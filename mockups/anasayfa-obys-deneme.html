@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Dada Mutfak — Pratik, Kolay ve Lezzetli Yemek Tarifleri</title>
+
+<!--
+  DadaMutfak Ana Sayfa — OBYS AGENCY ART-DIRECTION DENEMESİ (cesur yön, deneme)
+  ============================================================================
+  REFERANS KARAKTER TOKEN'LARI (obys.agency'den çıkarıldı):
+  - Tipografi: DEVASA grotesk display başlıklar + minik tracked UPPERCASE etiket.
+    Uç ölçek kontrastı (dev başlık ↔ 11px etiket). Geniş aralıklı iri caps.
+  - Layout: brutalist-editöryal grid, stark asimetri, AŞIRI beyaz alan ↔ büyük
+    blok kontrastı, off-grid index numaraları (01,02…65), full-bleed görsel.
+  - Renk: yüksek kontrast, light-dominant, gri tonlu foto, ölçülü ama net aksan.
+  - Detay: hairline ayraçlar, iri index sayaçları, tracked etiketler, marquee/
+    ticker, hover invert/scale, ham/undecorated his.
+  - İMZA: (1) numaralı arşiv-grid (01–NN), (2) iri caps + aşırı boşluk,
+    (3) full-bleed + tickeer şerit.
+
+  DADAMUTFAK'A UYGULAMA (karakteri al, WebGL'i ALMA):
+  - Ağır 3D/WebGL YOK; hareket sadece hafif CSS (hover, fade, marquee, scale).
+  - Kimlik korundu: krem zemin #FBF7EF, slate metin #253D4E, domates #E14827
+    imza aksanı (önceki turda az kaldığı için BU SEFER daha cesur: ticker, hover
+    invert, dev CTA). Yeşil=sağlık, sarı=indirim fonksiyonel aksan.
+  - Obys gri-foto yerine GERÇEK renkli yemek fotoğrafı (içerik platformuyuz).
+  - Tipografi: Bricolage Grotesque (karakterli display) + Archivo (tracked etiket/gövde).
+  - Görseller: div + background-image cover center (img tag YOK), 2x retina çarpma yok.
+  KARAR NOTLARI (50/50) bölüm içlerinde <!-- KARAR: ... --> ile işaretli.
+  ============================================================================
+-->
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=Archivo:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          cream:   '#FBF7EF',
+          paper:   '#FFFDF9',
+          ink:     '#1C2B36',   // Obys high-contrast için slate'in koyu ucu
+          slate:   '#253D4E',
+          'slate-soft': '#6A7882',
+          tomato:  '#E14827',
+          'tomato-deep': '#C13A1E',
+          herb:    '#3BB77E',
+          honey:   '#F0B429',
+          line:    '#DCD2C0',
+          'line-strong': '#1C2B36',
+        },
+        fontFamily: {
+          display: ['"Bricolage Grotesque"', 'system-ui', 'sans-serif'],
+          sans: ['Archivo', 'system-ui', 'sans-serif'],
+        },
+        maxWidth: { shell: '1320px', text: '560px' },
+      },
+      borderRadius: { none:'0', DEFAULT:'0', sm:'0', md:'0', lg:'0', xl:'0', '2xl':'0', '3xl':'0', full:'9999px' },
+    }
+  }
+</script>
+
+<style>
+  html { scroll-behavior:smooth; }
+  body { background:#FBF7EF; }
+
+  /* Görsel: div + background-image cover center (img tag YOK). Gerçek Unsplash foto. */
+  .ph { background-size:cover; background-position:center; background-repeat:no-repeat; background-color:#EDE6D8; }
+
+  /* Obys etiket: minik, çok seyrek harf aralıklı, uppercase */
+  .label { font-size:11px; letter-spacing:.24em; text-transform:uppercase; font-weight:600; }
+  .label-sm { font-size:10px; letter-spacing:.22em; text-transform:uppercase; font-weight:600; }
+
+  /* İri off-grid index sayacı — Obys imza */
+  .index { font-family:'Bricolage Grotesque',sans-serif; font-weight:500; line-height:.8; }
+
+  /* Hairline tam-genişlik ayraç */
+  .rule { border-top:1px solid #1C2B36; }
+  .rule-soft { border-top:1px solid #DCD2C0; }
+
+  @keyframes fade { from{opacity:0; transform:translateY(14px);} to{opacity:1; transform:none;} }
+  .fade { animation: fade .8s cubic-bezier(.2,.7,.2,1) both; }
+
+  /* Ticker / marquee — Obys ham şerit hissi (hafif CSS) */
+  @keyframes marquee { from{transform:translateX(0);} to{transform:translateX(-50%);} }
+  .marquee { display:flex; width:max-content; animation: marquee 28s linear infinite; }
+  .marquee:hover { animation-play-state:paused; }
+
+  /* Hover invert: kart başlığı domatese döner + görsel hafif scale */
+  .img-hover { overflow:hidden; }
+  .img-hover .ph { transition: transform 1s cubic-bezier(.2,.6,.2,1); }
+  .img-hover:hover .ph { transform: scale(1.05); }
+
+  .link-underline { background-image:linear-gradient(currentColor,currentColor); background-size:0% 1px; background-position:0 100%; background-repeat:no-repeat; transition:background-size .35s ease; }
+  .link-underline:hover { background-size:100% 1px; }
+
+  .has-mega:hover .mega { opacity:1; visibility:visible; transform:translateY(0); }
+  .mega { opacity:0; visibility:hidden; transform:translateY(4px); transition:all .2s ease; }
+
+  /* Hafif grain dokusu — Obys ham his */
+  .grain::after { content:""; position:absolute; inset:0; pointer-events:none; opacity:.05;
+    background-image:radial-gradient(#1C2B36 1px,transparent 1px); background-size:3px 3px; }
+
+  .strip::-webkit-scrollbar { height:3px; } .strip::-webkit-scrollbar-thumb { background:#1C2B36; }
+</style>
+</head>
+
+<body class="font-sans text-slate antialiased">
+
+<!-- ============================ 1. HEADER + MEGA MENÜ ============================ -->
+<!-- KARAR: Obys header = ince hairline, sol marka / sağ tracked caps nav, dev değil ama net. -->
+<header class="sticky top-0 z-50 bg-cream/92 backdrop-blur-md border-b border-line-strong">
+  <div class="max-w-shell mx-auto px-5 lg:px-8">
+    <div class="flex items-center justify-between h-[64px]">
+      <a href="#" class="font-display text-[24px] font-700 tracking-[-0.02em] text-ink leading-none">DADA<span class="text-tomato">MUTFAK</span></a>
+
+      <nav class="hidden lg:flex items-center gap-8 label">
+        <div class="has-mega relative">
+          <button class="py-2 hover:text-tomato transition">Tarifler</button>
+          <div class="mega absolute left-1/2 -translate-x-1/2 top-full pt-4 w-[460px]">
+            <div class="bg-paper border border-line-strong p-7 grid grid-cols-2 gap-x-8 gap-y-0.5">
+              <p class="col-span-2 label-sm text-slate-soft mb-2">Tarifler</p>
+              <a href="#" class="py-2 text-[14px] tracking-normal normal-case font-500 link-underline w-fit">Tüm Tarifler</a>
+              <a href="#" class="py-2 text-[14px] tracking-normal normal-case font-500 link-underline w-fit">Bugün Ne Pişirsem</a>
+              <a href="#" class="py-2 text-[14px] tracking-normal normal-case font-500 link-underline w-fit">Malzemeye Göre Ara</a>
+              <a href="#" class="py-2 text-[14px] tracking-normal normal-case font-500 link-underline w-fit">Dünya Mutfakları</a>
+              <a href="#" class="py-2 text-[14px] tracking-normal normal-case font-500 link-underline w-fit">Pratik / 30 dk</a>
+              <a href="#" class="py-2 text-[14px] tracking-normal normal-case font-500 link-underline w-fit">Tarif Ekle</a>
+            </div>
+          </div>
+        </div>
+        <div class="has-mega relative">
+          <button class="py-2 hover:text-tomato transition">Rehber</button>
+          <div class="mega absolute left-1/2 -translate-x-1/2 top-full pt-4 w-[420px]">
+            <div class="bg-paper border border-line-strong p-7 grid grid-cols-2 gap-x-8 gap-y-0.5">
+              <p class="col-span-2 label-sm text-slate-soft mb-2">Mutfak Rehberi</p>
+              <a href="#" class="py-2 text-[14px] tracking-normal normal-case font-500 link-underline w-fit">Mutfağa Giriş</a>
+              <a href="#" class="py-2 text-[14px] tracking-normal normal-case font-500 link-underline w-fit">Püf Noktaları</a>
+              <a href="#" class="py-2 text-[14px] tracking-normal normal-case font-500 link-underline w-fit">Mutfak Sözlüğü</a>
+              <a href="#" class="py-2 text-[14px] tracking-normal normal-case font-500 link-underline w-fit">Ölçü Birimleri</a>
+              <a href="#" class="py-2 text-[14px] tracking-normal normal-case font-500 link-underline w-fit">Şefler</a>
+              <a href="#" class="py-2 text-[14px] tracking-normal normal-case font-500 link-underline w-fit">Keşfet</a>
+            </div>
+          </div>
+        </div>
+        <a href="#saglik" class="py-2 hover:text-tomato transition">Sağlık</a>
+        <a href="#shop" class="py-2 hover:text-tomato transition">Ürünler</a>
+        <a href="#ramazan" class="py-2 hover:text-tomato transition flex items-center gap-1.5">Ramazan <span class="w-1 h-1 rounded-full bg-tomato"></span></a>
+      </nav>
+
+      <div class="flex items-center gap-4">
+        <a href="#" class="hidden sm:block label hover:text-tomato transition">Giriş</a>
+        <a href="#" class="label bg-ink text-cream px-4 py-2.5 hover:bg-tomato transition">Üye Ol</a>
+        <button class="lg:hidden grid place-items-center w-9 h-9" aria-label="Menü"><svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main>
+<!-- ============================ 2. CESUR EDİTÖRYAL HERO ============================ -->
+<!-- KARAR: Obys uç-ölçek hero → DEV grotesk başlık + off-grid (01) index + minik etiket sıraları.
+     Arama, dev başlığın altında geniş bir bar. Sonra full-bleed görsel. -->
+<section class="border-b border-line-strong">
+  <div class="max-w-shell mx-auto px-5 lg:px-8 pt-10 lg:pt-14 pb-8 lg:pb-10">
+
+    <!-- üst etiket sırası: sol künye / sağ index -->
+    <div class="fade flex items-start justify-between label text-slate-soft" style="animation-delay:.05s">
+      <span>Dada Mutfak — Est. 2026</span>
+      <span class="hidden sm:block">Denenmiş · Yorumlanmış · Paylaşılmış</span>
+      <span class="index text-tomato text-[15px] tracking-normal">(01)</span>
+    </div>
+
+    <!-- DEV başlık -->
+    <h1 class="fade font-display font-700 text-ink tracking-[-0.03em] mt-6 lg:mt-8" style="animation-delay:.12s; font-size:clamp(56px,14vw,184px); line-height:.86;">
+      BUGÜN NE<br>Pİ<span class="text-tomato">Ş</span>İRSEM?
+    </h1>
+
+    <!-- alt satır: lead + arama -->
+    <div class="grid lg:grid-cols-12 gap-6 lg:gap-10 items-end mt-8 lg:mt-12">
+      <p class="fade lg:col-span-5 text-[16.5px] leading-[1.6] text-slate max-w-text" style="animation-delay:.2s">
+        Evdeki malzemeleri yaz, sana uygun tarifi bulalım. Binlerce ev yapımı,
+        denenmiş tarif tek bir mutfakta.
+      </p>
+      <div class="fade lg:col-span-7 lg:col-start-6" style="animation-delay:.28s">
+        <div class="border border-line-strong flex items-stretch">
+          <span class="hidden sm:grid place-items-center px-4 border-r border-line-strong text-slate-soft">
+            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="11" cy="11" r="7"/><path d="m20 20-3-3"/></svg>
+          </span>
+          <input type="text" placeholder="domates, yumurta, peynir…" class="flex-1 bg-transparent outline-none px-4 py-4 text-[16px] placeholder:text-slate-soft/70" />
+          <button class="px-7 lg:px-10 bg-tomato text-cream label hover:bg-tomato-deep transition">Tarif Bul</button>
+        </div>
+        <div class="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1.5 text-[13px] text-slate-soft">
+          <span class="label-sm">Popüler</span>
+          <a href="#" class="link-underline">Tavuk</a><a href="#" class="link-underline">Patates</a>
+          <a href="#" class="link-underline">Mercimek</a><a href="#" class="link-underline">Makarna</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- full-bleed feature görsel -->
+  <div class="fade img-hover relative w-full grain" style="animation-delay:.32s">
+    <div class="ph w-full h-[46vh] lg:h-[64vh]" style="background-image:url('https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=2000&q=80')"></div>
+    <div class="absolute left-0 bottom-0 bg-cream px-5 lg:px-8 py-3 border-t border-r border-line-strong flex items-center gap-3">
+      <span class="label text-slate-soft">Günün Tarifi</span>
+      <span class="font-display font-600 text-[18px] text-ink">Fırında Sebzeli Tavuk</span>
+    </div>
+  </div>
+</section>
+
+<!-- TICKER / MARQUEE — Obys ham şerit (domates cesareti) -->
+<!-- KARAR: domatesi cesur kullanmak için tam-genişlik kayan şerit. -->
+<div class="bg-tomato text-cream overflow-hidden border-b border-line-strong">
+  <div class="marquee py-3 label text-[12px]">
+    <span class="flex">
+      <span class="px-6">Denenmiş Tarifler</span><span class="px-2">✦</span>
+      <span class="px-6">Bugün Ne Pişirsem</span><span class="px-2">✦</span>
+      <span class="px-6">Mutfak Rehberi</span><span class="px-2">✦</span>
+      <span class="px-6">Sağlıklı Beslenme</span><span class="px-2">✦</span>
+      <span class="px-6">Dünya Mutfakları</span><span class="px-2">✦</span>
+      <span class="px-6">Ramazan Sofraları</span><span class="px-2">✦</span>
+    </span>
+    <span class="flex" aria-hidden="true">
+      <span class="px-6">Denenmiş Tarifler</span><span class="px-2">✦</span>
+      <span class="px-6">Bugün Ne Pişirsem</span><span class="px-2">✦</span>
+      <span class="px-6">Mutfak Rehberi</span><span class="px-2">✦</span>
+      <span class="px-6">Sağlıklı Beslenme</span><span class="px-2">✦</span>
+      <span class="px-6">Dünya Mutfakları</span><span class="px-2">✦</span>
+      <span class="px-6">Ramazan Sofraları</span><span class="px-2">✦</span>
+    </span>
+  </div>
+</div>
+
+<!-- ============================ 3. ÖNE ÇIKAN TARİFLER ============================ -->
+<!-- KARAR: bölüm başlığı Obys istifi — iri index (02) solda off-grid, dev başlık, sağda etiket -->
+<section class="max-w-shell mx-auto px-5 lg:px-8 pt-16 lg:pt-24">
+  <div class="flex items-start gap-5 lg:gap-8 rule pt-6 mb-10">
+    <span class="index text-line-strong text-[clamp(40px,6vw,72px)] shrink-0">02</span>
+    <div class="flex-1 flex flex-wrap items-end justify-between gap-3">
+      <div>
+        <p class="label text-slate-soft mb-2">Bu Hafta Öne Çıkan</p>
+        <h2 class="font-display font-700 text-ink tracking-[-0.02em] leading-[.9] text-[clamp(34px,5vw,60px)]">TARİFLERİMİZ</h2>
+      </div>
+      <a href="#" class="label text-ink hover:text-tomato transition link-underline pb-1">Tümünü Gör →</a>
+    </div>
+  </div>
+
+  <div class="strip flex lg:grid lg:grid-cols-4 gap-5 lg:gap-6 overflow-x-auto pb-2 -mx-5 px-5 lg:mx-0 lg:px-0 snap-x">
+    <!-- KARAR: tarif kartı numaralı (Obys arşiv-grid), keskin, hover'da başlık domatese döner -->
+    <article class="snap-start shrink-0 w-[280px] lg:w-auto group">
+      <a href="#" class="block img-hover relative">
+        <div class="ph aspect-[4/5]" style="background-image:url('https://images.unsplash.com/photo-1473093295043-cdd812d0e601?auto=format&fit=crop&w=800&q=80')"></div>
+        <span class="absolute top-0 left-0 bg-tomato text-cream label-sm px-3 py-1.5">Dada Denedi</span>
+        <span class="absolute bottom-0 right-0 bg-cream text-ink index text-[22px] px-3 py-1 border-t border-l border-line-strong">01</span>
+      </a>
+      <p class="label-sm text-slate-soft mt-4 mb-1.5">Ana Yemek</p>
+      <h3 class="font-display text-[22px] font-600 leading-[1.05] text-ink group-hover:text-tomato transition">Köz Patlıcanlı Mantı</h3>
+      <div class="mt-2 flex items-center gap-2.5 text-[12.5px] text-slate-soft"><span class="text-honey font-700">★ 4.9</span><span>·</span><span>50 DK</span><span>·</span><span>312 YORUM</span></div>
+    </article>
+    <article class="snap-start shrink-0 w-[280px] lg:w-auto group">
+      <a href="#" class="block img-hover relative">
+        <div class="ph aspect-[4/5]" style="background-image:url('https://images.unsplash.com/photo-1547592166-23ac45744acd?auto=format&fit=crop&w=800&q=80')"></div>
+        <span class="absolute top-0 left-0 bg-herb text-cream label-sm px-3 py-1.5">Sağlıklı</span>
+        <span class="absolute bottom-0 right-0 bg-cream text-ink index text-[22px] px-3 py-1 border-t border-l border-line-strong">02</span>
+      </a>
+      <p class="label-sm text-slate-soft mt-4 mb-1.5">Çorba</p>
+      <h3 class="font-display text-[22px] font-600 leading-[1.05] text-ink group-hover:text-tomato transition">Şifalı Mercimek Çorbası</h3>
+      <div class="mt-2 flex items-center gap-2.5 text-[12.5px] text-slate-soft"><span class="text-honey font-700">★ 4.7</span><span>·</span><span>30 DK</span><span>·</span><span>198 YORUM</span></div>
+    </article>
+    <article class="snap-start shrink-0 w-[280px] lg:w-auto group">
+      <a href="#" class="block img-hover relative">
+        <div class="ph aspect-[4/5]" style="background-image:url('https://images.unsplash.com/photo-1488477181946-6428a0291777?auto=format&fit=crop&w=800&q=80')"></div>
+        <span class="absolute top-0 left-0 bg-tomato text-cream label-sm px-3 py-1.5">Dada Denedi</span>
+        <span class="absolute bottom-0 right-0 bg-cream text-ink index text-[22px] px-3 py-1 border-t border-l border-line-strong">03</span>
+      </a>
+      <p class="label-sm text-slate-soft mt-4 mb-1.5">Tatlı</p>
+      <h3 class="font-display text-[22px] font-600 leading-[1.05] text-ink group-hover:text-tomato transition">Fırın Sütlaç</h3>
+      <div class="mt-2 flex items-center gap-2.5 text-[12.5px] text-slate-soft"><span class="text-honey font-700">★ 4.8</span><span>·</span><span>60 DK</span><span>·</span><span>421 YORUM</span></div>
+    </article>
+    <article class="snap-start shrink-0 w-[280px] lg:w-auto group">
+      <a href="#" class="block img-hover relative">
+        <div class="ph aspect-[4/5]" style="background-image:url('https://images.unsplash.com/photo-1525351484163-7529414344d8?auto=format&fit=crop&w=800&q=80')"></div>
+        <span class="absolute top-0 left-0 bg-cream text-ink label-sm px-3 py-1.5 border-b border-r border-line-strong">15 DK</span>
+        <span class="absolute bottom-0 right-0 bg-cream text-ink index text-[22px] px-3 py-1 border-t border-l border-line-strong">04</span>
+      </a>
+      <p class="label-sm text-slate-soft mt-4 mb-1.5">Kahvaltı</p>
+      <h3 class="font-display text-[22px] font-600 leading-[1.05] text-ink group-hover:text-tomato transition">Menemen</h3>
+      <div class="mt-2 flex items-center gap-2.5 text-[12.5px] text-slate-soft"><span class="text-honey font-700">★ 4.9</span><span>·</span><span>15 DK</span><span>·</span><span>540 YORUM</span></div>
+    </article>
+  </div>
+</section>
+
+<!-- ============================ 4. MUTFAĞA GİRİŞ / PÜF NOKTALARI ============================ -->
+<section class="max-w-shell mx-auto px-5 lg:px-8 pt-16 lg:pt-24">
+  <div class="flex items-start gap-5 lg:gap-8 rule pt-6 mb-10">
+    <span class="index text-line-strong text-[clamp(40px,6vw,72px)] shrink-0">03</span>
+    <div class="flex-1 flex flex-wrap items-end justify-between gap-3">
+      <div>
+        <p class="label text-slate-soft mb-2">Mutfak Rehberi</p>
+        <h2 class="font-display font-700 text-ink tracking-[-0.02em] leading-[.9] text-[clamp(34px,5vw,60px)]">ÖĞREN &amp; USTALAŞ</h2>
+      </div>
+      <a href="#" class="label text-ink hover:text-tomato transition link-underline pb-1">Tüm Rehber →</a>
+    </div>
+  </div>
+
+  <!-- KARAR: asimetrik ikili — sol büyük (8/12), sağ küçük (4/12), Obys off-grid hissi -->
+  <div class="grid md:grid-cols-12 gap-6 lg:gap-10">
+    <a href="#" class="group block md:col-span-8">
+      <div class="img-hover"><div class="ph aspect-[16/9]" style="background-image:url('https://images.unsplash.com/photo-1556910103-1c02745aae4d?auto=format&fit=crop&w=1300&q=80')"></div></div>
+      <p class="label-sm text-slate-soft mt-5 mb-2">Mutfağa Giriş</p>
+      <h3 class="font-display text-[30px] lg:text-[40px] font-700 leading-[.95] tracking-[-0.02em] text-ink group-hover:text-tomato transition">Temel teknikler:<br>bıçaktan ateşe</h3>
+      <p class="text-[15px] text-slate-soft leading-relaxed mt-3 max-w-text">Yeni başlayanlar için adım adım mutfak rehberi — kesimden pişirmeye.</p>
+    </a>
+    <a href="#" class="group block md:col-span-4">
+      <div class="img-hover"><div class="ph aspect-[3/4] md:h-full" style="background-image:url('https://images.unsplash.com/photo-1596797038530-2c107229654b?auto=format&fit=crop&w=900&q=80')"></div></div>
+      <p class="label-sm text-slate-soft mt-5 mb-2">Püf Noktaları</p>
+      <h3 class="font-display text-[26px] lg:text-[30px] font-700 leading-[.95] tracking-[-0.02em] text-ink group-hover:text-tomato transition">Pilav neden lapa olur?</h3>
+      <p class="text-[15px] text-slate-soft leading-relaxed mt-3">Mutfak sırları ve denenmiş çözümler.</p>
+    </a>
+  </div>
+</section>
+
+<!-- ============================ 5. SAĞLIK & DİYETİSYEN ============================ -->
+<!-- KARAR: koyu tam-genişlik blok (Obys yüksek-kontrast), yeşil fonksiyonel aksan, numaralı liste -->
+<section id="saglik" class="mt-16 lg:mt-24 bg-ink text-cream grain relative border-y border-line-strong">
+  <div class="max-w-shell mx-auto px-5 lg:px-8 py-16 lg:py-24 relative">
+    <div class="grid lg:grid-cols-12 gap-10 lg:gap-16 items-start">
+      <div class="lg:col-span-5">
+        <p class="label text-herb mb-4">04 — Sağlık &amp; Diyetisyen</p>
+        <h2 class="font-display font-700 tracking-[-0.02em] leading-[.9] text-[clamp(40px,6vw,72px)]">DENGELİ BESLEN,<br>UZMANINA DANIŞ</h2>
+        <p class="mt-6 text-[16px] text-cream/70 leading-[1.7] max-w-text">Kalori ve besin hesaplayıcılar, vücut analizleri ve alanında uzman diyetisyenlerle birebir danışmanlık — hepsi tek mutfakta.</p>
+        <div class="mt-8 flex flex-wrap gap-3">
+          <a href="#" class="bg-herb text-ink label px-6 py-4 hover:brightness-110 transition">Diyetisyen Bul</a>
+          <a href="#" class="border border-cream/40 text-cream label px-6 py-4 hover:bg-cream hover:text-ink transition">Hesaplayıcılar</a>
+        </div>
+      </div>
+
+      <div class="lg:col-span-7 lg:pt-1">
+        <ul style="border-top:1px solid rgba(251,247,239,.18)">
+          <li><a href="#" class="group flex items-center gap-6 py-6" style="border-bottom:1px solid rgba(251,247,239,.18)">
+            <span class="index text-herb text-[clamp(28px,4vw,48px)] w-16 shrink-0">01</span>
+            <span class="flex-1"><span class="font-display text-[24px] lg:text-[30px] font-600 group-hover:text-herb transition">Kalori Hesapla</span><span class="block label-sm text-cream/50 mt-1">Günlük enerji ihtiyacın</span></span>
+            <svg class="w-6 h-6 text-cream/50 group-hover:text-herb group-hover:translate-x-1 transition shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </a></li>
+          <li><a href="#" class="group flex items-center gap-6 py-6" style="border-bottom:1px solid rgba(251,247,239,.18)">
+            <span class="index text-herb text-[clamp(28px,4vw,48px)] w-16 shrink-0">02</span>
+            <span class="flex-1"><span class="font-display text-[24px] lg:text-[30px] font-600 group-hover:text-herb transition">Vücut Kitle Endeksi</span><span class="block label-sm text-cream/50 mt-1">Boy / kilo dengen</span></span>
+            <svg class="w-6 h-6 text-cream/50 group-hover:text-herb group-hover:translate-x-1 transition shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </a></li>
+          <li><a href="#" class="group flex items-center gap-6 py-6" style="border-bottom:1px solid rgba(251,247,239,.18)">
+            <span class="index text-herb text-[clamp(28px,4vw,48px)] w-16 shrink-0">03</span>
+            <span class="flex-1"><span class="font-display text-[24px] lg:text-[30px] font-600 group-hover:text-herb transition">Bazal Metabolizma</span><span class="block label-sm text-cream/50 mt-1">Dinlenme halinde yakım</span></span>
+            <svg class="w-6 h-6 text-cream/50 group-hover:text-herb group-hover:translate-x-1 transition shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </a></li>
+          <li><a href="#" class="group flex items-center gap-6 py-6" style="border-bottom:1px solid rgba(251,247,239,.18)">
+            <span class="index text-herb text-[clamp(28px,4vw,48px)] w-16 shrink-0">04</span>
+            <span class="flex-1"><span class="font-display text-[24px] lg:text-[30px] font-600 group-hover:text-herb transition">Vücut Tipi Testi</span><span class="block label-sm text-cream/50 mt-1">Sana uygun beslenme modeli</span></span>
+            <svg class="w-6 h-6 text-cream/50 group-hover:text-herb group-hover:translate-x-1 transition shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ 6. DADA SHOP ============================ -->
+<section id="shop" class="max-w-shell mx-auto px-5 lg:px-8 pt-16 lg:pt-24">
+  <div class="flex items-start gap-5 lg:gap-8 rule pt-6 mb-10">
+    <span class="index text-line-strong text-[clamp(40px,6vw,72px)] shrink-0">05</span>
+    <div class="flex-1 flex flex-wrap items-end justify-between gap-3">
+      <div>
+        <p class="label text-slate-soft mb-2">Dada Shop</p>
+        <h2 class="font-display font-700 text-ink tracking-[-0.02em] leading-[.9] text-[clamp(34px,5vw,60px)]">MUTFAĞINA TAŞI</h2>
+      </div>
+      <a href="#" class="label text-ink hover:text-tomato transition link-underline pb-1">Tüm Ürünler →</a>
+    </div>
+  </div>
+
+  <!-- KARAR: ürün kartı üst-etiketli "ÜRÜN" + indirim sarı; foto-isim eşleşmeli (erzak/pantry) -->
+  <div class="strip flex lg:grid lg:grid-cols-4 gap-5 lg:gap-6 overflow-x-auto pb-2 -mx-5 px-5 lg:mx-0 lg:px-0 snap-x">
+    <article class="snap-start shrink-0 w-[240px] lg:w-auto group">
+      <a href="#" class="block img-hover relative">
+        <div class="ph aspect-square" style="background-image:url('https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?auto=format&fit=crop&w=700&q=80')"></div>
+        <span class="absolute top-0 left-0 bg-ink text-cream label-sm text-[9px] px-2.5 py-1">Ürün</span>
+        <span class="absolute top-0 right-0 bg-honey text-ink label-sm text-[10px] px-2.5 py-1">%20</span>
+      </a>
+      <h3 class="font-display text-[19px] font-600 leading-tight text-ink mt-3.5 group-hover:text-tomato transition">Soğuk Sıkım Zeytinyağı</h3>
+      <div class="mt-1.5 flex items-center gap-2"><span class="font-700 text-ink text-[15px]">₺240</span><span class="text-slate-soft line-through text-[13px]">₺300</span></div>
+    </article>
+    <article class="snap-start shrink-0 w-[240px] lg:w-auto group">
+      <a href="#" class="block img-hover relative">
+        <div class="ph aspect-square" style="background-image:url('https://images.unsplash.com/photo-1596040033229-a9821ebd058d?auto=format&fit=crop&w=700&q=80')"></div>
+        <span class="absolute top-0 left-0 bg-ink text-cream label-sm text-[9px] px-2.5 py-1">Ürün</span>
+        <span class="absolute top-0 right-0 bg-herb text-cream label-sm text-[10px] px-2.5 py-1">Organik</span>
+      </a>
+      <h3 class="font-display text-[19px] font-600 leading-tight text-ink mt-3.5 group-hover:text-tomato transition">Yöresel Baharat Seti</h3>
+      <div class="mt-1.5"><span class="font-700 text-ink text-[15px]">₺175</span></div>
+    </article>
+    <article class="snap-start shrink-0 w-[240px] lg:w-auto group">
+      <a href="#" class="block img-hover relative">
+        <div class="ph aspect-square" style="background-image:url('https://images.unsplash.com/photo-1551462147-37885acc36f1?auto=format&fit=crop&w=700&q=80')"></div>
+        <span class="absolute top-0 left-0 bg-ink text-cream label-sm text-[9px] px-2.5 py-1">Ürün</span>
+        <span class="absolute top-0 right-0 bg-honey text-ink label-sm text-[10px] px-2.5 py-1">%15</span>
+      </a>
+      <h3 class="font-display text-[19px] font-600 leading-tight text-ink mt-3.5 group-hover:text-tomato transition">El Yapımı Köy Makarnası</h3>
+      <div class="mt-1.5 flex items-center gap-2"><span class="font-700 text-ink text-[15px]">₺68</span><span class="text-slate-soft line-through text-[13px]">₺80</span></div>
+    </article>
+    <article class="snap-start shrink-0 w-[240px] lg:w-auto group">
+      <a href="#" class="block img-hover relative">
+        <div class="ph aspect-square" style="background-image:url('https://images.unsplash.com/photo-1498837167922-ddd27525d352?auto=format&fit=crop&w=700&q=80')"></div>
+        <span class="absolute top-0 left-0 bg-ink text-cream label-sm text-[9px] px-2.5 py-1">Ürün</span>
+      </a>
+      <h3 class="font-display text-[19px] font-600 leading-tight text-ink mt-3.5 group-hover:text-tomato transition">Taze Sebze Kutusu</h3>
+      <div class="mt-1.5"><span class="font-700 text-ink text-[15px]">₺120</span></div>
+    </article>
+  </div>
+</section>
+
+<!-- ============================ 7. TOPLULUK / SON EKLENENLER ============================ -->
+<section class="max-w-shell mx-auto px-5 lg:px-8 pt-16 lg:pt-24">
+  <div class="flex items-start gap-5 lg:gap-8 rule pt-6 mb-10">
+    <span class="index text-line-strong text-[clamp(40px,6vw,72px)] shrink-0">06</span>
+    <div class="flex-1 flex flex-wrap items-end justify-between gap-3">
+      <div>
+        <p class="label text-slate-soft mb-2">Topluluktan</p>
+        <h2 class="font-display font-700 text-ink tracking-[-0.02em] leading-[.9] text-[clamp(34px,5vw,60px)]">BUGÜN EKLENENLER</h2>
+      </div>
+      <a href="#" class="label text-ink hover:text-tomato transition link-underline pb-1">Tarifini Paylaş →</a>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-2 lg:grid-cols-4 gap-5 lg:gap-6">
+    <article class="group">
+      <div class="img-hover"><div class="ph aspect-[4/5]" style="background-image:url('https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=700&q=80')"></div></div>
+      <h3 class="font-display text-[19px] font-600 leading-tight text-ink mt-3.5 group-hover:text-tomato transition">Zeytinyağlı Enginar</h3>
+      <p class="label-sm text-slate-soft text-[10px] mt-2">Ayşe K.</p>
+    </article>
+    <article class="group">
+      <div class="img-hover"><div class="ph aspect-[4/5]" style="background-image:url('https://images.unsplash.com/photo-1529042410759-befb1204b468?auto=format&fit=crop&w=700&q=80')"></div></div>
+      <h3 class="font-display text-[19px] font-600 leading-tight text-ink mt-3.5 group-hover:text-tomato transition">Fırın Köfte</h3>
+      <p class="label-sm text-slate-soft text-[10px] mt-2">Mehmet T.</p>
+    </article>
+    <article class="group">
+      <div class="img-hover"><div class="ph aspect-[4/5]" style="background-image:url('https://images.unsplash.com/photo-1565958011703-44f9829ba187?auto=format&fit=crop&w=700&q=80')"></div></div>
+      <h3 class="font-display text-[19px] font-600 leading-tight text-ink mt-3.5 group-hover:text-tomato transition">Havuçlu Kek</h3>
+      <p class="label-sm text-slate-soft text-[10px] mt-2">Elif S.</p>
+    </article>
+    <article class="group">
+      <div class="img-hover"><div class="ph aspect-[4/5]" style="background-image:url('https://images.unsplash.com/photo-1476718406336-bb5a9690ee2a?auto=format&fit=crop&w=700&q=80')"></div></div>
+      <h3 class="font-display text-[19px] font-600 leading-tight text-ink mt-3.5 group-hover:text-tomato transition">Ezogelin Çorbası</h3>
+      <p class="label-sm text-slate-soft text-[10px] mt-2">Can D.</p>
+    </article>
+  </div>
+</section>
+
+<!-- ============================ 8. RAMAZAN ÖZEL BLOK ============================ -->
+<!-- KARAR: full-bleed koyu görsel + DEV serif-grotesk overlay (Obys spread hissi) -->
+<section id="ramazan" class="mt-16 lg:mt-24">
+  <div class="relative img-hover grain">
+    <div class="ph w-full h-[64vh] lg:h-[78vh]" style="background-image:url('https://images.unsplash.com/photo-1542528180-1c2803fa048c?auto=format&fit=crop&w=2000&q=80')"></div>
+    <div class="absolute inset-0 bg-ink/60"></div>
+    <div class="absolute inset-0 flex items-center">
+      <div class="max-w-shell mx-auto px-5 lg:px-8 w-full">
+        <p class="label text-honey mb-4">07 — Ramazan'a Özel</p>
+        <h2 class="font-display text-cream font-700 tracking-[-0.03em] leading-[.86] text-[clamp(44px,9vw,128px)]">İFTARA VE<br>SAHURA</h2>
+        <p class="text-cream/85 text-[16.5px] leading-[1.7] mt-6 max-w-text">Günün iftar &amp; sahur menüleri, hazırlık listeleri ve ramazan boyunca her güne özel tarif önerileri.</p>
+        <div class="mt-8 flex flex-wrap gap-3">
+          <a href="#" class="bg-tomato text-cream label px-8 py-4 hover:bg-tomato-deep transition">İftara Doğru</a>
+          <a href="#" class="border border-cream/50 text-cream label px-8 py-4 hover:bg-cream hover:text-ink transition">Sahura Doğru</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+</main>
+
+<!-- ============================ 9. FOOTER ============================ -->
+<footer class="mt-16 lg:mt-24 border-t border-line-strong bg-cream">
+  <div class="max-w-shell mx-auto px-5 lg:px-8 py-14 lg:py-16">
+    <div class="grid md:grid-cols-12 gap-10">
+      <div class="md:col-span-4">
+        <p class="label-sm text-slate-soft mb-3">Bülten</p>
+        <p class="font-display text-[24px] font-600 text-ink leading-tight max-w-xs mb-4">Her hafta yeni tarifler kutuna gelsin.</p>
+        <div class="border border-line-strong flex items-stretch max-w-sm">
+          <input type="email" placeholder="E-posta adresin" class="flex-1 bg-transparent outline-none px-4 py-3 text-[14px] placeholder:text-slate-soft/70" />
+          <button class="px-5 bg-ink text-cream label-sm hover:bg-tomato transition">Abone Ol</button>
+        </div>
+      </div>
+      <div class="md:col-span-2 md:col-start-7">
+        <p class="label-sm text-slate-soft mb-4">Tarifler</p>
+        <ul class="space-y-2.5 text-[14px] text-slate">
+          <li><a href="#" class="link-underline hover:text-tomato transition">Bugün Ne Pişirsem</a></li>
+          <li><a href="#" class="link-underline hover:text-tomato transition">Dünya Mutfakları</a></li>
+          <li><a href="#" class="link-underline hover:text-tomato transition">Tarif Ekle</a></li>
+          <li><a href="#" class="link-underline hover:text-tomato transition">Şefler</a></li>
+        </ul>
+      </div>
+      <div class="md:col-span-2">
+        <p class="label-sm text-slate-soft mb-4">Rehber</p>
+        <ul class="space-y-2.5 text-[14px] text-slate">
+          <li><a href="#" class="link-underline hover:text-tomato transition">Mutfağa Giriş</a></li>
+          <li><a href="#" class="link-underline hover:text-tomato transition">Püf Noktaları</a></li>
+          <li><a href="#" class="link-underline hover:text-tomato transition">Sözlük</a></li>
+          <li><a href="#" class="link-underline hover:text-tomato transition">Ölçü Birimleri</a></li>
+        </ul>
+      </div>
+      <div class="md:col-span-2">
+        <p class="label-sm text-slate-soft mb-4">Sağlık</p>
+        <ul class="space-y-2.5 text-[14px] text-slate">
+          <li><a href="#" class="link-underline hover:text-tomato transition">Diyetisyenler</a></li>
+          <li><a href="#" class="link-underline hover:text-tomato transition">Hesaplayıcılar</a></li>
+          <li><a href="#" class="link-underline hover:text-tomato transition">Testler</a></li>
+        </ul>
+      </div>
+      <div class="md:col-span-2">
+        <p class="label-sm text-slate-soft mb-4">Kurumsal</p>
+        <ul class="space-y-2.5 text-[14px] text-slate">
+          <li><a href="#" class="link-underline hover:text-tomato transition">Hakkımızda</a></li>
+          <li><a href="#" class="link-underline hover:text-tomato transition">İletişim</a></li>
+          <li><a href="#" class="link-underline hover:text-tomato transition">Reklam Ver</a></li>
+          <li><a href="#" class="link-underline hover:text-tomato transition">S.S.S.</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- KARAR: Obys imzası — footer'da DEV wordmark, alt bar -->
+  <div class="rule">
+    <div class="max-w-shell mx-auto px-5 lg:px-8 pt-6">
+      <h2 class="font-display font-700 text-ink/90 tracking-[-0.04em] leading-[.8] text-[clamp(64px,18vw,260px)]">DADA<span class="text-tomato">MUTFAK</span></h2>
+    </div>
+  </div>
+  <div class="border-t border-line">
+    <div class="max-w-shell mx-auto px-5 lg:px-8 py-5 flex flex-col sm:flex-row items-center justify-between gap-3 label-sm text-slate-soft">
+      <p class="tracking-normal normal-case text-[12.5px]">© 2026 DadaMutfak. Tüm hakları saklıdır.</p>
+      <div class="flex items-center gap-6"><a href="#" class="hover:text-tomato transition">KVKK</a><a href="#" class="hover:text-tomato transition">Gizlilik</a><a href="#" class="hover:text-tomato transition">Kullanım Koşulları</a></div>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>

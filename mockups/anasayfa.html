@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Dada Mutfak — Pratik, Kolay ve Lezzetli Yemek Tarifleri</title>
+
+<!--
+  DadaMutfak Ana Sayfa — İlk taslak (SS feedback loop, 1. tur)
+  Yön: iskelet editöryal-sakin, kimlik sıcak. Palet krem zemin + slate metin +
+  domates kırmızısı imza aksanı (sadece CTA/etiket/rozet). Yeşil=sağlık, sarı=indirim.
+  Tipografi: Fraunces (display serif, sıcak) + Hanken Grotesk (gövde sans).
+  Görseller: placeholder gradient blokları (div + background-image cover center).
+  KARAR NOTLARI (50/50 tercihler) bölüm içlerinde <!-- KARAR: ... --> ile işaretli.
+-->
+
+<!-- Fraunces: karakterli sıcak serif (başlıklar). Hanken Grotesk: temiz gövde sans. -->
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,400;1,9..144,500&family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          cream:   '#FBF7EF',  // sıcak-nötr zemin
+          paper:   '#FFFDF9',  // kart zemini (zeminden bir ton açık)
+          slate:   '#253D4E',  // ana metin
+          'slate-soft': '#5A6B76',
+          tomato:  '#E14827',  // imza aksanı — sadece CTA/etiket/rozet
+          'tomato-deep': '#C13A1E',
+          herb:    '#3BB77E',  // sağlık fonksiyonel aksanı
+          honey:   '#FAC045',  // indirim fonksiyonel aksanı
+          line:    '#EBE3D6',  // ince ayraç çizgisi
+        },
+        fontFamily: {
+          display: ['Fraunces', 'Georgia', 'serif'],
+          sans: ['"Hanken Grotesk"', 'system-ui', 'sans-serif'],
+        },
+        maxWidth: { shell: '1240px' },
+      }
+    }
+  }
+</script>
+
+<style>
+  html { scroll-behavior: smooth; }
+  body { background: #FBF7EF; }
+
+  /* Placeholder görsel: div + background-image cover center (img tag YOK).
+     Gerçek food fotoğrafı sonra; şimdilik sıcak gradient blokları. */
+  .ph { background-size: cover; background-position: center; background-repeat: no-repeat; }
+  .ph-1 { background-image: linear-gradient(135deg,#F4C9A8 0%,#E89B6C 100%); }
+  .ph-2 { background-image: linear-gradient(135deg,#E8B4A0 0%,#C9695A 100%); }
+  .ph-3 { background-image: linear-gradient(135deg,#CFE3C4 0%,#7FB286 100%); }
+  .ph-4 { background-image: linear-gradient(135deg,#F6DEA6 0%,#E8B45A 100%); }
+  .ph-5 { background-image: linear-gradient(135deg,#D9C7B0 0%,#A98C6B 100%); }
+  .ph-6 { background-image: linear-gradient(135deg,#EBC1B0 0%,#B5705E 100%); }
+  .ph-dark { background-image: linear-gradient(150deg,#2C4456 0%,#16242E 100%); }
+
+  /* İnce kağıt dokusu hissi için çok hafif noktasal overlay */
+  .grain::before {
+    content:""; position:absolute; inset:0; pointer-events:none; opacity:.04;
+    background-image: radial-gradient(#253D4E 1px, transparent 1px);
+    background-size: 4px 4px;
+  }
+
+  /* Hero load animasyonu — kademeli reveal */
+  @keyframes rise { from { opacity:0; transform: translateY(14px);} to {opacity:1; transform:none;} }
+  .rise { animation: rise .7s cubic-bezier(.2,.7,.2,1) both; }
+
+  /* Mega-menü: hover ile aç (desktop). Basit, JS'siz. */
+  .has-mega:hover .mega { opacity:1; visibility:visible; transform: translateY(0); }
+  .mega { opacity:0; visibility:hidden; transform: translateY(6px); transition: all .18s ease; }
+
+  .card-hover { transition: transform .25s ease, box-shadow .25s ease; }
+  .card-hover:hover { transform: translateY(-4px); box-shadow: 0 18px 40px -24px rgba(37,61,78,.45); }
+
+  .strip { scrollbar-width: thin; scrollbar-color: #DDD2C2 transparent; }
+  .strip::-webkit-scrollbar { height: 6px; }
+  .strip::-webkit-scrollbar-thumb { background:#DDD2C2; border-radius:99px; }
+</style>
+</head>
+
+<body class="font-sans text-slate antialiased">
+
+<!-- ============================ 1. HEADER + MEGA MENÜ ============================ -->
+<header class="sticky top-0 z-50 bg-cream/90 backdrop-blur-md border-b border-line">
+  <div class="max-w-shell mx-auto px-5 lg:px-8">
+    <div class="flex items-center justify-between h-[68px]">
+
+      <!-- Logo -->
+      <a href="#" class="flex items-center gap-2 shrink-0">
+        <span class="grid place-items-center w-9 h-9 rounded-full bg-tomato text-cream font-display font-600 text-lg leading-none">d</span>
+        <span class="font-display text-[22px] font-600 tracking-tight text-slate">Dada<span class="text-tomato">Mutfak</span></span>
+      </a>
+
+      <!-- Ana navigasyon (desktop) -->
+      <nav class="hidden lg:flex items-center gap-1 text-[15px] font-500">
+        <!-- Tarifler (mega) -->
+        <div class="has-mega relative">
+          <button class="px-3.5 py-2 rounded-full hover:bg-paper transition flex items-center gap-1">
+            Tarifler
+            <svg class="w-3.5 h-3.5 text-slate-soft" viewBox="0 0 20 20" fill="currentColor"><path d="M5.5 7.5 10 12l4.5-4.5"/></svg>
+          </button>
+          <div class="mega absolute left-0 top-full pt-3 w-[520px]">
+            <div class="bg-paper border border-line rounded-2xl shadow-xl p-5 grid grid-cols-2 gap-x-6 gap-y-1">
+              <p class="col-span-2 text-xs uppercase tracking-wider text-slate-soft font-600 mb-1">Tarifler</p>
+              <a href="#" class="px-2 py-2 rounded-lg hover:bg-cream transition">Tüm Tarifler</a>
+              <a href="#" class="px-2 py-2 rounded-lg hover:bg-cream transition">Bugün Ne Pişirsem</a>
+              <a href="#" class="px-2 py-2 rounded-lg hover:bg-cream transition">Malzemeye Göre Ara</a>
+              <a href="#" class="px-2 py-2 rounded-lg hover:bg-cream transition">Dünya Mutfakları</a>
+              <a href="#" class="px-2 py-2 rounded-lg hover:bg-cream transition">Pratik / 30 dk</a>
+              <a href="#" class="px-2 py-2 rounded-lg hover:bg-cream transition">Tarif Ekle</a>
+            </div>
+          </div>
+        </div>
+        <!-- Rehber (mega) -->
+        <div class="has-mega relative">
+          <button class="px-3.5 py-2 rounded-full hover:bg-paper transition flex items-center gap-1">
+            Rehber
+            <svg class="w-3.5 h-3.5 text-slate-soft" viewBox="0 0 20 20" fill="currentColor"><path d="M5.5 7.5 10 12l4.5-4.5"/></svg>
+          </button>
+          <div class="mega absolute left-0 top-full pt-3 w-[420px]">
+            <div class="bg-paper border border-line rounded-2xl shadow-xl p-5 grid grid-cols-2 gap-x-6 gap-y-1">
+              <p class="col-span-2 text-xs uppercase tracking-wider text-slate-soft font-600 mb-1">Mutfak Rehberi</p>
+              <a href="#" class="px-2 py-2 rounded-lg hover:bg-cream transition">Mutfağa Giriş</a>
+              <a href="#" class="px-2 py-2 rounded-lg hover:bg-cream transition">Püf Noktaları</a>
+              <a href="#" class="px-2 py-2 rounded-lg hover:bg-cream transition">Mutfak Sözlüğü</a>
+              <a href="#" class="px-2 py-2 rounded-lg hover:bg-cream transition">Ölçü Birimleri</a>
+              <a href="#" class="px-2 py-2 rounded-lg hover:bg-cream transition">Şefler</a>
+              <a href="#" class="px-2 py-2 rounded-lg hover:bg-cream transition">Keşfet</a>
+            </div>
+          </div>
+        </div>
+        <a href="#saglik" class="px-3.5 py-2 rounded-full hover:bg-paper transition">Sağlık &amp; Diyetisyen</a>
+        <a href="#shop" class="px-3.5 py-2 rounded-full hover:bg-paper transition">Ürünler</a>
+        <!-- KARAR: Ramazan nav'da küçük domates noktayla mevsimsel olarak işaretlendi -->
+        <a href="#ramazan" class="px-3.5 py-2 rounded-full hover:bg-paper transition flex items-center gap-1.5">
+          Ramazan <span class="w-1.5 h-1.5 rounded-full bg-tomato"></span>
+        </a>
+      </nav>
+
+      <!-- Sağ aksiyonlar -->
+      <div class="flex items-center gap-2">
+        <button class="hidden sm:grid place-items-center w-10 h-10 rounded-full hover:bg-paper transition" aria-label="Ara">
+          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="7"/><path d="m20 20-3-3"/></svg>
+        </button>
+        <a href="#" class="hidden sm:block px-3.5 py-2 text-[15px] font-500 rounded-full hover:bg-paper transition">Giriş</a>
+        <a href="#" class="px-4 py-2 text-[15px] font-600 rounded-full bg-slate text-cream hover:bg-tomato transition">Üye Ol</a>
+        <button class="lg:hidden grid place-items-center w-10 h-10 rounded-full hover:bg-paper transition" aria-label="Menü">
+          <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main>
+<!-- ============================ 2. HERO + ARAMA KUTUSU ============================ -->
+<!-- KARAR: NYT sıcak manşet + Samsung Food aksiyon kutusu birleşimi.
+     Sol editöryal metin + arama, sağ büyük görsel manşet (asimetrik 7/5 grid). -->
+<section class="relative overflow-hidden">
+  <div class="max-w-shell mx-auto px-5 lg:px-8 pt-10 lg:pt-16 pb-12 lg:pb-20">
+    <div class="grid lg:grid-cols-12 gap-8 lg:gap-12 items-center">
+
+      <!-- Sol: editöryal başlık + arama -->
+      <div class="lg:col-span-6">
+        <p class="rise text-tomato font-600 tracking-wide uppercase text-[13px] mb-4" style="animation-delay:.05s">Denenmiş · Yorumlanmış · Puanlanmış</p>
+        <h1 class="rise font-display text-[42px] sm:text-[54px] lg:text-[60px] leading-[1.04] font-500 text-slate tracking-tight" style="animation-delay:.12s">
+          Bugün ne<br><span class="italic text-tomato">pişirsem?</span>
+        </h1>
+        <p class="rise mt-5 text-[17px] lg:text-[18px] text-slate-soft max-w-md leading-relaxed" style="animation-delay:.2s">
+          Evdeki malzemeleri yaz, sana uygun tarifi bulalım. Binlerce ev yapımı,
+          denenmiş tarif tek bir mutfakta.
+        </p>
+
+        <!-- Arama kutusu (Bugün Ne Pişirsem / malzemeye göre) -->
+        <div class="rise mt-7 bg-paper border border-line rounded-2xl p-2 shadow-sm flex items-center gap-2 max-w-lg" style="animation-delay:.28s">
+          <div class="grid place-items-center w-10 h-10 shrink-0 text-slate-soft">
+            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="7"/><path d="m20 20-3-3"/></svg>
+          </div>
+          <input type="text" placeholder="domates, yumurta, peynir…" class="flex-1 bg-transparent outline-none text-[16px] placeholder:text-slate-soft/70" />
+          <button class="px-5 py-2.5 rounded-xl bg-tomato text-cream font-600 hover:bg-tomato-deep transition shrink-0">Tarif Bul</button>
+        </div>
+        <div class="rise mt-3.5 flex flex-wrap items-center gap-2 text-[14px] text-slate-soft" style="animation-delay:.34s">
+          <span>Popüler:</span>
+          <a href="#" class="px-3 py-1 rounded-full bg-paper border border-line hover:border-tomato hover:text-tomato transition">Tavuk</a>
+          <a href="#" class="px-3 py-1 rounded-full bg-paper border border-line hover:border-tomato hover:text-tomato transition">Patates</a>
+          <a href="#" class="px-3 py-1 rounded-full bg-paper border border-line hover:border-tomato hover:text-tomato transition">Mercimek</a>
+          <a href="#" class="px-3 py-1 rounded-full bg-paper border border-line hover:border-tomato hover:text-tomato transition">Makarna</a>
+        </div>
+      </div>
+
+      <!-- Sağ: büyük görsel manşet + üstüne küçük "günün tarifi" kartı -->
+      <div class="lg:col-span-6 relative">
+        <div class="ph ph-2 grain relative rounded-[28px] aspect-[4/3] w-full shadow-xl"></div>
+        <!-- Manşet etiketi -->
+        <div class="absolute top-5 left-5 bg-cream/95 backdrop-blur px-4 py-2 rounded-full text-[13px] font-600 text-slate flex items-center gap-2">
+          <span class="w-2 h-2 rounded-full bg-tomato"></span> Günün Tarifi
+        </div>
+        <!-- Alt bilgi kartı (overlap) -->
+        <div class="absolute -bottom-5 left-5 right-5 sm:left-8 sm:right-auto sm:w-[300px] bg-paper border border-line rounded-2xl p-4 shadow-lg card-hover">
+          <p class="font-display text-[20px] font-600 text-slate leading-snug">Fırında Sebzeli Tavuk</p>
+          <div class="mt-2 flex items-center gap-3 text-[14px] text-slate-soft">
+            <span class="flex items-center gap-1 text-honey font-600">★ 4.8</span>
+            <span>·</span><span>45 dk</span><span>·</span><span>kolay</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ============================ 3. ÖNE ÇIKAN TARİFLER ============================ -->
+<section class="max-w-shell mx-auto px-5 lg:px-8 pt-14 lg:pt-20">
+  <div class="flex items-end justify-between gap-4 mb-6">
+    <div>
+      <p class="text-tomato font-600 uppercase tracking-wide text-[13px] mb-1.5">Bu hafta öne çıkan</p>
+      <h2 class="font-display text-[30px] lg:text-[36px] font-500 text-slate tracking-tight">Tariflerimiz</h2>
+    </div>
+    <a href="#" class="hidden sm:inline-flex items-center gap-1.5 text-[15px] font-600 text-slate hover:text-tomato transition shrink-0">
+      Tümünü gör
+      <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+    </a>
+  </div>
+
+  <!-- KARAR: kartlar mobilde yatay kaydırılabilir şerit, desktop'ta 4'lü grid -->
+  <div class="strip flex lg:grid lg:grid-cols-4 gap-5 overflow-x-auto pb-2 -mx-5 px-5 lg:mx-0 lg:px-0 snap-x">
+    <!-- Tarif kartı x4 -->
+    <article class="snap-start shrink-0 w-[260px] lg:w-auto bg-paper border border-line rounded-2xl overflow-hidden card-hover">
+      <div class="ph ph-1 aspect-[4/3] relative">
+        <span class="absolute top-3 left-3 bg-tomato text-cream text-[12px] font-600 px-2.5 py-1 rounded-full">Dada Denedi</span>
+      </div>
+      <div class="p-4">
+        <p class="text-[12px] uppercase tracking-wide text-slate-soft font-600 mb-1">Ana Yemek</p>
+        <h3 class="font-display text-[19px] font-600 text-slate leading-snug">Köz Patlıcanlı Mantı</h3>
+        <div class="mt-2.5 flex items-center gap-2.5 text-[13.5px] text-slate-soft">
+          <span class="text-honey font-600">★ 4.9</span><span>·</span><span>50 dk</span><span>·</span><span>312 yorum</span>
+        </div>
+      </div>
+    </article>
+    <article class="snap-start shrink-0 w-[260px] lg:w-auto bg-paper border border-line rounded-2xl overflow-hidden card-hover">
+      <div class="ph ph-3 aspect-[4/3] relative">
+        <span class="absolute top-3 left-3 bg-herb text-white text-[12px] font-600 px-2.5 py-1 rounded-full">Sağlıklı</span>
+      </div>
+      <div class="p-4">
+        <p class="text-[12px] uppercase tracking-wide text-slate-soft font-600 mb-1">Çorba</p>
+        <h3 class="font-display text-[19px] font-600 text-slate leading-snug">Şifalı Mercimek Çorbası</h3>
+        <div class="mt-2.5 flex items-center gap-2.5 text-[13.5px] text-slate-soft">
+          <span class="text-honey font-600">★ 4.7</span><span>·</span><span>30 dk</span><span>·</span><span>198 yorum</span>
+        </div>
+      </div>
+    </article>
+    <article class="snap-start shrink-0 w-[260px] lg:w-auto bg-paper border border-line rounded-2xl overflow-hidden card-hover">
+      <div class="ph ph-4 aspect-[4/3] relative">
+        <span class="absolute top-3 left-3 bg-tomato text-cream text-[12px] font-600 px-2.5 py-1 rounded-full">Dada Denedi</span>
+      </div>
+      <div class="p-4">
+        <p class="text-[12px] uppercase tracking-wide text-slate-soft font-600 mb-1">Tatlı</p>
+        <h3 class="font-display text-[19px] font-600 text-slate leading-snug">Fırın Sütlaç</h3>
+        <div class="mt-2.5 flex items-center gap-2.5 text-[13.5px] text-slate-soft">
+          <span class="text-honey font-600">★ 4.8</span><span>·</span><span>60 dk</span><span>·</span><span>421 yorum</span>
+        </div>
+      </div>
+    </article>
+    <article class="snap-start shrink-0 w-[260px] lg:w-auto bg-paper border border-line rounded-2xl overflow-hidden card-hover">
+      <div class="ph ph-6 aspect-[4/3] relative">
+        <span class="absolute top-3 left-3 bg-paper/90 text-slate text-[12px] font-600 px-2.5 py-1 rounded-full">15 dk</span>
+      </div>
+      <div class="p-4">
+        <p class="text-[12px] uppercase tracking-wide text-slate-soft font-600 mb-1">Kahvaltı</p>
+        <h3 class="font-display text-[19px] font-600 text-slate leading-snug">Menemen</h3>
+        <div class="mt-2.5 flex items-center gap-2.5 text-[13.5px] text-slate-soft">
+          <span class="text-honey font-600">★ 4.9</span><span>·</span><span>15 dk</span><span>·</span><span>540 yorum</span>
+        </div>
+      </div>
+    </article>
+  </div>
+</section>
+
+<!-- ============================ 4. MUTFAĞA GİRİŞ / PÜF NOKTALARI ============================ -->
+<!-- KARAR: rehber bölümü editöryal his için 2 büyük "dosya" kartı (tarif kartından
+     ayrışsın diye geniş, yatay format) -->
+<section class="max-w-shell mx-auto px-5 lg:px-8 pt-16 lg:pt-24">
+  <div class="flex items-end justify-between gap-4 mb-6">
+    <div>
+      <p class="text-slate-soft font-600 uppercase tracking-wide text-[13px] mb-1.5">Mutfak Rehberi</p>
+      <h2 class="font-display text-[30px] lg:text-[36px] font-500 text-slate tracking-tight">Öğren &amp; ustalaş</h2>
+    </div>
+    <a href="#" class="hidden sm:inline-flex items-center gap-1.5 text-[15px] font-600 text-slate hover:text-tomato transition shrink-0">
+      Tüm rehber
+      <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+    </a>
+  </div>
+
+  <div class="grid md:grid-cols-2 gap-5">
+    <a href="#" class="group relative rounded-3xl overflow-hidden ph ph-dark grain min-h-[260px] flex items-end p-7 card-hover">
+      <div class="relative z-10 max-w-sm">
+        <span class="text-cream/70 text-[13px] uppercase tracking-wide font-600">Mutfağa Giriş</span>
+        <h3 class="font-display text-cream text-[26px] lg:text-[30px] font-500 leading-tight mt-2">Temel teknikler: bıçaktan ateşe</h3>
+        <p class="text-cream/75 text-[15px] mt-2.5 leading-relaxed">Yeni başlayanlar için adım adım mutfak rehberi.</p>
+      </div>
+    </a>
+    <a href="#" class="group relative rounded-3xl overflow-hidden ph ph-5 grain min-h-[260px] flex items-end p-7 card-hover">
+      <div class="absolute inset-0 bg-gradient-to-t from-slate/70 to-transparent"></div>
+      <div class="relative z-10 max-w-sm">
+        <span class="text-cream/80 text-[13px] uppercase tracking-wide font-600">Püf Noktaları</span>
+        <h3 class="font-display text-cream text-[26px] lg:text-[30px] font-500 leading-tight mt-2">Pilav neden lapa olur?</h3>
+        <p class="text-cream/80 text-[15px] mt-2.5 leading-relaxed">Mutfak sırları ve denenmiş çözümler.</p>
+      </div>
+    </a>
+  </div>
+</section>
+
+<!-- ============================ 5. SAĞLIK & DİYETİSYEN ============================ -->
+<!-- KARAR: yeşil fonksiyonel aksanlı, zeminden ayrışan bant. Hesaplayıcı + diyetisyen birlikte. -->
+<section id="saglik" class="mt-16 lg:mt-24 bg-[#F1F6F0] border-y border-[#DDEAD9]">
+  <div class="max-w-shell mx-auto px-5 lg:px-8 py-14 lg:py-20">
+    <div class="grid lg:grid-cols-12 gap-10 items-center">
+      <div class="lg:col-span-5">
+        <p class="inline-flex items-center gap-2 text-herb font-600 uppercase tracking-wide text-[13px] mb-3">
+          <span class="w-2 h-2 rounded-full bg-herb"></span> Sağlık &amp; Diyetisyen
+        </p>
+        <h2 class="font-display text-[30px] lg:text-[38px] font-500 text-slate tracking-tight leading-tight">
+          Dengeli beslen,<br>uzmanına danış
+        </h2>
+        <p class="mt-4 text-[16px] text-slate-soft leading-relaxed max-w-md">
+          Kalori ve besin hesaplayıcılar, vücut analizleri ve alanında uzman
+          diyetisyenlerle birebir danışmanlık — hepsi tek mutfakta.
+        </p>
+        <div class="mt-6 flex flex-wrap gap-3">
+          <a href="#" class="px-5 py-2.5 rounded-full bg-herb text-white font-600 hover:brightness-95 transition">Diyetisyen bul</a>
+          <a href="#" class="px-5 py-2.5 rounded-full bg-white border border-[#DDEAD9] text-slate font-600 hover:border-herb transition">Hesaplayıcılar</a>
+        </div>
+      </div>
+
+      <!-- Hesaplayıcı mini-kartlar -->
+      <div class="lg:col-span-7 grid sm:grid-cols-2 gap-4">
+        <a href="#" class="bg-white rounded-2xl p-5 border border-[#E3EDE0] card-hover">
+          <div class="w-11 h-11 rounded-xl bg-[#EAF3E7] grid place-items-center text-herb font-display text-[20px] font-700 mb-3">kc</div>
+          <h3 class="font-display text-[19px] font-600 text-slate">Kalori Hesapla</h3>
+          <p class="text-[14px] text-slate-soft mt-1">Günlük ihtiyacını öğren</p>
+        </a>
+        <a href="#" class="bg-white rounded-2xl p-5 border border-[#E3EDE0] card-hover">
+          <div class="w-11 h-11 rounded-xl bg-[#EAF3E7] grid place-items-center text-herb font-display text-[20px] font-700 mb-3">vk</div>
+          <h3 class="font-display text-[19px] font-600 text-slate">Vücut Kitle Endeksi</h3>
+          <p class="text-[14px] text-slate-soft mt-1">Boy/kilo dengeni gör</p>
+        </a>
+        <a href="#" class="bg-white rounded-2xl p-5 border border-[#E3EDE0] card-hover">
+          <div class="w-11 h-11 rounded-xl bg-[#EAF3E7] grid place-items-center text-herb font-display text-[20px] font-700 mb-3">bm</div>
+          <h3 class="font-display text-[19px] font-600 text-slate">Bazal Metabolizma</h3>
+          <p class="text-[14px] text-slate-soft mt-1">Dinlenme kalorisi</p>
+        </a>
+        <a href="#" class="bg-white rounded-2xl p-5 border border-[#E3EDE0] card-hover">
+          <div class="w-11 h-11 rounded-xl bg-[#EAF3E7] grid place-items-center text-herb font-display text-[20px] font-700 mb-3">vt</div>
+          <h3 class="font-display text-[19px] font-600 text-slate">Vücut Tipi Testi</h3>
+          <p class="text-[14px] text-slate-soft mt-1">Sana uygun beslenme</p>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ 6. DADA SHOP ============================ -->
+<section id="shop" class="max-w-shell mx-auto px-5 lg:px-8 pt-16 lg:pt-24">
+  <div class="flex items-end justify-between gap-4 mb-6">
+    <div>
+      <p class="text-tomato font-600 uppercase tracking-wide text-[13px] mb-1.5">Dada Shop</p>
+      <h2 class="font-display text-[30px] lg:text-[36px] font-500 text-slate tracking-tight">Mutfağına taşı</h2>
+    </div>
+    <a href="#" class="hidden sm:inline-flex items-center gap-1.5 text-[15px] font-600 text-slate hover:text-tomato transition shrink-0">
+      Tüm ürünler
+      <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+    </a>
+  </div>
+
+  <!-- KARAR: ürün kartı üst-etiketli (ÜRÜN) — tarif kartından net ayrışsın. İndirim=sarı rozet. -->
+  <div class="strip flex lg:grid lg:grid-cols-4 gap-5 overflow-x-auto pb-2 -mx-5 px-5 lg:mx-0 lg:px-0 snap-x">
+    <article class="snap-start shrink-0 w-[230px] lg:w-auto bg-paper border border-line rounded-2xl overflow-hidden card-hover">
+      <div class="ph ph-4 aspect-square relative">
+        <span class="absolute top-3 left-3 bg-slate text-cream text-[11px] font-700 px-2 py-0.5 rounded tracking-wider">ÜRÜN</span>
+        <span class="absolute top-3 right-3 bg-honey text-slate text-[12px] font-700 px-2.5 py-1 rounded-full">%20</span>
+      </div>
+      <div class="p-4">
+        <h3 class="font-display text-[18px] font-600 text-slate leading-snug">Soğuk Sıkım Zeytinyağı</h3>
+        <div class="mt-2 flex items-center gap-2">
+          <span class="font-700 text-slate text-[16px]">₺240</span>
+          <span class="text-slate-soft line-through text-[14px]">₺300</span>
+        </div>
+      </div>
+    </article>
+    <article class="snap-start shrink-0 w-[230px] lg:w-auto bg-paper border border-line rounded-2xl overflow-hidden card-hover">
+      <div class="ph ph-5 aspect-square relative">
+        <span class="absolute top-3 left-3 bg-slate text-cream text-[11px] font-700 px-2 py-0.5 rounded tracking-wider">ÜRÜN</span>
+      </div>
+      <div class="p-4">
+        <h3 class="font-display text-[18px] font-600 text-slate leading-snug">Döküm Tava 28cm</h3>
+        <div class="mt-2"><span class="font-700 text-slate text-[16px]">₺890</span></div>
+      </div>
+    </article>
+    <article class="snap-start shrink-0 w-[230px] lg:w-auto bg-paper border border-line rounded-2xl overflow-hidden card-hover">
+      <div class="ph ph-1 aspect-square relative">
+        <span class="absolute top-3 left-3 bg-slate text-cream text-[11px] font-700 px-2 py-0.5 rounded tracking-wider">ÜRÜN</span>
+        <span class="absolute top-3 right-3 bg-herb text-white text-[12px] font-700 px-2.5 py-1 rounded-full">Organik</span>
+      </div>
+      <div class="p-4">
+        <h3 class="font-display text-[18px] font-600 text-slate leading-snug">Yöresel Baharat Seti</h3>
+        <div class="mt-2"><span class="font-700 text-slate text-[16px]">₺175</span></div>
+      </div>
+    </article>
+    <article class="snap-start shrink-0 w-[230px] lg:w-auto bg-paper border border-line rounded-2xl overflow-hidden card-hover">
+      <div class="ph ph-6 aspect-square relative">
+        <span class="absolute top-3 left-3 bg-slate text-cream text-[11px] font-700 px-2 py-0.5 rounded tracking-wider">ÜRÜN</span>
+        <span class="absolute top-3 right-3 bg-honey text-slate text-[12px] font-700 px-2.5 py-1 rounded-full">%15</span>
+      </div>
+      <div class="p-4">
+        <h3 class="font-display text-[18px] font-600 text-slate leading-snug">El Yapımı Köy Makarnası</h3>
+        <div class="mt-2 flex items-center gap-2">
+          <span class="font-700 text-slate text-[16px]">₺68</span>
+          <span class="text-slate-soft line-through text-[14px]">₺80</span>
+        </div>
+      </div>
+    </article>
+  </div>
+</section>
+
+<!-- ============================ 7. TOPLULUK / SON EKLENEN ============================ -->
+<section class="max-w-shell mx-auto px-5 lg:px-8 pt-16 lg:pt-24">
+  <div class="flex items-end justify-between gap-4 mb-6">
+    <div>
+      <p class="text-tomato font-600 uppercase tracking-wide text-[13px] mb-1.5">Topluluktan</p>
+      <h2 class="font-display text-[30px] lg:text-[36px] font-500 text-slate tracking-tight">Bugün eklenenler</h2>
+    </div>
+    <a href="#" class="hidden sm:inline-flex items-center gap-1.5 text-[15px] font-600 text-slate hover:text-tomato transition shrink-0">
+      Tarifini paylaş
+      <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+    </a>
+  </div>
+
+  <!-- KARAR: topluluk kartı daha "insani" — kullanıcı avatarı + adı öne çıkıyor, kompakt -->
+  <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+    <article class="bg-paper border border-line rounded-2xl overflow-hidden card-hover">
+      <div class="ph ph-3 aspect-[5/4]"></div>
+      <div class="p-3.5">
+        <h3 class="font-display text-[16px] font-600 text-slate leading-snug">Zeytinyağlı Enginar</h3>
+        <div class="mt-2.5 flex items-center gap-2">
+          <span class="w-6 h-6 rounded-full ph ph-1"></span>
+          <span class="text-[13px] text-slate-soft">Ayşe K.</span>
+        </div>
+      </div>
+    </article>
+    <article class="bg-paper border border-line rounded-2xl overflow-hidden card-hover">
+      <div class="ph ph-6 aspect-[5/4]"></div>
+      <div class="p-3.5">
+        <h3 class="font-display text-[16px] font-600 text-slate leading-snug">Fırın Köfte</h3>
+        <div class="mt-2.5 flex items-center gap-2">
+          <span class="w-6 h-6 rounded-full ph ph-2"></span>
+          <span class="text-[13px] text-slate-soft">Mehmet T.</span>
+        </div>
+      </div>
+    </article>
+    <article class="bg-paper border border-line rounded-2xl overflow-hidden card-hover">
+      <div class="ph ph-4 aspect-[5/4]"></div>
+      <div class="p-3.5">
+        <h3 class="font-display text-[16px] font-600 text-slate leading-snug">Havuçlu Kek</h3>
+        <div class="mt-2.5 flex items-center gap-2">
+          <span class="w-6 h-6 rounded-full ph ph-3"></span>
+          <span class="text-[13px] text-slate-soft">Elif S.</span>
+        </div>
+      </div>
+    </article>
+    <article class="bg-paper border border-line rounded-2xl overflow-hidden card-hover">
+      <div class="ph ph-5 aspect-[5/4]"></div>
+      <div class="p-3.5">
+        <h3 class="font-display text-[16px] font-600 text-slate leading-snug">Ezogelin Çorbası</h3>
+        <div class="mt-2.5 flex items-center gap-2">
+          <span class="w-6 h-6 rounded-full ph ph-6"></span>
+          <span class="text-[13px] text-slate-soft">Can D.</span>
+        </div>
+      </div>
+    </article>
+  </div>
+</section>
+
+<!-- ============================ 8. RAMAZAN ÖZEL BLOK ============================ -->
+<!-- KARAR: mevsimsel, koyu/sıcak atmosfer; yılın geri kalanında gizlenebilir tek blok. -->
+<section id="ramazan" class="max-w-shell mx-auto px-5 lg:px-8 pt-16 lg:pt-24">
+  <div class="relative rounded-[32px] overflow-hidden ph ph-dark grain p-8 lg:p-14">
+    <div class="relative z-10 max-w-2xl">
+      <p class="inline-flex items-center gap-2 text-honey font-600 uppercase tracking-wide text-[13px] mb-3">
+        <span class="w-2 h-2 rounded-full bg-honey"></span> Ramazan'a Özel
+      </p>
+      <h2 class="font-display text-cream text-[32px] lg:text-[44px] font-500 leading-tight tracking-tight">
+        İftara ve sahura<br>özenli sofralar
+      </h2>
+      <p class="text-cream/75 text-[16px] lg:text-[17px] mt-4 leading-relaxed max-w-lg">
+        Günün iftar &amp; sahur menüleri, hazırlık listeleri ve ramazan boyunca
+        her güne özel tarif önerileri.
+      </p>
+      <div class="mt-7 flex flex-wrap gap-3">
+        <a href="#" class="px-5 py-2.5 rounded-full bg-tomato text-cream font-600 hover:bg-tomato-deep transition">İftara Doğru</a>
+        <a href="#" class="px-5 py-2.5 rounded-full bg-cream/10 border border-cream/25 text-cream font-600 hover:bg-cream/20 transition backdrop-blur">Sahura Doğru</a>
+      </div>
+    </div>
+    <!-- dekoratif minik tarif kartları (overlap, sadece desktop) -->
+    <div class="hidden lg:block absolute right-10 top-1/2 -translate-y-1/2 w-[240px]">
+      <div class="bg-cream rounded-2xl p-3 shadow-2xl rotate-3">
+        <div class="ph ph-2 aspect-[4/3] rounded-xl"></div>
+        <p class="font-display text-[16px] font-600 text-slate mt-2.5 px-1">Bugünün İftar Menüsü</p>
+        <p class="text-[13px] text-slate-soft px-1 pb-1">Çorba · ana yemek · tatlı</p>
+      </div>
+    </div>
+  </div>
+</section>
+</main>
+
+<!-- ============================ 9. FOOTER ============================ -->
+<footer class="mt-16 lg:mt-24 border-t border-line bg-paper">
+  <div class="max-w-shell mx-auto px-5 lg:px-8 py-14">
+    <div class="grid md:grid-cols-12 gap-10">
+      <div class="md:col-span-4">
+        <a href="#" class="flex items-center gap-2 mb-4">
+          <span class="grid place-items-center w-9 h-9 rounded-full bg-tomato text-cream font-display font-600 text-lg leading-none">d</span>
+          <span class="font-display text-[22px] font-600 tracking-tight text-slate">Dada<span class="text-tomato">Mutfak</span></span>
+        </a>
+        <p class="text-[15px] text-slate-soft leading-relaxed max-w-xs">
+          Denenmiş, yorumlanmış, paylaşılmış ev yapımı tarifler. Türkiye'nin
+          mutfak topluluğu.
+        </p>
+        <!-- Bülten -->
+        <div class="mt-5 flex items-center gap-2 max-w-sm bg-cream border border-line rounded-xl p-1.5">
+          <input type="email" placeholder="E-posta adresin" class="flex-1 bg-transparent outline-none px-3 text-[15px] placeholder:text-slate-soft/70" />
+          <button class="px-4 py-2 rounded-lg bg-slate text-cream font-600 text-[14px] hover:bg-tomato transition">Abone ol</button>
+        </div>
+      </div>
+
+      <div class="md:col-span-2">
+        <h4 class="font-600 text-slate text-[15px] mb-3">Tarifler</h4>
+        <ul class="space-y-2 text-[14.5px] text-slate-soft">
+          <li><a href="#" class="hover:text-tomato transition">Bugün Ne Pişirsem</a></li>
+          <li><a href="#" class="hover:text-tomato transition">Dünya Mutfakları</a></li>
+          <li><a href="#" class="hover:text-tomato transition">Tarif Ekle</a></li>
+          <li><a href="#" class="hover:text-tomato transition">Şefler</a></li>
+        </ul>
+      </div>
+      <div class="md:col-span-2">
+        <h4 class="font-600 text-slate text-[15px] mb-3">Rehber</h4>
+        <ul class="space-y-2 text-[14.5px] text-slate-soft">
+          <li><a href="#" class="hover:text-tomato transition">Mutfağa Giriş</a></li>
+          <li><a href="#" class="hover:text-tomato transition">Püf Noktaları</a></li>
+          <li><a href="#" class="hover:text-tomato transition">Sözlük</a></li>
+          <li><a href="#" class="hover:text-tomato transition">Ölçü Birimleri</a></li>
+        </ul>
+      </div>
+      <div class="md:col-span-2">
+        <h4 class="font-600 text-slate text-[15px] mb-3">Sağlık</h4>
+        <ul class="space-y-2 text-[14.5px] text-slate-soft">
+          <li><a href="#" class="hover:text-tomato transition">Diyetisyenler</a></li>
+          <li><a href="#" class="hover:text-tomato transition">Hesaplayıcılar</a></li>
+          <li><a href="#" class="hover:text-tomato transition">Testler</a></li>
+        </ul>
+      </div>
+      <div class="md:col-span-2">
+        <h4 class="font-600 text-slate text-[15px] mb-3">Kurumsal</h4>
+        <ul class="space-y-2 text-[14.5px] text-slate-soft">
+          <li><a href="#" class="hover:text-tomato transition">Hakkımızda</a></li>
+          <li><a href="#" class="hover:text-tomato transition">İletişim</a></li>
+          <li><a href="#" class="hover:text-tomato transition">Reklam Ver</a></li>
+          <li><a href="#" class="hover:text-tomato transition">S.S.S.</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="mt-12 pt-6 border-t border-line flex flex-col sm:flex-row items-center justify-between gap-3 text-[13.5px] text-slate-soft">
+      <p>© 2026 DadaMutfak. Tüm hakları saklıdır.</p>
+      <div class="flex items-center gap-5">
+        <a href="#" class="hover:text-tomato transition">KVKK</a>
+        <a href="#" class="hover:text-tomato transition">Gizlilik</a>
+        <a href="#" class="hover:text-tomato transition">Kullanım Koşulları</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>

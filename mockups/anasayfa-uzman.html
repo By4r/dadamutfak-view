@@ -1,0 +1,777 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Dada Mutfak — Mutfak Defteri</title>
+
+<!-- Fonts: Lora (serif başlık) + Lato (gövde) — KİLİTLİ -->
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Lato:wght@300;400;700;900&display=swap" rel="stylesheet" />
+
+<!-- FontAwesome 6.5.2 — KİLİTLİ ikon seti -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+
+<!-- Tailwind CDN -->
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          tomato: '#E14827',
+          slate: '#253D4E',
+          herb:  '#3BB77E',
+          gold:  '#FAC045',
+          shell: '#FBF9F5',
+          cream: '#F4EFE7',
+          ink:   '#1B2B36',
+        },
+        fontFamily: {
+          serif: ['Lora', 'Georgia', 'serif'],
+          sans:  ['Lato', 'system-ui', 'sans-serif'],
+        },
+      },
+    },
+  };
+</script>
+
+<style>
+  :root { --tomato:#E14827; --slate:#253D4E; --herb:#3BB77E; --gold:#FAC045; }
+  html { scroll-behavior: smooth; }
+  body { background:#FBF9F5; color:#253D4E; font-family:'Lato',sans-serif; -webkit-font-smoothing:antialiased; }
+
+  /* Editöryal small-caps etiket */
+  .eyebrow { font-family:'Lato',sans-serif; font-weight:700; letter-spacing:.22em; text-transform:uppercase; font-size:11px; }
+
+  /* Numaralı bölüm indeksi — imza */
+  .index-num { font-family:'Lora',serif; font-weight:500; font-variant-numeric:lining-nums; }
+
+  /* İnce domates rule — imza baseline sistemi */
+  .rule-tomato { height:2px; background:var(--tomato); }
+
+  /* "Dada Denedi" mühür rozeti — imza güven sinyali */
+  .stamp {
+    width:62px; height:62px; border-radius:9999px;
+    border:1.5px solid var(--tomato); color:var(--tomato);
+    display:flex; align-items:center; justify-content:center; text-align:center;
+    position:relative; transform:rotate(-9deg);
+    background:rgba(251,249,245,.86); backdrop-filter:blur(2px);
+  }
+  .stamp::before {
+    content:""; position:absolute; inset:4px; border-radius:9999px;
+    border:1px dashed rgba(225,72,39,.55);
+  }
+  .stamp span { font-family:'Lato',sans-serif; font-weight:900; font-size:8.5px; letter-spacing:.12em; line-height:1.15; text-transform:uppercase; }
+
+  /* Kare/oranlı görsel = div + background-image cover center (KİLİTLİ) */
+  .bg-img { background-size:cover; background-position:center; background-repeat:no-repeat; }
+
+  /* Kapak başlığı — overlap için */
+  .cover-title { font-family:'Lora',serif; font-weight:600; line-height:.94; letter-spacing:-.015em; color:var(--slate); }
+
+  /* Editöryal altı-çizili arama input */
+  .underline-input { background:transparent; border:none; border-bottom:1.5px solid #cbb9a6; outline:none; }
+  .underline-input:focus { border-bottom-color:var(--tomato); }
+
+  /* Carousel */
+  .scroller { scrollbar-width:none; -ms-overflow-style:none; }
+  .scroller::-webkit-scrollbar { display:none; }
+  .snap-x-mandatory { scroll-snap-type:x mandatory; }
+  .snap-start { scroll-snap-align:start; }
+
+  /* Kalp toggle */
+  .save-btn { transition:transform .15s ease, color .15s ease; }
+  .save-btn:hover { transform:scale(1.12); }
+  .save-btn.saved { color:var(--tomato); }
+
+  /* Reveal on load (staggered) */
+  @keyframes riseIn { from { opacity:0; transform:translateY(14px); } to { opacity:1; transform:translateY(0); } }
+  .rise { opacity:0; animation:riseIn .7s cubic-bezier(.2,.7,.2,1) forwards; }
+
+  /* Hero arka plan grain dokusu */
+  .grain { position:relative; }
+  .grain::after {
+    content:""; position:absolute; inset:0; pointer-events:none; opacity:.04;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  .nav-link { position:relative; }
+  .nav-link::after {
+    content:""; position:absolute; left:0; bottom:-6px; width:0; height:2px; background:var(--tomato); transition:width .25s ease;
+  }
+  .nav-link:hover::after { width:100%; }
+
+  /* Bullet reset override (KİLİTLİ kural) */
+  .clean-list { list-style:none; margin:0; padding:0; }
+
+  /* Ramazan koyu gradient — sola güçlü */
+  .ramazan-overlay {
+    background:linear-gradient(90deg, rgba(20,28,18,.94) 0%, rgba(20,28,18,.82) 38%, rgba(20,28,18,.35) 70%, rgba(20,28,18,.05) 100%);
+  }
+</style>
+</head>
+
+<body class="font-sans text-slate antialiased">
+
+<!-- ============================ HEADER ============================ -->
+<header class="relative z-40 bg-shell">
+  <!-- Üst utility bar -->
+  <div class="border-b border-[#e8e0d4]">
+    <div class="max-w-[1240px] mx-auto px-6 flex items-center justify-between h-12 text-[12px]">
+      <div class="hidden md:flex items-center gap-2 text-slate/60">
+        <i class="fa-solid fa-utensils text-tomato text-[11px]"></i>
+        <span class="tracking-wide">Denenmiş · yorumlanmış · puanlanmış tarifler topluluğu</span>
+      </div>
+      <div class="flex items-center gap-5 ml-auto">
+        <a href="#" class="flex items-center gap-1.5 text-slate/70 hover:text-tomato transition-colors">
+          <i class="fa-regular fa-heart"></i><span class="hidden sm:inline">Kaydettiklerim</span>
+        </a>
+        <span class="w-px h-4 bg-[#e0d6c8]"></span>
+        <a href="#" class="flex items-center gap-1.5 text-slate/70 hover:text-tomato transition-colors">
+          <i class="fa-regular fa-user"></i><span>Giriş Yap</span>
+        </a>
+        <a href="#" class="bg-tomato text-white px-3.5 py-1.5 rounded-full font-bold hover:bg-[#c93c1e] transition-colors">Tarif Paylaş</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Ana nav -->
+  <div class="max-w-[1240px] mx-auto px-6">
+    <div class="flex items-center justify-between h-[78px]">
+      <a href="#" class="shrink-0">
+        <img src="logo-colored.png" alt="Dada Mutfak" class="h-9 w-auto" />
+      </a>
+
+      <nav class="hidden lg:flex items-center gap-9 eyebrow text-slate/80">
+        <a href="#" class="nav-link hover:text-tomato transition-colors">Tarifler</a>
+        <a href="#rehber" class="nav-link hover:text-tomato transition-colors">Mutfak Rehberi</a>
+        <a href="#saglik" class="nav-link hover:text-tomato transition-colors">Sağlık &amp; Diyetisyen</a>
+        <a href="#shop" class="nav-link hover:text-tomato transition-colors">Dada Shop</a>
+        <a href="#ramazan" class="nav-link hover:text-tomato transition-colors">Ramazan</a>
+      </nav>
+
+      <div class="flex items-center gap-4">
+        <button class="hidden md:flex items-center gap-2 text-[13px] text-slate/60 border border-[#e2d8ca] rounded-full pl-4 pr-3 py-2 hover:border-tomato/50 transition-colors w-[210px]">
+          <i class="fa-solid fa-magnifying-glass text-tomato/80"></i>
+          <span>Tarif, malzeme ara…</span>
+        </button>
+        <button id="menuBtn" class="lg:hidden text-slate text-xl"><i class="fa-solid fa-bars"></i></button>
+      </div>
+    </div>
+  </div>
+  <div class="rule-tomato max-w-[1240px] mx-auto"></div>
+</header>
+
+
+<!-- ============================ HERO — EDİTÖRYAL KAPAK (imza) ============================ -->
+<section class="grain relative bg-shell overflow-hidden">
+  <div class="max-w-[1240px] mx-auto px-6 pt-12 pb-16 lg:pt-16 lg:pb-24">
+
+    <!-- masthead satırı -->
+    <div class="flex items-end justify-between mb-9 rise" style="animation-delay:.05s">
+      <div>
+        <p class="eyebrow text-tomato mb-2">Mutfak Defteri · Sayı 09</p>
+        <p class="font-serif italic text-slate/55 text-[15px]">Haziran 2026 — mevsimin sofrası</p>
+      </div>
+      <p class="hidden md:block eyebrow text-slate/40">Est. Dada · Ev yapımı</p>
+    </div>
+
+    <div class="grid lg:grid-cols-12 gap-8 lg:gap-10 items-center">
+
+      <!-- Sol: numaralı bölüm indeksi (imza) -->
+      <aside class="hidden lg:block lg:col-span-2 rise" style="animation-delay:.15s">
+        <p class="eyebrow text-slate/40 mb-5">Bu sayıda</p>
+        <ul class="clean-list space-y-4">
+          <li><a href="#bugun" class="group flex items-baseline gap-3">
+            <span class="index-num text-tomato text-lg w-6">01</span>
+            <span class="text-[13px] text-slate/70 group-hover:text-tomato transition-colors leading-snug">Bugün ne pişsem</span>
+          </a></li>
+          <li><a href="#one-cikan" class="group flex items-baseline gap-3">
+            <span class="index-num text-tomato text-lg w-6">02</span>
+            <span class="text-[13px] text-slate/70 group-hover:text-tomato transition-colors leading-snug">Öne çıkan tarifler</span>
+          </a></li>
+          <li><a href="#rehber" class="group flex items-baseline gap-3">
+            <span class="index-num text-tomato text-lg w-6">03</span>
+            <span class="text-[13px] text-slate/70 group-hover:text-tomato transition-colors leading-snug">Mutfağa giriş &amp; püf</span>
+          </a></li>
+          <li><a href="#saglik" class="group flex items-baseline gap-3">
+            <span class="index-num text-tomato text-lg w-6">04</span>
+            <span class="text-[13px] text-slate/70 group-hover:text-tomato transition-colors leading-snug">Sağlık &amp; diyetisyen</span>
+          </a></li>
+          <li><a href="#shop" class="group flex items-baseline gap-3">
+            <span class="index-num text-tomato text-lg w-6">05</span>
+            <span class="text-[13px] text-slate/70 group-hover:text-tomato transition-colors leading-snug">Dada Shop</span>
+          </a></li>
+        </ul>
+      </aside>
+
+      <!-- Orta: kapak tipografisi -->
+      <div class="lg:col-span-6 relative z-20 rise" style="animation-delay:.25s">
+        <h1 class="cover-title text-[52px] sm:text-[68px] lg:text-[76px]">
+          Mutfakta<br />
+          <span class="italic text-tomato">denenmişi</span><br />
+          pişiririz.
+        </h1>
+        <p class="mt-7 text-[17px] leading-relaxed text-slate/70 max-w-md">
+          Binlerce ev mutfağının paylaştığı, yorumlanıp puanlanan tarifler.
+          Önce başkaları denedi, not düştü — sen güvenle pişir.
+        </p>
+        <div class="mt-8 flex items-center gap-7">
+          <a href="#one-cikan" class="bg-tomato text-white px-7 py-3.5 rounded-full font-bold text-[15px] hover:bg-[#c93c1e] transition-colors shadow-sm shadow-tomato/20">
+            Tarifleri keşfet
+          </a>
+          <a href="#bugun" class="group flex items-center gap-2.5 text-[15px] font-bold text-slate hover:text-tomato transition-colors">
+            <span class="w-9 h-9 rounded-full border border-slate/25 flex items-center justify-center group-hover:border-tomato group-hover:bg-tomato group-hover:text-white transition-all">
+              <i class="fa-solid fa-arrow-down text-xs"></i>
+            </span>
+            Bugün ne pişsem?
+          </a>
+        </div>
+      </div>
+
+      <!-- Sağ: tek kahraman fotoğraf, ince tomato çerçeve + mühür overlap -->
+      <div class="lg:col-span-4 relative rise" style="animation-delay:.35s">
+        <div class="relative">
+          <!-- çerçeve offset -->
+          <div class="absolute -top-3 -right-3 w-full h-full border border-tomato/40 rounded-[4px] hidden sm:block"></div>
+          <div class="bg-img relative rounded-[4px] aspect-[4/5] shadow-xl shadow-slate/10"
+               style="background-image:url('https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=900&q=72&exp=7&gam=6&sat=-9&high=8&vib=5');">
+          </div>
+          <!-- Dada Denedi mühür -->
+          <div class="stamp absolute -bottom-5 -left-5 shadow-md" style="width:78px;height:78px;">
+            <span>Dada<br/>Denedi<br/>★★★★★</span>
+          </div>
+          <!-- foto künyesi -->
+          <p class="mt-5 text-[12px] text-slate/50 italic font-serif">Günün tarifi · Fırında mevsim sebzeli güveç — 4.9 ★ (312 değerlendirme)</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ============================ 01 · BUGÜN NE PİŞSEM (arama bandı) ============================ -->
+<section id="bugun" class="bg-slate text-white">
+  <div class="max-w-[1240px] mx-auto px-6 py-14">
+    <div class="flex items-baseline gap-4 mb-7">
+      <span class="index-num text-tomato text-2xl">01</span>
+      <div class="rule-tomato w-10 self-center"></div>
+      <h2 class="font-serif text-2xl sm:text-3xl text-white">Bugün ne pişsem?</h2>
+    </div>
+
+    <div class="grid lg:grid-cols-12 gap-8 items-end">
+      <div class="lg:col-span-8">
+        <!-- toggle -->
+        <div class="flex gap-1 mb-6 text-[12px]">
+          <button id="tabName" class="eyebrow px-4 py-2 rounded-full bg-white text-slate">Yemek adı</button>
+          <button id="tabIng"  class="eyebrow px-4 py-2 rounded-full bg-white/10 text-white/70 hover:bg-white/15 transition-colors">Malzemeye göre</button>
+        </div>
+        <div class="flex items-center gap-4 border-b border-white/25 pb-3">
+          <i class="fa-solid fa-magnifying-glass text-tomato"></i>
+          <input id="searchInput" type="text" placeholder="Tavuklu, 30 dakikada, fırın…"
+                 class="underline-input flex-1 text-white text-lg placeholder-white/40 border-none focus:border-none" style="border:none;" />
+          <button class="bg-tomato text-white px-6 py-2.5 rounded-full font-bold text-sm hover:bg-[#c93c1e] transition-colors">Ara</button>
+        </div>
+        <div class="flex flex-wrap items-center gap-2.5 mt-5">
+          <span class="eyebrow text-white/40">Popüler:</span>
+          <a href="#" class="text-[13px] px-3 py-1 rounded-full border border-white/20 text-white/80 hover:border-tomato hover:text-tomato transition-colors">Mercimek çorbası</a>
+          <a href="#" class="text-[13px] px-3 py-1 rounded-full border border-white/20 text-white/80 hover:border-tomato hover:text-tomato transition-colors">Karnıyarık</a>
+          <a href="#" class="text-[13px] px-3 py-1 rounded-full border border-white/20 text-white/80 hover:border-tomato hover:text-tomato transition-colors">Cheesecake</a>
+          <a href="#" class="text-[13px] px-3 py-1 rounded-full border border-white/20 text-white/80 hover:border-tomato hover:text-tomato transition-colors">Menemen</a>
+        </div>
+      </div>
+
+      <div class="lg:col-span-4 lg:border-l lg:border-white/15 lg:pl-8">
+        <p class="eyebrow text-tomato mb-3">Elinde ne varsa</p>
+        <p class="text-white/70 text-[15px] leading-relaxed mb-4">Buzdolabındaki 3-5 malzemeyi yaz, sana uygun tarifleri sıralayalım.</p>
+        <a href="#" class="inline-flex items-center gap-2 text-white font-bold text-sm hover:text-tomato transition-colors">
+          Tarif bulucuyu aç <i class="fa-solid fa-arrow-right-long text-xs"></i>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ============================ ÖNE ÇIKAN KOLEKSİYONLAR ============================ -->
+<section class="bg-shell">
+  <div class="max-w-[1240px] mx-auto px-6 py-16">
+    <div class="flex items-end justify-between mb-8">
+      <div class="flex items-baseline gap-4">
+        <span class="eyebrow text-slate/40">Koleksiyonlar</span>
+      </div>
+      <a href="#" class="eyebrow text-tomato hover:underline">Tümünü gör</a>
+    </div>
+    <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
+      <!-- koleksiyon kart -->
+      <a href="#" class="group">
+        <div class="relative bg-img rounded-[4px] aspect-[4/3] overflow-hidden"
+             style="background-image:url('https://images.unsplash.com/photo-1495521821757-a1efb6729352?auto=format&fit=crop&w=700&q=70&exp=7&gam=6&sat=-9&high=8&vib=5');">
+          <div class="absolute inset-0 bg-gradient-to-t from-black/55 to-transparent"></div>
+          <div class="absolute bottom-0 left-0 p-4">
+            <h3 class="font-serif text-white text-xl leading-tight">30 Dakikada Akşam</h3>
+            <p class="text-white/80 text-[12px] mt-1">48 tarif</p>
+          </div>
+        </div>
+      </a>
+      <a href="#" class="group">
+        <div class="relative bg-img rounded-[4px] aspect-[4/3] overflow-hidden"
+             style="background-image:url('https://images.unsplash.com/photo-1490645935967-10de6ba17061?auto=format&fit=crop&w=700&q=70&exp=7&gam=6&sat=-9&high=8&vib=5');">
+          <div class="absolute inset-0 bg-gradient-to-t from-black/55 to-transparent"></div>
+          <div class="absolute bottom-0 left-0 p-4">
+            <h3 class="font-serif text-white text-xl leading-tight">Hafif &amp; Sağlıklı</h3>
+            <p class="text-white/80 text-[12px] mt-1">63 tarif</p>
+          </div>
+        </div>
+      </a>
+      <a href="#" class="group">
+        <div class="relative bg-img rounded-[4px] aspect-[4/3] overflow-hidden"
+             style="background-image:url('https://images.unsplash.com/photo-1432139555190-58524dae6a55?auto=format&fit=crop&w=700&q=70&exp=7&gam=6&sat=-9&high=8&vib=5');">
+          <div class="absolute inset-0 bg-gradient-to-t from-black/55 to-transparent"></div>
+          <div class="absolute bottom-0 left-0 p-4">
+            <h3 class="font-serif text-white text-xl leading-tight">Fırından Tatlılar</h3>
+            <p class="text-white/80 text-[12px] mt-1">37 tarif</p>
+          </div>
+        </div>
+      </a>
+      <a href="#" class="group">
+        <div class="relative bg-img rounded-[4px] aspect-[4/3] overflow-hidden"
+             style="background-image:url('https://images.unsplash.com/photo-1476224203421-9ac39bcb3327?auto=format&fit=crop&w=700&q=70&exp=7&gam=6&sat=-9&high=8&vib=5');">
+          <div class="absolute inset-0 bg-gradient-to-t from-black/55 to-transparent"></div>
+          <div class="absolute bottom-0 left-0 p-4">
+            <h3 class="font-serif text-white text-xl leading-tight">Anadolu Lezzetleri</h3>
+            <p class="text-white/80 text-[12px] mt-1">54 tarif</p>
+          </div>
+        </div>
+      </a>
+    </div>
+  </div>
+</section>
+
+
+<!-- ============================ 02 · POPÜLER TARİFLER CAROUSEL ============================ -->
+<section id="one-cikan" class="bg-cream">
+  <div class="max-w-[1240px] mx-auto px-6 py-16">
+    <div class="flex items-end justify-between mb-9">
+      <div class="flex items-baseline gap-4">
+        <span class="index-num text-tomato text-2xl">02</span>
+        <div class="rule-tomato w-10 self-center"></div>
+        <h2 class="font-serif text-3xl sm:text-4xl text-slate">Bu hafta en çok pişenler</h2>
+      </div>
+      <div class="hidden sm:flex items-center gap-2">
+        <button class="car-prev w-10 h-10 rounded-full border border-slate/20 flex items-center justify-center hover:border-tomato hover:text-tomato transition-colors" aria-label="Önceki"><i class="fa-solid fa-chevron-left text-sm"></i></button>
+        <button class="car-next w-10 h-10 rounded-full border border-slate/20 flex items-center justify-center hover:border-tomato hover:text-tomato transition-colors" aria-label="Sonraki"><i class="fa-solid fa-chevron-right text-sm"></i></button>
+      </div>
+    </div>
+
+    <div id="recipeScroller" class="scroller snap-x-mandatory flex gap-6 overflow-x-auto pb-2 -mx-1 px-1">
+      <!-- KART ŞABLONU -->
+      <!-- 1 -->
+      <article class="snap-start shrink-0 w-[300px] bg-shell rounded-[5px] border border-[#ece4d7] overflow-hidden group">
+        <div class="relative bg-img aspect-[5/4]" style="background-image:url('https://images.unsplash.com/photo-1473093295043-cdd812d0e601?auto=format&fit=crop&w=700&q=70&exp=7&gam=6&sat=-9&high=8&vib=5');">
+          <button class="save-btn absolute top-3 right-3 w-9 h-9 rounded-full bg-shell/90 flex items-center justify-center text-slate/60 shadow-sm" aria-label="Kaydet"><i class="fa-regular fa-heart"></i></button>
+          <div class="stamp absolute -bottom-4 left-4 scale-90"><span>Dada<br/>Denedi</span></div>
+        </div>
+        <div class="p-5 pt-6">
+          <div class="flex items-center gap-2 text-[12px] mb-2">
+            <span class="text-gold"><i class="fa-solid fa-star"></i></span>
+            <span class="font-bold text-slate">4.9</span>
+            <span class="text-slate/45">(312 değerlendirme)</span>
+          </div>
+          <h3 class="font-serif text-xl text-slate leading-snug mb-3 group-hover:text-tomato transition-colors">Tereyağında Mantarlı Tagliatelle</h3>
+          <div class="flex items-center justify-between text-[12px] text-slate/55">
+            <span class="flex items-center gap-1.5"><i class="fa-regular fa-user"></i> Selin K.</span>
+            <span class="flex items-center gap-1.5"><i class="fa-regular fa-clock"></i> 25 dk</span>
+          </div>
+        </div>
+      </article>
+      <!-- 2 -->
+      <article class="snap-start shrink-0 w-[300px] bg-shell rounded-[5px] border border-[#ece4d7] overflow-hidden group">
+        <div class="relative bg-img aspect-[5/4]" style="background-image:url('https://images.unsplash.com/photo-1455619452474-d2be8b1e70cd?auto=format&fit=crop&w=700&q=70&exp=7&gam=6&sat=-9&high=8&vib=5');">
+          <button class="save-btn absolute top-3 right-3 w-9 h-9 rounded-full bg-shell/90 flex items-center justify-center text-slate/60 shadow-sm" aria-label="Kaydet"><i class="fa-regular fa-heart"></i></button>
+          <div class="stamp absolute -bottom-4 left-4 scale-90"><span>Dada<br/>Denedi</span></div>
+        </div>
+        <div class="p-5 pt-6">
+          <div class="flex items-center gap-2 text-[12px] mb-2">
+            <span class="text-gold"><i class="fa-solid fa-star"></i></span>
+            <span class="font-bold text-slate">4.8</span>
+            <span class="text-slate/45">(204 değerlendirme)</span>
+          </div>
+          <h3 class="font-serif text-xl text-slate leading-snug mb-3 group-hover:text-tomato transition-colors">Köz Biberli Izgara Antrikot</h3>
+          <div class="flex items-center justify-between text-[12px] text-slate/55">
+            <span class="flex items-center gap-1.5"><i class="fa-regular fa-user"></i> Mehmet A.</span>
+            <span class="flex items-center gap-1.5"><i class="fa-regular fa-clock"></i> 40 dk</span>
+          </div>
+        </div>
+      </article>
+      <!-- 3 -->
+      <article class="snap-start shrink-0 w-[300px] bg-shell rounded-[5px] border border-[#ece4d7] overflow-hidden group">
+        <div class="relative bg-img aspect-[5/4]" style="background-image:url('https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=700&q=70&exp=7&gam=6&sat=-9&high=8&vib=5');">
+          <button class="save-btn absolute top-3 right-3 w-9 h-9 rounded-full bg-shell/90 flex items-center justify-center text-slate/60 shadow-sm" aria-label="Kaydet"><i class="fa-regular fa-heart"></i></button>
+        </div>
+        <div class="p-5">
+          <div class="flex items-center gap-2 text-[12px] mb-2">
+            <span class="text-gold"><i class="fa-solid fa-star"></i></span>
+            <span class="font-bold text-slate">4.7</span>
+            <span class="text-slate/45">(158 değerlendirme)</span>
+          </div>
+          <h3 class="font-serif text-xl text-slate leading-snug mb-3 group-hover:text-tomato transition-colors">Mevsim Yeşillikli Tahıl Kâsesi</h3>
+          <div class="flex items-center justify-between text-[12px] text-slate/55">
+            <span class="flex items-center gap-1.5"><i class="fa-regular fa-user"></i> Aylin D.</span>
+            <span class="flex items-center gap-1.5"><i class="fa-regular fa-clock"></i> 15 dk</span>
+          </div>
+        </div>
+      </article>
+      <!-- 4 -->
+      <article class="snap-start shrink-0 w-[300px] bg-shell rounded-[5px] border border-[#ece4d7] overflow-hidden group">
+        <div class="relative bg-img aspect-[5/4]" style="background-image:url('https://images.unsplash.com/photo-1529042410759-befb1204b468?auto=format&fit=crop&w=700&q=70&exp=7&gam=6&sat=-9&high=8&vib=5');">
+          <button class="save-btn absolute top-3 right-3 w-9 h-9 rounded-full bg-shell/90 flex items-center justify-center text-slate/60 shadow-sm" aria-label="Kaydet"><i class="fa-regular fa-heart"></i></button>
+          <div class="stamp absolute -bottom-4 left-4 scale-90"><span>Dada<br/>Denedi</span></div>
+        </div>
+        <div class="p-5 pt-6">
+          <div class="flex items-center gap-2 text-[12px] mb-2">
+            <span class="text-gold"><i class="fa-solid fa-star"></i></span>
+            <span class="font-bold text-slate">5.0</span>
+            <span class="text-slate/45">(427 değerlendirme)</span>
+          </div>
+          <h3 class="font-serif text-xl text-slate leading-snug mb-3 group-hover:text-tomato transition-colors">Fırında Sütlü İrmik Tatlısı</h3>
+          <div class="flex items-center justify-between text-[12px] text-slate/55">
+            <span class="flex items-center gap-1.5"><i class="fa-regular fa-user"></i> Zeynep T.</span>
+            <span class="flex items-center gap-1.5"><i class="fa-regular fa-clock"></i> 50 dk</span>
+          </div>
+        </div>
+      </article>
+      <!-- 5 -->
+      <article class="snap-start shrink-0 w-[300px] bg-shell rounded-[5px] border border-[#ece4d7] overflow-hidden group">
+        <div class="relative bg-img aspect-[5/4]" style="background-image:url('https://images.unsplash.com/photo-1466637574441-749b8f19452f?auto=format&fit=crop&w=700&q=70&exp=7&gam=6&sat=-9&high=8&vib=5');">
+          <button class="save-btn absolute top-3 right-3 w-9 h-9 rounded-full bg-shell/90 flex items-center justify-center text-slate/60 shadow-sm" aria-label="Kaydet"><i class="fa-regular fa-heart"></i></button>
+        </div>
+        <div class="p-5">
+          <div class="flex items-center gap-2 text-[12px] mb-2">
+            <span class="text-gold"><i class="fa-solid fa-star"></i></span>
+            <span class="font-bold text-slate">4.6</span>
+            <span class="text-slate/45">(96 değerlendirme)</span>
+          </div>
+          <h3 class="font-serif text-xl text-slate leading-snug mb-3 group-hover:text-tomato transition-colors">Zeytinyağlı Taze Fasulye</h3>
+          <div class="flex items-center justify-between text-[12px] text-slate/55">
+            <span class="flex items-center gap-1.5"><i class="fa-regular fa-user"></i> Hatice Y.</span>
+            <span class="flex items-center gap-1.5"><i class="fa-regular fa-clock"></i> 35 dk</span>
+          </div>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+
+<!-- ============================ 03 · REHBER (mutfağa giriş & püf) ============================ -->
+<section id="rehber" class="bg-shell">
+  <div class="max-w-[1240px] mx-auto px-6 py-16">
+    <div class="grid lg:grid-cols-12 gap-10">
+      <div class="lg:col-span-4">
+        <div class="flex items-baseline gap-4 mb-5">
+          <span class="index-num text-tomato text-2xl">03</span>
+          <div class="rule-tomato w-10 self-center"></div>
+        </div>
+        <h2 class="font-serif text-3xl sm:text-4xl text-slate leading-tight mb-4">Mutfağa giriş &amp; püf noktaları</h2>
+        <p class="text-slate/65 text-[15px] leading-relaxed mb-6">Tekniği bilen, daha rahat pişirir. Temel bilgiler, ölçü birimleri, sözlük ve ustaların küçük sırları — hepsi tek defterde.</p>
+        <a href="#" class="inline-flex items-center gap-2 font-bold text-tomato hover:gap-3 transition-all">Rehberi aç <i class="fa-solid fa-arrow-right-long"></i></a>
+      </div>
+
+      <div class="lg:col-span-8 grid sm:grid-cols-2 gap-5">
+        <a href="#" class="group flex gap-4 p-5 rounded-[5px] border border-[#ece4d7] hover:border-tomato/40 hover:shadow-sm transition-all bg-cream/40">
+          <div class="bg-img w-20 h-20 rounded-[4px] shrink-0" style="background-image:url('https://images.unsplash.com/photo-1490818387583-1baba5e638af?auto=format&fit=crop&w=300&q=70&exp=7&gam=6&sat=-9&high=8&vib=5');"></div>
+          <div>
+            <p class="eyebrow text-slate/40 mb-1">Temel teknik</p>
+            <h3 class="font-serif text-lg text-slate leading-snug group-hover:text-tomato transition-colors">Soğanı doğru kavurmanın 4 adımı</h3>
+          </div>
+        </a>
+        <a href="#" class="group flex gap-4 p-5 rounded-[5px] border border-[#ece4d7] hover:border-tomato/40 hover:shadow-sm transition-all bg-cream/40">
+          <div class="bg-img w-20 h-20 rounded-[4px] shrink-0" style="background-image:url('https://images.unsplash.com/photo-1498837167922-ddd27525d352?auto=format&fit=crop&w=300&q=70&exp=7&gam=6&sat=-9&high=8&vib=5');"></div>
+          <div>
+            <p class="eyebrow text-slate/40 mb-1">Ölçü birimleri</p>
+            <h3 class="font-serif text-lg text-slate leading-snug group-hover:text-tomato transition-colors">Su bardağı kaç gram? Pratik tablo</h3>
+          </div>
+        </a>
+        <a href="#" class="group flex gap-4 p-5 rounded-[5px] border border-[#ece4d7] hover:border-tomato/40 hover:shadow-sm transition-all bg-cream/40">
+          <div class="bg-img w-20 h-20 rounded-[4px] shrink-0" style="background-image:url('https://images.unsplash.com/photo-1606787366850-de6330128bfc?auto=format&fit=crop&w=300&q=70&exp=7&gam=6&sat=-9&high=8&vib=5');"></div>
+          <div>
+            <p class="eyebrow text-slate/40 mb-1">Saklama</p>
+            <h3 class="font-serif text-lg text-slate leading-snug group-hover:text-tomato transition-colors">Yeşillikler buzdolabında nasıl uzun yaşar</h3>
+          </div>
+        </a>
+        <a href="#" class="group flex gap-4 p-5 rounded-[5px] border border-[#ece4d7] hover:border-tomato/40 hover:shadow-sm transition-all bg-cream/40">
+          <div class="bg-img w-20 h-20 rounded-[4px] shrink-0" style="background-image:url('https://images.unsplash.com/photo-1556909212-d5b604d0c90d?auto=format&fit=crop&w=300&q=70&exp=7&gam=6&sat=-9&high=8&vib=5');"></div>
+          <div>
+            <p class="eyebrow text-slate/40 mb-1">Sözlük</p>
+            <h3 class="font-serif text-lg text-slate leading-snug group-hover:text-tomato transition-colors">"Terbiye etmek" tam olarak ne demek?</h3>
+          </div>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ============================ 04 · SAĞLIK & DİYETİSYEN ============================ -->
+<section id="saglik" class="bg-[#F1F6F1]">
+  <div class="max-w-[1240px] mx-auto px-6 py-16">
+    <div class="flex items-baseline gap-4 mb-9">
+      <span class="index-num text-herb text-2xl">04</span>
+      <div class="w-10 self-center" style="height:2px;background:#3BB77E;"></div>
+      <h2 class="font-serif text-3xl sm:text-4xl text-slate">Sağlık &amp; diyetisyen</h2>
+    </div>
+
+    <div class="grid lg:grid-cols-12 gap-6">
+      <!-- hesaplayıcılar -->
+      <div class="lg:col-span-7 grid sm:grid-cols-2 gap-4">
+        <a href="#" class="group bg-white rounded-[5px] p-5 border border-herb/15 hover:border-herb/50 transition-colors flex items-center gap-4">
+          <span class="w-12 h-12 rounded-full bg-herb/10 flex items-center justify-center text-herb shrink-0"><i class="fa-solid fa-fire-flame-curved"></i></span>
+          <div><h3 class="font-bold text-slate">Kalori hesapla</h3><p class="text-[12px] text-slate/55">Besin değeri &amp; günlük ihtiyaç</p></div>
+        </a>
+        <a href="#" class="group bg-white rounded-[5px] p-5 border border-herb/15 hover:border-herb/50 transition-colors flex items-center gap-4">
+          <span class="w-12 h-12 rounded-full bg-herb/10 flex items-center justify-center text-herb shrink-0"><i class="fa-solid fa-weight-scale"></i></span>
+          <div><h3 class="font-bold text-slate">Beden Kitle Endeksi</h3><p class="text-[12px] text-slate/55">Boy &amp; kiloya göre BKİ</p></div>
+        </a>
+        <a href="#" class="group bg-white rounded-[5px] p-5 border border-herb/15 hover:border-herb/50 transition-colors flex items-center gap-4">
+          <span class="w-12 h-12 rounded-full bg-herb/10 flex items-center justify-center text-herb shrink-0"><i class="fa-solid fa-heart-pulse"></i></span>
+          <div><h3 class="font-bold text-slate">Bazal metabolizma</h3><p class="text-[12px] text-slate/55">Dinlenme kalori hızı</p></div>
+        </a>
+        <a href="#" class="group bg-white rounded-[5px] p-5 border border-herb/15 hover:border-herb/50 transition-colors flex items-center gap-4">
+          <span class="w-12 h-12 rounded-full bg-herb/10 flex items-center justify-center text-herb shrink-0"><i class="fa-solid fa-person"></i></span>
+          <div><h3 class="font-bold text-slate">Vücut tipi testi</h3><p class="text-[12px] text-slate/55">Sana uygun beslenme</p></div>
+        </a>
+      </div>
+
+      <!-- diyetisyen CTA -->
+      <div class="lg:col-span-5 relative rounded-[5px] overflow-hidden bg-img min-h-[260px]"
+           style="background-image:url('https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?auto=format&fit=crop&w=800&q=70&exp=7&gam=6&sat=-9&high=8&vib=5');">
+        <div class="absolute inset-0" style="background:linear-gradient(90deg,rgba(28,54,42,.92),rgba(28,54,42,.55));"></div>
+        <div class="relative p-8 h-full flex flex-col justify-end text-white">
+          <p class="eyebrow text-herb mb-2" style="color:#8fe3bd;">Uzmana danış</p>
+          <h3 class="font-serif text-2xl leading-snug mb-3">Diyetisyenden kişisel beslenme planı</h3>
+          <p class="text-white/75 text-[14px] leading-relaxed mb-5 max-w-xs">Uzman diyetisyenlerle randevu al, sana özel haftalık menünü oluştur.</p>
+          <a href="#" class="self-start bg-herb text-white px-6 py-3 rounded-full font-bold text-sm hover:bg-[#2fa06b] transition-colors">Diyetisyenleri gör</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ============================ 05 · DADA SHOP ============================ -->
+<section id="shop" class="bg-shell">
+  <div class="max-w-[1240px] mx-auto px-6 py-16">
+    <div class="flex items-end justify-between mb-9">
+      <div class="flex items-baseline gap-4">
+        <span class="index-num text-tomato text-2xl">05</span>
+        <div class="rule-tomato w-10 self-center"></div>
+        <h2 class="font-serif text-3xl sm:text-4xl text-slate">Dada Shop</h2>
+      </div>
+      <a href="#" class="eyebrow text-tomato hover:underline">Tüm ürünler</a>
+    </div>
+
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-5">
+      <!-- ürün -->
+      <a href="#" class="group">
+        <div class="relative bg-cream rounded-[5px] aspect-square bg-img overflow-hidden border border-[#ece4d7]"
+             style="background-image:url('https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?auto=format&fit=crop&w=600&q=70&exp=7&gam=6&sat=-9&high=8&vib=5');">
+          <span class="absolute top-3 left-3 eyebrow bg-tomato text-white px-2.5 py-1 rounded-full text-[10px]">%20</span>
+        </div>
+        <div class="pt-4">
+          <h3 class="font-serif text-lg text-slate leading-snug group-hover:text-tomato transition-colors">El Yapımı Bakır Cezve</h3>
+          <div class="flex items-baseline gap-2 mt-1.5">
+            <span class="font-bold text-slate">₺480</span>
+            <span class="text-[13px] text-slate/40 line-through">₺600</span>
+          </div>
+        </div>
+      </a>
+      <a href="#" class="group">
+        <div class="relative bg-cream rounded-[5px] aspect-square bg-img overflow-hidden border border-[#ece4d7]"
+             style="background-image:url('https://images.unsplash.com/photo-1505576399279-565b52d4ac71?auto=format&fit=crop&w=600&q=70&exp=7&gam=6&sat=-9&high=8&vib=5');">
+          <span class="absolute top-3 left-3 eyebrow bg-herb text-white px-2.5 py-1 rounded-full text-[10px]">Organik</span>
+        </div>
+        <div class="pt-4">
+          <h3 class="font-serif text-lg text-slate leading-snug group-hover:text-tomato transition-colors">Soğuk Sıkım Zeytinyağı 500ml</h3>
+          <div class="flex items-baseline gap-2 mt-1.5">
+            <span class="font-bold text-slate">₺320</span>
+          </div>
+        </div>
+      </a>
+      <a href="#" class="group">
+        <div class="relative bg-cream rounded-[5px] aspect-square bg-img overflow-hidden border border-[#ece4d7]"
+             style="background-image:url('https://images.unsplash.com/photo-1590794056226-79ef3a8147e1?auto=format&fit=crop&w=600&q=70&exp=7&gam=6&sat=-9&high=8&vib=5');">
+        </div>
+        <div class="pt-4">
+          <h3 class="font-serif text-lg text-slate leading-snug group-hover:text-tomato transition-colors">Dökme Demir Tava 26cm</h3>
+          <div class="flex items-baseline gap-2 mt-1.5">
+            <span class="font-bold text-slate">₺750</span>
+          </div>
+        </div>
+      </a>
+      <a href="#" class="group">
+        <div class="relative bg-cream rounded-[5px] aspect-square bg-img overflow-hidden border border-[#ece4d7]"
+             style="background-image:url('https://images.unsplash.com/photo-1607672632458-9eb56696346b?auto=format&fit=crop&w=600&q=70&exp=7&gam=6&sat=-9&high=8&vib=5');">
+          <span class="absolute top-3 left-3 eyebrow bg-tomato text-white px-2.5 py-1 rounded-full text-[10px]">%15</span>
+        </div>
+        <div class="pt-4">
+          <h3 class="font-serif text-lg text-slate leading-snug group-hover:text-tomato transition-colors">Yöresel Baharat Seti</h3>
+          <div class="flex items-baseline gap-2 mt-1.5">
+            <span class="font-bold text-slate">₺255</span>
+            <span class="text-[13px] text-slate/40 line-through">₺300</span>
+          </div>
+        </div>
+      </a>
+    </div>
+  </div>
+</section>
+
+
+<!-- ============================ RAMAZAN — sakin tek-odak + güçlü sol gradient (FİX) ============================ -->
+<section id="ramazan" class="bg-shell">
+  <div class="max-w-[1240px] mx-auto px-6 pb-16">
+    <div class="relative rounded-[6px] overflow-hidden min-h-[380px] bg-img"
+         style="background-image:url('https://images.unsplash.com/photo-1455619452474-d2be8b1e70cd?auto=format&fit=crop&w=1400&q=72&exp=5&gam=4&sat=-14&high=4&vib=3');">
+      <div class="absolute inset-0 ramazan-overlay"></div>
+      <div class="relative h-full flex items-center">
+        <div class="p-10 lg:p-16 max-w-lg text-white">
+          <p class="eyebrow mb-4" style="color:#FAC045;">Ramazan 2026 · İftara doğru</p>
+          <h2 class="font-serif text-4xl lg:text-5xl leading-[1.05] mb-5">Sofranı vaktinde<br/>kur.</h2>
+          <p class="text-white/80 text-[15px] leading-relaxed mb-7 max-w-sm">İftar ve sahur menüleri, geleneksel tarifler ve imsakiyeye göre hazırlık planı — hepsi bir arada.</p>
+          <div class="flex items-center gap-4">
+            <a href="#" class="bg-tomato text-white px-7 py-3.5 rounded-full font-bold text-sm hover:bg-[#c93c1e] transition-colors">Ramazan menüleri</a>
+            <a href="#" class="text-white/90 font-bold text-sm hover:text-gold transition-colors flex items-center gap-2">Sahura doğru <i class="fa-solid fa-arrow-right-long text-xs"></i></a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ============================ TOPLULUK CTA ============================ -->
+<section class="bg-cream">
+  <div class="max-w-[1240px] mx-auto px-6 py-20 text-center">
+    <p class="eyebrow text-tomato mb-4">Herkesin bir tarifi var</p>
+    <h2 class="font-serif text-4xl sm:text-5xl text-slate leading-tight max-w-2xl mx-auto mb-6">
+      Sen de defterimize<br/>bir tarif düş.
+    </h2>
+    <p class="text-slate/65 text-[16px] leading-relaxed max-w-xl mx-auto mb-9">
+      Anneanneden kalma o tarif, hafta içi kurtaran 20 dakikalık akşam yemeği —
+      paylaş, denensin, puanlansın. Belki bu hafta en çok pişen senin tarifin olur.
+    </p>
+    <div class="flex items-center justify-center gap-4">
+      <a href="#" class="bg-tomato text-white px-8 py-4 rounded-full font-bold hover:bg-[#c93c1e] transition-colors shadow-sm shadow-tomato/20">Tarif paylaş</a>
+      <a href="#" class="border border-slate/25 text-slate px-8 py-4 rounded-full font-bold hover:border-tomato hover:text-tomato transition-colors">Topluluğa katıl</a>
+    </div>
+  </div>
+</section>
+
+
+<!-- ============================ FOOTER ============================ -->
+<footer class="bg-slate text-white/70">
+  <div class="max-w-[1240px] mx-auto px-6 pt-16 pb-10">
+    <div class="grid lg:grid-cols-12 gap-10 pb-12 border-b border-white/10">
+      <div class="lg:col-span-4">
+        <div class="bg-white inline-block rounded-md px-3 py-2 mb-5">
+          <img src="logo-colored.png" alt="Dada Mutfak" class="h-8 w-auto" />
+        </div>
+        <p class="text-[14px] leading-relaxed text-white/55 max-w-xs mb-6">Denenmiş, yorumlanmış, puanlanmış tariflerin biriktiği ev mutfağı topluluğu. Mutfak Defteri'ne hoş geldin.</p>
+        <div class="flex items-center gap-3">
+          <a href="#" class="w-10 h-10 rounded-full border border-white/15 flex items-center justify-center hover:border-tomato hover:text-tomato transition-colors" aria-label="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
+          <a href="#" class="w-10 h-10 rounded-full border border-white/15 flex items-center justify-center hover:border-tomato hover:text-tomato transition-colors" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+          <a href="#" class="w-10 h-10 rounded-full border border-white/15 flex items-center justify-center hover:border-tomato hover:text-tomato transition-colors" aria-label="YouTube"><i class="fa-brands fa-youtube"></i></a>
+        </div>
+      </div>
+
+      <div class="lg:col-span-2">
+        <p class="eyebrow text-white/40 mb-4">Tarifler</p>
+        <ul class="clean-list space-y-2.5 text-[14px]">
+          <li><a href="#" class="hover:text-tomato transition-colors">Tüm tarifler</a></li>
+          <li><a href="#" class="hover:text-tomato transition-colors">Bugün ne pişsem</a></li>
+          <li><a href="#" class="hover:text-tomato transition-colors">Tarif bulucu</a></li>
+          <li><a href="#" class="hover:text-tomato transition-colors">Keşfet</a></li>
+          <li><a href="#" class="hover:text-tomato transition-colors">Şefler</a></li>
+        </ul>
+      </div>
+      <div class="lg:col-span-2">
+        <p class="eyebrow text-white/40 mb-4">Rehber</p>
+        <ul class="clean-list space-y-2.5 text-[14px]">
+          <li><a href="#" class="hover:text-tomato transition-colors">Mutfağa giriş</a></li>
+          <li><a href="#" class="hover:text-tomato transition-colors">Püf noktaları</a></li>
+          <li><a href="#" class="hover:text-tomato transition-colors">Sözlük</a></li>
+          <li><a href="#" class="hover:text-tomato transition-colors">Ölçü birimleri</a></li>
+        </ul>
+      </div>
+      <div class="lg:col-span-2">
+        <p class="eyebrow text-white/40 mb-4">Sağlık</p>
+        <ul class="clean-list space-y-2.5 text-[14px]">
+          <li><a href="#" class="hover:text-tomato transition-colors">Hesaplamalar</a></li>
+          <li><a href="#" class="hover:text-tomato transition-colors">Testler</a></li>
+          <li><a href="#" class="hover:text-tomato transition-colors">Diyetisyenler</a></li>
+          <li><a href="#" class="hover:text-tomato transition-colors">Besin rehberi</a></li>
+        </ul>
+      </div>
+      <div class="lg:col-span-2">
+        <p class="eyebrow text-white/40 mb-4">Kurumsal</p>
+        <ul class="clean-list space-y-2.5 text-[14px]">
+          <li><a href="#" class="hover:text-tomato transition-colors">Hakkımızda</a></li>
+          <li><a href="#" class="hover:text-tomato transition-colors">İletişim</a></li>
+          <li><a href="#" class="hover:text-tomato transition-colors">Dada Shop</a></li>
+          <li><a href="#" class="hover:text-tomato transition-colors">SSS</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="pt-7 flex flex-col sm:flex-row items-center justify-between gap-4 text-[12px] text-white/40">
+      <p>© 2026 Dada Mutfak — Mutfak Defteri. Tüm hakları saklıdır.</p>
+      <div class="flex items-center gap-5">
+        <a href="#" class="hover:text-tomato transition-colors">Gizlilik</a>
+        <a href="#" class="hover:text-tomato transition-colors">KVKK</a>
+        <a href="#" class="hover:text-tomato transition-colors">Kullanım Koşulları</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+
+<script>
+  // Kalp (kaydet) toggle — regular ↔ solid
+  document.querySelectorAll('.save-btn').forEach(function (btn) {
+    btn.addEventListener('click', function (e) {
+      e.preventDefault();
+      var icon = btn.querySelector('i');
+      var saved = btn.classList.toggle('saved');
+      icon.classList.toggle('fa-regular', !saved);
+      icon.classList.toggle('fa-solid', saved);
+    });
+  });
+
+  // Carousel ok kontrolleri
+  (function () {
+    var scroller = document.getElementById('recipeScroller');
+    if (!scroller) return;
+    var step = 326; // kart genişliği + gap
+    document.querySelector('.car-next').addEventListener('click', function () { scroller.scrollBy({ left: step, behavior: 'smooth' }); });
+    document.querySelector('.car-prev').addEventListener('click', function () { scroller.scrollBy({ left: -step, behavior: 'smooth' }); });
+  })();
+
+  // Arama toggle (yemek adı / malzeme)
+  (function () {
+    var tabName = document.getElementById('tabName');
+    var tabIng = document.getElementById('tabIng');
+    var input = document.getElementById('searchInput');
+    if (!tabName) return;
+    function activate(active, passive, ph) {
+      active.className = 'eyebrow px-4 py-2 rounded-full bg-white text-slate';
+      passive.className = 'eyebrow px-4 py-2 rounded-full bg-white/10 text-white/70 hover:bg-white/15 transition-colors';
+      input.placeholder = ph;
+    }
+    tabName.addEventListener('click', function () { activate(tabName, tabIng, 'Tavuklu, 30 dakikada, fırın…'); });
+    tabIng.addEventListener('click', function () { activate(tabIng, tabName, 'Patates, soğan, yumurta…'); });
+  })();
+</script>
+
+</body>
+</html>
