@@ -127,6 +127,20 @@ img{display:block;max-width:100%}
 .topbar .tb-right{display:flex;gap:18px;align-items:center}
 .topbar .tb-soc{display:flex;gap:14px}
 .topbar .tb-soc a:hover{color:var(--yellow)}
+/* dil seçici — üst bant (ince, açık zemin yazı) */
+.tb-lang{position:relative;display:flex;align-items:center}
+.tb-lang::before{content:"";width:1px;height:14px;background:rgba(233,226,214,.22);margin-right:4px}
+.tb-lang-btn{display:inline-flex;align-items:center;gap:7px;background:transparent;border:none;cursor:pointer;color:#e9e2d6;font-family:inherit;font-size:12.5px;font-weight:300;padding:0;transition:color .2s}
+.tb-lang-btn:hover{color:#fff}
+.tb-lang-btn>span{font-weight:600;letter-spacing:.03em}
+.tb-lang-caret{font-size:9px;transition:transform .2s var(--ease)}
+.tb-lang.open .tb-lang-caret{transform:rotate(180deg)}
+.tb-lang-menu{position:absolute;top:calc(100% + 9px);right:0;min-width:148px;background:#fff;border:1px solid var(--line);border-radius:var(--radius-md);box-shadow:var(--sh-md);padding:6px;opacity:0;visibility:hidden;transform:translateY(-6px);transition:opacity .2s var(--ease),transform .2s var(--ease),visibility .2s;z-index:80}
+.tb-lang.open .tb-lang-menu{opacity:1;visibility:visible;transform:translateY(0)}
+.tb-lang-menu a{display:flex;align-items:center;gap:9px;color:var(--ink);font-size:13px;font-weight:600;padding:9px 11px;border-radius:var(--radius-sm);transition:.18s var(--ease)}
+.tb-lang-menu a span{color:var(--muted);font-weight:300;font-size:12.5px}
+.tb-lang-menu a:hover{background:var(--tomato-tint);color:var(--tomato)}
+.tb-lang-menu a.active,.tb-lang-menu a.active span{color:var(--tomato)}
 
 /* ============ HEADER ============ */
 .header{
@@ -620,6 +634,13 @@ html,body{overflow-x:hidden}
 .drawer-foot{padding:18px 20px;border-top:1px solid var(--line);display:flex;flex-direction:column;gap:11px;flex:none}
 .drawer-add{display:flex;align-items:center;justify-content:center;gap:9px;font-weight:800;font-size:14.5px;color:var(--slate);padding:13px;border:1px solid var(--line);border-radius:var(--radius-md);transition:.2s var(--ease)}
 .drawer-add:hover{border-color:var(--tomato);color:var(--tomato)}
+/* drawer dil seçici (mobilde üst bant yok) */
+.drawer-lang{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:3px}
+.drawer-lang-label{display:inline-flex;align-items:center;gap:8px;font-size:13px;font-weight:600;color:var(--muted)}
+.drawer-lang-opts{display:flex;gap:6px}
+.drawer-lang-opts button{font-family:inherit;font-size:13px;font-weight:800;letter-spacing:.03em;color:var(--slate);background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-sm);padding:7px 14px;cursor:pointer;transition:.2s var(--ease)}
+.drawer-lang-opts button:hover{border-color:var(--tomato);color:var(--tomato)}
+.drawer-lang-opts button.active{background:var(--tomato);border-color:var(--tomato);color:#fff}
 
 /* mobil alt navigasyon — Instagram tarzı floating frosted pill */
 .bottom-nav{
@@ -814,6 +835,15 @@ html,body{overflow-x:hidden}
         <a href="#"><i class="fa-brands fa-youtube"></i></a>
         <a href="#"><i class="fa-brands fa-pinterest"></i></a>
       </div>
+      <div class="tb-lang" id="tbLang">
+        <button class="tb-lang-btn" id="tbLangBtn" type="button" aria-haspopup="true" aria-expanded="false">
+          <i class="fa-solid fa-globe"></i><span>TR</span><i class="fa-solid fa-chevron-down tb-lang-caret"></i>
+        </button>
+        <div class="tb-lang-menu" id="tbLangMenu" role="menu">
+          <a href="#" role="menuitem" class="active" data-lang="tr">TR <span>Türkçe</span></a>
+          <a href="#" role="menuitem" data-lang="en">EN <span>English</span></a>
+        </div>
+      </div>
     </div>
   </div>
 </div>
@@ -937,6 +967,13 @@ html,body{overflow-x:hidden}
   <div class="drawer-foot">
     <button class="btn btn-primary" style="width:100%"><i class="fa-regular fa-user"></i> Giriş Yap</button>
     <a href="#" class="drawer-add"><i class="fa-solid fa-circle-plus"></i> Tarif Ekle</a>
+    <div class="drawer-lang">
+      <span class="drawer-lang-label"><i class="fa-solid fa-globe"></i> Dil</span>
+      <div class="drawer-lang-opts">
+        <button type="button" class="active" data-lang="tr">TR</button>
+        <button type="button" data-lang="en">EN</button>
+      </div>
+    </div>
   </div>
 </aside>
 
@@ -1464,7 +1501,7 @@ html,body{overflow-x:hidden}
 <script>
 // screenshot mode (?ss=1): swap autoplay video for a static real frame so it renders in headless
 if(location.search.indexOf('ss=1')>-1){document.querySelector('.hero-v').classList.add('ss-mode');var _g=document.querySelector('.guide');if(_g)_g.classList.add('ss-mode');}
-if(location.search.indexOf('dd=1')>-1){document.querySelector('.nav-item').classList.add('open');}
+if(location.search.indexOf('dd=1')>-1){document.querySelector('.nav-item').classList.add('open');var _l=document.getElementById('tbLang');if(_l)_l.classList.add('open');}
 if(location.search.indexOf('fp=1')>-1){document.querySelector('.hero-v').classList.add('fp-cap');}
 if(location.search.indexOf('drawer=1')>-1){window.addEventListener('DOMContentLoaded',function(){document.getElementById('drawer').classList.add('open');document.getElementById('drawerOverlay').classList.add('open');document.querySelector('.d-has-sub').classList.add('open');});}
 // header: hero üstünde şeffaf, ~60px scroll sonrası katı
@@ -1515,6 +1552,30 @@ document.addEventListener('click',function(e){
   if(!e.target.closest('.nav-item'))document.querySelectorAll('.nav-item.open').forEach(function(o){o.classList.remove('open')});
 });
 
+// ---- DİL SEÇİCİ (üst bant dropdown) ----
+(function(){
+  var lang=document.getElementById('tbLang');
+  if(!lang)return;
+  var btn=document.getElementById('tbLangBtn');
+  btn.addEventListener('click',function(e){
+    e.preventDefault();e.stopPropagation();
+    var open=lang.classList.toggle('open');
+    btn.setAttribute('aria-expanded',open?'true':'false');
+  });
+  lang.querySelectorAll('.tb-lang-menu a').forEach(function(a){
+    a.addEventListener('click',function(e){
+      e.preventDefault();
+      lang.querySelectorAll('.tb-lang-menu a').forEach(function(x){x.classList.remove('active')});
+      a.classList.add('active');
+      btn.querySelector('span').textContent=a.getAttribute('data-lang').toUpperCase();
+      lang.classList.remove('open');btn.setAttribute('aria-expanded','false');
+    });
+  });
+  document.addEventListener('click',function(e){
+    if(!e.target.closest('#tbLang')){lang.classList.remove('open');btn.setAttribute('aria-expanded','false');}
+  });
+})();
+
 // ---- MOBİL DRAWER aç/kapa ----
 (function(){
   var drawer=document.getElementById('drawer');
@@ -1537,8 +1598,15 @@ document.addEventListener('click',function(e){
     });
   });
   // alt link veya direkt linke tıklayınca drawer kapansın
-  drawer.querySelectorAll('.d-sub a, .d-item > a.d-link, .drawer-foot a, .drawer-foot button').forEach(function(a){
+  drawer.querySelectorAll('.d-sub a, .d-item > a.d-link, .drawer-foot a, .drawer-foot > button').forEach(function(a){
     a.addEventListener('click',close);
+  });
+  // drawer dil seçici — aktif state toggle (drawer kapanmaz)
+  drawer.querySelectorAll('.drawer-lang-opts button').forEach(function(b){
+    b.addEventListener('click',function(){
+      drawer.querySelectorAll('.drawer-lang-opts button').forEach(function(x){x.classList.remove('active')});
+      b.classList.add('active');
+    });
   });
 })();
 
