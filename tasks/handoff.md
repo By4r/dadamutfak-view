@@ -8,6 +8,24 @@
 
 ## 🟢 DURUM (EN ÜSTTE OKU)
 
+**✅ MOBİL REVİZE TURU TAMAMLANDI (2026-06-10, Yasin Bey'den 2 madde — SS turu Beyar onaylı, commit/push bu session'da).**
+Yalnız `≤640px` medya bloğu değişti (`mockups/anasayfa-portal-v3a.html`) — desktop/tablet'e dokunulmadı, 1440 kontrol SS'leriyle sızıntı olmadığı doğrulandı.
+- **Madde 1 — Section başlık araçları:** DOM aynı; mobilde `.sec-head`/`.cat-head`/`.guide-head`
+  + `.sec-tools` `display:contents` ile grid'e açılır. Düzen: eyebrow → **h2 + oklar aynı
+  satırda (sağda, 38px)** → lead → **kompakt "Tamamını Gör →" metin-linki** (buton kabuğu
+  mobilde kalkar; domates renk, koyu guide zemininde `#ff8763`). 7 section'da tutarlı:
+  Kategoriler · Tariflerimiz · Mutfak Sırları · Keşfet · Şefler · Videolar · Shop.
+  Tab'lı section'larda tab yerleşimi korundu (guide: tabs tam genişlik kendi satırında;
+  keşfet: tabs satırı aynen).
+- **Madde 2 — Püf kartları tek hizada:** mobilde `.puf-fig` 166→112px, açıklama `<p>` +
+  başlık `<h4>` 2 satır `-webkit-line-clamp` (metin DOM'da tam — yalnız görsel kırpma),
+  `.puf-body` min-height 140px → 6 kart da 142px (önce 152–236 boy boydu). Mutfağa Giriş
+  adım kartlarına aynı clamp — hepsi 112px'te eşit. Desktop'taki 1-2-3 satır karışık yapı
+  bilinçli, korundu.
+- **Bonus düzeltme:** Keşfet mobilde `disc-tools` (tabs + see-all) baseline'da sağdan
+  taşıyordu → flex-wrap'lı kendi satırına alındı, yatay taşma 0px.
+- SS'ler: `screenshots/m-rev/` (390 + 1440 kontrol) · baseline: `screenshots/m-rev-baseline/`.
+
 **REVİZE TURU 3 TAMAMLANDI (2026-06-10, SS turu Beyar onaylı — commit/push bu session'da yapıldı).**
 17 madde + 4 canlı ek revizyon (slider auto-slide, login butonu eski tomato rengi,
 mega menü "Tüm Tarifler" son kategori slotuna, kart tutarlılık turu) uygulandı.
