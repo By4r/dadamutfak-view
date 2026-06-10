@@ -8,10 +8,18 @@
 
 ## 🟢 DURUM (EN ÜSTTE OKU)
 
-**REVİZE TURU 2 TAMAMLANDI (2026-06-10, henüz COMMIT YOK — Beyar inceleyecek).**
+**REVİZE TURU 2 CANLIDA (2026-06-10, commit `a544321` — push edildi, Pages'te yayında).**
 Çalışma dosyası artık SADECE `mockups/anasayfa-portal-v3a.html` (ana base seçildi);
 v2/v3b/v3c dondu, dokunulmuyor. Mega menü patron onaylı — yapısı değişmez.
 Tur 2 detayı aşağıda "REVİZE TURU 2" bölümünde.
+
+**FONT DOĞRULAMASI TAMAM (2026-06-10, bağımsız ölçüm — canlı link üzerinden):**
+Canlı v3a = eski site. İki taraf da aynı `Gilroy-Medium.ttf` dosyasını yüklüyor —
+**MD5 birebir aynı** (`d8ee4539e9ba9211a8b532e325075577`), canlıda istek 200 OK.
+Eleman bazında (body/h1/h2/menü/buton/kart başlığı) computed style aynı dosyaya
+çözümleniyor; 700'ler iki tarafta da sentetik bold. Tek nominal fark: body/buton
+declared weight eski sitede 400, v3a'da 500 — ikisi de tek Medium yüze düştüğü
+için render piksel-bazında aynı. **Beyar kararı: OLDUĞU GİBİ BIRAKILDI, düzeltme yok.**
 
 Önceki durum: revize taban + 3 alternatif canlıda (Yasin Bey değerlendirmesi sürüyor).
 
@@ -85,7 +93,7 @@ klasörde var ama CSS hiç yüklemez. Lato yalnız 1 span'da declared, yüklenme
 **v3a buna eşitlendi:** tek @font-face (Gilroy-Medium 500), 300→500 (42 yer),
 800→700 (43 yer), nav linkleri 700. Dosya md5'leri eski siteyle birebir aynı.
 
-### REVİZE TURU 2 (2026-06-10 — v3a, commit YOK)
+### REVİZE TURU 2 (2026-06-10 — v3a, commit `a544321`, canlıda)
 1. **Font** — yukarıda (tek yüz Gilroy-Medium + sentetik bold = eski site DNA'sı)
 2. **Menü ortalandı** — `.h-nav>.wrap` justify-content:center (çift kat korunur)
 3. **"Tamamını Gör"** — tüm listeli section'larda tek etiket/pattern (`.see-all`):
@@ -127,7 +135,8 @@ v3c'de orta sıra farklı (yukarıda).
 
 ## ➡️ SIRADAKİ İŞ
 
-1. **Yasin Bey değerlendirmesi** → seçilen varyant lead olacak.
+1. **Yasin Bey değerlendirmesi** → seçilen varyant lead olacak (Beyar favorisi v3a,
+   Tur 2 + font doğrulaması canlıda hazır).
 2. Lead seçilince: ana sayfa gerçek içerikleri + **diğer sayfalar** (tarif detay ·
    tarifler liste/filtre · ürün detay) lead'in dilinden türetilecek.
 
