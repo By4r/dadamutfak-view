@@ -8,8 +8,12 @@
 
 ## 🟢 DURUM (EN ÜSTTE OKU)
 
-**Revize taban + 3 anasayfa alternatifi TAMAMLANDI ve CANLI.** Beyar onayıyla
-commit/push/deploy yapıldı. Sırada: Yasin Bey değerlendirmesi → lead varyant seçimi.
+**REVİZE TURU 2 TAMAMLANDI (2026-06-10, henüz COMMIT YOK — Beyar inceleyecek).**
+Çalışma dosyası artık SADECE `mockups/anasayfa-portal-v3a.html` (ana base seçildi);
+v2/v3b/v3c dondu, dokunulmuyor. Mega menü patron onaylı — yapısı değişmez.
+Tur 2 detayı aşağıda "REVİZE TURU 2" bölümünde.
+
+Önceki durum: revize taban + 3 alternatif canlıda (Yasin Bey değerlendirmesi sürüyor).
 
 - **🌐 CANLI (4 link):**
   - Taban: https://by4r.github.io/dadamutfak-view/mockups/anasayfa-portal-v2.html
@@ -71,11 +75,36 @@ commit/push/deploy yapıldı. Sırada: Yasin Bey değerlendirmesi → lead varya
   filtre) → guide → şefler → keşfet → "60 saniyede pişir" videolar → appband → sağlık →
   shop → topluluk(+avatar satırı). Kart = v3a anatomisi.
 
-### Font analizi (Aşama 0-c sonucu)
-Mockup fontları **gerçek kurumsal fontlarla birebir uyumlu**: Gilroy 300/500/800.
-Kaynak: `brand/corporate-identity-guideline.pdf` (56 sf) — marka fontu Gilroy (tüm
-ağırlıklar), Steelfish+Neo Sans yalnız logo wordmark'ı (logoya gömülü). Eski site de
-Gilroy-Medium kullanıyordu (`myBrandFont`). Değişiklik gerekmedi.
+### Font analizi (Aşama 0-c sonucu) — ⚠️ TUR 2'DE REVİZE EDİLDİ
+~~Mockup fontları kurumsal PDF'le uyumlu: Gilroy 300/500/800~~ → Beyar düzeltti:
+**doğruluk kaynağı PDF değil, eski sitenin FİİLEN render ettiği font.** Kanıtlı bulgu
+(Playwright `document.fonts` + computed style): eski site TEK YÜZ yükler —
+`myBrandFont` = `Gilroy-Medium.ttf` (universal reset ile her elemana); başlık/menü/
+buton bold'ları (600/700) **tarayıcı sentetik bold'u**. Light/ExtraBold dosyaları
+klasörde var ama CSS hiç yüklemez. Lato yalnız 1 span'da declared, yüklenmez bile.
+**v3a buna eşitlendi:** tek @font-face (Gilroy-Medium 500), 300→500 (42 yer),
+800→700 (43 yer), nav linkleri 700. Dosya md5'leri eski siteyle birebir aynı.
+
+### REVİZE TURU 2 (2026-06-10 — v3a, commit YOK)
+1. **Font** — yukarıda (tek yüz Gilroy-Medium + sentetik bold = eski site DNA'sı)
+2. **Menü ortalandı** — `.h-nav>.wrap` justify-content:center (çift kat korunur)
+3. **"Tamamını Gör"** — tüm listeli section'larda tek etiket/pattern (`.see-all`):
+   Kategoriler + Tariflerimiz + Mutfak Sırları (koyu glass varyant) + Keşfet +
+   Şefler + Videolar + Shop. Konum: başlık sağı (sec-tools)
+4. **App bandı büyüdü** — padding 30→52px, ikon 46→64px, başlık 17→22px,
+   badge'ler büyüdü; separator karakteri korundu
+5. **Çerez banner'a "KVKK Aydınlatma Metni" linki** eklendi (Çerez Politikası yanı)
+6. **Görüş Bildir** — eski site mirası: sağ kenarda 90° döner sabit turuncu etiket
+   (`.feedback-tab`, ≤640 gizli) → tıklayınca **modal** (konu chips: öneri/soru/
+   teknik/ihlal + ad-opsiyonel/e-posta/mesaj/KVKK onay + teşekkür state). `?fb=1` SS modu
+7. **Keşfet mobilde yatay slider** (dikey yığma kaldırıldı, diğer slider'larla aynı dil)
+8. **Drawer dil seçici** ikili butondan **aç/kapa listeye** çevrildi (N dile ölçeklenir,
+   `#drawerLang`, seçimde etiket "TR — Türkçe" formatında güncellenir)
+9. **Footer reveal (gaviaworks perdesi)** — ≥641px: footer fixed bottom z-1 arkada,
+   içerik `<main class="page-main">` z-2 opak; JS footer yüksekliğini ölçüp
+   main'e margin-bottom verir (resize/load/fonts.ready'de güncellenir).
+   Mobil: statik footer'a düşer. Perde gölgesi YOK (Beyar böyle istedi)
+10. **Ok tutarlılığı** — tüm yön okları 13px (see-all, cat-nav, row-nav, mega-all, st-arrow)
 
 ---
 
@@ -127,7 +156,7 @@ open "http://localhost:8765/mockups/anasayfa-portal-v3a.html"
 
 # headless SS: ?ss=1 (video→poster) · ?fp=1 (hero cap, full-page SS) ·
 # ?hdr=solid (katı header) · ?dd=1 (mega menü + dil dropdown açık) ·
-# ?drawer=1 (mobil drawer) · ?cc=1 (çerez banner zorla)
+# ?drawer=1 (mobil drawer) · ?cc=1 (çerez banner zorla) · ?fb=1 (görüş bildir modal)
 "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" --headless=new \
   --disable-gpu --hide-scrollbars --window-size=1440,9600 --virtual-time-budget=9000 \
   --screenshot="screenshots/v3a-full.png" \
