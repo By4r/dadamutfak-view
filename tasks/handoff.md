@@ -8,6 +8,35 @@
 
 ## 🟢 DURUM (EN ÜSTTE OKU)
 
+**REVİZE TURU 3 TAMAMLANDI (2026-06-10, SS turu Beyar onaylı — commit/push bu session'da yapıldı).**
+17 madde + 4 canlı ek revizyon (slider auto-slide, login butonu eski tomato rengi,
+mega menü "Tüm Tarifler" son kategori slotuna, kart tutarlılık turu) uygulandı.
+Hepsi `mockups/anasayfa-portal-v3a.html` içinde; Playwright SS'leriyle doğrulandı,
+SS'ler `ss-t3/` klasöründe. Plan + uygulama sonuçları + sapmalar:
+`tasks/revize-turu-3-plan.md` (UYGULAMA SONUCU bölümü dahil — oku).
+
+**Yasin Bey onayı bekleyen 2 nokta:**
+1. Footer yasal link kısaltmaları ("İptal, İade ve Değişim", "Gizlilik ve Çerez" vb.
+   tek satır için) — SS: `ss-t3/16-footer.jpeg`
+2. Görüş Bildir'e eklenen 5. tip "Puan ver" (emoji skalası, ekstra öneri) —
+   SS: `ss-t3/17-modal-puan.jpeg`
+
+**🎨 RENK NOTU (gelecek session bunu bilsin):** Krem TAMAMEN kalktı — "Topluluğa katıl"
+dahil tüm section akışı `#f9f9f9` (eski site grisi) / beyaz ekseninde. `--bg-cream` ve
+`--bg` artık #f9f9f9, `--bg-white` #fff. Krem geri getirilmeyecek.
+
+**⏭️ SIRADAKİ İŞ (bu session'da YAPILMADI — yeni session buradan başlar):**
+Keşfet mekan kartlarına **kapanış bilgisi** eklenecek.
+- Referans: eski site `drive-download-20260608T070112Z-3-001/dada-mutfak-icerik/`
+  altındaki keşfet kartlarındaki kapanış uyarısı pattern'ı (örn. kesfet.html'de
+  "30 dk sonra kapanacak" satırı, `fa-clock` + turuncu vurgu).
+- Mantık: kapanışa **60 dk kala** uyarı görünür — durumlar: "45 dk sonra kapanıyor",
+  "30 dk", "15 dk" ve "Kapandı".
+- 1-2 demo karta eklenecek; mevcut kart diliyle tutarlı (koyu pill rozet dili — `.mt`).
+- Sonrasında: SS + commit + push.
+
+---
+
 **REVİZE TURU 2 CANLIDA (2026-06-10, commit `a544321` — push edildi, Pages'te yayında).**
 Çalışma dosyası artık SADECE `mockups/anasayfa-portal-v3a.html` (ana base seçildi);
 v2/v3b/v3c dondu, dokunulmuyor. Mega menü patron onaylı — yapısı değişmez.
