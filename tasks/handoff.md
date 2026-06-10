@@ -15,25 +15,35 @@ Hepsi `mockups/anasayfa-portal-v3a.html` içinde; Playwright SS'leriyle doğrula
 SS'ler `ss-t3/` klasöründe. Plan + uygulama sonuçları + sapmalar:
 `tasks/revize-turu-3-plan.md` (UYGULAMA SONUCU bölümü dahil — oku).
 
-**Yasin Bey onayı bekleyen 2 nokta:**
+**Yasin Bey onayı bekleyen 3 nokta:**
 1. Footer yasal link kısaltmaları ("İptal, İade ve Değişim", "Gizlilik ve Çerez" vb.
    tek satır için) — SS: `ss-t3/16-footer.jpeg`
 2. Görüş Bildir'e eklenen 5. tip "Puan ver" (emoji skalası, ekstra öneri) —
    SS: `ss-t3/17-modal-puan.jpeg`
+3. Keşfet mekan kartlarındaki kapanış rozetleri (aşağıda — Beyar onayladı,
+   patron henüz görmedi) — SS: `screenshots/kesfet-kapanis-1440.png`
 
 **🎨 RENK NOTU (gelecek session bunu bilsin):** Krem TAMAMEN kalktı — "Topluluğa katıl"
 dahil tüm section akışı `#f9f9f9` (eski site grisi) / beyaz ekseninde. `--bg-cream` ve
 `--bg` artık #f9f9f9, `--bg-white` #fff. Krem geri getirilmeyecek.
 
-**⏭️ SIRADAKİ İŞ (bu session'da YAPILMADI — yeni session buradan başlar):**
-Keşfet mekan kartlarına **kapanış bilgisi** eklenecek.
-- Referans: eski site `drive-download-20260608T070112Z-3-001/dada-mutfak-icerik/`
-  altındaki keşfet kartlarındaki kapanış uyarısı pattern'ı (örn. kesfet.html'de
-  "30 dk sonra kapanacak" satırı, `fa-clock` + turuncu vurgu).
-- Mantık: kapanışa **60 dk kala** uyarı görünür — durumlar: "45 dk sonra kapanıyor",
-  "30 dk", "15 dk" ve "Kapandı".
-- 1-2 demo karta eklenecek; mevcut kart diliyle tutarlı (koyu pill rozet dili — `.mt`).
-- Sonrasında: SS + commit + push.
+**✅ KEŞFET KAPANIŞ BİLGİSİ TAMAMLANDI (2026-06-10, Beyar onaylı — bu commit'te):**
+Keşfet mekan kartlarına kapanış rozetleri eklendi (`mockups/anasayfa-portal-v3a.html`).
+- Eski site pattern'ı: kapanış yakın → `fa-clock` + "30 dk sonra kapanacak" kehribar
+  (`rgb(219,142,0)`, kesfet.html/index.html); kapalı → `fa-circle-minus` + "Kapalı"
+  kırmızı (kesfet-detay.html). "Açık" durumu eski sitede yorum satırında — kullanılmadı.
+- Yeni dil: rozet **görsel üst-sol** (`.disc-status`, sol-alt fiyat pill + sağ-alt
+  medya rozetleriyle çakışmaz), mevcut `.mt` koyu rgba+blur pill tabanı.
+  - `st-closing` — koyu pill + **sarı saat ikonu** (`--yellow`) + "30 dk sonra
+    kapanıyor" (1. kart, Sini). 45/15 dk durumları aynı pill'de metin değişimi.
+    Mantık: kapanışa **60 dk kala** görünür.
+  - `st-closed` — **kırmızımsı pill** (`rgba(116,28,18,.74)`, soluk somon metin,
+    `fa-circle-minus`) + karta `is-closed` class'ı → görsel `grayscale(.45)
+    brightness(.94)` ile soluklaşır (2. kart, Tandır Ocakbaşı).
+  - 3. kart default temiz bırakıldı (uyarısız durum örneği). Gurme pane dokunulmadı.
+- SS'ler: `screenshots/kesfet-kapanis-1440.png` (desktop section) ·
+  `kesfet-kart1-closing.png` / `kesfet-kart2-closed.png` (yakın çekim) ·
+  `kesfet-kapanis-390.png` (mobil slider).
 
 ---
 
