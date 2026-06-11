@@ -1,8 +1,8 @@
-# DadaMutfak — HANDOFF · F1 Tarif Detay (Tur 1 + Tur 1.5 revize TAMAM, Tur 2 sıradaki)
+# DadaMutfak — HANDOFF · F1 Tarif Detay (Tur 1 + 1.5 + 2 TAMAM — patron sunumu sıradaki)
 
 > Bu dosya **tek doğruluk kaynağı**dır. Beyar context temizledikten (clear) sonra
 > yeni session bu dosyayı okuyup kaldığı yerden devam eder.
-> Güncelleme: 2026-06-11 (F1 Tur 1.5 — patron revize turu sonu)
+> Güncelleme: 2026-06-11 (F1 Tur 2 — sosyal katman tamamlandı)
 
 ---
 
@@ -87,18 +87,61 @@ revize + Beyar ara maddeleri işlendi (hepsi `tarif-detay-v1.html`'de):
 
 ---
 
+### F1 TUR 2 — SOSYAL KATMAN (TAMAMLANDI ✔)
+
+Eski template yorum bölgesi blok envanteri çıkarıldı (L1), tüm işlevler
+karşılandı. Hepsi `tarif-detay-v1.html`'de:
+
+- **Yorum bölümü** (stub kaldırıldı): puan özeti (4.9 + %96 tavsiye) + yıldız
+  dağılım grafiği (5→1 bar) tek kartta; **fotoğraflı yorum formu** (yıldız
+  ZORUNLU — puansız submit engellenir + shake; foto önizleme max 3, objectURL);
+  form **kapalı başlar, tıkla → genişler** (dikey tasarruf, Beyar isteği);
+  filtre çipleri (Tümü/Fotoğraflı/5/4/3 ve altı — ilk sayfada canlı çalışır);
+  nested yorum listesi: beğen (sayaçlı toggle) / yanıtla (inline form, gönderince
+  "denetimde" cevabı eklenir) / bildir ("Bildirildi ✓") / kendi yorumunda
+  düzenle+sil (sil → Geri Al satırı); rozetler: Usta Aşçı, **Tarif Sahibi**
+  (dolu domates), "sen"; "Daha Fazla Yorum Göster". Yorum fotoğrafları MEVCUT
+  lightbox'a bağlı (yorum başına grup).
+  Bilinçli kararlar: eski sitenin "Beğenme" (dislike) butonu ELENDİ; disclaimer
+  metni korundu; login gate mock'ta giriş yapmış görünüm (stack fazında).
+- **"Ben de Yaptım" foto duvarı (m2):** masonry 4 kolon (kompakt), ad+tarih
+  overlay, "Fotoğrafını Yükle" CTA (başlıkta buton + duvarda dashed tile;
+  dosya seç → duvara "denetimde" etiketiyle eklenir). Fotoğraflar MEVCUT
+  lightbox grubuna bağlı — yeni lightbox YOK.
+- **Editör notu (m30):** hatırlatma kutusu ailesi, ayrışan ses (beyaz kart +
+  domates sol şerit + kalem ikonu + "En Sık Yapılan Hata" etiketi + editör
+  imza satırı). **Hatırlatma + editör notu yan yana `.note-duo` grid'inde**
+  (Beyar dikey optimizasyon isteği; ≤1024 tek kolon).
+- **Tarif→Shop rayı (m19):** "Bu tarifte kullanılan ürünler" — p-card v3a'dan
+  BİREBİR (CSS verbatim kopya), 4 ürün adım referanslı açıklamalarla, beyaz
+  zemin (gri↔beyaz ritmi), row-nav + drag-scroll otomatik çalışır.
+- **Hashtag + paylaşım rayı:** 4 hashtag chip + 5 platform (FB/X/WA/TG/Pin) +
+  bağlantı kopyala (e-posta yerine; "Kopyalandı ✓" durumu). Tek satır, ince.
+  Sticky bar "Paylaş" → navigator.share, yoksa bu raya scroll (EK handler,
+  onaylı bar koduna dokunulmadı).
+- **Sayfalar arası bağlantı:** v3a'da 11 göreli href (feat-big + 9 r-card
+  başlığı anchor + "Tarife Git") → tarif-detay-v1.html; v3a'da SADECE href
+  eklendi (başlık metni anchor'a sarıldı, CSS/yapı değişmedi). Karşı yön:
+  breadcrumb "Ana Sayfa" + header logo → v3a (Tur 1'den vardı, doğrulandı);
+  benzer tarifler 4 kartı kendine (mock) linkli.
+- **Bugfix (Beyar):** hero "1.204 değerlendirme" tıklayınca lightbox da
+  açılıyordu — sahne click handler'ına `a` exclude eklendi.
+- **Dikey optimizasyon (Beyar "uzadı" notu):** note-duo yan yana, duvar 3→4
+  kolon + alçak tile, form collapsed, liste/margin sıkılaştırma, shoprail
+  52px padding → sayfa 7750 → **6543px** (1440).
+- Doğrulama: 1440+390 konsol 0 hata; lightbox 4 kaynak (galeri/adım/duvar/yorum)
+  regresyon geçti; porsiyon/ikame/pişirme modu regresyon geçti; link gezinmesi
+  iki yönlü gerçek tıklamayla test edildi; 390'da yatay scroll yok.
+
 ## ➡️ AÇIK İŞ — SIRADAKİ
 
-**F1 TUR 2 — sosyal katman** (tarif-detay-v1.html üzerine):
-1. Yorum akışı (yıldız zorunlu + foto upload + nested + beğen/bildir/düzenle/sil)
-   — `#yorumlar` stub'ının yerine gelir
-2. Fotoğraflı yorum formu
-3. Yıldız dağılım grafiği
-4. "Ben de Yaptım" foto duvarı (m2)
-5. Tarif→Shop rayı (m19)
-6. Hashtag/paylaşım
-7. Ana sayfa ↔ tarif detay link bağlantısı
-8. Editör notu / sık yapılan hata kutusu (m30) — yeri adımların altı
+**F1 TAMAMLANDI ✔** (Tur 1 + 1.5 + 2, Beyar onaylı, commit'lendi).
+
+Üretim planı: **`tasks/uretim-plani.md`** (Tier 0-5, Beyar onaylı).
+
+**SIRADAKİ ADIM: TIER 1 agent team kurulumu** — 4 teammate (liste / video /
+form / profil). Ön koşul: lead önce `mockups/_shell.html` + 
+`tasks/bilesen-kilavuzu.md` üretir. Kurallar uretim-plani.md'de.
 
 ---
 
