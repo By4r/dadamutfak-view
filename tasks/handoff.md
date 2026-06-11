@@ -1,8 +1,8 @@
-# DadaMutfak — HANDOFF · F1 Tarif Detay (Tur 1 üretildi, revize bekliyor)
+# DadaMutfak — HANDOFF · F1 Tarif Detay (Tur 1 + Tur 1.5 revize TAMAM, Tur 2 sıradaki)
 
 > Bu dosya **tek doğruluk kaynağı**dır. Beyar context temizledikten (clear) sonra
 > yeni session bu dosyayı okuyup kaldığı yerden devam eder.
-> Güncelleme: 2026-06-11 (F1 Tur 1 sonu)
+> Güncelleme: 2026-06-11 (F1 Tur 1.5 — patron revize turu sonu)
 
 ---
 
@@ -38,8 +38,50 @@
 - Besin seti **modern 8'li** (Kalori/Protein/Karb/Yağ/Lif/Şeker/Sodyum/Doymuş)
   — **kapandı, bilinçli karar** (eski sitenin Su/Kolesterol/Demir seti ELENDİ)
 
+### F1 Tur 1.5 — PATRON REVİZE TURU (TAMAMLANDI ✔)
+
+Patron 3 başlık varyantından **A'yı (hero overlay)** seçti; üzerine 14 maddelik
+revize + Beyar ara maddeleri işlendi (hepsi `tarif-detay-v1.html`'de):
+
+- **Hero başlık dili (A):** etiketler + H1 + puan satırı hero alt bölgesinde
+  koyu gradient üzerinde; sahne 440px; thumb şeridi hero ALTINDA yatay
+- **Künye dikey kolon (260px):** hero yanında — porsiyon/süre/zorluk/derece +
+  altında "Mutfak & Özellikler" chip bölmesi (panelden taşındı)
+- **Çoklu mutfak + gerçek bayrak:** N mutfak chip'i desteklenir (örnek: Türk
+  Kayseri + İtalyan), bayraklar flagcdn img — EMOJİ YASAK
+- **Pişirme modu SAYACI:** adımın "N dk"sı sayaca otomatik; Başlat/Durdur,
+  bitişte 3'lü bip (WebAudio) + yanıp sönme; **"Bitince otomatik geç"** toggle'ı
+  (büyük, kutu görünümlü — eli yağlı senaryo); adım değişince reset
+- **Ölçü birimi popover'ı (F11 önyüzü):** miktara tıkla → "1 su bardağı ≈ 200 ml
+  / un ≈ 130 g"; ikame popover ailesiyle aynı dil, birbirini kapatırlar
+- **A−/A+ yazı boyutu:** adımlar başlığında; tarif metni + malzemeler 0.9–1.2x
+- **Adım tamamlama:** NUMARAYA tıkla → done; kart 74px'e KATLANIR (başlık+tik),
+  tekrar tıkla → açılır. Akordeon bilinçli REDDEDİLDİ (pişirirken taranabilirlik)
+- **Çoklu satıcı "Sipariş Et"** (eski site shops-dropdown kalıbı): Dada Shop
+  birincil (fiyat+stok) + Getir/Trendyol/Hepsiburada dış market seçenekleri;
+  logolar `mockups/assets/img/vendors/` (eski siteden kopyalandı)
+- **Satır bazlı sepet+ & liste durumu:** sponsorsuz satırlarda hover'da (mobilde
+  hep görünür, 34px) sepet+ ikonu; panel altında canlı "Listende N malzeme ·
+  Listeyi Gör" şeridi; toplu buton "Tümünü Listeye Ekle ↔ Tümü Listede"
+- **Sponsor varyantları:** Sipariş Et'li (Yörem, Söke) + Sipariş Et'siz salt
+  marka önerisi (Çiftlik yoğurt, "Sponsorlu Öneri" etiketi)
+- **Malzeme grupları (OPSİYONEL yapı):** "Hamur / İç Harç / Sos & Servis İçin"
+  hairline başlıkları; `.ing-group` satırı yoksa düz liste aynen çalışır;
+  porsiyon çarpanı + checkbox grup içinde aynen çalışır
+- **Kaldırılanlar:** "Kendi Kalori İhtiyacını Hesapla" CTA'sı; üst bölgedeki şef
+  satırı (şef yalnız alttaki minimal kartta — 54px avatar)
+- **Yorum erişimi:** smooth scroll + `#yorumlar` çapası (Tur 2 hedef bölgesi
+  stub'ı yazar kartı altında) + sticky aksiyon barında "Yorumlar" kısayolu
+- **Dikey optimizasyon:** besin bölümünün ayrı başlığı kalktı (kart kendi
+  başlığını taşır), sayfa 4371→3970px; "Nasıl yapılır?" y≈868 (eski 1233)
+- Doğrulama: 1440+390 konsol 0 hata; porsiyon/lightbox/pişirme modu/popover
+  regresyonları geçti. Referans varyant dosyası `tarif-detay-v1-headA.html`
+  duruyor (headB/C silindi).
+
 ### Kapanan kararlar
 - Besin alan seti → modern 8'li ✔
+- Başlık bölgesi → Varyant A hero overlay (patron seçimi) ✔
+- Adım akordeon fikri → reddedildi; tamamlanan adım katlanır (orta yol) ✔
 - Lessons kuralı → `tasks/lessons.md` L1 yazıldı: eski template blok envanteri
   üretimden ÖNCE çıkarılır, kıyas plan onayıyla sunulur (F2'den itibaren otomatik) ✔
 
@@ -47,12 +89,16 @@
 
 ## ➡️ AÇIK İŞ — SIRADAKİ
 
-1. **Başlık bölgesi yığılma revizesi** — Beyar mevcut hâli beğenmedi; yeni
-   session'da 2 varyant SS denenecek (detay prompt'la gelecek).
-2. Sonra **Tur 1 Beyar SS onayı** → **Tur 2 sosyal katman**: yorum (yıldız
-   zorunlu + foto upload + nested + beğen/bildir/düzenle/sil) + "Ben de Yaptım"
-   foto duvarı (m2) + yıldız dağılım grafiği + tarif→Shop rayı (m19) +
-   hashtag/paylaşım + editör notu/sık yapılan hata kutusu (m30).
+**F1 TUR 2 — sosyal katman** (tarif-detay-v1.html üzerine):
+1. Yorum akışı (yıldız zorunlu + foto upload + nested + beğen/bildir/düzenle/sil)
+   — `#yorumlar` stub'ının yerine gelir
+2. Fotoğraflı yorum formu
+3. Yıldız dağılım grafiği
+4. "Ben de Yaptım" foto duvarı (m2)
+5. Tarif→Shop rayı (m19)
+6. Hashtag/paylaşım
+7. Ana sayfa ↔ tarif detay link bağlantısı
+8. Editör notu / sık yapılan hata kutusu (m30) — yeri adımların altı
 
 ---
 
@@ -93,6 +139,9 @@ open "http://localhost:8765/mockups/tarif-detay-v1.html"
   · `?cc=1` · `?fb=1`
 - **tarif-detay-v1 paramları:** `?dd=1` (mega menü) · `?drawer=1` · `?cc=1` ·
   `?fb=1` · `?swap=1` (ikame popover açık) · `?bar=1` (aksiyon barı açık) ·
-  `?cook=1` (pişirme modu açık). Header bu sayfada hep katı (`hdr=solid` no-op).
+  `?cook=1` (pişirme modu açık) · `?shop=1` (sipariş popover'ı açık).
+  Header bu sayfada hep katı (`hdr=solid` no-op).
+- Scratch SS klasörü: `mockups/.ss-scratch/` (gitignored). Headless SS'i
+  Playwright MCP timeout verirse Chrome `--headless=new --screenshot` ile al.
 - Video modal açıkken headless SS timeout verebiliyor — state'i
   `browser_evaluate` ile doğrula, SS'i poster/kapalı hâlde al.
