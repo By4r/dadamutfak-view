@@ -80,6 +80,63 @@
 - `.menu-card .menu-thumbs .menu-cnt .menu-meta` menü koleksiyon kartı · `.puf-card .puf-fig .puf-tag .pufl-grid` püf kartı
 - `.try-note .tn-ph .tn-stars` — "denedim" yazar/not satırı (kaydedilen/favori kartlarında)
 
+## 2c. Dalga 2'de doğan bileşenler (Dalga 3+ MİRAS alır — yeniden icat YASAK)
+
+> CSS'i ilgili kaynak dosyanın diskteki SON hâlinden verbatim kopyala;
+> class adlarını DEĞİŞTİRME.
+
+### dmCart sepet izleri — kaynak `dada-shop-v1.html` (urun-liste/detay aynısını taşır)
+- `.cart-wrap .cart-btn .cart-badge` — header sepet ikonu + pop animasyonlu sayaç
+  (id'ler: `cartWrap cartBtn cartBadge`). YALNIZ shop ailesi sayfalarında (bilinçli
+  shell sapması); Dalga 3'te sepet/ödeme/sipariş sayfaları da bu aileye katılır
+- `.cart-dd .cdd-head .cdd-body .cdd-item .cdd-th .cdd-info .cdd-price .cdd-empty
+  .cdd-foot .cdd-sub .cdd-go` — header dropdown sepet önizleme
+- `.cart-toast .ct-ico .ct-text .ct-go` — "sepete eklendi" toast'ı
+- `window.dmCart` mock motoru: `add(name, price, qty, img)`; `.p-add` butonları
+  otomatik bağlanır (`dmPriceNum`/`dmImgOf` yardımcıları). Sepet TAM SAYFASI bu
+  motorun ÜSTÜNE kurulur, motoru yeniden yazmaz; `.cdd-go`/"Sepete Git" →
+  `sepet-v1.html`
+
+### Dolap/raf ailesi — kaynak `tarif-bulucu-v1.html`
+- `.tb-layout .tb-left .tb-right .tb-head .tb-head-row .tb-bar .tb-sum .tb-sort
+  .tb-grid .tb-empty .tb-div .tb-sec` — sol sticky dolap paneli + sağ CANLI sonuç grid'i
+- `.raf-rack .raf-item` (+ `.raf-head`) — akordeon raf grubu (malzeme seçimi)
+- `.dlp-bar .dlp-count .dlp-live .dlp-strip` — dolap durum çubuğu / canlı sayaç;
+  mobil sheet: `.dlp-sheet-head .dlp-sheet-foot .dlp-sheet-close`
+
+### Hesaplayıcı form + gauge şablonu — kaynak `hesaplayici-v1.html` (×6 tam sayfa bundan türetilir)
+- `.calc-top .calc-layout .calc-head .calc-card-box .calc-switch .calc-actions` —
+  sayfa iskeleti + hesaplayıcı geçiş (sekme) barı. Dalga 3'te sekme barı GERÇEK
+  sayfa linklerine döner (6 ayrı dosya)
+- `.res-box .res-num .res-num-row .res-cat .res-desc` — sonuç kartı
+- `.gauge .gauge-track .gauge-bar .gauge-needle .gauge-scale .gauge-labels` —
+  ibreli sonuç göstergesi (BKİ deseninden uyarlama; her hesaplayıcı kendi
+  skala/kategori etiketlerini verir)
+- Form alanları `fk-*` kitinden (§2b); cinsiyet/aktivite seçimleri chip/segment dili
+
+### Wizard mirası notu (KURAL)
+- `bugun-ne-pisirsem-v1` tarif-ekle stepper'ını (`.stepper .stp .stp-num .stp-lbl
+  .stp-line` + `.wiz-foot`) miras aldı, üstüne `.bnp-top .bnp-head .bnp-body
+  .bnp-restart` ekledi. YENİ çok adımlı akışlar (checkout, onboarding vb.) AYNI
+  stepper ailesinden türetilir — yeni stepper icadı YASAK
+
+### Landing hero varyantları — `lst-hero` ailesi (atası tarif-liste, §2b)
+- kategori / koleksiyon / seo-landing / gunun-menusu hero'ları hep `.lst-hero`
+  koyu-overlay dilinin varyantı; ekler: `.lh-main .lh-chips .lh-note .clh-note`
+- seo-landing: `.seo-intro .seo-intro-grid .seo-prose .seo-aside .seo-quick` —
+  uzun-form SEO metin bloğu (rehber/uzun içerik sayfalarına referans dil)
+- koleksiyon: `.coll-* .coldex-*` (dizin rayı) · günün menüsü: `.arc-*` (arşiv rayı)
+
+### Diyetisyen kart dili — kaynak `diyetisyen-dizin-v1.html`
+- `.dz-grid .dz-card .dz-top .dz-ava .dz-id .dz-verify .dz-rate .dz-tags .dz-tag
+  .dz-meta .dz-price .dz-foot .dz-go .dz-save .dz-ribbon` — doğrulanmış uzman kartı
+
+### Reyon-grup alışveriş listesi — kaynak `haftalik-menu-v1.html`
+- `.shop-layout .shop-list .shop-sec .shop-group .shop-ghead .shop-headrow
+  .shop-items .shop-item .shop-summary` — reyon başlıklı, işaretlenebilir liste;
+  `alisveris-listesi-v1` bu dili miras alır (üstüne manuel kalem ekleme +
+  "sepete aktar" köprüsü gelir)
+
 ## 3. Dil kuralları (kısa)
 
 - Radius: SADECE token (`--radius-sm/md/lg/xl/circle`); `--radius-pill` yalnız bottom-nav mirası — YENİ pill yok
