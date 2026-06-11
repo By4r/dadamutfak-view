@@ -149,6 +149,11 @@ diyetisyen profili → randevu → danışan paneli (kalıcı abonelik ilişkisi
 - **Yazdır görünümü** Ⓜ — sade print şablonu (tarif + menü + alışveriş listesi).
 
 ### 2.3 Keşif araçları
+- **Global arama sonuç sayfası** Ⓡ — header aramasının indiği, içerik tipleri
+  karışık sonuç ekranı (tarif + püf + video + ürün + sözlük terimi sekmeleri/
+  blokları; BBC Good Food / NYT site search modeli). *Tip sekmeli sonuç düzeni,
+  r-card/vid-card/p-card karışık kullanım, sonuç-boş durumu, arama autocomplete
+  dropdown'ı. → F2.*
 - **Bugün Ne Pişirsem** Ⓜ — seçim akışıyla öneri (kategori/tempo/diyet seçimi →
   sonuç listesi). *Wizard pattern, seçim kartları, activated-state, sonuç grid'i.*
 - **Tarif Bulucu (malzemeye göre)** Ⓜ — "evde ne varsa" araması. *Malzeme
@@ -203,6 +208,10 @@ diyetisyen profili → randevu → danışan paneli (kalıcı abonelik ilişkisi
 
 ### 2.7 Diyetisyen Modülü Ⓓ
 **Public taraf:**
+- **Diyetisyen Ol — başvuru/kayıt sayfası** — uzmanın platforma katılım formu
+  (doküman başlık 1): ad/soyad, unvan, **diploma no (doğrulamalı)**, iletişim,
+  uzmanlık alanları; başvuru-alındı/inceleme durumu ekranı. *Form kiti +
+  durum banner'ı. → F12a.*
 - **Diyetisyenler dizini** — uzman bulma. *Uzman kartı (foto+unvan+uzmanlık+puan),
   filtre (uzmanlık, şehir, online/yüz yüze), arama.*
 - **Diyetisyen public profili** — SEO-açık tanıtım sayfası. *Profil hero
@@ -225,6 +234,8 @@ diyetisyen profili → randevu → danışan paneli (kalıcı abonelik ilişkisi
 - **Ölçüm takibim** — kilo/ölçü girişi + ilerleme grafiği.
 - **Randevularım** — mevcut + geçmiş.
 - **Mesajlarım** — diyetisyenle yazışma.
+- **Anket doldurma ekranı** — diyetisyenin gönderdiği beslenme anketi (doküman
+  ek notu); sonuçları diyetisyen panelindeki danışan dosyasına düşer.
 
 ### 2.8 Dada Shop ⭐ (patron onaylı: "aşırı iyi")
 - **Shop vitrini** — kampanya bandı + kategori girişleri + öne çıkan/indirimli
@@ -245,6 +256,13 @@ diyetisyen profili → randevu → danışan paneli (kalıcı abonelik ilişkisi
 ### 2.9 Topluluk & Hesap
 - **Giriş / Kayıt / Şifremi unuttum** Ⓜ — auth ailesi. *Auth kart layout'u,
   sosyal login, KVKK onayları.*
+- **Auth ara ekranları** Ⓡ — e-posta doğrulama ("mail gönderildi" + doğrulandı/
+  link geçersiz), yeni şifre belirleme; auth kart şablonunun varyantları. *→ F6.*
+- **Onboarding / hoş geldin akışı** Ⓡ — ilk kayıt sonrası 2-3 adımlık tercih
+  seçimi: beslenme tercihi (vegan/glutensiz...), alerjiler, ilgi kategorileri,
+  takip önerileri (Samsung Food / Mealime modeli; panel taslağındaki
+  kişiselleştirme/yapay-zeka tohumunun veri girişi). *Wizard pattern (F4) +
+  seçim chip'leri, atlanabilir. → F6.*
 - **Hesabım (ayarlar)** Ⓜ — profil bilgileri, bildirim tercihleri, gizlilik,
   hesap silme. *Section'lı ayar sayfası, toggle'lar.*
 - **Public kullanıcı profili — "Mutfak Defteri"** Ⓟ⭐ (m8 patron: detaylandır) —
@@ -261,6 +279,9 @@ diyetisyen profili → randevu → danışan paneli (kalıcı abonelik ilişkisi
   kullanıcı profili şablonunun rozetli varyantı. *"Şef Ol" CTA'sı kayda köprü.*
 - **Bildirimler** Ⓜ — takip edilenlerin aktiviteleri, onay sonuçları, randevu
   hatırlatmaları. *Bildirim satırı listesi + temizle; header dropdown'ı.*
+- **Premium üyelik tanıtım sayfası** Ⓟ — **[İLERİ FAZ]** reklamsız kullanım,
+  kişisel menü planı, diyetisyen içerikleri, özel koleksiyonlar (PDF m29);
+  plan karşılaştırma tablosu. Tasarım sırası premium kararı netleşince.
 
 ### 2.10 Ramazan & sezonluk
 - **İftara Doğru / Sahura Doğru** Ⓜ — Ramazan landing'leri (geri sayım, günün
@@ -276,16 +297,30 @@ diyetisyen profili → randevu → danışan paneli (kalıcı abonelik ilişkisi
   çerez, üyelik, kullanım koşulları, mesafeli satış, iptal-iade, ödeme-teslimat.
   *Tek şablon: içindekiler nav'ı + metin gövdesi.*
 - **İhlal bildirimi** Ⓜ — içerik şikâyet formu (telif/spam/uygunsuz).
+- **Topluluk / içerik yayın kuralları** Ⓡ — UGC platform standardı (Cookpad/
+  Allrecipes community guidelines): tarif/foto/yorum yayın kuralları, onay
+  kriterleri; tarif ekleme stepper'ından ve ihlal formundan linklenir.
+  *Yasal metin şablonunu paylaşır. → F13.*
+- **Mobil app tanıtım landing'i** Ⓟ — **[PATRON KARARINA BAĞLI]** uygulama içi
+  özelliklerin tanıtımı: favoriler, alışveriş listesi, tarif defteri, haftalık
+  menü, bildirim, çevrimdışı tarif (PDF m3 — "uygulama özellikleri
+  detaylandırılmıyor" eleştirisinin cevabı). *App bandı (v3a) görselleri +
+  özellik vitrini + store rozetleri. → F13 (karar onaylanırsa).*
 
 ### 2.12 Yardımcı ekranlar
-- **404** — Oatly-sesli, esprili marka kişiliği ("tarif bulunamadı, ama şuna ne
-  dersin" + öneri rayı).
+- **Hata ailesi: 404 / 500 / bakım modu** Ⓡ — tek şablon ailesi, Oatly-sesli
+  esprili marka kişiliği ("tarif bulunamadı, ama şuna ne dersin" + öneri rayı;
+  500/bakım: sade varyant, öneri rayı yok). *→ F13.*
 - **Arama sonucu boş / filtre boş durumları** — her liste sayfasının kendi boş
   durumu (kendi fazında tasarlanır, sona bırakılmaz).
 - **Çerez/izin, geri bildirim modali** ✓ — v3a'da mevcut.
 
-**Özet sayım:** ~55-60 ayrı ekran; şablon paylaşımıyla (~hesaplayıcı ×5, yasal
-×10, sözlük ×4, seri ×N) **~35-40 özgün tasarım**.
+**Özet sayım:** ~60-65 ayrı ekran; şablon paylaşımıyla (~hesaplayıcı ×5, yasal
+×10+, sözlük ×4, seri ×N, auth ara ekranları, hata ailesi) **~40 özgün tasarım**.
+
+> **Açık soru (Beyar/patron):** topbar'da dil seçici (EN) var — EN içerik/sayfa
+> stratejisi tanımsız. Mockup fazında sayfa üretilmiyor; karar stack fazından
+> önce netleşmeli (tam çeviri mi, yalnız arayüz mü, EN yok mu).
 
 ---
 
@@ -316,7 +351,8 @@ diyetisyen profili → randevu → danışan paneli (kalıcı abonelik ilişkisi
 | Sağlık | hesaplayıcı form + sonuç kartı (gauge) · quiz akışı (soru kartı+ilerleme) · besin satırı/tablosu · program kartı · ölçüm grafiği | sağlık / diyetisyen |
 | Diyetisyen panel | app shell (sidebar'lı) · stat kartı · veri tablosu · takvim görünümü + slot seçici · öğün-blok builder · makro progress bar'ı · chat balonu | diyetisyen modülü |
 | Shop | ürün galerisi · varyant/adet seçici · sepet satırı · sipariş özeti kutusu · checkout stepper'ı · timeline (sipariş durumu) · işaretlenebilir alışveriş listesi | shop |
-| Genel | accordion (SSS) · toast/bildirim · modal aileleri (kayıt tetikleyici, randevu) · empty state seti (Oatly-sesli) · pişirme modu tam ekran şablonu · print şablonu · 404 | ilgili fazlar |
+| Genel | accordion (SSS) · toast/bildirim · modal aileleri (kayıt tetikleyici, randevu) · empty state seti (Oatly-sesli) · pişirme modu tam ekran şablonu · print şablonu · hata sayfası şablonu (404/500/bakım) | ilgili fazlar |
+| Panel taslağı public yüzü | kampanya popup'ı (popup yönetiminin önyüzü) · bülten kayıt formu (footer — üyeler/E-Bülten modülünün önyüzü) · reklam alanı şablonları (728×90, kare — reklam yönetiminin önyüzü; **patron kararına bağlı**, m29 "reklamsız premium" reklam varlığını ima ediyor) | footer / tarif detay / liste |
 
 ---
 
