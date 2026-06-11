@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Tarif Ekle — DadaMutfak | Tarifini 4 Adımda Paylaş</title>
+<title>Haftalık Dada Menü — 7 Günlük Plan & Alışveriş Listesi — DadaMutfak</title>
 <link rel="shortcut icon" type="image/x-icon"
       href="assets/img/favicon.ico" />
 <!-- FontAwesome 6.5.2 (kilitli ikon seti) -->
@@ -612,317 +612,163 @@ html,body{overflow-x:hidden}
    Yukarıdaki chrome katmanına DOKUNMA (mega menü KİLİTLİ).
    ===================================================================== */
 
-/* ============ TARİF EKLE (F5) — FORM KİTİ DOĞUM SAYFASI ============
-   .fk-* alan kiti + .up-* yükleme kiti + .ie-* dinamik satır kiti +
-   .stepper sihirbaz göstergesi + .sbanner durum bandı.
-   Sonraki sayfalar (auth, hesabım, diyetisyen) bu kiti miras alır.
-   Köken: shell .fb-field/.fb-select dili + TD .remind-box/.ing-group. */
+/* ============ HAFTALIK DADA MENÜ (F4 / m5 · kritik-10 №3) ============
+   7 gün × 3 öğün plan board + kişi sayısı sayacı + otomatik alışveriş
+   listesi çıktısı (yıldız özellik). Miras: rd-crumb · facet .cbx onay kutusu
+   · TD .ing-list satır dili · r-card mini türevi. */
 
-/* ---- sayfa üst bandı (TD .rd-top pattern'ı) ---- */
-.fp-top{background:var(--bg-white);border-bottom:1px solid var(--line);padding-bottom:0}
-
-/* breadcrumb — tarif-detay-v1 .rd-crumb VERBATIM */
+/* breadcrumb — VERBATIM */
 .rd-crumb{display:flex;align-items:center;flex-wrap:wrap;gap:9px;padding:18px 0 14px;font-size:13px;font-weight:500;color:var(--muted)}
 .rd-crumb a{color:var(--muted);transition:.18s}
 .rd-crumb a:hover{color:var(--tomato)}
 .rd-crumb i{font-size:9px;color:#c7c7c7}
 .rd-crumb b{color:var(--slate);font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:340px}
 
-/* başlık satırı */
-.fp-head{display:flex;align-items:flex-end;justify-content:space-between;gap:24px;padding:6px 0 24px}
-.fp-head h1{font-size:38px;letter-spacing:-.03em;margin-top:10px}
-.fp-head .lead{font-size:15px;color:var(--muted);font-weight:500;margin-top:8px;max-width:560px}
-.fp-head .see-all{margin-bottom:4px}
+/* üst band */
+.hm-top{background:var(--bg-white);border-bottom:1px solid var(--line)}
+.hm-head{display:flex;align-items:flex-end;justify-content:space-between;gap:24px;flex-wrap:wrap;padding:4px 0 24px}
+.hm-head .eyebrow{margin-bottom:13px}
+.hm-head h1{font-size:38px;letter-spacing:-.03em}
+.hm-head .lead{font-size:15px;color:var(--muted);font-weight:500;margin-top:9px;max-width:560px}
 
-/* ---- DURUM BANDI (.sbanner) — taslak / onayda / reddedildi ---- */
-.sbanner{display:none;align-items:flex-start;gap:14px;border:1px solid;border-radius:var(--radius-lg);padding:16px 18px;margin-bottom:22px;animation:fadeUp .35s var(--ease)}
-.sbanner.show{display:flex}
-.sb-ico{flex:none;width:42px;height:42px;border-radius:var(--radius-md);display:grid;place-items:center;font-size:17px}
-.sb-body{flex:1;min-width:0}
-.sb-body h4{font-size:15.5px;margin-bottom:4px;display:flex;align-items:center;gap:9px;flex-wrap:wrap}
-.sb-tag{font-size:9.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:3px 8px;border-radius:var(--radius-sm)}
-.sb-body p{font-size:13.5px;color:var(--slate-2);font-weight:500;line-height:1.6}
-.sb-body p b{color:var(--slate)}
-.sb-quote{display:block;background:#fff;border:1px solid rgba(225,72,39,.25);border-radius:var(--radius-md);padding:11px 14px;margin-top:9px;font-size:13.5px;color:var(--slate);font-weight:500;line-height:1.55;font-style:normal;quotes:none}
-.sb-quote i{font-size:12px;color:var(--tomato);margin-right:7px}
-.sbanner .btn{flex:none;align-self:center;padding:12px 20px;font-size:13.5px;white-space:nowrap}
-.sbanner.draft{background:var(--bg);border-color:var(--line)}
-.sbanner.draft .sb-ico{background:rgba(33,30,22,.07);color:var(--slate-2)}
-.sbanner.draft .sb-tag{background:rgba(33,30,22,.08);color:var(--slate-2)}
-.sbanner.review{background:#FFF8E6;border-color:rgba(250,192,69,.5)}
-.sbanner.review .sb-ico{background:rgba(250,192,69,.25);color:#B8860B}
-.sbanner.review .sb-tag{background:rgba(250,192,69,.22);color:#B8860B}
-.sbanner.rejected{background:var(--tomato-tint);border-color:rgba(225,72,39,.35)}
-.sbanner.rejected .sb-ico{background:rgba(225,72,39,.14);color:var(--tomato)}
-.sbanner.rejected .sb-tag{background:rgba(225,72,39,.14);color:var(--tomato)}
+/* kontrol barı (kişi sayısı + hafta + aksiyonlar) */
+.hm-controls{display:flex;align-items:center;gap:14px;flex-wrap:wrap;padding:16px 18px;background:var(--bg-cream);border:1px solid var(--line);border-radius:var(--radius-lg);margin-bottom:22px}
+.hm-ctl{display:flex;flex-direction:column;gap:7px}
+.hm-ctl>.cl{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+/* kişi sayacı */
+.ppl{display:inline-flex;align-items:center;border:1px solid var(--line);border-radius:var(--radius-md);background:var(--paper);overflow:hidden}
+.ppl button{width:42px;height:46px;border:none;background:var(--paper);color:var(--slate);font-size:15px;cursor:pointer;transition:.18s var(--ease)}
+.ppl button:hover{background:var(--tomato-tint);color:var(--tomato)}
+.ppl button[disabled]{opacity:.4;cursor:default}
+.ppl .ppl-val{min-width:96px;height:46px;display:grid;place-items:center;font-size:14px;font-weight:700;color:var(--slate);border-left:1px solid var(--line);border-right:1px solid var(--line)}
+.ppl .ppl-val small{font-weight:500;color:var(--muted);margin-left:5px;font-size:12px}
+/* hafta gezgini */
+.wk-nav{display:inline-flex;align-items:center;border:1px solid var(--line);border-radius:var(--radius-md);background:var(--paper);overflow:hidden}
+.wk-nav button{width:42px;height:46px;border:none;background:var(--paper);color:var(--slate);font-size:13px;cursor:pointer;transition:.18s var(--ease)}
+.wk-nav button:hover{background:var(--tomato-tint);color:var(--tomato)}
+.wk-nav .wk-cur{min-width:148px;height:46px;display:grid;place-items:center;font-size:13.5px;font-weight:700;color:var(--slate);border-left:1px solid var(--line);border-right:1px solid var(--line);text-align:center}
+.hm-actions{margin-left:auto;display:flex;gap:10px;align-self:flex-end}
 
-/* ---- STEPPER (4 adım · tamamlanan ✓ · aktif domates · geriye tıklanır) ---- */
-.stepper{display:flex;align-items:center;gap:14px;background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-lg) var(--radius-lg) 0 0;border-bottom:none;box-shadow:var(--sh-sm);padding:18px 22px;position:relative;z-index:2}
-.stp{display:flex;align-items:center;gap:12px;background:none;border:none;font-family:inherit;text-align:left;cursor:default;padding:0}
-.stp-num{position:relative;flex:none;width:40px;height:40px;border-radius:var(--radius-circle);border:2px solid var(--line);background:var(--paper);display:grid;place-items:center;font-size:14px;font-weight:700;color:var(--muted);transition:.25s var(--ease)}
-.stp-num i{display:none;font-size:13px}
-.stp-lbl{min-width:0}
-.stp-lbl b{display:block;font-size:13.5px;font-weight:700;color:var(--muted);line-height:1.2;white-space:nowrap;transition:color .2s}
-.stp-lbl small{display:block;font-size:11px;color:var(--muted);font-weight:500;margin-top:2px;white-space:nowrap}
-.stp.active .stp-num{background:var(--tomato);border-color:var(--tomato);color:#fff;box-shadow:0 6px 14px rgba(225,72,39,.32)}
-.stp.active .stp-lbl b{color:var(--slate)}
-.stp.done{cursor:pointer}
-.stp.done .stp-num{background:var(--tomato-tint);border-color:rgba(225,72,39,.35);color:var(--tomato)}
-.stp.done .stp-num span{display:none}
-.stp.done .stp-num i{display:block}
-.stp.done .stp-lbl b{color:var(--slate-2)}
-.stp.done:hover .stp-num{background:var(--tomato);border-color:var(--tomato);color:#fff}
-.stp.done:hover .stp-lbl b{color:var(--tomato)}
-.stp-line{flex:1;height:2px;border-radius:var(--radius-sm);background:var(--line);min-width:16px;transition:background .25s}
-.stp-line.done{background:rgba(225,72,39,.38)}
+/* gövde */
+.hm-body{background:var(--bg-cream);padding:0 0 74px}
 
-/* ---- gövde ---- */
-.fp-body{background:var(--bg-cream);padding:34px 0 74px}
-.wstep{display:none}
-.wstep.active{display:block;animation:fadeUp .35s var(--ease)}
-.wiz-grid{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:28px;align-items:start}
-.wiz-main{min-width:0}
-.wiz-solo{max-width:980px;margin:0 auto}
+/* ---- PLAN BOARD (7 gün × 3 öğün) ---- */
+.wk-board{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-lg);box-shadow:var(--sh-sm);overflow:hidden}
+.wk-grid{display:grid;grid-template-columns:104px repeat(7,minmax(0,1fr))}
+.wk-corner{border-bottom:1px solid var(--line);background:var(--bg)}
+.wk-day{padding:13px 8px;text-align:center;border-bottom:1px solid var(--line);border-left:1px solid var(--line)}
+.wk-day b{display:block;font-size:13.5px;font-weight:700;color:var(--slate);line-height:1.1}
+.wk-day span{display:block;font-size:11.5px;color:var(--muted);font-weight:500;margin-top:3px}
+.wk-day.today{background:var(--tomato-tint)}
+.wk-day.today b{color:var(--tomato)}
+.wk-day.today span{color:var(--tomato)}
+/* öğün etiket sütunu */
+.wk-mealcol{display:flex;flex-direction:column;justify-content:center;gap:5px;padding:12px 12px;border-bottom:1px solid var(--line);background:var(--bg)}
+.wk-mealcol i{width:30px;height:30px;border-radius:var(--radius-md);background:var(--paper);border:1px solid var(--line);color:var(--tomato);display:grid;place-items:center;font-size:13px}
+.wk-mealcol b{font-size:13px;font-weight:700;color:var(--slate)}
+.wk-mealcol small{font-size:11px;color:var(--muted);font-weight:500}
+.wk-grid .wk-mealcol:last-of-type,.wk-grid .mcell.lastrow{border-bottom:none}
+/* hücre */
+.mcell{position:relative;padding:9px;border-bottom:1px solid var(--line);border-left:1px solid var(--line);min-height:126px}
+.mc-card{display:flex;flex-direction:column;gap:7px;height:100%;cursor:pointer}
+.mc-thumb{position:relative;height:60px;border-radius:var(--radius-sm);background-size:cover;background-position:center;overflow:hidden;flex:none}
+.mc-card:hover .mc-thumb::after{content:"";position:absolute;inset:0;background:rgba(225,72,39,.12)}
+.mc-name{font-size:11.5px;font-weight:700;color:var(--slate);line-height:1.25;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.mc-card:hover .mc-name{color:var(--tomato)}
+.mc-meta{margin-top:auto;display:flex;align-items:center;gap:8px;font-size:10.5px;color:var(--muted);font-weight:500}
+.mc-meta i{font-size:9.5px;color:var(--tomato)}
+.mc-x{position:absolute;top:13px;right:13px;width:22px;height:22px;border:none;border-radius:var(--radius-sm);background:rgba(255,255,255,.92);color:var(--slate);font-size:10px;cursor:pointer;display:grid;place-items:center;opacity:0;transition:.18s var(--ease);z-index:2}
+.mcell:hover .mc-x{opacity:1}
+.mc-x:hover{background:var(--tomato);color:#fff}
+/* boş hücre */
+.mc-add{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;height:100%;border:1.5px dashed #dcdcdc;border-radius:var(--radius-sm);background:transparent;color:var(--muted);font-family:inherit;font-size:11px;font-weight:700;cursor:pointer;transition:.18s var(--ease)}
+.mc-add i{font-size:15px}
+.mc-add:hover{border-color:var(--tomato);color:var(--tomato);background:var(--tomato-tint)}
 
-/* ---- FORM KARTI ---- */
-.form-card{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-lg);box-shadow:var(--sh-sm);padding:28px}
-.form-card+.form-card{margin-top:20px}
-.fc-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:24px;padding-bottom:18px;border-bottom:1px solid var(--line)}
-.fc-head h2{font-size:20px;display:flex;align-items:center;gap:11px}
-.fc-head h2 i{flex:none;width:38px;height:38px;border-radius:var(--radius-md);background:var(--tomato-tint);color:var(--tomato);display:grid;place-items:center;font-size:15px}
-.fc-head p{font-size:13px;color:var(--muted);font-weight:500;margin-top:5px}
-.fc-step{flex:none;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);background:var(--bg);border:1px solid var(--line);padding:6px 11px;border-radius:var(--radius-sm);white-space:nowrap}
+/* gün kalori özeti satırı (mobil günde gösterilir, desktop gizli) */
+.wk-daysum{display:none}
 
-/* ---- FK ALAN KİTİ (form kit çekirdeği — shell .fb-field dilinden) ---- */
-.fk-field{margin-bottom:22px}
-.fk-field:last-child{margin-bottom:0}
-.fk-label{display:flex;align-items:baseline;gap:7px;font-size:14px;font-weight:700;color:var(--slate);margin-bottom:9px}
-.fk-label .req{color:var(--tomato);font-weight:700}
-.fk-label .opt{font-size:11.5px;color:var(--muted);font-weight:500}
-.fk-label .fk-count{margin-left:auto;font-size:11.5px;color:var(--muted);font-weight:500;letter-spacing:.02em}
-.fk-input,.fk-select,.fk-textarea{
-  width:100%;font-family:inherit;font-size:14px;font-weight:500;color:var(--slate);
-  background:var(--bg);border:1px solid var(--line);border-radius:var(--radius-md);
-  padding:13px 15px;outline:none;transition:border-color .2s var(--ease),box-shadow .2s var(--ease);
-}
-.fk-input::placeholder,.fk-textarea::placeholder{color:#a7a7a7}
-.fk-input:focus,.fk-select:focus,.fk-textarea:focus{border-color:var(--tomato);box-shadow:0 0 0 3px rgba(225,72,39,.10)}
-.fk-textarea{min-height:150px;resize:vertical;line-height:1.6}
-.fk-select{
-  appearance:none;-webkit-appearance:none;cursor:pointer;
-  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%237E7E7E' stroke-width='1.6' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
-  background-repeat:no-repeat;background-position:right 15px center;padding-right:40px;
-}
-.fk-select:invalid{color:#a7a7a7}
-.fk-help{display:flex;align-items:flex-start;gap:7px;font-size:12.5px;color:var(--muted);font-weight:500;margin-top:8px;line-height:1.5}
-.fk-help i{color:var(--tomato);font-size:12px;margin-top:2px;flex:none}
-.fk-error{display:none;align-items:center;gap:7px;font-size:12.5px;font-weight:700;color:var(--tomato);margin-top:8px}
-.fk-error i{font-size:12px}
-.fk-field.has-error .fk-input,.fk-field.has-error .fk-select,.fk-field.has-error .fk-textarea{border-color:var(--tomato);box-shadow:0 0 0 3px rgba(225,72,39,.10)}
-.fk-field.has-error .fk-error{display:flex}
-.fk-grid{display:grid;gap:16px 18px}
-.fk-grid .fk-field{margin-bottom:0}
-.fk-grid.c2{grid-template-columns:1fr 1fr}
-.fk-grid.c3{grid-template-columns:1fr 1fr 1fr}
-.fk-grid+.fk-grid{margin-top:18px}
-.fk-grid+.fk-field,.fk-field+.fk-grid{margin-top:22px}
-/* sonek birimli input (dk · °C · kişilik) */
-.fk-suffix{position:relative}
-.fk-suffix .fk-input{padding-right:64px}
-.fk-suffix>span{position:absolute;right:15px;top:50%;transform:translateY(-50%);font-size:12px;font-weight:700;color:var(--muted);pointer-events:none}
+/* ---- ALIŞVERİŞ LİSTESİ ÇIKTISI (yıldız) ---- */
+.shop-sec{margin-top:32px}
+.shop-headrow{display:flex;align-items:flex-end;justify-content:space-between;gap:18px;flex-wrap:wrap;margin-bottom:18px}
+.shop-headrow .eyebrow{margin-bottom:11px}
+.shop-headrow h2{font-size:26px}
+.shop-headrow p{font-size:13.5px;color:var(--muted);font-weight:500;margin-top:6px}
+.shop-layout{display:grid;grid-template-columns:minmax(0,1fr) 326px;gap:24px;align-items:start}
+.shop-list{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-lg);box-shadow:var(--sh-sm);overflow:hidden}
+.shop-group{border-bottom:1px solid var(--line)}
+.shop-group:last-child{border-bottom:none}
+.shop-ghead{display:flex;align-items:center;gap:11px;padding:14px 20px;background:var(--bg)}
+.shop-ghead i{flex:none;width:34px;height:34px;border-radius:var(--radius-md);background:var(--paper);border:1px solid var(--line);color:var(--tomato);display:grid;place-items:center;font-size:14px}
+.shop-ghead b{font-size:14.5px;color:var(--slate)}
+.shop-ghead .gcnt{margin-left:auto;font-size:12px;color:var(--muted);font-weight:600}
+.shop-items{padding:6px 20px 12px}
+.shop-item{position:relative;display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid var(--line);cursor:pointer;font-size:14px;color:var(--slate);font-weight:500;transition:color .15s}
+.shop-item:last-child{border-bottom:none}
+.shop-item input{position:absolute;opacity:0;pointer-events:none}
+/* onay kutusu — facet .cbx VERBATIM */
+.cbx{flex:none;width:20px;height:20px;border-radius:var(--radius-sm);border:1.5px solid #d8d8d8;background:var(--paper);display:grid;place-items:center;transition:.18s var(--ease)}
+.cbx::after{content:"\f00c";font-family:"Font Awesome 6 Free";font-weight:900;font-size:10px;color:#fff;transform:scale(0);transition:transform .15s var(--ease)}
+.shop-item input:checked ~ .cbx{background:var(--tomato);border-color:var(--tomato)}
+.shop-item input:checked ~ .cbx::after{transform:scale(1)}
+.shop-item .si-name{min-width:0}
+.shop-item .si-qty{margin-left:auto;flex:none;font-size:12.5px;color:var(--muted);font-weight:700;background:var(--bg);border:1px solid var(--line);padding:4px 10px;border-radius:var(--radius-sm)}
+.shop-item:hover{color:var(--tomato)}
+.shop-item:hover .cbx{border-color:var(--tomato)}
+.shop-item.done .si-name{text-decoration:line-through;color:var(--muted);font-weight:500}
+.shop-item input:checked ~ .si-qty{color:var(--tomato);border-color:rgba(225,72,39,.25);background:var(--tomato-tint)}
 
-/* ---- UP YÜKLEME KİTİ (TD .mw-up dashed dilinden) ---- */
-.up-zone{
-  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:9px;width:100%;
-  border:1.5px dashed rgba(225,72,39,.45);background:var(--tomato-tint);color:var(--tomato);
-  border-radius:var(--radius-lg);padding:34px 20px;text-align:center;cursor:pointer;
-  font-family:inherit;transition:.2s var(--ease);
-}
-.up-zone i{font-size:27px}
-.up-zone b{font-size:14.5px;font-weight:700}
-.up-zone small{font-size:12px;font-weight:500;color:var(--slate-2)}
-.up-zone:hover{background:#F7DCD2;border-color:var(--tomato)}
-.up-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-top:14px}
-.up-item{position:relative;aspect-ratio:1/1;border-radius:var(--radius-md);background-size:cover;background-position:center;overflow:hidden;border:2px solid transparent;transition:border-color .2s var(--ease)}
-.up-item.is-cover{border-color:var(--tomato)}
-.up-item .ui-cover{display:none;position:absolute;left:7px;top:7px;align-items:center;gap:5px;font-size:9.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;background:var(--tomato);color:#fff;padding:4px 8px;border-radius:var(--radius-sm);z-index:2}
-.up-item.is-cover .ui-cover{display:inline-flex}
-.up-item .ui-btns{position:absolute;right:6px;top:6px;display:flex;flex-direction:column;gap:6px;opacity:0;transition:opacity .2s var(--ease);z-index:2}
-.up-item:hover .ui-btns{opacity:1}
-.up-item .ui-btns button{width:28px;height:28px;border:none;border-radius:var(--radius-sm);background:rgba(255,255,255,.94);color:var(--slate);font-size:11.5px;cursor:pointer;display:grid;place-items:center;transition:.18s var(--ease)}
-.up-item .ui-btns button:hover{background:var(--tomato);color:#fff}
-.up-add{
-  aspect-ratio:1/1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;
-  border:1.5px dashed #d9d9d9;background:transparent;color:var(--muted);border-radius:var(--radius-md);
-  font-family:inherit;font-size:11.5px;font-weight:700;cursor:pointer;transition:.18s var(--ease);
-}
-.up-add i{font-size:17px}
-.up-add:hover{border-color:var(--tomato);color:var(--tomato)}
+/* özet kartı (sticky) */
+.shop-summary{position:sticky;top:130px;background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-lg);box-shadow:var(--sh-sm);padding:22px;display:flex;flex-direction:column;gap:16px}
+.ss-ico{width:48px;height:48px;border-radius:var(--radius-md);background:var(--tomato-tint);color:var(--tomato);display:grid;place-items:center;font-size:20px}
+.shop-summary h3{font-size:18px}
+.shop-summary .ss-sub{font-size:13px;color:var(--muted);font-weight:500;margin-top:3px}
+.ss-stats{display:flex;gap:0;border:1px solid var(--line);border-radius:var(--radius-md);overflow:hidden}
+.ss-stat{flex:1;padding:13px 12px;text-align:center}
+.ss-stat+.ss-stat{border-left:1px solid var(--line)}
+.ss-stat b{display:block;font-size:21px;font-weight:700;color:var(--slate);letter-spacing:-.02em}
+.ss-stat span{font-size:11.5px;color:var(--muted);font-weight:500}
+.ss-prog{height:7px;border-radius:var(--radius-sm);background:var(--line);overflow:hidden}
+.ss-prog>i{display:block;height:100%;background:var(--tomato);border-radius:var(--radius-sm);transition:width .3s var(--ease)}
+.ss-progtxt{font-size:12px;color:var(--muted);font-weight:600;margin-top:-8px}
+.shop-summary .btn{width:100%}
+.ss-note{display:flex;gap:9px;font-size:12px;color:var(--slate-2);font-weight:500;line-height:1.55;background:var(--bg);border:1px solid var(--line);border-radius:var(--radius-md);padding:12px 14px}
+.ss-note i{color:var(--tomato);font-size:12px;margin-top:2px;flex:none}
 
-/* ---- IE DİNAMİK SATIR KİTİ (malzemeler — TD .ing-group kavramıyla uyumlu) ---- */
-.ie-list{display:flex;flex-direction:column;gap:10px}
-.ie-group{display:flex;align-items:center;gap:10px;margin-top:10px}
-.ie-list>.ie-group:first-child{margin-top:0}
-.ie-drag{flex:none;color:#c9c9c9;cursor:grab;font-size:13px;padding:4px 2px;transition:color .18s}
-.ie-drag:hover{color:var(--tomato)}
-.ie-group input{
-  flex:none;width:220px;font-family:inherit;font-size:11.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
-  color:var(--slate);background:transparent;border:1px solid transparent;border-radius:var(--radius-sm);
-  padding:7px 9px;outline:none;transition:.2s var(--ease);
-}
-.ie-group input::placeholder{color:#bdbdbd;text-transform:none;letter-spacing:0;font-weight:500}
-.ie-group input:hover,.ie-group input:focus{border-color:var(--line);background:var(--paper)}
-.ie-group input:focus{border-color:var(--tomato)}
-.ie-group::after{content:"";flex:1;height:1px;background:var(--line)}
-.ie-row{display:grid;grid-template-columns:auto 92px 148px minmax(0,1fr) auto;grid-template-areas:"drag amt unit name del";gap:10px;align-items:center;background:var(--bg);border:1px solid var(--line);border-radius:var(--radius-md);padding:9px 12px}
-.ie-row .ie-drag{grid-area:drag}
-.ie-row .ie-amt{grid-area:amt}
-.ie-row .ie-unit{grid-area:unit}
-.ie-row .ie-name{grid-area:name}
-.ie-row .ie-del{grid-area:del}
-.ie-row .fk-input,.ie-row .fk-select{background:var(--paper);padding:10px 12px;font-size:13.5px}
-.ie-row .fk-select{padding-right:32px;background-position:right 11px center}
-.ie-del,.ie-gdel{
-  flex:none;width:34px;height:34px;border:1px solid var(--line);border-radius:var(--radius-sm);background:var(--paper);
-  color:var(--muted);font-size:12.5px;cursor:pointer;display:grid;place-items:center;transition:.18s var(--ease);
-}
-.ie-del:hover,.ie-gdel:hover{border-color:var(--tomato);color:var(--tomato);background:var(--tomato-tint)}
-.ie-gdel{width:28px;height:28px;border-color:transparent;background:transparent;font-size:11.5px}
-.ie-actions{display:flex;gap:10px;margin-top:16px}
-/* dashed ekleme butonu (shell .fb-shot dili) */
-.add-row{
-  flex:1;display:flex;align-items:center;justify-content:center;gap:9px;font-family:inherit;font-size:13px;font-weight:700;
-  color:var(--muted);background:transparent;border:1.5px dashed #d9d9d9;border-radius:var(--radius-md);padding:13px;
-  cursor:pointer;transition:.18s var(--ease);
-}
-.add-row:hover{border-color:var(--tomato);color:var(--tomato)}
-.add-row.alt{flex:0 0 auto;padding:13px 22px}
-
-/* ---- ST ADIM KARTLARI (hazırlanış) ---- */
-.st-list{display:flex;flex-direction:column;gap:14px}
-.st-card{display:flex;gap:14px;background:var(--bg);border:1px solid var(--line);border-radius:var(--radius-lg);padding:16px}
-.st-num{flex:none;width:38px;height:38px;border-radius:var(--radius-circle);background:var(--tomato);color:#fff;font-size:14px;font-weight:700;display:grid;place-items:center;box-shadow:0 5px 12px rgba(225,72,39,.28)}
-.st-body{flex:1;min-width:0}
-.st-body .fk-textarea{background:var(--paper);min-height:96px}
-.st-meta{display:flex;align-items:center;gap:12px;margin-top:10px;flex-wrap:wrap}
-.st-shot{position:relative;flex:none;width:148px;height:92px;border-radius:var(--radius-md);background-size:cover;background-position:center;overflow:hidden}
-.st-shot button{position:absolute;right:5px;top:5px;width:26px;height:26px;border:none;border-radius:var(--radius-sm);background:rgba(255,255,255,.94);color:var(--slate);font-size:11px;cursor:pointer;display:grid;place-items:center;opacity:0;transition:.18s var(--ease)}
-.st-shot:hover button{opacity:1}
-.st-shot button:hover{background:var(--tomato);color:#fff}
-.st-up{
-  flex:none;width:148px;height:92px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;
-  border:1.5px dashed #d9d9d9;background:transparent;color:var(--muted);border-radius:var(--radius-md);
-  font-family:inherit;font-size:11px;font-weight:700;cursor:pointer;transition:.18s var(--ease);text-align:center;
-}
-.st-up i{font-size:15px}
-.st-up:hover{border-color:var(--tomato);color:var(--tomato)}
-/* adım görselleri — max 3 slot (Beyar kararı: eski site + tarif detay paritesi) */
-.st-figs{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
-.st-up small{font-weight:500;opacity:.8}
-
-/* malzeme autocomplete — havuz + serbest karma (Beyar kararı, DB ilişkisi için) */
-.ie-sugg{position:fixed;z-index:90;background:#fff;border:1px solid var(--line);border-radius:var(--radius-md);box-shadow:var(--sh-md);padding:6px;display:none;max-height:228px;overflow-y:auto}
-.ie-sugg.show{display:block}
-.ie-sugg button{display:flex;align-items:center;gap:9px;width:100%;text-align:left;font-family:inherit;font-size:13.5px;font-weight:500;color:var(--slate);background:none;border:none;border-radius:var(--radius-sm);padding:9px 11px;cursor:pointer;transition:.16s var(--ease)}
-.ie-sugg button i{width:16px;text-align:center;color:var(--muted);font-size:12px}
-.ie-sugg button:hover{background:var(--tomato-tint);color:var(--tomato)}
-.ie-sugg button:hover i{color:var(--tomato)}
-.ie-sugg .sg-new{color:var(--tomato);font-weight:700;border-top:1px dashed var(--line);margin-top:4px;padding-top:10px}
-.ie-sugg .sg-new i{color:var(--tomato)}
-.st-time{width:148px}
-.st-side{flex:none;display:flex;flex-direction:column;align-items:center;gap:7px}
-.st-side .ie-drag{padding:6px 4px}
-
-/* ---- sihirbaz alt barı ---- */
-.wiz-foot{display:flex;align-items:center;gap:14px;margin-top:24px}
-.wf-note{display:inline-flex;align-items:center;gap:8px;font-size:12.5px;color:var(--muted);font-weight:500}
-.wf-note i{color:var(--green);font-size:13px}
-.wiz-foot .btn{padding:14px 24px}
-.wiz-foot .wf-actions{display:flex;gap:10px;margin-left:auto}
-
-/* ---- gönder paneli (adım 4 sonu) ---- */
-.send-panel{display:flex;align-items:center;gap:18px;background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-lg);box-shadow:var(--sh-sm);padding:20px 22px;margin-top:20px}
-.send-panel .sp-ico{flex:none;width:46px;height:46px;border-radius:var(--radius-md);background:var(--tomato-tint);color:var(--tomato);display:grid;place-items:center;font-size:18px}
-.send-panel .sp-info{flex:1;min-width:0}
-.send-panel .sp-info b{display:block;font-size:15px;color:var(--slate)}
-.send-panel .sp-info p{font-size:12.5px;color:var(--muted);font-weight:500;margin-top:3px;line-height:1.5}
-.send-panel .sp-info a{color:var(--tomato);font-weight:700;text-decoration:underline;text-underline-offset:2px}
-.send-panel .sp-btns{flex:none;display:flex;gap:10px}
-
-/* ---- ipuçları sidebar'ı (adım 1) ---- */
-.tips-col{position:sticky;top:132px;display:flex;flex-direction:column;gap:14px}
-.tips-card{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-lg);box-shadow:var(--sh-sm);overflow:hidden}
-.tips-head{display:flex;align-items:center;gap:11px;padding:16px 18px;border-bottom:1px solid var(--line)}
-.tips-head i{flex:none;width:36px;height:36px;border-radius:var(--radius-md);background:var(--tomato-tint);color:var(--tomato);display:grid;place-items:center;font-size:14px}
-.tips-head h3{font-size:15.5px}
-.tips-head small{display:block;font-size:11.5px;color:var(--muted);font-weight:500;margin-top:1px}
-.tips-list{padding:15px 18px;display:flex;flex-direction:column;gap:13px}
-.tip{display:flex;gap:10px;font-size:13px;color:var(--slate-2);font-weight:500;line-height:1.55}
-.tip i{flex:none;color:var(--tomato);font-size:12px;margin-top:3px}
-.tip b{color:var(--slate)}
-/* hatırlatma kutusu — TD .remind-box VERBATIM (sidebar'da margin sıfır) */
-.remind-box{
-  display:flex;gap:16px;align-items:flex-start;
-  background:#FFF8E6;border:1px solid rgba(250,192,69,.5);border-radius:var(--radius-lg);
-  padding:20px 22px;margin-top:16px;
-}
-.remind-box .rb-ico{flex:none;width:42px;height:42px;border-radius:var(--radius-md);background:rgba(250,192,69,.25);color:#B8860B;display:grid;place-items:center;font-size:17px}
-.remind-box .rb-body{min-width:0}
-.remind-box .rb-body h4{font-size:15.5px;margin-bottom:5px;display:flex;align-items:center;gap:9px;flex-wrap:wrap}
-.remind-box .rb-auto{font-size:9.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#B8860B;background:rgba(250,192,69,.22);padding:3px 8px;border-radius:var(--radius-sm)}
-.remind-box .rb-body p{font-size:13.5px;color:var(--slate-2);font-weight:500;line-height:1.6}
-.remind-box .rb-body p b{color:var(--slate)}
-.tips-col .remind-box{margin-top:0;padding:16px 18px}
-
-/* ===================== TABLET (≤1024px) — sayfa ===================== */
+/* ===================== TABLET (≤1024px) ===================== */
 @media (max-width:1024px){
-  .wiz-grid{grid-template-columns:1fr;gap:20px}
-  .tips-col{position:static}
-  .fp-head h1{font-size:32px}
+  .hm-head h1{font-size:32px}
+  .hm-actions{margin-left:0;width:100%}
+  .hm-actions .btn{flex:1}
+  /* board yatay kaydırılır (board genişliği grid'e eşit → kırpma yok, scroll açık, radius korunur) */
+  .wk-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:thin}
+  .wk-board{min-width:880px}
+  .wk-grid{min-width:880px}
+  .shop-layout{grid-template-columns:1fr}
+  .shop-summary{position:static;flex-direction:row;flex-wrap:wrap;align-items:center}
+  .shop-summary .ss-head{flex:1 1 100%;display:flex;align-items:center;gap:14px}
+  .ss-stats{flex:1 1 100%}
+  .shop-summary .btn{flex:1;width:auto}
 }
-
-/* ===================== MOBİL (≤640px) — sayfa ===================== */
+/* ===================== MOBİL (≤640px) ===================== */
 @media (max-width:640px){
-  .fp-head{flex-direction:column;align-items:flex-start;gap:14px;padding-bottom:18px}
-  .fp-head h1{font-size:27px}
-  .fp-head .see-all{margin-bottom:0}
-  /* stepper kompakt: yalnız numara + aktif etiket */
-  .stepper{padding:13px 14px;gap:8px;border-radius:var(--radius-lg);border-bottom:1px solid var(--line)}
-  .stp{gap:9px}
-  .stp-num{width:34px;height:34px;font-size:13px}
-  .stp-lbl{display:none}
-  .stp.active .stp-lbl{display:block}
-  .stp-lbl small{display:none}
-  .stp-line{min-width:8px}
-  .fp-body{padding:22px 0 56px}
-  .form-card{padding:18px 16px}
-  .fc-head{flex-direction:column;gap:10px;margin-bottom:18px;padding-bottom:14px}
-  .fc-step{align-self:flex-start}
-  .fk-grid.c2,.fk-grid.c3{grid-template-columns:1fr 1fr}
-  .up-grid{grid-template-columns:repeat(3,1fr);gap:9px}
-  .up-item .ui-btns{opacity:1}
-  .up-zone{padding:26px 16px}
-  /* malzeme satırı iki kata kırılır: [tutamaç|miktar|birim|sil] / [ad] */
-  .ie-row{grid-template-columns:auto 72px minmax(0,1fr) auto;grid-template-areas:"drag amt unit del" "name name name name";gap:8px;padding:10px}
-  .ie-group input{width:150px}
-  .ie-actions{flex-direction:column}
-  .add-row.alt{flex:1;padding:13px}
-  .st-card{padding:13px;gap:10px}
-  .st-num{width:32px;height:32px;font-size:13px}
-  .st-shot,.st-up{width:104px;height:70px}
-  .st-time{width:110px}
-  .st-meta{gap:9px}
-  .wiz-foot{flex-wrap:wrap;gap:12px}
-  .wf-note{width:100%;justify-content:center;order:2}
-  .wiz-foot .wf-actions{margin-left:0;width:100%;order:1}
-  .wiz-foot .wf-actions .btn{flex:1;padding:14px 10px}
-  .send-panel{flex-direction:column;align-items:stretch;text-align:center;padding:18px 16px}
-  .send-panel .sp-ico{margin:0 auto}
-  .send-panel .sp-btns{flex-direction:column}
-  .sbanner{flex-wrap:wrap}
-  .sbanner .btn{width:100%;align-self:stretch}
   .rd-crumb{padding:14px 0 10px;font-size:12px}
-  .rd-crumb b{max-width:170px}
+  .hm-head h1{font-size:26px}
+  .hm-controls{flex-direction:column;align-items:stretch;gap:14px}
+  .hm-ctl{width:100%}
+  .ppl,.wk-nav{width:100%}
+  .ppl .ppl-val,.wk-nav .wk-cur{flex:1}
+  .ppl button,.wk-nav button{flex:none}
+  .hm-actions{flex-direction:column}
+  /* board: içeride yatay kaydırılır (sayfa taşmaz) — ilk sütun sticky */
+  .wk-board{min-width:760px}
+  .wk-grid{min-width:760px}
+  .wk-mealcol{position:sticky;left:0;z-index:2;box-shadow:2px 0 0 var(--line)}
+  .wk-corner{position:sticky;left:0;z-index:2}
+  .wk-scroll::-webkit-scrollbar{height:6px}
+  .wk-scroll::-webkit-scrollbar-thumb{background:#d8d8d8;border-radius:var(--radius-sm)}
+  .shop-headrow h2{font-size:21px}
+  .shop-summary{flex-direction:column;align-items:stretch}
 }
 </style>
 </head>
@@ -941,7 +787,7 @@ html,body{overflow-x:hidden}
       </div>
     </div>
     <div class="tb-right">
-      <a href="#"><i class="fa-solid fa-circle-plus"></i> Tarif Ekle</a>
+      <a href="tarif-ekle-v1.html"><i class="fa-solid fa-circle-plus"></i> Tarif Ekle</a>
       <a href="diyetisyen-dizin-v1.html"><i class="fa-solid fa-stethoscope"></i> Diyetisyen Ara</a>
       <div class="tb-lang" id="tbLang">
         <button class="tb-lang-btn" id="tbLangBtn" type="button" aria-haspopup="true" aria-expanded="false">
@@ -967,7 +813,7 @@ html,body{overflow-x:hidden}
       </a>
       <nav class="nav">
         <div class="nav-item has-mega">
-          <a href="tarif-liste-v1.html" class="active">Tarifler <i class="fa-solid fa-chevron-down"></i></a>
+          <a href="tarif-liste-v1.html">Tarifler <i class="fa-solid fa-chevron-down"></i></a>
           <div class="mega">
             <div class="wrap">
               <div class="mega-grid">
@@ -995,7 +841,7 @@ html,body{overflow-x:hidden}
             </div>
           </div>
         </div>
-        <div class="nav-item"><a href="bugun-ne-pisirsem-v1.html">Bugün Ne Pişirsem</a></div>
+        <div class="nav-item"><a href="bugun-ne-pisirsem-v1.html" class="active">Bugün Ne Pişirsem</a></div>
         <div class="nav-item">
           <a href="#">Mutfak Sırları <i class="fa-solid fa-chevron-down"></i></a>
           <div class="dropdown">
@@ -1087,7 +933,7 @@ html,body{overflow-x:hidden}
   </nav>
   <div class="drawer-foot">
     <button class="btn btn-primary" style="width:100%"><i class="fa-regular fa-user"></i> Giriş Yap</button>
-    <a href="#" class="drawer-add"><i class="fa-solid fa-circle-plus"></i> Tarif Ekle</a>
+    <a href="tarif-ekle-v1.html" class="drawer-add"><i class="fa-solid fa-circle-plus"></i> Tarif Ekle</a>
     <div class="drawer-lang" id="drawerLang">
       <button class="drawer-lang-toggle" type="button" aria-haspopup="true" aria-expanded="false">
         <span class="drawer-lang-label"><i class="fa-solid fa-globe"></i> Dil</span>
@@ -1241,479 +1087,174 @@ html,body{overflow-x:hidden}
 <!-- ===== ANA İÇERİK (footer reveal perdesi) ===== -->
 <main class="page-main" id="pageMain">
 
-<!-- SAYFA İÇERİĞİ — TARİF EKLE (F5) -->
-
-<!-- ===== ÜST BANT: breadcrumb + başlık + durum bandı + stepper ===== -->
-<section class="below-header fp-top">
+<!-- ===== ÜST BAND ===== -->
+<section class="hm-top below-header">
   <div class="wrap">
-    <nav class="rd-crumb" aria-label="Sayfa yolu">
-      <a href="anasayfa-portal-v3a.html"><i class="fa-solid fa-house" style="font-size:12px"></i></a>
+    <nav class="rd-crumb" aria-label="breadcrumb">
+      <a href="anasayfa-portal-v3a.html">Ana Sayfa</a>
       <i class="fa-solid fa-chevron-right"></i>
-      <a href="#">Hesabım</a>
-      <i class="fa-solid fa-chevron-right"></i>
-      <b>Tarif Ekle</b>
+      <b>Haftalık Dada Menü</b>
     </nav>
-
-    <div class="fp-head">
+    <div class="hm-head">
       <div>
-        <span class="eyebrow"><i class="fa-solid fa-circle-plus"></i> Mutfağından Gelsin</span>
-        <h1>Tarif Ekle</h1>
-        <p class="lead">Tarifini 4 kısa adımda hazırla. Yazdıkların her adımda taslağına otomatik kaydedilir — dilediğin zaman bırakıp dönebilirsin.</p>
+        <span class="eyebrow"><i class="fa-solid fa-calendar-week"></i> Planla &amp; Pişir</span>
+        <h1>Haftalık Dada Menü</h1>
+        <p class="lead">Tüm haftanı tek ekranda planla. Kişi sayını seç, menünü kur — alışveriş listeni biz otomatik çıkaralım.</p>
       </div>
-      <a class="see-all" href="#"><i class="fa-regular fa-folder-open"></i> Taslaklarım (3)</a>
-    </div>
-
-    <!-- DURUM BANDLARI — ?state=draft|review|rejected (varsayılan: gizli, yeni tarif) -->
-    <div class="sbanner draft" id="sbDraft" role="status">
-      <span class="sb-ico"><i class="fa-regular fa-floppy-disk"></i></span>
-      <div class="sb-body">
-        <h4>Taslak olarak kayıtlı <span class="sb-tag">Taslak</span></h4>
-        <p>Son kayıt: <b>bugün 14.32</b> · Kaldığın yerden devam edebilirsin — onaya göndermeden yayınlanmaz.</p>
-      </div>
-    </div>
-    <div class="sbanner review" id="sbReview" role="status">
-      <span class="sb-ico"><i class="fa-solid fa-hourglass-half"></i></span>
-      <div class="sb-body">
-        <h4>Tarifin editör incelemesinde <span class="sb-tag">Onayda</span></h4>
-        <p>Gönderim: <b>9 Haziran, 16.05</b> · Ortalama inceleme süresi <b>24–48 saat</b>. Sonuçlandığında bildirim alacaksın; inceleme sürerken tarif düzenlenemez.</p>
-      </div>
-    </div>
-    <div class="sbanner rejected" id="sbRejected" role="alert">
-      <span class="sb-ico"><i class="fa-regular fa-circle-xmark"></i></span>
-      <div class="sb-body">
-        <h4>Tarifin bu haliyle yayınlanamadı <span class="sb-tag">Reddedildi</span></h4>
-        <p>Editör notunu okuyup ilgili adımları güncelledikten sonra yeniden gönderebilirsin.</p>
-        <q class="sb-quote"><i class="fa-solid fa-quote-left"></i>Kapak görseli bulanık ve İç Harç grubundaki malzemelerin miktarları eksik. Görseller ve Malzemeler adımlarını güncelleyip tekrar gönderir misin? — <b>Ayşe, Tarif Editörü</b></q>
-      </div>
-      <button class="btn btn-primary" type="button" id="sbRetry"><i class="fa-solid fa-rotate-right"></i> Düzenle ve Tekrar Gönder</button>
-    </div>
-
-    <!-- STEPPER — geri tıklanır, ileri atlanmaz -->
-    <div class="stepper" id="stepper" role="tablist" aria-label="Tarif ekleme adımları">
-      <button class="stp active" type="button" data-goto="1" role="tab" aria-selected="true">
-        <span class="stp-num"><span>1</span><i class="fa-solid fa-check"></i></span>
-        <span class="stp-lbl"><b>Bilgi</b><small>Ad · kategori · hikâye</small></span>
-      </button>
-      <span class="stp-line" data-line="1"></span>
-      <button class="stp" type="button" data-goto="2" role="tab" aria-selected="false">
-        <span class="stp-num"><span>2</span><i class="fa-solid fa-check"></i></span>
-        <span class="stp-lbl"><b>Görseller</b><small>Kapak · galeri · video</small></span>
-      </button>
-      <span class="stp-line" data-line="2"></span>
-      <button class="stp" type="button" data-goto="3" role="tab" aria-selected="false">
-        <span class="stp-num"><span>3</span><i class="fa-solid fa-check"></i></span>
-        <span class="stp-lbl"><b>Künye &amp; Malzemeler</b><small>Süre · porsiyon · liste</small></span>
-      </button>
-      <span class="stp-line" data-line="3"></span>
-      <button class="stp" type="button" data-goto="4" role="tab" aria-selected="false">
-        <span class="stp-num"><span>4</span><i class="fa-solid fa-check"></i></span>
-        <span class="stp-lbl"><b>Adımlar</b><small>Hazırlanış · gönderim</small></span>
-      </button>
     </div>
   </div>
 </section>
 
-<!-- ===== GÖVDE: sihirbaz adımları ===== -->
-<section class="fp-body">
-  <div class="wrap">
-    <form id="wiz" novalidate>
+<!-- ===== GÖVDE ===== -->
+<section class="hm-body">
+  <div class="wrap" style="padding-top:24px">
 
-      <!-- ======== ADIM 1 — BİLGİ ======== -->
-      <div class="wstep active" data-step="1">
-        <div class="wiz-grid">
-          <div class="wiz-main">
-            <div class="form-card">
-              <div class="fc-head">
-                <div>
-                  <h2><i class="fa-solid fa-file-pen"></i> Tarif Bilgisi</h2>
-                  <p>Tarifinin adı, kategorisi ve seni bu tarife getiren hikâye.</p>
-                </div>
-                <span class="fc-step">Adım 1 / 4</span>
-              </div>
+    <!-- KONTROL BARI -->
+    <div class="hm-controls">
+      <div class="hm-ctl">
+        <span class="cl">Kişi sayısı</span>
+        <div class="ppl" id="ppl">
+          <button type="button" data-ppl="-" aria-label="Azalt"><i class="fa-solid fa-minus"></i></button>
+          <span class="ppl-val"><span id="pplVal">4</span><small>kişilik</small></span>
+          <button type="button" data-ppl="+" aria-label="Artır"><i class="fa-solid fa-plus"></i></button>
+        </div>
+      </div>
+      <div class="hm-ctl">
+        <span class="cl">Hafta</span>
+        <div class="wk-nav">
+          <button type="button" aria-label="Önceki hafta"><i class="fa-solid fa-chevron-left"></i></button>
+          <span class="wk-cur">8 – 14 Haziran</span>
+          <button type="button" aria-label="Sonraki hafta"><i class="fa-solid fa-chevron-right"></i></button>
+        </div>
+      </div>
+      <div class="hm-actions">
+        <button class="btn btn-ghost" type="button" id="autoGen"><i class="fa-solid fa-wand-magic-sparkles"></i> Otomatik Oluştur</button>
+        <a class="btn btn-ghost" href="tarif-bulucu-v1.html"><i class="fa-solid fa-basket-shopping"></i> Tarif Bulucu</a>
+      </div>
+    </div>
 
-              <div class="fk-field" id="fldTitle">
-                <label class="fk-label" for="fTitle">Tarif Adı <span class="req">*</span><span class="fk-count" id="titleCount">0/80</span></label>
-                <input class="fk-input" id="fTitle" type="text" maxlength="80" value="Kayseri Usulü Mantı" placeholder="Örn. Kayseri Usulü Mantı" />
-                <span class="fk-error" id="errTitle"><i class="fa-solid fa-circle-exclamation"></i> Tarif adı zorunlu — tarifine bir isim ver.</span>
-                <span class="fk-help"><i class="fa-solid fa-lightbulb"></i> Yöre veya tekniği başlığa taşı: “Fırında”, “Kayseri Usulü”, “Pratik” gibi ekler aramada öne çıkarır.</span>
-              </div>
+    <!-- PLAN BOARD -->
+    <div class="wk-scroll">
+      <div class="wk-board">
+        <div class="wk-grid">
+          <!-- başlık satırı -->
+          <div class="wk-corner"></div>
+          <div class="wk-day"><b>Pzt</b><span>8 Haz</span></div>
+          <div class="wk-day"><b>Sal</b><span>9 Haz</span></div>
+          <div class="wk-day"><b>Çar</b><span>10 Haz</span></div>
+          <div class="wk-day today"><b>Per</b><span>Bugün</span></div>
+          <div class="wk-day"><b>Cum</b><span>12 Haz</span></div>
+          <div class="wk-day"><b>Cmt</b><span>13 Haz</span></div>
+          <div class="wk-day"><b>Paz</b><span>14 Haz</span></div>
 
-              <div class="fk-field">
-                <label class="fk-label" for="fCat">Kategori <span class="req">*</span></label>
-                <select class="fk-select" id="fCat" required>
-                  <option value="" disabled>Kategori seç</option>
-                  <option selected>Ana Yemekler</option>
-                  <option>Çorbalar</option>
-                  <option>Et Yemekleri</option>
-                  <option>Tatlılar</option>
-                  <option>Hamur İşi</option>
-                  <option>Hamur Tatlısı</option>
-                  <option>Salatalar &amp; Mezeler</option>
-                  <option>Kahvaltılık</option>
-                  <option>Zeytinyağlılar</option>
-                  <option>İçecekler</option>
-                  <option>Vejetaryen &amp; Vegan</option>
-                  <option>Aperatifler</option>
-                </select>
-              </div>
+          <!-- KAHVALTI -->
+          <div class="wk-mealcol"><i class="fa-solid fa-mug-saucer"></i><b>Kahvaltı</b><small>07:30</small></div>
+          <div class="mcell" data-meal="Kahvaltı"><button class="mc-x" type="button" aria-label="Kaldır"><i class="fa-solid fa-xmark"></i></button><div class="mc-card" onclick="location.href='tarif-detay-v1.html'"><div class="mc-thumb" style="background-image:url('https://images.unsplash.com/photo-1525755662778-989d0524087e?w=300&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')"></div><div class="mc-name">Domatesli Menemen</div><div class="mc-meta"><i class="fa-solid fa-fire-flame-curved"></i> 320 kcal</div></div></div>
+          <div class="mcell" data-meal="Kahvaltı"><button class="mc-x" type="button" aria-label="Kaldır"><i class="fa-solid fa-xmark"></i></button><div class="mc-card" onclick="location.href='tarif-detay-v1.html'"><div class="mc-thumb" style="background-image:url('https://images.unsplash.com/photo-1612240498936-65f5101365d2?w=300&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')"></div><div class="mc-name">Peynirli Omlet</div><div class="mc-meta"><i class="fa-solid fa-fire-flame-curved"></i> 290 kcal</div></div></div>
+          <div class="mcell" data-meal="Kahvaltı"><button class="mc-x" type="button" aria-label="Kaldır"><i class="fa-solid fa-xmark"></i></button><div class="mc-card" onclick="location.href='tarif-detay-v1.html'"><div class="mc-thumb" style="background-image:url('https://images.unsplash.com/photo-1533089860892-a7c6f0a88666?w=300&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')"></div><div class="mc-name">Serpme Kahvaltı Tabağı</div><div class="mc-meta"><i class="fa-solid fa-fire-flame-curved"></i> 410 kcal</div></div></div>
+          <div class="mcell" data-meal="Kahvaltı"><button class="mc-x" type="button" aria-label="Kaldır"><i class="fa-solid fa-xmark"></i></button><div class="mc-card" onclick="location.href='tarif-detay-v1.html'"><div class="mc-thumb" style="background-image:url('https://images.unsplash.com/photo-1517673400267-0251440c45dc?w=300&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')"></div><div class="mc-name">Meyveli Yulaf Kâsesi</div><div class="mc-meta"><i class="fa-solid fa-fire-flame-curved"></i> 260 kcal</div></div></div>
+          <div class="mcell empty" data-meal="Kahvaltı"><button class="mc-add" type="button"><i class="fa-solid fa-plus"></i> Ekle</button></div>
+          <div class="mcell" data-meal="Kahvaltı"><button class="mc-x" type="button" aria-label="Kaldır"><i class="fa-solid fa-xmark"></i></button><div class="mc-card" onclick="location.href='tarif-detay-v1.html'"><div class="mc-thumb" style="background-image:url('https://images.unsplash.com/photo-1509440159596-0249088772ff?w=300&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')"></div><div class="mc-name">Tahinli Açma</div><div class="mc-meta"><i class="fa-solid fa-fire-flame-curved"></i> 350 kcal</div></div></div>
+          <div class="mcell" data-meal="Kahvaltı"><button class="mc-x" type="button" aria-label="Kaldır"><i class="fa-solid fa-xmark"></i></button><div class="mc-card" onclick="location.href='tarif-detay-v1.html'"><div class="mc-thumb" style="background-image:url('https://images.unsplash.com/photo-1466637574441-749b8f19452f?w=300&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')"></div><div class="mc-name">Şakşuka Tava</div><div class="mc-meta"><i class="fa-solid fa-fire-flame-curved"></i> 300 kcal</div></div></div>
 
-              <div class="fk-field">
-                <label class="fk-label" for="fDesc">Açıklama / Hikâye <span class="req">*</span></label>
-                <textarea class="fk-textarea" id="fDesc" placeholder="Bu tarif sana nereden geliyor? Okuyana neden denemesi gerektiğini anlat...">Anneannemin Kayseri'den getirdiği, hamuru kulak memesi kıvamında açılan gerçek bir mantı tarifi. Püf noktası, mantıları haşlamadan önce fırında 10 dakika kurutmak — böylece haşlarken dağılmıyor ve sosu çok daha iyi tutuyor.</textarea>
-                <span class="fk-help"><i class="fa-solid fa-lightbulb"></i> İlk iki cümle tarif kartında önizleme olarak görünür — en güçlü cümlenle başla.</span>
-              </div>
-            </div>
+          <!-- ÖĞLE -->
+          <div class="wk-mealcol"><i class="fa-solid fa-bowl-food"></i><b>Öğle</b><small>13:00</small></div>
+          <div class="mcell" data-meal="Öğle"><button class="mc-x" type="button" aria-label="Kaldır"><i class="fa-solid fa-xmark"></i></button><div class="mc-card" onclick="location.href='tarif-detay-v1.html'"><div class="mc-thumb" style="background-image:url('https://images.unsplash.com/photo-1547592180-85f173990554?w=300&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')"></div><div class="mc-name">Ezogelin Çorbası</div><div class="mc-meta"><i class="fa-solid fa-fire-flame-curved"></i> 220 kcal</div></div></div>
+          <div class="mcell" data-meal="Öğle"><button class="mc-x" type="button" aria-label="Kaldır"><i class="fa-solid fa-xmark"></i></button><div class="mc-card" onclick="location.href='tarif-detay-v1.html'"><div class="mc-thumb" style="background-image:url('https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=300&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')"></div><div class="mc-name">Tavuklu Sezar Salata</div><div class="mc-meta"><i class="fa-solid fa-fire-flame-curved"></i> 380 kcal</div></div></div>
+          <div class="mcell" data-meal="Öğle"><button class="mc-x" type="button" aria-label="Kaldır"><i class="fa-solid fa-xmark"></i></button><div class="mc-card" onclick="location.href='tarif-detay-v1.html'"><div class="mc-thumb" style="background-image:url('https://images.unsplash.com/photo-1473093295043-cdd812d0e601?w=300&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')"></div><div class="mc-name">Domates Soslu Makarna</div><div class="mc-meta"><i class="fa-solid fa-fire-flame-curved"></i> 480 kcal</div></div></div>
+          <div class="mcell empty" data-meal="Öğle"><button class="mc-add" type="button"><i class="fa-solid fa-plus"></i> Ekle</button></div>
+          <div class="mcell" data-meal="Öğle"><button class="mc-x" type="button" aria-label="Kaldır"><i class="fa-solid fa-xmark"></i></button><div class="mc-card" onclick="location.href='tarif-detay-v1.html'"><div class="mc-thumb" style="background-image:url('https://images.unsplash.com/photo-1596797038530-2c107229654b?w=300&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')"></div><div class="mc-name">Sebzeli Bulgur Pilavı</div><div class="mc-meta"><i class="fa-solid fa-fire-flame-curved"></i> 340 kcal</div></div></div>
+          <div class="mcell" data-meal="Öğle"><button class="mc-x" type="button" aria-label="Kaldır"><i class="fa-solid fa-xmark"></i></button><div class="mc-card" onclick="location.href='tarif-detay-v1.html'"><div class="mc-thumb" style="background-image:url('https://images.unsplash.com/photo-1529692236671-f1f6cf9683ba?w=300&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')"></div><div class="mc-name">Izgara Köfte</div><div class="mc-meta"><i class="fa-solid fa-fire-flame-curved"></i> 450 kcal</div></div></div>
+          <div class="mcell" data-meal="Öğle"><button class="mc-x" type="button" aria-label="Kaldır"><i class="fa-solid fa-xmark"></i></button><div class="mc-card" onclick="location.href='tarif-detay-v1.html'"><div class="mc-thumb" style="background-image:url('https://images.unsplash.com/photo-1598103442097-8b74394b95c6?w=300&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')"></div><div class="mc-name">Izgara Tavuk &amp; Salata</div><div class="mc-meta"><i class="fa-solid fa-fire-flame-curved"></i> 400 kcal</div></div></div>
 
-            <div class="wiz-foot">
-              <span class="wf-note"><i class="fa-solid fa-cloud-arrow-up"></i> Taslağa otomatik kaydedildi · 14.32</span>
-              <div class="wf-actions">
-                <button class="btn btn-primary" type="button" data-next="1">Sonraki Adım <i class="fa-solid fa-arrow-right"></i></button>
-              </div>
-            </div>
-          </div>
+          <!-- AKŞAM -->
+          <div class="wk-mealcol"><i class="fa-solid fa-utensils"></i><b>Akşam</b><small>20:00</small></div>
+          <div class="mcell lastrow" data-meal="Akşam"><button class="mc-x" type="button" aria-label="Kaldır"><i class="fa-solid fa-xmark"></i></button><div class="mc-card" onclick="location.href='tarif-detay-v1.html'"><div class="mc-thumb" style="background-image:url('https://images.unsplash.com/photo-1604908176997-125f25cc6f3d?w=300&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')"></div><div class="mc-name">Fırında Sebzeli Tavuk</div><div class="mc-meta"><i class="fa-solid fa-fire-flame-curved"></i> 520 kcal</div></div></div>
+          <div class="mcell lastrow" data-meal="Akşam"><button class="mc-x" type="button" aria-label="Kaldır"><i class="fa-solid fa-xmark"></i></button><div class="mc-card" onclick="location.href='tarif-detay-v1.html'"><div class="mc-thumb" style="background-image:url('https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=300&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')"></div><div class="mc-name">Karnıyarık</div><div class="mc-meta"><i class="fa-solid fa-fire-flame-curved"></i> 480 kcal</div></div></div>
+          <div class="mcell lastrow" data-meal="Akşam"><button class="mc-x" type="button" aria-label="Kaldır"><i class="fa-solid fa-xmark"></i></button><div class="mc-card" onclick="location.href='tarif-detay-v1.html'"><div class="mc-thumb" style="background-image:url('https://images.unsplash.com/photo-1485921325833-c519f76c4927?w=300&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')"></div><div class="mc-name">Buğulama Levrek</div><div class="mc-meta"><i class="fa-solid fa-fire-flame-curved"></i> 360 kcal</div></div></div>
+          <div class="mcell lastrow" data-meal="Akşam"><button class="mc-x" type="button" aria-label="Kaldır"><i class="fa-solid fa-xmark"></i></button><div class="mc-card" onclick="location.href='tarif-detay-v1.html'"><div class="mc-thumb" style="background-image:url('https://images.unsplash.com/photo-1455619452474-d2be8b1e70cd?w=300&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')"></div><div class="mc-name">Etli Nohut Yemeği</div><div class="mc-meta"><i class="fa-solid fa-fire-flame-curved"></i> 540 kcal</div></div></div>
+          <div class="mcell lastrow" data-meal="Akşam"><button class="mc-x" type="button" aria-label="Kaldır"><i class="fa-solid fa-xmark"></i></button><div class="mc-card" onclick="location.href='tarif-detay-v1.html'"><div class="mc-thumb" style="background-image:url('https://images.unsplash.com/photo-1547592166-23ac45744acd?w=300&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')"></div><div class="mc-name">Sebzeli Güveç</div><div class="mc-meta"><i class="fa-solid fa-fire-flame-curved"></i> 380 kcal</div></div></div>
+          <div class="mcell lastrow empty" data-meal="Akşam"><button class="mc-add" type="button"><i class="fa-solid fa-plus"></i> Ekle</button></div>
+          <div class="mcell lastrow" data-meal="Akşam"><button class="mc-x" type="button" aria-label="Kaldır"><i class="fa-solid fa-xmark"></i></button><div class="mc-card" onclick="location.href='tarif-detay-v1.html'"><div class="mc-thumb" style="background-image:url('https://images.unsplash.com/photo-1631452180519-c014fe946bc7?w=300&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')"></div><div class="mc-name">Fırın Mantı</div><div class="mc-meta"><i class="fa-solid fa-fire-flame-curved"></i> 560 kcal</div></div></div>
+        </div>
+      </div>
+    </div>
 
-          <aside class="tips-col">
-            <div class="tips-card">
-              <div class="tips-head">
-                <i class="fa-solid fa-wand-magic-sparkles"></i>
-                <div><h3>İyi Tarif Yazmanın Sırları</h3><small>Editör ekibinden öneriler</small></div>
-              </div>
-              <div class="tips-list">
-                <div class="tip"><i class="fa-solid fa-circle-check"></i><span><b>Başlık net olsun.</b> “Mantı” yerine “Kayseri Usulü Mantı” — yöre ve teknik güven verir.</span></div>
-                <div class="tip"><i class="fa-solid fa-circle-check"></i><span><b>Hikâyeni kısa tut.</b> İki-üç cümle yeter; ilk cümle iştah açsın.</span></div>
-                <div class="tip"><i class="fa-solid fa-circle-check"></i><span><b>Püf noktanı sakla ama tarifte söyle.</b> En çok denenen tarifler bir “sır” paylaşanlar.</span></div>
-                <div class="tip"><i class="fa-solid fa-circle-check"></i><span><b>Miktarları standart ölçüyle ver.</b> “Biraz” yerine “1 çay kaşığı”.</span></div>
-                <div class="tip"><i class="fa-solid fa-circle-check"></i><span><b>Doğal ışıkta çek.</b> Gün ışığında çekilen kapaklar belirgin şekilde daha çok tıklanıyor.</span></div>
-              </div>
-            </div>
-            <div class="remind-box">
-              <span class="rb-ico"><i class="fa-solid fa-bell"></i></span>
-              <div class="rb-body">
-                <h4>Tarif sana ait olmalı <span class="rb-auto">Kural</span></h4>
-                <p>Gönderdiğin tarif ve görseller <b>kendi orijinal çalışman</b> olmalı. Başkasına ait içerikler editör incelemesinde elenir.</p>
-              </div>
-            </div>
-          </aside>
+    <!-- ALIŞVERİŞ LİSTESİ ÇIKTISI (yıldız özellik) -->
+    <div class="shop-sec">
+      <div class="shop-headrow">
+        <div>
+          <span class="eyebrow"><i class="fa-solid fa-cart-shopping"></i> Otomatik Çıktı</span>
+          <h2>Haftalık Alışveriş Listen</h2>
+          <p>Menündeki <b><span id="menuCount">18</span> tarifin</b> malzemeleri birleştirildi, <span id="shopPpl">4</span> kişiye göre ölçeklendi. Reyon reyon ayrıldı — markette hiç şaşırma. Tarif ekle/kaldır → liste anında güncellenir.</p>
         </div>
       </div>
 
-      <!-- ======== ADIM 2 — GÖRSELLER ======== -->
-      <div class="wstep" data-step="2">
-        <div class="wiz-solo">
-          <div class="form-card">
-            <div class="fc-head">
-              <div>
-                <h2><i class="fa-regular fa-images"></i> Görseller</h2>
-                <p>İştah açan bir kapak ve süreci gösteren birkaç kare — tarifin vitrini burası.</p>
-              </div>
-              <span class="fc-step">Adım 2 / 4</span>
-            </div>
-
-            <div class="fk-field">
-              <label class="fk-label">Kapak Görseli &amp; Galeri <span class="req">*</span><span class="fk-count" id="upCount">4/8 görsel</span></label>
-              <button class="up-zone" type="button" id="upZone">
-                <i class="fa-solid fa-cloud-arrow-up"></i>
-                <b>Görselleri buraya sürükle ya da bilgisayarından seç</b>
-                <small>PNG / JPG · en az 1200px genişlik · en fazla 8 görsel</small>
-              </button>
-              <div class="up-grid" id="upGrid">
-                <div class="up-item is-cover" style="background-image:url('https://images.unsplash.com/photo-1583224964978-2257b960c3d3?w=400&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')">
-                  <span class="ui-cover"><i class="fa-solid fa-star"></i> Kapak</span>
-                  <span class="ui-btns">
-                    <button type="button" class="ui-star" title="Kapak yap" aria-label="Kapak yap"><i class="fa-solid fa-star"></i></button>
-                    <button type="button" class="ui-del" title="Sil" aria-label="Görseli sil"><i class="fa-solid fa-trash-can"></i></button>
-                  </span>
-                </div>
-                <div class="up-item" style="background-image:url('https://images.unsplash.com/photo-1556910103-1c02745aae4d?w=400&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')">
-                  <span class="ui-cover"><i class="fa-solid fa-star"></i> Kapak</span>
-                  <span class="ui-btns">
-                    <button type="button" class="ui-star" title="Kapak yap" aria-label="Kapak yap"><i class="fa-solid fa-star"></i></button>
-                    <button type="button" class="ui-del" title="Sil" aria-label="Görseli sil"><i class="fa-solid fa-trash-can"></i></button>
-                  </span>
-                </div>
-                <div class="up-item" style="background-image:url('https://images.unsplash.com/photo-1604908176997-125f25cc6f3d?w=400&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')">
-                  <span class="ui-cover"><i class="fa-solid fa-star"></i> Kapak</span>
-                  <span class="ui-btns">
-                    <button type="button" class="ui-star" title="Kapak yap" aria-label="Kapak yap"><i class="fa-solid fa-star"></i></button>
-                    <button type="button" class="ui-del" title="Sil" aria-label="Görseli sil"><i class="fa-solid fa-trash-can"></i></button>
-                  </span>
-                </div>
-                <div class="up-item" style="background-image:url('https://images.unsplash.com/photo-1547592180-85f173990554?w=400&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')">
-                  <span class="ui-cover"><i class="fa-solid fa-star"></i> Kapak</span>
-                  <span class="ui-btns">
-                    <button type="button" class="ui-star" title="Kapak yap" aria-label="Kapak yap"><i class="fa-solid fa-star"></i></button>
-                    <button type="button" class="ui-del" title="Sil" aria-label="Görseli sil"><i class="fa-solid fa-trash-can"></i></button>
-                  </span>
-                </div>
-                <button class="up-add" type="button" id="upAdd"><i class="fa-solid fa-plus"></i> Görsel Ekle</button>
-              </div>
-              <span class="fk-help"><i class="fa-solid fa-star"></i> Yıldıza tıklayarak kapak görselini değiştirebilirsin. Bulanık veya karanlık görseller editör incelemesinde elenir.</span>
-            </div>
-
-            <div class="fk-field">
-              <label class="fk-label" for="fVideo">Video <span class="opt">(opsiyonel)</span></label>
-              <input class="fk-input" id="fVideo" type="url" placeholder="https://youtube.com/watch?v=..." />
-              <span class="fk-help"><i class="fa-brands fa-youtube"></i> YouTube veya Vimeo bağlantısı — tarif sayfasında oynatıcı olarak gömülür.</span>
+      <div class="shop-layout">
+        <!-- liste -->
+        <div class="shop-list" id="shopList">
+          <div class="shop-group" data-reyon="manav">
+            <div class="shop-ghead"><i class="fa-solid fa-carrot"></i> <b>Manav</b> <span class="gcnt">7 kalem</span></div>
+            <div class="shop-items">
+              <label class="shop-item"><input type="checkbox"><span class="cbx"></span><span class="si-name">Domates</span><span class="si-qty" data-base="6" data-unit="ad">6 ad</span></label>
+              <label class="shop-item"><input type="checkbox"><span class="cbx"></span><span class="si-name">Kuru soğan</span><span class="si-qty" data-base="1" data-unit="kg">1 kg</span></label>
+              <label class="shop-item"><input type="checkbox"><span class="cbx"></span><span class="si-name">Patates</span><span class="si-qty" data-base="1" data-unit="kg">1 kg</span></label>
+              <label class="shop-item"><input type="checkbox"><span class="cbx"></span><span class="si-name">Sivri biber</span><span class="si-qty" data-base="500" data-unit="g">500 g</span></label>
+              <label class="shop-item"><input type="checkbox"><span class="cbx"></span><span class="si-name">Havuç</span><span class="si-qty" data-base="4" data-unit="ad">4 ad</span></label>
+              <label class="shop-item"><input type="checkbox"><span class="cbx"></span><span class="si-name">Maydanoz</span><span class="si-qty" data-base="2" data-unit="demet">2 demet</span></label>
+              <label class="shop-item"><input type="checkbox"><span class="cbx"></span><span class="si-name">Limon</span><span class="si-qty" data-base="3" data-unit="ad">3 ad</span></label>
             </div>
           </div>
-
-          <div class="wiz-foot">
-            <span class="wf-note"><i class="fa-solid fa-cloud-arrow-up"></i> Taslağa otomatik kaydedildi · 14.36</span>
-            <div class="wf-actions">
-              <button class="btn btn-ghost" type="button" data-prev="2"><i class="fa-solid fa-arrow-left"></i> Önceki Adım</button>
-              <button class="btn btn-primary" type="button" data-next="2">Sonraki Adım <i class="fa-solid fa-arrow-right"></i></button>
+          <div class="shop-group" data-reyon="kasap">
+            <div class="shop-ghead"><i class="fa-solid fa-drumstick-bite"></i> <b>Kasap &amp; Balık</b> <span class="gcnt">3 kalem</span></div>
+            <div class="shop-items">
+              <label class="shop-item"><input type="checkbox"><span class="cbx"></span><span class="si-name">Tavuk göğsü</span><span class="si-qty" data-base="800" data-unit="g">800 g</span></label>
+              <label class="shop-item"><input type="checkbox"><span class="cbx"></span><span class="si-name">Dana kıyma</span><span class="si-qty" data-base="500" data-unit="g">500 g</span></label>
+              <label class="shop-item"><input type="checkbox"><span class="cbx"></span><span class="si-name">Levrek</span><span class="si-qty" data-base="4" data-unit="ad">4 ad</span></label>
+            </div>
+          </div>
+          <div class="shop-group" data-reyon="sut">
+            <div class="shop-ghead"><i class="fa-solid fa-egg"></i> <b>Süt &amp; Kahvaltılık</b> <span class="gcnt">5 kalem</span></div>
+            <div class="shop-items">
+              <label class="shop-item"><input type="checkbox"><span class="cbx"></span><span class="si-name">Yumurta</span><span class="si-qty" data-base="20" data-unit="ad">20 ad</span></label>
+              <label class="shop-item"><input type="checkbox"><span class="cbx"></span><span class="si-name">Süt</span><span class="si-qty" data-base="2" data-unit="L">2 L</span></label>
+              <label class="shop-item"><input type="checkbox"><span class="cbx"></span><span class="si-name">Beyaz peynir</span><span class="si-qty" data-base="500" data-unit="g">500 g</span></label>
+              <label class="shop-item"><input type="checkbox"><span class="cbx"></span><span class="si-name">Tereyağı</span><span class="si-qty" data-base="250" data-unit="g">250 g</span></label>
+              <label class="shop-item"><input type="checkbox"><span class="cbx"></span><span class="si-name">Yoğurt</span><span class="si-qty" data-base="1" data-unit="kg">1 kg</span></label>
+            </div>
+          </div>
+          <div class="shop-group" data-reyon="bakkal">
+            <div class="shop-ghead"><i class="fa-solid fa-wheat-awn"></i> <b>Bakkal &amp; Kuru Gıda</b> <span class="gcnt">6 kalem</span></div>
+            <div class="shop-items">
+              <label class="shop-item"><input type="checkbox"><span class="cbx"></span><span class="si-name">Pirinç</span><span class="si-qty" data-base="1" data-unit="kg">1 kg</span></label>
+              <label class="shop-item"><input type="checkbox"><span class="cbx"></span><span class="si-name">Bulgur</span><span class="si-qty" data-base="500" data-unit="g">500 g</span></label>
+              <label class="shop-item"><input type="checkbox"><span class="cbx"></span><span class="si-name">Makarna</span><span class="si-qty" data-base="2" data-unit="paket">2 paket</span></label>
+              <label class="shop-item"><input type="checkbox"><span class="cbx"></span><span class="si-name">Kırmızı mercimek</span><span class="si-qty" data-base="500" data-unit="g">500 g</span></label>
+              <label class="shop-item"><input type="checkbox"><span class="cbx"></span><span class="si-name">Nohut</span><span class="si-qty" data-base="500" data-unit="g">500 g</span></label>
+              <label class="shop-item"><input type="checkbox"><span class="cbx"></span><span class="si-name">Zeytinyağı</span><span class="si-qty" data-base="1" data-unit="şişe">1 şişe</span></label>
             </div>
           </div>
         </div>
+
+        <!-- özet kartı -->
+        <aside class="shop-summary">
+          <div class="ss-head" style="display:flex;align-items:center;gap:14px">
+            <span class="ss-ico"><i class="fa-solid fa-list-check"></i></span>
+            <div><h3>Alışveriş Özeti</h3><div class="ss-sub">21 kalem · 4 reyon</div></div>
+          </div>
+          <div class="ss-stats">
+            <div class="ss-stat"><b id="ssTotal">21</b><span>toplam kalem</span></div>
+            <div class="ss-stat"><b id="ssDone">0</b><span>sepete atıldı</span></div>
+          </div>
+          <div class="ss-prog"><i id="ssBar" style="width:0%"></i></div>
+          <div class="ss-progtxt"><span id="ssPct">0</span>% tamamlandı</div>
+          <button class="btn btn-primary" type="button"><i class="fa-solid fa-file-arrow-down"></i> Listeyi İndir (PDF)</button>
+          <button class="btn btn-ghost" type="button"><i class="fa-solid fa-share-nodes"></i> Paylaş</button>
+          <div class="ss-note"><i class="fa-solid fa-circle-info"></i> <span>Miktarlar <b id="ssPplNote">4</b> kişiye göre otomatik ölçeklenir. Kişi sayısını değiştirince liste güncellenir.</span></div>
+        </aside>
       </div>
+    </div>
 
-      <!-- ======== ADIM 3 — KÜNYE + MALZEMELER ======== -->
-      <div class="wstep" data-step="3">
-        <div class="wiz-solo">
-          <div class="form-card">
-            <div class="fc-head">
-              <div>
-                <h2><i class="fa-solid fa-clipboard-list"></i> Künye</h2>
-                <p>Tarif sayfasındaki künye şeridini dolduran bilgiler.</p>
-              </div>
-              <span class="fc-step">Adım 3 / 4</span>
-            </div>
-
-            <div class="fk-grid c3">
-              <div class="fk-field">
-                <label class="fk-label" for="fServ">Porsiyon <span class="req">*</span></label>
-                <div class="fk-suffix"><input class="fk-input" id="fServ" type="number" min="1" value="4" /><span>kişilik</span></div>
-              </div>
-              <div class="fk-field">
-                <label class="fk-label" for="fPrep">Hazırlık Süresi <span class="req">*</span></label>
-                <div class="fk-suffix"><input class="fk-input" id="fPrep" type="number" min="0" value="30" /><span>dk</span></div>
-              </div>
-              <div class="fk-field">
-                <label class="fk-label" for="fCook">Pişirme Süresi <span class="req">*</span></label>
-                <div class="fk-suffix"><input class="fk-input" id="fCook" type="number" min="0" value="45" /><span>dk</span></div>
-              </div>
-            </div>
-            <div class="fk-grid c3">
-              <div class="fk-field">
-                <label class="fk-label" for="fDiff">Zorluk <span class="req">*</span></label>
-                <select class="fk-select" id="fDiff" required>
-                  <option value="" disabled>Seç</option>
-                  <option>Kolay</option>
-                  <option selected>Orta</option>
-                  <option>Zor</option>
-                  <option>Çok Zor</option>
-                </select>
-              </div>
-              <div class="fk-field">
-                <label class="fk-label" for="fCuisine">Mutfak <span class="req">*</span></label>
-                <select class="fk-select" id="fCuisine" required>
-                  <option value="" disabled>Seç</option>
-                  <option selected>Türk Mutfağı</option>
-                  <option>İtalyan Mutfağı</option>
-                  <option>Fransız Mutfağı</option>
-                  <option>Uzak Doğu Mutfağı</option>
-                  <option>Orta Doğu Mutfağı</option>
-                  <option>Meksika Mutfağı</option>
-                  <option>Hint Mutfağı</option>
-                  <option>Dünya Mutfağı</option>
-                </select>
-              </div>
-              <div class="fk-field">
-                <label class="fk-label" for="fHeat">Pişirme Derecesi <span class="opt">(opsiyonel)</span></label>
-                <div class="fk-suffix"><input class="fk-input" id="fHeat" type="number" min="0" value="180" /><span>°C</span></div>
-              </div>
-            </div>
-          </div>
-
-          <div class="form-card">
-            <div class="fc-head">
-              <div>
-                <h2><i class="fa-solid fa-basket-shopping"></i> Malzemeler</h2>
-                <p>Kullanım sırasına göre yaz; “Hamur”, “İç Harç” gibi gruplara ayırabilirsin.</p>
-              </div>
-            </div>
-
-            <div class="ie-list" id="ieList">
-              <div class="ie-group">
-                <span class="ie-drag" title="Sürükleyerek sırala"><i class="fa-solid fa-grip-vertical"></i></span>
-                <input type="text" value="Hamur" placeholder="Grup adı (örn. Hamur)" />
-                <button class="ie-gdel" type="button" title="Grubu kaldır" aria-label="Grubu kaldır"><i class="fa-solid fa-xmark"></i></button>
-              </div>
-              <div class="ie-row">
-                <span class="ie-drag" title="Sürükleyerek sırala"><i class="fa-solid fa-grip-vertical"></i></span>
-                <input class="fk-input ie-amt" type="text" value="3,5" placeholder="Miktar" aria-label="Miktar" />
-                <select class="fk-select ie-unit" aria-label="Birim">
-                  <option value="" disabled>Birim</option>
-                  <option selected>Su Bardağı</option><option>Çay Bardağı</option><option>Yemek Kaşığı</option><option>Tatlı Kaşığı</option><option>Çay Kaşığı</option><option>Gram</option><option>Kilogram</option><option>Mililitre</option><option>Litre</option><option>Adet</option><option>Paket</option><option>Dilim</option><option>Tutam</option><option>Diş</option><option>Demet</option>
-                </select>
-                <input class="fk-input ie-name" type="text" value="Un (elenmiş)" placeholder="Malzeme adı" aria-label="Malzeme adı" />
-                <button class="ie-del" type="button" title="Satırı sil" aria-label="Satırı sil"><i class="fa-solid fa-trash-can"></i></button>
-              </div>
-              <div class="ie-row">
-                <span class="ie-drag" title="Sürükleyerek sırala"><i class="fa-solid fa-grip-vertical"></i></span>
-                <input class="fk-input ie-amt" type="text" value="1" placeholder="Miktar" aria-label="Miktar" />
-                <select class="fk-select ie-unit" aria-label="Birim">
-                  <option value="" disabled>Birim</option>
-                  <option>Su Bardağı</option><option>Çay Bardağı</option><option>Yemek Kaşığı</option><option>Tatlı Kaşığı</option><option>Çay Kaşığı</option><option>Gram</option><option>Kilogram</option><option>Mililitre</option><option>Litre</option><option selected>Adet</option><option>Paket</option><option>Dilim</option><option>Tutam</option><option>Diş</option><option>Demet</option>
-                </select>
-                <input class="fk-input ie-name" type="text" value="Yumurta" placeholder="Malzeme adı" aria-label="Malzeme adı" />
-                <button class="ie-del" type="button" title="Satırı sil" aria-label="Satırı sil"><i class="fa-solid fa-trash-can"></i></button>
-              </div>
-              <div class="ie-row">
-                <span class="ie-drag" title="Sürükleyerek sırala"><i class="fa-solid fa-grip-vertical"></i></span>
-                <input class="fk-input ie-amt" type="text" value="1" placeholder="Miktar" aria-label="Miktar" />
-                <select class="fk-select ie-unit" aria-label="Birim">
-                  <option value="" disabled>Birim</option>
-                  <option>Su Bardağı</option><option selected>Çay Bardağı</option><option>Yemek Kaşığı</option><option>Tatlı Kaşığı</option><option>Çay Kaşığı</option><option>Gram</option><option>Kilogram</option><option>Mililitre</option><option>Litre</option><option>Adet</option><option>Paket</option><option>Dilim</option><option>Tutam</option><option>Diş</option><option>Demet</option>
-                </select>
-                <input class="fk-input ie-name" type="text" value="Ilık su" placeholder="Malzeme adı" aria-label="Malzeme adı" />
-                <button class="ie-del" type="button" title="Satırı sil" aria-label="Satırı sil"><i class="fa-solid fa-trash-can"></i></button>
-              </div>
-              <div class="ie-group">
-                <span class="ie-drag" title="Sürükleyerek sırala"><i class="fa-solid fa-grip-vertical"></i></span>
-                <input type="text" value="İç Harç" placeholder="Grup adı (örn. İç Harç)" />
-                <button class="ie-gdel" type="button" title="Grubu kaldır" aria-label="Grubu kaldır"><i class="fa-solid fa-xmark"></i></button>
-              </div>
-              <div class="ie-row">
-                <span class="ie-drag" title="Sürükleyerek sırala"><i class="fa-solid fa-grip-vertical"></i></span>
-                <input class="fk-input ie-amt" type="text" value="250" placeholder="Miktar" aria-label="Miktar" />
-                <select class="fk-select ie-unit" aria-label="Birim">
-                  <option value="" disabled>Birim</option>
-                  <option>Su Bardağı</option><option>Çay Bardağı</option><option>Yemek Kaşığı</option><option>Tatlı Kaşığı</option><option>Çay Kaşığı</option><option selected>Gram</option><option>Kilogram</option><option>Mililitre</option><option>Litre</option><option>Adet</option><option>Paket</option><option>Dilim</option><option>Tutam</option><option>Diş</option><option>Demet</option>
-                </select>
-                <input class="fk-input ie-name" type="text" value="Dana kıyma (az yağlı)" placeholder="Malzeme adı" aria-label="Malzeme adı" />
-                <button class="ie-del" type="button" title="Satırı sil" aria-label="Satırı sil"><i class="fa-solid fa-trash-can"></i></button>
-              </div>
-              <div class="ie-row">
-                <span class="ie-drag" title="Sürükleyerek sırala"><i class="fa-solid fa-grip-vertical"></i></span>
-                <input class="fk-input ie-amt" type="text" value="1" placeholder="Miktar" aria-label="Miktar" />
-                <select class="fk-select ie-unit" aria-label="Birim">
-                  <option value="" disabled>Birim</option>
-                  <option>Su Bardağı</option><option>Çay Bardağı</option><option>Yemek Kaşığı</option><option>Tatlı Kaşığı</option><option>Çay Kaşığı</option><option>Gram</option><option>Kilogram</option><option>Mililitre</option><option>Litre</option><option selected>Adet</option><option>Paket</option><option>Dilim</option><option>Tutam</option><option>Diş</option><option>Demet</option>
-                </select>
-                <input class="fk-input ie-name" type="text" value="Kuru soğan (rendelenmiş)" placeholder="Malzeme adı" aria-label="Malzeme adı" />
-                <button class="ie-del" type="button" title="Satırı sil" aria-label="Satırı sil"><i class="fa-solid fa-trash-can"></i></button>
-              </div>
-              <div class="ie-row">
-                <span class="ie-drag" title="Sürükleyerek sırala"><i class="fa-solid fa-grip-vertical"></i></span>
-                <input class="fk-input ie-amt" type="text" value="1" placeholder="Miktar" aria-label="Miktar" />
-                <select class="fk-select ie-unit" aria-label="Birim">
-                  <option value="" disabled>Birim</option>
-                  <option>Su Bardağı</option><option>Çay Bardağı</option><option>Yemek Kaşığı</option><option>Tatlı Kaşığı</option><option selected>Çay Kaşığı</option><option>Gram</option><option>Kilogram</option><option>Mililitre</option><option>Litre</option><option>Adet</option><option>Paket</option><option>Dilim</option><option>Tutam</option><option>Diş</option><option>Demet</option>
-                </select>
-                <input class="fk-input ie-name" type="text" value="Karabiber" placeholder="Malzeme adı" aria-label="Malzeme adı" />
-                <button class="ie-del" type="button" title="Satırı sil" aria-label="Satırı sil"><i class="fa-solid fa-trash-can"></i></button>
-              </div>
-            </div>
-
-            <div class="ie-actions">
-              <button class="add-row" type="button" id="addRow"><i class="fa-solid fa-plus"></i> Satır Ekle</button>
-              <button class="add-row alt" type="button" id="addGroup"><i class="fa-solid fa-layer-group"></i> Grup Ekle</button>
-            </div>
-          </div>
-
-          <div class="wiz-foot">
-            <span class="wf-note"><i class="fa-solid fa-cloud-arrow-up"></i> Taslağa otomatik kaydedildi · 14.41</span>
-            <div class="wf-actions">
-              <button class="btn btn-ghost" type="button" data-prev="3"><i class="fa-solid fa-arrow-left"></i> Önceki Adım</button>
-              <button class="btn btn-primary" type="button" data-next="3">Sonraki Adım <i class="fa-solid fa-arrow-right"></i></button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- ======== ADIM 4 — HAZIRLANIŞ ADIMLARI ======== -->
-      <div class="wstep" data-step="4">
-        <div class="wiz-solo">
-          <div class="form-card">
-            <div class="fc-head">
-              <div>
-                <h2><i class="fa-solid fa-list-ol"></i> Hazırlanış Adımları</h2>
-                <p>Her adım tek bir işlemi anlatsın; görsel ve süre eklersen pişirme modunda zamanlayıcıya dönüşür.</p>
-              </div>
-              <span class="fc-step">Adım 4 / 4</span>
-            </div>
-
-            <div class="st-list" id="stList">
-              <div class="st-card">
-                <span class="st-num">1</span>
-                <div class="st-body">
-                  <textarea class="fk-textarea" placeholder="Bu adımda ne yapılıyor? Tek işlem, net anlatım...">Un, yumurta, tuz ve ılık suyu derin bir kapta birleştirip kulak memesi yumuşaklığında bir hamur yoğurun. Üzerini nemli bezle örtüp 20 dakika dinlendirin.</textarea>
-                  <div class="st-meta">
-                    <div class="st-figs">
-                      <div class="st-shot" style="background-image:url('https://images.unsplash.com/photo-1556910103-1c02745aae4d?w=300&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')">
-                        <button type="button" title="Görseli sil" aria-label="Görseli sil"><i class="fa-solid fa-trash-can"></i></button>
-                      </div>
-                      <button class="st-up" type="button"><i class="fa-regular fa-image"></i> Görsel ekle <small>1/3</small></button>
-                    </div>
-                    <div class="fk-suffix st-time"><input class="fk-input" type="number" min="0" value="20" placeholder="Süre" aria-label="Adım süresi" /><span>dk</span></div>
-                  </div>
-                </div>
-                <div class="st-side">
-                  <span class="ie-drag" title="Sürükleyerek sırala"><i class="fa-solid fa-grip-vertical"></i></span>
-                  <button class="ie-del st-del" type="button" title="Adımı sil" aria-label="Adımı sil"><i class="fa-solid fa-trash-can"></i></button>
-                </div>
-              </div>
-
-              <div class="st-card">
-                <span class="st-num">2</span>
-                <div class="st-body">
-                  <textarea class="fk-textarea" placeholder="Bu adımda ne yapılıyor? Tek işlem, net anlatım...">Kıyma, rendelenmiş soğan, tuz ve karabiberi karıştırarak iç harcı hazırlayın. Hamuru 2 mm incelikte açıp 2x2 cm kareler kesin, her karenin ortasına nohut büyüklüğünde harç koyup bohça gibi kapatın.</textarea>
-                  <div class="st-meta">
-                    <div class="st-figs"><button class="st-up" type="button"><i class="fa-regular fa-image"></i> Görsel ekle <small>0/3</small></button></div>
-                    <div class="fk-suffix st-time"><input class="fk-input" type="number" min="0" value="35" placeholder="Süre" aria-label="Adım süresi" /><span>dk</span></div>
-                  </div>
-                </div>
-                <div class="st-side">
-                  <span class="ie-drag" title="Sürükleyerek sırala"><i class="fa-solid fa-grip-vertical"></i></span>
-                  <button class="ie-del st-del" type="button" title="Adımı sil" aria-label="Adımı sil"><i class="fa-solid fa-trash-can"></i></button>
-                </div>
-              </div>
-
-              <div class="st-card">
-                <span class="st-num">3</span>
-                <div class="st-body">
-                  <textarea class="fk-textarea" placeholder="Bu adımda ne yapılıyor? Tek işlem, net anlatım...">Mantıları yağlanmış tepsiye dizip 180°C fırında 10 dakika kurutun. Ardından kaynayan tuzlu suda 8-10 dakika haşlayın; sarımsaklı yoğurt ve kızdırılmış salçalı tereyağı ile servis edin.</textarea>
-                  <div class="st-meta">
-                    <div class="st-figs"><button class="st-up" type="button"><i class="fa-regular fa-image"></i> Görsel ekle <small>0/3</small></button></div>
-                    <div class="fk-suffix st-time"><input class="fk-input" type="number" min="0" value="25" placeholder="Süre" aria-label="Adım süresi" /><span>dk</span></div>
-                  </div>
-                </div>
-                <div class="st-side">
-                  <span class="ie-drag" title="Sürükleyerek sırala"><i class="fa-solid fa-grip-vertical"></i></span>
-                  <button class="ie-del st-del" type="button" title="Adımı sil" aria-label="Adımı sil"><i class="fa-solid fa-trash-can"></i></button>
-                </div>
-              </div>
-            </div>
-
-            <div class="ie-actions">
-              <button class="add-row" type="button" id="addStep"><i class="fa-solid fa-plus"></i> Adım Ekle</button>
-            </div>
-          </div>
-
-          <!-- önizleme / gönder bölgesi -->
-          <div class="send-panel">
-            <span class="sp-ico"><i class="fa-solid fa-paper-plane"></i></span>
-            <div class="sp-info">
-              <b>Tarifin gönderime hazır görünüyor</b>
-              <p>Onaya göndermeden önce <a href="#">tarifini önizle</a>. Editör incelemesi ortalama <b>24–48 saat</b> sürer; sonuç bildirimle gelir.</p>
-            </div>
-            <div class="sp-btns">
-              <button class="btn btn-ghost" type="button" id="saveDraft"><i class="fa-regular fa-floppy-disk"></i> Taslak Kaydet</button>
-              <button class="btn btn-primary" type="button" id="sendApproval"><i class="fa-solid fa-paper-plane"></i> Onaya Gönder</button>
-            </div>
-          </div>
-
-          <div class="wiz-foot">
-            <span class="wf-note"><i class="fa-solid fa-cloud-arrow-up"></i> Taslağa otomatik kaydedildi · 14.48</span>
-            <div class="wf-actions">
-              <button class="btn btn-ghost" type="button" data-prev="4"><i class="fa-solid fa-arrow-left"></i> Önceki Adım</button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-    </form>
   </div>
 </section>
 
@@ -2024,272 +1565,158 @@ document.addEventListener('click',function(e){
   document.getElementById('cookieReject').addEventListener('click',function(){dismiss('rejected');});
 })();
 
-/* ===== SAYFA JS — sayfa-spesifik script BU İŞARETİN ALTINA eklenir ===== */
-
-/* ============ TARİF EKLE (F5) — sihirbaz + form kiti davranışları ============
-   SS paramları: ?step=1..4 · ?state=draft|review|rejected · ?err=1 (boş ad hatası) */
+/* ===== SAYFA JS — HAFTALIK DADA MENÜ ===== */
 (function(){
-  var params=new URLSearchParams(location.search);
-  var cur=Math.min(4,Math.max(1,parseInt(params.get('step')||'1',10)||1));
+  var BASE=4, people=4, MINP=1, MAXP=12;
+  var pplVal=document.getElementById('pplVal');
+  var shopPpl=document.getElementById('shopPpl');
+  var ssPplNote=document.getElementById('ssPplNote');
 
-  /* ---- durum bandı (?state=) ---- */
-  var state=params.get('state');
-  if(state==='draft')document.getElementById('sbDraft').classList.add('show');
-  if(state==='review')document.getElementById('sbReview').classList.add('show');
-  if(state==='rejected')document.getElementById('sbRejected').classList.add('show');
-  var retry=document.getElementById('sbRetry');
-  if(retry)retry.addEventListener('click',function(){goTo(2,true);});
-
-  /* ---- adım gösterimi + stepper senkronu ---- */
-  var steps=document.querySelectorAll('.wstep');
-  var stps=document.querySelectorAll('.stepper .stp');
-  var lines=document.querySelectorAll('.stepper .stp-line');
-  function render(){
-    steps.forEach(function(p){p.classList.toggle('active',+p.getAttribute('data-step')===cur);});
-    stps.forEach(function(s){
-      var n=+s.getAttribute('data-goto');
-      s.classList.toggle('active',n===cur);
-      s.classList.toggle('done',n<cur);
-      s.setAttribute('aria-selected',n===cur?'true':'false');
+  function fmtQty(base,unit){
+    var v=base*(people/BASE);
+    if(unit==='ad'||unit==='demet') return Math.max(1,Math.round(v))+' '+unit;
+    if(unit==='paket'||unit==='şişe') return Math.max(1,Math.ceil(v))+' '+unit;
+    if(unit==='kg'||unit==='L'){ var r=Math.round(v*2)/2; if(r<0.5)r=0.5; return (r%1===0?r.toFixed(0):r.toFixed(1))+' '+unit; }
+    if(unit==='g'){ var g=Math.max(50,Math.round(v/50)*50); if(g>=1000) return (g/1000)+' kg'; return g+' g'; }
+    return v+' '+unit;
+  }
+  function scale(){
+    document.querySelectorAll('.si-qty').forEach(function(q){
+      q.textContent=fmtQty(+q.dataset.base,q.dataset.unit);
     });
-    lines.forEach(function(l){l.classList.toggle('done',+l.getAttribute('data-line')<cur);});
+    pplVal.textContent=people; shopPpl.textContent=people; ssPplNote.textContent=people;
+    document.querySelector('.ppl [data-ppl="-"]').disabled=people<=MINP;
+    document.querySelector('.ppl [data-ppl="+"]').disabled=people>=MAXP;
   }
-  function goTo(n,force){
-    if(n===cur)return;
-    if(n>cur&&!force&&!validate(cur))return;   // ileri: doğrulamadan geçmeden olmaz
-    cur=Math.min(4,Math.max(1,n));
-    render();
-    window.scrollTo({top:0,behavior:'smooth'});
-  }
-  // stepper: yalnız GERİ tıklanır (ileri atlamak yasak)
-  stps.forEach(function(s){
-    s.addEventListener('click',function(){
-      var n=+s.getAttribute('data-goto');
-      if(n<cur)goTo(n);
+  document.querySelectorAll('.ppl button[data-ppl]').forEach(function(b){
+    b.addEventListener('click',function(){
+      if(b.dataset.ppl==='+'&&people<MAXP)people++;
+      if(b.dataset.ppl==='-'&&people>MINP)people--;
+      scale();
     });
   });
-  document.querySelectorAll('[data-next]').forEach(function(b){
-    b.addEventListener('click',function(){goTo(cur+1);});
-  });
-  document.querySelectorAll('[data-prev]').forEach(function(b){
-    b.addEventListener('click',function(){goTo(cur-1,true);});
-  });
 
-  /* ---- doğrulama (görsel dil örneği: boş tarif adı) ---- */
-  var fldTitle=document.getElementById('fldTitle');
-  var fTitle=document.getElementById('fTitle');
-  function validate(step){
-    if(step===1&&fTitle.value.trim()===''){
-      fldTitle.classList.add('has-error');
-      fTitle.focus();
-      return false;
-    }
-    return true;
+  // ---- CANLI ALIŞVERİŞ LİSTESİ (menüden türetilir — Beyar ek iş) ----
+  var ssTotal=document.getElementById('ssTotal'),ssDone=document.getElementById('ssDone'),
+      ssBar=document.getElementById('ssBar'),ssPct=document.getElementById('ssPct'),
+      ssSub=document.querySelector('.shop-summary .ss-sub'),
+      menuCountEl=document.getElementById('menuCount');
+  // malzeme kataloğu: ad → [reyon, baz miktar, birim]
+  var CAT={
+    'Domates':['manav',6,'ad'],'Kuru soğan':['manav',1,'kg'],'Patates':['manav',1,'kg'],'Sivri biber':['manav',500,'g'],'Havuç':['manav',4,'ad'],'Maydanoz':['manav',2,'demet'],'Limon':['manav',3,'ad'],
+    'Tavuk göğsü':['kasap',800,'g'],'Dana kıyma':['kasap',500,'g'],'Levrek':['kasap',4,'ad'],
+    'Yumurta':['sut',20,'ad'],'Süt':['sut',2,'L'],'Beyaz peynir':['sut',500,'g'],'Tereyağı':['sut',250,'g'],'Yoğurt':['sut',1,'kg'],
+    'Bulgur':['bakkal',500,'g'],'Makarna':['bakkal',2,'paket'],'Kırmızı mercimek':['bakkal',500,'g'],'Nohut':['bakkal',500,'g'],'Zeytinyağı':['bakkal',1,'şişe'],'Un':['bakkal',1,'kg'],'Maya':['bakkal',1,'paket']
+  };
+  // tarif → malzemeleri (mock; .mc-name ile eşleşir)
+  var RING={
+    'Domatesli Menemen':['Yumurta','Domates','Sivri biber'],'Peynirli Omlet':['Yumurta','Beyaz peynir'],
+    'Serpme Kahvaltı Tabağı':['Beyaz peynir','Domates','Zeytinyağı'],'Meyveli Yulaf Kâsesi':['Süt','Yoğurt'],
+    'Tahinli Açma':['Un','Maya'],'Şakşuka Tava':['Patates','Sivri biber','Domates'],
+    'Ezogelin Çorbası':['Kırmızı mercimek','Bulgur','Domates'],'Tavuklu Sezar Salata':['Tavuk göğsü','Limon'],
+    'Domates Soslu Makarna':['Makarna','Domates','Kuru soğan'],'Sebzeli Bulgur Pilavı':['Bulgur','Havuç','Sivri biber'],
+    'Izgara Köfte':['Dana kıyma','Kuru soğan','Maydanoz'],'Izgara Tavuk & Salata':['Tavuk göğsü','Limon','Maydanoz'],
+    'Fırında Sebzeli Tavuk':['Tavuk göğsü','Patates','Havuç'],'Karnıyarık':['Patates','Dana kıyma','Domates'],
+    'Buğulama Levrek':['Levrek','Limon','Maydanoz'],'Etli Nohut Yemeği':['Nohut','Dana kıyma','Kuru soğan'],
+    'Sebzeli Güveç':['Patates','Havuç','Sivri biber'],'Fırın Mantı':['Un','Yoğurt','Dana kıyma'],
+    'Sebzeli Sote':['Havuç','Sivri biber','Zeytinyağı'],'Mercimek Köftesi':['Kırmızı mercimek','Bulgur','Maydanoz'],
+    'Yoğurtlu Makarna':['Makarna','Yoğurt','Tereyağı']
+  };
+  var REYONS=['manav','kasap','sut','bakkal'];
+  var checkedSet={};                                   // işaretliler (ad bazlı, rebuild'de korunur)
+
+  function prog(){
+    var all=document.querySelectorAll('.shop-item').length;
+    var done=document.querySelectorAll('.shop-item input:checked').length;
+    ssDone.textContent=done;
+    var pct=all?Math.round(done/all*100):0;
+    ssBar.style.width=pct+'%'; ssPct.textContent=pct;
   }
-  fTitle.addEventListener('input',function(){
-    fldTitle.classList.remove('has-error');
-    countTitle();
-  });
-
-  /* ---- başlık karakter sayacı ---- */
-  var titleCount=document.getElementById('titleCount');
-  function countTitle(){titleCount.textContent=fTitle.value.length+'/80';}
-  countTitle();
-
-  /* ---- SS: ?err=1 → boş ad + hata durumu ---- */
-  if(params.get('err')==='1'){
-    fTitle.value='';
-    countTitle();
-    fldTitle.classList.add('has-error');
+  function menuRecipes(){
+    return Array.prototype.slice.call(document.querySelectorAll('.mcell:not(.empty) .mc-name'))
+      .map(function(n){return n.textContent.trim();});
+  }
+  function rebuildShop(){
+    var recipes=menuRecipes(), counts={};
+    recipes.forEach(function(rn){ (RING[rn]||[]).forEach(function(ing){ counts[ing]=(counts[ing]||0)+1; }); });
+    var activeReyons=0;
+    REYONS.forEach(function(rk){
+      var grp=document.querySelector('.shop-group[data-reyon="'+rk+'"]'); if(!grp)return;
+      var box=grp.querySelector('.shop-items'); box.innerHTML=''; var n=0;
+      Object.keys(CAT).forEach(function(ing){
+        if(CAT[ing][0]!==rk||!counts[ing])return;
+        n++;
+        var base=CAT[ing][1],unit=CAT[ing][2],on=!!checkedSet[ing];
+        var lab=document.createElement('label'); lab.className='shop-item'+(on?' done':'');
+        lab.innerHTML='<input type="checkbox"'+(on?' checked':'')+'><span class="cbx"></span>'+
+          '<span class="si-name">'+ing+(counts[ing]>1?' <span style="color:var(--muted);font-weight:500;font-size:11px">×'+counts[ing]+' tarif</span>':'')+'</span>'+
+          '<span class="si-qty" data-base="'+base+'" data-unit="'+unit+'">'+fmtQty(base,unit)+'</span>';
+        var inp=lab.querySelector('input');
+        inp.addEventListener('change',function(){ if(inp.checked)checkedSet[ing]=true; else delete checkedSet[ing]; lab.classList.toggle('done',inp.checked); prog(); });
+        box.appendChild(lab);
+      });
+      grp.querySelector('.gcnt').textContent=n+' kalem';
+      grp.style.display=n===0?'none':''; if(n>0)activeReyons++;
+    });
+    var total=document.querySelectorAll('.shop-item').length;
+    ssTotal.textContent=total;
+    if(menuCountEl) menuCountEl.textContent=recipes.length;
+    if(ssSub) ssSub.textContent=total+' kalem · '+activeReyons+' reyon';
+    prog();
   }
 
-  /* ---- ADIM 2: galeri (kapak yıldızı · sil · örnek ekleme) ---- */
-  var upGrid=document.getElementById('upGrid');
-  var upCount=document.getElementById('upCount');
-  var upAdd=document.getElementById('upAdd');
-  var spareImgs=[
-    'https://images.unsplash.com/photo-1495195134817-aeb325a55b65?w=400&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5',
-    'https://images.unsplash.com/photo-1466637574441-749b8f19452f?w=400&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5',
-    'https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=400&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5',
-    'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=400&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5'
+  // ---- toast ----
+  var toast=document.createElement('div');
+  toast.style.cssText='position:fixed;left:50%;bottom:96px;transform:translateX(-50%) translateY(20px);z-index:96;background:var(--slate);color:#fff;font-size:13.5px;font-weight:700;padding:13px 20px;border-radius:var(--radius-md);box-shadow:var(--sh-lg);opacity:0;pointer-events:none;transition:.3s var(--ease);display:flex;align-items:center;gap:9px';
+  document.body.appendChild(toast);
+  var toastT;
+  function showToast(msg){
+    toast.innerHTML='<i class="fa-solid fa-circle-check" style="color:var(--green)"></i> '+msg;
+    toast.style.opacity='1';toast.style.transform='translateX(-50%) translateY(0)';
+    clearTimeout(toastT);toastT=setTimeout(function(){toast.style.opacity='0';toast.style.transform='translateX(-50%) translateY(20px)';},2200);
+  }
+
+  // ---- otomatik oluştur (görsel) ----
+  document.getElementById('autoGen').addEventListener('click',function(){
+    var board=document.querySelector('.wk-board');
+    board.style.transition='opacity .25s';board.style.opacity='.4';
+    setTimeout(function(){board.style.opacity='1';showToast('Menün yenilendi — alışveriş listesi güncel');},280);
+  });
+
+  // ---- hücre kaldır → boş slot ----
+  function bindRemove(btn){
+    btn.addEventListener('click',function(e){
+      e.stopPropagation();
+      var cell=btn.closest('.mcell');
+      cell.classList.add('empty');
+      cell.innerHTML='<button class="mc-add" type="button"><i class="fa-solid fa-plus"></i> Ekle</button>';
+      bindAdd(cell.querySelector('.mc-add'));
+      rebuildShop(); showToast('Tarif menüden çıkarıldı — liste güncellendi');
+    });
+  }
+  // ---- boş slot doldur (görsel) ----
+  var POOL=[
+    ['Sebzeli Sote','https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=300&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5','280'],
+    ['Mercimek Köftesi','https://images.unsplash.com/photo-1543339308-43e59d6b73a6?w=300&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5','240'],
+    ['Yoğurtlu Makarna','https://images.unsplash.com/photo-1621996346565-e3dbc646d9a9?w=300&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5','390']
   ];
-  var spareIdx=0;
-  function items(){return upGrid.querySelectorAll('.up-item');}
-  function syncUp(){
-    var n=items().length;
-    upCount.textContent=n+'/8 görsel';
-    upAdd.style.display=n>=8?'none':'';
-    // kapak garanti: hiç is-cover kalmadıysa ilk görseli kapak yap
-    if(n&&!upGrid.querySelector('.up-item.is-cover'))items()[0].classList.add('is-cover');
+  function bindAdd(btn){
+    btn.addEventListener('click',function(e){
+      e.stopPropagation();
+      var cell=btn.closest('.mcell');
+      var p=POOL[(cell.dataset.meal||'').length%POOL.length];
+      cell.classList.remove('empty');
+      cell.innerHTML='<button class="mc-x" type="button" aria-label="Kaldır"><i class="fa-solid fa-xmark"></i></button>'+
+        '<div class="mc-card" onclick="location.href=\'tarif-detay-v1.html\'"><div class="mc-thumb" style="background-image:url(\''+p[1]+'\')"></div>'+
+        '<div class="mc-name">'+p[0]+'</div><div class="mc-meta"><i class="fa-solid fa-fire-flame-curved"></i> '+p[2]+' kcal</div></div>';
+      bindRemove(cell.querySelector('.mc-x'));
+      rebuildShop(); showToast('Tarif eklendi — liste güncellendi');
+    });
   }
-  function addImg(){
-    if(items().length>=8)return;
-    var d=document.createElement('div');
-    d.className='up-item';
-    d.style.backgroundImage="url('"+spareImgs[spareIdx++%spareImgs.length]+"')";
-    d.innerHTML='<span class="ui-cover"><i class="fa-solid fa-star"></i> Kapak</span>'+
-      '<span class="ui-btns">'+
-      '<button type="button" class="ui-star" title="Kapak yap" aria-label="Kapak yap"><i class="fa-solid fa-star"></i></button>'+
-      '<button type="button" class="ui-del" title="Sil" aria-label="Görseli sil"><i class="fa-solid fa-trash-can"></i></button>'+
-      '</span>';
-    upGrid.insertBefore(d,upAdd);
-    syncUp();
-  }
-  upAdd.addEventListener('click',addImg);
-  document.getElementById('upZone').addEventListener('click',addImg);
-  upGrid.addEventListener('click',function(e){
-    var star=e.target.closest('.ui-star');
-    var del=e.target.closest('.ui-del');
-    if(star){
-      items().forEach(function(it){it.classList.remove('is-cover');});
-      star.closest('.up-item').classList.add('is-cover');
-    }
-    if(del){del.closest('.up-item').remove();syncUp();}
-  });
-  syncUp();
+  document.querySelectorAll('.mc-x').forEach(bindRemove);
+  document.querySelectorAll('.mc-add').forEach(bindAdd);
 
-  /* ---- ADIM 3: dinamik malzeme satırı + grup ---- */
-  var ieList=document.getElementById('ieList');
-  var UNITS='<option value="" disabled selected>Birim</option><option>Su Bardağı</option><option>Çay Bardağı</option><option>Yemek Kaşığı</option><option>Tatlı Kaşığı</option><option>Çay Kaşığı</option><option>Gram</option><option>Kilogram</option><option>Mililitre</option><option>Litre</option><option>Adet</option><option>Paket</option><option>Dilim</option><option>Tutam</option><option>Diş</option><option>Demet</option>';
-  function makeRow(){
-    var r=document.createElement('div');
-    r.className='ie-row';
-    r.innerHTML='<span class="ie-drag" title="Sürükleyerek sırala"><i class="fa-solid fa-grip-vertical"></i></span>'+
-      '<input class="fk-input ie-amt" type="text" placeholder="Miktar" aria-label="Miktar" />'+
-      '<select class="fk-select ie-unit" aria-label="Birim">'+UNITS+'</select>'+
-      '<input class="fk-input ie-name" type="text" placeholder="Malzeme adı" aria-label="Malzeme adı" />'+
-      '<button class="ie-del" type="button" title="Satırı sil" aria-label="Satırı sil"><i class="fa-solid fa-trash-can"></i></button>';
-    return r;
-  }
-  document.getElementById('addRow').addEventListener('click',function(){
-    var r=makeRow();
-    ieList.appendChild(r);
-    r.querySelector('.ie-amt').focus();
-  });
-  document.getElementById('addGroup').addEventListener('click',function(){
-    var g=document.createElement('div');
-    g.className='ie-group';
-    g.innerHTML='<span class="ie-drag" title="Sürükleyerek sırala"><i class="fa-solid fa-grip-vertical"></i></span>'+
-      '<input type="text" placeholder="Grup adı (örn. Sos)" />'+
-      '<button class="ie-gdel" type="button" title="Grubu kaldır" aria-label="Grubu kaldır"><i class="fa-solid fa-xmark"></i></button>';
-    ieList.appendChild(g);
-    ieList.appendChild(makeRow());
-    g.querySelector('input').focus();
-  });
-  ieList.addEventListener('click',function(e){
-    var del=e.target.closest('.ie-del');
-    var gdel=e.target.closest('.ie-gdel');
-    if(del)del.closest('.ie-row').remove();
-    if(gdel)gdel.closest('.ie-group').remove();  // grup başlığı kalkar, satırlar üst gruba akar
-  });
-
-  /* ---- malzeme autocomplete: havuz + serbest karma (Beyar kararı, DB ilişkisi) ---- */
-  var ING_POOL=['Un','Tuz','Toz şeker','Yumurta','Süt','Tereyağı','Zeytinyağı','Kuru soğan','Sarımsak','Dana kıyma','Tavuk göğsü','Domates salçası','Karabiber','Süzme yoğurt','Maydanoz'];
-  var sugg=document.createElement('div');
-  sugg.className='ie-sugg';
-  document.body.appendChild(sugg);
-  var suggFor=null;
-  function trLower(s){return s.replace(/İ/g,'i').replace(/I/g,'ı').toLowerCase();}
-  function hideSugg(){sugg.classList.remove('show');suggFor=null;}
-  function showSugg(input){
-    var q=input.value.trim(), ql=trLower(q);
-    var hits=ING_POOL.filter(function(m){return !ql||trLower(m).indexOf(ql)>-1;}).slice(0,6);
-    var exact=ING_POOL.some(function(m){return trLower(m)===ql;});
-    var html=hits.map(function(m){return '<button type="button" data-val="'+m+'"><i class="fa-solid fa-carrot"></i> '+m+'</button>';}).join('');
-    if(q&&!exact)html+='<button type="button" class="sg-new" data-val="'+q.replace(/"/g,'&quot;')+'"><i class="fa-solid fa-circle-plus"></i> &ldquo;'+q+'&rdquo; — yeni malzeme öner</button>';
-    if(!html){hideSugg();return;}
-    sugg.innerHTML=html;
-    var r=input.getBoundingClientRect();
-    sugg.style.left=r.left+'px';sugg.style.top=(r.bottom+6)+'px';sugg.style.width=Math.max(r.width,230)+'px';
-    sugg.classList.add('show');suggFor=input;
-  }
-  document.addEventListener('focusin',function(e){if(e.target.classList&&e.target.classList.contains('ie-name'))showSugg(e.target);});
-  document.addEventListener('input',function(e){if(e.target.classList&&e.target.classList.contains('ie-name'))showSugg(e.target);});
-  sugg.addEventListener('mousedown',function(e){
-    var b=e.target.closest('button');if(!b)return;
-    e.preventDefault();                                  // blur'dan önce seçimi işle
-    if(suggFor)suggFor.value=b.getAttribute('data-val');
-    hideSugg();
-  });
-  document.addEventListener('click',function(e){if(!e.target.closest('.ie-sugg')&&!(e.target.classList&&e.target.classList.contains('ie-name')))hideSugg();});
-  document.addEventListener('keydown',function(e){if(e.key==='Escape')hideSugg();});
-  window.addEventListener('scroll',hideSugg,{passive:true});
-
-  /* ---- ADIM 4: dinamik adım kartları ---- */
-  var stList=document.getElementById('stList');
-  function renumber(){
-    stList.querySelectorAll('.st-card .st-num').forEach(function(n,i){n.textContent=i+1;});
-  }
-  document.getElementById('addStep').addEventListener('click',function(){
-    var c=document.createElement('div');
-    c.className='st-card';
-    c.innerHTML='<span class="st-num"></span>'+
-      '<div class="st-body">'+
-      '<textarea class="fk-textarea" placeholder="Bu adımda ne yapılıyor? Tek işlem, net anlatım..."></textarea>'+
-      '<div class="st-meta">'+
-      '<div class="st-figs"><button class="st-up" type="button"><i class="fa-regular fa-image"></i> Görsel ekle <small>0/3</small></button></div>'+
-      '<div class="fk-suffix st-time"><input class="fk-input" type="number" min="0" placeholder="Süre" aria-label="Adım süresi" /><span>dk</span></div>'+
-      '</div></div>'+
-      '<div class="st-side">'+
-      '<span class="ie-drag" title="Sürükleyerek sırala"><i class="fa-solid fa-grip-vertical"></i></span>'+
-      '<button class="ie-del st-del" type="button" title="Adımı sil" aria-label="Adımı sil"><i class="fa-solid fa-trash-can"></i></button>'+
-      '</div>';
-    stList.appendChild(c);
-    renumber();
-    c.querySelector('textarea').focus();
-  });
-  // adım görseli: max 3 slot (Beyar kararı — eski site + tarif detay paritesi)
-  var STEP_IMGS=['photo-1466637574441-749b8f19452f','photo-1495521821757-a1efb6729352','photo-1507048331197-7d4ac70811cf'];
-  function syncFigs(figs){
-    var n=figs.querySelectorAll('.st-shot').length;
-    var up=figs.querySelector('.st-up');
-    if(n>=3){if(up)up.style.display='none';}
-    else{
-      if(!up){up=document.createElement('button');up.className='st-up';up.type='button';figs.appendChild(up);}
-      up.style.display='';
-      up.innerHTML='<i class="fa-regular fa-image"></i> Görsel ekle <small>'+n+'/3</small>';
-    }
-  }
-  stList.addEventListener('click',function(e){
-    var del=e.target.closest('.st-del');
-    if(del){del.closest('.st-card').remove();renumber();return;}
-    var shotDel=e.target.closest('.st-shot button');
-    if(shotDel){
-      var figs=shotDel.closest('.st-figs');
-      shotDel.closest('.st-shot').remove();
-      syncFigs(figs);
-      return;
-    }
-    var up=e.target.closest('.st-up');
-    if(up){
-      var figs2=up.closest('.st-figs');
-      var n=figs2.querySelectorAll('.st-shot').length;
-      if(n>=3)return;
-      var shot=document.createElement('div');
-      shot.className='st-shot';
-      shot.style.backgroundImage="url('https://images.unsplash.com/"+STEP_IMGS[n]+"?w=300&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')";
-      shot.innerHTML='<button type="button" title="Görseli sil" aria-label="Görseli sil"><i class="fa-solid fa-trash-can"></i></button>';
-      figs2.insertBefore(shot,up);
-      syncFigs(figs2);
-    }
-  });
-
-  /* ---- taslak kaydet / onaya gönder (mock geri bildirim) ---- */
-  var saveDraft=document.getElementById('saveDraft');
-  saveDraft.addEventListener('click',function(){
-    var old=saveDraft.innerHTML;
-    saveDraft.innerHTML='<i class="fa-solid fa-check"></i> Taslağa Kaydedildi';
-    saveDraft.disabled=true;
-    setTimeout(function(){saveDraft.innerHTML=old;saveDraft.disabled=false;},1800);
-  });
-  document.getElementById('sendApproval').addEventListener('click',function(){
-    // mock: onaya gönderildi durumuna geç (ONAYDA bandı + adım 1)
-    document.querySelectorAll('.sbanner').forEach(function(b){b.classList.remove('show');});
-    document.getElementById('sbReview').classList.add('show');
-    window.scrollTo({top:0,behavior:'smooth'});
-  });
-
-  render();
+  scale(); rebuildShop();
 })();
 </script>
 </body>

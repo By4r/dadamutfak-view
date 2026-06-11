@@ -33,13 +33,52 @@
 ## 2. tarif-detay-v1'den (TD) — class referansı, CSS'i TD'den kopyala
 
 - **Sayfa üst yapısı:** `.rd-top` (below-header muadili, 112px) · `.rd-crumb` breadcrumb · `.rd-head` hero + `.kunye-col` dikey künye (260px) · `.tbadge` rozet · `.chip-flag` bayraklı mutfak chip'i (flagcdn)
-- **Form/etkileşim kiti:** `.rev-form` (yorum formu: `.rf-stars .rf-text .rf-photo .rf-chips`) — form sayfası için referans dil; `.rev-filter` filtre çipleri; `.rev-summary .rs-bars` puan dağılımı
+- **Form/etkileşim kiti:** `.rev-form` (yorum formu: `.rf-stars .rf-text .rf-photo .rf-chips`) — form sayfası için referans dil; `.rev-filter` filtre çipleri; `.rev-summary .rs-bars` puan dağılımı. **`.rev-*` yorum dilinin KANONİK prefix'idir (Beyar onayı, Dalga 2 kapanışı)** — yeni yorum bileşenleri `rev-` ailesinden türetilir (`rv-` deneyimi `rev-`e dönüştürüldü, diyetisyen-profil)
 - **Liste satırı kiti:** `.ing-panel .ing-list .ing-row .ing-head/.ing-group` (checkbox'lı satır + grup başlığı) · `.ing-pop/.conv-pop` popover ailesi · `.shop-pop` çoklu satıcı popover
 - **`.note-duo`** (hatırlatma `.remind-box` + editör notu `.editor-box` yan yana grid)
 - **`.mw-grid .mw-item`** masonry foto duvarı + `.mw-up` yükleme tile'ı
 - **`.lightbox`** (grup içi ok/klavye gezinme) · `.video-modal .vm-frame` · `.actbar` sticky aksiyon barı · `.tagshare` hashtag+paylaşım rayı
 - **`.author-card .rd-follow`** şef mini kartı + takip butonu (profil sayfası başlangıç dili)
 - **`.cookmode .cm-*`** pişirme modu (BU DALGADA KULLANILMAZ — form sayfası HARİÇ tutuldu)
+
+## 2b. Dalga 1'de doğan bileşenler (Dalga 2+ MİRAS alır — yeniden icat YASAK)
+
+> CSS'i ilgili kaynak dosyadan verbatim kopyala; class adlarını DEĞİŞTİRME.
+
+### Form kiti — kaynak `tarif-ekle-v1.html` (her yeni form buradan miras)
+- `.fk-field .fk-label .fk-input .fk-select .fk-textarea .fk-help .fk-error .fk-count .fk-suffix .fk-grid` — temel alan ailesi; label + input + yardım/hata/sayaç satırı tek desen
+- `.up-zone .up-grid .up-item .up-add` (+ `.is-cover`) — görsel yükleme: drop zone + thumb grid + kapak işareti
+- `.ie-list .ie-row .ie-name .ie-amt .ie-unit .ie-actions .ie-del .ie-drag .ie-group .ie-gdel .ie-sugg .sg-new` — malzeme editör satırı + grup başlığı + autocomplete (havuz+serbest karma)
+- `.st-list .st-card .st-num .st-body .st-side .st-up .st-figs .st-shot .st-time` — numaralı adım kartı (görsel max 3 slot)
+- `.stepper .stp .stp-num .stp-lbl .stp-line` + `.wiz-grid .wiz-main .wiz-foot .wiz-solo` + `.form-card .fc-head .fc-step` — çok adımlı wizard iskeleti
+- `.sbanner` (`.draft/.review/.rejected`) — durum bantları (`?state=`); ONAYDA formu kilitler
+- `.tips-card .tips-head .tips-list` + `.send-panel` — yan ipucu kartı + gönderim paneli
+
+### Facet filtre paneli — kaynak `tarif-liste-v1.html`
+- `.lst-layout .lst-side .lst-grid .lst-top .lst-bar .lst-sum .lst-tools` — sol facet sütunu + sağ grid iskeleti
+- `.fct .fct-head .fct-body .fct-row .fct-dot .fct-car .fct-more .cbx .fcnt` — facet grubu: aç/kapa başlık + checkbox satırı + adet sayacı
+- `.fchips .fchip .fchips-clear .fil-clear .fil-top` — aktif filtre chip'leri + tümünü temizle
+- `.sort-btn .sort-dd .sort-menu` — sıralama dropdown'ı
+- `.sheet-overlay .sheet-head .sheet-body .sheet-foot .sheet-close` — ≤640 mobil filtre sheet'i (`?sheet=1`)
+- `.lst-empty` boş durum (§3 deseni) · `.pagi .pg .pg-dots .pagi-note` sayfalama
+
+### Liste hero bandı — kaynak `tarif-liste-v1.html` — LANDING AİLESİNİN ATASI
+- `.lst-hero .lst-stats .lh-chips` — görselli **koyu-overlay** hero (overlay 0.3–0.4) + istatistik + hızlı chip rayı; kategori/koleksiyon/SEO landing/Günün Menüsü hero'ları bu dilin varyantıdır. Krem zemin denendi → **REDDEDİLDİ**, kullanma.
+
+### Video bileşenleri — kaynak `video-mutfagi-v1.html`
+- `.vhub-hero .vh-overlay .vh-grain .vh-cont .vh-feat .vh-play .vh-stats .vh-queue .vq-item .vq-th .vq-num` — koyu hub hero + yan oynatma kuyruğu
+- `.vray .vray-cover .vray-head .vray-info .vray-tools .vseries-sec` — seri rayı (kapak + bölüm şeridi)
+- `.ep-panel .ep-row .ep-num .ep-th .ep-body .ep-meta .ep-state .ep-hoverplay` — bölüm satırı; seri detayı `?seri=1` toggle (`.sd-* .sds-*`)
+- `.dakis .dk-stage .dk-media .dk-segs .dk-info .dk-actions .dk-nav .dk-follow` + `.short-card .short-track` — dikey 9:16 Dada Akış player (`?short=1`; ok + klavye + mobil swipe)
+- `.vfilter .vf-count` video filtre barı · `.btn-glass` koyu zemin buton
+
+### Profil dili — kaynak `mutfak-defteri-v1.html`
+- `.pf-top .pf-banner .pf-head .pf-ava .pf-id .pf-handle .pf-bio .pf-meta .pf-stats .pfs .pf-actions .pf-follow` — profil hero (banner + avatar + sayaç şeridi); diyetisyen profili bu dilden varyantlar
+- `.pf-tabbar .pf-tabs .pf-pane .pf-empty` — sekme barı (`?tab=`, `&empty=1`)
+- `.badge-band .bh-cnt .badge-grid .badge-card .badge-ico .badge-lock .locked` — kompakt rozet teaser bandı (sekmelerin ALTINDA, büyük vitrin değil)
+- `.flw-modal .flw-panel .flw-tabs .flw-row .flw-av .flw-info .flw-fol` — takipçi/takip modalı (`?flw=1`)
+- `.menu-card .menu-thumbs .menu-cnt .menu-meta` menü koleksiyon kartı · `.puf-card .puf-fig .puf-tag .pufl-grid` püf kartı
+- `.try-note .tn-ph .tn-stars` — "denedim" yazar/not satırı (kaydedilen/favori kartlarında)
 
 ## 3. Dil kuralları (kısa)
 
@@ -49,6 +88,11 @@
 - Renk: domates baskın; yeşil yalnız sağlık/indirim; sarı yalnız puan; koyu `--slate`
 - Boş durum: ikon + başlık + açıklama + CTA (domates-tint zemin ikon kutusu)
 - Mobil: ≤640 grid'ler yatay snap slider'a döner (v3a pattern'ı); 390'da yatay scroll SIFIR
+- **Header-altı nefes (Dalga 2 kapanış kuralı):** sayfanın İLK section'ı HER ZAMAN
+  `.below-header` alır (112px / mobil 62px) — **inline `style="padding-top:0"` override
+  YASAK** (fixed header içeriği yutar; dada-shop vakası). Section'ın ilk içerik satırı
+  (breadcrumb / chip / eyebrow) header çizgisinden **≥16px iç nefes** alır (Dalga 1
+  standardı ~17px; saglik-hub vakası `.rd-crumb{margin-top:16px}` ile çözüldü)
 
 ## 4. Bilinen SS notu (kök neden bulundu — profil teammate)
 

@@ -1,74 +1,86 @@
-# DadaMutfak — HANDOFF · DALGA 1 TAMAMLANDI (Tier 1, Beyar onaylı)
+# DadaMutfak — HANDOFF · DALGA 2 TAMAMLANDI (Tier 2 + ara işler, Beyar onaylı)
 
 > Bu dosya **tek doğruluk kaynağı**dır. Beyar context temizledikten (clear) sonra
 > yeni session bu dosyayı okuyup kaldığı yerden devam eder.
-> Güncelleme: 2026-06-11 (Dalga 1 kapanışı — 4 sayfa + shell + kılavuz commit'lendi)
+> Güncelleme: 2026-06-11 (Dalga 2 kapanışı — 19 sayfa + site-içi navigasyon +
+> kapanış paketi commit'lendi)
 
 ---
 
 ## 🟢 MEVCUT DURUM
 
 - **Kanonik baz:** `mockups/anasayfa-portal-v3a.html` — token/header/footer/mega
-  menü her sayfaya BİREBİR. **Mega menü kilitli.**
+  menü her sayfaya BİREBİR. **Mega menü kilitli** (linkleri bağlandı, tasarımı kilitli).
 - **Kanonik iskelet:** `mockups/_shell.html` — chrome + ortak JS; yeni sayfa =
-  shell kopyası. Header varsayılan KATI (`heroMode` bayrağı sayfada açılabilir).
-  `.below-header` = ilk section offseti (112px / mobil 62px).
-- **Bileşen kılavuzu:** `tasks/bilesen-kilavuzu.md` — v3a satır no'ları + TD
-  class referansları + dil kuralları. Her yeni sayfa buna birebir uyar.
-- **TIER 0:** Ana sayfa (v3a) + Tarif Detay F1 (Tur 1+1.5+2) ✔
-- **TIER 1 / DALGA 1 (4 teammate, paralel) ✔ Beyar onaylı:**
-  - `tarif-liste-v1.html` (F2) — facet panel + r-card grid + boş durum + mobil
-    sheet + **görsel+koyu-overlay hero** (krem denendi→REDDEDİLDİ; bu hero dili
-    Dalga 2 landing'lerine örnek)
-  - `video-mutfagi-v1.html` (F3, m13) — hub + seri detayı (JS toggle) + dikey
-    9:16 Dada Akış (`?short=1`, ok+klavye+**mobil swipe** m28)
-  - `tarif-ekle-v1.html` (F5) — 4 adımlı stepper + **form kiti doğdu**
-    (`.fk-/.up-/.ie-/.st-` aileleri — envanter raporda; sonraki formlar miras
-    alır) + durum bantları (`?state=`) + **malzeme autocomplete (havuz+serbest)**
-    + adım görseli **max 3 slot**
-  - `mutfak-defteri-v1.html` (F7, m8) — profil hero + 5'li sayaç + 6 sekme
-    (`?tab=`, `&empty=1`) + takipçi modalı + **kompakt rozet teaser bandı**
-    (büyük vitrin tonlandı, sekmelerin altında) + kaydedilen/favoride yazar
-    satırı + puan→liderlik mock linki
-- Raporlar: `outputs/<sayfa>-rapor.md` (L1 kıyas tabloları + karar ekleri içinde).
+  shell kopyası. `.below-header` = ilk section offseti (112/62px) — **inline
+  padding override YASAK + ilk içerik satırı ≥16px nefes (kılavuz §3, Dalga 2 kuralı)**.
+- **Bileşen kılavuzu:** `tasks/bilesen-kilavuzu.md` — v3a + TD + **§2b Dalga 1
+  bileşen mirası** + dil kuralları. `.rev-*` yorum dilinin kanonik prefix'i.
+- **TIER 0:** Ana sayfa (v3a) + Tarif Detay F1 ✔
+- **TIER 1 / DALGA 1 ✔:** tarif-liste (F2) · video-mutfagi (F3) · tarif-ekle (F5,
+  form kiti) · mutfak-defteri (F7) — detay önceki handoff sürümünde / raporlarda.
+- **TIER 2 / DALGA 2 (5 teammate, paralel) ✔ Beyar onaylı — 19 sayfa:**
+  - **Keşif (F4):** `bugun-ne-pisirsem-v1` (wizard, tarif-ekle dili, R2 revize) ·
+    `tarif-bulucu-v1` (**DOLAP deneyimi**: sol sticky akordeon raf paneli + sağ
+    CANLI sonuç grid'i — 3 revize turuyla oturdu) · `haftalik-menu-v1` (YILDIZ m5:
+    7g×3 board + kişi ölçekleme + **menüden türetilen canlı alışveriş listesi**) ·
+    `kesfet-v1` (`?detay=1` toggle)
+  - **Shop (F8):** `dada-shop-v1` · `urun-liste-v1` · `urun-detay-v1` (m19 tarif
+    rayı) + **sepet izleri**: badge'li header sepet ikonu YALNIZ shop sayfalarında
+    (bilinçli shell sapması), p-card sepete ekle + toast, `dmCart` mock
+  - **Sağlık (F10):** `saglik-hub-v1` · `hesaplayici-v1` (×6'nın şablonu, BKİ) ·
+    `saglik-testler-v1` (quiz) · `diyet-listeleri-v1` (m6 tanıtım) ·
+    `besin-kutuphanesi-v1` (`?besin=1`)
+  - **Diyetisyen public (F12a):** `diyetisyen-dizin-v1` · `diyetisyen-profil-v1`
+    (`?randevu=1` slot modalı) · `diyetisyen-ol-v1` (diploma no, form kiti mirası)
+  - **Landing (ara iş ①):** `kategori-v1` · `koleksiyon-v1` · `seo-landing-v1`
+    (Airfryer + SSS) · `gunun-menusu-v1` (m11) — hepsi lst-hero koyu-overlay mirası
+- **SİTE-İÇİ NAVİGASYON BAĞLI:** 26 dosyada chrome linkleri + v3a see-all/kartlar
+  → site lokalden gerçek gibi gezilebilir. Bilinçli `#`: Mutfak Sırları ailesi (F11),
+  Dada Akademi, Şef Ol, yasal/kurumsal (Tier 5), Sepete Git (Dalga 3).
+  Araç: `mockups/.ss-scratch/navbind.py` (yeni sayfa eklenince yeniden koşulabilir).
+- **Kapanış paketi ✔:** hero-üst nefes standardı (dada-shop + saglik-hub fix,
+  kural kılavuz §3) · tarif-liste latent taşma fix portu · `.rv-*`→`.rev-*` ·
+  v3a kart stopPropagation.
+- Raporlar: `outputs/<teammate>-rapor.md` ×5 + **`outputs/dalga2-sentez.md`**
+  (durumlar + karar kayıtları + SS yolları).
 
-### Dalga 1'de kapanan kararlar
-- Liste: "Yemek Modu" = Günlük Pratik/Misafir/Tek Tencere/Fırın/Airfryer ✔ ·
-  ≤640 dikey mini kart ✔ · grid boyu seçici YOK ✔ · kart sayısı → stack
-- Form: malzeme = havuz+serbest karma ✔ · adım görseli max 3 ✔ · kategori
-  ÇOKLU (max 2; çoklu UI sonraki tur) · ONAYDA'da form KİLİTLİ (stack işi) ·
-  Taslaklarım → Hesabım (stack)
-- Profil: şef profili TEK ŞABLON ✔ · sahibi-görünümü aynı sayfa `?owner=1`
-  (İLERİDE) · takipçi MODAL kalır ✔
-- Video: seri detayı ayrı route stack işi, toggle kalır ✔
-- SS altyapı bulgusu: **headless Chrome min pencere genişliği 500px** —
-  390 SS'te sağ kenar kırpılması artifact'tir (kılavuz §4; lessons adayı)
+### Dalga 2'de kapanan kararlar (özet — tamamı sentez §4)
+- Shop: vitrin hero statik ✔ · raylar 4'lü grid ✔ · stokta-yok "haber ver" ✔ ·
+  m19 = editör seçkisi ✔
+- Keşif: erişim = araçlar misafire açık, kaydet login ister ✔ · keşfet toggle ✔ ·
+  raf taksonomisi ✔ · mock'lar (uyum skoru/reyon/otomatik oluştur) onaylı ✔
+- Sağlık: besin toggle ✔ · app bandı patron kararı bekliyor (ekleme yok)
+- Diyetisyen: facet ✔ · reklam atıldı ✔ · randevu/ödeme + diploma doğrulama = stack
+- Landing: SSS grid altında ✔ · Günün Menüsü nav = Bugün Ne Pişirsem ✔ ·
+  koleksiyon dizini hero altı ✔
+- Yorum dili kanonik: TD `.rev-*` ✔
 
 ## ➡️ AÇIK İŞ — SIRADAKİ
 
-**DALGA 2** (uretim-plani.md TIER 2 + ARA İŞLER): Keşif & Planlama (F4) ·
-Dada Shop (F8) · Sağlık (F10) · Diyetisyen public (F12a) · **5. teammate:**
-kategori/koleksiyon/SEO landing + Günün Menüsü. Dalga 1 ritüeli uygulanır
-(shell kopyası + kılavuz + L1 + SS + rapor).
+**DALGA 3** (uretim-plani.md TIER 3 — scope kapanış paketiyle netleşti):
+Shop II (sepet/ödeme/sipariş/alışveriş listesi, F9) · Mutfak Rehberi ailesi (F11) ·
+Auth + onboarding + hesabım + bildirimler (F6) · **hesaplayıcı ×6 TAM SAYFA** ·
+**tarif-bulucu alerjen/"İstemediklerim" filtresi** · **diyet program-detay** ·
+pişirme modu derinleşmesi + yazdır (Dalga 1 ara işi). Dalga ritüeli aynı.
 
 ---
 
 ## 🏭 ÜRETİM STRATEJİSİ (Beyar kararı)
 
 - **ODAKLI (babysit):** diyetisyen panel shell, reçete builder (TIER 4).
-- **ŞABLON ONAYI:** hesaplayıcı, koleksiyon/SEO landing, Shop ürün detay, yasal.
+- **ŞABLON ONAYI:** hesaplayıcı ×6, yasal sayfalar.
 - **TAM OTOMATİK (%90 reuse):** auth, onboarding, sözlük, püf, mutfağa giriş,
-  ölçü birimleri, keşfet, testler, Ramazan, bildirimler, hata, global arama.
+  ölçü birimleri, testler, Ramazan, bildirimler, hata, global arama.
 
 ---
 
-## ⏳ PATRON KARARI BEKLEYENLER
+## ⏳ PATRON KARARI BEKLEYENLER (değişmedi)
 
 1. **Günün Tarifi bandının ana sayfadaki yeri** — iki koyu band ard arda.
 2. **Mutfak Sırları arka plan videosu** — sabit foto mu, lazy-load mu.
-3. **Mobil app tanıtım landing'i** gerekli mi (PDF m3).
-4. **Reklam alanları olacak mı** (m29 premium ile ilişkili) — **+ liste
-   sayfasında reklam kutusu olsun mu (eski 728x90 mirası)**.
+3. **Mobil app tanıtım landing'i** gerekli mi (PDF m3) — sağlık app bandı buna bağlı.
+4. **Reklam alanları olacak mı** (m29) — liste + diyetisyen dizini 728x90 mirası.
 5. **EN dil stratejisi** — topbar'da dil seçici var; stack öncesi karar.
 6. **Malzeme başı dış market "Sipariş Et" dropdown'ı** (eski site kalıbı).
 7. **Video ray modeli** — Netflix bölüm rayı mı, seri-kapağı kartları mı (m13).
@@ -80,16 +92,18 @@ kategori/koleksiyon/SEO landing + Günün Menüsü. Dalga 1 ritüeli uygulanır
 ```
 cd /Users/dadaistanbul/Developer/Projects/dadamutfak
 python3 -m http.server 8765 &
-open "http://localhost:8765/mockups/tarif-liste-v1.html"
+open "http://localhost:8765/mockups/anasayfa-portal-v3a.html"   # site gezilebilir
 ```
 
 - **Ortak paramlar (shell):** `?dd=1` mega+dil · `?drawer=1` · `?cc=1` · `?fb=1`
-- **liste:** `?empty=1` boş durum · `?sheet=1` mobil filtre sheet
-- **video:** `?seri=1` seri detayı · `?short=1` dikey Dada Akış
-- **form:** `?step=1..4` · `?state=draft|review|rejected` · `?err=1` doğrulama
-- **profil:** `?tab=tarifler|puf|kaydedilenler|denedikleri|favoriler|menuler`
-  · `&empty=1` · `?flw=1` takipçi modalı
+- **liste:** `?empty=1` · `?sheet=1` — **video:** `?seri=1` · `?short=1`
+- **form:** `?step=1..4` · `?state=` · `?err=1` — **profil:** `?tab=` · `&empty=1` · `?flw=1`
 - **tarif-detay:** `?swap=1` · `?bar=1` · `?cook=1` · `?shop=1`
-- Scratch SS: `mockups/.ss-scratch/` (gitignored). **390 SS uyarısı:** headless
-  Chrome min 500px — mobil SS'i 500px'te al, 390 taşmazlığını JS probe ile doğrula.
-- Video modal/dakis açıkken headless SS timeout verebilir — poster hâlde SS'le.
+- **bnp:** `?step=1..4` · `?sonuc=1` — **bulucu:** `?sheet=1` — **kesfet:** `?detay=1`
+- **testler:** `?sonuc=1` — **besin:** `?besin=1` — **dizin:** `?sheet=1` `?empty=1`
+- **profil (dyt):** `?tab=` · `?randevu=1` · `?msg=1` — **ol:** `?sent=1`
+- Scratch SS: `mockups/.ss-scratch/` (gitignored). **Mobil SS:** headless Chrome
+  min 500px — 500'de çek, 390 taşmazlığı JS probe ile (kılavuz §4).
+- Video modal/dakış açıkken headless SS timeout verebilir — poster hâlde SS'le.
+- Lead doğrulama tekniği: sayfa kopyasına probe `<script>` enjekte + `--dump-dom`
+  + `document.title` okuma (browser MCP meşgulken işe yarar).
