@@ -137,6 +137,40 @@
   `alisveris-listesi-v1` bu dili miras alır (üstüne manuel kalem ekleme +
   "sepete aktar" köprüsü gelir)
 
+## 2d. Dalga 3'te doğan bileşenler (sonraki işler MİRAS alır — yeniden icat YASAK)
+
+> CSS'i ilgili kaynak dosyanın diskteki SON hâlinden verbatim kopyala;
+> class adlarını DEĞİŞTİRME. (Final cila turunda yazıldı.)
+
+### Auth ailesi — kaynak `giris-v1.html` / `onboarding-v1.html` / `hesabim-v1.html`
+- `.au-layout .au-card .au-head .au-pane .au-row .au-div .au-alt .au-perks
+  .au-forgot .au-back` — split-auth iskeleti: sol form kartı + sağ fayda paneli;
+  `?tab=giris|kayit|sifre` sekme sözleşmesi
+- `.fk-pass .fk-eye` — şifre alanı + göz toggle'ı (fk-* kitinin auth eklentisi)
+- `.tgl .tk` — anahtar (switch) bileşeni (onboarding'de doğdu; hesabim +
+  dyt-profil-ayar miras aldı). Token radius; pill DEĞİL
+- `.nt-top .nt-filter .nt-list .nt-day .ntr .nt-body .nt-foot .nt-unread-badge` —
+  bildirim satırı ailesi (kaynak `bildirimler-v1.html`); tip ikonu + gün grubu +
+  okundu yönetimi
+
+### Shop II ailesi — kaynak `sepet-v1.html` / `odeme-v1.html` / `siparislerim-v1.html`
+- `.sum-card` — sipariş/sepet özet kartı (ara toplam + kargo eşiği + CTA);
+  sepet ve ödeme aynı dili paylaşır
+- `.pick-card` — seçim kartı (adres / kargo / ödeme yöntemi radio kartı, odeme)
+- `.tml` — dikey sipariş takip timeline'ı (siparislerim `?detay=1`)
+- `.ost` — sipariş durum rozeti (radius-sm; pstat'ın public karşılığı)
+
+### Rehber ailesi — kaynak `sozluk-v1.html` / `mutfaga-giris-v1.html`
+- `.az-bar` — A-Z harf çubuğu (29 TR harfi; `?harf=` derin link; canlı filtre)
+- `.term-row` — sözlük terim satırı (`?terim=` derin link; mutfak-sirlari hub'ı
+  teaser olarak miras aldı)
+- `.lvl` — seviye rozeti (Başlangıç/Orta/İleri; mutfaga-giris konu kartları)
+
+### Hesaplayıcı ekleri — kaynak `gunluk-kalori-v1.html` / `ideal-kilo-v1.html`
+- `.kcal-bands .kb` — koru/ver/al kalori bandı üçlüsü (ideal-kilo BKİ aralık
+  kartlarında varyantı)
+- Hesaplayıcı iskeleti §2c'deki calc+gauge şablonudur; 6 tam sayfa bu dilden
+
 ## 2e. PANEL DİLİ — Dalga 4, kaynak `panel-shell.html` (diyetisyen paneli ailesi)
 
 > Diyetisyen paneli SİTE CHROME'U KULLANMAZ — uygulama düzeni: sol dikey
@@ -180,6 +214,9 @@
   ailesinden (§2c kuralı) — panel yeni form/stepper İCAT ETMEZ
 - GRID KURALI: panel grid kolonları HEP `minmax(0,1fr)` (1fr'nin min-width:auto
   taşması 390'da yakalandı — panel-shell vakası)
+- **`.vw-seg .vs-btn`** görünüm segmenti (Hafta/Gün, Kart/Tablo geçişi) — iki
+  sayfada bağımsız doğdu, final cilada KANONİK ilan edildi (kaynak
+  `dyt-randevular-v1.html`); yeni panel görünüm geçişleri bu dilden
 
 ## 3. Dil kuralları (kısa)
 

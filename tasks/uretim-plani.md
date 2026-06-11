@@ -68,9 +68,14 @@
 
 ---
 
-# 🏁 TÜM ÜRETİM TIER'LARI KAPANDI (0–5 ✔) — KALAN: FİNAL CİLA TURU
+# 🏁 PROJE TAMAMLANDI — FİNAL CİLA TURU DA KAPANDI ✔ (2026-06-11)
 
-### FİNAL CİLA TURU SCOPE'U (lead + Beyar, yeni üretim dalgası YOK)
+> Final cila solo (lead) kesintisiz modda koşuldu + 2 ara görev teammate'i
+> (testler: test-detay-v1 Onedio ailesi · gorsel: boş görsel/ölü buton onarımı).
+> Sonuçlar: `outputs/cila-raporu.md`. Envanter 62 sayfa. Sonraki adım: stack
+> kararı + EN stratejisi (`tasks/handoff.md`).
+
+### FİNAL CİLA TURU SCOPE'U (kapandı — referans)
 - **Açık soru cevapları → mini revizeler:** Dalga 3'ün 18'i (`dalga3-sentez.md` §3)
   + Dalga 4'ün 22'si (`dalga4-sentez.md` §3) — öncelikliler: persona Yıldırım/Şahin
   birleştirme, "Şef Ol" hedefi, İhlal Bildir bağlantısı, grid-4 tablet kuralı portu
