@@ -1,46 +1,71 @@
-# DadaMutfak — HANDOFF · F1 Tarif Detay
+# DadaMutfak — HANDOFF · F1 Tarif Detay (Tur 1 üretildi, revize bekliyor)
 
 > Bu dosya **tek doğruluk kaynağı**dır. Beyar context temizledikten (clear) sonra
 > yeni session bu dosyayı okuyup kaldığı yerden devam eder.
-> Güncelleme: 2026-06-11
+> Güncelleme: 2026-06-11 (F1 Tur 1 sonu)
 
 ---
 
 ## 🟢 MEVCUT DURUM
 
-- **Research fazı tamamlandı ve denetlendi:**
-  - `tasks/research-sistem.md` — senaryo/sistem anlayışı, ~60-65 ekranlık
-    **denetlenmiş** sayfa envanteri (4 kaynağa karşı teyitli), bileşen envanteri
-    (v3a'da var / yeni), kaynaklı modül listesi, bağlayıcı tutarlılık kuralları
-  - `tasks/workflow-fazlar.md` — 13 fazlık tasarım sırası (≈15-16 oturum,
-    faz sonu SS + handoff + commit + onay kapısı)
-- **Ana sayfa onaylı:** `mockups/anasayfa-portal-v3a.html` — **KANONİK BAZ.**
-  Her yeni sayfa token bloğunu, header'ı, footer'ı, mega menüyü buradan
-  **BİREBİR** alır; lokal değişiklik yasak. **Mega menü kilitli.**
-  Canlı: https://by4r.github.io/dadamutfak-view/mockups/anasayfa-portal-v3a.html
-- Rakip analizi PDF'i projeye kopyalandı:
-  `drive-download-20260608T070112Z-3-001/dadamutfak_rakip_analizi_gelisim_raporu.pdf`
+- **Kanonik baz:** `mockups/anasayfa-portal-v3a.html` — token/header/footer/mega
+  menü her sayfaya BİREBİR, lokal değişiklik yasak. **Mega menü kilitli.**
+- **F1 Tur 1 üretildi:** `mockups/tarif-detay-v1.html` (Fırında Tereyağlı Mantı
+  örnek içeriği, chrome v3a'dan birebir, konsol 0 hata).
+
+### F1 Tur 1 — YAPILANLAR
+- İki kolon + sticky malzeme paneli yerleşimi (Beyar onaylı yerleşim kararı)
+- Künye revizesi: 4 ayrı kutu → tek hairline-bölmeli şerit kart; Mutfak +
+  Özellikler sessiz satırı
+- Rozet düzeltmesi: "Dada Denedi" KALDIRILDI — birincil rozet **Editör Onaylı**
+  (+ Diyetisyen Yorumlu)
+- **İnteraktif pişirme modu** (`?cook=1`): tam ekran overlay, adım başına çoklu
+  görsel yan yana + görselden lightbox + üst barda "Videolu Anlatım" butonu;
+  derinleşme (zamanlayıcı vb.) F5'te
+- **Hatırlatma kutusu** (sarı, çan ikonlu) — metin sistemden tarif özelliklerine
+  göre otomatik gelir, UI'da "otomatik" etiketi YOK (Beyar)
+- **Sponsorlu malzeme satırları**: Söke un kartıyla aynı dil, satır içi kompakt
+  boy (Yörem tereyağı, Çiftlik yoğurt + panel altı Söke bloğu)
+- **Lightbox**: galeri + adım görselleri (adımda max 3), grup içinde ok/klavye
+  gezinme, sayaç + başlık
+- **Video modal**: galeri video thumb → sahne video modu → 16:9 player
+  (mock: `assets/video/guide-cooking.mp4`)
+- Sesli tarif player'ı (hız + 15sn atlama, radius-md — pill yasak)
+- Kalori hesaplama köprüsü: besin kartı altı yeşil CTA (F10 önyüzü)
+- Porsiyon stepper 2/4/6 (miktarlar otomatik, mutfak kesirleri: 1/2, 1 1/2)
+- İkame popover'ı (m18): kıyma/tereyağı/yoğurt satırlarında, `?swap=1`
+- Sticky aksiyon barı (`?bar=1`): kaydet/yaptım/eline sağlık+sayaç/paylaş
+- Besin seti **modern 8'li** (Kalori/Protein/Karb/Yağ/Lif/Şeker/Sodyum/Doymuş)
+  — **kapandı, bilinçli karar** (eski sitenin Su/Kolesterol/Demir seti ELENDİ)
+
+### Kapanan kararlar
+- Besin alan seti → modern 8'li ✔
+- Lessons kuralı → `tasks/lessons.md` L1 yazıldı: eski template blok envanteri
+  üretimden ÖNCE çıkarılır, kıyas plan onayıyla sunulur (F2'den itibaren otomatik) ✔
 
 ---
 
-## ➡️ SIRADAKİ İŞ — F1 TARİF DETAY (Beyar onaylı başlangıç)
+## ➡️ AÇIK İŞ — SIRADAKİ
 
-- **Kapsam:** `tasks/workflow-fazlar.md` F1 + `tasks/research-sistem.md`
-  §2.2 "Tarif detay" maddesi.
-- **Tek dosya:** `mockups/tarif-detay-v1.html`
-- **İki turlu üretim stratejisi:**
-  - **TUR 1 — çekirdek:** hero/galeri, etiketler (Dada Denedi/Editör Onaylı...),
-    künye, porsiyon ayarlı malzeme listesi + **ikame popover** (patron m18),
-    adım kartları, besin tablosu, yazar kutusu, breadcrumb, sticky aksiyon barı,
-    benzer tarifler → **Beyar SS onayı**
-  - **TUR 2 — sosyal katman:** **"Ben de Yaptım" foto duvarı** (patron m2),
-    fotoğraflı yorum + yıldız dağılımı, editör notu kutusu, tarif→Shop rayı
-- **Çalışma kuralları:**
-  - Plan mode ile başla; **plan onayı olmadan implement yok**
-  - **frontend-design skill** kullan
-  - Headless SS ile kendi kendini doğrula (v3a ile header/footer/token piksel
-    uyumu dahil)
-  - **Commit/push sadece Beyar onayıyla**; iş bitince DUR
+1. **Başlık bölgesi yığılma revizesi** — Beyar mevcut hâli beğenmedi; yeni
+   session'da 2 varyant SS denenecek (detay prompt'la gelecek).
+2. Sonra **Tur 1 Beyar SS onayı** → **Tur 2 sosyal katman**: yorum (yıldız
+   zorunlu + foto upload + nested + beğen/bildir/düzenle/sil) + "Ben de Yaptım"
+   foto duvarı (m2) + yıldız dağılım grafiği + tarif→Shop rayı (m19) +
+   hashtag/paylaşım + editör notu/sık yapılan hata kutusu (m30).
+
+---
+
+## 🏭 ÜRETİM STRATEJİSİ (Beyar kararı)
+
+- **ODAKLI (babysit) sayfalar:** tarif detay, tarif liste/arama, video hub +
+  dikey görünüm, tarif ekle stepper, Mutfak Defteri profili, diyetisyen panel
+  shell, reçete builder.
+- **ŞABLON ONAYI (1 örnek odaklı, kalanı otomatik):** hesaplayıcı,
+  koleksiyon/SEO landing, Shop ürün detay, yasal metin.
+- **TAM OTOMATİK (%90 reuse; F2 sonrası `_shell.html` dondurulup paralel
+  terminallerde):** auth, onboarding, sözlük, püf, mutfağa giriş, ölçü
+  birimleri, keşfet, testler, Ramazan, bildirimler, hata sayfaları, global arama.
 
 ---
 
@@ -51,6 +76,8 @@
 3. **Mobil app tanıtım landing'i** gerekli mi (PDF m3).
 4. **Reklam alanları olacak mı** (m29 premium "reklamsız kullanım" ile ilişkili).
 5. **EN dil stratejisi** — topbar'da dil seçici var; stack fazından önce karar.
+6. **Malzeme başı dış market "Sipariş Et" dropdown'ı** (Getir/Trendyol) —
+   eski site kalıbı; şimdilik sponsor kartlarındaki tekil "Sipariş Et" var.
 
 ---
 
@@ -59,9 +86,13 @@
 ```
 cd /Users/dadaistanbul/Developer/Projects/dadamutfak
 python3 -m http.server 8765 &
-open "http://localhost:8765/mockups/anasayfa-portal-v3a.html"
-
-# headless SS parametreleri (v3a): ?ss=1 (video→poster) · ?fp=1 (hero cap, full-page SS) ·
-# ?hdr=solid (katı header) · ?dd=1 (mega menü + dil dropdown açık) ·
-# ?drawer=1 (mobil drawer) · ?cc=1 (çerez banner zorla) · ?fb=1 (görüş bildir modal)
+open "http://localhost:8765/mockups/tarif-detay-v1.html"
 ```
+
+- **v3a paramları:** `?ss=1` · `?fp=1` · `?hdr=solid` · `?dd=1` · `?drawer=1`
+  · `?cc=1` · `?fb=1`
+- **tarif-detay-v1 paramları:** `?dd=1` (mega menü) · `?drawer=1` · `?cc=1` ·
+  `?fb=1` · `?swap=1` (ikame popover açık) · `?bar=1` (aksiyon barı açık) ·
+  `?cook=1` (pişirme modu açık). Header bu sayfada hep katı (`hdr=solid` no-op).
+- Video modal açıkken headless SS timeout verebiliyor — state'i
+  `browser_evaluate` ile doğrula, SS'i poster/kapalı hâlde al.
