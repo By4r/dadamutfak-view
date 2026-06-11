@@ -47,24 +47,41 @@
 + Sentez: `outputs/dalga3-sentez.md` — **18 açık soru §3'te Beyar cevabı bekliyor.**
 + NOT: Pişirme modu derinleşmesi + yazdır görünümü Dalga 3'e girmedi → Dalga 4 cila turuna taşındı.
 
-## TIER 4+5 — DALGA 4 (sıradaki — scope)
+## TIER 4+5 — DALGA 4 — TAMAMLANDI ✔ (Beyar onaylı, 2026-06-11, commit 2aac219)
 
-### A) TIER 4 — BABYSIT SOLO (ajana verilmez, Beyar ile adım adım)
-- Diyetisyen panel shell (F12b) — diyetisyen tarafı login sonrası iskelet
-- Reçete builder + danışan paneli (F12c)
+> Plan değişikliği (Beyar kararı): "babysit solo" yerine **lead-ön-görevli agent
+> team** — lead `panel-shell.html`'i kurup kılavuza §2e PANEL DİLİ'ni yazdı,
+> 4 teammate kesintisiz modda koştu. 13/13 sayfa ilk turda kanıtlı kabul.
 
-### B) TIER 5 — OTOMATİK KAPANIŞ (teammate'lara verilebilir)
-- Sezon sayfaları (Ramazan: iftara/sahura doğru mirası) + Günün Menüsü bağları
-- Kurumsal: hakkımızda, künye, iletişim, reklam/sponsorluk
-- Yasal paket (şablon onayıyla): KVKK, aydınlatma, üyelik, mesafeli satış, çerez,
-  iptal-iade, kullanım koşulları — footer `#`'leri gerçeğe bağlanır
-- Hata sayfaları (404/500) + global arama sonuç sayfası (F13)
+| Teammate | Sayfalar | Faz |
+|---|---|---|
+| (lead) | panel-shell (diyetisyen paneli kanonik iskeleti) + kılavuz §2e | F12b |
+| `panel1` | dyt-randevular, dyt-danisanlar, dyt-mesajlar | F12b/c |
+| `panel2` | dyt-receteler, dyt-recete-builder (yıldız: canlı kcal/makro board), dyt-profil-ayar | F12c |
+| `kapanis1` | hakkimizda (#kunye), iletisim, reklam-ver, yasal (?metin= 9 slug), hata (?kod=) | Tier 5 |
+| `kapanis2` | arama (F13), sezon (Ramazan şablonu), sss + footer denetimi (53 dosya/14 link) | Tier 5/F13 |
 
-### C) FİNAL CİLA TURU (lead + Beyar)
-- Sentez §3'teki 18 açık sorunun cevaplarına göre mini revizeler
-- Kılavuz §2d (Dalga 3 bileşen mirası) yazılır
-- Pişirme modu derinleşmesi + yazdır görünümü (Dalga 1'den taşan ara iş)
-- Kozmetik: sepet boş-alan, haftalık menü→alışveriş listesi köprüsü (yeni UI, onaylı)
++ **Navigasyon (lead):** diyetisyen-profil → panel girişi · büyüteç → arama (51
+  dosya) · Künye → #kunye · 3 tıklama yolculuğu click-probe PASS.
++ Kapanış revizesi: sss-v1 üst bölgesi lst-top koyu hero ailesine hizalandı.
++ Sentez: `outputs/dalga4-sentez.md` — **22 açık soru §3'te Beyar cevabı bekliyor.**
+
+---
+
+# 🏁 TÜM ÜRETİM TIER'LARI KAPANDI (0–5 ✔) — KALAN: FİNAL CİLA TURU
+
+### FİNAL CİLA TURU SCOPE'U (lead + Beyar, yeni üretim dalgası YOK)
+- **Açık soru cevapları → mini revizeler:** Dalga 3'ün 18'i (`dalga3-sentez.md` §3)
+  + Dalga 4'ün 22'si (`dalga4-sentez.md` §3) — öncelikliler: persona Yıldırım/Şahin
+  birleştirme, "Şef Ol" hedefi, İhlal Bildir bağlantısı, grid-4 tablet kuralı portu
+- **Beyar SS turu notları** → seri revize
+- **Kılavuz §2d** (Dalga 3 bileşen mirası: tgl, fk-pass, pick-card, sum-card, tml,
+  ost, az-bar, term-row, lvl, kcal-bands, au-*, ntr) + §2e'ye panel segment
+  (`.vw-seg`) kararı
+- **Taşan işler:** pişirme modu derinleşmesi + yazdır görünümü (Dalga 1) ·
+  hesaplayici-v1 footer eksiği · sepet boş-alan kozmetiği · haftalık
+  menü→alışveriş listesi köprüsü (yeni UI, Beyar onayı şart)
+- Cila sonrası: **stack kararı** (henüz verilmedi — CLAUDE.md) + EN dil stratejisi
 
 ## KURALLAR
 

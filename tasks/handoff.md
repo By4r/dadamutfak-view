@@ -1,73 +1,56 @@
-# DadaMutfak — HANDOFF · DALGA 3 TAMAMLANDI (Tier 3 + ara işler, Beyar onaylı)
+# DadaMutfak — HANDOFF · DALGA 4 TAMAMLANDI — ÜRETİM BİTTİ 🏁
 
 > Bu dosya **tek doğruluk kaynağı**dır. Beyar context temizledikten (clear) sonra
 > yeni session bu dosyayı okuyup kaldığı yerden devam eder.
-> Güncelleme: 2026-06-11 (Dalga 3 kapanışı — 18 yeni sayfa + 3 düzenleme +
-> site-içi navigasyon, commit 68b4e81 push'landı)
+> Güncelleme: 2026-06-11 (Dalga 4 kapanışı — diyetisyen paneli + kapanış
+> sayfaları, commit 2aac219 push'landı. TÜM ÜRETİM DALGALARI BİTTİ.)
 
 ---
 
-## 🟢 MEVCUT DURUM
+## 🟢 MEVCUT DURUM — ÜRETİM TAMAMLANDI
 
-- **Kanonik baz:** `mockups/anasayfa-portal-v3a.html` — token/header/footer/mega
-  menü her sayfaya BİREBİR. **Mega menü kilitli.**
-- **Kanonik iskelet:** `mockups/_shell.html` — yeni sayfa = shell kopyası.
-  `.below-header` + ilk içerik satırı ≥16px nefes (kılavuz §3) — inline override YASAK.
-- **Bileşen kılavuzu:** `tasks/bilesen-kilavuzu.md` — §2b Dalga 1 + **§2c Dalga 2
-  mirası** (dmCart, dolap/raf, calc+gauge, wizard kuralı, lst-hero varyantları,
-  dz-kart, reyon-grup). **§2d Dalga 3 adayları sentez §3 sonunda bekliyor** (tgl,
-  fk-pass, pick-card, sum-card, tml, ost, az-bar, term-row, lvl, kcal-bands, au-*, ntr).
-- **TIER 0 ✔** v3a + Tarif Detay F1 · **TIER 1 / DALGA 1 ✔** liste/video/form/profil ·
-  **TIER 2 / DALGA 2 ✔** 19 sayfa (keşif, shop, sağlık, diyetisyen, landing)
-- **TIER 3 / DALGA 3 (4 teammate, kesintisiz mod) ✔ Beyar onaylı — 18 yeni + 3 düzenleme:**
-  - **Shop II (F9):** `sepet-v1` (dmCart üstüne tam sayfa, 400₺ eşik çubuğu, kupon,
-    `?empty=1`) · `odeme-v1` (4 adımlı checkout `?step=1..4`, stepper mirası, sözleşme
-    kilidi) · `siparislerim-v1` (`?yeni=1` + `?detay=1` takip timeline) ·
-    `alisveris-listesi-v1` (reyon-grup mirası + "Sepete Aktar"→dmCart) + ara iş:
-    dada-shop crumb fix, 3 shop sayfası sepet ikonu → sepet-v1
-  - **Mutfak Rehberi (F11):** `mutfak-sirlari-v1` (hub) · `puf-noktalari-v1`
-    (`?detay=1` uzun-form) · `mutfaga-giris-v1` (seviye rozetleri) · `sozluk-v1`
-    (eski 4 sayfa→1; `?harf=` `?terim=`) · `olcu-birimleri-v1` (canlı dönüştürücü +
-    fırın tablosu) · `akademi-v1` (YAKINDA landing, `?sent=1`)
-  - **Auth (F6):** `giris-v1` (`?tab=giris|kayit|sifre` + `?err/?ok/?sent`) ·
-    `onboarding-v1` (bnp wizard mirası, `?step=1..4` `?sonuc=1`) · `hesabim-v1`
-    (AYAR sayfası `?tab=profil|sifre|gizlilik|bildirim`; içerik profili =
-    mutfak-defteri, KARIŞTIRMA) · `bildirimler-v1` (`?empty=1`)
-  - **Sağlık:** hesaplayıcı ×6 TAM SAYFA, GERÇEK formüllerle (13 senaryo doğrulandı):
-    `beden-kutle-endeksi-v1` `bazal-metabolizma-v1` `gunluk-kalori-v1` `vucut-tipi-v1`
-    `gunluk-su-v1` `ideal-kilo-v1`; `hesaplayici-v1` = alias/redirect →BKİ ·
-    `diyet-program-detay-v1` (7g×3 board + r-card + note-duo uyarı) · ara iş:
-    `tarif-bulucu-v1` "İstemediklerim/Alerjen" rafı geri geldi
-- **SİTE-İÇİ NAVİGASYON ✔ (47 dosya):** Mutfak Sırları ailesi + Dada Akademi
-  gerçeğe bağlı · btn-login/drawer Giriş Yap → giris-v1 · bottom-nav Hesap →
-  hesabim-v1 · saglik-hub calc kartları ×6 + diyet-listeleri prog-card ×6 bağlı ·
-  Sepete Git zinciri tam. Araç: `mockups/.ss-scratch/navbind.py` (Dalga 3 haritalı).
-  Kalan bilinçli `#`: yasal/kurumsal (Tier 5), Şef Ol, bildirim satırı hedefleri,
-  mutfaga-giris konu detayları (şablon = püf `?detay=1`, stack fazı).
-- Raporlar: `outputs/{shop2,rehber,auth,saglik2}-rapor.md` + **`outputs/dalga3-sentez.md`**
-  (durumlar + **18 AÇIK SORU TEK LİSTE §3 — Beyar cevapları bekleniyor** + SS yolları).
+- **Envanter: 61 üretim sayfası** = 59 ×`*-v1.html` + `anasayfa-portal-v3a.html`
+  (kanonik baz) + `panel-shell.html` (diyetisyen paneli kanonik iskeleti).
+  İskeletler: `_shell.html` (public) + `panel-shell.html` (panel).
+- **Bileşen kılavuzu:** `tasks/bilesen-kilavuzu.md` — §2b/§2c miras + **§2e PANEL
+  DİLİ** (Dalga 4'te doğdu). §2d (Dalga 3 adayları) HÂLÂ yazılmadı → cila turu.
+- **TIER 0 ✔** v3a + Tarif Detay · **DALGA 1 ✔** liste/video/form/profil ·
+  **DALGA 2 ✔** 19 sayfa · **DALGA 3 ✔** 18 sayfa + nav (commit 68b4e81) ·
+  **DALGA 4 ✔ Beyar onaylı (commit 2aac219):**
+  - **Panel ailesi (F12b+c):** `panel-shell` (koyu sidebar + topbar + yeşil aksan
+    kart dili) · `dyt-randevular` (haftalık takvim, `?gorunum=gun` `?detay=1`) ·
+    `dyt-danisanlar` (`?danisan=1` detay + SVG kilo eğrisi, `?kart=1` `?bos=1`) ·
+    `dyt-mesajlar` (iki kolon sohbet, `?bos=1` `?sohbet=1`) · `dyt-receteler` ·
+    `dyt-recete-builder` (7g×5 öğün board, CANLI kcal/makro, `?sablon=1..3`) ·
+    `dyt-profil-ayar` (`?tab=profil|hizmet|takvim|ayarlar`)
+  - **Kapanış (Tier 5 / F13):** `hakkimizda` (#kunye entegre) · `iletisim` (`?ok=1`) ·
+    `reklam-ver` (`?ok=1`) · `yasal` (`?metin=kvkk|aydinlatma|kullanim|cerez|uyelik|
+    mesafeli|iade|teslimat|bilgilendirme`) · `hata` (`?kod=404/500` CSS illüstrasyon) ·
+    `arama` (`?q=` `?tab=` `?empty=1`) · `sezon` (Ramazan şablonu) · `sss` (`?kat=`,
+    lst-top koyu hero — Beyar revizesiyle hizalandı)
+  - **Navigasyon:** diyetisyen-profil → "Diyetisyen Paneli" girişi (`.pf-panel`) ·
+    header büyüteç → arama-v1 (51 dosya) · footer 14 kırık link → gerçek (53 dosya,
+    kapanis2 denetimi) · Künye → `hakkimizda-v1.html#kunye` · 3 tıklama yolculuğu
+    headless click probe ile PASS
+- Raporlar: `outputs/{panel1,panel2,kapanis1,kapanis2}-rapor.md` +
+  **`outputs/dalga4-sentez.md`** (sayfa durumları + 22 açık soru + SS yolları)
 
-## ➡️ AÇIK İŞ — SIRADAKİ
+## ➡️ KALAN TEK İŞ — FİNAL CİLA TURU (lead + Beyar, yeni üretim dalgası YOK)
 
-1. **Sentez §3'teki 18 açık soru** Beyar cevaplayacak (sosyal login seti, fatura
-   görünümü, TTS, püf yorumları, header zili, bebek BMH vb.) — cevaplar geldiğinde
-   mini revize turu.
-2. **DALGA 4** (uretim-plani.md TIER 4+5):
-   - **TIER 4 BABYSIT SOLO:** diyetisyen panel shell (F12b) + reçete builder +
-     danışan paneli (F12c) — ajana verilmez, Beyar ile adım adım.
-   - **TIER 5 OTOMATİK KAPANIŞ:** sezon (Ramazan) + kurumsal + yasal + hata
-     sayfaları + global arama (F13) — yasal/kurumsal `#`'ler gerçeğe bağlanır.
-   - **Final cila turu:** §2d kılavuz güncellemesi · pişirme modu derinleşmesi +
-     yazdır görünümü (Dalga 1'den taşan ara iş) · sepet boş-alan kozmetiği ·
-     haftalık menü→alışveriş listesi köprüsü (Beyar onayı şart, yeni UI).
-
----
-
-## 🏭 ÜRETİM STRATEJİSİ (Beyar kararı)
-
-- **ODAKLI (babysit):** diyetisyen panel shell, reçete builder (TIER 4) — SIRADA.
-- **ŞABLON ONAYI:** yasal sayfalar (hesaplayıcı ×6 ✔ tamamlandı).
-- **TAM OTOMATİK:** Tier 5 kalanları (Ramazan, hata, global arama, kurumsal).
+1. **Açık soru cevapları → mini revizeler:**
+   - Dalga 3: **18 soru** (`outputs/dalga3-sentez.md` §3 — sosyal login seti,
+     fatura görünümü, TTS, püf yorumları, header zili, bebek BMH vb.)
+   - Dalga 4: **22 soru** (`outputs/dalga4-sentez.md` §3 — persona Yıldırım/Şahin,
+     aylık takvim v2, yasal metin hukukçu onayı, "Şef Ol" hedefi, builder↔kalori
+     hesaplayıcı köprüsü, grid-4 tablet kuralının master'a portu vb.)
+2. **Beyar SS turu notları** → seri revize
+3. **Kılavuz §2d** (Dalga 3 bileşen adayları: tgl, fk-pass, pick-card, sum-card,
+   tml, ost, az-bar, term-row, lvl, kcal-bands, au-*, ntr) yazılır
+4. **Kozmetik/taşan işler:** pişirme modu derinleşmesi + yazdır görünümü (Dalga 1
+   taşanı) · sepet boş-alan kozmetiği · haftalık menü→alışveriş listesi köprüsü
+   (yeni UI, Beyar onayı şart) · hesaplayici-v1 footer eksiği (Dalga 4 soru #20)
+5. Cila sonrası: **stack kararı** (Laravel mi, statik mi — CLAUDE.md gereği ayrı
+   konuşma) + EN dil stratejisi
 
 ---
 
@@ -76,7 +59,7 @@
 1. Günün Tarifi bandının ana sayfadaki yeri (iki koyu band ard arda)
 2. Mutfak Sırları arka plan videosu (statik foto ile çözüldü, video beklemede)
 3. Mobil app tanıtım landing'i (m3) — sağlık app bandı buna bağlı
-4. Reklam alanları (m29) — liste + diyetisyen dizini 728x90 mirası
+4. Reklam alanları (m29) — Dalga 4'te reklam-ver sayfası doğdu, alan yerleşimi bekliyor
 5. EN dil stratejisi — stack öncesi karar
 6. Malzeme başı dış market "Sipariş Et" dropdown'ı
 7. Video ray modeli (m13)
@@ -89,21 +72,21 @@
 cd /Users/dadaistanbul/Developer/Projects/dadamutfak
 python3 -m http.server 8765 &
 open "http://localhost:8765/mockups/anasayfa-portal-v3a.html"   # site gezilebilir
+open "http://localhost:8765/mockups/panel-shell.html"           # diyetisyen paneli
 ```
 
 Canlı (Pages): https://by4r.github.io/dadamutfak-view/mockups/<sayfa>.html
 
-- **Ortak (shell):** `?dd=1` mega+dil · `?drawer=1` · `?cc=1` · `?fb=1`
-- **liste:** `?empty=1` `?sheet=1` — **video:** `?seri=1` `?short=1` — **form:**
-  `?step=` `?state=` `?err=1` — **profil:** `?tab=` `&empty=1` `?flw=1`
-- **tarif-detay:** `?swap=1` `?bar=1` `?cook=1` `?shop=1` — **bnp:** `?step=` `?sonuc=1`
-- **kesfet/püf:** `?detay=1` — **testler:** `?sonuc=1` — **besin:** `?besin=1`
-- **Dalga 3:** sepet `?empty=1` · odeme `?step=1..4` · siparislerim `?yeni=1`
-  `?detay=1` · giris `?tab=` `?err/?ok/?sent` · onboarding `?step=` `?sonuc=1` ·
-  hesabim `?tab=` · bildirimler `?empty=1` · sozluk `?harf=` `?terim=` ·
-  akademi `?sent=1`
+- **Ortak (public shell):** `?dd=1` mega+dil · `?drawer=1` · `?cc=1` · `?fb=1`
+- **Panel shell:** `?nav=1` mobil sidebar açık
+- **Dalga 1-3 paramları:** önceki handoff sürümlerine değil sentezlere bak
+  (`outputs/dalga2-sentez.md` / `dalga3-sentez.md`)
+- **Dalga 4:** randevular `?gorunum=gun` `?detay=1` · danisanlar `?danisan=1`
+  `?kart=1` `?bos=1` · mesajlar `?bos=1` `?sohbet=1` · builder `?sablon=1..3` ·
+  profil-ayar `?tab=` · yasal `?metin=` · hata `?kod=404/500` · arama `?q=` `?tab=`
+  `?empty=1` · sss `?kat=` · iletisim/reklam-ver `?ok=1`
 - Scratch SS: `mockups/.ss-scratch/` (gitignored). **Mobil SS:** headless Chrome
-  min 500px — 500'de çek, 390 taşmazlığı JS probe ile (kılavuz §4).
-- Lead doğrulama tekniği: sayfa kopyasına probe `<script>` enjekte + `--dump-dom`
-  + `document.title` okuma. Kabul SS'lerini sohbette Read ile görünür aç (Beyar
-  mobilden izliyor — tercih edilen pratik).
+  min 500px — 500'de çek, 390 taşmazlığı iframe probe ile (kılavuz §4).
+- Lead doğrulama tekniği: error probe enjekte + `--dump-dom` + iframe click-journey
+  probu (`.ss-scratch/.journey.html` deseni). Kabul SS'leri sohbette Read ile açılır
+  (Beyar mobilden izliyor).
