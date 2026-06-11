@@ -2,11 +2,38 @@
 
 > Bu dosya **tek doğruluk kaynağı**dır. Beyar context temizledikten (clear) sonra
 > yeni session bu dosyayı okuyup kaldığı yerden devam eder.
-> Güncelleme: 2026-06-10
+> Güncelleme: 2026-06-11
 
 ---
 
 ## 🟢 DURUM (EN ÜSTTE OKU)
+
+**✅ PATRON REVİZESİ TUR 4 TAMAMLANDI (2026-06-11, 4 madde — Beyar onaylı, commit/push bu session'da).**
+Yalnız `mockups/anasayfa-portal-v3a.html` değişti; mega menüye dokunulmadı (kilitli).
+- **Madde 1 — Section header ortak grid pattern'ı:** `sec-head`/`cat-head`/`guide-head`
+  tek yapıya çekildi: `[eyebrow] / [h2 | aksiyon grubu] / [lead]`. "Tamamını Gör" +
+  prev/next okları (ve tab'lar) artık **h2 hizasında**, description altta tek başına.
+  Sol blok `display:contents` ile grid'e açılır — DOM aynı, ≤640 mobil pattern'ı bozulmadı
+  (1440 + 390 SS ile doğrulandı). h2'lerdeki inline `margin-top:14px`'ler kaldırıldı,
+  boşluk eyebrow'a taşındı; ≤1024 guide-head stack kuralı grid diline çevrildi.
+- **Madde 2 — Günün Tarifi bandı:** padding 22→52px (**appband yüksekliğiyle tutarlı**:
+  162 vs 168px ölçüldü). Tarif görseli `background-attachment:fixed` ile bandın arka
+  planı (appband M13 pattern'ının aynısı; ≤1024 iOS scroll fallback'ine dayband eklendi).
+  Koyu gradient overlay üstünde içerik: başlık beyaz 22px, eyebrow/meta ikonları `#ff8763`.
+  Küçük tarif thumb'ı korundu — koyu zeminde ayrışsın diye **beyaz çerçeve**
+  (`2px rgba(255,255,255,.3)`).
+- **Madde 3 — Footer yasal linkler:** `.foot-legal`'a `justify-content:center` — divider
+  altındaki 9 yasal link yatayda ortalı.
+- **Madde 4 — Copyright satırı:** ikiye bölündü — solda "© 2026 DadaMutfak. Tüm hakları
+  saklıdır.", **en sağda `#GaviaWorks`** (gaviaworks.com linki korundu, space-between flex).
+
+**⚠️ Bilinen görsel not (patron kararı bekliyor):** Mutfak Sırları koyu section'ı ile
+Günün Tarifi koyu bandı ard arda geliyor — patron sayfaya bakıp Günün Tarifi için uygun
+yeri söyleyecek, o zaman taşınacak.
+
+**❓ Açık soru (Beyar/patron kararı bekliyor):** Mutfak Sırları arka plan videosu —
+sabit fotoğrafa mı çevrilsin (sayfada 2 autoplay video var; öneri: video sadece hero'da
+kalsın) yoksa lazy-load mu (`poster` + `preload="none"` + viewport'ta başlat)?
 
 **✅ MOBİL REVİZE TURU TAMAMLANDI (2026-06-10, Yasin Bey'den 2 madde — SS turu Beyar onaylı, commit/push bu session'da).**
 Yalnız `≤640px` medya bloğu değişti (`mockups/anasayfa-portal-v3a.html`) — desktop/tablet'e dokunulmadı, 1440 kontrol SS'leriyle sızıntı olmadığı doğrulandı.

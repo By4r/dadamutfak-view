@@ -90,9 +90,19 @@ img{display:block;max-width:100%}
 .feat-sec{background:var(--bg-white)}
 .vids-sec{background:var(--bg-cream)}
 .shop{background:var(--bg-white)}
-.sec-head{display:flex;align-items:flex-end;justify-content:space-between;gap:24px;margin-bottom:34px}
+/* ortak section header grid'i — aksiyon grubu (Tamamını Gör + oklar/tablar) h2 ile
+   aynı satırda, açıklama altta tek başına: [eyebrow] / [h2 | tools] / [lead] (Revize T4 M1).
+   Sol blok display:contents ile grid'e açılır — DOM aynı, ≤640 pattern'ı ile uyumlu */
+.sec-head,.cat-head,.guide-head{
+  display:grid;grid-template-columns:minmax(0,1fr) auto;column-gap:24px;
+  align-items:center;margin-bottom:34px;
+}
+.sec-head>div:first-child,.cat-head>div:first-child,.guide-head>div:first-child{display:contents}
+.sec-head .eyebrow,.cat-head .eyebrow,.guide-head .eyebrow{grid-row:1;grid-column:1/-1;justify-self:start;margin-bottom:14px}
+.sec-head h2,.cat-head h2,.guide-head h2{grid-row:2;grid-column:1}
+.sec-head .sec-tools,.sec-head .disc-tools,.cat-head .sec-tools,.guide-head .sec-tools{grid-row:2;grid-column:2;align-self:center}
+.sec-head .lead,.cat-head .lead,.guide-head .lead{grid-row:3;grid-column:1/-1;margin-top:10px;color:var(--muted);font-weight:500;font-size:15.5px;max-width:520px}
 .sec-head h2{font-size:34px}
-.sec-head .lead{margin-top:10px;color:var(--muted);font-weight:500;font-size:15.5px;max-width:520px}
 .see-all{
   flex:none;display:inline-flex;align-items:center;gap:9px;font-weight:700;font-size:13.5px;
   color:var(--slate);padding:11px 18px;border:1px solid var(--line);border-radius:var(--radius-md);
@@ -257,9 +267,8 @@ img{display:block;max-width:100%}
 
 /* ============ CATEGORY STRIP ============ */
 .catstrip{padding:48px 0 54px}
-.cat-head{display:flex;align-items:flex-end;justify-content:space-between;gap:24px;margin-bottom:30px}
-.cat-head h2{font-size:28px;margin-top:14px}
-.cat-head .lead{margin-top:10px;color:var(--muted);font-weight:500;font-size:15.5px;max-width:520px}
+.cat-head{margin-bottom:30px}
+.cat-head h2{font-size:28px}
 .cat-nav{flex:none;display:flex;gap:8px}
 .cat-nav button{width:42px;height:42px;font-size:13px;border-radius:var(--radius-md);border:1px solid var(--line);background:var(--paper);color:var(--slate);cursor:pointer;transition:.2s var(--ease)}
 .cat-nav button:hover{background:var(--tomato);border-color:var(--tomato);color:#fff}
@@ -339,9 +348,9 @@ img{display:block;max-width:100%}
 .guide .wrap{position:relative;z-index:2}
 .guide .eyebrow{color:#ff8763}
 /* tek sekmeli kurgu: başlık + glass tab pill, altında pane'ler */
-.guide-head{display:flex;align-items:flex-end;justify-content:space-between;gap:24px;margin-bottom:32px}
-.guide-head h2{font-size:30px;margin:14px 0 8px;color:#fff}
-.guide-head .lead{color:#c9c3b8;font-weight:500;font-size:15px;max-width:520px}
+.guide-head{margin-bottom:32px}
+.guide-head h2{font-size:30px;color:#fff}
+.guide-head .lead{color:#c9c3b8;font-size:15px}
 .guide-tabs{
   flex:none;display:flex;gap:4px;padding:4px;border-radius:var(--radius-md);
   background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);
@@ -490,7 +499,7 @@ img{display:block;max-width:100%}
 .foot-col a{display:block;font-size:14px;font-weight:500;color:#9fb0bc;padding:7px 0;transition:.2s}
 .foot-col a:hover{color:var(--tomato);padding-left:5px}
 /* legal bar — 9 link, ince dikey ayraçlı, wrap'li */
-.foot-legal{display:flex;flex-wrap:wrap;align-items:center;gap:8px 10px;padding:24px 0 0;font-size:12px;font-weight:500}
+.foot-legal{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:8px 10px;padding:24px 0 0;font-size:12px;font-weight:500}
 .foot-legal a{white-space:nowrap;transition:.2s}
 .foot-legal .sep{width:1px;height:11px;background:rgba(255,255,255,.28);flex:none}
 .foot-bottom{display:flex;align-items:center;justify-content:space-between;padding:16px 0 26px;font-size:13px;font-weight:500;color:#7e8e9a}
@@ -641,15 +650,22 @@ img{display:block;max-width:100%}
 .findbar .btn{flex:none}
 
 /* ---- GÜNÜN TARİFİ BANDI (Revize T3 M3 — guide↔keşfet ayracı) ---- */
-.dayband{background:var(--tomato-tint);border-top:1px solid rgba(225,72,39,.14);border-bottom:1px solid rgba(225,72,39,.14);padding:22px 0}
+/* tarif görseli sabit arkaplan — appband ile aynı teknik (M13) ve aynı dikey ritim;
+   koyu overlay üstünde içerik, scroll'da görselin farklı bölgeleri görünür (Revize T4 M2) */
+.dayband{
+  background-image:linear-gradient(90deg,rgba(28,25,18,.92),rgba(33,30,22,.78)),
+    url('https://images.unsplash.com/photo-1559054663-e8d23213f55c?w=1600&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5');
+  background-size:cover;background-position:center;background-attachment:fixed;
+  padding:52px 0;
+}
 .dayband .wrap{display:flex;align-items:center;gap:24px}
 .db-left{display:flex;align-items:center;gap:16px;min-width:0}
-.db-thumb{flex:none;width:60px;height:60px;border-radius:var(--radius-md);background-size:cover;background-position:center}
-.db-eyebrow{display:inline-flex;align-items:center;gap:7px;font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--tomato)}
-.db-text b{display:block;margin-top:3px;font-size:18px;font-weight:700;color:var(--slate);letter-spacing:-.01em;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.db-meta{display:flex;gap:18px;margin-left:auto;font-size:13px;color:var(--slate-2);font-weight:500;flex:none}
+.db-thumb{flex:none;width:60px;height:60px;border-radius:var(--radius-md);background-size:cover;background-position:center;border:2px solid rgba(255,255,255,.3)}
+.db-eyebrow{display:inline-flex;align-items:center;gap:7px;font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#ff8763}
+.db-text b{display:block;margin-top:6px;font-size:22px;font-weight:700;color:#fff;letter-spacing:-.01em;line-height:1.25;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.db-meta{display:flex;gap:18px;margin-left:auto;font-size:13px;color:#d6cfc3;font-weight:500;flex:none}
 .db-meta .it{display:inline-flex;align-items:center;gap:7px}
-.db-meta i{color:var(--tomato);font-size:12.5px}
+.db-meta i{color:#ff8763;font-size:12.5px}
 .db-meta .db-star{color:var(--yellow)}
 .db-btn{flex:none;padding:12px 22px;font-size:13.5px}
 
@@ -1014,14 +1030,16 @@ html,body{overflow-x:hidden}
   .db-meta{display:none}
 
   /* iOS/tablet: background-attachment fixed desteklenmez → scroll fallback (M13) */
-  .appband{background-attachment:scroll}
+  .appband,.dayband{background-attachment:scroll}
 
   /* grid'ler 2 kolon / yığma */
   .feat-grid{grid-template-columns:1fr;gap:22px}
   .feat-big{min-height:420px}
   .feat-side{grid-template-rows:none;grid-template-columns:1fr 1fr}
   .grid-4{grid-template-columns:1fr 1fr}
-  .guide-head{flex-direction:column;align-items:flex-start;gap:18px}
+  /* guide-head tablette tek kolona iner — tabs+see-all lead'in altına */
+  .guide-head{grid-template-columns:minmax(0,1fr)}
+  .guide-head .sec-tools{grid-row:4;grid-column:1;justify-self:start;margin-top:18px}
   .steps-grid,.puf-grid{grid-template-columns:1fr}
   .steps-grid .step:nth-last-child(2){border-bottom:1px solid rgba(255,255,255,.12)}
   .vid-grid{grid-template-columns:1fr 1fr}
@@ -1144,8 +1162,7 @@ html,body{overflow-x:hidden}
   /* adım kartlarında aynı koruma (1 satırlıklarda görünür etkisi yok) */
   .step .st-body p{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 
-  /* günün tarifi bandı dikey stack */
-  .dayband{padding:18px 0}
+  /* günün tarifi bandı dikey stack — dikey ritim appband ile aynı (52px), override yok */
   .dayband .wrap{flex-wrap:wrap;gap:14px}
   .db-text b{white-space:normal}
   .db-btn{width:100%;justify-content:center}
@@ -1645,7 +1662,7 @@ html,body{overflow-x:hidden}
     <div class="sec-head">
       <div>
         <span class="eyebrow"><i class="fa-solid fa-star"></i> Tariflerimiz</span>
-        <h2 style="margin-top:14px">Bu hafta öne çıkanlar</h2>
+        <h2>Bu hafta öne çıkanlar</h2>
         <p class="lead">Topluluğun en çok denediği, puanladığı ve kaydettiği tarifler — editör seçkisiyle.</p>
       </div>
       <div class="sec-tools">
@@ -2007,7 +2024,7 @@ html,body{overflow-x:hidden}
     <div class="sec-head">
       <div>
         <span class="eyebrow"><i class="fa-solid fa-compass"></i> Keşfet</span>
-        <h2 style="margin-top:14px">Mutfak kültürüne yolculuk</h2>
+        <h2>Mutfak kültürüne yolculuk</h2>
         <p class="lead">Sofranın etrafındaki dünya: mekânlar ve gurme lezzet yazıları.</p>
       </div>
       <div class="disc-tools">
@@ -2119,7 +2136,7 @@ html,body{overflow-x:hidden}
     <div class="sec-head">
       <div>
         <span class="eyebrow"><i class="fa-solid fa-utensils"></i> Şefler & Yazarlar</span>
-        <h2 style="margin-top:14px">Tarifin ustaları</h2>
+        <h2>Tarifin ustaları</h2>
         <p class="lead">Tarifleriyle topluluğa yön veren şefler, yazarlar ve diyetisyenler.</p>
       </div>
       <div class="sec-tools">
@@ -2172,7 +2189,7 @@ html,body{overflow-x:hidden}
     <div class="sec-head">
       <div>
         <span class="eyebrow"><i class="fa-solid fa-circle-play"></i> İzle & Pişir</span>
-        <h2 style="margin-top:14px">En lezzetli videolar</h2>
+        <h2>En lezzetli videolar</h2>
         <p class="lead">Adım adım video tariflerle mutfakta hiç yalnız kalma.</p>
       </div>
       <div class="sec-tools">
@@ -2309,7 +2326,7 @@ html,body{overflow-x:hidden}
     <div class="sec-head">
       <div>
         <span class="eyebrow"><i class="fa-solid fa-bag-shopping"></i> Dada Shop</span>
-        <h2 style="margin-top:14px">Mutfağına yakışanlar</h2>
+        <h2>Mutfağına yakışanlar</h2>
         <p class="lead">Seçtiğimiz kaliteli mutfak ürünlerini kapına getirelim.</p>
       </div>
       <div class="sec-tools">
@@ -2456,7 +2473,8 @@ html,body{overflow-x:hidden}
       <a href="#">İhlal Bildir</a>
     </div>
     <div class="foot-bottom">
-      <span>© 2026 DadaMutfak. Tüm hakları saklıdır. · <a href="https://gaviaworks.com" target="_blank" rel="noopener">Gavia Works</a></span>
+      <span>© 2026 DadaMutfak. Tüm hakları saklıdır.</span>
+      <a href="https://gaviaworks.com" target="_blank" rel="noopener">#GaviaWorks</a>
     </div>
   </div>
 </footer>
