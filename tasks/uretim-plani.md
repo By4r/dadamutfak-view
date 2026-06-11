@@ -33,28 +33,38 @@
 + **Kapanış paketi:** hero-üst nefes standardı · tarif-liste taşma fix portu ·
   `.rev-*` kanonik · v3a stopPropagation. Sentez: `outputs/dalga2-sentez.md`.
 
-## TIER 3 — PARALEL DALGA 3 (sıradaki — scope NETLEŞTİ)
+## TIER 3 — DALGA 3 — TAMAMLANDI ✔ (Beyar onaylı, 2026-06-11, commit 68b4e81)
 
-- **Shop II (F9):** sepet + ödeme + sipariş takip + alışveriş listesi sayfası
-  (header sepet ikonu/dmCart buna bağlanır)
-- **Mutfak Rehberi ailesi (F11):** mutfağa giriş + temel teknikler + püf noktaları +
-  sözlük + ölçü birimleri (nav'da `#` bekleyen linkler bağlanır)
-- **Auth + onboarding + hesabım + bildirimler (F6):** bottom-nav "Hesap" gerçek
-  hedefine kavuşur; kaydet/deftere-ekle login kapısı
-- **Hesaplayıcı ×6 TAM SAYFA** (Beyar kararı — şablondan türetilir: BKİ, BMH,
-  kalori, vücut tipi, su, ideal kilo)
-- **tarif-bulucu alerjen/"İstemediklerim" filtresi** (Beyar kararı — geri gelecek)
-- **Diyet program-detay sayfası** (günlük menü dökümü)
-- Pişirme modu derinleşmesi + yazdır görünümü (Dalga 1 ara işi)
+| Teammate | Sayfalar | Faz |
+|---|---|---|
+| `shop2` | sepet, odeme, siparislerim, alisveris-listesi + dada-shop crumb fix + sepet ikonu bağlama | F9 |
+| `rehber` | mutfak-sirlari (hub), puf-noktalari, mutfaga-giris, sozluk (4 eski→1), olcu-birimleri, akademi | F11 |
+| `auth` | giris (?tab= üçlü), onboarding (bnp wizard mirası), hesabim (AYAR), bildirimler | F6 |
+| `saglik2` | hesaplayıcı ×6 TAM SAYFA (gerçek formüller) + hesaplayici alias + diyet-program-detay + tarif-bulucu alerjen rafı | F10 ara işler |
 
-## TIER 4 — BABYSIT SOLO (ajana verilmez)
++ **Site-içi navigasyon** (lead, 47 dosya): Mutfak Sırları ailesi/Akademi/giriş/hesap/
+  calc kartları/prog kartları bağlı. Kılavuz **§2c** eklendi (Dalga 2 mirası).
++ Sentez: `outputs/dalga3-sentez.md` — **18 açık soru §3'te Beyar cevabı bekliyor.**
++ NOT: Pişirme modu derinleşmesi + yazdır görünümü Dalga 3'e girmedi → Dalga 4 cila turuna taşındı.
 
-- Diyetisyen panel shell (F12b)
+## TIER 4+5 — DALGA 4 (sıradaki — scope)
+
+### A) TIER 4 — BABYSIT SOLO (ajana verilmez, Beyar ile adım adım)
+- Diyetisyen panel shell (F12b) — diyetisyen tarafı login sonrası iskelet
 - Reçete builder + danışan paneli (F12c)
 
-## TIER 5 — OTOMATİK KAPANIŞ
+### B) TIER 5 — OTOMATİK KAPANIŞ (teammate'lara verilebilir)
+- Sezon sayfaları (Ramazan: iftara/sahura doğru mirası) + Günün Menüsü bağları
+- Kurumsal: hakkımızda, künye, iletişim, reklam/sponsorluk
+- Yasal paket (şablon onayıyla): KVKK, aydınlatma, üyelik, mesafeli satış, çerez,
+  iptal-iade, kullanım koşulları — footer `#`'leri gerçeğe bağlanır
+- Hata sayfaları (404/500) + global arama sonuç sayfası (F13)
 
-- Sezon + kurumsal + yasal + hata sayfaları + global arama (F13 + kalanlar)
+### C) FİNAL CİLA TURU (lead + Beyar)
+- Sentez §3'teki 18 açık sorunun cevaplarına göre mini revizeler
+- Kılavuz §2d (Dalga 3 bileşen mirası) yazılır
+- Pişirme modu derinleşmesi + yazdır görünümü (Dalga 1'den taşan ara iş)
+- Kozmetik: sepet boş-alan, haftalık menü→alışveriş listesi köprüsü (yeni UI, onaylı)
 
 ## KURALLAR
 
