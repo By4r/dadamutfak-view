@@ -137,6 +137,50 @@
   `alisveris-listesi-v1` bu dili miras alır (üstüne manuel kalem ekleme +
   "sepete aktar" köprüsü gelir)
 
+## 2e. PANEL DİLİ — Dalga 4, kaynak `panel-shell.html` (diyetisyen paneli ailesi)
+
+> Diyetisyen paneli SİTE CHROME'U KULLANMAZ — uygulama düzeni: sol dikey
+> sidebar + üst ince bar + içerik. Yeni panel sayfası = `panel-shell.html`
+> kopyası (İÇERİK ALANI doldurulur, sayfa CSS'i "SAYFA CSS" işaretinin altına).
+> Token/radius/font _shell ile BİREBİR; aksan YEŞİL (`--green/--green-deep/
+> --green-tint`), domates yalnız ikincil vurgu (iptal/uyarı/kırmızı nokta).
+> Section zemin ritmi YOK — gri `--bg` zemin üzerinde BEYAZ KART ritmi VAR.
+
+### Düzen iskeleti (shell'de hazır, dokunma)
+- `.pnl-app` kök · `.pnl-side` koyu slate sidebar (248px, `--pnl-side-w`) ·
+  `.pnl-top` ince üst bar (64px, `--pnl-top-h`) · `.pnl-main` içerik
+  (margin-left + padding-top shell'den; `.below-header` PANELDE KULLANILMAZ)
+- Sidebar: `.pnl-logo` (beyaz logo + `.pl-tag` PRO rozeti) · `.pnl-nav` ·
+  `.pnl-link` (+ `.is-active` yeşil sol çubuk; `i` ikon; `.pl-cnt` sayaç) ·
+  `.pnl-sec-lbl` grup etiketi · `.pnl-side-foot` (Public Profilim + Siteye Dön)
+- Üst bar: `.pnl-burger` (≤980 görünür) · `.pnl-search` (yeşil focus ring) ·
+  `.pnl-top-tools` · `.pnl-bell` (+ `.pb-dot` domates nokta) · `.pnl-me`
+  (avatar `.pm-ava` yeşil ring + `.pm-name/.pm-role`)
+- Mobil ≤980: sidebar off-canvas (`body.nav-open` + `.pnl-overlay`); SS paramı `?nav=1`
+- Sayfa başı: `.pnl-page-head` (h1 24px + `.ph-sub` + `.ph-actions`)
+
+### Panel bileşenleri (her panel sayfası BUNLARDAN kurar)
+- **`.pnl-card`** panel kartı: `.pc-head` (`.pc-title` ikonu yeşil + `.pc-link`) ·
+  `.pc-body` (`.flush` = padding'siz, tablo/liste için) · `.pc-foot`
+- **`.kpi-grid .kpi-card`** KPI kartı: `.kpi-ico` (yeşil-tint kutu; `.warm`
+  domates / `.sun` sarı varyant) + `.kpi-num .kpi-lbl .kpi-delta(.up/.down)`
+- **`.pstat`** durum rozeti (radius-sm, pill YASAK): `.ok` onaylı/dolu ·
+  `.wait` onay bekliyor · `.off` boş/pasif · `.warm` iptal/gecikmiş
+- **`.ptable`** panel tablosu (uppercase gri th + hover satır; `.pc-body.flush` içine)
+- **`.appt-list .appt-row`** randevu satırı: `.appt-time` (yeşil saat bloğu;
+  `.is-online` krem varyant) + `.appt-ava .appt-info .appt-name .appt-meta .appt-act`
+- **`.mm-list .mm-row`** mini mesaj satırı: `.mm-av` (+`.is-unread` yeşil nokta)
+  `.mm-info .mm-name .mm-prev .mm-time`
+- **`.cl-grid .cl-card`** danışan özet kartı: `.cl-top .cl-ava .cl-id .cl-name
+  .cl-goal` + `.cl-prog .cl-prog-row .cl-bar` (yeşil gradient ilerleme çubuğu)
+- **`.pnl-empty`** panel boş durumu (`.pe-ico` yeşil-tint kutu + h4 + p + CTA)
+- **`.btn-green`** panel birincil aksiyonu · `.btn-sm` kompakt boy ·
+  `.chip.is-on` yeşil aktif chip
+- Form alanları yine `fk-*` kitinden (§2b); çok adımlı akış yine `.stepper`
+  ailesinden (§2c kuralı) — panel yeni form/stepper İCAT ETMEZ
+- GRID KURALI: panel grid kolonları HEP `minmax(0,1fr)` (1fr'nin min-width:auto
+  taşması 390'da yakalandı — panel-shell vakası)
+
 ## 3. Dil kuralları (kısa)
 
 - Radius: SADECE token (`--radius-sm/md/lg/xl/circle`); `--radius-pill` yalnız bottom-nav mirası — YENİ pill yok

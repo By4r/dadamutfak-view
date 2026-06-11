@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>DadaMutfak — Diyetisyen Paneli</title>
+<link rel="shortcut icon" type="image/x-icon" href="assets/img/favicon.ico" />
+<!-- FontAwesome 6.5.2 (kilitli ikon seti) -->
+<link rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+      integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A=="
+      crossorigin="anonymous" referrerpolicy="no-referrer" />
+<style>
+/* =====================================================================
+   PANEL-SHELL.HTML — DİYETİSYEN PANELİ KANONİK İSKELETİ (DALGA 4)
+   Site chrome'u DEĞİL — uygulama düzeni: sol dikey sidebar + üst ince bar
+   + içerik alanı. Token/radius/font _shell.html ile BİREBİR aynı;
+   aksan dili YEŞİL (sağlık/diyetisyen ekseni), domates yalnız ikincil vurgu.
+   Yeni panel sayfası = bu dosyanın kopyası; İÇERİK ALANI bloğu doldurulur,
+   sayfa-spesifik CSS "SAYFA CSS" işaretinin altına eklenir.
+   Kılavuz referansı: tasks/bilesen-kilavuzu.md §Panel dili
+   ===================================================================== */
+
+/* ============ GERÇEK SİTE FONTU: Gilroy-Medium — TEK YÜZ ============ */
+@font-face{
+  font-family:"Gilroy";
+  src:url("assets/fonts/Gilroy-Medium.ttf") format("truetype");
+  font-weight:500; font-style:normal; font-display:swap;
+}
+
+/* ============ KİMLİK TOKEN'LARI (brand-tokens.md — _shell ile BİREBİR) ============ */
+:root{
+  --tomato:#E14827;
+  --tomato-dark:#C43D20;
+  --tomato-deep:#A8331A;
+  --tomato-tint:#FBE9E3;
+  --slate:#211E16;
+  --slate-2:#56514a;
+  --green:#3BB77E;
+  --green-deep:#2c9963;
+  --green-tint:#E7F6EF;      /* panel dili: yeşil fısıltı zemin (tomato-tint muadili) */
+  --yellow:#FAC045;
+  --muted:#7E7E7E;
+  --line:#ECECEC;
+  --cream:#EFE5D3;
+  --cream-2:#F7F1E6;
+  --paper:#ffffff;
+  --bg:#f9f9f9;
+  --ink:#211E16;
+  --bg-white:#ffffff;
+  --bg-cream:#f9f9f9;
+
+  --radius-sm:8px; --radius-md:12px; --radius-lg:16px; --radius-xl:24px; --radius-pill:999px; --radius-circle:50%;
+  --r:var(--radius-lg); --r-sm:var(--radius-sm); --r-lg:var(--radius-xl);
+  --sh-sm:0 1px 2px rgba(33,30,22,.04), 0 2px 6px rgba(33,30,22,.05);
+  --sh-md:0 6px 22px rgba(33,30,22,.09);
+  --sh-lg:0 18px 50px rgba(33,30,22,.16);
+  --ease:cubic-bezier(.22,.61,.36,1);
+
+  /* panel düzen ölçüleri */
+  --pnl-side-w:248px;
+  --pnl-top-h:64px;
+}
+
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  font-family:"Gilroy",system-ui,sans-serif;
+  font-weight:500;
+  color:var(--ink);
+  background:var(--bg);
+  line-height:1.55;
+  -webkit-font-smoothing:antialiased;
+}
+h1,h2,h3,h4{font-weight:700;color:var(--slate);line-height:1.12;letter-spacing:-.02em}
+a{color:inherit;text-decoration:none}
+img{display:block;max-width:100%}
+.muted{color:var(--muted);font-weight:500}
+
+/* btn ailesi — _shell mirası (panel boyut türevi .btn-sm eklendi) */
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:10px;
+  font-family:inherit;font-weight:700;font-size:14.5px;cursor:pointer;border:none;
+  padding:14px 26px;border-radius:var(--radius-md);transition:.25s var(--ease);
+}
+.btn-primary{background:var(--tomato);color:#fff}
+.btn-primary:hover{background:var(--tomato-dark);transform:translateY(-2px)}
+.btn-ghost{background:var(--paper);color:var(--slate);border:1px solid var(--line)}
+.btn-ghost:hover{border-color:var(--slate);transform:translateY(-2px)}
+/* panel birincil aksiyonu YEŞİL (diyetisyen ekseni) */
+.btn-green{background:var(--green);color:#fff}
+.btn-green:hover{background:var(--green-deep);transform:translateY(-2px)}
+.btn-sm{padding:10px 16px;font-size:13px;border-radius:var(--radius-sm)}
+
+.chips{display:flex;flex-wrap:wrap;gap:9px;align-items:center}
+.chip{
+  font-size:13px;font-weight:500;color:var(--slate);background:var(--paper);border:1px solid var(--line);
+  padding:8px 15px;border-radius:var(--radius-sm);cursor:pointer;transition:.2s var(--ease);
+}
+.chip:hover{border-color:var(--green);color:var(--green-deep);background:var(--green-tint)}
+.chip.is-on{border-color:var(--green);color:var(--green-deep);background:var(--green-tint);font-weight:700}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+
+/* =====================================================================
+   PANEL DÜZENİ — .pnl-app : sidebar + (topbar + main)
+   ===================================================================== */
+.pnl-app{min-height:100vh}
+
+/* ============ SOL DİKEY SIDEBAR — koyu slate, yeşil aksan ============ */
+.pnl-side{
+  position:fixed;top:0;left:0;bottom:0;width:var(--pnl-side-w);z-index:80;
+  background:var(--slate);color:#e9e2d6;
+  display:flex;flex-direction:column;
+  background-image:radial-gradient(420px 260px at -20% -10%, rgba(59,183,126,.16), transparent 60%);
+}
+.pnl-logo{
+  display:flex;align-items:center;gap:10px;
+  padding:22px 22px 18px;border-bottom:1px solid rgba(233,226,214,.1);
+}
+.pnl-logo img{height:30px;width:auto}
+.pnl-logo .pl-tag{
+  font-size:10.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--green);background:rgba(59,183,126,.14);
+  padding:3px 8px;border-radius:var(--radius-sm);
+}
+.pnl-nav{flex:1;overflow-y:auto;padding:18px 14px;display:flex;flex-direction:column;gap:3px}
+.pnl-sec-lbl{
+  font-size:10.5px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;
+  color:rgba(233,226,214,.42);padding:14px 12px 7px;
+}
+.pnl-link{
+  position:relative;display:flex;align-items:center;gap:12px;
+  padding:11px 12px;border-radius:var(--radius-md);
+  font-size:14px;font-weight:500;color:rgba(233,226,214,.78);
+  transition:.2s var(--ease);
+}
+.pnl-link i{width:20px;text-align:center;font-size:15px;color:rgba(233,226,214,.55);transition:.2s var(--ease)}
+.pnl-link:hover{background:rgba(255,255,255,.06);color:#fff}
+.pnl-link:hover i{color:var(--green)}
+.pnl-link.is-active{background:rgba(59,183,126,.14);color:#fff;font-weight:700}
+.pnl-link.is-active i{color:var(--green)}
+.pnl-link.is-active::before{
+  content:"";position:absolute;left:-14px;top:9px;bottom:9px;width:3px;
+  background:var(--green);border-radius:0 var(--radius-sm) var(--radius-sm) 0;
+}
+.pnl-link .pl-cnt{
+  margin-left:auto;font-size:11.5px;font-weight:700;
+  background:var(--green);color:#fff;min-width:20px;height:20px;
+  display:inline-flex;align-items:center;justify-content:center;
+  padding:0 6px;border-radius:var(--radius-sm);
+}
+.pnl-side-foot{
+  padding:14px;border-top:1px solid rgba(233,226,214,.1);
+  display:flex;flex-direction:column;gap:3px;
+}
+.pnl-side-foot .pnl-link{font-size:13px}
+
+/* ============ ÜST İNCE BAR — arama + bildirim + avatar ============ */
+.pnl-top{
+  position:fixed;top:0;left:var(--pnl-side-w);right:0;z-index:70;height:var(--pnl-top-h);
+  background:var(--paper);border-bottom:1px solid var(--line);
+  display:flex;align-items:center;gap:16px;padding:0 28px;
+}
+.pnl-burger{
+  display:none;width:40px;height:40px;border:1px solid var(--line);border-radius:var(--radius-md);
+  background:var(--paper);cursor:pointer;font-size:16px;color:var(--slate);
+  align-items:center;justify-content:center;flex:none;
+}
+.pnl-search{
+  flex:1;max-width:420px;position:relative;
+}
+.pnl-search i{
+  position:absolute;left:14px;top:50%;transform:translateY(-50%);
+  font-size:13.5px;color:var(--muted);pointer-events:none;
+}
+.pnl-search input{
+  width:100%;height:40px;padding:0 14px 0 38px;
+  font-family:inherit;font-size:13.5px;font-weight:500;color:var(--ink);
+  background:var(--bg);border:1px solid var(--line);border-radius:var(--radius-md);
+  outline:none;transition:.2s var(--ease);
+}
+.pnl-search input::placeholder{color:var(--muted)}
+.pnl-search input:focus{border-color:var(--green);background:var(--paper);box-shadow:0 0 0 3px rgba(59,183,126,.12)}
+.pnl-top-tools{margin-left:auto;display:flex;align-items:center;gap:10px}
+.pnl-bell{
+  position:relative;width:40px;height:40px;border:1px solid var(--line);border-radius:var(--radius-md);
+  background:var(--paper);cursor:pointer;font-size:15px;color:var(--slate);
+  display:inline-flex;align-items:center;justify-content:center;transition:.2s var(--ease);
+}
+.pnl-bell:hover{border-color:var(--green);color:var(--green-deep)}
+.pnl-bell .pb-dot{
+  position:absolute;top:9px;right:10px;width:8px;height:8px;
+  background:var(--tomato);border:2px solid var(--paper);border-radius:var(--radius-circle);
+}
+.pnl-me{
+  display:flex;align-items:center;gap:11px;cursor:pointer;
+  padding:6px 8px 6px 6px;border-radius:var(--radius-md);transition:.2s var(--ease);
+}
+.pnl-me:hover{background:var(--bg)}
+.pnl-me .pm-ava{
+  width:36px;height:36px;border-radius:var(--radius-circle);flex:none;
+  background-size:cover;background-position:center;
+  box-shadow:0 0 0 2px var(--paper), 0 0 0 4px var(--green);
+}
+.pnl-me .pm-id{line-height:1.25}
+.pnl-me .pm-name{font-size:13.5px;font-weight:700;color:var(--slate)}
+.pnl-me .pm-role{font-size:11.5px;color:var(--muted)}
+.pnl-me>i{font-size:11px;color:var(--muted)}
+
+/* ============ İÇERİK ALANI ============ */
+.pnl-main{
+  margin-left:var(--pnl-side-w);padding:calc(var(--pnl-top-h) + 28px) 28px 48px;
+  min-height:100vh;
+}
+.pnl-page-head{
+  display:flex;align-items:flex-end;justify-content:space-between;gap:18px;
+  margin-bottom:24px;flex-wrap:wrap;
+}
+.pnl-page-head h1{font-size:24px}
+.pnl-page-head .ph-sub{margin-top:5px;font-size:13.5px;color:var(--muted)}
+.pnl-page-head .ph-actions{display:flex;gap:10px;flex:none}
+
+/* ============ PANEL KARTI — .pnl-card (section ritmi YOK, kart ritmi VAR) ============ */
+.pnl-card{
+  background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-lg);
+  box-shadow:var(--sh-sm);
+}
+.pc-head{
+  display:flex;align-items:center;justify-content:space-between;gap:14px;
+  padding:18px 22px;border-bottom:1px solid var(--line);
+}
+.pc-title{font-size:16px;font-weight:700;color:var(--slate);display:flex;align-items:center;gap:10px}
+.pc-title i{color:var(--green);font-size:15px}
+.pc-link{font-size:13px;font-weight:700;color:var(--green-deep);display:inline-flex;align-items:center;gap:7px;transition:.2s}
+.pc-link i{font-size:11.5px;transition:.25s var(--ease)}
+.pc-link:hover i{transform:translateX(3px)}
+.pc-body{padding:22px}
+.pc-body.flush{padding:0}
+.pc-foot{padding:14px 22px;border-top:1px solid var(--line)}
+
+/* ============ KPI KARTLARI — .kpi-grid ============ */
+.kpi-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;margin-bottom:24px}
+.kpi-card{
+  background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-lg);
+  box-shadow:var(--sh-sm);padding:20px;display:flex;align-items:flex-start;gap:14px;
+  transition:.25s var(--ease);
+}
+.kpi-card:hover{transform:translateY(-3px);box-shadow:var(--sh-md)}
+.kpi-ico{
+  width:44px;height:44px;flex:none;border-radius:var(--radius-md);
+  background:var(--green-tint);color:var(--green-deep);
+  display:inline-flex;align-items:center;justify-content:center;font-size:17px;
+}
+.kpi-card.warm .kpi-ico{background:var(--tomato-tint);color:var(--tomato)}
+.kpi-card.sun .kpi-ico{background:#FCF3DD;color:#B8860B}
+.kpi-num{font-size:26px;font-weight:700;color:var(--slate);line-height:1.05;letter-spacing:-.02em}
+.kpi-lbl{font-size:12.5px;color:var(--muted);margin-top:4px}
+.kpi-delta{font-size:11.5px;font-weight:700;margin-top:6px;display:inline-flex;align-items:center;gap:5px}
+.kpi-delta.up{color:var(--green-deep)}
+.kpi-delta.down{color:var(--tomato)}
+
+/* ============ DURUM ROZETİ — .pstat (radius-sm, pill YASAK) ============ */
+.pstat{
+  display:inline-flex;align-items:center;gap:6px;
+  font-size:11.5px;font-weight:700;padding:4px 10px;border-radius:var(--radius-sm);
+  white-space:nowrap;
+}
+.pstat::before{content:"";width:6px;height:6px;border-radius:var(--radius-circle);background:currentColor}
+.pstat.ok{background:var(--green-tint);color:var(--green-deep)}        /* onaylı / dolu / aktif */
+.pstat.wait{background:#FCF3DD;color:#B8860B}                          /* onay bekliyor */
+.pstat.off{background:var(--bg);color:var(--muted);border:1px solid var(--line)} /* boş / pasif */
+.pstat.warm{background:var(--tomato-tint);color:var(--tomato)}         /* iptal / gecikmiş */
+
+/* ============ PANEL TABLOSU — .ptable ============ */
+.ptable{width:100%;border-collapse:collapse;font-size:13.5px}
+.ptable th{
+  text-align:left;font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--muted);padding:13px 22px;border-bottom:1px solid var(--line);background:var(--bg);
+}
+.ptable td{padding:14px 22px;border-bottom:1px solid var(--line);vertical-align:middle}
+.ptable tr:last-child td{border-bottom:none}
+.ptable tbody tr{transition:background .15s}
+.ptable tbody tr:hover{background:var(--bg)}
+
+/* ============ RANDEVU SATIRI — .appt-list (dashboard "bugünkü randevular") ============ */
+.appt-list{display:flex;flex-direction:column}
+.appt-row{
+  display:flex;align-items:center;gap:16px;padding:14px 22px;
+  border-bottom:1px solid var(--line);transition:background .15s;
+}
+.appt-row:last-child{border-bottom:none}
+.appt-row:hover{background:var(--bg)}
+.appt-time{
+  flex:none;width:64px;text-align:center;padding:8px 0;
+  background:var(--green-tint);border-radius:var(--radius-md);
+  font-size:14px;font-weight:700;color:var(--green-deep);line-height:1.2;
+}
+.appt-time small{display:block;font-size:10.5px;font-weight:500;color:var(--green-deep);opacity:.75}
+.appt-row.is-online .appt-time{background:var(--cream-2);color:var(--slate-2)}
+.appt-row.is-online .appt-time small{color:var(--slate-2)}
+.appt-ava{
+  width:38px;height:38px;flex:none;border-radius:var(--radius-circle);
+  background-size:cover;background-position:center;
+}
+.appt-info{flex:1;min-width:0;line-height:1.3}
+.appt-name{font-size:14px;font-weight:700;color:var(--slate)}
+.appt-meta{font-size:12px;color:var(--muted);margin-top:3px;display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+.appt-meta i{font-size:11px}
+.appt-act{display:flex;gap:8px;flex:none;align-items:center}
+
+/* ============ MİNİ MESAJ LİSTESİ — .mm-list (dashboard "bekleyen mesajlar") ============ */
+.mm-list{display:flex;flex-direction:column}
+.mm-row{
+  display:flex;align-items:center;gap:13px;padding:13px 22px;
+  border-bottom:1px solid var(--line);transition:background .15s;cursor:pointer;
+}
+.mm-row:last-child{border-bottom:none}
+.mm-row:hover{background:var(--bg)}
+.mm-av{
+  width:38px;height:38px;flex:none;border-radius:var(--radius-circle);
+  background-size:cover;background-position:center;position:relative;
+}
+.mm-row.is-unread .mm-av::after{
+  content:"";position:absolute;top:-1px;right:-1px;width:10px;height:10px;
+  background:var(--green);border:2px solid var(--paper);border-radius:var(--radius-circle);
+}
+.mm-info{flex:1;min-width:0;line-height:1.3}
+.mm-name{font-size:13.5px;font-weight:700;color:var(--slate)}
+.mm-prev{font-size:12.5px;color:var(--muted);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mm-row.is-unread .mm-prev{color:var(--slate-2);font-weight:700}
+.mm-time{flex:none;font-size:11.5px;color:var(--muted)}
+
+/* ============ DANIŞAN ÖZET KARTI — .cl-card ============ */
+.cl-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.cl-card{
+  border:1px solid var(--line);border-radius:var(--radius-md);padding:16px;
+  display:flex;flex-direction:column;gap:11px;transition:.25s var(--ease);background:var(--paper);
+}
+.cl-card:hover{border-color:var(--green);box-shadow:var(--sh-sm)}
+.cl-top{display:flex;align-items:center;gap:11px}
+.cl-ava{
+  width:40px;height:40px;flex:none;border-radius:var(--radius-circle);
+  background-size:cover;background-position:center;
+}
+.cl-id{min-width:0;line-height:1.3}
+.cl-name{font-size:13.5px;font-weight:700;color:var(--slate);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cl-goal{font-size:11.5px;color:var(--muted);margin-top:2px}
+.cl-prog{line-height:1.3}
+.cl-prog-row{display:flex;justify-content:space-between;font-size:11.5px;margin-bottom:6px}
+.cl-prog-row b{color:var(--green-deep)}
+.cl-bar{height:6px;background:var(--bg);border-radius:var(--radius-sm);overflow:hidden}
+.cl-bar i{display:block;height:100%;background:linear-gradient(90deg,var(--green),var(--green-deep));border-radius:var(--radius-sm)}
+
+/* ============ PANEL BOŞ DURUM — .pnl-empty (site boş durum deseninin panel türevi) ============ */
+.pnl-empty{padding:44px 24px;text-align:center}
+.pnl-empty .pe-ico{
+  width:58px;height:58px;margin:0 auto 14px;border-radius:var(--radius-md);
+  background:var(--green-tint);color:var(--green-deep);
+  display:flex;align-items:center;justify-content:center;font-size:22px;
+}
+.pnl-empty h4{font-size:15.5px;margin-bottom:5px}
+.pnl-empty p{font-size:13px;color:var(--muted);max-width:300px;margin:0 auto 16px}
+
+/* ============ DASHBOARD DÜZENİ (örnek içerik) ============ */
+.dash-cols{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);gap:16px;margin-bottom:16px}
+.dash-row{margin-bottom:16px}
+
+/* ============ MOBİL (≤980 sidebar off-canvas, ≤640 yoğunluk) ============ */
+.pnl-overlay{
+  position:fixed;inset:0;background:rgba(33,30,22,.5);z-index:79;
+  opacity:0;pointer-events:none;transition:.25s;
+}
+@media(max-width:980px){
+  .pnl-side{transform:translateX(-100%);transition:transform .28s var(--ease)}
+  body.nav-open .pnl-side{transform:translateX(0)}
+  body.nav-open .pnl-overlay{opacity:1;pointer-events:auto}
+  .pnl-top{left:0}
+  .pnl-burger{display:inline-flex}
+  .pnl-main{margin-left:0;padding:calc(var(--pnl-top-h) + 20px) 16px 40px}
+  .kpi-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+  .dash-cols{grid-template-columns:minmax(0,1fr)}
+  .cl-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .pnl-me .pm-id,.pnl-me>i{display:none}
+}
+@media(max-width:640px){
+  .pnl-search{max-width:none}
+  .kpi-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .kpi-num{font-size:21px}
+  .cl-grid{grid-template-columns:minmax(0,1fr)}
+  .appt-act .btn-ghost{display:none}
+  .pc-head,.pc-body,.appt-row,.mm-row{padding-left:16px;padding-right:16px}
+  .ptable th,.ptable td{padding-left:16px;padding-right:16px}
+  .pnl-page-head h1{font-size:20px}
+}
+
+/* =====================================================================
+   SAYFA CSS — sayfa-spesifik stiller BU İŞARETİN ALTINA
+   ===================================================================== */
+</style>
+</head>
+<body>
+
+<div class="pnl-app">
+
+  <!-- ============ SOL SIDEBAR ============ -->
+  <aside class="pnl-side" id="pnlSide">
+    <a class="pnl-logo" href="anasayfa-portal-v3a.html">
+      <img src="assets/img/logo-official-white.png" alt="DadaMutfak" />
+      <span class="pl-tag">Pro</span>
+    </a>
+    <nav class="pnl-nav">
+      <a class="pnl-link is-active" href="panel-shell.html" data-nav="panel"><i class="fa-solid fa-gauge-high"></i> Panel</a>
+      <a class="pnl-link" href="dyt-randevular-v1.html" data-nav="randevular"><i class="fa-regular fa-calendar-check"></i> Randevular <span class="pl-cnt">5</span></a>
+      <a class="pnl-link" href="dyt-danisanlar-v1.html" data-nav="danisanlar"><i class="fa-solid fa-user-group"></i> Danışanlar</a>
+      <a class="pnl-link" href="dyt-receteler-v1.html" data-nav="receteler"><i class="fa-solid fa-utensils"></i> Reçeteler</a>
+      <a class="pnl-link" href="dyt-mesajlar-v1.html" data-nav="mesajlar"><i class="fa-regular fa-comment-dots"></i> Mesajlar <span class="pl-cnt">3</span></a>
+      <div class="pnl-sec-lbl">Hesap</div>
+      <a class="pnl-link" href="dyt-profil-ayar-v1.html" data-nav="profil"><i class="fa-regular fa-id-badge"></i> Profil</a>
+      <a class="pnl-link" href="dyt-profil-ayar-v1.html?tab=ayarlar" data-nav="ayarlar"><i class="fa-solid fa-sliders"></i> Ayarlar</a>
+    </nav>
+    <div class="pnl-side-foot">
+      <a class="pnl-link" href="diyetisyen-profil-v1.html"><i class="fa-regular fa-eye"></i> Public Profilim</a>
+      <a class="pnl-link" href="anasayfa-portal-v3a.html"><i class="fa-solid fa-arrow-left"></i> Siteye Dön</a>
+    </div>
+  </aside>
+  <div class="pnl-overlay" id="pnlOverlay"></div>
+
+  <!-- ============ ÜST İNCE BAR ============ -->
+  <header class="pnl-top">
+    <button class="pnl-burger" id="pnlBurger" aria-label="Menü"><i class="fa-solid fa-bars"></i></button>
+    <div class="pnl-search">
+      <i class="fa-solid fa-magnifying-glass"></i>
+      <input type="text" placeholder="Danışan, randevu veya reçete ara…" />
+    </div>
+    <div class="pnl-top-tools">
+      <button class="pnl-bell" aria-label="Bildirimler"><i class="fa-regular fa-bell"></i><span class="pb-dot"></span></button>
+      <div class="pnl-me">
+        <div class="pm-ava" style="background-image:url('https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=240&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')"></div>
+        <div class="pm-id">
+          <div class="pm-name">Dyt. Elif Yıldırım</div>
+          <div class="pm-role">Diyetisyen · Onaylı</div>
+        </div>
+        <i class="fa-solid fa-chevron-down"></i>
+      </div>
+    </div>
+  </header>
+
+  <!-- ============ İÇERİK ALANI — dashboard örneği ============ -->
+  <main class="pnl-main">
+
+    <div class="pnl-page-head">
+      <div>
+        <h1>Günaydın, Dyt. Elif</h1>
+        <div class="ph-sub">11 Haziran 2026, Perşembe — bugün 5 randevun ve 3 bekleyen mesajın var.</div>
+      </div>
+      <div class="ph-actions">
+        <button class="btn btn-ghost btn-sm"><i class="fa-regular fa-calendar-plus"></i> Müsaitlik Ekle</button>
+        <button class="btn btn-green btn-sm"><i class="fa-solid fa-plus"></i> Yeni Reçete</button>
+      </div>
+    </div>
+
+    <!-- KPI şeridi -->
+    <div class="kpi-grid">
+      <div class="kpi-card">
+        <div class="kpi-ico"><i class="fa-regular fa-calendar-check"></i></div>
+        <div>
+          <div class="kpi-num">5</div>
+          <div class="kpi-lbl">Bugünkü randevu</div>
+          <div class="kpi-delta up"><i class="fa-solid fa-arrow-trend-up"></i> 2 onay bekliyor</div>
+        </div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-ico"><i class="fa-solid fa-user-group"></i></div>
+        <div>
+          <div class="kpi-num">34</div>
+          <div class="kpi-lbl">Aktif danışan</div>
+          <div class="kpi-delta up"><i class="fa-solid fa-arrow-trend-up"></i> +3 bu ay</div>
+        </div>
+      </div>
+      <div class="kpi-card warm">
+        <div class="kpi-ico"><i class="fa-regular fa-comment-dots"></i></div>
+        <div>
+          <div class="kpi-num">3</div>
+          <div class="kpi-lbl">Bekleyen mesaj</div>
+          <div class="kpi-delta down"><i class="fa-regular fa-clock"></i> en eski 2 saat</div>
+        </div>
+      </div>
+      <div class="kpi-card sun">
+        <div class="kpi-ico"><i class="fa-regular fa-star"></i></div>
+        <div>
+          <div class="kpi-num">4,9</div>
+          <div class="kpi-lbl">Profil puanı</div>
+          <div class="kpi-delta up"><i class="fa-solid fa-arrow-trend-up"></i> 128 değerlendirme</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- bugünkü randevular + bekleyen mesajlar -->
+    <div class="dash-cols">
+      <div class="pnl-card">
+        <div class="pc-head">
+          <div class="pc-title"><i class="fa-regular fa-calendar-check"></i> Bugünkü Randevular</div>
+          <a class="pc-link" href="dyt-randevular-v1.html">Takvimi Aç <i class="fa-solid fa-arrow-right"></i></a>
+        </div>
+        <div class="appt-list">
+          <div class="appt-row">
+            <div class="appt-time">09.30<small>45 dk</small></div>
+            <div class="appt-ava" style="background-image:url('https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=160&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')"></div>
+            <div class="appt-info">
+              <div class="appt-name">Zeynep Arslan</div>
+              <div class="appt-meta"><i class="fa-solid fa-location-dot"></i> Yüz yüze · İlk görüşme</div>
+            </div>
+            <div class="appt-act">
+              <span class="pstat ok">Onaylı</span>
+            </div>
+          </div>
+          <div class="appt-row is-online">
+            <div class="appt-time">11.00<small>30 dk</small></div>
+            <div class="appt-ava" style="background-image:url('https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=160&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')"></div>
+            <div class="appt-info">
+              <div class="appt-name">Mert Kaya</div>
+              <div class="appt-meta"><i class="fa-solid fa-video"></i> Online · Kontrol</div>
+            </div>
+            <div class="appt-act">
+              <span class="pstat wait">Onay Bekliyor</span>
+              <button class="btn btn-green btn-sm">Onayla</button>
+            </div>
+          </div>
+          <div class="appt-row">
+            <div class="appt-time">14.00<small>45 dk</small></div>
+            <div class="appt-ava" style="background-image:url('https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=160&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')"></div>
+            <div class="appt-info">
+              <div class="appt-name">Selin Demir</div>
+              <div class="appt-meta"><i class="fa-solid fa-location-dot"></i> Yüz yüze · Ölçüm + kontrol</div>
+            </div>
+            <div class="appt-act">
+              <span class="pstat ok">Onaylı</span>
+            </div>
+          </div>
+          <div class="appt-row is-online">
+            <div class="appt-time">16.30<small>30 dk</small></div>
+            <div class="appt-ava" style="background-image:url('https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=160&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')"></div>
+            <div class="appt-info">
+              <div class="appt-name">Burak Şahin</div>
+              <div class="appt-meta"><i class="fa-solid fa-video"></i> Online · Diyet revizyonu</div>
+            </div>
+            <div class="appt-act">
+              <span class="pstat warm">İptal İstendi</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="pnl-card">
+        <div class="pc-head">
+          <div class="pc-title"><i class="fa-regular fa-comment-dots"></i> Bekleyen Mesajlar</div>
+          <a class="pc-link" href="dyt-mesajlar-v1.html">Tümü <i class="fa-solid fa-arrow-right"></i></a>
+        </div>
+        <div class="mm-list">
+          <div class="mm-row is-unread">
+            <div class="mm-av" style="background-image:url('https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=160&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')"></div>
+            <div class="mm-info">
+              <div class="mm-name">Zeynep Arslan</div>
+              <div class="mm-prev">Merhaba hocam, ara öğünü atlasam olur mu?</div>
+            </div>
+            <div class="mm-time">12 dk</div>
+          </div>
+          <div class="mm-row is-unread">
+            <div class="mm-av" style="background-image:url('https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=160&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')"></div>
+            <div class="mm-info">
+              <div class="mm-name">Burak Şahin</div>
+              <div class="mm-prev">Bu haftaki ölçümleri ekledim, bakabilir misiniz?</div>
+            </div>
+            <div class="mm-time">1 sa</div>
+          </div>
+          <div class="mm-row">
+            <div class="mm-av" style="background-image:url('https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=160&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')"></div>
+            <div class="mm-info">
+              <div class="mm-name">Selin Demir</div>
+              <div class="mm-prev">Teşekkürler hocam, görüşmede konuşuruz 🙂</div>
+            </div>
+            <div class="mm-time">3 sa</div>
+          </div>
+        </div>
+        <div class="pc-foot">
+          <a class="pc-link" href="dyt-mesajlar-v1.html"><i class="fa-regular fa-paper-plane"></i> Mesajlara Git</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- danışan özeti -->
+    <div class="dash-row">
+      <div class="pnl-card">
+        <div class="pc-head">
+          <div class="pc-title"><i class="fa-solid fa-user-group"></i> Danışan Özeti</div>
+          <a class="pc-link" href="dyt-danisanlar-v1.html">Tüm Danışanlar <i class="fa-solid fa-arrow-right"></i></a>
+        </div>
+        <div class="pc-body">
+          <div class="cl-grid">
+            <div class="cl-card">
+              <div class="cl-top">
+                <div class="cl-ava" style="background-image:url('https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=160&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')"></div>
+                <div class="cl-id">
+                  <div class="cl-name">Zeynep Arslan</div>
+                  <div class="cl-goal">Hedef: −6 kg · 8. hafta</div>
+                </div>
+              </div>
+              <div class="cl-prog">
+                <div class="cl-prog-row"><span class="muted">İlerleme</span><b>−4,2 kg</b></div>
+                <div class="cl-bar"><i style="width:70%"></i></div>
+              </div>
+            </div>
+            <div class="cl-card">
+              <div class="cl-top">
+                <div class="cl-ava" style="background-image:url('https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=160&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')"></div>
+                <div class="cl-id">
+                  <div class="cl-name">Mert Kaya</div>
+                  <div class="cl-goal">Hedef: kas kazanımı · 3. hafta</div>
+                </div>
+              </div>
+              <div class="cl-prog">
+                <div class="cl-prog-row"><span class="muted">İlerleme</span><b>+1,8 kg</b></div>
+                <div class="cl-bar"><i style="width:35%"></i></div>
+              </div>
+            </div>
+            <div class="cl-card">
+              <div class="cl-top">
+                <div class="cl-ava" style="background-image:url('https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=160&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')"></div>
+                <div class="cl-id">
+                  <div class="cl-name">Selin Demir</div>
+                  <div class="cl-goal">Hedef: −10 kg · 12. hafta</div>
+                </div>
+              </div>
+              <div class="cl-prog">
+                <div class="cl-prog-row"><span class="muted">İlerleme</span><b>−7,5 kg</b></div>
+                <div class="cl-bar"><i style="width:75%"></i></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+/* ============ PANEL ORTAK JS — kopyala, dokunma ============ */
+(function(){
+  var burger=document.getElementById('pnlBurger'),
+      overlay=document.getElementById('pnlOverlay');
+  if(burger) burger.addEventListener('click',function(){document.body.classList.toggle('nav-open')});
+  if(overlay) overlay.addEventListener('click',function(){document.body.classList.remove('nav-open')});
+
+  /* SS paramı: ?nav=1 mobil sidebar açık */
+  var q=new URLSearchParams(location.search);
+  if(q.get('nav')==='1') document.body.classList.add('nav-open');
+})();
+</script>
+
+</body>
+</html>
