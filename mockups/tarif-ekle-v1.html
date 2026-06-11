@@ -1,0 +1,2296 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Tarif Ekle — DadaMutfak | Tarifini 4 Adımda Paylaş</title>
+<link rel="shortcut icon" type="image/x-icon"
+      href="assets/img/favicon.ico" />
+<!-- FontAwesome 6.5.2 (kilitli ikon seti) -->
+<link rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+      integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A=="
+      crossorigin="anonymous" referrerpolicy="no-referrer" />
+<style>
+/* =====================================================================
+   _SHELL.HTML — KANONİK İSKELET (anasayfa-portal-v3a.html'den BİREBİR)
+   Token + tipografi + utilities + topbar + header + mega menü (KİLİTLİ)
+   + footer + drawer/bottom-nav + çerez/görüş modal + ortak JS.
+   Yeni sayfa = bu dosyanın kopyası; SAYFA İÇERİĞİ bloğu doldurulur,
+   sayfa-spesifik CSS "SAYFA CSS" işaretinin altına eklenir.
+   Header varsayılan KATI; hero'lu sayfa ?hdr=hero benzeri davranış için
+   JS'teki heroMode bayrağını açar.
+   ===================================================================== */
+
+/* ============ GERÇEK SİTE FONTU: Gilroy-Medium — TEK YÜZ (eski site DNA'sı) ============
+   Eski site (main.css): @font-face myBrandFont = Gilroy-Medium.ttf, universal reset ile
+   başlık/gövde/buton dahil HER eleman bu tek yüzle render olur; 600/700 bold'lar
+   tarayıcının sentetik bold'udur. Light/ExtraBold dosyaları klasörde var ama
+   eski site CSS'i hiç yüklemez — bu yüzden burada da yalnız Medium yüklenir. */
+@font-face{
+  font-family:"Gilroy";
+  src:url("assets/fonts/Gilroy-Medium.ttf") format("truetype");
+  font-weight:500; font-style:normal; font-display:swap;
+}
+
+/* ============ KİMLİK TOKEN'LARI (brand-tokens.md) ============ */
+:root{
+  --tomato:#E14827;          /* tek baskın marka rengi */
+  --tomato-dark:#C43D20;     /* hover türevi */
+  --tomato-deep:#A8331A;     /* gradient ucu */
+  --tomato-tint:#FBE9E3;     /* domates fısıltısı zemin */
+  --slate:#211E16;           /* Pantone Process Black C — başlık/koyu metin/panel */
+  --slate-2:#56514a;           /* sıcak muted koyu */
+  --green:#3BB77E;           /* yalnız sağlık bloğu */
+  --green-deep:#2c9963;
+  --yellow:#FAC045;          /* yalnız puan */
+  --muted:#7E7E7E;           /* ikincil metin */
+  --line:#ECECEC;            /* hairline ayraç */
+  --cream:#EFE5D3;           /* sıcak nötr */
+  --cream-2:#F7F1E6;
+  /* kurumsal alternatif renkler (kılavuz) */
+  --c-purple:#b14fc5; --c-mint:#6cca98; --c-green:#009d4f; --c-petrol:#006072;
+  --paper:#ffffff;
+  --bg:#f9f9f9;              /* eski site grisi — sayfa zemini (Revize T3 M12) */
+  --ink:#211E16;
+  /* section zemin ritmi — açık bölüm alternasyonu (gri ↔ beyaz, eski site ekseni) */
+  --bg-white:#ffffff;        /* saf beyaz */
+  --bg-cream:#f9f9f9;        /* eski site section grisi (own.css'teki en yaygın zemin) */
+
+  --radius-sm:8px; --radius-md:12px; --radius-lg:16px; --radius-xl:24px; --radius-pill:999px; --radius-circle:50%;
+  /* legacy alias → yeni ölçek */
+  --r:var(--radius-lg); --r-sm:var(--radius-sm); --r-lg:var(--radius-xl);
+  --sh-sm:0 1px 2px rgba(33,30,22,.04), 0 2px 6px rgba(33,30,22,.05);
+  --sh-md:0 6px 22px rgba(33,30,22,.09);
+  --sh-lg:0 18px 50px rgba(33,30,22,.16);
+  --ease:cubic-bezier(.22,.61,.36,1);
+  --wrap:1240px;
+}
+
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  font-family:"Gilroy",system-ui,sans-serif;
+  font-weight:500;
+  color:var(--ink);
+  background:var(--bg);
+  line-height:1.55;
+  -webkit-font-smoothing:antialiased;
+}
+h1,h2,h3,h4{font-weight:700;color:var(--slate);line-height:1.12;letter-spacing:-.02em}
+a{color:inherit;text-decoration:none}
+img{display:block;max-width:100%}
+.wrap{max-width:var(--wrap);margin:0 auto;padding:0 32px}
+.muted{color:var(--muted);font-weight:500}
+
+/* eyebrow */
+.eyebrow{
+  display:inline-flex;align-items:center;gap:8px;
+  font-size:12px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--tomato);
+}
+.eyebrow::before{content:"";width:26px;height:2px;background:currentColor;border-radius:var(--radius-sm)}
+.eyebrow i{font-size:13px}
+
+/* section head */
+.sec{padding:74px 0}
+/* fixed header offseti — sayfanın İLK section'ına bu class verilir
+   (topbar 40 + header 72 = 112px · mobil 62px) */
+.below-header{padding-top:112px}
+/* ortak section header grid'i — aksiyon grubu (Tamamını Gör + oklar/tablar) h2 ile
+   aynı satırda, açıklama altta tek başına: [eyebrow] / [h2 | tools] / [lead] (Revize T4 M1).
+   Sol blok display:contents ile grid'e açılır — DOM aynı, ≤640 pattern'ı ile uyumlu */
+.sec-head,.cat-head,.guide-head{
+  display:grid;grid-template-columns:minmax(0,1fr) auto;column-gap:24px;
+  align-items:center;margin-bottom:34px;
+}
+.sec-head>div:first-child,.cat-head>div:first-child,.guide-head>div:first-child{display:contents}
+.sec-head .eyebrow,.cat-head .eyebrow,.guide-head .eyebrow{grid-row:1;grid-column:1/-1;justify-self:start;margin-bottom:14px}
+.sec-head h2,.cat-head h2,.guide-head h2{grid-row:2;grid-column:1}
+.sec-head .sec-tools,.sec-head .disc-tools,.cat-head .sec-tools,.guide-head .sec-tools{grid-row:2;grid-column:2;align-self:center}
+.sec-head .lead,.cat-head .lead,.guide-head .lead{grid-row:3;grid-column:1/-1;margin-top:10px;color:var(--muted);font-weight:500;font-size:15.5px;max-width:520px}
+.sec-head h2{font-size:34px}
+.see-all{
+  flex:none;display:inline-flex;align-items:center;gap:9px;font-weight:700;font-size:13.5px;
+  color:var(--slate);padding:11px 18px;border:1px solid var(--line);border-radius:var(--radius-md);
+  background:var(--paper);transition:.25s var(--ease);white-space:nowrap;
+}
+.see-all i{font-size:13px;transition:.25s var(--ease)}
+.see-all:hover{border-color:var(--tomato);color:var(--tomato)}
+.see-all:hover i{transform:translateX(3px)}
+
+/* buttons */
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:10px;
+  font-family:inherit;font-weight:700;font-size:14.5px;cursor:pointer;border:none;
+  padding:14px 26px;border-radius:var(--radius-md);transition:.25s var(--ease);
+}
+.btn-primary{background:var(--tomato);color:#fff}
+.btn-primary:hover{background:var(--tomato-dark);transform:translateY(-2px)}
+.btn-ghost{background:var(--paper);color:var(--slate);border:1px solid var(--line)}
+.btn-ghost:hover{border-color:var(--slate);transform:translateY(-2px)}
+
+/* chips */
+.chips{display:flex;flex-wrap:wrap;gap:9px;align-items:center}
+.chips .lbl{font-size:13px;color:var(--muted);font-weight:500;margin-right:2px}
+.chip{
+  font-size:13px;font-weight:500;color:var(--slate);background:var(--paper);border:1px solid var(--line);
+  padding:8px 15px;border-radius:var(--radius-sm);cursor:pointer;transition:.2s var(--ease);
+}
+.chip:hover{border-color:var(--tomato);color:var(--tomato);background:var(--tomato-tint)}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+
+/* ============ TOP UTILITY BAR ============ */
+.topbar{position:fixed;top:0;left:0;right:0;z-index:70;background:var(--ink);color:#e9e2d6;font-size:12.5px;font-weight:500}
+.topbar .wrap{display:flex;align-items:center;justify-content:space-between;height:40px}
+.topbar a{display:inline-flex;align-items:center;gap:7px;color:#e9e2d6;transition:.2s}
+.topbar a:hover{color:#fff}
+.topbar .tb-left{display:flex;align-items:center;gap:16px}
+.topbar .tb-left b{font-weight:600;color:#fff}
+.tb-div{width:1px;height:14px;background:rgba(233,226,214,.22);flex:none}
+.topbar .tb-right{display:flex;gap:18px;align-items:center}
+.topbar .tb-soc{display:flex;gap:14px}
+.topbar .tb-soc a:hover{color:var(--yellow)}
+/* dil seçici — üst bant (ince, açık zemin yazı) */
+.tb-lang{position:relative;display:flex;align-items:center}
+.tb-lang::before{content:"";width:1px;height:14px;background:rgba(233,226,214,.22);margin-right:4px}
+.tb-lang-btn{display:inline-flex;align-items:center;gap:7px;background:transparent;border:none;cursor:pointer;color:#e9e2d6;font-family:inherit;font-size:12.5px;font-weight:500;padding:0;transition:color .2s}
+.tb-lang-btn:hover{color:#fff}
+.tb-lang-btn>span{font-weight:600;letter-spacing:.03em}
+.tb-lang-caret{font-size:9px;transition:transform .2s var(--ease)}
+.tb-lang.open .tb-lang-caret{transform:rotate(180deg)}
+.tb-lang-menu{position:absolute;top:calc(100% + 9px);right:0;min-width:148px;background:#fff;border:1px solid var(--line);border-radius:var(--radius-md);box-shadow:var(--sh-md);padding:6px;opacity:0;visibility:hidden;transform:translateY(-6px);transition:opacity .2s var(--ease),transform .2s var(--ease),visibility .2s;z-index:80}
+.tb-lang.open .tb-lang-menu{opacity:1;visibility:visible;transform:translateY(0)}
+.tb-lang-menu a{display:flex;align-items:center;gap:9px;color:var(--ink);font-size:13px;font-weight:600;padding:9px 11px;border-radius:var(--radius-sm);transition:.18s var(--ease)}
+.tb-lang-menu a span{color:var(--muted);font-weight:500;font-size:12.5px}
+.tb-lang-menu a:hover{background:var(--tomato-tint);color:var(--tomato)}
+.tb-lang-menu a.active,.tb-lang-menu a.active span{color:var(--tomato)}
+
+/* ============ HEADER — TEK KAT (marka · ortalanmış nav · aksiyonlar) — Revize T3 M2 ============ */
+.header{
+  position:fixed;top:0;left:0;right:0;z-index:60;
+  top:40px;background:rgba(255,255,255,.94);backdrop-filter:saturate(150%) blur(10px);
+  border-bottom:1px solid var(--line);box-shadow:0 4px 20px rgba(33,30,22,.05);
+  transition:background .3s var(--ease),border-color .3s var(--ease),box-shadow .3s var(--ease);
+}
+/* hero üstünde: şeffaf + beyaz — yalnız heroMode açık sayfalarda kullanılır (JS) */
+.header.at-top{background:transparent;backdrop-filter:none;border-color:rgba(255,255,255,.14);box-shadow:none}
+.h-top>.wrap{display:flex;align-items:center;gap:22px;height:72px}
+.brand{display:flex;align-items:center;flex:none}
+.brand img{height:40px;width:auto;display:block}
+.brand .logo-white{display:none}
+.header.at-top .brand .logo-color{display:none}
+.header.at-top .brand .logo-white{display:block}
+/* nav, logo ile aksiyonlar arasında ortalanır */
+.nav{display:flex;gap:2px;flex-wrap:nowrap;flex:1;justify-content:center;min-width:0}
+.nav a{
+  position:relative;font-weight:700;font-size:15px;color:var(--slate);white-space:nowrap;
+  padding:9px 12px;border-radius:var(--radius-md);transition:color .2s var(--ease),background .2s var(--ease);
+}
+.nav a .fa-chevron-down{font-size:9px;margin-left:5px;opacity:.5}
+.nav a:hover{color:var(--tomato);background:var(--tomato-tint)}
+.nav a.active{color:var(--tomato)}
+.nav a.active::after{
+  content:"";position:absolute;left:12px;right:12px;bottom:2px;height:2px;
+  background:var(--tomato);border-radius:var(--radius-sm);
+}
+/* at-top nav beyaz */
+.header.at-top .nav>.nav-item>a{color:#fff}
+.header.at-top .nav>.nav-item>a:hover{background:rgba(255,255,255,.14);color:#fff}
+.header.at-top .nav>.nav-item>a.active{color:#fff}
+.header.at-top .nav>.nav-item>a.active::after{background:#fff}
+.head-actions{margin-left:auto;display:flex;align-items:center;gap:9px;flex:none}
+.icon-btn{
+  width:43px;height:43px;border-radius:var(--radius-md);border:1px solid var(--line);background:var(--paper);
+  display:grid;place-items:center;color:var(--slate);font-size:16px;cursor:pointer;transition:.2s var(--ease);position:relative;
+}
+.icon-btn:hover{border-color:var(--tomato);color:var(--tomato)}
+.header.at-top .icon-btn{background:rgba(255,255,255,.10);border-color:rgba(255,255,255,.30);color:#fff}
+.header.at-top .icon-btn:hover{background:rgba(255,255,255,.20);border-color:#fff;color:#fff}
+/* minimal giriş butonu — kompakt boy, marka rengi (Beyar: eski renk kalsın), flat */
+.btn-login{
+  display:inline-flex;align-items:center;gap:8px;font-family:inherit;font-weight:700;font-size:14px;
+  color:#fff;background:var(--tomato);border:1px solid var(--tomato);border-radius:var(--radius-md);
+  height:43px;padding:0 18px;margin-left:3px;cursor:pointer;white-space:nowrap;transition:.2s var(--ease);
+}
+.btn-login i{font-size:14px}
+.btn-login:hover{background:var(--tomato-dark);border-color:var(--tomato-dark)}
+
+/* ---- NAV DROPDOWNS ---- */
+.nav .nav-item{position:relative}
+/* nav item tek katın tam yüksekliğini doldursun → hover sürekliliği (mega'ya geçişte kopmaz) */
+.h-top .nav-item{display:flex;align-items:center;height:72px}
+.nav .nav-item>a{display:inline-flex;align-items:center}
+.soon{margin-left:7px;font-size:9.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;
+  color:#fff;background:var(--green);padding:3px 7px;border-radius:var(--radius-sm);vertical-align:middle}
+.dropdown{
+  position:absolute;top:calc(100% + 12px);left:50%;transform:translateX(-50%) translateY(8px);
+  min-width:230px;background:#fff;border:1px solid var(--line);border-radius:var(--radius-lg);box-shadow:var(--sh-lg);
+  padding:10px;opacity:0;visibility:hidden;transition:.22s var(--ease);z-index:80;
+}
+.nav-item:hover .dropdown,.nav-item.open .dropdown{opacity:1;visibility:visible;transform:translateX(-50%) translateY(0)}
+.dropdown::before{content:"";position:absolute;top:-7px;left:50%;transform:translateX(-50%) rotate(45deg);
+  width:13px;height:13px;background:#fff;border-left:1px solid var(--line);border-top:1px solid var(--line)}
+.dropdown a{
+  display:flex;align-items:flex-start;gap:12px;padding:11px 13px;border-radius:var(--radius-md);font-size:14px;font-weight:500;
+  color:var(--slate);transition:.16s var(--ease);
+}
+.dropdown a i{width:18px;text-align:center;color:var(--tomato);font-size:14px;margin-top:2px}
+.dropdown a small{display:block;font-size:11.5px;color:var(--muted);font-weight:500;margin-top:1px}
+.dropdown a:hover{background:var(--tomato-tint);color:var(--tomato);padding-left:16px}
+.dd-head{padding:8px 13px 4px;font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.dd-col{display:flex;flex-direction:column}
+
+/* ---- MEGA MENÜ (Tarifler) — header'a bağlı tam genişlik panel — KİLİTLİ ---- */
+.nav-item.has-mega{position:static}            /* containing block = .header (fixed) */
+.mega{
+  position:absolute;left:0;right:0;top:100%;
+  background:#fff;border-top:1px solid var(--line);
+  box-shadow:var(--sh-lg);padding:28px 0 26px;
+  opacity:0;visibility:hidden;transform:translateY(8px);
+  transition:.22s var(--ease);z-index:80;
+}
+.nav-item:hover .mega,.nav-item.open .mega{opacity:1;visibility:visible;transform:translateY(0)}
+.mega-grid{display:grid;grid-template-columns:2.2fr 1fr;gap:44px;align-items:start}
+.mega-cats{display:grid;grid-template-columns:repeat(3,1fr);gap:2px 16px;align-content:start}
+.mega-cats a{
+  display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:var(--radius-md);
+  font-size:14.5px;font-weight:500;color:var(--slate);transition:.16s var(--ease);line-height:1.25;
+}
+.mega-cats a i{width:20px;text-align:center;color:var(--tomato);font-size:15px;flex:none}
+.mega-cats a small{display:block;font-size:11.5px;color:var(--muted);font-weight:500;margin-top:1px}
+.mega-cats a:hover{background:var(--tomato-tint);color:var(--tomato)}
+.mega-feat{min-width:0}
+.mf-fig{
+  position:relative;aspect-ratio:16/10;border-radius:var(--radius-md);overflow:hidden;
+  background-size:cover;background-position:center;display:flex;align-items:flex-end;cursor:pointer;
+}
+.mf-fig::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(33,30,22,0) 35%,rgba(15,13,9,.78))}
+.mf-fig .r-chip{position:absolute;top:12px;left:12px;background:var(--tomato);color:#fff;z-index:2}
+.mf-fig h4{position:relative;z-index:2;color:#fff;font-size:17px;padding:16px;line-height:1.25}
+/* "Tüm Tarifler" — kategori grid'inin 13. hücresi, buton dilinde (Revize T3 M1) */
+.mega-cats .mega-cat-all{
+  font-weight:700;color:var(--tomato);
+  background:var(--tomato-tint);border:1px solid rgba(225,72,39,.22);
+}
+.mega-cats .mega-cat-all small{color:var(--tomato);opacity:.75}
+.mega-cats .mega-cat-all .mca-arrow{margin-left:auto;width:auto;font-size:13px;transition:transform .2s var(--ease)}
+.mega-cats .mega-cat-all:hover{background:var(--tomato);color:#fff;border-color:var(--tomato)}
+.mega-cats .mega-cat-all:hover i,.mega-cats .mega-cat-all:hover small{color:#fff;opacity:1}
+.mega-cats .mega-cat-all:hover .mca-arrow{transform:translateX(3px)}
+/* mega içindeki r-chip (mf-fig rozeti) için minimal taban */
+.r-chip{background:rgba(255,255,255,.94);color:var(--slate);font-size:11.5px;font-weight:700;padding:6px 12px;border-radius:var(--radius-sm);letter-spacing:.02em}
+
+/* ---- "TÜMÜNÜ GÖR" SLIDER ALTYAPISI (oklar + snap track) ---- */
+.sec-tools{flex:none;display:flex;align-items:center;gap:12px}
+.row-nav{display:flex;gap:8px}
+.row-nav button{width:42px;height:42px;font-size:13px;border-radius:var(--radius-md);border:1px solid var(--line);background:var(--paper);color:var(--slate);cursor:pointer;transition:.2s var(--ease)}
+.row-nav button:hover{background:var(--tomato);border-color:var(--tomato);color:#fff}
+.row-track{
+  display:flex;gap:26px;overflow-x:auto;scroll-snap-type:x mandatory;
+  scrollbar-width:none;padding:6px 2px 10px;
+}
+.row-track::-webkit-scrollbar{display:none}
+.row-track>*{flex:none;width:274px;scroll-snap-align:start}
+
+/* ---- FOOTER REVEAL (gaviaworks perde efekti) — yalnız desktop/tablet ----
+   Footer sayfanın arkasında sabit bekler (z düşük); opak içerik wrapper'ı
+   üstünde durur ve sonuna JS ile footer yüksekliği kadar boşluk açılır —
+   scroll sonunda içerik kalkar, footer alttan ortaya çıkar. Mobil: statik. */
+@media (min-width:641px){
+  .footer.orange{position:fixed;left:0;right:0;bottom:0;z-index:1}
+  .page-main{position:relative;z-index:2;background:var(--bg)}
+}
+
+/* ============ FOOTER ============ */
+.footer{background:var(--slate);color:#aebcc6;padding:70px 0 0}
+/* kolon ritmi: logo bloğu geniş, 4 link kolonu eşit dağılır → sağ kenara kadar dengeli */
+.foot-grid{display:grid;grid-template-columns:1.5fr 1fr 1fr 1fr 1.05fr;gap:44px 28px;padding-bottom:50px;border-bottom:1px solid rgba(255,255,255,.1)}
+.foot-col a{white-space:nowrap}
+.foot-brand img{height:42px;width:auto;margin-bottom:22px}
+.foot-soc{display:flex;gap:11px}
+.foot-soc a{width:42px;height:42px;border-radius:var(--radius-md);background:rgba(255,255,255,.07);display:grid;place-items:center;color:#cdd8e0;font-size:16px;transition:.2s var(--ease)}
+.foot-soc a:hover{background:var(--tomato);color:#fff;transform:translateY(-3px)}
+.foot-col h5{color:#fff;font-size:15px;font-weight:700;margin-bottom:18px}
+.foot-col a{display:block;font-size:14px;font-weight:500;color:#9fb0bc;padding:7px 0;transition:.2s}
+.foot-col a:hover{color:var(--tomato);padding-left:5px}
+/* legal bar — 9 link, ince dikey ayraçlı, wrap'li */
+.foot-legal{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:8px 10px;padding:24px 0 0;font-size:12px;font-weight:500}
+.foot-legal a{white-space:nowrap;transition:.2s}
+.foot-legal .sep{width:1px;height:11px;background:rgba(255,255,255,.28);flex:none}
+.foot-bottom{display:flex;align-items:center;justify-content:space-between;padding:16px 0 26px;font-size:13px;font-weight:500;color:#7e8e9a}
+.foot-bottom a:hover{color:#cdd8e0}
+
+/* ---- ORANGE FOOTER (gaviaworks yapısı) ---- */
+.footer.orange{background:var(--tomato);color:#ffe7df}
+.footer.orange .foot-grid{border-bottom-color:rgba(255,255,255,.18)}
+.footer.orange .foot-soc a{background:rgba(255,255,255,.14);color:#fff}
+.footer.orange .foot-soc a:hover{background:#fff;color:var(--tomato);transform:translateY(-3px)}
+.footer.orange .foot-col h5{color:#fff}
+.footer.orange .foot-col a{color:#ffdccf}
+.footer.orange .foot-col a:hover{color:#fff;padding-left:5px}
+.footer.orange .foot-legal a{color:#ffd0c2}
+.footer.orange .foot-legal a:hover{color:#fff}
+.footer.orange .foot-bottom{color:#ffd0c2}
+.footer.orange .foot-bottom a{color:#ffd0c2}
+.footer.orange .foot-bottom a:hover{color:#fff}
+
+/* =========================================================
+   RESPONSIVE TABAN  ·  desktop ≥1025px DEĞİŞMEZ
+   tablet 641–1024px · mobil ≤640px
+   ========================================================= */
+
+/* yatay taşmayı global engelle */
+html,body{overflow-x:hidden}
+
+/* sürükle-kaydır (mouse) imleci — yatay slider'lar */
+.drag-scroll.dragging{cursor:grabbing;user-select:none;scroll-behavior:auto}
+.drag-scroll.dragging *{pointer-events:none}
+
+/* ---- MOBİL KOMPONENTLER (desktop'ta gizli) ---- */
+.hamburger{display:none}
+.drawer,.drawer-overlay,.bottom-nav{display:none}
+
+/* drawer */
+.drawer-overlay{position:fixed;inset:0;background:rgba(20,18,12,.5);z-index:95;opacity:0;pointer-events:none;transition:opacity .3s var(--ease)}
+.drawer-overlay.open{opacity:1;pointer-events:auto}
+.drawer{
+  position:fixed;top:0;right:0;height:100%;width:min(360px,86vw);background:#fff;z-index:96;
+  transform:translateX(100%);transition:transform .32s var(--ease);
+  flex-direction:column;box-shadow:-12px 0 44px rgba(20,18,12,.22);
+}
+.drawer.open{transform:translateX(0)}
+.drawer-head{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--line);flex:none}
+.drawer-logo{height:34px;width:auto;display:block}
+.drawer-close{width:42px;height:42px;border-radius:var(--radius-md);border:1px solid var(--line);background:var(--paper);color:var(--slate);font-size:18px;cursor:pointer;display:grid;place-items:center}
+.drawer-close:hover{border-color:var(--tomato);color:var(--tomato)}
+.drawer-nav{flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch}
+.d-item{border-bottom:1px solid var(--line)}
+.d-link{
+  display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%;
+  font-family:inherit;font-weight:700;font-size:16px;color:var(--slate);
+  background:none;border:none;text-align:left;padding:16px 22px;cursor:pointer;
+}
+.d-link .fa-chevron-down{font-size:12px;color:var(--muted);transition:transform .25s var(--ease),color .25s var(--ease)}
+.d-item.open>.d-link .fa-chevron-down{transform:rotate(180deg);color:var(--tomato)}
+.d-link .soon{font-size:9.5px}
+.d-sub{max-height:0;overflow:hidden;transition:max-height .3s var(--ease);background:var(--bg)}
+.d-item.open>.d-sub{max-height:760px}
+.d-sub a{display:flex;align-items:center;gap:11px;padding:13px 22px 13px 36px;font-size:14.5px;font-weight:500;color:var(--slate-2)}
+.d-sub a i{width:18px;text-align:center;color:var(--tomato);font-size:13px}
+.d-sub a:hover{color:var(--tomato);background:var(--tomato-tint)}
+.drawer-foot{padding:18px 20px;border-top:1px solid var(--line);display:flex;flex-direction:column;gap:11px;flex:none}
+.drawer-add{display:flex;align-items:center;justify-content:center;gap:9px;font-weight:700;font-size:14.5px;color:var(--slate);padding:13px;border:1px solid var(--line);border-radius:var(--radius-md);transition:.2s var(--ease)}
+.drawer-add:hover{border-color:var(--tomato);color:var(--tomato)}
+/* drawer dil seçici (mobilde üst bant yok) — aç/kapa liste: N dile ölçeklenir */
+.drawer-lang{display:flex;flex-direction:column;margin-top:3px}
+.drawer-lang-toggle{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;background:none;border:none;font-family:inherit;padding:4px 0;cursor:pointer}
+.drawer-lang-label{display:inline-flex;align-items:center;gap:8px;font-size:13px;font-weight:600;color:var(--muted)}
+.drawer-lang-cur{display:inline-flex;align-items:center;gap:8px;font-size:13px;font-weight:700;letter-spacing:.03em;color:var(--slate)}
+.drawer-lang-cur i{font-size:10px;color:var(--muted);transition:transform .25s var(--ease)}
+.drawer-lang.open .drawer-lang-cur i{transform:rotate(180deg)}
+.drawer-lang-list{display:none;flex-direction:column;gap:5px;margin-top:10px;max-height:212px;overflow-y:auto;-webkit-overflow-scrolling:touch}
+.drawer-lang.open .drawer-lang-list{display:flex}
+.drawer-lang-list button{display:flex;align-items:center;gap:10px;width:100%;text-align:left;font-family:inherit;font-size:13.5px;font-weight:500;color:var(--slate);background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-sm);padding:10px 13px;cursor:pointer;transition:.18s var(--ease)}
+.drawer-lang-list button b{font-weight:700;letter-spacing:.03em;width:26px;flex:none}
+.drawer-lang-list button:hover{border-color:var(--tomato);color:var(--tomato)}
+.drawer-lang-list button.active{border-color:rgba(225,72,39,.4);background:var(--tomato-tint);color:var(--tomato)}
+.drawer-lang-list button.active::after{content:"\f00c";font-family:"Font Awesome 6 Free";font-weight:900;margin-left:auto;font-size:12px}
+
+/* mobil alt navigasyon — Instagram tarzı floating frosted pill */
+.bottom-nav{
+  position:fixed;left:16px;right:16px;z-index:90;
+  bottom:calc(14px + env(safe-area-inset-bottom,0px));
+  justify-content:space-around;align-items:center;gap:4px;
+  padding:6px 8px;border-radius:var(--radius-lg);
+  background:rgba(255,255,255,.55);
+  -webkit-backdrop-filter:blur(30px) saturate(190%);backdrop-filter:blur(30px) saturate(190%);
+  border:none;
+  box-shadow:0 10px 30px rgba(33,30,22,.16),0 2px 8px rgba(33,30,22,.07),inset 0 1px 0 rgba(255,255,255,.6);
+}
+.bn-item{
+  flex:none;position:relative;display:grid;place-items:center;
+  width:40px;height:40px;border-radius:var(--radius-lg);
+  color:var(--slate-2);font-size:19px;transition:background .2s var(--ease),color .2s var(--ease),transform .12s var(--ease);
+}
+/* etiketler görsel gizli (icon-only, IG tarzı) — erişilebilirlik için DOM'da kalır */
+.bn-item>span:last-child{position:absolute;width:1px;height:1px;padding:0;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+/* aktif: yarı saydam domates (primary) — glass korunur, radius-lg pill ile uyumlu */
+.bn-item.active{color:var(--tomato);background:rgba(225,72,39,.15)}
+.bn-item:active{transform:scale(.9)}
+/* orta FAB: bar'dan çıkık (raised) — düz domates, token radius, halka yok */
+.bn-center{width:auto;height:auto;background:none;transform:translateY(-14px)}
+.bn-center:active{transform:translateY(-14px) scale(.92)}
+.bn-fab{
+  width:52px;height:52px;border-radius:var(--radius-lg);border:none;color:#fff;
+  background:var(--tomato);
+  display:grid;place-items:center;font-size:19px;
+  box-shadow:0 8px 20px rgba(225,72,39,.5);
+}
+
+/* ===================== GÖRÜŞ BİLDİR (eski site "Öneri ve Şikayet" mirası) =====================
+   Eski sitedeki sunum: sağ kenarda 90° döndürülmüş sabit turuncu buton (open-feedback-modal).
+   Aynı desen, yeni dile çevrildi. */
+.feedback-tab{
+  position:fixed;top:50%;right:0;z-index:55;
+  transform-origin:100% 0;transform:rotate(90deg) translateX(50%);
+  display:inline-flex;align-items:center;gap:8px;
+  background:var(--tomato);color:#fff;font-size:12.5px;font-weight:700;letter-spacing:.04em;
+  padding:10px 18px 12px;border-radius:0 0 var(--radius-md) var(--radius-md);
+  white-space:nowrap;
+  transition:background .2s var(--ease),transform .25s var(--ease);
+}
+.feedback-tab i{font-size:13px}
+.feedback-tab:hover{background:var(--tomato-dark);transform:rotate(90deg) translateX(50%) translateY(3px)}
+
+/* görüş bildir modal'ı — eski site akışı (konu seç → form → teşekkür) tek panelde */
+.fb-overlay{position:fixed;inset:0;background:rgba(20,18,12,.5);z-index:97;opacity:0;visibility:hidden;transition:opacity .25s var(--ease),visibility .25s}
+.fb-overlay.show{opacity:1;visibility:visible}
+.fb-modal{position:fixed;inset:0;z-index:98;display:grid;place-items:center;padding:20px;opacity:0;visibility:hidden;pointer-events:none;transition:opacity .25s var(--ease),visibility .25s}
+.fb-modal.show{opacity:1;visibility:visible;pointer-events:auto}
+.fb-panel{width:min(520px,100%);max-height:calc(100vh - 40px);overflow-y:auto;background:#fff;border-radius:var(--radius-lg);box-shadow:var(--sh-lg);transform:translateY(14px);transition:transform .3s var(--ease)}
+.fb-modal.show .fb-panel{transform:translateY(0)}
+.fb-head{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:20px 24px;border-bottom:1px solid var(--line)}
+.fb-head h3{font-size:19px}
+.fb-head p{font-size:12.5px;color:var(--muted);font-weight:500;margin-top:2px}
+.fb-close{flex:none;width:40px;height:40px;border-radius:var(--radius-md);border:1px solid var(--line);background:var(--paper);color:var(--slate);font-size:16px;cursor:pointer;display:grid;place-items:center;transition:.2s var(--ease)}
+.fb-close:hover{border-color:var(--tomato);color:var(--tomato)}
+.fb-body{padding:22px 24px 24px}
+.fb-topics{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:16px}
+.fb-topic{display:flex;align-items:center;gap:10px;font-family:inherit;font-size:13.5px;font-weight:500;color:var(--slate);background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-md);padding:12px 14px;cursor:pointer;transition:.18s var(--ease);text-align:left}
+.fb-topic i{width:18px;text-align:center;color:var(--tomato);font-size:14px;flex:none}
+.fb-topic:hover{border-color:var(--tomato);color:var(--tomato)}
+.fb-topic.active{border-color:rgba(225,72,39,.4);background:var(--tomato-tint);color:var(--tomato);font-weight:700}
+.fb-topic[data-topic="puan"]{grid-column:1/-1;justify-content:center} /* 5. tip (Puan ver — Yasin Bey'e öneri) tam satır */
+.fb-field{margin-bottom:11px}
+.fb-field input,.fb-field textarea{width:100%;font-family:inherit;font-size:14px;font-weight:500;color:var(--slate);background:var(--bg);border:1px solid var(--line);border-radius:var(--radius-md);padding:13px 15px;outline:none;transition:border-color .2s var(--ease)}
+.fb-field input::placeholder,.fb-field textarea::placeholder{color:#a7a7a7}
+.fb-field input:focus,.fb-field textarea:focus{border-color:var(--tomato)}
+.fb-field textarea{min-height:108px;resize:vertical}
+/* M17 — tipe göre alan setleri */
+.fb-fields{display:none}
+.fb-fields.active{display:block;animation:fadeUp .3s var(--ease)}
+.fb-q{font-size:13.5px;font-weight:700;color:var(--slate);margin-bottom:10px}
+.fb-select{
+  appearance:none;-webkit-appearance:none;width:100%;font-family:inherit;font-size:14px;font-weight:500;color:var(--slate);
+  background:var(--bg) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%237E7E7E' stroke-width='1.6' fill='none' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat right 15px center;
+  border:1px solid var(--line);border-radius:var(--radius-md);padding:13px 40px 13px 15px;outline:none;cursor:pointer;transition:border-color .2s var(--ease);
+}
+.fb-select:focus{border-color:var(--tomato)}
+.fb-select:invalid{color:#a7a7a7}
+.fb-chiprow{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:13px}
+.fb-chiprow .chip.active{border-color:var(--tomato);color:var(--tomato);background:var(--tomato-tint);font-weight:700}
+.fb-emoji{display:flex;gap:8px;margin-bottom:13px}
+.fb-emoji button{
+  flex:1;font-size:25px;line-height:1;padding:13px 0;background:var(--bg);border:1px solid var(--line);
+  border-radius:var(--radius-md);cursor:pointer;filter:grayscale(1);opacity:.65;transition:.18s var(--ease);
+}
+.fb-emoji button:hover{filter:none;opacity:1;border-color:var(--tomato)}
+.fb-emoji button.active{filter:none;opacity:1;border-color:rgba(225,72,39,.4);background:var(--tomato-tint);transform:scale(1.06)}
+.fb-shot{
+  display:flex;align-items:center;justify-content:center;gap:9px;width:100%;font-family:inherit;font-size:13px;font-weight:700;
+  color:var(--muted);background:transparent;border:1.5px dashed #d9d9d9;border-radius:var(--radius-md);padding:13px;margin-bottom:11px;
+  cursor:pointer;transition:.18s var(--ease);
+}
+.fb-shot small{font-weight:500}
+.fb-shot:hover{border-color:var(--tomato);color:var(--tomato)}
+.fb-kvkk{display:flex;align-items:flex-start;gap:9px;font-size:12.5px;font-weight:500;color:var(--muted);line-height:1.5;margin:14px 0 16px;cursor:pointer}
+.fb-kvkk input{margin-top:3px;accent-color:var(--tomato);flex:none}
+.fb-kvkk a{color:var(--tomato);font-weight:700;text-decoration:underline;text-underline-offset:2px}
+.fb-send{width:100%}
+.fb-success{text-align:center;padding:18px 0 10px}
+.fb-success .ok{width:62px;height:62px;border-radius:var(--radius-circle);background:#EAF7F0;color:var(--green);display:grid;place-items:center;font-size:26px;margin:0 auto 16px}
+.fb-success h4{font-size:18px;margin-bottom:7px}
+.fb-success p{font-size:13.5px;color:var(--muted);font-weight:500;max-width:340px;margin:0 auto}
+
+/* ===================== ÇEREZ ONAY BANNER ===================== */
+.cookie-banner{
+  position:fixed;left:0;right:0;bottom:24px;z-index:95;
+  width:min(1180px,calc(100% - 48px));margin:0 auto;
+  background:#fff;border:1px solid var(--line);border-radius:var(--radius-lg);
+  box-shadow:var(--sh-lg);padding:16px 20px;
+  transform:translateY(140%);opacity:0;visibility:hidden;
+  transition:transform .42s var(--ease),opacity .35s var(--ease),visibility .42s;
+}
+.cookie-banner.show{transform:translateY(0);opacity:1;visibility:visible}
+.cookie-inner{display:flex;align-items:center;justify-content:space-between;gap:24px}
+.cookie-text{display:flex;align-items:center;gap:14px}
+.cookie-ico{flex:none;width:44px;height:44px;border-radius:var(--radius-md);background:var(--tomato-tint);color:var(--tomato);display:grid;place-items:center;font-size:19px}
+.cookie-text p{font-size:13.5px;font-weight:500;color:var(--slate-2);line-height:1.5;max-width:700px}
+.cookie-text a{color:var(--tomato);font-weight:700;text-decoration:underline;text-underline-offset:2px;white-space:nowrap}
+.cookie-text a:hover{color:var(--tomato-dark)}
+.cookie-actions{flex:none;display:flex;align-items:center;gap:10px}
+.btn-cookie-reject,.btn-cookie-accept{font-family:inherit;font-size:13.5px;font-weight:700;border-radius:var(--radius-md);padding:11px 22px;cursor:pointer;transition:.2s var(--ease);white-space:nowrap}
+.btn-cookie-reject{color:var(--slate);background:transparent;border:1px solid var(--line)}
+.btn-cookie-reject:hover{border-color:var(--slate);color:var(--ink)}
+.btn-cookie-accept{color:#fff;background:var(--tomato);border:1px solid var(--tomato)}
+.btn-cookie-accept:hover{background:var(--tomato-dark);border-color:var(--tomato-dark);transform:translateY(-1px)}
+
+/* ===================== TABLET (≤1024px) — chrome katmanı ===================== */
+@media (max-width:1024px){
+  .wrap{padding:0 24px}
+
+  /* yatay menü → hamburger + drawer */
+  .h-top .nav{display:none}
+  .hamburger{display:grid}
+  .drawer{display:flex}
+  .drawer-overlay{display:block}
+
+  /* üst bant sadeleşir — yatay taşma engeli */
+  .topbar .tb-soc,.topbar .tb-div{display:none}
+
+  .foot-grid{grid-template-columns:1fr 1fr;gap:36px 28px}
+  .foot-brand{grid-column:1/-1}
+  .sec-head h2{font-size:30px}
+}
+
+/* ===================== MOBİL (≤640px) — chrome katmanı ===================== */
+@media (max-width:640px){
+  .wrap{padding:0 16px}
+
+  /* üst bant gizli, header en üste (tek kat 62px) */
+  .topbar{display:none}
+  .header{top:0}
+  .h-top>.wrap{height:62px;gap:10px}
+  .brand img{height:32px}
+  .head-actions{gap:6px}
+  .btn-login{display:none}                                   /* giriş → drawer + bottom-nav */
+  .icon-btn{width:40px;height:40px;font-size:15px}
+
+  /* fixed header offseti mobilde tek kat */
+  .below-header{padding-top:62px}
+
+  /* bölüm ritmi */
+  .sec{padding:44px 0}
+
+  /* section başlık araçları: oklar h2 satırında, "Tamamını Gör" kompakt metin-link.
+     DOM aynı — sol blok + sec-tools display:contents ile grid'e açılır:
+     [eyebrow] / [h2 | oklar] / [lead] / [see-all] */
+  .sec-head,.cat-head,.guide-head{
+    display:grid;grid-template-columns:minmax(0,1fr) auto;
+    column-gap:14px;align-items:center;margin-bottom:24px;
+  }
+  .sec-head>div:first-child,.cat-head>div:first-child,.guide-head>div:first-child,
+  .sec-head .sec-tools,.cat-head .sec-tools,.guide-head .sec-tools{display:contents}
+  .sec-head .eyebrow,.cat-head .eyebrow,.guide-head .eyebrow{grid-row:1;grid-column:1/-1}
+  .sec-head h2,.cat-head h2,.guide-head h2{grid-row:2;grid-column:1;font-size:24px}
+  .row-nav,.cat-nav{grid-row:2;grid-column:2;align-self:center}
+  .row-nav button,.cat-nav button{width:38px;height:38px;font-size:12px}
+  .sec-head .lead,.cat-head .lead,.guide-head .lead{grid-row:3;grid-column:1/-1;font-size:14.5px}
+  /* kompakt see-all: buton kabuğu kalkar, metin-link kalır */
+  .see-all{padding:0;border:none;background:transparent;font-size:13.5px;color:var(--tomato)}
+  .sec-tools>.see-all{grid-row:4;grid-column:1/-1;justify-self:start;margin-top:14px}
+
+  .chip{font-size:12px;padding:7px 12px;white-space:nowrap}
+
+  /* görüş bildir etiketi mobilde gizli — bottom-nav + FAB yeterli */
+  .feedback-tab{display:none}
+
+  /* footer — floating pill nav'ı örtmesin */
+  .footer.orange{padding-bottom:calc(86px + env(safe-area-inset-bottom,0px))}
+  .foot-grid{grid-template-columns:1fr;gap:30px}
+  .foot-legal{justify-content:center;text-align:center}
+  .foot-bottom{flex-direction:column;gap:14px;text-align:center}
+
+  /* mobil alt bar aç */
+  .bottom-nav{display:flex}
+
+  /* çerez banner: floating bottom-nav'ın ÜSTÜNDE, alt alta */
+  .cookie-banner{
+    width:calc(100% - 24px);padding:15px 16px;
+    bottom:calc(80px + env(safe-area-inset-bottom,0px));
+  }
+  .cookie-inner{flex-direction:column;align-items:stretch;gap:13px}
+  .cookie-text{align-items:flex-start}
+  .cookie-actions{gap:9px}
+  .cookie-actions button{flex:1;padding:12px 8px;font-size:12.5px}
+}
+
+/* =====================================================================
+   SAYFA CSS — sayfa-spesifik stiller BU İŞARETİN ALTINA eklenir.
+   Yukarıdaki chrome katmanına DOKUNMA (mega menü KİLİTLİ).
+   ===================================================================== */
+
+/* ============ TARİF EKLE (F5) — FORM KİTİ DOĞUM SAYFASI ============
+   .fk-* alan kiti + .up-* yükleme kiti + .ie-* dinamik satır kiti +
+   .stepper sihirbaz göstergesi + .sbanner durum bandı.
+   Sonraki sayfalar (auth, hesabım, diyetisyen) bu kiti miras alır.
+   Köken: shell .fb-field/.fb-select dili + TD .remind-box/.ing-group. */
+
+/* ---- sayfa üst bandı (TD .rd-top pattern'ı) ---- */
+.fp-top{background:var(--bg-white);border-bottom:1px solid var(--line);padding-bottom:0}
+
+/* breadcrumb — tarif-detay-v1 .rd-crumb VERBATIM */
+.rd-crumb{display:flex;align-items:center;flex-wrap:wrap;gap:9px;padding:18px 0 14px;font-size:13px;font-weight:500;color:var(--muted)}
+.rd-crumb a{color:var(--muted);transition:.18s}
+.rd-crumb a:hover{color:var(--tomato)}
+.rd-crumb i{font-size:9px;color:#c7c7c7}
+.rd-crumb b{color:var(--slate);font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:340px}
+
+/* başlık satırı */
+.fp-head{display:flex;align-items:flex-end;justify-content:space-between;gap:24px;padding:6px 0 24px}
+.fp-head h1{font-size:38px;letter-spacing:-.03em;margin-top:10px}
+.fp-head .lead{font-size:15px;color:var(--muted);font-weight:500;margin-top:8px;max-width:560px}
+.fp-head .see-all{margin-bottom:4px}
+
+/* ---- DURUM BANDI (.sbanner) — taslak / onayda / reddedildi ---- */
+.sbanner{display:none;align-items:flex-start;gap:14px;border:1px solid;border-radius:var(--radius-lg);padding:16px 18px;margin-bottom:22px;animation:fadeUp .35s var(--ease)}
+.sbanner.show{display:flex}
+.sb-ico{flex:none;width:42px;height:42px;border-radius:var(--radius-md);display:grid;place-items:center;font-size:17px}
+.sb-body{flex:1;min-width:0}
+.sb-body h4{font-size:15.5px;margin-bottom:4px;display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+.sb-tag{font-size:9.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:3px 8px;border-radius:var(--radius-sm)}
+.sb-body p{font-size:13.5px;color:var(--slate-2);font-weight:500;line-height:1.6}
+.sb-body p b{color:var(--slate)}
+.sb-quote{display:block;background:#fff;border:1px solid rgba(225,72,39,.25);border-radius:var(--radius-md);padding:11px 14px;margin-top:9px;font-size:13.5px;color:var(--slate);font-weight:500;line-height:1.55;font-style:normal;quotes:none}
+.sb-quote i{font-size:12px;color:var(--tomato);margin-right:7px}
+.sbanner .btn{flex:none;align-self:center;padding:12px 20px;font-size:13.5px;white-space:nowrap}
+.sbanner.draft{background:var(--bg);border-color:var(--line)}
+.sbanner.draft .sb-ico{background:rgba(33,30,22,.07);color:var(--slate-2)}
+.sbanner.draft .sb-tag{background:rgba(33,30,22,.08);color:var(--slate-2)}
+.sbanner.review{background:#FFF8E6;border-color:rgba(250,192,69,.5)}
+.sbanner.review .sb-ico{background:rgba(250,192,69,.25);color:#B8860B}
+.sbanner.review .sb-tag{background:rgba(250,192,69,.22);color:#B8860B}
+.sbanner.rejected{background:var(--tomato-tint);border-color:rgba(225,72,39,.35)}
+.sbanner.rejected .sb-ico{background:rgba(225,72,39,.14);color:var(--tomato)}
+.sbanner.rejected .sb-tag{background:rgba(225,72,39,.14);color:var(--tomato)}
+
+/* ---- STEPPER (4 adım · tamamlanan ✓ · aktif domates · geriye tıklanır) ---- */
+.stepper{display:flex;align-items:center;gap:14px;background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-lg) var(--radius-lg) 0 0;border-bottom:none;box-shadow:var(--sh-sm);padding:18px 22px;position:relative;z-index:2}
+.stp{display:flex;align-items:center;gap:12px;background:none;border:none;font-family:inherit;text-align:left;cursor:default;padding:0}
+.stp-num{position:relative;flex:none;width:40px;height:40px;border-radius:var(--radius-circle);border:2px solid var(--line);background:var(--paper);display:grid;place-items:center;font-size:14px;font-weight:700;color:var(--muted);transition:.25s var(--ease)}
+.stp-num i{display:none;font-size:13px}
+.stp-lbl{min-width:0}
+.stp-lbl b{display:block;font-size:13.5px;font-weight:700;color:var(--muted);line-height:1.2;white-space:nowrap;transition:color .2s}
+.stp-lbl small{display:block;font-size:11px;color:var(--muted);font-weight:500;margin-top:2px;white-space:nowrap}
+.stp.active .stp-num{background:var(--tomato);border-color:var(--tomato);color:#fff;box-shadow:0 6px 14px rgba(225,72,39,.32)}
+.stp.active .stp-lbl b{color:var(--slate)}
+.stp.done{cursor:pointer}
+.stp.done .stp-num{background:var(--tomato-tint);border-color:rgba(225,72,39,.35);color:var(--tomato)}
+.stp.done .stp-num span{display:none}
+.stp.done .stp-num i{display:block}
+.stp.done .stp-lbl b{color:var(--slate-2)}
+.stp.done:hover .stp-num{background:var(--tomato);border-color:var(--tomato);color:#fff}
+.stp.done:hover .stp-lbl b{color:var(--tomato)}
+.stp-line{flex:1;height:2px;border-radius:var(--radius-sm);background:var(--line);min-width:16px;transition:background .25s}
+.stp-line.done{background:rgba(225,72,39,.38)}
+
+/* ---- gövde ---- */
+.fp-body{background:var(--bg-cream);padding:34px 0 74px}
+.wstep{display:none}
+.wstep.active{display:block;animation:fadeUp .35s var(--ease)}
+.wiz-grid{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:28px;align-items:start}
+.wiz-main{min-width:0}
+.wiz-solo{max-width:980px;margin:0 auto}
+
+/* ---- FORM KARTI ---- */
+.form-card{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-lg);box-shadow:var(--sh-sm);padding:28px}
+.form-card+.form-card{margin-top:20px}
+.fc-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:24px;padding-bottom:18px;border-bottom:1px solid var(--line)}
+.fc-head h2{font-size:20px;display:flex;align-items:center;gap:11px}
+.fc-head h2 i{flex:none;width:38px;height:38px;border-radius:var(--radius-md);background:var(--tomato-tint);color:var(--tomato);display:grid;place-items:center;font-size:15px}
+.fc-head p{font-size:13px;color:var(--muted);font-weight:500;margin-top:5px}
+.fc-step{flex:none;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);background:var(--bg);border:1px solid var(--line);padding:6px 11px;border-radius:var(--radius-sm);white-space:nowrap}
+
+/* ---- FK ALAN KİTİ (form kit çekirdeği — shell .fb-field dilinden) ---- */
+.fk-field{margin-bottom:22px}
+.fk-field:last-child{margin-bottom:0}
+.fk-label{display:flex;align-items:baseline;gap:7px;font-size:14px;font-weight:700;color:var(--slate);margin-bottom:9px}
+.fk-label .req{color:var(--tomato);font-weight:700}
+.fk-label .opt{font-size:11.5px;color:var(--muted);font-weight:500}
+.fk-label .fk-count{margin-left:auto;font-size:11.5px;color:var(--muted);font-weight:500;letter-spacing:.02em}
+.fk-input,.fk-select,.fk-textarea{
+  width:100%;font-family:inherit;font-size:14px;font-weight:500;color:var(--slate);
+  background:var(--bg);border:1px solid var(--line);border-radius:var(--radius-md);
+  padding:13px 15px;outline:none;transition:border-color .2s var(--ease),box-shadow .2s var(--ease);
+}
+.fk-input::placeholder,.fk-textarea::placeholder{color:#a7a7a7}
+.fk-input:focus,.fk-select:focus,.fk-textarea:focus{border-color:var(--tomato);box-shadow:0 0 0 3px rgba(225,72,39,.10)}
+.fk-textarea{min-height:150px;resize:vertical;line-height:1.6}
+.fk-select{
+  appearance:none;-webkit-appearance:none;cursor:pointer;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%237E7E7E' stroke-width='1.6' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 15px center;padding-right:40px;
+}
+.fk-select:invalid{color:#a7a7a7}
+.fk-help{display:flex;align-items:flex-start;gap:7px;font-size:12.5px;color:var(--muted);font-weight:500;margin-top:8px;line-height:1.5}
+.fk-help i{color:var(--tomato);font-size:12px;margin-top:2px;flex:none}
+.fk-error{display:none;align-items:center;gap:7px;font-size:12.5px;font-weight:700;color:var(--tomato);margin-top:8px}
+.fk-error i{font-size:12px}
+.fk-field.has-error .fk-input,.fk-field.has-error .fk-select,.fk-field.has-error .fk-textarea{border-color:var(--tomato);box-shadow:0 0 0 3px rgba(225,72,39,.10)}
+.fk-field.has-error .fk-error{display:flex}
+.fk-grid{display:grid;gap:16px 18px}
+.fk-grid .fk-field{margin-bottom:0}
+.fk-grid.c2{grid-template-columns:1fr 1fr}
+.fk-grid.c3{grid-template-columns:1fr 1fr 1fr}
+.fk-grid+.fk-grid{margin-top:18px}
+.fk-grid+.fk-field,.fk-field+.fk-grid{margin-top:22px}
+/* sonek birimli input (dk · °C · kişilik) */
+.fk-suffix{position:relative}
+.fk-suffix .fk-input{padding-right:64px}
+.fk-suffix>span{position:absolute;right:15px;top:50%;transform:translateY(-50%);font-size:12px;font-weight:700;color:var(--muted);pointer-events:none}
+
+/* ---- UP YÜKLEME KİTİ (TD .mw-up dashed dilinden) ---- */
+.up-zone{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:9px;width:100%;
+  border:1.5px dashed rgba(225,72,39,.45);background:var(--tomato-tint);color:var(--tomato);
+  border-radius:var(--radius-lg);padding:34px 20px;text-align:center;cursor:pointer;
+  font-family:inherit;transition:.2s var(--ease);
+}
+.up-zone i{font-size:27px}
+.up-zone b{font-size:14.5px;font-weight:700}
+.up-zone small{font-size:12px;font-weight:500;color:var(--slate-2)}
+.up-zone:hover{background:#F7DCD2;border-color:var(--tomato)}
+.up-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-top:14px}
+.up-item{position:relative;aspect-ratio:1/1;border-radius:var(--radius-md);background-size:cover;background-position:center;overflow:hidden;border:2px solid transparent;transition:border-color .2s var(--ease)}
+.up-item.is-cover{border-color:var(--tomato)}
+.up-item .ui-cover{display:none;position:absolute;left:7px;top:7px;align-items:center;gap:5px;font-size:9.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;background:var(--tomato);color:#fff;padding:4px 8px;border-radius:var(--radius-sm);z-index:2}
+.up-item.is-cover .ui-cover{display:inline-flex}
+.up-item .ui-btns{position:absolute;right:6px;top:6px;display:flex;flex-direction:column;gap:6px;opacity:0;transition:opacity .2s var(--ease);z-index:2}
+.up-item:hover .ui-btns{opacity:1}
+.up-item .ui-btns button{width:28px;height:28px;border:none;border-radius:var(--radius-sm);background:rgba(255,255,255,.94);color:var(--slate);font-size:11.5px;cursor:pointer;display:grid;place-items:center;transition:.18s var(--ease)}
+.up-item .ui-btns button:hover{background:var(--tomato);color:#fff}
+.up-add{
+  aspect-ratio:1/1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;
+  border:1.5px dashed #d9d9d9;background:transparent;color:var(--muted);border-radius:var(--radius-md);
+  font-family:inherit;font-size:11.5px;font-weight:700;cursor:pointer;transition:.18s var(--ease);
+}
+.up-add i{font-size:17px}
+.up-add:hover{border-color:var(--tomato);color:var(--tomato)}
+
+/* ---- IE DİNAMİK SATIR KİTİ (malzemeler — TD .ing-group kavramıyla uyumlu) ---- */
+.ie-list{display:flex;flex-direction:column;gap:10px}
+.ie-group{display:flex;align-items:center;gap:10px;margin-top:10px}
+.ie-list>.ie-group:first-child{margin-top:0}
+.ie-drag{flex:none;color:#c9c9c9;cursor:grab;font-size:13px;padding:4px 2px;transition:color .18s}
+.ie-drag:hover{color:var(--tomato)}
+.ie-group input{
+  flex:none;width:220px;font-family:inherit;font-size:11.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--slate);background:transparent;border:1px solid transparent;border-radius:var(--radius-sm);
+  padding:7px 9px;outline:none;transition:.2s var(--ease);
+}
+.ie-group input::placeholder{color:#bdbdbd;text-transform:none;letter-spacing:0;font-weight:500}
+.ie-group input:hover,.ie-group input:focus{border-color:var(--line);background:var(--paper)}
+.ie-group input:focus{border-color:var(--tomato)}
+.ie-group::after{content:"";flex:1;height:1px;background:var(--line)}
+.ie-row{display:grid;grid-template-columns:auto 92px 148px minmax(0,1fr) auto;grid-template-areas:"drag amt unit name del";gap:10px;align-items:center;background:var(--bg);border:1px solid var(--line);border-radius:var(--radius-md);padding:9px 12px}
+.ie-row .ie-drag{grid-area:drag}
+.ie-row .ie-amt{grid-area:amt}
+.ie-row .ie-unit{grid-area:unit}
+.ie-row .ie-name{grid-area:name}
+.ie-row .ie-del{grid-area:del}
+.ie-row .fk-input,.ie-row .fk-select{background:var(--paper);padding:10px 12px;font-size:13.5px}
+.ie-row .fk-select{padding-right:32px;background-position:right 11px center}
+.ie-del,.ie-gdel{
+  flex:none;width:34px;height:34px;border:1px solid var(--line);border-radius:var(--radius-sm);background:var(--paper);
+  color:var(--muted);font-size:12.5px;cursor:pointer;display:grid;place-items:center;transition:.18s var(--ease);
+}
+.ie-del:hover,.ie-gdel:hover{border-color:var(--tomato);color:var(--tomato);background:var(--tomato-tint)}
+.ie-gdel{width:28px;height:28px;border-color:transparent;background:transparent;font-size:11.5px}
+.ie-actions{display:flex;gap:10px;margin-top:16px}
+/* dashed ekleme butonu (shell .fb-shot dili) */
+.add-row{
+  flex:1;display:flex;align-items:center;justify-content:center;gap:9px;font-family:inherit;font-size:13px;font-weight:700;
+  color:var(--muted);background:transparent;border:1.5px dashed #d9d9d9;border-radius:var(--radius-md);padding:13px;
+  cursor:pointer;transition:.18s var(--ease);
+}
+.add-row:hover{border-color:var(--tomato);color:var(--tomato)}
+.add-row.alt{flex:0 0 auto;padding:13px 22px}
+
+/* ---- ST ADIM KARTLARI (hazırlanış) ---- */
+.st-list{display:flex;flex-direction:column;gap:14px}
+.st-card{display:flex;gap:14px;background:var(--bg);border:1px solid var(--line);border-radius:var(--radius-lg);padding:16px}
+.st-num{flex:none;width:38px;height:38px;border-radius:var(--radius-circle);background:var(--tomato);color:#fff;font-size:14px;font-weight:700;display:grid;place-items:center;box-shadow:0 5px 12px rgba(225,72,39,.28)}
+.st-body{flex:1;min-width:0}
+.st-body .fk-textarea{background:var(--paper);min-height:96px}
+.st-meta{display:flex;align-items:center;gap:12px;margin-top:10px;flex-wrap:wrap}
+.st-shot{position:relative;flex:none;width:148px;height:92px;border-radius:var(--radius-md);background-size:cover;background-position:center;overflow:hidden}
+.st-shot button{position:absolute;right:5px;top:5px;width:26px;height:26px;border:none;border-radius:var(--radius-sm);background:rgba(255,255,255,.94);color:var(--slate);font-size:11px;cursor:pointer;display:grid;place-items:center;opacity:0;transition:.18s var(--ease)}
+.st-shot:hover button{opacity:1}
+.st-shot button:hover{background:var(--tomato);color:#fff}
+.st-up{
+  flex:none;width:148px;height:92px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;
+  border:1.5px dashed #d9d9d9;background:transparent;color:var(--muted);border-radius:var(--radius-md);
+  font-family:inherit;font-size:11px;font-weight:700;cursor:pointer;transition:.18s var(--ease);text-align:center;
+}
+.st-up i{font-size:15px}
+.st-up:hover{border-color:var(--tomato);color:var(--tomato)}
+/* adım görselleri — max 3 slot (Beyar kararı: eski site + tarif detay paritesi) */
+.st-figs{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.st-up small{font-weight:500;opacity:.8}
+
+/* malzeme autocomplete — havuz + serbest karma (Beyar kararı, DB ilişkisi için) */
+.ie-sugg{position:fixed;z-index:90;background:#fff;border:1px solid var(--line);border-radius:var(--radius-md);box-shadow:var(--sh-md);padding:6px;display:none;max-height:228px;overflow-y:auto}
+.ie-sugg.show{display:block}
+.ie-sugg button{display:flex;align-items:center;gap:9px;width:100%;text-align:left;font-family:inherit;font-size:13.5px;font-weight:500;color:var(--slate);background:none;border:none;border-radius:var(--radius-sm);padding:9px 11px;cursor:pointer;transition:.16s var(--ease)}
+.ie-sugg button i{width:16px;text-align:center;color:var(--muted);font-size:12px}
+.ie-sugg button:hover{background:var(--tomato-tint);color:var(--tomato)}
+.ie-sugg button:hover i{color:var(--tomato)}
+.ie-sugg .sg-new{color:var(--tomato);font-weight:700;border-top:1px dashed var(--line);margin-top:4px;padding-top:10px}
+.ie-sugg .sg-new i{color:var(--tomato)}
+.st-time{width:148px}
+.st-side{flex:none;display:flex;flex-direction:column;align-items:center;gap:7px}
+.st-side .ie-drag{padding:6px 4px}
+
+/* ---- sihirbaz alt barı ---- */
+.wiz-foot{display:flex;align-items:center;gap:14px;margin-top:24px}
+.wf-note{display:inline-flex;align-items:center;gap:8px;font-size:12.5px;color:var(--muted);font-weight:500}
+.wf-note i{color:var(--green);font-size:13px}
+.wiz-foot .btn{padding:14px 24px}
+.wiz-foot .wf-actions{display:flex;gap:10px;margin-left:auto}
+
+/* ---- gönder paneli (adım 4 sonu) ---- */
+.send-panel{display:flex;align-items:center;gap:18px;background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-lg);box-shadow:var(--sh-sm);padding:20px 22px;margin-top:20px}
+.send-panel .sp-ico{flex:none;width:46px;height:46px;border-radius:var(--radius-md);background:var(--tomato-tint);color:var(--tomato);display:grid;place-items:center;font-size:18px}
+.send-panel .sp-info{flex:1;min-width:0}
+.send-panel .sp-info b{display:block;font-size:15px;color:var(--slate)}
+.send-panel .sp-info p{font-size:12.5px;color:var(--muted);font-weight:500;margin-top:3px;line-height:1.5}
+.send-panel .sp-info a{color:var(--tomato);font-weight:700;text-decoration:underline;text-underline-offset:2px}
+.send-panel .sp-btns{flex:none;display:flex;gap:10px}
+
+/* ---- ipuçları sidebar'ı (adım 1) ---- */
+.tips-col{position:sticky;top:132px;display:flex;flex-direction:column;gap:14px}
+.tips-card{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-lg);box-shadow:var(--sh-sm);overflow:hidden}
+.tips-head{display:flex;align-items:center;gap:11px;padding:16px 18px;border-bottom:1px solid var(--line)}
+.tips-head i{flex:none;width:36px;height:36px;border-radius:var(--radius-md);background:var(--tomato-tint);color:var(--tomato);display:grid;place-items:center;font-size:14px}
+.tips-head h3{font-size:15.5px}
+.tips-head small{display:block;font-size:11.5px;color:var(--muted);font-weight:500;margin-top:1px}
+.tips-list{padding:15px 18px;display:flex;flex-direction:column;gap:13px}
+.tip{display:flex;gap:10px;font-size:13px;color:var(--slate-2);font-weight:500;line-height:1.55}
+.tip i{flex:none;color:var(--tomato);font-size:12px;margin-top:3px}
+.tip b{color:var(--slate)}
+/* hatırlatma kutusu — TD .remind-box VERBATIM (sidebar'da margin sıfır) */
+.remind-box{
+  display:flex;gap:16px;align-items:flex-start;
+  background:#FFF8E6;border:1px solid rgba(250,192,69,.5);border-radius:var(--radius-lg);
+  padding:20px 22px;margin-top:16px;
+}
+.remind-box .rb-ico{flex:none;width:42px;height:42px;border-radius:var(--radius-md);background:rgba(250,192,69,.25);color:#B8860B;display:grid;place-items:center;font-size:17px}
+.remind-box .rb-body{min-width:0}
+.remind-box .rb-body h4{font-size:15.5px;margin-bottom:5px;display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+.remind-box .rb-auto{font-size:9.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#B8860B;background:rgba(250,192,69,.22);padding:3px 8px;border-radius:var(--radius-sm)}
+.remind-box .rb-body p{font-size:13.5px;color:var(--slate-2);font-weight:500;line-height:1.6}
+.remind-box .rb-body p b{color:var(--slate)}
+.tips-col .remind-box{margin-top:0;padding:16px 18px}
+
+/* ===================== TABLET (≤1024px) — sayfa ===================== */
+@media (max-width:1024px){
+  .wiz-grid{grid-template-columns:1fr;gap:20px}
+  .tips-col{position:static}
+  .fp-head h1{font-size:32px}
+}
+
+/* ===================== MOBİL (≤640px) — sayfa ===================== */
+@media (max-width:640px){
+  .fp-head{flex-direction:column;align-items:flex-start;gap:14px;padding-bottom:18px}
+  .fp-head h1{font-size:27px}
+  .fp-head .see-all{margin-bottom:0}
+  /* stepper kompakt: yalnız numara + aktif etiket */
+  .stepper{padding:13px 14px;gap:8px;border-radius:var(--radius-lg);border-bottom:1px solid var(--line)}
+  .stp{gap:9px}
+  .stp-num{width:34px;height:34px;font-size:13px}
+  .stp-lbl{display:none}
+  .stp.active .stp-lbl{display:block}
+  .stp-lbl small{display:none}
+  .stp-line{min-width:8px}
+  .fp-body{padding:22px 0 56px}
+  .form-card{padding:18px 16px}
+  .fc-head{flex-direction:column;gap:10px;margin-bottom:18px;padding-bottom:14px}
+  .fc-step{align-self:flex-start}
+  .fk-grid.c2,.fk-grid.c3{grid-template-columns:1fr 1fr}
+  .up-grid{grid-template-columns:repeat(3,1fr);gap:9px}
+  .up-item .ui-btns{opacity:1}
+  .up-zone{padding:26px 16px}
+  /* malzeme satırı iki kata kırılır: [tutamaç|miktar|birim|sil] / [ad] */
+  .ie-row{grid-template-columns:auto 72px minmax(0,1fr) auto;grid-template-areas:"drag amt unit del" "name name name name";gap:8px;padding:10px}
+  .ie-group input{width:150px}
+  .ie-actions{flex-direction:column}
+  .add-row.alt{flex:1;padding:13px}
+  .st-card{padding:13px;gap:10px}
+  .st-num{width:32px;height:32px;font-size:13px}
+  .st-shot,.st-up{width:104px;height:70px}
+  .st-time{width:110px}
+  .st-meta{gap:9px}
+  .wiz-foot{flex-wrap:wrap;gap:12px}
+  .wf-note{width:100%;justify-content:center;order:2}
+  .wiz-foot .wf-actions{margin-left:0;width:100%;order:1}
+  .wiz-foot .wf-actions .btn{flex:1;padding:14px 10px}
+  .send-panel{flex-direction:column;align-items:stretch;text-align:center;padding:18px 16px}
+  .send-panel .sp-ico{margin:0 auto}
+  .send-panel .sp-btns{flex-direction:column}
+  .sbanner{flex-wrap:wrap}
+  .sbanner .btn{width:100%;align-self:stretch}
+  .rd-crumb{padding:14px 0 10px;font-size:12px}
+  .rd-crumb b{max-width:170px}
+}
+</style>
+</head>
+<body>
+
+<!-- ===== TOP UTILITY BAR ===== -->
+<div class="topbar">
+  <div class="wrap">
+    <div class="tb-left">
+      <a href="#"><i class="fa-solid fa-utensils"></i> 48.200+ denenmiş tarif</a>
+      <span class="tb-div"></span>
+      <div class="tb-soc">
+        <a href="#"><i class="fa-brands fa-instagram"></i></a>
+        <a href="#"><i class="fa-brands fa-youtube"></i></a>
+        <a href="#"><i class="fa-brands fa-pinterest"></i></a>
+      </div>
+    </div>
+    <div class="tb-right">
+      <a href="#"><i class="fa-solid fa-circle-plus"></i> Tarif Ekle</a>
+      <a href="#"><i class="fa-solid fa-stethoscope"></i> Diyetisyen Ara</a>
+      <div class="tb-lang" id="tbLang">
+        <button class="tb-lang-btn" id="tbLangBtn" type="button" aria-haspopup="true" aria-expanded="false">
+          <i class="fa-solid fa-globe"></i><span>EN</span><i class="fa-solid fa-chevron-down tb-lang-caret"></i>
+        </button>
+        <div class="tb-lang-menu" id="tbLangMenu" role="menu">
+          <a href="#" role="menuitem" data-lang="tr">TR <span>Türkçe</span></a>
+          <a href="#" role="menuitem" class="active" data-lang="en">EN <span>English</span></a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== HEADER ===== -->
+<header class="header">
+  <!-- TEK KAT: marka + ortalanmış nav + aksiyonlar (Revize T3 M2) -->
+  <div class="h-top">
+    <div class="wrap">
+      <a class="brand" href="anasayfa-portal-v3a.html">
+        <img class="logo-color" src="assets/img/logo-official.png" alt="DadaMutfak" />
+        <img class="logo-white" src="assets/img/logo-official-white.png" alt="DadaMutfak" />
+      </a>
+      <nav class="nav">
+        <div class="nav-item has-mega">
+          <a href="#" class="active">Tarifler <i class="fa-solid fa-chevron-down"></i></a>
+          <div class="mega">
+            <div class="wrap">
+              <div class="mega-grid">
+                <div class="mega-cats">
+                  <a href="#"><i class="fa-solid fa-bowl-food"></i> <span>Çorbalar<small>1.240 tarif</small></span></a>
+                  <a href="#"><i class="fa-solid fa-drumstick-bite"></i> <span>Ana Yemekler<small>3.810 tarif</small></span></a>
+                  <a href="#"><i class="fa-solid fa-bacon"></i> <span>Et Yemekleri<small>1.480 tarif</small></span></a>
+                  <a href="#"><i class="fa-solid fa-ice-cream"></i> <span>Tatlılar<small>2.105 tarif</small></span></a>
+                  <a href="#"><i class="fa-solid fa-bread-slice"></i> <span>Hamur İşi<small>1.560 tarif</small></span></a>
+                  <a href="#"><i class="fa-solid fa-stroopwafel"></i> <span>Hamur Tatlısı<small>610 tarif</small></span></a>
+                  <a href="#"><i class="fa-solid fa-leaf"></i> <span>Salatalar & Mezeler<small>980 tarif</small></span></a>
+                  <a href="#"><i class="fa-solid fa-egg"></i> <span>Kahvaltılık<small>740 tarif</small></span></a>
+                  <a href="#"><i class="fa-solid fa-bottle-droplet"></i> <span>Zeytinyağlılar<small>520 tarif</small></span></a>
+                  <a href="#"><i class="fa-solid fa-mug-hot"></i> <span>İçecekler<small>430 tarif</small></span></a>
+                  <a href="#"><i class="fa-solid fa-seedling"></i> <span>Vejetaryen & Vegan<small>1.120 tarif</small></span></a>
+                  <a class="mega-cat-all" href="#"><i class="fa-solid fa-book-open"></i> <span>Tüm Tarifler<small>14.975 tarif</small></span><i class="fa-solid fa-arrow-right mca-arrow"></i></a>
+                </div>
+                <div class="mega-feat">
+                  <div class="mf-fig" style="background-image:url('https://images.unsplash.com/photo-1565958011703-44f9829ba187?w=600&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')">
+                    <span class="r-chip"><i class="fa-solid fa-star"></i> Haftanın Tarifi</span>
+                    <h4>Mevsim Meyveli Cheesecake</h4>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="nav-item"><a href="#">Bugün Ne Pişirsem</a></div>
+        <div class="nav-item">
+          <a href="#">Mutfak Sırları <i class="fa-solid fa-chevron-down"></i></a>
+          <div class="dropdown">
+            <a href="#"><i class="fa-solid fa-fire-burner"></i> <span>Temel Teknikler<small>Haşlama, sote, fırınlama</small></span></a>
+            <a href="#"><i class="fa-solid fa-lightbulb"></i> <span>Püf Noktaları<small>Şeflerden küçük sırlar</small></span></a>
+            <a href="#"><i class="fa-solid fa-book-open"></i> <span>Sözlük<small>Mutfak terimleri</small></span></a>
+            <a href="#"><i class="fa-solid fa-scale-balanced"></i> <span>Ölçü Birimleri<small>Bardak, kaşık, gram</small></span></a>
+          </div>
+        </div>
+        <div class="nav-item">
+          <a href="#">Sağlık <i class="fa-solid fa-chevron-down"></i></a>
+          <div class="dropdown">
+            <a href="#"><i class="fa-solid fa-calculator"></i> <span>Hesaplayıcılar<small>Kalori, BMI, metabolizma</small></span></a>
+            <a href="#"><i class="fa-solid fa-stethoscope"></i> <span>Diyetisyen Ara<small>Uzmanla randevu al</small></span></a>
+          </div>
+        </div>
+        <div class="nav-item">
+          <a href="#">Dada Store <i class="fa-solid fa-chevron-down"></i></a>
+          <div class="dropdown">
+            <a href="#"><i class="fa-solid fa-kitchen-set"></i> <span>Pişirme Gereçleri</span></a>
+            <a href="#"><i class="fa-solid fa-utensils"></i> <span>Sofra & Sunum</span></a>
+            <a href="#"><i class="fa-solid fa-jar"></i> <span>Baharat & Gıda</span></a>
+            <a href="#"><i class="fa-solid fa-blender"></i> <span>Küçük Ev Aletleri</span></a>
+          </div>
+        </div>
+        <div class="nav-item"><a href="#">Dada Akademi <span class="soon">Yakında</span></a></div>
+      </nav>
+      <div class="head-actions">
+        <button class="icon-btn" aria-label="Ara"><i class="fa-solid fa-magnifying-glass"></i></button>
+        <button class="btn-login"><i class="fa-regular fa-user"></i> Giriş Yap</button>
+        <button class="icon-btn hamburger" id="hamburger" aria-label="Menü"><i class="fa-solid fa-bars"></i></button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ===== MOBİL DRAWER (≤1024px) ===== -->
+<div class="drawer-overlay" id="drawerOverlay"></div>
+<aside class="drawer" id="drawer" aria-label="Mobil menü">
+  <div class="drawer-head">
+    <img class="drawer-logo" src="assets/img/logo-official.png" alt="DadaMutfak" />
+    <button class="drawer-close" id="drawerClose" aria-label="Menüyü kapat"><i class="fa-solid fa-xmark"></i></button>
+  </div>
+  <nav class="drawer-nav">
+    <div class="d-item d-has-sub">
+      <button class="d-link">Tarifler <i class="fa-solid fa-chevron-down"></i></button>
+      <div class="d-sub">
+        <a href="#"><i class="fa-solid fa-bowl-food"></i> Çorbalar</a>
+        <a href="#"><i class="fa-solid fa-drumstick-bite"></i> Ana Yemekler</a>
+        <a href="#"><i class="fa-solid fa-bacon"></i> Et Yemekleri</a>
+        <a href="#"><i class="fa-solid fa-ice-cream"></i> Tatlılar</a>
+        <a href="#"><i class="fa-solid fa-bread-slice"></i> Hamur İşi</a>
+        <a href="#"><i class="fa-solid fa-stroopwafel"></i> Hamur Tatlısı</a>
+        <a href="#"><i class="fa-solid fa-leaf"></i> Salatalar & Mezeler</a>
+        <a href="#"><i class="fa-solid fa-egg"></i> Kahvaltılık</a>
+        <a href="#"><i class="fa-solid fa-bottle-droplet"></i> Zeytinyağlılar</a>
+        <a href="#"><i class="fa-solid fa-mug-hot"></i> İçecekler</a>
+        <a href="#"><i class="fa-solid fa-seedling"></i> Vejetaryen & Vegan</a>
+        <a href="#"><i class="fa-solid fa-cheese"></i> Aperatifler</a>
+      </div>
+    </div>
+    <div class="d-item"><a class="d-link" href="#">Bugün Ne Pişirsem</a></div>
+    <div class="d-item d-has-sub">
+      <button class="d-link">Mutfak Sırları <i class="fa-solid fa-chevron-down"></i></button>
+      <div class="d-sub">
+        <a href="#"><i class="fa-solid fa-fire-burner"></i> Temel Teknikler</a>
+        <a href="#"><i class="fa-solid fa-lightbulb"></i> Püf Noktaları</a>
+        <a href="#"><i class="fa-solid fa-book-open"></i> Sözlük</a>
+        <a href="#"><i class="fa-solid fa-scale-balanced"></i> Ölçü Birimleri</a>
+      </div>
+    </div>
+    <div class="d-item d-has-sub">
+      <button class="d-link">Sağlık <i class="fa-solid fa-chevron-down"></i></button>
+      <div class="d-sub">
+        <a href="#"><i class="fa-solid fa-calculator"></i> Hesaplayıcılar</a>
+        <a href="#"><i class="fa-solid fa-stethoscope"></i> Diyetisyen Ara</a>
+      </div>
+    </div>
+    <div class="d-item d-has-sub">
+      <button class="d-link">Dada Store <i class="fa-solid fa-chevron-down"></i></button>
+      <div class="d-sub">
+        <a href="#"><i class="fa-solid fa-kitchen-set"></i> Pişirme Gereçleri</a>
+        <a href="#"><i class="fa-solid fa-utensils"></i> Sofra & Sunum</a>
+        <a href="#"><i class="fa-solid fa-jar"></i> Baharat & Gıda</a>
+        <a href="#"><i class="fa-solid fa-blender"></i> Küçük Ev Aletleri</a>
+      </div>
+    </div>
+    <div class="d-item"><a class="d-link" href="#">Dada Akademi <span class="soon">Yakında</span></a></div>
+  </nav>
+  <div class="drawer-foot">
+    <button class="btn btn-primary" style="width:100%"><i class="fa-regular fa-user"></i> Giriş Yap</button>
+    <a href="#" class="drawer-add"><i class="fa-solid fa-circle-plus"></i> Tarif Ekle</a>
+    <div class="drawer-lang" id="drawerLang">
+      <button class="drawer-lang-toggle" type="button" aria-haspopup="true" aria-expanded="false">
+        <span class="drawer-lang-label"><i class="fa-solid fa-globe"></i> Dil</span>
+        <span class="drawer-lang-cur"><span id="drawerLangCur">EN — English</span> <i class="fa-solid fa-chevron-down"></i></span>
+      </button>
+      <div class="drawer-lang-list" role="menu">
+        <button type="button" data-lang="tr" data-name="Türkçe"><b>TR</b> Türkçe</button>
+        <button type="button" class="active" data-lang="en" data-name="English"><b>EN</b> English</button>
+      </div>
+    </div>
+  </div>
+</aside>
+
+<!-- ===== MOBİL BOTTOM NAV (≤640px) ===== -->
+<nav class="bottom-nav" aria-label="Mobil alt navigasyon">
+  <a href="anasayfa-portal-v3a.html" class="bn-item"><i class="fa-solid fa-house"></i><span>Ana Sayfa</span></a>
+  <a href="#" class="bn-item"><i class="fa-solid fa-bowl-food"></i><span>Tarifler</span></a>
+  <a href="#" class="bn-item bn-center"><span class="bn-fab"><i class="fa-solid fa-wand-magic-sparkles"></i></span><span>Bugün?</span></a>
+  <a href="#" class="bn-item"><i class="fa-solid fa-heart-pulse"></i><span>Sağlık</span></a>
+  <a href="#" class="bn-item"><i class="fa-solid fa-user"></i><span>Hesap</span></a>
+</nav>
+
+<!-- ===== GÖRÜŞ BİLDİR (sağ kenar sabit etiket) ===== -->
+<a class="feedback-tab" href="#" id="fbTab" aria-label="Görüş Bildir — öneri ve şikayet">
+  <i class="fa-solid fa-comment-dots"></i> Görüş Bildir
+</a>
+
+<!-- ===== GÖRÜŞ BİLDİR MODAL ===== -->
+<div class="fb-overlay" id="fbOverlay"></div>
+<div class="fb-modal" id="fbModal" role="dialog" aria-modal="true" aria-label="Görüş Bildir">
+  <div class="fb-panel">
+    <div class="fb-head">
+      <div>
+        <h3>Görüş Bildir</h3>
+        <p>Önerin, şikayetin veya sorun — hepsine kulak veriyoruz.</p>
+      </div>
+      <button class="fb-close" id="fbClose" type="button" aria-label="Kapat"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="fb-body">
+      <form id="fbForm">
+        <!-- M17: konu tipine göre alan seti değişir (Onedio referansı, mevcut dil korunarak) -->
+        <div class="fb-topics" role="group" aria-label="Konu seç">
+          <button class="fb-topic active" type="button" data-topic="oneri"><i class="fa-solid fa-lightbulb"></i> Önerim var</button>
+          <button class="fb-topic" type="button" data-topic="soru"><i class="fa-solid fa-circle-question"></i> Bir sorum var</button>
+          <button class="fb-topic" type="button" data-topic="sorun"><i class="fa-solid fa-bug"></i> Teknik sorun</button>
+          <button class="fb-topic" type="button" data-topic="ihlal"><i class="fa-solid fa-shield-halved"></i> İhlal bildirimi</button>
+          <button class="fb-topic" type="button" data-topic="puan"><i class="fa-solid fa-face-smile"></i> Puan ver</button>
+        </div>
+
+        <div class="fb-fields active" data-for="oneri">
+          <div class="fb-chiprow" role="group" aria-label="İlgili alan">
+            <button class="chip active" type="button">Tarifler</button>
+            <button class="chip" type="button">Keşfet</button>
+            <button class="chip" type="button">DadaShop</button>
+            <button class="chip" type="button">Uygulama</button>
+            <button class="chip" type="button">Diğer</button>
+          </div>
+          <div class="fb-field"><textarea required placeholder="Önerini anlat *"></textarea></div>
+          <div class="fb-field"><input type="email" placeholder="E-posta adresin (opsiyonel)" /></div>
+        </div>
+
+        <div class="fb-fields" data-for="soru">
+          <div class="fb-field">
+            <select class="fb-select" required>
+              <option value="" selected disabled>Sorunun konusu *</option>
+              <option>Üyelik & Hesap</option>
+              <option>Tarif ekleme</option>
+              <option>Diyetisyen randevusu</option>
+              <option>Sipariş & DadaShop</option>
+              <option>Diğer</option>
+            </select>
+          </div>
+          <div class="fb-field"><textarea required placeholder="Sorunu yaz *"></textarea></div>
+          <div class="fb-field"><input type="email" required placeholder="E-posta adresin (cevap için) *" /></div>
+        </div>
+
+        <div class="fb-fields" data-for="sorun">
+          <div class="fb-field">
+            <select class="fb-select" required>
+              <option value="" selected disabled>Sorunu nerede yaşadın? *</option>
+              <option>Anasayfa</option>
+              <option>Tarif sayfası</option>
+              <option>Arama / Tarif Bulucu</option>
+              <option>Üyelik & Giriş</option>
+              <option>DadaShop</option>
+              <option>Mobil uygulama</option>
+            </select>
+          </div>
+          <div class="fb-field"><textarea required placeholder="Sorunu kısaca anlat — ne yaptın, ne oldu? *"></textarea></div>
+          <button class="fb-shot" type="button"><i class="fa-solid fa-image"></i> Ekran görüntüsü ekle <small>(opsiyonel)</small></button>
+          <div class="fb-field"><input type="email" placeholder="E-posta adresin (opsiyonel)" /></div>
+        </div>
+
+        <div class="fb-fields" data-for="ihlal">
+          <div class="fb-field"><input type="url" required placeholder="İhlal içeren sayfanın linki *" /></div>
+          <div class="fb-field">
+            <select class="fb-select" required>
+              <option value="" selected disabled>İhlal türü *</option>
+              <option>Telif hakkı</option>
+              <option>Uygunsuz içerik</option>
+              <option>Spam / yanıltıcı içerik</option>
+              <option>Diğer</option>
+            </select>
+          </div>
+          <div class="fb-field"><textarea required placeholder="Açıklama *"></textarea></div>
+          <div class="fb-field"><input type="email" required placeholder="E-posta adresin *" /></div>
+        </div>
+
+        <div class="fb-fields" data-for="puan">
+          <p class="fb-q">DadaMutfak deneyimini nasıl puanlarsın?</p>
+          <div class="fb-emoji" role="group" aria-label="Puan">
+            <button type="button" data-val="1" aria-label="Çok kötü">😡</button>
+            <button type="button" data-val="2" aria-label="Kötü">🙁</button>
+            <button type="button" data-val="3" aria-label="İdare eder">😐</button>
+            <button type="button" data-val="4" aria-label="İyi">🙂</button>
+            <button type="button" data-val="5" aria-label="Harika">😍</button>
+          </div>
+          <div class="fb-field"><textarea placeholder="Eklemek istediğin bir şey var mı? (opsiyonel)"></textarea></div>
+          <div class="fb-field"><input type="email" placeholder="E-posta adresin (opsiyonel)" /></div>
+        </div>
+
+        <label class="fb-kvkk">
+          <input type="checkbox" required />
+          <span><a href="#">Aydınlatma Metni</a>'ni ve <a href="#">KVKK Metni</a>'ni okudum, onaylıyorum.</span>
+        </label>
+        <button class="btn btn-primary fb-send" type="submit"><i class="fa-solid fa-paper-plane"></i> Gönder</button>
+      </form>
+      <div class="fb-success" id="fbSuccess" hidden>
+        <span class="ok"><i class="fa-solid fa-check"></i></span>
+        <h4>Görüşün bize ulaştı</h4>
+        <p>Teşekkürler! Ekibimiz en kısa sürede inceleyip gerekirse e-posta ile dönüş yapacak.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== ÇEREZ ONAY BANNER ===== -->
+<div class="cookie-banner" id="cookieBanner" role="dialog" aria-label="Çerez onayı" aria-live="polite">
+  <div class="cookie-inner">
+    <div class="cookie-text">
+      <span class="cookie-ico"><i class="fa-solid fa-cookie-bite"></i></span>
+      <p>Sana daha iyi bir deneyim sunmak için çerezler kullanıyoruz. Siteyi kullanmaya devam ederek çerez kullanımını kabul etmiş olursun. <a href="#">Çerez Politikası</a> · <a href="#">KVKK Aydınlatma Metni</a></p>
+    </div>
+    <div class="cookie-actions">
+      <button type="button" class="btn-cookie-reject" id="cookieReject">Reddet</button>
+      <button type="button" class="btn-cookie-accept" id="cookieAccept">Tümünü Kabul Et</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== ANA İÇERİK (footer reveal perdesi) ===== -->
+<main class="page-main" id="pageMain">
+
+<!-- SAYFA İÇERİĞİ — TARİF EKLE (F5) -->
+
+<!-- ===== ÜST BANT: breadcrumb + başlık + durum bandı + stepper ===== -->
+<section class="below-header fp-top">
+  <div class="wrap">
+    <nav class="rd-crumb" aria-label="Sayfa yolu">
+      <a href="anasayfa-portal-v3a.html"><i class="fa-solid fa-house" style="font-size:12px"></i></a>
+      <i class="fa-solid fa-chevron-right"></i>
+      <a href="#">Hesabım</a>
+      <i class="fa-solid fa-chevron-right"></i>
+      <b>Tarif Ekle</b>
+    </nav>
+
+    <div class="fp-head">
+      <div>
+        <span class="eyebrow"><i class="fa-solid fa-circle-plus"></i> Mutfağından Gelsin</span>
+        <h1>Tarif Ekle</h1>
+        <p class="lead">Tarifini 4 kısa adımda hazırla. Yazdıkların her adımda taslağına otomatik kaydedilir — dilediğin zaman bırakıp dönebilirsin.</p>
+      </div>
+      <a class="see-all" href="#"><i class="fa-regular fa-folder-open"></i> Taslaklarım (3)</a>
+    </div>
+
+    <!-- DURUM BANDLARI — ?state=draft|review|rejected (varsayılan: gizli, yeni tarif) -->
+    <div class="sbanner draft" id="sbDraft" role="status">
+      <span class="sb-ico"><i class="fa-regular fa-floppy-disk"></i></span>
+      <div class="sb-body">
+        <h4>Taslak olarak kayıtlı <span class="sb-tag">Taslak</span></h4>
+        <p>Son kayıt: <b>bugün 14.32</b> · Kaldığın yerden devam edebilirsin — onaya göndermeden yayınlanmaz.</p>
+      </div>
+    </div>
+    <div class="sbanner review" id="sbReview" role="status">
+      <span class="sb-ico"><i class="fa-solid fa-hourglass-half"></i></span>
+      <div class="sb-body">
+        <h4>Tarifin editör incelemesinde <span class="sb-tag">Onayda</span></h4>
+        <p>Gönderim: <b>9 Haziran, 16.05</b> · Ortalama inceleme süresi <b>24–48 saat</b>. Sonuçlandığında bildirim alacaksın; inceleme sürerken tarif düzenlenemez.</p>
+      </div>
+    </div>
+    <div class="sbanner rejected" id="sbRejected" role="alert">
+      <span class="sb-ico"><i class="fa-regular fa-circle-xmark"></i></span>
+      <div class="sb-body">
+        <h4>Tarifin bu haliyle yayınlanamadı <span class="sb-tag">Reddedildi</span></h4>
+        <p>Editör notunu okuyup ilgili adımları güncelledikten sonra yeniden gönderebilirsin.</p>
+        <q class="sb-quote"><i class="fa-solid fa-quote-left"></i>Kapak görseli bulanık ve İç Harç grubundaki malzemelerin miktarları eksik. Görseller ve Malzemeler adımlarını güncelleyip tekrar gönderir misin? — <b>Ayşe, Tarif Editörü</b></q>
+      </div>
+      <button class="btn btn-primary" type="button" id="sbRetry"><i class="fa-solid fa-rotate-right"></i> Düzenle ve Tekrar Gönder</button>
+    </div>
+
+    <!-- STEPPER — geri tıklanır, ileri atlanmaz -->
+    <div class="stepper" id="stepper" role="tablist" aria-label="Tarif ekleme adımları">
+      <button class="stp active" type="button" data-goto="1" role="tab" aria-selected="true">
+        <span class="stp-num"><span>1</span><i class="fa-solid fa-check"></i></span>
+        <span class="stp-lbl"><b>Bilgi</b><small>Ad · kategori · hikâye</small></span>
+      </button>
+      <span class="stp-line" data-line="1"></span>
+      <button class="stp" type="button" data-goto="2" role="tab" aria-selected="false">
+        <span class="stp-num"><span>2</span><i class="fa-solid fa-check"></i></span>
+        <span class="stp-lbl"><b>Görseller</b><small>Kapak · galeri · video</small></span>
+      </button>
+      <span class="stp-line" data-line="2"></span>
+      <button class="stp" type="button" data-goto="3" role="tab" aria-selected="false">
+        <span class="stp-num"><span>3</span><i class="fa-solid fa-check"></i></span>
+        <span class="stp-lbl"><b>Künye &amp; Malzemeler</b><small>Süre · porsiyon · liste</small></span>
+      </button>
+      <span class="stp-line" data-line="3"></span>
+      <button class="stp" type="button" data-goto="4" role="tab" aria-selected="false">
+        <span class="stp-num"><span>4</span><i class="fa-solid fa-check"></i></span>
+        <span class="stp-lbl"><b>Adımlar</b><small>Hazırlanış · gönderim</small></span>
+      </button>
+    </div>
+  </div>
+</section>
+
+<!-- ===== GÖVDE: sihirbaz adımları ===== -->
+<section class="fp-body">
+  <div class="wrap">
+    <form id="wiz" novalidate>
+
+      <!-- ======== ADIM 1 — BİLGİ ======== -->
+      <div class="wstep active" data-step="1">
+        <div class="wiz-grid">
+          <div class="wiz-main">
+            <div class="form-card">
+              <div class="fc-head">
+                <div>
+                  <h2><i class="fa-solid fa-file-pen"></i> Tarif Bilgisi</h2>
+                  <p>Tarifinin adı, kategorisi ve seni bu tarife getiren hikâye.</p>
+                </div>
+                <span class="fc-step">Adım 1 / 4</span>
+              </div>
+
+              <div class="fk-field" id="fldTitle">
+                <label class="fk-label" for="fTitle">Tarif Adı <span class="req">*</span><span class="fk-count" id="titleCount">0/80</span></label>
+                <input class="fk-input" id="fTitle" type="text" maxlength="80" value="Kayseri Usulü Mantı" placeholder="Örn. Kayseri Usulü Mantı" />
+                <span class="fk-error" id="errTitle"><i class="fa-solid fa-circle-exclamation"></i> Tarif adı zorunlu — tarifine bir isim ver.</span>
+                <span class="fk-help"><i class="fa-solid fa-lightbulb"></i> Yöre veya tekniği başlığa taşı: “Fırında”, “Kayseri Usulü”, “Pratik” gibi ekler aramada öne çıkarır.</span>
+              </div>
+
+              <div class="fk-field">
+                <label class="fk-label" for="fCat">Kategori <span class="req">*</span></label>
+                <select class="fk-select" id="fCat" required>
+                  <option value="" disabled>Kategori seç</option>
+                  <option selected>Ana Yemekler</option>
+                  <option>Çorbalar</option>
+                  <option>Et Yemekleri</option>
+                  <option>Tatlılar</option>
+                  <option>Hamur İşi</option>
+                  <option>Hamur Tatlısı</option>
+                  <option>Salatalar &amp; Mezeler</option>
+                  <option>Kahvaltılık</option>
+                  <option>Zeytinyağlılar</option>
+                  <option>İçecekler</option>
+                  <option>Vejetaryen &amp; Vegan</option>
+                  <option>Aperatifler</option>
+                </select>
+              </div>
+
+              <div class="fk-field">
+                <label class="fk-label" for="fDesc">Açıklama / Hikâye <span class="req">*</span></label>
+                <textarea class="fk-textarea" id="fDesc" placeholder="Bu tarif sana nereden geliyor? Okuyana neden denemesi gerektiğini anlat...">Anneannemin Kayseri'den getirdiği, hamuru kulak memesi kıvamında açılan gerçek bir mantı tarifi. Püf noktası, mantıları haşlamadan önce fırında 10 dakika kurutmak — böylece haşlarken dağılmıyor ve sosu çok daha iyi tutuyor.</textarea>
+                <span class="fk-help"><i class="fa-solid fa-lightbulb"></i> İlk iki cümle tarif kartında önizleme olarak görünür — en güçlü cümlenle başla.</span>
+              </div>
+            </div>
+
+            <div class="wiz-foot">
+              <span class="wf-note"><i class="fa-solid fa-cloud-arrow-up"></i> Taslağa otomatik kaydedildi · 14.32</span>
+              <div class="wf-actions">
+                <button class="btn btn-primary" type="button" data-next="1">Sonraki Adım <i class="fa-solid fa-arrow-right"></i></button>
+              </div>
+            </div>
+          </div>
+
+          <aside class="tips-col">
+            <div class="tips-card">
+              <div class="tips-head">
+                <i class="fa-solid fa-wand-magic-sparkles"></i>
+                <div><h3>İyi Tarif Yazmanın Sırları</h3><small>Editör ekibinden öneriler</small></div>
+              </div>
+              <div class="tips-list">
+                <div class="tip"><i class="fa-solid fa-circle-check"></i><span><b>Başlık net olsun.</b> “Mantı” yerine “Kayseri Usulü Mantı” — yöre ve teknik güven verir.</span></div>
+                <div class="tip"><i class="fa-solid fa-circle-check"></i><span><b>Hikâyeni kısa tut.</b> İki-üç cümle yeter; ilk cümle iştah açsın.</span></div>
+                <div class="tip"><i class="fa-solid fa-circle-check"></i><span><b>Püf noktanı sakla ama tarifte söyle.</b> En çok denenen tarifler bir “sır” paylaşanlar.</span></div>
+                <div class="tip"><i class="fa-solid fa-circle-check"></i><span><b>Miktarları standart ölçüyle ver.</b> “Biraz” yerine “1 çay kaşığı”.</span></div>
+                <div class="tip"><i class="fa-solid fa-circle-check"></i><span><b>Doğal ışıkta çek.</b> Gün ışığında çekilen kapaklar belirgin şekilde daha çok tıklanıyor.</span></div>
+              </div>
+            </div>
+            <div class="remind-box">
+              <span class="rb-ico"><i class="fa-solid fa-bell"></i></span>
+              <div class="rb-body">
+                <h4>Tarif sana ait olmalı <span class="rb-auto">Kural</span></h4>
+                <p>Gönderdiğin tarif ve görseller <b>kendi orijinal çalışman</b> olmalı. Başkasına ait içerikler editör incelemesinde elenir.</p>
+              </div>
+            </div>
+          </aside>
+        </div>
+      </div>
+
+      <!-- ======== ADIM 2 — GÖRSELLER ======== -->
+      <div class="wstep" data-step="2">
+        <div class="wiz-solo">
+          <div class="form-card">
+            <div class="fc-head">
+              <div>
+                <h2><i class="fa-regular fa-images"></i> Görseller</h2>
+                <p>İştah açan bir kapak ve süreci gösteren birkaç kare — tarifin vitrini burası.</p>
+              </div>
+              <span class="fc-step">Adım 2 / 4</span>
+            </div>
+
+            <div class="fk-field">
+              <label class="fk-label">Kapak Görseli &amp; Galeri <span class="req">*</span><span class="fk-count" id="upCount">4/8 görsel</span></label>
+              <button class="up-zone" type="button" id="upZone">
+                <i class="fa-solid fa-cloud-arrow-up"></i>
+                <b>Görselleri buraya sürükle ya da bilgisayarından seç</b>
+                <small>PNG / JPG · en az 1200px genişlik · en fazla 8 görsel</small>
+              </button>
+              <div class="up-grid" id="upGrid">
+                <div class="up-item is-cover" style="background-image:url('https://images.unsplash.com/photo-1583224964978-2257b960c3d3?w=400&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')">
+                  <span class="ui-cover"><i class="fa-solid fa-star"></i> Kapak</span>
+                  <span class="ui-btns">
+                    <button type="button" class="ui-star" title="Kapak yap" aria-label="Kapak yap"><i class="fa-solid fa-star"></i></button>
+                    <button type="button" class="ui-del" title="Sil" aria-label="Görseli sil"><i class="fa-solid fa-trash-can"></i></button>
+                  </span>
+                </div>
+                <div class="up-item" style="background-image:url('https://images.unsplash.com/photo-1556910103-1c02745aae4d?w=400&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')">
+                  <span class="ui-cover"><i class="fa-solid fa-star"></i> Kapak</span>
+                  <span class="ui-btns">
+                    <button type="button" class="ui-star" title="Kapak yap" aria-label="Kapak yap"><i class="fa-solid fa-star"></i></button>
+                    <button type="button" class="ui-del" title="Sil" aria-label="Görseli sil"><i class="fa-solid fa-trash-can"></i></button>
+                  </span>
+                </div>
+                <div class="up-item" style="background-image:url('https://images.unsplash.com/photo-1604908176997-125f25cc6f3d?w=400&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')">
+                  <span class="ui-cover"><i class="fa-solid fa-star"></i> Kapak</span>
+                  <span class="ui-btns">
+                    <button type="button" class="ui-star" title="Kapak yap" aria-label="Kapak yap"><i class="fa-solid fa-star"></i></button>
+                    <button type="button" class="ui-del" title="Sil" aria-label="Görseli sil"><i class="fa-solid fa-trash-can"></i></button>
+                  </span>
+                </div>
+                <div class="up-item" style="background-image:url('https://images.unsplash.com/photo-1547592180-85f173990554?w=400&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')">
+                  <span class="ui-cover"><i class="fa-solid fa-star"></i> Kapak</span>
+                  <span class="ui-btns">
+                    <button type="button" class="ui-star" title="Kapak yap" aria-label="Kapak yap"><i class="fa-solid fa-star"></i></button>
+                    <button type="button" class="ui-del" title="Sil" aria-label="Görseli sil"><i class="fa-solid fa-trash-can"></i></button>
+                  </span>
+                </div>
+                <button class="up-add" type="button" id="upAdd"><i class="fa-solid fa-plus"></i> Görsel Ekle</button>
+              </div>
+              <span class="fk-help"><i class="fa-solid fa-star"></i> Yıldıza tıklayarak kapak görselini değiştirebilirsin. Bulanık veya karanlık görseller editör incelemesinde elenir.</span>
+            </div>
+
+            <div class="fk-field">
+              <label class="fk-label" for="fVideo">Video <span class="opt">(opsiyonel)</span></label>
+              <input class="fk-input" id="fVideo" type="url" placeholder="https://youtube.com/watch?v=..." />
+              <span class="fk-help"><i class="fa-brands fa-youtube"></i> YouTube veya Vimeo bağlantısı — tarif sayfasında oynatıcı olarak gömülür.</span>
+            </div>
+          </div>
+
+          <div class="wiz-foot">
+            <span class="wf-note"><i class="fa-solid fa-cloud-arrow-up"></i> Taslağa otomatik kaydedildi · 14.36</span>
+            <div class="wf-actions">
+              <button class="btn btn-ghost" type="button" data-prev="2"><i class="fa-solid fa-arrow-left"></i> Önceki Adım</button>
+              <button class="btn btn-primary" type="button" data-next="2">Sonraki Adım <i class="fa-solid fa-arrow-right"></i></button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ======== ADIM 3 — KÜNYE + MALZEMELER ======== -->
+      <div class="wstep" data-step="3">
+        <div class="wiz-solo">
+          <div class="form-card">
+            <div class="fc-head">
+              <div>
+                <h2><i class="fa-solid fa-clipboard-list"></i> Künye</h2>
+                <p>Tarif sayfasındaki künye şeridini dolduran bilgiler.</p>
+              </div>
+              <span class="fc-step">Adım 3 / 4</span>
+            </div>
+
+            <div class="fk-grid c3">
+              <div class="fk-field">
+                <label class="fk-label" for="fServ">Porsiyon <span class="req">*</span></label>
+                <div class="fk-suffix"><input class="fk-input" id="fServ" type="number" min="1" value="4" /><span>kişilik</span></div>
+              </div>
+              <div class="fk-field">
+                <label class="fk-label" for="fPrep">Hazırlık Süresi <span class="req">*</span></label>
+                <div class="fk-suffix"><input class="fk-input" id="fPrep" type="number" min="0" value="30" /><span>dk</span></div>
+              </div>
+              <div class="fk-field">
+                <label class="fk-label" for="fCook">Pişirme Süresi <span class="req">*</span></label>
+                <div class="fk-suffix"><input class="fk-input" id="fCook" type="number" min="0" value="45" /><span>dk</span></div>
+              </div>
+            </div>
+            <div class="fk-grid c3">
+              <div class="fk-field">
+                <label class="fk-label" for="fDiff">Zorluk <span class="req">*</span></label>
+                <select class="fk-select" id="fDiff" required>
+                  <option value="" disabled>Seç</option>
+                  <option>Kolay</option>
+                  <option selected>Orta</option>
+                  <option>Zor</option>
+                  <option>Çok Zor</option>
+                </select>
+              </div>
+              <div class="fk-field">
+                <label class="fk-label" for="fCuisine">Mutfak <span class="req">*</span></label>
+                <select class="fk-select" id="fCuisine" required>
+                  <option value="" disabled>Seç</option>
+                  <option selected>Türk Mutfağı</option>
+                  <option>İtalyan Mutfağı</option>
+                  <option>Fransız Mutfağı</option>
+                  <option>Uzak Doğu Mutfağı</option>
+                  <option>Orta Doğu Mutfağı</option>
+                  <option>Meksika Mutfağı</option>
+                  <option>Hint Mutfağı</option>
+                  <option>Dünya Mutfağı</option>
+                </select>
+              </div>
+              <div class="fk-field">
+                <label class="fk-label" for="fHeat">Pişirme Derecesi <span class="opt">(opsiyonel)</span></label>
+                <div class="fk-suffix"><input class="fk-input" id="fHeat" type="number" min="0" value="180" /><span>°C</span></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-card">
+            <div class="fc-head">
+              <div>
+                <h2><i class="fa-solid fa-basket-shopping"></i> Malzemeler</h2>
+                <p>Kullanım sırasına göre yaz; “Hamur”, “İç Harç” gibi gruplara ayırabilirsin.</p>
+              </div>
+            </div>
+
+            <div class="ie-list" id="ieList">
+              <div class="ie-group">
+                <span class="ie-drag" title="Sürükleyerek sırala"><i class="fa-solid fa-grip-vertical"></i></span>
+                <input type="text" value="Hamur" placeholder="Grup adı (örn. Hamur)" />
+                <button class="ie-gdel" type="button" title="Grubu kaldır" aria-label="Grubu kaldır"><i class="fa-solid fa-xmark"></i></button>
+              </div>
+              <div class="ie-row">
+                <span class="ie-drag" title="Sürükleyerek sırala"><i class="fa-solid fa-grip-vertical"></i></span>
+                <input class="fk-input ie-amt" type="text" value="3,5" placeholder="Miktar" aria-label="Miktar" />
+                <select class="fk-select ie-unit" aria-label="Birim">
+                  <option value="" disabled>Birim</option>
+                  <option selected>Su Bardağı</option><option>Çay Bardağı</option><option>Yemek Kaşığı</option><option>Tatlı Kaşığı</option><option>Çay Kaşığı</option><option>Gram</option><option>Kilogram</option><option>Mililitre</option><option>Litre</option><option>Adet</option><option>Paket</option><option>Dilim</option><option>Tutam</option><option>Diş</option><option>Demet</option>
+                </select>
+                <input class="fk-input ie-name" type="text" value="Un (elenmiş)" placeholder="Malzeme adı" aria-label="Malzeme adı" />
+                <button class="ie-del" type="button" title="Satırı sil" aria-label="Satırı sil"><i class="fa-solid fa-trash-can"></i></button>
+              </div>
+              <div class="ie-row">
+                <span class="ie-drag" title="Sürükleyerek sırala"><i class="fa-solid fa-grip-vertical"></i></span>
+                <input class="fk-input ie-amt" type="text" value="1" placeholder="Miktar" aria-label="Miktar" />
+                <select class="fk-select ie-unit" aria-label="Birim">
+                  <option value="" disabled>Birim</option>
+                  <option>Su Bardağı</option><option>Çay Bardağı</option><option>Yemek Kaşığı</option><option>Tatlı Kaşığı</option><option>Çay Kaşığı</option><option>Gram</option><option>Kilogram</option><option>Mililitre</option><option>Litre</option><option selected>Adet</option><option>Paket</option><option>Dilim</option><option>Tutam</option><option>Diş</option><option>Demet</option>
+                </select>
+                <input class="fk-input ie-name" type="text" value="Yumurta" placeholder="Malzeme adı" aria-label="Malzeme adı" />
+                <button class="ie-del" type="button" title="Satırı sil" aria-label="Satırı sil"><i class="fa-solid fa-trash-can"></i></button>
+              </div>
+              <div class="ie-row">
+                <span class="ie-drag" title="Sürükleyerek sırala"><i class="fa-solid fa-grip-vertical"></i></span>
+                <input class="fk-input ie-amt" type="text" value="1" placeholder="Miktar" aria-label="Miktar" />
+                <select class="fk-select ie-unit" aria-label="Birim">
+                  <option value="" disabled>Birim</option>
+                  <option>Su Bardağı</option><option selected>Çay Bardağı</option><option>Yemek Kaşığı</option><option>Tatlı Kaşığı</option><option>Çay Kaşığı</option><option>Gram</option><option>Kilogram</option><option>Mililitre</option><option>Litre</option><option>Adet</option><option>Paket</option><option>Dilim</option><option>Tutam</option><option>Diş</option><option>Demet</option>
+                </select>
+                <input class="fk-input ie-name" type="text" value="Ilık su" placeholder="Malzeme adı" aria-label="Malzeme adı" />
+                <button class="ie-del" type="button" title="Satırı sil" aria-label="Satırı sil"><i class="fa-solid fa-trash-can"></i></button>
+              </div>
+              <div class="ie-group">
+                <span class="ie-drag" title="Sürükleyerek sırala"><i class="fa-solid fa-grip-vertical"></i></span>
+                <input type="text" value="İç Harç" placeholder="Grup adı (örn. İç Harç)" />
+                <button class="ie-gdel" type="button" title="Grubu kaldır" aria-label="Grubu kaldır"><i class="fa-solid fa-xmark"></i></button>
+              </div>
+              <div class="ie-row">
+                <span class="ie-drag" title="Sürükleyerek sırala"><i class="fa-solid fa-grip-vertical"></i></span>
+                <input class="fk-input ie-amt" type="text" value="250" placeholder="Miktar" aria-label="Miktar" />
+                <select class="fk-select ie-unit" aria-label="Birim">
+                  <option value="" disabled>Birim</option>
+                  <option>Su Bardağı</option><option>Çay Bardağı</option><option>Yemek Kaşığı</option><option>Tatlı Kaşığı</option><option>Çay Kaşığı</option><option selected>Gram</option><option>Kilogram</option><option>Mililitre</option><option>Litre</option><option>Adet</option><option>Paket</option><option>Dilim</option><option>Tutam</option><option>Diş</option><option>Demet</option>
+                </select>
+                <input class="fk-input ie-name" type="text" value="Dana kıyma (az yağlı)" placeholder="Malzeme adı" aria-label="Malzeme adı" />
+                <button class="ie-del" type="button" title="Satırı sil" aria-label="Satırı sil"><i class="fa-solid fa-trash-can"></i></button>
+              </div>
+              <div class="ie-row">
+                <span class="ie-drag" title="Sürükleyerek sırala"><i class="fa-solid fa-grip-vertical"></i></span>
+                <input class="fk-input ie-amt" type="text" value="1" placeholder="Miktar" aria-label="Miktar" />
+                <select class="fk-select ie-unit" aria-label="Birim">
+                  <option value="" disabled>Birim</option>
+                  <option>Su Bardağı</option><option>Çay Bardağı</option><option>Yemek Kaşığı</option><option>Tatlı Kaşığı</option><option>Çay Kaşığı</option><option>Gram</option><option>Kilogram</option><option>Mililitre</option><option>Litre</option><option selected>Adet</option><option>Paket</option><option>Dilim</option><option>Tutam</option><option>Diş</option><option>Demet</option>
+                </select>
+                <input class="fk-input ie-name" type="text" value="Kuru soğan (rendelenmiş)" placeholder="Malzeme adı" aria-label="Malzeme adı" />
+                <button class="ie-del" type="button" title="Satırı sil" aria-label="Satırı sil"><i class="fa-solid fa-trash-can"></i></button>
+              </div>
+              <div class="ie-row">
+                <span class="ie-drag" title="Sürükleyerek sırala"><i class="fa-solid fa-grip-vertical"></i></span>
+                <input class="fk-input ie-amt" type="text" value="1" placeholder="Miktar" aria-label="Miktar" />
+                <select class="fk-select ie-unit" aria-label="Birim">
+                  <option value="" disabled>Birim</option>
+                  <option>Su Bardağı</option><option>Çay Bardağı</option><option>Yemek Kaşığı</option><option>Tatlı Kaşığı</option><option selected>Çay Kaşığı</option><option>Gram</option><option>Kilogram</option><option>Mililitre</option><option>Litre</option><option>Adet</option><option>Paket</option><option>Dilim</option><option>Tutam</option><option>Diş</option><option>Demet</option>
+                </select>
+                <input class="fk-input ie-name" type="text" value="Karabiber" placeholder="Malzeme adı" aria-label="Malzeme adı" />
+                <button class="ie-del" type="button" title="Satırı sil" aria-label="Satırı sil"><i class="fa-solid fa-trash-can"></i></button>
+              </div>
+            </div>
+
+            <div class="ie-actions">
+              <button class="add-row" type="button" id="addRow"><i class="fa-solid fa-plus"></i> Satır Ekle</button>
+              <button class="add-row alt" type="button" id="addGroup"><i class="fa-solid fa-layer-group"></i> Grup Ekle</button>
+            </div>
+          </div>
+
+          <div class="wiz-foot">
+            <span class="wf-note"><i class="fa-solid fa-cloud-arrow-up"></i> Taslağa otomatik kaydedildi · 14.41</span>
+            <div class="wf-actions">
+              <button class="btn btn-ghost" type="button" data-prev="3"><i class="fa-solid fa-arrow-left"></i> Önceki Adım</button>
+              <button class="btn btn-primary" type="button" data-next="3">Sonraki Adım <i class="fa-solid fa-arrow-right"></i></button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ======== ADIM 4 — HAZIRLANIŞ ADIMLARI ======== -->
+      <div class="wstep" data-step="4">
+        <div class="wiz-solo">
+          <div class="form-card">
+            <div class="fc-head">
+              <div>
+                <h2><i class="fa-solid fa-list-ol"></i> Hazırlanış Adımları</h2>
+                <p>Her adım tek bir işlemi anlatsın; görsel ve süre eklersen pişirme modunda zamanlayıcıya dönüşür.</p>
+              </div>
+              <span class="fc-step">Adım 4 / 4</span>
+            </div>
+
+            <div class="st-list" id="stList">
+              <div class="st-card">
+                <span class="st-num">1</span>
+                <div class="st-body">
+                  <textarea class="fk-textarea" placeholder="Bu adımda ne yapılıyor? Tek işlem, net anlatım...">Un, yumurta, tuz ve ılık suyu derin bir kapta birleştirip kulak memesi yumuşaklığında bir hamur yoğurun. Üzerini nemli bezle örtüp 20 dakika dinlendirin.</textarea>
+                  <div class="st-meta">
+                    <div class="st-figs">
+                      <div class="st-shot" style="background-image:url('https://images.unsplash.com/photo-1556910103-1c02745aae4d?w=300&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')">
+                        <button type="button" title="Görseli sil" aria-label="Görseli sil"><i class="fa-solid fa-trash-can"></i></button>
+                      </div>
+                      <button class="st-up" type="button"><i class="fa-regular fa-image"></i> Görsel ekle <small>1/3</small></button>
+                    </div>
+                    <div class="fk-suffix st-time"><input class="fk-input" type="number" min="0" value="20" placeholder="Süre" aria-label="Adım süresi" /><span>dk</span></div>
+                  </div>
+                </div>
+                <div class="st-side">
+                  <span class="ie-drag" title="Sürükleyerek sırala"><i class="fa-solid fa-grip-vertical"></i></span>
+                  <button class="ie-del st-del" type="button" title="Adımı sil" aria-label="Adımı sil"><i class="fa-solid fa-trash-can"></i></button>
+                </div>
+              </div>
+
+              <div class="st-card">
+                <span class="st-num">2</span>
+                <div class="st-body">
+                  <textarea class="fk-textarea" placeholder="Bu adımda ne yapılıyor? Tek işlem, net anlatım...">Kıyma, rendelenmiş soğan, tuz ve karabiberi karıştırarak iç harcı hazırlayın. Hamuru 2 mm incelikte açıp 2x2 cm kareler kesin, her karenin ortasına nohut büyüklüğünde harç koyup bohça gibi kapatın.</textarea>
+                  <div class="st-meta">
+                    <div class="st-figs"><button class="st-up" type="button"><i class="fa-regular fa-image"></i> Görsel ekle <small>0/3</small></button></div>
+                    <div class="fk-suffix st-time"><input class="fk-input" type="number" min="0" value="35" placeholder="Süre" aria-label="Adım süresi" /><span>dk</span></div>
+                  </div>
+                </div>
+                <div class="st-side">
+                  <span class="ie-drag" title="Sürükleyerek sırala"><i class="fa-solid fa-grip-vertical"></i></span>
+                  <button class="ie-del st-del" type="button" title="Adımı sil" aria-label="Adımı sil"><i class="fa-solid fa-trash-can"></i></button>
+                </div>
+              </div>
+
+              <div class="st-card">
+                <span class="st-num">3</span>
+                <div class="st-body">
+                  <textarea class="fk-textarea" placeholder="Bu adımda ne yapılıyor? Tek işlem, net anlatım...">Mantıları yağlanmış tepsiye dizip 180°C fırında 10 dakika kurutun. Ardından kaynayan tuzlu suda 8-10 dakika haşlayın; sarımsaklı yoğurt ve kızdırılmış salçalı tereyağı ile servis edin.</textarea>
+                  <div class="st-meta">
+                    <div class="st-figs"><button class="st-up" type="button"><i class="fa-regular fa-image"></i> Görsel ekle <small>0/3</small></button></div>
+                    <div class="fk-suffix st-time"><input class="fk-input" type="number" min="0" value="25" placeholder="Süre" aria-label="Adım süresi" /><span>dk</span></div>
+                  </div>
+                </div>
+                <div class="st-side">
+                  <span class="ie-drag" title="Sürükleyerek sırala"><i class="fa-solid fa-grip-vertical"></i></span>
+                  <button class="ie-del st-del" type="button" title="Adımı sil" aria-label="Adımı sil"><i class="fa-solid fa-trash-can"></i></button>
+                </div>
+              </div>
+            </div>
+
+            <div class="ie-actions">
+              <button class="add-row" type="button" id="addStep"><i class="fa-solid fa-plus"></i> Adım Ekle</button>
+            </div>
+          </div>
+
+          <!-- önizleme / gönder bölgesi -->
+          <div class="send-panel">
+            <span class="sp-ico"><i class="fa-solid fa-paper-plane"></i></span>
+            <div class="sp-info">
+              <b>Tarifin gönderime hazır görünüyor</b>
+              <p>Onaya göndermeden önce <a href="#">tarifini önizle</a>. Editör incelemesi ortalama <b>24–48 saat</b> sürer; sonuç bildirimle gelir.</p>
+            </div>
+            <div class="sp-btns">
+              <button class="btn btn-ghost" type="button" id="saveDraft"><i class="fa-regular fa-floppy-disk"></i> Taslak Kaydet</button>
+              <button class="btn btn-primary" type="button" id="sendApproval"><i class="fa-solid fa-paper-plane"></i> Onaya Gönder</button>
+            </div>
+          </div>
+
+          <div class="wiz-foot">
+            <span class="wf-note"><i class="fa-solid fa-cloud-arrow-up"></i> Taslağa otomatik kaydedildi · 14.48</span>
+            <div class="wf-actions">
+              <button class="btn btn-ghost" type="button" data-prev="4"><i class="fa-solid fa-arrow-left"></i> Önceki Adım</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </form>
+  </div>
+</section>
+
+</main><!-- /.page-main -->
+
+<!-- ===== FOOTER ===== -->
+<footer class="footer orange">
+  <div class="wrap">
+    <div class="foot-grid">
+      <div class="foot-brand">
+        <img src="assets/img/logo-official-white.png" alt="DadaMutfak" />
+        <div class="foot-soc">
+          <a href="#" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+          <a href="#" aria-label="YouTube"><i class="fa-brands fa-youtube"></i></a>
+          <a href="#" aria-label="X"><i class="fa-brands fa-x-twitter"></i></a>
+          <a href="#" aria-label="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
+          <a href="#" aria-label="LinkedIn"><i class="fa-brands fa-linkedin-in"></i></a>
+        </div>
+      </div>
+      <div class="foot-col">
+        <h5>Kurumsal</h5>
+        <a href="#">Şef Ol</a>
+        <a href="#">Şefler</a>
+        <a href="#">Ölçü Birimleri</a>
+      </div>
+      <div class="foot-col">
+        <h5>Hızlı Erişim</h5>
+        <a href="#">Hakkımızda</a>
+        <a href="#">Künye</a>
+        <a href="#">S.S.S.</a>
+      </div>
+      <div class="foot-col">
+        <h5>İletişim</h5>
+        <a href="#">Bize Ulaşın</a>
+        <a href="#">Öneri ve Şikayet</a>
+      </div>
+      <div class="foot-col">
+        <h5>İş Birliği</h5>
+        <a href="#">Reklam Vermek İçin</a>
+        <a href="#">Sponsorlar ve Partnerler</a>
+      </div>
+    </div>
+    <!-- M15: etiketler tek satır için kısaltıldı — tam adlar hedef sayfa başlıklarında (Yasin Bey onayına sunulacak) -->
+    <div class="foot-legal">
+      <a href="#">İptal, İade ve Değişim</a><span class="sep"></span>
+      <a href="#">Ödeme ve Teslimat</a><span class="sep"></span>
+      <a href="#">Mesafeli Satış</a><span class="sep"></span>
+      <a href="#">Gizlilik ve Çerez</a><span class="sep"></span>
+      <a href="#">Üyelik Sözleşmesi</a><span class="sep"></span>
+      <a href="#">Kullanım Koşulları</a><span class="sep"></span>
+      <a href="#">Aydınlatma Metni</a><span class="sep"></span>
+      <a href="#">KVKK</a><span class="sep"></span>
+      <a href="#">İhlal Bildir</a>
+    </div>
+    <div class="foot-bottom">
+      <span>© 2026 DadaMutfak. Tüm hakları saklıdır.</span>
+      <a href="https://gaviaworks.com" target="_blank" rel="noopener">#GaviaWorks</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+/* ===== ORTAK CHROME JS (v3a'dan, sayfa-bağımsız hale getirildi) =====
+   SS paramları: ?dd=1 (mega+dil açık) · ?drawer=1 · ?cc=1 (çerez) · ?fb=1 (görüş modal)
+   Header VARSAYILAN KATI. Hero'lu sayfa şeffaf başlangıç isterse aşağıdaki
+   heroMode bayrağını kendi kopyasında true yapar (v3a davranışı). */
+
+// SS paramları
+if(location.search.indexOf('dd=1')>-1){document.querySelector('.nav-item').classList.add('open');var _l=document.getElementById('tbLang');if(_l)_l.classList.add('open');}
+if(location.search.indexOf('drawer=1')>-1){window.addEventListener('DOMContentLoaded',function(){document.getElementById('drawer').classList.add('open');document.getElementById('drawerOverlay').classList.add('open');var _s=document.querySelector('.d-has-sub');if(_s)_s.classList.add('open');});}
+
+// header: VARSAYILAN katı (içerik sayfası). heroMode=true → hero üstünde şeffaf,
+// ~60px scroll sonrası katı (v3a davranışı; ?hdr=solid ile yine zorla katı)
+(function(){
+  var header=document.querySelector('.header');
+  var heroMode=false;                                  // hero'lu sayfada true yap
+  var forceSolid=location.search.indexOf('hdr=solid')>-1;
+  if(!heroMode||forceSolid)return;                     // katı kal — at-top hiç eklenmez
+  function onScroll(){ if(window.scrollY<60){header.classList.add('at-top');} else {header.classList.remove('at-top');} }
+  onScroll(); window.addEventListener('scroll',onScroll,{passive:true});
+})();
+
+// save / favorite toggle (recipes + products) — sayfada varsa çalışır
+document.querySelectorAll('.r-save, .p-fav, .feat-save').forEach(function(btn){
+  btn.addEventListener('click',function(e){
+    e.stopPropagation();
+    btn.classList.toggle('saved');
+    var i=btn.querySelector('i');
+    if(btn.classList.contains('saved')){i.classList.remove('fa-regular');i.classList.add('fa-solid');}
+    else{i.classList.remove('fa-solid');i.classList.add('fa-regular');}
+  });
+});
+
+// "tümünü gör" slider okları — data-track / data-dir ile genel
+document.querySelectorAll('.row-nav button').forEach(function(b){
+  b.addEventListener('click',function(){
+    var t=document.getElementById(b.getAttribute('data-track'));
+    if(t){t.scrollBy({left:b.getAttribute('data-dir')==='prev'?-620:620,behavior:'smooth'});if(t._pauseAuto)t._pauseAuto();}
+  });
+});
+
+// nav dropdown click toggle (hover also works via CSS)
+document.querySelectorAll('.nav-item').forEach(function(it){
+  var trigger=it.querySelector(':scope > a');
+  if(!it.querySelector('.dropdown,.mega'))return;
+  trigger.addEventListener('click',function(e){
+    e.preventDefault();
+    var wasOpen=it.classList.contains('open');
+    document.querySelectorAll('.nav-item.open').forEach(function(o){o.classList.remove('open')});
+    if(!wasOpen)it.classList.add('open');
+  });
+});
+document.addEventListener('click',function(e){
+  if(!e.target.closest('.nav-item'))document.querySelectorAll('.nav-item.open').forEach(function(o){o.classList.remove('open')});
+});
+
+// ---- DİL SEÇİCİ (üst bant dropdown) ----
+(function(){
+  var lang=document.getElementById('tbLang');
+  if(!lang)return;
+  var btn=document.getElementById('tbLangBtn');
+  btn.addEventListener('click',function(e){
+    e.preventDefault();e.stopPropagation();
+    var open=lang.classList.toggle('open');
+    btn.setAttribute('aria-expanded',open?'true':'false');
+  });
+  lang.querySelectorAll('.tb-lang-menu a').forEach(function(a){
+    a.addEventListener('click',function(e){
+      e.preventDefault();
+      lang.querySelectorAll('.tb-lang-menu a').forEach(function(x){x.classList.remove('active')});
+      a.classList.add('active');
+      btn.querySelector('span').textContent=a.getAttribute('data-lang').toUpperCase();
+      lang.classList.remove('open');btn.setAttribute('aria-expanded','false');
+    });
+  });
+  document.addEventListener('click',function(e){
+    if(!e.target.closest('#tbLang')){lang.classList.remove('open');btn.setAttribute('aria-expanded','false');}
+  });
+})();
+
+// ---- MOBİL DRAWER aç/kapa ----
+(function(){
+  var drawer=document.getElementById('drawer');
+  var overlay=document.getElementById('drawerOverlay');
+  var burger=document.getElementById('hamburger');
+  var closeBtn=document.getElementById('drawerClose');
+  function open(){drawer.classList.add('open');overlay.classList.add('open');document.body.style.overflow='hidden';}
+  function close(){drawer.classList.remove('open');overlay.classList.remove('open');document.body.style.overflow='';}
+  burger.addEventListener('click',open);
+  closeBtn.addEventListener('click',close);
+  overlay.addEventListener('click',close);
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')close();});
+  // accordion: alt menülü öğeler tıkla-aç
+  drawer.querySelectorAll('.d-has-sub > .d-link').forEach(function(lnk){
+    lnk.addEventListener('click',function(){
+      var item=lnk.parentElement;
+      var wasOpen=item.classList.contains('open');
+      drawer.querySelectorAll('.d-item.open').forEach(function(o){o.classList.remove('open')});
+      if(!wasOpen)item.classList.add('open');
+    });
+  });
+  // alt link veya direkt linke tıklayınca drawer kapansın
+  drawer.querySelectorAll('.d-sub a, .d-item > a.d-link, .drawer-foot a, .drawer-foot > button').forEach(function(a){
+    a.addEventListener('click',close);
+  });
+  // drawer dil seçici — aç/kapa liste + seçim (drawer kapanmaz, N dile ölçeklenir)
+  var dl=document.getElementById('drawerLang');
+  if(dl){
+    var dlToggle=dl.querySelector('.drawer-lang-toggle');
+    dlToggle.addEventListener('click',function(){
+      var open=dl.classList.toggle('open');
+      dlToggle.setAttribute('aria-expanded',open?'true':'false');
+    });
+    dl.querySelectorAll('.drawer-lang-list button').forEach(function(b){
+      b.addEventListener('click',function(){
+        dl.querySelectorAll('.drawer-lang-list button').forEach(function(x){x.classList.remove('active')});
+        b.classList.add('active');
+        document.getElementById('drawerLangCur').textContent=b.getAttribute('data-lang').toUpperCase()+' — '+b.getAttribute('data-name');
+        dl.classList.remove('open');dlToggle.setAttribute('aria-expanded','false');
+      });
+    });
+  }
+})();
+
+// ---- SÜRÜKLE-KAYDIR (mouse ile yatay slider'lar) ----
+// Sayfa kendi track selector'larını alttaki listeye ekler (.row-track hazır gelir)
+(function(){
+  function enableDrag(el){
+    el.classList.add('drag-scroll');
+    var down=false,startX=0,startScroll=0,moved=false;
+    el.addEventListener('pointerdown',function(e){
+      if(e.pointerType==='touch')return;           // touch zaten native kayar
+      down=true;moved=false;startX=e.clientX;startScroll=el.scrollLeft;
+    });
+    el.addEventListener('pointermove',function(e){
+      if(!down)return;
+      var dx=e.clientX-startX;
+      if(Math.abs(dx)>4){moved=true;el.classList.add('dragging');}
+      el.scrollLeft=startScroll-dx;
+    });
+    function up(){down=false;setTimeout(function(){el.classList.remove('dragging');},0);}
+    el.addEventListener('pointerup',up);
+    el.addEventListener('pointercancel',up);
+    el.addEventListener('pointerleave',up);
+    // sürükleme sonrası yanlışlıkla tıklamayı engelle
+    el.addEventListener('click',function(e){if(moved){e.preventDefault();e.stopPropagation();moved=false;}},true);
+    // dikey wheel'i yatay scroll'a çevir (trackpad/mouse)
+    el.addEventListener('wheel',function(e){
+      if(el.scrollWidth<=el.clientWidth)return;
+      if(Math.abs(e.deltaX)>Math.abs(e.deltaY))return;
+      e.preventDefault();el.scrollLeft+=e.deltaY;
+    },{passive:false});
+  }
+  ['.row-track','.cat-track','.grid-4','.vid-grid','.chips','.chef-row','.disc-grid'].forEach(function(sel){
+    document.querySelectorAll(sel).forEach(enableDrag);
+  });
+})();
+
+// ---- FOOTER REVEAL — footer yüksekliğini ölç, içerik sonuna boşluk aç ----
+(function(){
+  var main=document.getElementById('pageMain');
+  var foot=document.querySelector('.footer');
+  if(!main||!foot)return;
+  function fit(){
+    if(window.matchMedia('(min-width:641px)').matches){
+      main.style.marginBottom=foot.offsetHeight+'px';
+    }else{
+      main.style.marginBottom='';
+    }
+  }
+  fit();
+  window.addEventListener('resize',fit);
+  window.addEventListener('load',fit);          // logo/font yüklenince yükseklik oturur
+  if(document.fonts&&document.fonts.ready)document.fonts.ready.then(fit);
+})();
+
+// ---- GÖRÜŞ BİLDİR (kenar etiketi → modal) ----
+(function(){
+  var tab=document.getElementById('fbTab');
+  var modal=document.getElementById('fbModal');
+  var overlay=document.getElementById('fbOverlay');
+  if(!tab||!modal)return;
+  var form=document.getElementById('fbForm');
+  var success=document.getElementById('fbSuccess');
+  function open(){modal.classList.add('show');overlay.classList.add('show');document.body.style.overflow='hidden';}
+  function close(){
+    modal.classList.remove('show');overlay.classList.remove('show');document.body.style.overflow='';
+    setTimeout(function(){form.hidden=false;success.hidden=true;form.reset();},300);
+  }
+  tab.addEventListener('click',function(e){e.preventDefault();open();});
+  document.getElementById('fbClose').addEventListener('click',close);
+  overlay.addEventListener('click',close);
+  modal.addEventListener('click',function(e){if(e.target===modal)close();});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')close();});
+  // M17 — konu tipine göre alan seti: aktif pane görünür, pasif pane'lerin
+  // input'ları disable edilir (gizli required alanlar submit'i bloklamasın)
+  function syncPanes(){
+    var cur=modal.querySelector('.fb-topic.active').getAttribute('data-topic');
+    modal.querySelectorAll('.fb-fields').forEach(function(p){
+      var on=p.getAttribute('data-for')===cur;
+      p.classList.toggle('active',on);
+      p.querySelectorAll('input,textarea,select,button').forEach(function(el){el.disabled=!on});
+    });
+  }
+  modal.querySelectorAll('.fb-topic').forEach(function(t){
+    t.addEventListener('click',function(){
+      modal.querySelectorAll('.fb-topic').forEach(function(x){x.classList.remove('active')});
+      t.classList.add('active');
+      syncPanes();
+    });
+  });
+  syncPanes();
+  // emoji + chip seçimleri (tek seçim)
+  modal.querySelectorAll('.fb-emoji button').forEach(function(b){
+    b.addEventListener('click',function(){
+      modal.querySelectorAll('.fb-emoji button').forEach(function(x){x.classList.remove('active')});
+      b.classList.add('active');
+    });
+  });
+  modal.querySelectorAll('.fb-chiprow .chip').forEach(function(c){
+    c.addEventListener('click',function(){
+      modal.querySelectorAll('.fb-chiprow .chip').forEach(function(x){x.classList.remove('active')});
+      c.classList.add('active');
+    });
+  });
+  form.addEventListener('submit',function(e){
+    e.preventDefault();
+    form.hidden=true;success.hidden=false;
+  });
+  if(location.search.indexOf('fb=1')>-1){open();}
+})();
+
+// ---- ÇEREZ ONAY BANNER ----
+(function(){
+  var banner=document.getElementById('cookieBanner');
+  if(!banner)return;
+  var KEY='dm-cookie-consent';
+  var force=location.search.indexOf('cc=1')>-1;   // SS/test için zorla göster
+  function stored(){try{return localStorage.getItem(KEY);}catch(e){return null;}}
+  function dismiss(val){
+    try{localStorage.setItem(KEY,val);}catch(e){}
+    banner.classList.remove('show');
+  }
+  if(force || !stored()){
+    setTimeout(function(){banner.classList.add('show');},700);
+  }
+  document.getElementById('cookieAccept').addEventListener('click',function(){dismiss('accepted');});
+  document.getElementById('cookieReject').addEventListener('click',function(){dismiss('rejected');});
+})();
+
+/* ===== SAYFA JS — sayfa-spesifik script BU İŞARETİN ALTINA eklenir ===== */
+
+/* ============ TARİF EKLE (F5) — sihirbaz + form kiti davranışları ============
+   SS paramları: ?step=1..4 · ?state=draft|review|rejected · ?err=1 (boş ad hatası) */
+(function(){
+  var params=new URLSearchParams(location.search);
+  var cur=Math.min(4,Math.max(1,parseInt(params.get('step')||'1',10)||1));
+
+  /* ---- durum bandı (?state=) ---- */
+  var state=params.get('state');
+  if(state==='draft')document.getElementById('sbDraft').classList.add('show');
+  if(state==='review')document.getElementById('sbReview').classList.add('show');
+  if(state==='rejected')document.getElementById('sbRejected').classList.add('show');
+  var retry=document.getElementById('sbRetry');
+  if(retry)retry.addEventListener('click',function(){goTo(2,true);});
+
+  /* ---- adım gösterimi + stepper senkronu ---- */
+  var steps=document.querySelectorAll('.wstep');
+  var stps=document.querySelectorAll('.stepper .stp');
+  var lines=document.querySelectorAll('.stepper .stp-line');
+  function render(){
+    steps.forEach(function(p){p.classList.toggle('active',+p.getAttribute('data-step')===cur);});
+    stps.forEach(function(s){
+      var n=+s.getAttribute('data-goto');
+      s.classList.toggle('active',n===cur);
+      s.classList.toggle('done',n<cur);
+      s.setAttribute('aria-selected',n===cur?'true':'false');
+    });
+    lines.forEach(function(l){l.classList.toggle('done',+l.getAttribute('data-line')<cur);});
+  }
+  function goTo(n,force){
+    if(n===cur)return;
+    if(n>cur&&!force&&!validate(cur))return;   // ileri: doğrulamadan geçmeden olmaz
+    cur=Math.min(4,Math.max(1,n));
+    render();
+    window.scrollTo({top:0,behavior:'smooth'});
+  }
+  // stepper: yalnız GERİ tıklanır (ileri atlamak yasak)
+  stps.forEach(function(s){
+    s.addEventListener('click',function(){
+      var n=+s.getAttribute('data-goto');
+      if(n<cur)goTo(n);
+    });
+  });
+  document.querySelectorAll('[data-next]').forEach(function(b){
+    b.addEventListener('click',function(){goTo(cur+1);});
+  });
+  document.querySelectorAll('[data-prev]').forEach(function(b){
+    b.addEventListener('click',function(){goTo(cur-1,true);});
+  });
+
+  /* ---- doğrulama (görsel dil örneği: boş tarif adı) ---- */
+  var fldTitle=document.getElementById('fldTitle');
+  var fTitle=document.getElementById('fTitle');
+  function validate(step){
+    if(step===1&&fTitle.value.trim()===''){
+      fldTitle.classList.add('has-error');
+      fTitle.focus();
+      return false;
+    }
+    return true;
+  }
+  fTitle.addEventListener('input',function(){
+    fldTitle.classList.remove('has-error');
+    countTitle();
+  });
+
+  /* ---- başlık karakter sayacı ---- */
+  var titleCount=document.getElementById('titleCount');
+  function countTitle(){titleCount.textContent=fTitle.value.length+'/80';}
+  countTitle();
+
+  /* ---- SS: ?err=1 → boş ad + hata durumu ---- */
+  if(params.get('err')==='1'){
+    fTitle.value='';
+    countTitle();
+    fldTitle.classList.add('has-error');
+  }
+
+  /* ---- ADIM 2: galeri (kapak yıldızı · sil · örnek ekleme) ---- */
+  var upGrid=document.getElementById('upGrid');
+  var upCount=document.getElementById('upCount');
+  var upAdd=document.getElementById('upAdd');
+  var spareImgs=[
+    'https://images.unsplash.com/photo-1495195134817-aeb325a55b65?w=400&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5',
+    'https://images.unsplash.com/photo-1466637574441-749b8f19452f?w=400&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5',
+    'https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=400&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5',
+    'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=400&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5'
+  ];
+  var spareIdx=0;
+  function items(){return upGrid.querySelectorAll('.up-item');}
+  function syncUp(){
+    var n=items().length;
+    upCount.textContent=n+'/8 görsel';
+    upAdd.style.display=n>=8?'none':'';
+    // kapak garanti: hiç is-cover kalmadıysa ilk görseli kapak yap
+    if(n&&!upGrid.querySelector('.up-item.is-cover'))items()[0].classList.add('is-cover');
+  }
+  function addImg(){
+    if(items().length>=8)return;
+    var d=document.createElement('div');
+    d.className='up-item';
+    d.style.backgroundImage="url('"+spareImgs[spareIdx++%spareImgs.length]+"')";
+    d.innerHTML='<span class="ui-cover"><i class="fa-solid fa-star"></i> Kapak</span>'+
+      '<span class="ui-btns">'+
+      '<button type="button" class="ui-star" title="Kapak yap" aria-label="Kapak yap"><i class="fa-solid fa-star"></i></button>'+
+      '<button type="button" class="ui-del" title="Sil" aria-label="Görseli sil"><i class="fa-solid fa-trash-can"></i></button>'+
+      '</span>';
+    upGrid.insertBefore(d,upAdd);
+    syncUp();
+  }
+  upAdd.addEventListener('click',addImg);
+  document.getElementById('upZone').addEventListener('click',addImg);
+  upGrid.addEventListener('click',function(e){
+    var star=e.target.closest('.ui-star');
+    var del=e.target.closest('.ui-del');
+    if(star){
+      items().forEach(function(it){it.classList.remove('is-cover');});
+      star.closest('.up-item').classList.add('is-cover');
+    }
+    if(del){del.closest('.up-item').remove();syncUp();}
+  });
+  syncUp();
+
+  /* ---- ADIM 3: dinamik malzeme satırı + grup ---- */
+  var ieList=document.getElementById('ieList');
+  var UNITS='<option value="" disabled selected>Birim</option><option>Su Bardağı</option><option>Çay Bardağı</option><option>Yemek Kaşığı</option><option>Tatlı Kaşığı</option><option>Çay Kaşığı</option><option>Gram</option><option>Kilogram</option><option>Mililitre</option><option>Litre</option><option>Adet</option><option>Paket</option><option>Dilim</option><option>Tutam</option><option>Diş</option><option>Demet</option>';
+  function makeRow(){
+    var r=document.createElement('div');
+    r.className='ie-row';
+    r.innerHTML='<span class="ie-drag" title="Sürükleyerek sırala"><i class="fa-solid fa-grip-vertical"></i></span>'+
+      '<input class="fk-input ie-amt" type="text" placeholder="Miktar" aria-label="Miktar" />'+
+      '<select class="fk-select ie-unit" aria-label="Birim">'+UNITS+'</select>'+
+      '<input class="fk-input ie-name" type="text" placeholder="Malzeme adı" aria-label="Malzeme adı" />'+
+      '<button class="ie-del" type="button" title="Satırı sil" aria-label="Satırı sil"><i class="fa-solid fa-trash-can"></i></button>';
+    return r;
+  }
+  document.getElementById('addRow').addEventListener('click',function(){
+    var r=makeRow();
+    ieList.appendChild(r);
+    r.querySelector('.ie-amt').focus();
+  });
+  document.getElementById('addGroup').addEventListener('click',function(){
+    var g=document.createElement('div');
+    g.className='ie-group';
+    g.innerHTML='<span class="ie-drag" title="Sürükleyerek sırala"><i class="fa-solid fa-grip-vertical"></i></span>'+
+      '<input type="text" placeholder="Grup adı (örn. Sos)" />'+
+      '<button class="ie-gdel" type="button" title="Grubu kaldır" aria-label="Grubu kaldır"><i class="fa-solid fa-xmark"></i></button>';
+    ieList.appendChild(g);
+    ieList.appendChild(makeRow());
+    g.querySelector('input').focus();
+  });
+  ieList.addEventListener('click',function(e){
+    var del=e.target.closest('.ie-del');
+    var gdel=e.target.closest('.ie-gdel');
+    if(del)del.closest('.ie-row').remove();
+    if(gdel)gdel.closest('.ie-group').remove();  // grup başlığı kalkar, satırlar üst gruba akar
+  });
+
+  /* ---- malzeme autocomplete: havuz + serbest karma (Beyar kararı, DB ilişkisi) ---- */
+  var ING_POOL=['Un','Tuz','Toz şeker','Yumurta','Süt','Tereyağı','Zeytinyağı','Kuru soğan','Sarımsak','Dana kıyma','Tavuk göğsü','Domates salçası','Karabiber','Süzme yoğurt','Maydanoz'];
+  var sugg=document.createElement('div');
+  sugg.className='ie-sugg';
+  document.body.appendChild(sugg);
+  var suggFor=null;
+  function trLower(s){return s.replace(/İ/g,'i').replace(/I/g,'ı').toLowerCase();}
+  function hideSugg(){sugg.classList.remove('show');suggFor=null;}
+  function showSugg(input){
+    var q=input.value.trim(), ql=trLower(q);
+    var hits=ING_POOL.filter(function(m){return !ql||trLower(m).indexOf(ql)>-1;}).slice(0,6);
+    var exact=ING_POOL.some(function(m){return trLower(m)===ql;});
+    var html=hits.map(function(m){return '<button type="button" data-val="'+m+'"><i class="fa-solid fa-carrot"></i> '+m+'</button>';}).join('');
+    if(q&&!exact)html+='<button type="button" class="sg-new" data-val="'+q.replace(/"/g,'&quot;')+'"><i class="fa-solid fa-circle-plus"></i> &ldquo;'+q+'&rdquo; — yeni malzeme öner</button>';
+    if(!html){hideSugg();return;}
+    sugg.innerHTML=html;
+    var r=input.getBoundingClientRect();
+    sugg.style.left=r.left+'px';sugg.style.top=(r.bottom+6)+'px';sugg.style.width=Math.max(r.width,230)+'px';
+    sugg.classList.add('show');suggFor=input;
+  }
+  document.addEventListener('focusin',function(e){if(e.target.classList&&e.target.classList.contains('ie-name'))showSugg(e.target);});
+  document.addEventListener('input',function(e){if(e.target.classList&&e.target.classList.contains('ie-name'))showSugg(e.target);});
+  sugg.addEventListener('mousedown',function(e){
+    var b=e.target.closest('button');if(!b)return;
+    e.preventDefault();                                  // blur'dan önce seçimi işle
+    if(suggFor)suggFor.value=b.getAttribute('data-val');
+    hideSugg();
+  });
+  document.addEventListener('click',function(e){if(!e.target.closest('.ie-sugg')&&!(e.target.classList&&e.target.classList.contains('ie-name')))hideSugg();});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')hideSugg();});
+  window.addEventListener('scroll',hideSugg,{passive:true});
+
+  /* ---- ADIM 4: dinamik adım kartları ---- */
+  var stList=document.getElementById('stList');
+  function renumber(){
+    stList.querySelectorAll('.st-card .st-num').forEach(function(n,i){n.textContent=i+1;});
+  }
+  document.getElementById('addStep').addEventListener('click',function(){
+    var c=document.createElement('div');
+    c.className='st-card';
+    c.innerHTML='<span class="st-num"></span>'+
+      '<div class="st-body">'+
+      '<textarea class="fk-textarea" placeholder="Bu adımda ne yapılıyor? Tek işlem, net anlatım..."></textarea>'+
+      '<div class="st-meta">'+
+      '<div class="st-figs"><button class="st-up" type="button"><i class="fa-regular fa-image"></i> Görsel ekle <small>0/3</small></button></div>'+
+      '<div class="fk-suffix st-time"><input class="fk-input" type="number" min="0" placeholder="Süre" aria-label="Adım süresi" /><span>dk</span></div>'+
+      '</div></div>'+
+      '<div class="st-side">'+
+      '<span class="ie-drag" title="Sürükleyerek sırala"><i class="fa-solid fa-grip-vertical"></i></span>'+
+      '<button class="ie-del st-del" type="button" title="Adımı sil" aria-label="Adımı sil"><i class="fa-solid fa-trash-can"></i></button>'+
+      '</div>';
+    stList.appendChild(c);
+    renumber();
+    c.querySelector('textarea').focus();
+  });
+  // adım görseli: max 3 slot (Beyar kararı — eski site + tarif detay paritesi)
+  var STEP_IMGS=['photo-1466637574441-749b8f19452f','photo-1495521821757-a1efb6729352','photo-1507048331197-7d4ac70811cf'];
+  function syncFigs(figs){
+    var n=figs.querySelectorAll('.st-shot').length;
+    var up=figs.querySelector('.st-up');
+    if(n>=3){if(up)up.style.display='none';}
+    else{
+      if(!up){up=document.createElement('button');up.className='st-up';up.type='button';figs.appendChild(up);}
+      up.style.display='';
+      up.innerHTML='<i class="fa-regular fa-image"></i> Görsel ekle <small>'+n+'/3</small>';
+    }
+  }
+  stList.addEventListener('click',function(e){
+    var del=e.target.closest('.st-del');
+    if(del){del.closest('.st-card').remove();renumber();return;}
+    var shotDel=e.target.closest('.st-shot button');
+    if(shotDel){
+      var figs=shotDel.closest('.st-figs');
+      shotDel.closest('.st-shot').remove();
+      syncFigs(figs);
+      return;
+    }
+    var up=e.target.closest('.st-up');
+    if(up){
+      var figs2=up.closest('.st-figs');
+      var n=figs2.querySelectorAll('.st-shot').length;
+      if(n>=3)return;
+      var shot=document.createElement('div');
+      shot.className='st-shot';
+      shot.style.backgroundImage="url('https://images.unsplash.com/"+STEP_IMGS[n]+"?w=300&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')";
+      shot.innerHTML='<button type="button" title="Görseli sil" aria-label="Görseli sil"><i class="fa-solid fa-trash-can"></i></button>';
+      figs2.insertBefore(shot,up);
+      syncFigs(figs2);
+    }
+  });
+
+  /* ---- taslak kaydet / onaya gönder (mock geri bildirim) ---- */
+  var saveDraft=document.getElementById('saveDraft');
+  saveDraft.addEventListener('click',function(){
+    var old=saveDraft.innerHTML;
+    saveDraft.innerHTML='<i class="fa-solid fa-check"></i> Taslağa Kaydedildi';
+    saveDraft.disabled=true;
+    setTimeout(function(){saveDraft.innerHTML=old;saveDraft.disabled=false;},1800);
+  });
+  document.getElementById('sendApproval').addEventListener('click',function(){
+    // mock: onaya gönderildi durumuna geç (ONAYDA bandı + adım 1)
+    document.querySelectorAll('.sbanner').forEach(function(b){b.classList.remove('show');});
+    document.getElementById('sbReview').classList.add('show');
+    window.scrollTo({top:0,behavior:'smooth'});
+  });
+
+  render();
+})();
+</script>
+</body>
+</html>

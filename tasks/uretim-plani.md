@@ -1,34 +1,41 @@
 # DadaMutfak Üretim Planı — Tier Yapısı (Beyar onaylı)
 
-> Güncelleme: 2026-06-11. Tek doğruluk kaynağı: dalga durumu burada,
-> günlük ilerleme `tasks/handoff.md`'de.
+> Güncelleme: 2026-06-11 (Dalga 1 kapandı). Tek doğruluk kaynağı: dalga durumu
+> burada, günlük ilerleme `tasks/handoff.md`'de.
 
 ## TIER 0 — TAMAMLANDI ✔
 
 - Ana sayfa (`mockups/anasayfa-portal-v3a.html`, kanonik baz)
 - Tarif Detay F1 (`mockups/tarif-detay-v1.html`, Tur 1 + 1.5 + 2)
 
-## TIER 1 — PARALEL DALGA 1 (agent team, 4 teammate)
+## TIER 1 — DALGA 1 — TAMAMLANDI ✔ (Beyar onaylı, 2026-06-11)
 
-| Teammate | Sayfa | Faz |
-|---|---|---|
-| `liste` | Tarif Liste/Arama | F2 |
-| `video` | Video Mutfağı hub + seri + dikey 9:16 | F3 |
-| `form` | Tarif Ekle stepper | F5 |
-| `profil` | Mutfak Defteri public profili | F7 |
+| Teammate | Sayfa | Faz | Durum |
+|---|---|---|---|
+| `liste` | `tarif-liste-v1.html` | F2 | ✔ + görsel hero revize |
+| `video` | `video-mutfagi-v1.html` | F3 | ✔ + mobil swipe (m28) |
+| `form` | `tarif-ekle-v1.html` (form kiti doğdu) | F5 | ✔ + autocomplete + 3 görsel slot |
+| `profil` | `mutfak-defteri-v1.html` | F7 | ✔ + rozet teaser + yazar satırı |
 
-**ÖN KOŞUL (lead'in ilk görevi, dalga başlamadan):**
-1. `mockups/_shell.html` — v3a'dan kanonik iskelet (token/topbar/header/mega
-   menü/footer/çerez/feedback BİREBİR).
-2. `tasks/bilesen-kilavuzu.md` — v3a + tarif-detay-v1 bileşen envanteri.
-   Tarif-detay'dan satır numarası VERME, class referansı yeter.
+Ön koşullar üretildi: `mockups/_shell.html` (kanonik iskelet) +
+`tasks/bilesen-kilavuzu.md` (bileşen envanteri + dil kuralları + SS notları).
 
-## TIER 2 — PARALEL DALGA 2 (Dalga 1 onayından sonra)
+## ARA İŞLER — ATLANMAYACAK (dalga brieflerine gömülür)
 
-- Keşif & Planlama (F4)
+1. **Kategori + koleksiyon + SEO landing + Günün Menüsü** → Dalga 2'ye
+   **5. teammate** (liste hero'sundaki görsel+koyu-overlay dili örnek alınır).
+2. **Diyet listeleri + besin kütüphanesi** → Dalga 2 **Sağlık (F10)** brief'ine.
+3. **Keşfet + keşfet detay** → Dalga 2 **Keşif (F4)** brief'ine.
+4. **Pişirme modu derinleşmesi + yazdır görünümü** → Dalga 3 ÖNCESİ küçük iş.
+5. **Şef profili ek bloğu + `?owner=1` sahibi-görünümü varyantı** → İLERİDE.
+
+## TIER 2 — PARALEL DALGA 2 (sıradaki)
+
+- Keşif & Planlama (F4) — + keşfet/keşfet detay (ara iş 3)
 - Dada Shop vitrin/liste/ürün detay (F8)
-- Sağlık (F10)
+- Sağlık (F10) — + diyet listeleri/besin kütüphanesi (ara iş 2)
 - Diyetisyen public (F12a)
+- **5. teammate:** kategori/koleksiyon/SEO landing + Günün Menüsü (ara iş 1)
 
 ## TIER 3 — PARALEL DALGA 3
 
