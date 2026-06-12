@@ -7,10 +7,12 @@
 > crumb · ansiklopedi IA (kategori + tıkla-aç) · dz-card v2 simetrik · BNP
 > sihirbazsız (mod→menü→koleksiyon) · shop login modalı · kampanya bandı hero ·
 > Boyut/Ölçü SVG facet · tarif-bulucu üst-geniş düzen (R14) · legacy anasayfa
-> varyantları mockups/arsiv/ altında (15 dosya, envanter dışı). Checkpoint:
-> `c5e8826`. Revize sentezi: `outputs/cila2-faz1-sentez.md` (REVİZE TURU
-> bölümü). **FIX COMMIT BEYAR ONAYI BEKLİYOR; PUSH YOK.** Beklemede: DadaStore
-> marka dili · mekan-detay 5px.)
+> varyantları mockups/arsiv/ altında (15 dosya, envanter dışı). + R15: BNP
+> görselli mod kartı rayı. Commit'ler: checkpoint `c5e8826` + fix `d3e1c2b`
+> (**PUSH YOK — Beyar push kararını ayrıca verecek**). Revize sentezi:
+> `outputs/cila2-faz1-sentez.md`. CİLA-2 Faz 1 takımı (cila2-faz1) kapatıldı.
+> Beklemede: DadaStore marka dili · mekan-detay 5px · BNP ölü wizard CSS
+> (handoff "Faz 2 Girdileri" bölümü).)
 > Önceki: 2026-06-12 (**CİLA-2 FAZ 1 TAMAM — patron
 > revize turu, 4 modül paralel, agent team**: 25 iş kalemi kanıtlı kabul.
 > TARİF (₺ rozet, grid⇄liste, ikonlu facet, TD video modal) · SIRLAR (Mutfağa
