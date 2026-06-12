@@ -713,10 +713,45 @@ html,body{overflow-x:hidden}
 .oven-grid{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:48px;align-items:start}
 .heat-dot{display:inline-block;width:10px;height:10px;border-radius:var(--radius-circle);margin-right:9px;vertical-align:baseline}
 
+/* ---- ONE-PAGE TAB NAV (üstte; tıkla → bölüme smooth scroll) ---- */
+.ob-tabs{display:flex;flex-wrap:wrap;gap:8px;margin-top:24px}
+.ob-tab{display:inline-flex;align-items:center;gap:9px;font-family:inherit;font-size:13.5px;font-weight:700;color:var(--slate);background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-md);padding:11px 18px;cursor:pointer;transition:.2s var(--ease)}
+.ob-tab i{font-size:13px;color:var(--tomato);transition:color .2s var(--ease)}
+.ob-tab:hover{border-color:var(--tomato);color:var(--tomato)}
+.ob-tab.active{background:var(--tomato);border-color:var(--tomato);color:#fff}
+.ob-tab.active i{color:#fff}
+/* fixed header altında bölüm hizalama */
+.conv-sec,.tables-sec,.std-sec,.oven-sec{scroll-margin-top:120px}
+
+/* ---- STANDART ÖLÇÜLER · markalı SVG preview (her öğe hover/tık → ürün önizleme) ---- */
+.std-sec{padding:60px 0;background:var(--bg-cream)}
+.std-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:8px}
+.std-card{position:relative;display:flex;align-items:center;gap:16px;background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-lg);padding:18px 20px;cursor:pointer;transition:transform .25s var(--ease),box-shadow .25s var(--ease),border-color .2s var(--ease)}
+.std-card:hover,.std-card.open{transform:translateY(-3px);box-shadow:var(--sh-md);border-color:rgba(225,72,39,.35)}
+.std-ico{flex:none;width:58px;height:58px;border-radius:var(--radius-md);background:var(--tomato-tint);display:grid;place-items:center}
+.std-ico svg{width:38px;height:46px;display:block}
+.std-info b{display:block;font-size:15.5px;font-weight:700;color:var(--slate)}
+.std-info span{display:block;font-size:13px;color:var(--muted);font-weight:500;margin-top:2px}
+.std-info .ml{color:var(--tomato);font-weight:700}
+.std-hint{margin-left:auto;flex:none;width:30px;height:30px;border-radius:var(--radius-circle);background:var(--bg);color:var(--muted);display:grid;place-items:center;font-size:12px;transition:.2s var(--ease)}
+.std-card:hover .std-hint,.std-card.open .std-hint{background:var(--tomato);color:#fff}
+/* markalı ürün önizleme — hover/tık ile açılır kart üstü panel */
+.std-preview{position:absolute;left:50%;bottom:calc(100% + 12px);transform:translateX(-50%) translateY(8px) scale(.96);width:230px;background:#fff;border:1px solid var(--line);border-radius:var(--radius-lg);box-shadow:var(--sh-lg);padding:18px 16px 16px;opacity:0;visibility:hidden;transition:opacity .22s var(--ease),transform .22s var(--ease),visibility .22s;z-index:15;pointer-events:none}
+.std-preview::after{content:"";position:absolute;left:50%;bottom:-7px;transform:translateX(-50%) rotate(45deg);width:13px;height:13px;background:#fff;border-right:1px solid var(--line);border-bottom:1px solid var(--line)}
+.std-card:hover .std-preview,.std-card.open .std-preview{opacity:1;visibility:visible;transform:translateX(-50%) translateY(0) scale(1)}
+.std-stage{height:150px;border-radius:var(--radius-md);background:linear-gradient(160deg,#fff 0%,var(--cream-2) 100%);display:grid;place-items:center;border:1px solid var(--line);overflow:hidden}
+.std-stage svg{width:120px;height:130px;display:block;filter:drop-shadow(0 8px 16px rgba(33,30,22,.14))}
+.std-pv-cap{margin-top:12px;text-align:center}
+.std-pv-cap b{display:block;font-size:14px;font-weight:700;color:var(--slate)}
+.std-pv-cap span{display:block;font-size:12px;color:var(--muted);font-weight:500;margin-top:2px}
+.std-note{display:flex;gap:9px;font-size:12.5px;color:var(--muted);font-weight:500;line-height:1.5;margin-top:18px}
+.std-note i{color:var(--tomato);margin-top:2px}
+
 /* ===================== TABLET (≤1024px) ===================== */
 @media (max-width:1024px){
   .ob-head h1{font-size:30px}
   .conv-grid,.oven-grid{grid-template-columns:1fr;gap:30px}
+  .std-grid{grid-template-columns:1fr 1fr}
   .seo-aside{position:static;top:auto}
 }
 /* ===================== MOBİL (≤640px) ===================== */
@@ -724,7 +759,14 @@ html,body{overflow-x:hidden}
   .rd-crumb{padding:14px 0 10px;font-size:12px}
   .ob-head h1{font-size:25px}
   .ob-head{padding-bottom:24px}
-  .conv-sec,.tables-sec{padding:38px 0}
+  .conv-sec,.tables-sec,.std-sec{padding:38px 0}
+  .std-grid{grid-template-columns:1fr}
+  .ob-tabs{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none}
+  .ob-tabs::-webkit-scrollbar{display:none}
+  .ob-tab{flex:none}
+  .std-preview{left:auto;right:0;transform:translateX(0) translateY(8px) scale(.96)}
+  .std-card:hover .std-preview,.std-card.open .std-preview{transform:translateX(0) translateY(0) scale(1)}
+  .std-preview::after{left:auto;right:24px}
   .oven-sec{padding:38px 0 50px}
   .conv-card{padding:20px}
   .fk-grid.c2{grid-template-columns:1fr}
@@ -810,8 +852,9 @@ html,body{overflow-x:hidden}
         <div class="nav-item">
           <a href="mutfak-sirlari-v1.html" class="active">Mutfak Sırları <i class="fa-solid fa-chevron-down"></i></a>
           <div class="dropdown">
-            <a href="mutfaga-giris-v1.html"><i class="fa-solid fa-fire-burner"></i> <span>Temel Teknikler<small>Haşlama, sote, fırınlama</small></span></a>
+            <a href="mutfaga-giris-v1.html"><i class="fa-solid fa-graduation-cap"></i> <span>Mutfağa Giriş<small>Sıfırdan temel teknikler</small></span></a>
             <a href="puf-noktalari-v1.html"><i class="fa-solid fa-lightbulb"></i> <span>Püf Noktaları<small>Şeflerden küçük sırlar</small></span></a>
+            <a href="ansiklopedi-v1.html"><i class="fa-solid fa-seedling"></i> <span>Mutfak Ansiklopedisi<small>Malzemeleri tanı: faydası, kullanımı</small></span></a>
             <a href="sozluk-v1.html"><i class="fa-solid fa-book-open"></i> <span>Sözlük<small>Mutfak terimleri</small></span></a>
             <a href="#"><i class="fa-solid fa-scale-balanced"></i> <span>Ölçü Birimleri<small>Bardak, kaşık, gram</small></span></a>
           </div>
@@ -873,8 +916,9 @@ html,body{overflow-x:hidden}
     <div class="d-item d-has-sub">
       <button class="d-link">Mutfak Sırları <i class="fa-solid fa-chevron-down"></i></button>
       <div class="d-sub">
-        <a href="mutfaga-giris-v1.html"><i class="fa-solid fa-fire-burner"></i> Temel Teknikler</a>
+        <a href="mutfaga-giris-v1.html"><i class="fa-solid fa-graduation-cap"></i> Mutfağa Giriş</a>
         <a href="puf-noktalari-v1.html"><i class="fa-solid fa-lightbulb"></i> Püf Noktaları</a>
+        <a href="ansiklopedi-v1.html"><i class="fa-solid fa-seedling"></i> Mutfak Ansiklopedisi</a>
         <a href="sozluk-v1.html"><i class="fa-solid fa-book-open"></i> Sözlük</a>
         <a href="#"><i class="fa-solid fa-scale-balanced"></i> Ölçü Birimleri</a>
       </div>
@@ -1077,13 +1121,19 @@ html,body{overflow-x:hidden}
     <div class="ob-head">
       <span class="eyebrow"><i class="fa-solid fa-scale-balanced"></i> Mutfak Sırları</span>
       <h1>Ölçü Birimleri</h1>
-      <p class="lead">1 su bardağı un kaç gram? Tarifteki bardağı, kaşığı grama ve mililitreye çevir — 60+ malzemenin dönüşüm tablosu ve fırın sıcaklık rehberi tek sayfada.</p>
+      <p class="lead">1 su bardağı un kaç gram? Tarifteki bardağı, kaşığı grama ve mililitreye çevir — 60+ malzemenin dönüşüm tablosu, standart ölçü kapları ve fırın sıcaklık rehberi tek sayfada.</p>
+      <nav class="ob-tabs" id="obTabs" aria-label="Sayfa bölümleri">
+        <button class="ob-tab active" type="button" data-target="donusturucu"><i class="fa-solid fa-arrows-rotate"></i> Dönüştürücü</button>
+        <button class="ob-tab" type="button" data-target="tablolar"><i class="fa-solid fa-table-list"></i> Dönüşüm Tabloları</button>
+        <button class="ob-tab" type="button" data-target="standart"><i class="fa-solid fa-flask-vial"></i> Standart Ölçüler</button>
+        <button class="ob-tab" type="button" data-target="firin"><i class="fa-solid fa-temperature-three-quarters"></i> Fırın Rehberi</button>
+      </nav>
     </div>
   </div>
 </section>
 
 <!-- ===== DÖNÜŞTÜRÜCÜ ===== -->
-<section class="conv-sec">
+<section class="conv-sec" id="donusturucu">
   <div class="wrap">
     <div class="conv-grid">
       <div class="conv-card">
@@ -1149,7 +1199,7 @@ html,body{overflow-x:hidden}
 </section>
 
 <!-- ===== DÖNÜŞÜM TABLOLARI ===== -->
-<section class="tables-sec">
+<section class="tables-sec" id="tablolar">
   <div class="wrap">
     <div class="sec-head">
       <div>
@@ -1262,8 +1312,79 @@ html,body{overflow-x:hidden}
   </div>
 </section>
 
+
+<!-- ===== STANDART ÖLÇÜLER · markalı SVG önizleme ===== -->
+<section class="std-sec" id="standart">
+  <div class="wrap">
+    <div class="sec-head">
+      <div>
+        <span class="eyebrow"><i class="fa-solid fa-flask-vial"></i> Standart Ölçüler</span>
+        <h2>Hangi kap kaç mililitre?</h2>
+        <p class="lead">Türk mutfağının standart kapları. Bir kabın üstüne gel (veya dokun) — DadaMutfak markalı ölçü görselini gör.</p>
+      </div>
+    </div>
+    <div class="std-grid">
+      <div class="std-card" tabindex="0" role="button" aria-label="Su Bardağı — 200 ml">
+        <span class="std-ico"><svg viewBox="0 0 100 120" role="img" aria-label="Su bardağı illüstrasyonu"><path d="M30 12h40l-5 94a7 7 0 0 1-7 6H42a7 7 0 0 1-7-6z" fill="#FBE9E3" stroke="#E14827" stroke-width="3" stroke-linejoin="round"/><path d="M33 56h34l-3 50a7 7 0 0 1-7 6H43a7 7 0 0 1-7-6z" fill="#E14827" opacity=".16"/><line x1="59" y1="38" x2="67" y2="38" stroke="#E14827" stroke-width="2.4" stroke-linecap="round"/><line x1="60" y1="56" x2="67" y2="56" stroke="#E14827" stroke-width="2.4" stroke-linecap="round"/><line x1="61" y1="74" x2="67" y2="74" stroke="#E14827" stroke-width="2.4" stroke-linecap="round"/><text x="50" y="94" text-anchor="middle" font-family="Gilroy,system-ui,sans-serif" font-size="8.5" font-weight="700" fill="#C43D20" letter-spacing="-.3">dadamutfak</text></svg></span>
+        <div class="std-info"><b>Su Bardağı</b><span class="ml">200 ml</span><span>İnce belli çay bardağının 2 katı; tariflerin temel ölçüsü.</span></div>
+        <span class="std-hint"><i class="fa-solid fa-eye"></i></span>
+        <div class="std-preview" aria-hidden="true">
+          <div class="std-stage"><svg viewBox="0 0 100 120" role="img" aria-label="Su bardağı illüstrasyonu"><path d="M30 12h40l-5 94a7 7 0 0 1-7 6H42a7 7 0 0 1-7-6z" fill="#FBE9E3" stroke="#E14827" stroke-width="3" stroke-linejoin="round"/><path d="M33 56h34l-3 50a7 7 0 0 1-7 6H43a7 7 0 0 1-7-6z" fill="#E14827" opacity=".16"/><line x1="59" y1="38" x2="67" y2="38" stroke="#E14827" stroke-width="2.4" stroke-linecap="round"/><line x1="60" y1="56" x2="67" y2="56" stroke="#E14827" stroke-width="2.4" stroke-linecap="round"/><line x1="61" y1="74" x2="67" y2="74" stroke="#E14827" stroke-width="2.4" stroke-linecap="round"/><text x="50" y="94" text-anchor="middle" font-family="Gilroy,system-ui,sans-serif" font-size="8.5" font-weight="700" fill="#C43D20" letter-spacing="-.3">dadamutfak</text></svg></div>
+          <div class="std-pv-cap"><b>DadaMutfak Su Bardağı</b><span>Markalı ölçü kabı · 200 ml</span></div>
+        </div>
+      </div>
+      <div class="std-card" tabindex="0" role="button" aria-label="Çay Bardağı — 100 ml">
+        <span class="std-ico"><svg viewBox="0 0 100 120" role="img" aria-label="Çay bardağı illüstrasyonu"><path d="M34 12h32c-3 14-9 18-9 30 0 16 10 14 10 38 0 20-9 32-17 32s-17-12-17-32c0-24 10-22 10-38 0-12-6-16-9-30z" fill="#FBE9E3" stroke="#E14827" stroke-width="3" stroke-linejoin="round"/><path d="M37 70c-1 6-2 10-2 18 0 16 6 24 15 24s15-8 15-24c0-8-1-12-2-18z" fill="#E14827" opacity=".16"/><text x="50" y="92" text-anchor="middle" font-family="Gilroy,system-ui,sans-serif" font-size="8" font-weight="700" fill="#C43D20" letter-spacing="-.3">dadamutfak</text></svg></span>
+        <div class="std-info"><b>Çay Bardağı</b><span class="ml">100 ml</span><span>İnce belli klasik bardak; su bardağının yarısı.</span></div>
+        <span class="std-hint"><i class="fa-solid fa-eye"></i></span>
+        <div class="std-preview" aria-hidden="true">
+          <div class="std-stage"><svg viewBox="0 0 100 120" role="img" aria-label="Çay bardağı illüstrasyonu"><path d="M34 12h32c-3 14-9 18-9 30 0 16 10 14 10 38 0 20-9 32-17 32s-17-12-17-32c0-24 10-22 10-38 0-12-6-16-9-30z" fill="#FBE9E3" stroke="#E14827" stroke-width="3" stroke-linejoin="round"/><path d="M37 70c-1 6-2 10-2 18 0 16 6 24 15 24s15-8 15-24c0-8-1-12-2-18z" fill="#E14827" opacity=".16"/><text x="50" y="92" text-anchor="middle" font-family="Gilroy,system-ui,sans-serif" font-size="8" font-weight="700" fill="#C43D20" letter-spacing="-.3">dadamutfak</text></svg></div>
+          <div class="std-pv-cap"><b>DadaMutfak Çay Bardağı</b><span>Markalı ölçü kabı · 100 ml</span></div>
+        </div>
+      </div>
+      <div class="std-card" tabindex="0" role="button" aria-label="Kahve Fincanı — 60 ml">
+        <span class="std-ico"><svg viewBox="0 0 100 120" role="img" aria-label="Kahve fincanı illüstrasyonu"><path d="M26 44h44v26a22 22 0 0 1-22 22h0a22 22 0 0 1-22-22z" fill="#FBE9E3" stroke="#E14827" stroke-width="3" stroke-linejoin="round"/><path d="M70 50h8a11 11 0 0 1 0 22h-8" fill="none" stroke="#E14827" stroke-width="3"/><path d="M30 58h36v12a18 18 0 0 1-18 18h0a18 18 0 0 1-18-18z" fill="#E14827" opacity=".16"/><ellipse cx="48" cy="44" rx="22" ry="5" fill="#fff" stroke="#E14827" stroke-width="3"/><rect x="24" y="100" width="48" height="6" rx="3" fill="#E14827" opacity=".5"/><text x="48" y="78" text-anchor="middle" font-family="Gilroy,system-ui,sans-serif" font-size="7.5" font-weight="700" fill="#C43D20" letter-spacing="-.3">dadamutfak</text></svg></span>
+        <div class="std-info"><b>Kahve Fincanı</b><span class="ml">60 ml</span><span>Türk kahvesi fincanı esastır; sos ve şurupta sık.</span></div>
+        <span class="std-hint"><i class="fa-solid fa-eye"></i></span>
+        <div class="std-preview" aria-hidden="true">
+          <div class="std-stage"><svg viewBox="0 0 100 120" role="img" aria-label="Kahve fincanı illüstrasyonu"><path d="M26 44h44v26a22 22 0 0 1-22 22h0a22 22 0 0 1-22-22z" fill="#FBE9E3" stroke="#E14827" stroke-width="3" stroke-linejoin="round"/><path d="M70 50h8a11 11 0 0 1 0 22h-8" fill="none" stroke="#E14827" stroke-width="3"/><path d="M30 58h36v12a18 18 0 0 1-18 18h0a18 18 0 0 1-18-18z" fill="#E14827" opacity=".16"/><ellipse cx="48" cy="44" rx="22" ry="5" fill="#fff" stroke="#E14827" stroke-width="3"/><rect x="24" y="100" width="48" height="6" rx="3" fill="#E14827" opacity=".5"/><text x="48" y="78" text-anchor="middle" font-family="Gilroy,system-ui,sans-serif" font-size="7.5" font-weight="700" fill="#C43D20" letter-spacing="-.3">dadamutfak</text></svg></div>
+          <div class="std-pv-cap"><b>DadaMutfak Kahve Fincanı</b><span>Markalı ölçü kabı · 60 ml</span></div>
+        </div>
+      </div>
+      <div class="std-card" tabindex="0" role="button" aria-label="Yemek Kaşığı — 15 ml">
+        <span class="std-ico"><svg viewBox="0 0 100 120" role="img" aria-label="Yemek kaşığı illüstrasyonu"><ellipse cx="50" cy="30" rx="24" ry="22" fill="#FBE9E3" stroke="#E14827" stroke-width="3"/><ellipse cx="50" cy="30" rx="17" ry="15" fill="#E14827" opacity=".14"/><rect x="46" y="48" width="8" height="64" rx="4" fill="#E14827"/><text x="50" y="34" text-anchor="middle" font-family="Gilroy,system-ui,sans-serif" font-size="7" font-weight="700" fill="#C43D20" letter-spacing="-.2">dada</text></svg></span>
+        <div class="std-info"><b>Yemek Kaşığı</b><span class="ml">15 ml</span><span>3 tatlı kaşığına eşittir; silme ölçülür.</span></div>
+        <span class="std-hint"><i class="fa-solid fa-eye"></i></span>
+        <div class="std-preview" aria-hidden="true">
+          <div class="std-stage"><svg viewBox="0 0 100 120" role="img" aria-label="Yemek kaşığı illüstrasyonu"><ellipse cx="50" cy="30" rx="24" ry="22" fill="#FBE9E3" stroke="#E14827" stroke-width="3"/><ellipse cx="50" cy="30" rx="17" ry="15" fill="#E14827" opacity=".14"/><rect x="46" y="48" width="8" height="64" rx="4" fill="#E14827"/><text x="50" y="34" text-anchor="middle" font-family="Gilroy,system-ui,sans-serif" font-size="7" font-weight="700" fill="#C43D20" letter-spacing="-.2">dada</text></svg></div>
+          <div class="std-pv-cap"><b>DadaMutfak Yemek Kaşığı</b><span>Markalı ölçü kabı · 15 ml</span></div>
+        </div>
+      </div>
+      <div class="std-card" tabindex="0" role="button" aria-label="Tatlı Kaşığı — 5 ml">
+        <span class="std-ico"><svg viewBox="0 0 100 120" role="img" aria-label="Tatlı kaşığı illüstrasyonu"><ellipse cx="50" cy="25" rx="19" ry="17" fill="#FBE9E3" stroke="#E14827" stroke-width="3"/><ellipse cx="50" cy="25" rx="12" ry="10" fill="#E14827" opacity=".14"/><rect x="46" y="38" width="8" height="74" rx="4" fill="#E14827"/><text x="50" y="29" text-anchor="middle" font-family="Gilroy,system-ui,sans-serif" font-size="7" font-weight="700" fill="#C43D20" letter-spacing="-.2">dada</text></svg></span>
+        <div class="std-info"><b>Tatlı Kaşığı</b><span class="ml">5 ml</span><span>1 çay kaşığının biraz üstü; orta boy kaşık.</span></div>
+        <span class="std-hint"><i class="fa-solid fa-eye"></i></span>
+        <div class="std-preview" aria-hidden="true">
+          <div class="std-stage"><svg viewBox="0 0 100 120" role="img" aria-label="Tatlı kaşığı illüstrasyonu"><ellipse cx="50" cy="25" rx="19" ry="17" fill="#FBE9E3" stroke="#E14827" stroke-width="3"/><ellipse cx="50" cy="25" rx="12" ry="10" fill="#E14827" opacity=".14"/><rect x="46" y="38" width="8" height="74" rx="4" fill="#E14827"/><text x="50" y="29" text-anchor="middle" font-family="Gilroy,system-ui,sans-serif" font-size="7" font-weight="700" fill="#C43D20" letter-spacing="-.2">dada</text></svg></div>
+          <div class="std-pv-cap"><b>DadaMutfak Tatlı Kaşığı</b><span>Markalı ölçü kabı · 5 ml</span></div>
+        </div>
+      </div>
+      <div class="std-card" tabindex="0" role="button" aria-label="Çay Kaşığı — 4 ml">
+        <span class="std-ico"><svg viewBox="0 0 100 120" role="img" aria-label="Çay kaşığı illüstrasyonu"><ellipse cx="50" cy="21" rx="15" ry="13" fill="#FBE9E3" stroke="#E14827" stroke-width="3"/><ellipse cx="50" cy="21" rx="8" ry="6" fill="#E14827" opacity=".14"/><rect x="46" y="30" width="8" height="82" rx="4" fill="#E14827"/><text x="50" y="25" text-anchor="middle" font-family="Gilroy,system-ui,sans-serif" font-size="7" font-weight="700" fill="#C43D20" letter-spacing="-.2">dada</text></svg></span>
+        <div class="std-info"><b>Çay Kaşığı</b><span class="ml">4 ml</span><span>En küçük standart kaşık; baharat ve maya için.</span></div>
+        <span class="std-hint"><i class="fa-solid fa-eye"></i></span>
+        <div class="std-preview" aria-hidden="true">
+          <div class="std-stage"><svg viewBox="0 0 100 120" role="img" aria-label="Çay kaşığı illüstrasyonu"><ellipse cx="50" cy="21" rx="15" ry="13" fill="#FBE9E3" stroke="#E14827" stroke-width="3"/><ellipse cx="50" cy="21" rx="8" ry="6" fill="#E14827" opacity=".14"/><rect x="46" y="30" width="8" height="82" rx="4" fill="#E14827"/><text x="50" y="25" text-anchor="middle" font-family="Gilroy,system-ui,sans-serif" font-size="7" font-weight="700" fill="#C43D20" letter-spacing="-.2">dada</text></svg></div>
+          <div class="std-pv-cap"><b>DadaMutfak Çay Kaşığı</b><span>Markalı ölçü kabı · 4 ml</span></div>
+        </div>
+      </div>
+    </div>
+    <p class="std-note"><i class="fa-solid fa-circle-info"></i> Ölçüler silme (bastırmadan, tepeleme olmadan) doldurulmuş kabul edilir. Görseller temsilîdir; gerçek hacim kabın iç çapına göre ±%5 oynayabilir.</p>
+  </div>
+</section>
+
 <!-- ===== FIRIN SICAKLIK TABLOSU ===== -->
-<section class="oven-sec">
+<section class="oven-sec" id="firin">
   <div class="wrap">
     <div class="sec-head">
       <div>
@@ -1609,6 +1730,37 @@ document.addEventListener('click',function(e){
 
 /* ===== SAYFA JS — sayfa-spesifik script BU İŞARETİN ALTINA eklenir ===== */
 
+/* ===== ONE-PAGE TAB NAV: smooth scroll + scrollspy ===== */
+(function(){
+  var tabs=[].slice.call(document.querySelectorAll('#obTabs .ob-tab'));
+  if(!tabs.length)return;
+  var ids=tabs.map(function(t){return t.getAttribute('data-target');});
+  tabs.forEach(function(t){
+    t.addEventListener('click',function(){
+      var el=document.getElementById(t.getAttribute('data-target'));
+      if(el)el.scrollIntoView({behavior:'smooth',block:'start'});
+    });
+  });
+  function setActive(){
+    var y=(window.scrollY||0)+140,cur=ids[0];
+    ids.forEach(function(id){var el=document.getElementById(id);if(el&&el.offsetTop<=y)cur=id;});
+    tabs.forEach(function(t){t.classList.toggle('active',t.getAttribute('data-target')===cur);});
+  }
+  window.addEventListener('scroll',setActive,{passive:true});setActive();
+})();
+/* ===== STANDART ÖLÇÜLER: dokunmatik için tıkla-aç (hover CSS ile) ===== */
+(function(){
+  var cards=[].slice.call(document.querySelectorAll('.std-card'));
+  cards.forEach(function(c){
+    c.addEventListener('click',function(){
+      var open=c.classList.contains('open');
+      cards.forEach(function(x){x.classList.remove('open');});
+      if(!open)c.classList.add('open');
+    });
+    c.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();c.click();}});
+  });
+  document.addEventListener('click',function(e){if(!e.target.closest('.std-card'))cards.forEach(function(x){x.classList.remove('open');});});
+})();
 /* ===== SAYFA JS — ÖLÇÜ BİRİMLERİ: dönüştürücü + tablo sekmeleri ===== */
 (function(){
   /* gram tablosu: [su bardağı, çay bardağı, yemek k., tatlı k., çay k.] — ml için birim "ml" */

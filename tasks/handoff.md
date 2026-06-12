@@ -1,11 +1,20 @@
 # DadaMutfak — PROJE TAMAMLANDI 🏁 MOCKUP SETİ TESLİME HAZIR
 
-> Tek doğruluk kaynağı. Güncelleme: 2026-06-12 gece (**KEŞFET MEKAN MODÜLÜ
-> TAMAM — Beyar onaylı, commit+push'lu**: mekan-detay nihai kurgu TARİF-DETAY
-> ANATOMİSİ MİRASI — rd-gallery sahne+thumb+kunye-col, GERÇEK tab paneli
-> `?tab=`, TD iki kolon ritmi. Kanıt 12/12 + köprü 4/4 + konsol 0:
-> `outputs/kesfet-mekan-rapor.md`. Dersler `tasks/lessons.md`e işlendi.
-> Sıradaki oturum: TOPLU CİLA + Beyar/patron revizeleri.)
+> Tek doğruluk kaynağı. Güncelleme: 2026-06-12 (**CİLA-2 FAZ 1 TAMAM — patron
+> revize turu, 4 modül paralel, agent team**: 25 iş kalemi kanıtlı kabul.
+> TARİF (₺ rozet, grid⇄liste, ikonlu facet, TD video modal) · SIRLAR (Mutfağa
+> Giriş IA + detay, püf liste/blog-detay + rev-* yorum, YENİ Mutfak
+> Ansiklopedisi modülü, ölçü one-page + markalı SVG) · SAĞLIK (2 sekmeli test
+> listesi, sade dz-card, profil Tarifleri sekmesi, BNP yeniden: menü çıktısı +
+> hazır menüler) · SHOP (ayrı mağaza kabuğu + DadaStore SVG logo, özgün hero,
+> kompakt p-card + fav fix, bambu serpiştirme, görsel kategori paneli, fatura
+> adresi JS) + site-geneli dropdown sweep 52 dosya + "Dada Denedi"→"Şefin
+> Tercihi" SIFIRLANDI + 390 mobil probe üretim seti 3×0. Envanter 64→68.
+> Sentez: `outputs/cila2-faz1-sentez.md`. **COMMIT ATILMADI — Beyar onayı
+> bekliyor.** Sıradaki: Beyar/patron incelemesi → cila-2 faz 2/3 (hero kanonu).)
+> Önceki: 2026-06-12 gece (KEŞFET MEKAN MODÜLÜ TAMAM — Beyar onaylı,
+> commit+push'lu: mekan-detay TD anatomisi mirası. Kanıt:
+> `outputs/kesfet-mekan-rapor.md`)
 > Önceki: 2026-06-12 akşam (mekan-liste-v1 **KABUL** · mekan-detay-v1 Tur 1
 > reddedildi. Envanter 62→64 sayfa.)
 > Önceki: 2026-06-12 (**REVİZE-2 TAMAM** — site geneli
@@ -18,10 +27,15 @@
 
 ---
 
-## 📦 SAYFA ENVANTERİ — 64 üretim sayfası
+## 📦 SAYFA ENVANTERİ — 68 üretim sayfası
 
-- **62 × `*-v1.html`** + `anasayfa-portal-v3a.html` (kanonik baz) +
+- **66 × `*-v1.html`** + `anasayfa-portal-v3a.html` (kanonik baz) +
   `panel-shell.html` (diyetisyen paneli iskeleti)
+- CİLA-2 Faz 1'de doğan (2026-06-12): `mutfaga-giris-detay-v1` (TD anatomisi)
+  + `puf-noktasi-detay-v1` (blog detay + rev-* yorum) + `ansiklopedi-v1` +
+  `ansiklopedi-detay-v1` (YENİ SEO modülü "Mutfak Ansiklopedisi"; sozluk-v1
+  AYNEN korundu — patron şartı). Shop ailesi (5 dosya) artık AYRI MAĞAZA
+  KABUĞU taşır (ana site nav'ı yok; "Ana Siteye Dön" + DadaStore SVG logo)
 - Mekan modülü (2026-06-12): `mekan-liste-v1` (kabul) + `mekan-detay-v1`
   (tasarım reddedildi — yeniden yapılacak, sayfa envanterde)
 - İskeletler: `_shell.html` (public) + `panel-shell.html` (panel)
@@ -83,17 +97,19 @@
 
 ## ➡️ SONRAKİ ADIM (Beyar kararı — 2026-06-12)
 
-1. **KEŞFET MEKAN MODÜLÜ TAMAM ✅ (liste + detay v3, 2026-06-12 gece, Beyar
-   onaylı + commit'li)** — `mekan-liste-v1` (facet + v3a kart dili) +
-   `mekan-detay-v1` (tarif-detay anatomisi mirası: tek sahne + thumb şeridi +
-   kc-card künye kolonu; gerçek tab paneli `?tab=` derin linkli; TD iki kolon
-   ritmi + sağ sticky künye; benzer mekânlar altta 3'lü). Tarihçe + kanıt:
-   `outputs/kesfet-mekan-rapor.md`. Dersler işlendi: `tasks/lessons.md`
-   (TD-anatomi-önce kuralı + overlay stacking + CSS yorum `*/`).
-   **Sıradaki oturum: TOPLU CİLA (cila-2) + Beyar/patron revizeleri.**
-2. **Toplu cila** (cila-2 — revize-2 tereddütleri dahil: hesabim 38px buton,
-   gerçek cihaz mobil teyit turu).
-3. Sonrası: stack kararı (Laravel mi statik mi) + EN dil stratejisi.
+1. **CİLA-2 FAZ 1 TAMAM ✅ (2026-06-12, agent team: lead + 4 teammate)** —
+   patron (Yasin Bey) revize turu 25 iş kalemi kanıtlı kabul; envanter 64→68;
+   site-geneli dropdown sweep (Mutfağa Giriş + Mutfak Ansiklopedisi, 52 dosya);
+   "Dada Denedi" site genelinde SIFIR; 390 mobil probe üretim setinde
+   taşma/konsol/çift-katman 3×0. Sentez + Beyar inceleme listesi:
+   `outputs/cila2-faz1-sentez.md`. **COMMIT BEYAR ONAYI BEKLİYOR** (öneri
+   sentez raporunun sonunda).
+2. **Beyar/patron incelemesi:** sentezdeki "Beyar incelemesi bekleyenler"
+   (rozet adı, Ansiklopedi modül adı, DadaStore marka dili, legacy varyant
+   arşiv kararı + mekan-detay 5px artefakt göz teyidi).
+3. **CİLA-2 devam fazları:** hero kanonu (Faz 3 — saglik-testler hero'su
+   dahil) + revize-2 tereddütleri (hesabim 38px buton, gerçek cihaz teyidi).
+4. Sonrası: stack kararı (Laravel mi statik mi) + EN dil stratejisi.
 
 ---
 

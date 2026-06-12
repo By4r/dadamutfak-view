@@ -70,3 +70,53 @@ intercepts pointer events").
 **How to apply:** Yeni overlay eklerken markup'ı `</main>` sonrasına yerleştir;
 probe setine overlay'in üst köşe butonuna (kapat) gerçek tıklama dahil et —
 görsel SS bu hatayı göstermez, yalnız tıklama yakalar.
+
+## TR karakterli toplu replace'te `perl -CSD` kullanılmaz (2026-06-12, cila-2 faz 1)
+
+**Kural:** UTF-8 Türkçe karakter içeren toplu metin değişiminde `perl -CSD -i -pe`
+KULLANILMAZ — zaten-UTF-8 dosyayı ikinci kez encode edip sessiz mojibake üretir
+("Şefin" → "Åefin"; Ş=C5 9E → C3 85 C2 9E). Saf byte mod kullan
+(`perl -i -pe`, `-CSD`siz) ve sonucu `grep + hexdump -C` ile teyit et.
+
+**Why:** "Dada Denedi"→"Şefin Tercihi" site-geneli temizliğinde ilk tur
+`-CSD` ile koştu; konsol/HTML hatası YOK, sayfa çalışıyor — bozulma yalnız
+hexdump/SS ile yakalandı. git checkout ile geri alınıp byte modla tekrarlandı.
+
+**How to apply:** Toplu replace komutunda TR karakter varsa: (1) `-CSD` yok,
+(2) değişim sonrası `grep -rl '<mojibake-imza>'` (örn. "Å") taraması,
+(3) tek dosyada `grep -o '<yeni metin>' | hexdump -C` ile bayt teyidi.
+
+## Paralel takım fazında ortak chrome değişikliği faz SONUNA ertelenir (2026-06-12, cila-2 faz 1)
+
+**Kural:** Birden çok ajan aynı anda farklı dosya setlerinde çalışırken,
+55+ sayfaya yayılan ortak chrome (header dropdown, footer, drawer) değişikliği
+ÖNCE yalnız `_shell.html` + değişikliğin sahibinin dosyalarında yapılır;
+site-geneli yayılım (idempotent script ile) TÜM ajanlar dosyalarını
+kapattıktan sonra TEK seferde koşulur. Sweep sonrası shop gibi bilinçli
+kabuk-sapması olan ailelere sızıntı grep'i zorunlu (hedef 0).
+
+**Why:** CİLA-2 Faz 1'de dropdown rename + yeni modül öğesi 4 ajanın 70
+dosyasına çakışacaktı; erteleme + faz sonu sweep (52 dosya) sıfır çakışmayla
+kapandı. Sweep'te tek kaçak aktif sayfanın `href="#"` anchor varyantıydı
+(sozluk-v1) — script'in insert anchor'ı href'e bağlıydı; "X olan ama Y
+olmayan sayfa" negatif grep'i kaçağı yakaladı.
+
+**How to apply:** Takım fazı planlarken ortak chrome işini "faz sonu sweep"
+görevi olarak ayır; sweep script'i idempotent yaz; bitince (1) negatif grep
+(`eski-öğe VAR ama yeni-öğe YOK`), (2) kabuk-sapması ailelere sızıntı grep'i,
+(3) 4+ farklı aileden örnek sayfada render probe'u koş.
+
+## Probe çıktısı inject klasörünün İÇİNE yazılmaz (2026-06-12, cila-2 faz 1)
+
+**Kural:** iframe-tabanlı toplu probe'da probe HTML'i inject kopyaların
+(`inj/`) klasörüne KONMAZ — relative `src='inj/'+sayfa` çift `inj/inj/` olur,
+tüm iframe'ler 404 boş yüklenir ve her sayfa sahte-TEMİZ ölçülür. Probe
+runner'ı inj'in BİR ÜSTÜNE koy ve detektörü bilinen-kirli bir sayfayla
+sanity-check et (kasıtlı taşmalı dosya → probe onu yakalıyor mu?).
+
+**Why:** Faz sonu 73 sayfalık 390px taramasının ilk turu bu yüzden tamamen
+yanlış "hepsi temiz" verdi; ikinci turda yakalandı, sonuçlar yeniden üretildi.
+
+**How to apply:** Toplu probe yazarken ilk iş sanity-check: 1 bilinen-kirli +
+1 bilinen-temiz sayfayı koş, beklenen sonucu vermiyorsa probe'un kendisini
+debug et; "0 bulgu" raporu ancak sanity-check'ten sonra güvenilirdir.

@@ -725,6 +725,25 @@ html,body{overflow-x:hidden}
 .hub-foot .go{display:inline-flex;align-items:center;gap:7px;color:var(--green-deep);font-weight:700}
 .hub-foot .go i{transition:.2s var(--ease)}
 .hub-card:hover .hub-foot .go i{transform:translateX(3px)}
+/* eğlence grubu kartları domates aksanına döner (sağlık yeşili yalnız bilgi grubunda) */
+.hub-card.fun .hub-cat{background:var(--tomato)}
+.hub-card.fun:hover .hub-body h4{color:var(--tomato)}
+.hub-card.fun .hub-foot .go{color:var(--tomato)}
+
+/* ---- GRUP SEKME BARI (.pf-tabbar/.pf-tabs MİRAS — diyetisyen-profil'den) ---- */
+.tst-tabwrap{display:flex;justify-content:center;margin:0 0 30px}
+.pf-tabs{display:inline-flex;gap:4px;background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-md);padding:4px;overflow-x:auto;scrollbar-width:none;max-width:100%}
+.pf-tabs::-webkit-scrollbar{display:none}
+.pf-tabs .dt{font-family:inherit;font-weight:700;font-size:13.5px;color:var(--muted);background:transparent;border:none;border-radius:var(--radius-sm);padding:11px 22px;cursor:pointer;display:inline-flex;align-items:center;gap:8px;transition:.2s var(--ease);white-space:nowrap;flex:none}
+.pf-tabs .dt:hover{color:var(--green-deep)}
+.pf-tabs .dt.active{background:var(--green);color:#fff}
+.pf-tabs .dt .cnt{font-size:11px;font-weight:700;opacity:.6}
+.pf-tabs .dt.active .cnt{opacity:.85}
+.pf-pane{animation:fadeUp .35s var(--ease)}
+.pf-pane[hidden]{display:none}
+.tst-pane-head{margin-bottom:22px}
+.tst-pane-head h2{font-size:23px}
+.tst-pane-head p{font-size:14px;color:var(--muted);font-weight:500;margin-top:7px;max-width:560px}
 
 /* ---- responsive ---- */
 @media (max-width:1024px){
@@ -739,6 +758,9 @@ html,body{overflow-x:hidden}
   .tst-head h1{font-size:25px}
   .tst-meta{flex-wrap:wrap;gap:12px 18px}
   .qz-res-card{padding:28px 20px}
+  .tst-tabwrap{justify-content:stretch}
+  .pf-tabs{width:100%}
+  .pf-tabs .dt{flex:1;justify-content:center;padding:11px 12px}
 }
 </style>
 </head>
@@ -815,8 +837,9 @@ html,body{overflow-x:hidden}
         <div class="nav-item">
           <a href="mutfak-sirlari-v1.html">Mutfak Sırları <i class="fa-solid fa-chevron-down"></i></a>
           <div class="dropdown">
-            <a href="mutfaga-giris-v1.html"><i class="fa-solid fa-fire-burner"></i> <span>Temel Teknikler<small>Haşlama, sote, fırınlama</small></span></a>
+            <a href="mutfaga-giris-v1.html"><i class="fa-solid fa-graduation-cap"></i> <span>Mutfağa Giriş<small>Sıfırdan temel teknikler</small></span></a>
             <a href="puf-noktalari-v1.html"><i class="fa-solid fa-lightbulb"></i> <span>Püf Noktaları<small>Şeflerden küçük sırlar</small></span></a>
+            <a href="ansiklopedi-v1.html"><i class="fa-solid fa-seedling"></i> <span>Mutfak Ansiklopedisi<small>Malzemeleri tanı: faydası, kullanımı</small></span></a>
             <a href="sozluk-v1.html"><i class="fa-solid fa-book-open"></i> <span>Sözlük<small>Mutfak terimleri</small></span></a>
             <a href="olcu-birimleri-v1.html"><i class="fa-solid fa-scale-balanced"></i> <span>Ölçü Birimleri<small>Bardak, kaşık, gram</small></span></a>
           </div>
@@ -877,8 +900,9 @@ html,body{overflow-x:hidden}
     <div class="d-item d-has-sub">
       <button class="d-link">Mutfak Sırları <i class="fa-solid fa-chevron-down"></i></button>
       <div class="d-sub">
-        <a href="mutfaga-giris-v1.html"><i class="fa-solid fa-fire-burner"></i> Temel Teknikler</a>
+        <a href="mutfaga-giris-v1.html"><i class="fa-solid fa-graduation-cap"></i> Mutfağa Giriş</a>
         <a href="puf-noktalari-v1.html"><i class="fa-solid fa-lightbulb"></i> Püf Noktaları</a>
+        <a href="ansiklopedi-v1.html"><i class="fa-solid fa-seedling"></i> Mutfak Ansiklopedisi</a>
         <a href="sozluk-v1.html"><i class="fa-solid fa-book-open"></i> Sözlük</a>
         <a href="olcu-birimleri-v1.html"><i class="fa-solid fa-scale-balanced"></i> Ölçü Birimleri</a>
       </div>
@@ -1082,134 +1106,118 @@ html,body{overflow-x:hidden}
   </div>
 </section>
 
-<!-- ===== QUIZ + SONUÇ ===== -->
-<section class="sec" style="background:var(--bg-white);padding-top:40px">
+<!-- ===== TEST LİSTESİ — 2 GRUP, SEKMELİ ===== -->
+<section class="sec" style="background:var(--bg-white);padding-top:36px">
   <div class="wrap">
 
-    <!-- OYNAT -->
-    <div class="quiz-wrap" id="quizPlay">
-      <div class="qz-card">
-        <div class="qz-prog-row">
-          <span class="qz-step" id="qzStep">Soru 1 / 8</span>
-          <span class="qz-pct" id="qzPct">%0 tamamlandı</span>
-        </div>
-        <div class="qz-bar"><i id="qzBar" style="width:12.5%"></i></div>
-        <h2 class="qz-q" id="qzQ">Güne genellikle nasıl başlıyorsun?</h2>
-        <div class="qz-opts" id="qzOpts" role="group" aria-label="Cevaplar"></div>
-        <div class="qz-nav">
-          <button class="qz-back" id="qzBack" type="button" disabled><i class="fa-solid fa-arrow-left"></i> Geri</button>
-          <button class="btn qz-next" id="qzNext" type="button" disabled>Devam <i class="fa-solid fa-arrow-right"></i></button>
-        </div>
+    <!-- GRUP SEKME BARI (pf-tabs MİRAS) — ?grup=saglik|eglence derin link -->
+    <div class="tst-tabwrap">
+      <div class="pf-tabs" role="tablist" aria-label="Test grupları">
+        <button class="dt active" type="button" role="tab" data-tab="saglik"><i class="fa-solid fa-heart-pulse"></i> Sağlık &amp; Beslenme <span class="cnt">6</span></button>
+        <button class="dt" type="button" role="tab" data-tab="eglence"><i class="fa-solid fa-face-grin-stars"></i> Eğlence &amp; Kişilik <span class="cnt">4</span></button>
       </div>
     </div>
 
-    <!-- SONUÇ (?sonuc=1 ile açılır) -->
-    <div class="qz-result" id="quizResult" hidden>
-      <div class="qz-res-card">
-        <div class="qz-res-ico"><i class="fa-solid fa-seedling"></i></div>
-        <span class="qz-res-eyebrow">Sonucun</span>
-        <h2>Dengeli Beslenen Tip</h2>
-        <p class="qz-score">Beslenme skorun: <b id="qzScore">78</b> / 100</p>
-        <p>Tabağın genel olarak dengeli — sebze, protein ve tam tahıl dağılımın iyi durumda. Şekerli atıştırmalıkları azaltıp su tüketimini artırarak skorunu daha da yükseltebilirsin.</p>
-        <div class="qz-bars">
-          <div class="qz-brow"><div class="ql"><span>Sebze & meyve</span><span>İyi</span></div><div class="qz-btrack"><i style="width:82%"></i></div></div>
-          <div class="qz-brow"><div class="ql"><span>Protein dengesi</span><span>Çok iyi</span></div><div class="qz-btrack"><i style="width:90%"></i></div></div>
-          <div class="qz-brow"><div class="ql"><span>Su tüketimi</span><span>Geliştirilebilir</span></div><div class="qz-btrack"><i style="width:55%"></i></div></div>
-          <div class="qz-brow"><div class="ql"><span>Şeker & işlenmiş gıda</span><span>Orta</span></div><div class="qz-btrack"><i style="width:64%"></i></div></div>
-        </div>
-        <div class="qz-res-actions">
-          <a class="btn btn-green" href="tarif-liste-v1.html"><i class="fa-solid fa-utensils"></i> Sana Uygun Tarifler</a>
-          <a class="btn btn-ghost" href="saglik-testler-v1.html"><i class="fa-solid fa-rotate-right"></i> Testi Tekrarla</a>
-        </div>
+    <!-- PANE 1 — SAĞLIK & BESLENME (bilgi/sağlık odaklı) -->
+    <div class="pf-pane" data-pane="saglik">
+      <div class="tst-pane-head">
+        <h2>Sağlık &amp; beslenme testleri</h2>
+        <p>Beslenme alışkanlığını, metabolizmanı ve mutfak bilgini ölçen, sonunda kişisel değerlendirme veren testler.</p>
       </div>
-
-      <!-- sonuçtan tarife köprü: ilgili tarifler -->
-      <div style="margin-top:46px">
-        <div class="sec-head">
-          <div>
-            <span class="eyebrow" style="color:var(--green-deep)"><i class="fa-solid fa-heart"></i> Sonucuna Uygun</span>
-            <h2>Dengeni koruyan tarifler</h2>
-            <p class="lead">Skoruna göre seçilmiş, besin değeri yüksek öneriler.</p>
+      <div class="hub-grid">
+        <a class="hub-card" href="test-detay-v1.html?test=beslenme">
+          <div class="hub-media" style="background-image:url('https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=600&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')">
+            <span class="hub-cat">Beslenme</span>
+            <div class="hub-tags"><span class="hub-tag"><i class="fa-solid fa-circle-question"></i> 8 soru</span></div>
           </div>
-          <div class="sec-tools"><a class="see-all" href="tarif-liste-v1.html">Tümünü Gör <i class="fa-solid fa-arrow-right"></i></a></div>
-        </div>
-        <div class="grid-4">
-          <a class="r-card" href="tarif-detay-v1.html">
-            <div class="r-media-wrap"><div class="r-media" style="background-image:url('https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=600&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')">
-              <span class="r-chip">Salata</span><button class="r-save" type="button" aria-label="Kaydet"><i class="fa-regular fa-bookmark"></i></button>
-              <div class="m-types"><span class="mt"><i class="fa-regular fa-clock"></i> 15 dk</span></div></div></div>
-            <div class="r-body"><h4>Avokadolu Nohut Salatası</h4>
-              <div class="r-facts"><span><i class="fa-solid fa-fire"></i> 340 kcal</span><span><i class="fa-solid fa-seedling"></i> Vegan</span></div>
-              <div class="r-foot"><div class="r-author"><span class="av" style="background-image:url('https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=80&q=80')"></span><span><b>Selin A.</b></span></div><div class="r-stats"><span class="r-rate"><i class="fa-solid fa-star"></i> 4.8</span></div></div></div>
-          </a>
-          <a class="r-card" href="tarif-detay-v1.html">
-            <div class="r-media-wrap"><div class="r-media" style="background-image:url('https://images.unsplash.com/photo-1484723091739-30a097e8f929?w=600&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')">
-              <span class="r-chip">Kahvaltı</span><button class="r-save" type="button" aria-label="Kaydet"><i class="fa-regular fa-bookmark"></i></button>
-              <div class="m-types"><span class="mt"><i class="fa-regular fa-clock"></i> 10 dk</span></div></div></div>
-            <div class="r-body"><h4>Yulaflı Çilekli Kase</h4>
-              <div class="r-facts"><span><i class="fa-solid fa-fire"></i> 290 kcal</span><span><i class="fa-solid fa-wheat-awn"></i> Lifli</span></div>
-              <div class="r-foot"><div class="r-author"><span class="av" style="background-image:url('https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=80&q=80')"></span><span><b>Ayça T.</b></span></div><div class="r-stats"><span class="r-rate"><i class="fa-solid fa-star"></i> 4.9</span></div></div></div>
-          </a>
-          <a class="r-card" href="tarif-detay-v1.html">
-            <div class="r-media-wrap"><div class="r-media" style="background-image:url('https://images.unsplash.com/photo-1467003909585-2f8a72700288?w=600&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')">
-              <span class="r-chip">Ana Yemek</span><button class="r-save" type="button" aria-label="Kaydet"><i class="fa-regular fa-bookmark"></i></button>
-              <div class="m-types"><span class="mt"><i class="fa-regular fa-clock"></i> 25 dk</span></div></div></div>
-            <div class="r-body"><h4>Fırında Somon & Brokoli</h4>
-              <div class="r-facts"><span><i class="fa-solid fa-fire"></i> 410 kcal</span><span><i class="fa-solid fa-fish"></i> Omega-3</span></div>
-              <div class="r-foot"><div class="r-author"><span class="av" style="background-image:url('https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=80&q=80')"></span><span><b>Mert Y.</b></span></div><div class="r-stats"><span class="r-rate"><i class="fa-solid fa-star"></i> 4.7</span></div></div></div>
-          </a>
-          <a class="r-card" href="tarif-detay-v1.html">
-            <div class="r-media-wrap"><div class="r-media" style="background-image:url('https://images.unsplash.com/photo-1547592180-85f173990554?w=600&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')">
-              <span class="r-chip">Çorba</span><button class="r-save" type="button" aria-label="Kaydet"><i class="fa-regular fa-bookmark"></i></button>
-              <div class="m-types"><span class="mt"><i class="fa-regular fa-clock"></i> 30 dk</span></div></div></div>
-            <div class="r-body"><h4>Mercimekli Sebze Çorbası</h4>
-              <div class="r-facts"><span><i class="fa-solid fa-fire"></i> 180 kcal</span><span><i class="fa-solid fa-seedling"></i> Vegan</span></div>
-              <div class="r-foot"><div class="r-author"><span class="av" style="background-image:url('https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=80&q=80')"></span><span><b>Deniz K.</b></span></div><div class="r-stats"><span class="r-rate"><i class="fa-solid fa-star"></i> 4.6</span></div></div></div>
-          </a>
-        </div>
+          <div class="hub-body"><h4>Beslenme alışkanlığın ne durumda?</h4><p>Günlük tabağını analiz et, dengeni gör.</p>
+            <div class="hub-foot"><span>~3 dk · 12.4B kişi</span><span class="go">Başla <i class="fa-solid fa-arrow-right"></i></span></div></div>
+        </a>
+        <a class="hub-card" href="test-detay-v1.html?test=metabolizma">
+          <div class="hub-media" style="background-image:url('https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=600&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')">
+            <span class="hub-cat">Metabolizma</span>
+            <div class="hub-tags"><span class="hub-tag"><i class="fa-solid fa-circle-question"></i> 10 soru</span></div>
+          </div>
+          <div class="hub-body"><h4>Metabolizman hızlı mı yavaş mı?</h4><p>Enerji ritmini öğren, planını ona göre kur.</p>
+            <div class="hub-foot"><span>~4 dk · 9.4B kişi</span><span class="go">Başla <i class="fa-solid fa-arrow-right"></i></span></div></div>
+        </a>
+        <a class="hub-card" href="test-detay-v1.html?test=su-hidrasyon">
+          <div class="hub-media" style="background-image:url('https://images.unsplash.com/photo-1498837167922-ddd27525d352?w=600&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')">
+            <span class="hub-cat">Su &amp; Hidrasyon</span>
+            <div class="hub-tags"><span class="hub-tag"><i class="fa-solid fa-circle-question"></i> 6 soru</span></div>
+          </div>
+          <div class="hub-body"><h4>Yeterince su içiyor musun?</h4><p>Hidrasyon seviyeni ölç, hedefini belirle.</p>
+            <div class="hub-foot"><span>~2 dk · 6.8B kişi</span><span class="go">Başla <i class="fa-solid fa-arrow-right"></i></span></div></div>
+        </a>
+        <a class="hub-card" href="test-detay-v1.html?test=temel-pisirme">
+          <div class="hub-media" style="background-image:url('https://images.unsplash.com/photo-1556910103-1c02745aae4d?w=600&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')">
+            <span class="hub-cat">Mutfak Bilgisi</span>
+            <div class="hub-tags"><span class="hub-tag"><i class="fa-solid fa-circle-question"></i> 8 soru</span></div>
+          </div>
+          <div class="hub-body"><h4>Mutfak bilgin ne kadar sağlam?</h4><p>Temel pişirme tekniklerini ne kadar biliyorsun?</p>
+            <div class="hub-foot"><span>~3 dk · 5.2B kişi</span><span class="go">Başla <i class="fa-solid fa-arrow-right"></i></span></div></div>
+        </a>
+        <a class="hub-card" href="test-detay-v1.html?test=beslenme">
+          <div class="hub-media" style="background-image:url('https://images.unsplash.com/photo-1565958011703-44f9829ba187?w=600&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')">
+            <span class="hub-cat">Şeker Dengesi</span>
+            <div class="hub-tags"><span class="hub-tag"><i class="fa-solid fa-circle-question"></i> 7 soru</span></div>
+          </div>
+          <div class="hub-body"><h4>Şekerle aran nasıl?</h4><p>Gizli şeker tüketimini fark et, dengele.</p>
+            <div class="hub-foot"><span>~3 dk · 4.1B kişi</span><span class="go">Başla <i class="fa-solid fa-arrow-right"></i></span></div></div>
+        </a>
+        <a class="hub-card" href="test-detay-v1.html?test=metabolizma">
+          <div class="hub-media" style="background-image:url('https://images.unsplash.com/photo-1490818387583-1baba5e638af?w=600&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')">
+            <span class="hub-cat">Uyku &amp; Enerji</span>
+            <div class="hub-tags"><span class="hub-tag"><i class="fa-solid fa-circle-question"></i> 8 soru</span></div>
+          </div>
+          <div class="hub-body"><h4>Enerji ritmin günü taşıyor mu?</h4><p>Uyku ve öğün düzeninin enerjine etkisini gör.</p>
+            <div class="hub-foot"><span>~3 dk · 3.6B kişi</span><span class="go">Başla <i class="fa-solid fa-arrow-right"></i></span></div></div>
+        </a>
       </div>
     </div>
 
-  </div>
-</section>
-
-<!-- ===== BENZER TESTLER ===== -->
-<section class="sec" style="background:var(--bg-cream)">
-  <div class="wrap">
-    <div class="sec-head">
-      <div>
-        <span class="eyebrow" style="color:var(--green-deep)"><i class="fa-solid fa-layer-group"></i> Benzer Testler</span>
-        <h2>Sıradaki testin hazır</h2>
-        <p class="lead">Kendini farklı açılardan keşfetmeye devam et.</p>
+    <!-- PANE 2 — EĞLENCE & KİŞİLİK (eğlence testleri) -->
+    <div class="pf-pane" data-pane="eglence" hidden>
+      <div class="tst-pane-head">
+        <h2>Eğlence &amp; kişilik testleri</h2>
+        <p>Sonucu eğlencesine — mutfak kişiliğini, damak zevkini ve tarzını keşfet. Skor değil, karakter çıkar.</p>
       </div>
-      <div class="sec-tools"><a class="see-all" href="saglik-hub-v1.html">Tüm Testler <i class="fa-solid fa-arrow-right"></i></a></div>
+      <div class="hub-grid">
+        <a class="hub-card fun" href="test-detay-v1.html?test=hangi-yemek">
+          <div class="hub-media" style="background-image:url('https://images.unsplash.com/photo-1547592180-85f173990554?w=600&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')">
+            <span class="hub-cat">Kişilik</span>
+            <div class="hub-tags"><span class="hub-tag"><i class="fa-solid fa-circle-question"></i> 6 soru</span></div>
+          </div>
+          <div class="hub-body"><h4>Sen bir yemek olsan hangisi olurdun?</h4><p>Mutfak kişiliğini keşfet — eğlencesine.</p>
+            <div class="hub-foot"><span>~2 dk · 18.2B kişi</span><span class="go">Başla <i class="fa-solid fa-arrow-right"></i></span></div></div>
+        </a>
+        <a class="hub-card fun" href="test-detay-v1.html?test=hangi-yemek">
+          <div class="hub-media" style="background-image:url('https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=600&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')">
+            <span class="hub-cat">Damak</span>
+            <div class="hub-tags"><span class="hub-tag"><i class="fa-solid fa-circle-question"></i> 6 soru</span></div>
+          </div>
+          <div class="hub-body"><h4>Tatlıcı mısın, tuzcu musun?</h4><p>Damak zevkinin asıl yönünü ortaya çıkar.</p>
+            <div class="hub-foot"><span>~2 dk · 14.7B kişi</span><span class="go">Başla <i class="fa-solid fa-arrow-right"></i></span></div></div>
+        </a>
+        <a class="hub-card fun" href="test-detay-v1.html?test=hangi-yemek">
+          <div class="hub-media" style="background-image:url('https://images.unsplash.com/photo-1473093295043-cdd812d0e601?w=600&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')">
+            <span class="hub-cat">Mutfak Ruhu</span>
+            <div class="hub-tags"><span class="hub-tag"><i class="fa-solid fa-circle-question"></i> 7 soru</span></div>
+          </div>
+          <div class="hub-body"><h4>Hangi dünya mutfağı senin ruhun?</h4><p>İç sesin İtalyan mı, uzakdoğu mu, Anadolu mu?</p>
+            <div class="hub-foot"><span>~2 dk · 11.3B kişi</span><span class="go">Başla <i class="fa-solid fa-arrow-right"></i></span></div></div>
+        </a>
+        <a class="hub-card fun" href="test-detay-v1.html?test=hangi-yemek">
+          <div class="hub-media" style="background-image:url('https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=600&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')">
+            <span class="hub-cat">Tarz</span>
+            <div class="hub-tags"><span class="hub-tag"><i class="fa-solid fa-circle-question"></i> 6 soru</span></div>
+          </div>
+          <div class="hub-body"><h4>Mutfaktaki tarzın ne?</h4><p>Planlı şef mi, doğaçlama dahisi misin?</p>
+            <div class="hub-foot"><span>~2 dk · 9.9B kişi</span><span class="go">Başla <i class="fa-solid fa-arrow-right"></i></span></div></div>
+        </a>
+      </div>
     </div>
-    <div class="hub-grid">
-      <a class="hub-card" href="test-detay-v1.html?test=metabolizma">
-        <div class="hub-media" style="background-image:url('https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=600&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')">
-          <span class="hub-cat">Metabolizma</span>
-          <div class="hub-tags"><span class="hub-tag"><i class="fa-solid fa-circle-question"></i> 10 soru</span></div>
-        </div>
-        <div class="hub-body"><h4>Metabolizman hızlı mı yavaş mı?</h4><p>Enerji ritmini öğren, planını ona göre kur.</p>
-          <div class="hub-foot"><span>~4 dk</span><span class="go">Başla <i class="fa-solid fa-arrow-right"></i></span></div></div>
-      </a>
-      <a class="hub-card" href="test-detay-v1.html?test=su-hidrasyon">
-        <div class="hub-media" style="background-image:url('https://images.unsplash.com/photo-1498837167922-ddd27525d352?w=600&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')">
-          <span class="hub-cat">Su & Hidrasyon</span>
-          <div class="hub-tags"><span class="hub-tag"><i class="fa-solid fa-circle-question"></i> 6 soru</span></div>
-        </div>
-        <div class="hub-body"><h4>Yeterince su içiyor musun?</h4><p>Hidrasyon seviyeni ölç, hedefini belirle.</p>
-          <div class="hub-foot"><span>~2 dk</span><span class="go">Başla <i class="fa-solid fa-arrow-right"></i></span></div></div>
-      </a>
-      <a class="hub-card" href="test-detay-v1.html?test=hangi-yemek">
-        <div class="hub-media" style="background-image:url('https://images.unsplash.com/photo-1547592180-85f173990554?w=600&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')">
-          <span class="hub-cat">Eğlence</span>
-          <div class="hub-tags"><span class="hub-tag"><i class="fa-solid fa-circle-question"></i> 6 soru</span></div>
-        </div>
-        <div class="hub-body"><h4>Sen bir yemek olsan hangisi olurdun?</h4><p>Mutfak kişiliğini keşfet — eğlencesine.</p>
-          <div class="hub-foot"><span>~2 dk</span><span class="go">Başla <i class="fa-solid fa-arrow-right"></i></span></div></div>
-      </a>
-    </div>
+
   </div>
 </section>
 
@@ -1520,68 +1528,24 @@ document.addEventListener('click',function(e){
   document.getElementById('cookieReject').addEventListener('click',function(){dismiss('rejected');});
 })();
 
-/* ===== SAYFA JS — beslenme testi quiz motoru ===== */
+/* ===== SAYFA JS — TEST GRUP SEKMELERİ (pf-tabs MİRAS) =====
+   ?grup=saglik|eglence derin link · sekme tıklamasında URL güncellenir */
 (function(){
-  var QS=[
-    {q:'Güne genellikle nasıl başlıyorsun?',o:['Dengeli bir kahvaltıyla','Sadece kahve/çayla','Atıştırmalık bir şeyle','Çoğu zaman aç çıkarım']},
-    {q:'Günde kaç porsiyon sebze-meyve tüketiyorsun?',o:['5 ve üzeri','3-4 porsiyon','1-2 porsiyon','Neredeyse hiç']},
-    {q:'Su tüketimin ne kadar?',o:['2,5 L ve üzeri','1,5-2 L','1 L civarı','Çok az içerim']},
-    {q:'Öğün aralarında ne atıştırırsın?',o:['Meyve / kuruyemiş','Yoğurt / süt ürünü','Bisküvi / cips','Şekerli/çikolata']},
-    {q:'Haftada kaç kez dışarıda/hazır yemek yersin?',o:['Nadiren','Haftada 1-2','Haftada 3-4','Hemen her gün']},
-    {q:'Protein kaynağını nasıl seçersin?',o:['Balık & baklagil ağırlıklı','Tavuk & yumurta','Kırmızı et ağırlıklı','Düzensiz, fark etmez']},
-    {q:'Akşam yemeğini ne zaman yersin?',o:['Uykudan 3+ saat önce','2 saat önce','1 saat önce','Yatmadan hemen önce']},
-    {q:'Tabaktaki tahıl tercihin?',o:['Tam tahıl / kepekli','Karışık','Beyaz un ağırlıklı','Pek düşünmem']}
-  ];
-  var play=document.getElementById('quizPlay'), result=document.getElementById('quizResult');
-  var stepEl=document.getElementById('qzStep'), pctEl=document.getElementById('qzPct'), barEl=document.getElementById('qzBar');
-  var qEl=document.getElementById('qzQ'), optsEl=document.getElementById('qzOpts');
-  var backBtn=document.getElementById('qzBack'), nextBtn=document.getElementById('qzNext');
-  var i=0, answers=new Array(QS.length).fill(null);
-
-  function render(){
-    var item=QS[i];
-    qEl.textContent=item.q;
-    stepEl.textContent='Soru '+(i+1)+' / '+QS.length;
-    var pct=Math.round(i/QS.length*100);
-    pctEl.textContent='%'+pct+' tamamlandı';
-    barEl.style.width=((i+1)/QS.length*100)+'%';
-    optsEl.innerHTML='';
-    item.o.forEach(function(txt,idx){
-      var b=document.createElement('button');
-      b.type='button'; b.className='qz-opt'+(answers[i]===idx?' sel':'');
-      b.innerHTML='<span class="dot"><i class="fa-solid fa-check"></i></span> '+txt;
-      b.addEventListener('click',function(){
-        answers[i]=idx;
-        optsEl.querySelectorAll('.qz-opt').forEach(function(x){x.classList.remove('sel')});
-        b.classList.add('sel');
-        nextBtn.disabled=false;
-      });
-      optsEl.appendChild(b);
+  var tabs=document.querySelectorAll('.pf-tabs .dt');
+  if(!tabs.length)return;
+  var valid=['saglik','eglence'];
+  var params=new URLSearchParams(location.search);
+  var start=params.get('grup'); if(valid.indexOf(start)<0)start='saglik';
+  function activate(name,push){
+    tabs.forEach(function(b){
+      var on=b.getAttribute('data-tab')===name;
+      b.classList.toggle('active',on); b.setAttribute('aria-selected',on?'true':'false');
     });
-    backBtn.disabled=(i===0);
-    nextBtn.disabled=(answers[i]===null);
-    nextBtn.innerHTML=(i===QS.length-1)?'Sonucu Gör <i class="fa-solid fa-flag-checkered"></i>':'Devam <i class="fa-solid fa-arrow-right"></i>';
+    document.querySelectorAll('.pf-pane').forEach(function(p){p.hidden=p.getAttribute('data-pane')!==name;});
+    if(push)history.replaceState(null,'','?grup='+name);
   }
-  function showResult(){
-    // skor: daha sağlıklı seçenek (düşük index) daha yüksek puan
-    var got=answers.reduce(function(s,a){return s+(a===null?0:(3-a));},0);
-    var score=Math.round(got/(QS.length*3)*100);
-    if(!isNaN(score)&&score>0)document.getElementById('qzScore').textContent=score;
-    play.hidden=true; result.hidden=false;
-    window.scrollTo({top:0,behavior:'smooth'});
-    history.replaceState(null,'','?sonuc=1');
-  }
-  nextBtn.addEventListener('click',function(){
-    if(answers[i]===null)return;
-    if(i<QS.length-1){i++;render();}else{showResult();}
-  });
-  backBtn.addEventListener('click',function(){ if(i>0){i--;render();} });
-
-  if(location.search.indexOf('sonuc=1')>-1){
-    play.hidden=true; result.hidden=false;
-  }else{
-    render();
-  }
+  tabs.forEach(function(b){b.addEventListener('click',function(){activate(b.getAttribute('data-tab'),true);});});
+  activate(start,false);
 })();
 </script>
 <script>
