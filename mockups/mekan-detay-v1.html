@@ -614,60 +614,83 @@ html,body{overflow-x:hidden}
    Yukarıdaki chrome katmanına DOKUNMA (mega menü KİLİTLİ).
    ===================================================================== */
 
-/* ============ MEKAN DETAY (keşfet mekan modülü) ============
-   Eski site kesfet-detay.html künyesi (galeri · saatler · iletişim · yorum)
-   modern dille. Miras: rd-crumb + rev-* ve c-item yorum kiti (tarif-detay VERBATIM)
-   + r-card rayı (v3a VERBATIM) + mekan disc-card (v3a VERBATIM, benzer mekanlar).
-   Yeni: .md-* başlık/galeri/bilgi dili + CSS-çizim harita mock'u (embed YOK). */
+/* ============ MEKAN DETAY — TARİF-DETAY ANATOMİSİ MİRASI (Beyar revizesi) ============
+   Kolaj/mozaik ve scrollspy İPTAL (Beyar: diğer detay sayfalarından kopuk, parça
+   parça kart gibi). Bu sitenin "detay sayfası dili" tarif-detay'dır — o miras alındı:
+   1) rd-gallery: TEK büyük sahne (başlık overlay'li) + altta thumb şeridi (3 + "+8"
+      tmore → lightbox) + sağda kc-card künye kolonu (260px) — TD R0/R1 düzeni VERBATIM
+   2) pf-tabbar GERÇEK TAB PANELİ: basınca içerik yerinde değişir (?tab= derin link),
+      sayfa aşağı akmaz — eski site kesfet-detay sekme kurgusunun modern karşılığı
+   3) gövde TD iki kolon ritmi: sol seçili pane (rd-sec-head tipografisi, kart-kolaj
+      YOK) + sağ sticky künye kolonu (harita mock + adres + saatler + telefon)
+   Miras: rd-crumb, rd-stage/rd-thumbs, kc-card/rdf, tbadge, rd-rateline, rev- ve
+   c-item yorum kiti, .lightbox (hepsi tarif-detay VERBATIM); r-card, disc-card (v3a).
+   Harita CSS-çizim mock (embed YOK, Laravel fazı). */
 
-/* breadcrumb — VERBATIM */
+/* breadcrumb — VERBATIM (tarif-detay) */
 .rd-crumb{display:flex;align-items:center;flex-wrap:wrap;gap:9px;padding:18px 0 14px;font-size:13px;font-weight:500;color:var(--muted)}
 .rd-crumb a{color:var(--muted);transition:.18s}
 .rd-crumb a:hover{color:var(--tomato)}
 .rd-crumb i{font-size:9px;color:#c7c7c7}
 .rd-crumb b{color:var(--slate);font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:360px}
 
-/* ---- ÜST BÖLGE: künye (sol) + kompakt slider (sağ) — Beyar revize 2:
-   görsel ağırlığı düşük, künye odaklı; Zomato pratiği + eski site sekme mirası ---- */
+/* ---- GALERİ: sahne + thumb şeridi + künye kolonu (TD R0/R1 düzeni VERBATIM) ---- */
 .md-top{background:var(--bg-white);border-bottom:1px solid var(--line)}
-.md-hero{display:grid;grid-template-columns:minmax(0,1fr) 460px;gap:44px;align-items:center;padding:2px 0 30px}
-.md-id{min-width:0}
-.md-id .eyebrow{margin-bottom:12px}
-.md-id h1{font-size:38px;letter-spacing:-.03em}
-.md-meta{display:flex;align-items:center;flex-wrap:wrap;gap:8px 18px;margin-top:13px;font-size:14px;font-weight:500;color:var(--slate-2)}
-.md-meta>span{display:inline-flex;align-items:center;gap:7px}
-.md-meta .md-rate{font-weight:700;color:var(--slate);font-size:15px}
-.md-meta .md-rate i{color:var(--yellow)}
-.md-meta .md-rate small{font-weight:500;color:var(--muted);font-size:12.5px}
-.md-meta .md-price b{color:var(--slate);letter-spacing:.06em}
-.md-meta .md-price span{color:#c9c9c9;letter-spacing:.06em}
-.md-meta .md-loc i{color:var(--tomato)}
-.md-meta .md-state{font-weight:700}
-.md-meta .md-state.is-open{color:var(--green-deep)}
-.md-meta .md-state.is-open i{color:var(--green)}
-.md-meta .md-state.is-closed{color:#b4452c}
-.md-sep{width:1px;height:16px;background:var(--line);flex:none}
-.md-actions{display:flex;align-items:center;gap:9px;margin-top:22px}
-.md-save{display:inline-flex;align-items:center;gap:9px;font-family:inherit;font-weight:700;font-size:13.5px;color:var(--slate);padding:11px 18px;border:1px solid var(--line);border-radius:var(--radius-md);background:var(--paper);cursor:pointer;transition:.2s var(--ease);white-space:nowrap}
-.md-save:hover{border-color:var(--tomato);color:var(--tomato)}
-.md-save.saved{background:var(--tomato);border-color:var(--tomato);color:#fff}
+.rd-gallery{display:grid;grid-template-columns:minmax(0,1fr) 260px;grid-template-rows:auto auto;gap:14px;padding-bottom:18px}
+.rd-stage{grid-column:1;grid-row:1;position:relative;height:440px;border-radius:var(--radius-xl);background-size:cover;background-position:center;overflow:hidden;box-shadow:var(--sh-md);cursor:zoom-in}
+.rd-stage::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(20,18,12,0) 42%,rgba(20,18,12,.28) 64%,rgba(15,13,9,.78))}
+.rd-stage .m-types{position:absolute;z-index:2;bottom:16px;right:16px;display:flex;gap:6px}
+.mt{display:inline-flex;align-items:center;gap:5px;background:rgba(20,18,12,.72);color:#fff;font-size:11px;font-weight:700;padding:6px 10px;border-radius:var(--radius-sm);backdrop-filter:blur(4px)}
+/* sahne aksiyonları: kaydet + paylaş (TD r-save dili, ikili grup) */
+.md-stage-acts{position:absolute;top:14px;right:14px;z-index:2;display:flex;gap:8px}
+.md-stage-acts button{width:42px;height:42px;border-radius:var(--radius-circle);background:rgba(255,255,255,.94);border:none;color:var(--slate);cursor:pointer;display:grid;place-items:center;font-size:16px;transition:.2s var(--ease)}
+.md-stage-acts button:hover{background:#fff;color:var(--tomato)}
+.md-stage-acts button.saved{background:var(--tomato);color:#fff}
+/* sahne üstü başlık katmanı (TD VERBATIM) */
+.rd-stage-info{position:absolute;left:28px;right:120px;bottom:24px;z-index:2}
+.rd-badges{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:13px}
+.tbadge{display:inline-flex;align-items:center;gap:7px;font-size:11.5px;font-weight:700;letter-spacing:.02em;padding:7px 13px;border-radius:var(--radius-sm)}
+.tbadge i{font-size:11.5px}
+.tbadge.t-dada{background:var(--tomato);color:#fff;box-shadow:0 4px 12px rgba(225,72,39,.32)}
+.tbadge.t-user{background:rgba(255,255,255,.92);color:var(--slate)}
+.rd-stage-info h1{color:#fff;font-size:38px;letter-spacing:-.03em;line-height:1.1;max-width:760px;margin-bottom:13px;text-shadow:0 2px 20px rgba(15,13,9,.4)}
+.rd-rateline{display:flex;flex-wrap:wrap;align-items:center;gap:10px 20px}
+.rd-stars{display:inline-flex;align-items:center;gap:10px}
+.rd-stars .stars{color:var(--yellow);font-size:15px;letter-spacing:2px}
+.rd-stars b{font-size:19px;font-weight:700;color:#fff}
+.rd-stars a{font-size:13px;color:rgba(255,255,255,.85);font-weight:500;text-decoration:underline;text-underline-offset:3px;transition:.18s;cursor:pointer}
+.rd-stars a:hover{color:#fff}
+.rd-rateline .r-views{display:inline-flex;align-items:center;gap:6px;font-size:13px;color:rgba(255,255,255,.85);font-weight:500}
+.rd-rateline .md-state{display:inline-flex;align-items:center;gap:7px;font-size:13px;font-weight:700;color:#fff}
+.rd-rateline .md-state i{color:var(--green)}
+/* thumb şeridi (TD VERBATIM — yatay, sahnenin altında) */
+.rd-thumbs{grid-column:1;grid-row:2;display:flex;flex-direction:row;gap:12px;height:88px;min-height:0}
+.rd-thumb{position:relative;flex:1;min-height:0;border-radius:var(--radius-lg);background-size:cover;background-position:center;cursor:pointer;border:2px solid transparent;overflow:hidden;transition:border-color .2s var(--ease),transform .2s var(--ease)}
+.rd-thumb:hover{transform:translateY(-2px)}
+.rd-thumb.active{border-color:var(--tomato)}
+.rd-thumb .tmore{position:absolute;inset:0;display:grid;place-items:center;background:rgba(20,18,12,.55);color:#fff;font-size:13.5px;font-weight:700}
+/* künye kolonu (TD kc-card VERBATIM) — mekan faktları + özellik chip'leri */
+.kunye-col{grid-column:2;grid-row:1/3;display:flex;flex-direction:column;min-width:0}
+.kc-card{flex:1;display:flex;flex-direction:column;background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-lg)}
+.rdf{flex:1;display:flex;align-items:center;gap:11px;padding:13px 15px;min-width:0}
+.rdf+.rdf{border-top:1px solid var(--line)}
+.rdf i{flex:none;width:38px;height:38px;border-radius:var(--radius-md);background:var(--tomato-tint);color:var(--tomato);display:grid;place-items:center;font-size:15px}
+.rdf div{min-width:0}
+.rdf span{display:block;font-size:11px;color:var(--muted);font-weight:500;letter-spacing:.02em}
+.rdf b{display:block;font-size:14.5px;font-weight:700;color:var(--slate);white-space:nowrap}
+.rdf b.is-open{color:var(--green-deep)}
+.rdf.state i{background:#EAF7F0;color:var(--green-deep)}
+.kc-chips{border-top:1px solid var(--line);padding:13px 15px 15px;display:flex;flex-wrap:wrap;gap:6px;align-content:flex-start}
+.kc-chips .kcl{flex:0 0 100%;font-size:10.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:2px}
+.kc-chips .chip{padding:6px 11px;font-size:12px;background:var(--bg);border-color:transparent;color:var(--slate-2)}
+.kc-chips .chip:hover{background:var(--tomato-tint);color:var(--tomato)}
+.kc-chips .chip i{font-size:10.5px;margin-right:5px;color:var(--tomato)}
+/* başlık bandı — yalnız kısa tanım (TD rd-head dili) */
+.rd-head{padding-bottom:22px}
+.rd-head .rd-sub{font-size:15px;color:var(--slate-2);font-weight:500;max-width:860px;margin:0}
 
-/* ---- GALERİ SLIDER: tek kare, kendi içinde kaydırma (Beyar revizesi —
-   kolaj ELENDİ, eski site kesfet-detay slider kurgusuna dönüş; snap track +
-   ok + sayaç; mobilde native swipe) ---- */
-.mg-slider{position:relative}
-.mg-track{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;border-radius:var(--radius-lg);box-shadow:var(--sh-sm)}
-.mg-track::-webkit-scrollbar{display:none}
-.mg-slide{flex:none;width:100%;aspect-ratio:21/9;background-size:cover;background-position:center;scroll-snap-align:start}
-.mg-nav{position:absolute;top:50%;transform:translateY(-50%);z-index:2;width:44px;height:44px;border-radius:var(--radius-md);border:none;background:rgba(255,255,255,.94);color:var(--slate);font-size:15px;cursor:pointer;display:grid;place-items:center;box-shadow:var(--sh-md);transition:.2s var(--ease)}
-.mg-nav:hover{background:var(--tomato);color:#fff}
-.mg-nav.prev{left:14px}
-.mg-nav.next{right:14px}
-.mg-count{position:absolute;bottom:13px;right:13px;z-index:2;display:inline-flex;align-items:center;gap:6px;background:rgba(20,18,12,.72);color:#fff;font-size:11.5px;font-weight:700;padding:6px 11px;border-radius:var(--radius-sm);backdrop-filter:blur(4px)}
-.mg-count i{font-size:11px}
-
-/* ---- STICKY SEKME BARI — pf-tabbar mirası (mutfak-defteri VERBATIM);
-   sekmeler bölüme scroll'lar (scrollspy), pane toggle değil ---- */
+/* ---- SEKME BARI — pf-tabbar görünümü (mutfak-defteri VERBATIM), davranış GERÇEK TAB:
+   pane yerinde değişir, sayfa kaymaz; ?tab= derin link ---- */
 .pf-tabbar{position:sticky;top:112px;z-index:40;background:rgba(255,255,255,.93);-webkit-backdrop-filter:blur(10px) saturate(150%);backdrop-filter:blur(10px) saturate(150%);padding:12px 0;border-bottom:1px solid var(--line)}
 .pf-tabs{display:flex;gap:4px;background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-md);padding:4px;overflow-x:auto;scrollbar-width:none}
 .pf-tabs::-webkit-scrollbar{display:none}
@@ -675,41 +698,49 @@ html,body{overflow-x:hidden}
 .pf-tabs .dt:hover{color:var(--tomato)}
 .pf-tabs .dt.active{background:var(--tomato);color:#fff}
 .pf-tabs .dt .cnt{font-size:11px;font-weight:700;opacity:.6}
-/* sekme hedefleri: sticky bar + header altına nefesli iniş */
-#hakkinda,#lezzetler,#yorumlar,#bilgi,#tarifler{scroll-margin-top:196px}
 
-/* ---- YERLEŞİM: ana kolon + sticky bilgi kolonu ---- */
-.md-sec{padding:44px 0 64px;background:var(--bg-cream)}
-.md-layout{display:grid;grid-template-columns:minmax(0,1fr) 360px;gap:30px;align-items:start}
+/* ---- GÖVDE: TD iki kolon ritmi — sol pane + sağ sticky künye ---- */
+.md-sec{padding:34px 0 64px;background:var(--bg-white)}
+.md-layout{display:grid;grid-template-columns:minmax(0,1fr) 360px;gap:44px;align-items:start}
 .md-main{min-width:0}
-.md-block{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-lg);padding:26px 28px;box-shadow:var(--sh-sm)}
-.md-block+.md-block{margin-top:22px}
-.md-block-head{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:16px}
-.md-block-head h2{font-size:22px;display:inline-flex;align-items:center;gap:11px}
-.md-block-head h2 i{color:var(--tomato);font-size:18px}
+/* pane mekanizması: yalnız aktif pane görünür */
+.md-pane{display:none}
+.md-pane.active{display:block;animation:fadeUp .3s var(--ease)}
+/* pane başlığı — TD rd-sec-head tipografisi VERBATIM */
+.rd-sec-head{display:flex;align-items:center;justify-content:space-between;gap:18px;flex-wrap:wrap;margin-bottom:22px}
+.rd-sec-head h2{font-size:26px}
+.rd-sec-head .eyebrow{margin-bottom:10px}
+.md-tools{display:flex;align-items:center;gap:14px;flex:none}
+/* genel bakış metni */
 .md-about p{font-size:15px;line-height:1.75;color:var(--slate-2);font-weight:500}
 .md-about p+p{margin-top:14px}
-.md-tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px;padding-top:16px;border-top:1px solid var(--line)}
-.md-tag{display:inline-flex;align-items:center;gap:7px;font-size:12.5px;font-weight:600;color:var(--slate-2);background:var(--bg);border:1px solid var(--line);padding:7px 13px;border-radius:var(--radius-sm)}
-.md-tag i{color:var(--tomato);font-size:11.5px}
 
-/* ---- ÖNE ÇIKAN LEZZETLER (menü highlights) ---- */
-.dish-list{display:flex;flex-direction:column}
-.dish-row{display:flex;align-items:center;gap:16px;padding:14px 0;border-top:1px solid var(--line)}
-.dish-row:first-child{border-top:none}
-.dish-fig{flex:none;width:74px;height:74px;border-radius:var(--radius-md);background-size:cover;background-position:center;box-shadow:var(--sh-sm)}
-.dish-body{flex:1;min-width:0}
-.dish-body h4{font-size:16px;display:flex;align-items:center;gap:9px;flex-wrap:wrap}
-.dish-sign{display:inline-flex;align-items:center;gap:5px;font-size:10px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--tomato);background:var(--tomato-tint);padding:3px 8px;border-radius:var(--radius-sm)}
-.dish-body p{font-size:13px;color:var(--muted);font-weight:500;margin-top:4px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-.dish-price{flex:none;font-size:16px;font-weight:700;color:var(--slate);letter-spacing:-.01em}
-.dish-note{margin-top:14px;padding-top:14px;border-top:1px dashed #ddd8cf;font-size:12.5px;color:var(--muted);font-weight:500;display:flex;align-items:center;gap:9px}
+/* ---- ÖNE ÇIKAN LEZZETLER — görselli yemek kartları (2'li grid) ---- */
+.dish-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.dish-card{border:1px solid var(--line);border-radius:var(--radius-md);overflow:hidden;background:var(--paper);transition:.25s var(--ease)}
+.dish-card:hover{transform:translateY(-3px);box-shadow:var(--sh-md)}
+.dish-fig{position:relative;aspect-ratio:16/9;background-size:cover;background-position:center}
+.dish-sign{position:absolute;top:10px;left:10px;display:inline-flex;align-items:center;gap:5px;font-size:10px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--tomato);background:rgba(255,255,255,.94);padding:4px 9px;border-radius:var(--radius-sm)}
+.dish-body{padding:13px 15px 15px}
+.dish-name{display:flex;align-items:baseline;justify-content:space-between;gap:10px}
+.dish-name h4{font-size:15.5px;min-width:0}
+.dish-price{flex:none;font-size:15px;font-weight:700;color:var(--tomato);letter-spacing:-.01em}
+.dish-body p{font-size:12.5px;color:var(--muted);font-weight:500;margin-top:5px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.dish-note{margin-top:16px;padding-top:14px;border-top:1px dashed #ddd8cf;font-size:12.5px;color:var(--muted);font-weight:500;display:flex;align-items:center;gap:9px}
 .dish-note i{color:var(--tomato);font-size:12px}
 
-/* ---- BİLGİ KOLONU: harita mock + iletişim + saatler ---- */
+/* ---- ADRES & SAATLER PANE'İ: harita + iletişim | saat tablosu (yan yana) ---- */
+.ap-grid{display:grid;grid-template-columns:1.15fr 1fr;gap:26px;align-items:start}
+.ap-grid .map-mock{height:240px;border-radius:var(--radius-lg);border:1px solid var(--line)}
+.ap-col h3{font-size:17px;display:inline-flex;align-items:center;gap:9px;margin-bottom:10px}
+.ap-col h3 i{color:var(--tomato);font-size:15px}
+
+/* ---- KÜNYE KOLONU (sticky, sağ) — harita mock + iletişim + saatler ---- */
 .md-side{position:sticky;top:130px;display:flex;flex-direction:column;gap:22px}
 .info-card{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-lg);overflow:hidden;box-shadow:var(--sh-sm)}
 .info-card .ic-body{padding:20px 22px}
+.info-card h3{font-size:17px;display:inline-flex;align-items:center;gap:9px;margin-bottom:12px}
+.info-card h3 i{color:var(--tomato);font-size:15px}
 /* harita GÖRSEL MOCK — CSS çizimi (gerçek embed Laravel fazında); cadde dokusu
    linear-gradient katmanları + domates pin */
 .map-mock{position:relative;height:190px;background:
@@ -743,7 +774,7 @@ html,body{overflow-x:hidden}
 .hr-row.closed .hr-time{color:#b4452c;font-weight:700}
 .hr-now{display:inline-flex;align-items:center;gap:7px;font-size:12px;font-weight:700;color:var(--green-deep);background:#EAF7F0;padding:6px 11px;border-radius:var(--radius-sm);margin-bottom:12px}
 
-/* ---- YORUMLAR — rev-* / c-item kiti (tarif-detay VERBATIM) ---- */
+/* ---- YORUMLAR — rev ve c-item kiti (tarif-detay VERBATIM) ---- */
 .rev-summary{display:grid;grid-template-columns:210px 1fr;gap:24px;background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-lg);padding:16px 22px;box-shadow:var(--sh-sm)}
 .rs-avg{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:5px;border-right:1px solid var(--line);padding-right:24px}
 .rs-avg>b{font-size:40px;font-weight:700;color:var(--slate);letter-spacing:-.03em;line-height:1}
@@ -804,7 +835,7 @@ html,body{overflow-x:hidden}
 .c-text{margin-top:7px;font-size:14px;color:var(--slate-2);font-weight:500;line-height:1.6}
 .c-text b{color:var(--slate)}
 .c-photos{display:flex;gap:8px;margin-top:9px}
-.c-ph{width:74px;height:74px;border-radius:var(--radius-md);background-size:cover;background-position:center;cursor:pointer;border:1px solid var(--line);transition:.2s var(--ease)}
+.c-ph{width:74px;height:74px;border-radius:var(--radius-md);background-size:cover;background-position:center;cursor:zoom-in;border:1px solid var(--line);transition:.2s var(--ease)}
 .c-ph:hover{transform:scale(1.04)}
 .c-acts{display:flex;align-items:center;gap:18px;margin-top:9px}
 .c-acts button{display:inline-flex;align-items:center;gap:7px;background:none;border:none;cursor:pointer;font-family:inherit;font-size:12.5px;font-weight:700;color:var(--muted);padding:0;transition:color .2s}
@@ -816,8 +847,7 @@ html,body{overflow-x:hidden}
 .rev-more{display:flex;justify-content:center;margin-top:4px;padding-top:14px;border-top:1px solid var(--line)}
 .rev-more .btn small{font-weight:500;color:var(--muted);font-size:12px}
 
-/* ---- "BU MEKÂNIN MUTFAĞINDAN TARİFLER" — r-card rayı (v3a VERBATIM) ---- */
-.md-recipes{background:var(--bg-white);padding:58px 0}
+/* ---- TARİFLER PANE'İ: r-card rayı (v3a VERBATIM), row-track shell'den ---- */
 .r-card{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-lg);overflow:hidden;transition:.3s var(--ease);cursor:pointer;display:flex;flex-direction:column}
 .r-card:hover{transform:translateY(-6px);border-color:#dcdcdc}
 .r-media{position:relative;height:200px;background-size:cover;background-position:center;transition:.5s var(--ease)}
@@ -848,16 +878,16 @@ html,body{overflow-x:hidden}
 .r-rate i{color:var(--yellow)}
 .r-views{display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--muted);font-weight:500}
 .r-views i{font-size:12px;color:var(--muted)}
+.md-pane .row-track{padding:6px 2px 12px}
 
-/* ---- BENZER MEKANLAR — mekan disc-card (v3a VERBATIM) ---- */
+/* ---- BENZER MEKANLAR — sayfa altı tam genişlik (TD "benzer tarifler" ritmi);
+   mekan disc-card (v3a VERBATIM), 3'lü grid ---- */
 .md-similar{background:var(--bg-cream);padding:58px 0 66px}
 .disc-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:26px}
 .disc-card{cursor:pointer}
 .disc-fig{position:relative;aspect-ratio:16/10;border-radius:var(--radius-lg);overflow:hidden;box-shadow:var(--sh-sm)}
 .disc-badges{position:absolute;bottom:13px;left:13px;display:flex;gap:6px;z-index:2}
-.disc-fig .m-types{z-index:2}
-.m-types{position:absolute;bottom:13px;right:13px;display:flex;gap:6px}
-.mt{display:inline-flex;align-items:center;gap:5px;background:rgba(20,18,12,.72);color:#fff;font-size:11px;font-weight:700;padding:6px 10px;border-radius:var(--radius-sm);backdrop-filter:blur(4px)}
+.disc-fig .m-types{position:absolute;bottom:13px;right:13px;display:flex;gap:6px;z-index:2}
 .disc-price-pill{letter-spacing:.06em;font-size:11.5px}
 .disc-price-pill b{color:#fff;font-weight:700}
 .disc-price-pill span{color:rgba(255,255,255,.42)}
@@ -880,42 +910,82 @@ html,body{overflow-x:hidden}
 .disc-meta .disc-loc{color:var(--slate);font-weight:500;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .disc-meta .disc-loc i{color:var(--tomato)}
 
+/* ---- LIGHTBOX — tarif-detay VERBATIM; markup main DIŞINDA (page-main z-index:2
+   stacking context'i header'ın altında bırakıyordu — TD ile aynı çözüm) ---- */
+.lightbox{
+  position:fixed;inset:0;z-index:100;background:rgba(20,18,12,.9);
+  display:grid;place-items:center;padding:34px;
+  opacity:0;visibility:hidden;transition:opacity .25s var(--ease),visibility .25s;
+}
+.lightbox.open{opacity:1;visibility:visible}
+.lb-img{max-width:min(1100px,92vw);max-height:80vh;border-radius:var(--radius-lg);box-shadow:var(--sh-lg);display:block;animation:fadeUp .25s var(--ease)}
+.lb-close{
+  position:absolute;top:22px;right:22px;width:46px;height:46px;border-radius:var(--radius-md);
+  border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.1);color:#fff;font-size:18px;
+  cursor:pointer;display:grid;place-items:center;transition:.2s var(--ease);
+}
+.lb-close:hover{background:var(--tomato);border-color:var(--tomato)}
+.lb-prev,.lb-next{
+  position:absolute;top:50%;transform:translateY(-50%);width:50px;height:50px;border-radius:var(--radius-md);
+  border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.1);color:#fff;font-size:17px;
+  cursor:pointer;display:grid;place-items:center;transition:.2s var(--ease);
+}
+.lb-prev{left:22px}.lb-next{right:22px}
+.lb-prev:hover,.lb-next:hover{background:var(--tomato);border-color:var(--tomato)}
+.lightbox.single .lb-prev,.lightbox.single .lb-next,.lightbox.single .lb-count{display:none}
+.lb-count{
+  position:absolute;bottom:24px;left:50%;transform:translateX(-50%);
+  font-size:12.5px;font-weight:700;color:#fff;background:rgba(255,255,255,.14);
+  border:1px solid rgba(255,255,255,.2);padding:7px 15px;border-radius:var(--radius-sm);
+}
+.lb-cap{position:absolute;top:26px;left:30px;font-size:13px;font-weight:700;color:rgba(255,255,255,.85);max-width:50vw;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
 /* ===================== TABLET (≤1024px) — mekan detay ===================== */
 @media (max-width:1024px){
-  .md-id h1{font-size:31px}
-  .md-hero{grid-template-columns:1fr;gap:24px;align-items:start}
-  .md-layout{grid-template-columns:1fr;gap:22px}
-  /* bilgi kolonu mobil/tablette İLK sıraya (harita+saat önce — yer profili alışkanlığı) */
-  .md-side{position:static;order:-1}
+  .rd-gallery{grid-template-columns:1fr}
+  .rd-stage{grid-column:1;grid-row:1;height:380px}
+  .rd-thumbs{grid-column:1;grid-row:2}
+  .kunye-col{grid-column:1;grid-row:3}
+  .kc-card{flex-direction:row;flex-wrap:wrap}
+  .kc-card .rdf{flex:1 1 40%}
+  .kc-card .rdf+.rdf{border-top:none}
+  .kc-card .rdf:nth-child(even){border-left:1px solid var(--line)}
+  .kc-card .rdf:nth-child(n+3){border-top:1px solid var(--line)}
+  .kc-chips{flex:1 1 100%}
+  .rd-stage-info h1{font-size:31px}
+  .md-layout{grid-template-columns:1fr;gap:30px}
+  .md-side{position:static}
+  .ap-grid{grid-template-columns:1fr}
   .disc-grid{grid-template-columns:1fr 1fr;gap:22px}
 }
 /* ===================== MOBİL (≤640px) — mekan detay ===================== */
 @media (max-width:640px){
   .rd-crumb{padding:14px 0 10px;font-size:12px}
   .rd-crumb b{max-width:150px}
-  .md-hero{gap:18px;padding-bottom:20px}
-  .md-id h1{font-size:26px}
-  .md-meta{gap:7px 14px;font-size:13px}
-  .md-sep{display:none}
-  .md-actions{margin-top:16px}
-  .md-actions .md-save{flex:1;justify-content:center}
+  .rd-gallery{gap:10px;padding-bottom:14px}
+  .rd-stage{height:300px;border-radius:var(--radius-lg)}
+  .rd-stage-info{left:16px;right:16px;bottom:16px}
+  .rd-stage-info h1{font-size:24px;margin-bottom:9px}
+  .rd-badges{margin-bottom:9px}
+  .rd-rateline{gap:7px 14px}
+  .rd-stars b{font-size:16px}
+  .rd-thumbs{height:64px;gap:9px}
+  .rd-head{padding-bottom:16px}
   .pf-tabbar{top:62px;padding:10px 0}
   .pf-tabs .dt{padding:9px 13px}
-  #hakkinda,#lezzetler,#yorumlar,#bilgi,#tarifler{scroll-margin-top:128px}
-  .mg-slide{aspect-ratio:16/10}
-  .mg-nav{width:38px;height:38px;font-size:13px}
-  .mg-nav.prev{left:10px}
-  .mg-nav.next{right:10px}
-  .md-sec{padding:26px 0 48px}
-  .md-block{padding:20px 18px}
-  .md-block-head h2{font-size:19px}
-  .dish-fig{width:60px;height:60px}
-  .dish-price{font-size:14.5px}
+  .md-sec{padding:22px 0 48px}
+  .rd-sec-head h2{font-size:22px}
+  .md-tools .row-nav{display:none}
+  .dish-grid{grid-template-columns:1fr;gap:16px}
   .rev-summary{grid-template-columns:1fr;gap:16px;padding:18px}
   .rs-avg{border-right:none;padding-right:0;border-bottom:1px solid var(--line);padding-bottom:14px}
   .rev-form{padding:16px;gap:10px}
-  .md-recipes,.md-similar{padding:44px 0}
+  .md-similar{padding:44px 0}
   .disc-grid{grid-template-columns:1fr;gap:20px}
+  .lightbox{padding:16px}
+  .lb-prev{left:10px}.lb-next{right:10px}
+  .lb-prev,.lb-next{width:42px;height:42px}
+  .lb-cap{display:none}
 }
 </style>
 </head>
@@ -1238,7 +1308,7 @@ html,body{overflow-x:hidden}
 
 <!-- SAYFA İÇERİĞİ — KEŞFET MEKAN MODÜLÜ: MEKAN PROFİLİ -->
 
-<!-- ===== ÜST BÖLGE: breadcrumb + başlık + galeri kolajı ===== -->
+<!-- ===== ÜST BÖLGE: breadcrumb + rd-gallery (sahne + thumb şeridi + künye kolonu) — tarif-detay anatomisi ===== -->
 <section class="below-header md-top">
   <div class="wrap">
     <nav class="rd-crumb" aria-label="Sayfa yolu">
@@ -1251,124 +1321,153 @@ html,body{overflow-x:hidden}
       <b>Nalia Karadeniz Mutfağı</b>
     </nav>
 
-    <div class="md-hero">
-      <div class="md-id">
-        <span class="eyebrow"><i class="fa-solid fa-location-dot"></i> Karadeniz Mutfağı · Aile İşletmesi</span>
-        <h1>Nalia Karadeniz Mutfağı</h1>
-        <div class="md-meta">
-          <span class="md-rate"><i class="fa-solid fa-star"></i> 4.8 <small>(312 değerlendirme)</small></span>
-          <span class="md-sep" aria-hidden="true"></span>
-          <span class="md-price"><b>₺₺</b><span>₺</span></span>
-          <span class="md-sep" aria-hidden="true"></span>
-          <span class="md-loc"><i class="fa-solid fa-location-dot"></i> İçerenköy, Ataşehir / İstanbul</span>
-          <span class="md-sep" aria-hidden="true"></span>
-          <span class="md-state is-open"><i class="fa-solid fa-circle-check"></i> Açık · 23.00'e kadar</span>
+    <div class="rd-gallery">
+      <!-- sahne: tek büyük görsel + başlık overlay (TD dili) -->
+      <div class="rd-stage" id="mdStage" style="background-image:url('https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=1400&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')">
+        <div class="md-stage-acts">
+          <button id="mdSave" type="button" aria-label="Mekânı kaydet"><i class="fa-regular fa-bookmark"></i></button>
+          <button id="mdShare" type="button" aria-label="Paylaş"><i class="fa-solid fa-arrow-up-from-bracket"></i></button>
         </div>
-        <div class="md-actions">
-          <button class="md-save" id="mdSave" type="button"><i class="fa-regular fa-bookmark"></i> Kaydet</button>
-          <button class="icon-btn" id="mdShare" type="button" aria-label="Paylaş"><i class="fa-solid fa-arrow-up-from-bracket"></i></button>
+        <div class="m-types"><span class="mt"><i class="fa-solid fa-images"></i> 12 fotoğraf</span></div>
+        <div class="rd-stage-info">
+          <div class="rd-badges">
+            <span class="tbadge t-dada"><i class="fa-solid fa-circle-check"></i> Doğrulanmış Mekân</span>
+            <span class="tbadge t-user"><i class="fa-solid fa-utensils"></i> Karadeniz Mutfağı</span>
+          </div>
+          <h1>Nalia Karadeniz Mutfağı</h1>
+          <div class="rd-rateline">
+            <span class="rd-stars">
+              <span class="stars"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star-half-stroke"></i></span>
+              <b>4.8</b>
+              <a id="mdGoReviews">312 değerlendirme</a>
+            </span>
+            <span class="r-views"><i class="fa-solid fa-eye"></i> 204B görüntülenme</span>
+            <span class="md-state"><i class="fa-solid fa-circle-check"></i> Açık · 23.00'e kadar</span>
+          </div>
         </div>
       </div>
 
-      <!-- kompakt galeri slider'ı — kendi içinde kaydırma (4 kare) -->
-      <div class="mg-slider" aria-label="Mekân fotoğrafları">
-        <div class="mg-track drag-scroll" id="mgTrack">
-          <div class="mg-slide" style="background-image:url('https://images.unsplash.com/photo-1547592180-85f173990554?w=1000&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')"></div>
-          <div class="mg-slide" style="background-image:url('https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=1000&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')"></div>
-          <div class="mg-slide" style="background-image:url('https://images.unsplash.com/photo-1547592166-23ac45744acd?w=1000&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')"></div>
-          <div class="mg-slide" style="background-image:url('https://images.unsplash.com/photo-1556909212-d5b604d0c90d?w=1000&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')"></div>
+      <!-- künye kolonu: mekan faktları + özellikler (TD kc-card dili) -->
+      <aside class="kunye-col" aria-label="Mekân künyesi">
+        <div class="kc-card">
+          <div class="rdf"><i class="fa-solid fa-utensils"></i><div><span>Mutfak</span><b>Karadeniz Mutfağı</b></div></div>
+          <div class="rdf"><i class="fa-solid fa-turkish-lira-sign"></i><div><span>Fiyat Aralığı</span><b>₺₺ · Orta seviye</b></div></div>
+          <div class="rdf"><i class="fa-solid fa-location-dot"></i><div><span>Semt</span><b>İçerenköy, Ataşehir</b></div></div>
+          <div class="rdf state"><i class="fa-regular fa-clock"></i><div><span>Şu An</span><b class="is-open">Açık · 23.00'e kadar</b></div></div>
+          <div class="kc-chips">
+            <span class="kcl">Özellikler</span>
+            <a class="chip" href="#" onclick="return false"><i class="fa-solid fa-mug-hot"></i>Kahvaltı Servisi</a>
+            <a class="chip" href="#" onclick="return false"><i class="fa-solid fa-calendar-check"></i>Rezervasyon</a>
+            <a class="chip" href="#" onclick="return false"><i class="fa-solid fa-children"></i>Aile Dostu</a>
+            <a class="chip" href="#" onclick="return false"><i class="fa-solid fa-tree"></i>Bahçe</a>
+            <a class="chip" href="#" onclick="return false"><i class="fa-solid fa-credit-card"></i>Kart Geçerli</a>
+          </div>
         </div>
-        <button class="mg-nav prev" id="mgPrev" type="button" aria-label="Önceki fotoğraf"><i class="fa-solid fa-chevron-left"></i></button>
-        <button class="mg-nav next" id="mgNext" type="button" aria-label="Sonraki fotoğraf"><i class="fa-solid fa-chevron-right"></i></button>
-        <span class="mg-count"><i class="fa-solid fa-images"></i> <span id="mgCount">1 / 4</span></span>
+      </aside>
+
+      <!-- thumb şeridi: 3 + "tümü" (TD davranışı: thumb sahneyi değiştirir, +8 lightbox açar) -->
+      <div class="rd-thumbs" id="mdThumbs">
+        <div class="rd-thumb active" aria-label="Salon — akşam servisi" data-img="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=1400&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5" style="background-image:url('https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=400&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')"></div>
+        <div class="rd-thumb" aria-label="Bakır tavada mıhlama" data-img="https://images.unsplash.com/photo-1547592180-85f173990554?w=1400&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5" style="background-image:url('https://images.unsplash.com/photo-1547592180-85f173990554?w=400&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')"></div>
+        <div class="rd-thumb" aria-label="Tepside hamsi tava" data-img="https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=1400&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5" style="background-image:url('https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=400&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')"></div>
+        <div class="rd-thumb" id="mdThumbMore" aria-label="Tüm fotoğraflar" data-img="https://images.unsplash.com/photo-1565958011703-44f9829ba187?w=1400&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5" style="background-image:url('https://images.unsplash.com/photo-1565958011703-44f9829ba187?w=400&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')"><span class="tmore">+8</span></div>
       </div>
+    </div>
+
+    <div class="rd-head">
+      <p class="rd-sub">Of'tan İstanbul'a taşınan bir aile tarifi defteri: bakır tavada mıhlama, mevsiminde tepside hamsi, günlük açılan Laz böreği. Küçük salon, ocaktan demli çay — beklemeye değer bir kuyruk.</p>
     </div>
   </div>
 </section>
 
-<!-- ===== STICKY SEKME BARI — pf-tabbar mirası; bölümlere scroll'lar ===== -->
+<!-- ===== SEKME BARI — pf-tabbar; GERÇEK TAB: pane yerinde değişir (?tab= derin link) ===== -->
 <div class="pf-tabbar">
   <div class="wrap">
-    <nav class="pf-tabs" id="mdTabs" aria-label="Sayfa bölümleri">
-      <a class="dt active" href="#hakkinda">Genel Bakış</a>
-      <a class="dt" href="#lezzetler">Öne Çıkan Lezzetler</a>
-      <a class="dt" href="#yorumlar">Yorumlar <span class="cnt">312</span></a>
-      <a class="dt" href="#bilgi">Adres &amp; Saatler</a>
-      <a class="dt" href="#tarifler">Tarifler</a>
+    <nav class="pf-tabs" id="mdTabs" aria-label="Mekân bölümleri">
+      <button class="dt active" type="button" data-pane="genel">Genel Bakış</button>
+      <button class="dt" type="button" data-pane="lezzetler">Öne Çıkan Lezzetler</button>
+      <button class="dt" type="button" data-pane="yorumlar">Yorumlar <span class="cnt">312</span></button>
+      <button class="dt" type="button" data-pane="adres">Adres &amp; Saatler</button>
+      <button class="dt" type="button" data-pane="tarifler">Tarifler</button>
     </nav>
   </div>
 </div>
 
-<!-- ===== GÖVDE: ana kolon + sticky bilgi kolonu ===== -->
+<!-- ===== GÖVDE: sol pane + sağ sticky künye (TD iki kolon ritmi) ===== -->
 <section class="md-sec">
   <div class="wrap">
     <div class="md-layout">
 
-      <!-- ---- ANA KOLON ---- -->
+      <!-- ---- SOL: seçili sekmenin paneli ---- -->
       <div class="md-main">
 
-        <!-- hakkında -->
-        <div class="md-block md-about" id="hakkinda">
-          <div class="md-block-head">
-            <h2><i class="fa-solid fa-store"></i> Mekân Hakkında</h2>
+        <!-- PANE: genel bakış -->
+        <div class="md-pane active" id="pane-genel">
+          <div class="rd-sec-head">
+            <div>
+              <span class="eyebrow"><i class="fa-solid fa-store"></i> Mekân Hakkında</span>
+              <h2>Genel Bakış</h2>
+            </div>
           </div>
-          <p>Of'tan İstanbul'a taşınan bir aile tarifi defteriyle açılan Nalia, yirmi yıldır aynı bakır tavalarda mıhlama çeviriyor. Mısır unu Karadeniz'den haftalık gelir, telli peynir köy kooperatifinden alınır; hamsi yalnız mevsiminde, tepside ve mısır ununa bulanmış hâliyle sunulur.</p>
-          <p>Salonu küçük, masası az — akşamları beklemeye değer bir kuyruğu olur. Tatlıda Laz böreği ve fırın sütlaç ikilisi sabittir; öğle saatlerinde günlük üç çeşit tencere yemeği eklenir.</p>
-          <div class="md-tags">
-            <span class="md-tag"><i class="fa-solid fa-mug-hot"></i> Kahvaltı Servisi</span>
-            <span class="md-tag"><i class="fa-solid fa-calendar-check"></i> Rezervasyon Alıyor</span>
-            <span class="md-tag"><i class="fa-solid fa-children"></i> Aile Dostu</span>
-            <span class="md-tag"><i class="fa-solid fa-tree"></i> Bahçe / Açık Alan</span>
-            <span class="md-tag"><i class="fa-solid fa-credit-card"></i> Kart Geçerli</span>
+          <div class="md-about">
+            <p>Of'tan İstanbul'a taşınan bir aile tarifi defteriyle açılan Nalia, yirmi yıldır aynı bakır tavalarda mıhlama çeviriyor. Mısır unu Karadeniz'den haftalık gelir, telli peynir köy kooperatifinden alınır; hamsi yalnız mevsiminde, tepside ve mısır ununa bulanmış hâliyle sunulur.</p>
+            <p>Salonu küçük, masası az — akşamları beklemeye değer bir kuyruğu olur. Tatlıda Laz böreği ve fırın sütlaç ikilisi sabittir; öğle saatlerinde günlük üç çeşit tencere yemeği eklenir. Hafta sonu kahvaltısı serpme usul, yalnız rezervasyonla.</p>
+            <p>Mutfak kapıya açık çalışır: tava ocaktan masaya çıkana dek gözünüzün önündedir. Çay ocaktan, bakır demlikte gelir; hesap kartla da nakitle de ödenebilir.</p>
           </div>
         </div>
 
-        <!-- öne çıkan lezzetler (menü highlights) -->
-        <div class="md-block" id="lezzetler">
-          <div class="md-block-head">
-            <h2><i class="fa-solid fa-utensils"></i> Öne Çıkan Lezzetler</h2>
+        <!-- PANE: öne çıkan lezzetler -->
+        <div class="md-pane" id="pane-lezzetler">
+          <div class="rd-sec-head">
+            <div>
+              <span class="eyebrow"><i class="fa-solid fa-utensils"></i> Menünün Yıldızları</span>
+              <h2>Öne Çıkan Lezzetler</h2>
+            </div>
           </div>
-          <div class="dish-list">
-            <div class="dish-row">
-              <div class="dish-fig" style="background-image:url('https://images.unsplash.com/photo-1547592180-85f173990554?w=300&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')"></div>
+          <div class="dish-grid">
+            <article class="dish-card">
+              <div class="dish-fig" style="background-image:url('https://images.unsplash.com/photo-1547592180-85f173990554?w=600&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')">
+                <span class="dish-sign"><i class="fa-solid fa-award"></i> İmza Lezzet</span>
+              </div>
               <div class="dish-body">
-                <h4>Bakır Tavada Mıhlama <span class="dish-sign"><i class="fa-solid fa-award"></i> İmza Lezzet</span></h4>
+                <div class="dish-name"><h4>Bakır Tavada Mıhlama</h4><span class="dish-price">₺240</span></div>
                 <p>Mısır unu, tereyağı ve telli peynir; tava masaya gelene dek çekilmeye devam eder.</p>
               </div>
-              <span class="dish-price">₺240</span>
-            </div>
-            <div class="dish-row">
-              <div class="dish-fig" style="background-image:url('https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=300&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')"></div>
+            </article>
+            <article class="dish-card">
+              <div class="dish-fig" style="background-image:url('https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=600&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')">
+                <span class="dish-sign"><i class="fa-regular fa-snowflake"></i> Mevsimlik</span>
+              </div>
               <div class="dish-body">
-                <h4>Hamsi Tava <span class="dish-sign"><i class="fa-regular fa-snowflake"></i> Mevsimlik</span></h4>
+                <div class="dish-name"><h4>Hamsi Tava</h4><span class="dish-price">₺320</span></div>
                 <p>Mısır ununa bulanır, tepside ters çevrilir — yalnız hamsi mevsiminde.</p>
               </div>
-              <span class="dish-price">₺320</span>
-            </div>
-            <div class="dish-row">
-              <div class="dish-fig" style="background-image:url('https://images.unsplash.com/photo-1547592166-23ac45744acd?w=300&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')"></div>
+            </article>
+            <article class="dish-card">
+              <div class="dish-fig" style="background-image:url('https://images.unsplash.com/photo-1547592166-23ac45744acd?w=600&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')"></div>
               <div class="dish-body">
-                <h4>Karalahana Çorbası</h4>
+                <div class="dish-name"><h4>Karalahana Çorbası</h4><span class="dish-price">₺140</span></div>
                 <p>Barbunya ve mısır taneli, közlenmiş tereyağıyla servis edilir.</p>
               </div>
-              <span class="dish-price">₺140</span>
-            </div>
-            <div class="dish-row">
-              <div class="dish-fig" style="background-image:url('https://images.unsplash.com/photo-1565958011703-44f9829ba187?w=300&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')"></div>
+            </article>
+            <article class="dish-card">
+              <div class="dish-fig" style="background-image:url('https://images.unsplash.com/photo-1565958011703-44f9829ba187?w=600&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')"></div>
               <div class="dish-body">
-                <h4>Laz Böreği</h4>
+                <div class="dish-name"><h4>Laz Böreği</h4><span class="dish-price">₺180</span></div>
                 <p>Muhallebili, üzeri pudra şekerli; günlük sınırlı sayıda açılır.</p>
               </div>
-              <span class="dish-price">₺180</span>
-            </div>
+            </article>
           </div>
           <p class="dish-note"><i class="fa-solid fa-circle-info"></i> Fiyatlar mekânın güncel menüsünden derlenmiştir; değişiklik gösterebilir.</p>
         </div>
 
-        <!-- yorumlar — rev-* kiti -->
-        <div class="md-block" id="yorumlar">
-          <div class="md-block-head">
-            <h2><i class="fa-regular fa-comments"></i> Yorumlar (312)</h2>
+        <!-- PANE: yorumlar — rev kiti (tarif-detay mirası) -->
+        <div class="md-pane" id="pane-yorumlar">
+          <div class="rd-sec-head">
+            <div>
+              <span class="eyebrow"><i class="fa-regular fa-comments"></i> Topluluk Ne Diyor</span>
+              <h2>Yorumlar (312)</h2>
+            </div>
           </div>
 
           <div class="rev-summary" aria-label="Puan özeti">
@@ -1479,9 +1578,148 @@ html,body{overflow-x:hidden}
           </div>
         </div>
 
+        <!-- PANE: adres & saatler -->
+        <div class="md-pane" id="pane-adres">
+          <div class="rd-sec-head">
+            <div>
+              <span class="eyebrow"><i class="fa-solid fa-map-location-dot"></i> Yol Tarifi &amp; Çalışma Düzeni</span>
+              <h2>Adres &amp; Saatler</h2>
+            </div>
+          </div>
+          <div class="ap-grid">
+            <div class="ap-col">
+              <div class="map-mock" role="img" aria-label="Harita önizlemesi (temsilî)" style="margin-bottom:14px">
+                <span class="map-pin"><i class="fa-solid fa-utensils"></i></span>
+                <span class="map-tag"><i class="fa-solid fa-location-dot"></i> İçerenköy, Ataşehir</span>
+              </div>
+              <div class="ic-rows">
+                <div class="ic-row"><i class="fa-solid fa-location-dot"></i><span><b>Adres</b>İçerenköy Mah. Prof. Dr. Ali Nihat Tarlan Cad. No:103, Ataşehir / İstanbul</span></div>
+                <div class="ic-row"><i class="fa-solid fa-phone"></i><span><b>Telefon</b><a href="tel:02164699610">0216 469 96 10</a></span></div>
+                <div class="ic-row"><i class="fa-solid fa-globe"></i><span><b>Web</b><a href="#" onclick="return false">nalia.com.tr</a></span></div>
+              </div>
+              <div class="ic-cta">
+                <button class="btn btn-primary" type="button"><i class="fa-solid fa-diamond-turn-right"></i> Yol Tarifi</button>
+                <button class="btn btn-ghost" type="button"><i class="fa-solid fa-phone"></i> Ara</button>
+              </div>
+            </div>
+            <div class="ap-col">
+              <h3><i class="fa-regular fa-clock"></i> Çalışma Saatleri</h3>
+              <span class="hr-now"><i class="fa-solid fa-circle-check"></i> Şu an açık · 23.00'te kapanıyor</span>
+              <div class="hours-table">
+                <div class="hr-row"><span class="hr-day">Pazartesi</span><span class="hr-time">12.00 – 23.00</span></div>
+                <div class="hr-row"><span class="hr-day">Salı</span><span class="hr-time">12.00 – 23.00</span></div>
+                <div class="hr-row"><span class="hr-day">Çarşamba</span><span class="hr-time">12.00 – 23.00</span></div>
+                <div class="hr-row today"><span class="hr-day">Perşembe</span><span class="hr-time">12.00 – 23.00</span></div>
+                <div class="hr-row"><span class="hr-day">Cuma</span><span class="hr-time">12.00 – 23.30</span></div>
+                <div class="hr-row"><span class="hr-day">Cumartesi</span><span class="hr-time">09.00 – 23.30</span></div>
+                <div class="hr-row closed"><span class="hr-day">Pazar</span><span class="hr-time">Kapalı</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- PANE: bu mutfaktan tarifler — r-card rayı (siteye köprü) -->
+        <div class="md-pane" id="pane-tarifler">
+          <div class="rd-sec-head">
+            <div>
+              <span class="eyebrow"><i class="fa-solid fa-fire-burner"></i> Evde Dene</span>
+              <h2>Bu Mutfaktan Tarifler</h2>
+            </div>
+            <div class="md-tools">
+              <div class="row-nav">
+                <button type="button" data-track="mdRecTrack" data-dir="prev" aria-label="Geri"><i class="fa-solid fa-chevron-left"></i></button>
+                <button type="button" data-track="mdRecTrack" data-dir="next" aria-label="İleri"><i class="fa-solid fa-chevron-right"></i></button>
+              </div>
+              <a class="see-all" href="tarif-liste-v1.html">Tamamını Gör <i class="fa-solid fa-arrow-right"></i></a>
+            </div>
+          </div>
+          <div class="row-track drag-scroll" id="mdRecTrack">
+            <article class="r-card" onclick="location.href='tarif-detay-v1.html'">
+              <div class="r-media-wrap"><div class="r-media" style="background-image:url('https://images.unsplash.com/photo-1547592180-85f173990554?w=600&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')">
+                <span class="r-chip">Karadeniz</span><button class="r-save" aria-label="Kaydet" onclick="event.stopPropagation()"><i class="fa-regular fa-heart"></i></button>
+                <div class="m-types"><span class="mt"><i class="fa-solid fa-play"></i> 4:10</span></div></div></div>
+              <div class="r-body">
+                <h4>Bakır Tavada Mıhlama — Of Usulü</h4>
+                <div class="r-facts">
+                  <span><i class="fa-solid fa-clock"></i> 25 dk</span>
+                  <span><i class="fa-solid fa-gauge-simple"></i> Kolay</span>
+                </div>
+                <div class="r-foot">
+                  <div class="r-author"><div class="av" style="background-image:url('https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&q=80&auto=format&fit=crop')"></div><span><b>Ayşe Tülin</b></span></div>
+                  <div class="r-stats"><span class="r-rate"><i class="fa-solid fa-star"></i> 4.9</span><span class="r-views"><i class="fa-solid fa-eye"></i> 88B</span></div>
+                </div>
+              </div>
+            </article>
+            <article class="r-card" onclick="location.href='tarif-detay-v1.html'">
+              <div class="r-media-wrap"><div class="r-media" style="background-image:url('https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=600&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')">
+                <span class="r-chip">Deniz Ürünleri</span><button class="r-save" aria-label="Kaydet" onclick="event.stopPropagation()"><i class="fa-regular fa-heart"></i></button>
+                <div class="m-types"><span class="mt"><i class="fa-solid fa-images"></i> 7</span></div></div></div>
+              <div class="r-body">
+                <h4>Tepside Hamsi Tava — Mısır Unlu</h4>
+                <div class="r-facts">
+                  <span><i class="fa-solid fa-clock"></i> 30 dk</span>
+                  <span><i class="fa-solid fa-gauge-simple"></i> Orta</span>
+                </div>
+                <div class="r-foot">
+                  <div class="r-author"><div class="av" style="background-image:url('https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=100&q=80&auto=format&fit=crop')"></div><span><b>Zeynep A.</b></span></div>
+                  <div class="r-stats"><span class="r-rate"><i class="fa-solid fa-star"></i> 4.7</span><span class="r-views"><i class="fa-solid fa-eye"></i> 52B</span></div>
+                </div>
+              </div>
+            </article>
+            <article class="r-card" onclick="location.href='tarif-detay-v1.html'">
+              <div class="r-media-wrap"><div class="r-media" style="background-image:url('https://images.unsplash.com/photo-1547592166-23ac45744acd?w=600&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')">
+                <span class="r-chip">Çorbalar</span><button class="r-save" aria-label="Kaydet" onclick="event.stopPropagation()"><i class="fa-regular fa-heart"></i></button>
+                <div class="m-types"><span class="mt"><i class="fa-solid fa-images"></i> 5</span></div></div></div>
+              <div class="r-body">
+                <h4>Karalahana Çorbası — Barbunyalı</h4>
+                <div class="r-facts">
+                  <span><i class="fa-solid fa-clock"></i> 45 dk</span>
+                  <span><i class="fa-solid fa-gauge-simple"></i> Kolay</span>
+                </div>
+                <div class="r-foot">
+                  <div class="r-author"><div class="av" style="background-image:url('https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?w=100&q=80&auto=format&fit=crop')"></div><span><b>Elif Şahin</b></span></div>
+                  <div class="r-stats"><span class="r-rate"><i class="fa-solid fa-star"></i> 4.8</span><span class="r-views"><i class="fa-solid fa-eye"></i> 36B</span></div>
+                </div>
+              </div>
+            </article>
+            <article class="r-card" onclick="location.href='tarif-detay-v1.html'">
+              <div class="r-media-wrap"><div class="r-media" style="background-image:url('https://images.unsplash.com/photo-1565958011703-44f9829ba187?w=600&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')">
+                <span class="r-chip">Tatlılar</span><button class="r-save" aria-label="Kaydet" onclick="event.stopPropagation()"><i class="fa-regular fa-heart"></i></button>
+                <div class="m-types"><span class="mt"><i class="fa-solid fa-play"></i> 6:02</span></div></div></div>
+              <div class="r-body">
+                <h4>Laz Böreği — Muhallebili Klasik</h4>
+                <div class="r-facts">
+                  <span><i class="fa-solid fa-clock"></i> 70 dk</span>
+                  <span><i class="fa-solid fa-gauge-simple"></i> Zor</span>
+                </div>
+                <div class="r-foot">
+                  <div class="r-author"><div class="av" style="background-image:url('https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&q=80&auto=format&fit=crop')"></div><span><b>Ayşe Tülin</b></span></div>
+                  <div class="r-stats"><span class="r-rate"><i class="fa-solid fa-star"></i> 4.9</span><span class="r-views"><i class="fa-solid fa-eye"></i> 61B</span></div>
+                </div>
+              </div>
+            </article>
+            <article class="r-card" onclick="location.href='tarif-detay-v1.html'">
+              <div class="r-media-wrap"><div class="r-media" style="background-image:url('https://images.unsplash.com/photo-1509440159596-0249088772ff?w=600&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')">
+                <span class="r-chip">Hamur İşi</span><button class="r-save" aria-label="Kaydet" onclick="event.stopPropagation()"><i class="fa-regular fa-heart"></i></button>
+                <div class="m-types"><span class="mt"><i class="fa-solid fa-images"></i> 6</span></div></div></div>
+              <div class="r-body">
+                <h4>Vakfıkebir Ekmeği — Ekşi Mayalı</h4>
+                <div class="r-facts">
+                  <span><i class="fa-solid fa-clock"></i> 3 saat</span>
+                  <span><i class="fa-solid fa-gauge-simple"></i> Orta</span>
+                </div>
+                <div class="r-foot">
+                  <div class="r-author"><div class="av" style="background-image:url('https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=100&q=80&auto=format&fit=crop')"></div><span><b>Zeynep A.</b></span></div>
+                  <div class="r-stats"><span class="r-rate"><i class="fa-solid fa-star"></i> 4.6</span><span class="r-views"><i class="fa-solid fa-eye"></i> 29B</span></div>
+                </div>
+              </div>
+            </article>
+          </div>
+        </div>
+
       </div>
 
-      <!-- ---- BİLGİ KOLONU (sticky) ---- -->
+      <!-- ---- SAĞ: sticky künye kolonu (her sekmede sabit — kullanıcının eli altında) ---- -->
       <aside class="md-side" id="bilgi">
 
         <!-- konum + iletişim -->
@@ -1494,7 +1732,6 @@ html,body{overflow-x:hidden}
             <div class="ic-rows">
               <div class="ic-row"><i class="fa-solid fa-location-dot"></i><span><b>Adres</b>İçerenköy Mah. Prof. Dr. Ali Nihat Tarlan Cad. No:103, Ataşehir / İstanbul</span></div>
               <div class="ic-row"><i class="fa-solid fa-phone"></i><span><b>Telefon</b><a href="tel:02164699610">0216 469 96 10</a></span></div>
-              <div class="ic-row"><i class="fa-solid fa-globe"></i><span><b>Web</b><a href="#" onclick="return false">nalia.com.tr</a></span></div>
             </div>
             <div class="ic-cta">
               <button class="btn btn-primary" type="button"><i class="fa-solid fa-diamond-turn-right"></i> Yol Tarifi</button>
@@ -1506,9 +1743,7 @@ html,body{overflow-x:hidden}
         <!-- çalışma saatleri -->
         <div class="info-card">
           <div class="ic-body">
-            <div class="md-block-head" style="margin-bottom:12px">
-              <h2 style="font-size:18px"><i class="fa-regular fa-clock"></i> Çalışma Saatleri</h2>
-            </div>
+            <h3><i class="fa-regular fa-clock"></i> Çalışma Saatleri</h3>
             <span class="hr-now"><i class="fa-solid fa-circle-check"></i> Şu an açık · 23.00'te kapanıyor</span>
             <div class="hours-table">
               <div class="hr-row"><span class="hr-day">Pazartesi</span><span class="hr-time">12.00 – 23.00</span></div>
@@ -1528,109 +1763,7 @@ html,body{overflow-x:hidden}
   </div>
 </section>
 
-<!-- ===== BU MEKÂNIN MUTFAĞINDAN TARİFLER — r-card rayı (siteye köprü) ===== -->
-<section class="md-recipes" id="tarifler">
-  <div class="wrap">
-    <div class="sec-head">
-      <div>
-        <span class="eyebrow"><i class="fa-solid fa-fire-burner"></i> Evde Dene</span>
-        <h2>Bu mekânın mutfağından tarifler</h2>
-        <p class="lead">Nalia'nın masasındaki Karadeniz klasiklerini kendi tenceren için yazdık.</p>
-      </div>
-      <div class="sec-tools">
-        <div class="row-nav">
-          <button type="button" data-track="mdRecTrack" data-dir="prev" aria-label="Geri"><i class="fa-solid fa-chevron-left"></i></button>
-          <button type="button" data-track="mdRecTrack" data-dir="next" aria-label="İleri"><i class="fa-solid fa-chevron-right"></i></button>
-        </div>
-        <a class="see-all" href="tarif-liste-v1.html">Tamamını Gör <i class="fa-solid fa-arrow-right"></i></a>
-      </div>
-    </div>
-    <div class="row-track drag-scroll" id="mdRecTrack">
-      <article class="r-card" onclick="location.href='tarif-detay-v1.html'">
-        <div class="r-media-wrap"><div class="r-media" style="background-image:url('https://images.unsplash.com/photo-1547592180-85f173990554?w=600&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')">
-          <span class="r-chip">Karadeniz</span><button class="r-save" aria-label="Kaydet" onclick="event.stopPropagation()"><i class="fa-regular fa-heart"></i></button>
-          <div class="m-types"><span class="mt"><i class="fa-solid fa-play"></i> 4:10</span></div></div></div>
-        <div class="r-body">
-          <h4>Bakır Tavada Mıhlama — Of Usulü</h4>
-          <div class="r-facts">
-            <span><i class="fa-solid fa-clock"></i> 25 dk</span>
-            <span><i class="fa-solid fa-gauge-simple"></i> Kolay</span>
-          </div>
-          <div class="r-foot">
-            <div class="r-author"><div class="av" style="background-image:url('https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&q=80&auto=format&fit=crop')"></div><span><b>Ayşe Tülin</b></span></div>
-            <div class="r-stats"><span class="r-rate"><i class="fa-solid fa-star"></i> 4.9</span><span class="r-views"><i class="fa-solid fa-eye"></i> 88B</span></div>
-          </div>
-        </div>
-      </article>
-      <article class="r-card" onclick="location.href='tarif-detay-v1.html'">
-        <div class="r-media-wrap"><div class="r-media" style="background-image:url('https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=600&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')">
-          <span class="r-chip">Deniz Ürünleri</span><button class="r-save" aria-label="Kaydet" onclick="event.stopPropagation()"><i class="fa-regular fa-heart"></i></button>
-          <div class="m-types"><span class="mt"><i class="fa-solid fa-images"></i> 7</span></div></div></div>
-        <div class="r-body">
-          <h4>Tepside Hamsi Tava — Mısır Unlu</h4>
-          <div class="r-facts">
-            <span><i class="fa-solid fa-clock"></i> 30 dk</span>
-            <span><i class="fa-solid fa-gauge-simple"></i> Orta</span>
-          </div>
-          <div class="r-foot">
-            <div class="r-author"><div class="av" style="background-image:url('https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=100&q=80&auto=format&fit=crop')"></div><span><b>Zeynep A.</b></span></div>
-            <div class="r-stats"><span class="r-rate"><i class="fa-solid fa-star"></i> 4.7</span><span class="r-views"><i class="fa-solid fa-eye"></i> 52B</span></div>
-          </div>
-        </div>
-      </article>
-      <article class="r-card" onclick="location.href='tarif-detay-v1.html'">
-        <div class="r-media-wrap"><div class="r-media" style="background-image:url('https://images.unsplash.com/photo-1547592166-23ac45744acd?w=600&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')">
-          <span class="r-chip">Çorbalar</span><button class="r-save" aria-label="Kaydet" onclick="event.stopPropagation()"><i class="fa-regular fa-heart"></i></button>
-          <div class="m-types"><span class="mt"><i class="fa-solid fa-images"></i> 5</span></div></div></div>
-        <div class="r-body">
-          <h4>Karalahana Çorbası — Barbunyalı</h4>
-          <div class="r-facts">
-            <span><i class="fa-solid fa-clock"></i> 45 dk</span>
-            <span><i class="fa-solid fa-gauge-simple"></i> Kolay</span>
-          </div>
-          <div class="r-foot">
-            <div class="r-author"><div class="av" style="background-image:url('https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?w=100&q=80&auto=format&fit=crop')"></div><span><b>Elif Şahin</b></span></div>
-            <div class="r-stats"><span class="r-rate"><i class="fa-solid fa-star"></i> 4.8</span><span class="r-views"><i class="fa-solid fa-eye"></i> 36B</span></div>
-          </div>
-        </div>
-      </article>
-      <article class="r-card" onclick="location.href='tarif-detay-v1.html'">
-        <div class="r-media-wrap"><div class="r-media" style="background-image:url('https://images.unsplash.com/photo-1565958011703-44f9829ba187?w=600&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')">
-          <span class="r-chip">Tatlılar</span><button class="r-save" aria-label="Kaydet" onclick="event.stopPropagation()"><i class="fa-regular fa-heart"></i></button>
-          <div class="m-types"><span class="mt"><i class="fa-solid fa-play"></i> 6:02</span></div></div></div>
-        <div class="r-body">
-          <h4>Laz Böreği — Muhallebili Klasik</h4>
-          <div class="r-facts">
-            <span><i class="fa-solid fa-clock"></i> 70 dk</span>
-            <span><i class="fa-solid fa-gauge-simple"></i> Zor</span>
-          </div>
-          <div class="r-foot">
-            <div class="r-author"><div class="av" style="background-image:url('https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&q=80&auto=format&fit=crop')"></div><span><b>Ayşe Tülin</b></span></div>
-            <div class="r-stats"><span class="r-rate"><i class="fa-solid fa-star"></i> 4.9</span><span class="r-views"><i class="fa-solid fa-eye"></i> 61B</span></div>
-          </div>
-        </div>
-      </article>
-      <article class="r-card" onclick="location.href='tarif-detay-v1.html'">
-        <div class="r-media-wrap"><div class="r-media" style="background-image:url('https://images.unsplash.com/photo-1509440159596-0249088772ff?w=600&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')">
-          <span class="r-chip">Hamur İşi</span><button class="r-save" aria-label="Kaydet" onclick="event.stopPropagation()"><i class="fa-regular fa-heart"></i></button>
-          <div class="m-types"><span class="mt"><i class="fa-solid fa-images"></i> 6</span></div></div></div>
-        <div class="r-body">
-          <h4>Vakfıkebir Ekmeği — Ekşi Mayalı</h4>
-          <div class="r-facts">
-            <span><i class="fa-solid fa-clock"></i> 3 saat</span>
-            <span><i class="fa-solid fa-gauge-simple"></i> Orta</span>
-          </div>
-          <div class="r-foot">
-            <div class="r-author"><div class="av" style="background-image:url('https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=100&q=80&auto=format&fit=crop')"></div><span><b>Zeynep A.</b></span></div>
-            <div class="r-stats"><span class="r-rate"><i class="fa-solid fa-star"></i> 4.6</span><span class="r-views"><i class="fa-solid fa-eye"></i> 29B</span></div>
-          </div>
-        </div>
-      </article>
-    </div>
-  </div>
-</section>
-
-<!-- ===== BENZER MEKANLAR — mekan disc-card ===== -->
+<!-- ===== BENZER MEKANLAR — sayfa altı tam genişlik (TD "benzer" ritmi) ===== -->
 <section class="md-similar">
   <div class="wrap">
     <div class="sec-head">
@@ -1661,7 +1794,7 @@ html,body{overflow-x:hidden}
       </article>
       <article class="disc-card" onclick="location.href='mekan-detay-v1.html'">
         <div class="disc-fig">
-          <div class="bg" style="background-image:url('https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=700&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')"></div>
+          <div class="bg" style="background-image:url('https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=700&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')"></div>
           <div class="disc-status"><span class="mt st-closing"><i class="fa-solid fa-clock"></i> 30 dk sonra kapanıyor</span></div>
           <div class="disc-badges"><span class="mt disc-price-pill"><b>₺₺</b><span>₺</span></span></div>
           <div class="m-types"><span class="mt"><i class="fa-solid fa-images"></i> 14</span></div>
@@ -1691,8 +1824,17 @@ html,body{overflow-x:hidden}
     </div>
   </div>
 </section>
-
 </main><!-- /.page-main -->
+
+<!-- ===== LIGHTBOX — tarif-detay VERBATIM; main DIŞINDA (stacking context) ===== -->
+<div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Görsel önizleme">
+  <span class="lb-cap" id="lbCap"></span>
+  <img class="lb-img" id="lbImg" alt="Mekân görseli" />
+  <button class="lb-close" id="lbClose" type="button" aria-label="Kapat"><i class="fa-solid fa-xmark"></i></button>
+  <button class="lb-prev" id="lbPrev" type="button" aria-label="Önceki görsel"><i class="fa-solid fa-chevron-left"></i></button>
+  <button class="lb-next" id="lbNext" type="button" aria-label="Sonraki görsel"><i class="fa-solid fa-chevron-right"></i></button>
+  <span class="lb-count" id="lbCount"></span>
+</div>
 
 <!-- ===== FOOTER ===== -->
 <footer class="footer orange">
@@ -2001,23 +2143,49 @@ document.addEventListener('click',function(e){
 
 /* ===== SAYFA JS — sayfa-spesifik script BU İŞARETİN ALTINA eklenir ===== */
 
-/* ===== MEKAN DETAY — kaydet + yorum formu (tarif-detay rev-* davranış mirası) ===== */
+/* ===== MEKAN DETAY — gerçek tab paneli + TD galeri (sahne/thumb/lightbox) + yorum kiti ===== */
 (function(){
-  /* kaydet toggle */
+  /* kaydet + paylaş (sahne üstü ikili) */
   var save=document.getElementById('mdSave');
-  save.addEventListener('click',function(){
+  save.addEventListener('click',function(e){
+    e.stopPropagation();
     var on=save.classList.toggle('saved');
-    save.innerHTML=on
-      ?'<i class="fa-solid fa-bookmark"></i> Kaydedildi'
-      :'<i class="fa-regular fa-bookmark"></i> Kaydet';
+    save.innerHTML='<i class="fa-'+(on?'solid':'regular')+' fa-bookmark"></i>';
   });
-
-  /* paylaş — mock geri bildirim */
   var share=document.getElementById('mdShare');
-  share.addEventListener('click',function(){
+  share.addEventListener('click',function(e){
+    e.stopPropagation();
     var ic=share.querySelector('i');
     ic.className='fa-solid fa-check';
     setTimeout(function(){ic.className='fa-solid fa-arrow-up-from-bracket';},1400);
+  });
+
+  /* ---- GERÇEK TAB PANELİ: pane yerinde değişir, sayfa kaymaz; ?tab= derin link ---- */
+  var tabs=Array.prototype.slice.call(document.querySelectorAll('#mdTabs .dt'));
+  function showPane(key){
+    tabs.forEach(function(t){t.classList.toggle('active',t.getAttribute('data-pane')===key);});
+    document.querySelectorAll('.md-pane').forEach(function(p){
+      p.classList.toggle('active',p.id==='pane-'+key);
+    });
+  }
+  tabs.forEach(function(t){
+    t.addEventListener('click',function(){
+      var key=t.getAttribute('data-pane');
+      showPane(key);
+      /* derin link sözleşmesi (pf-tabbar mirası): ?tab=lezzetler|yorumlar|adres|tarifler */
+      try{
+        var u=new URL(location.href);
+        if(key==='genel')u.searchParams.delete('tab');else u.searchParams.set('tab',key);
+        history.replaceState(null,'',u);
+      }catch(err){}
+    });
+  });
+  /* ?tab= ile gelindiyse o pane açılır */
+  var q=new URLSearchParams(location.search).get('tab');
+  if(q&&document.getElementById('pane-'+q))showPane(q);
+  /* sahnedeki "312 değerlendirme" → yorumlar sekmesi */
+  document.getElementById('mdGoReviews').addEventListener('click',function(e){
+    e.stopPropagation();showPane('yorumlar');
   });
 
   /* yorum formu: odakta açılır; yıldız zorunlu (TD davranışı) */
@@ -2068,42 +2236,86 @@ document.addEventListener('click',function(e){
     });
   });
 
-  /* galeri slider'ı — snap track + ok + sayaç (mobilde native swipe) */
+  /* ---- GALERİ: TD davranışı — thumb sahneyi değiştirir, sahne/+8 lightbox açar ---- */
   (function(){
-    var track=document.getElementById('mgTrack');
-    var count=document.getElementById('mgCount');
-    var total=track.children.length;
-    function idx(){return Math.round(track.scrollLeft/track.clientWidth);}
-    function go(d){track.scrollTo({left:(idx()+d)*track.clientWidth,behavior:'smooth'});}
-    document.getElementById('mgPrev').addEventListener('click',function(){go(-1);});
-    document.getElementById('mgNext').addEventListener('click',function(){go(1);});
-    track.addEventListener('scroll',function(){
-      var i=Math.min(total-1,Math.max(0,idx()));
-      count.textContent=(i+1)+' / '+total;
-    },{passive:true});
-  })();
+    var lb=document.getElementById('lightbox');
+    if(!lb)return;
+    var img=document.getElementById('lbImg');
+    var cap=document.getElementById('lbCap');
+    var count=document.getElementById('lbCount');
+    var group=[],idx=0;
+    function bgUrl(el){
+      var m=(el.style.backgroundImage||'').match(/url\(["']?(.*?)["']?\)/);
+      return m?m[1]:null;
+    }
+    function render(){
+      img.src=group[idx].src;
+      cap.textContent=group[idx].cap||'';
+      count.textContent=(idx+1)+' / '+group.length;
+      lb.classList.toggle('single',group.length<2);
+    }
+    function open(g,i){group=g;idx=i;render();lb.classList.add('open');document.body.style.overflow='hidden';}
+    function close(){lb.classList.remove('open');document.body.style.overflow='';}
+    document.getElementById('lbClose').addEventListener('click',close);
+    lb.addEventListener('click',function(e){if(e.target===lb)close();});
+    document.getElementById('lbPrev').addEventListener('click',function(){idx=(idx-1+group.length)%group.length;render();});
+    document.getElementById('lbNext').addEventListener('click',function(){idx=(idx+1)%group.length;render();});
+    document.addEventListener('keydown',function(e){
+      if(!lb.classList.contains('open'))return;
+      if(e.key==='Escape')close();
+      if(e.key==='ArrowRight'){idx=(idx+1)%group.length;render();}
+      if(e.key==='ArrowLeft'){idx=(idx-1+group.length)%group.length;render();}
+    });
 
-  /* sticky sekme barı — scrollspy (pf-tabbar mirası; pane değil, bölüme scroll) */
-  (function(){
-    var tabs=Array.prototype.slice.call(document.querySelectorAll('#mdTabs .dt'));
-    var secs=tabs.map(function(t){return document.querySelector(t.getAttribute('href'));});
-    function setActive(t){tabs.forEach(function(x){x.classList.toggle('active',x===t);});}
-    tabs.forEach(function(t){t.addEventListener('click',function(){setActive(t);});});
-    var ticking=false;
-    window.addEventListener('scroll',function(){
-      if(ticking)return;ticking=true;
-      requestAnimationFrame(function(){
-        ticking=false;
-        /* DOM sırasına değil offsetTop'a göre seç — mobilde bilgi kolonu
-           order:-1 ile öne geçer, dizi sırası ekran sırasından sapar */
-        var ref=window.scrollY+220,best=0,bestTop=-1;
-        secs.forEach(function(s,i){
-          if(!s)return;var t=s.offsetTop;
-          if(t<=ref&&t>bestTop){bestTop=t;best=i;}
-        });
-        setActive(tabs[best]);
+    /* galeri verisi: 4 thumb + 8 ek = 12 fotoğraf (Laravel fazında DB'den) */
+    var EXTRA=[
+      {id:'photo-1547592166-23ac45744acd',cap:'Karalahana çorbası'},
+      {id:'photo-1509440159596-0249088772ff',cap:'Vakfıkebir ekmeği'},
+      {id:'photo-1525351484163-7529414344d8',cap:'Serpme köy kahvaltısı'},
+      {id:'photo-1466978913421-dad2ebd01d17',cap:'Sofra kurulumu'},
+      {id:'photo-1556909212-d5b604d0c90d',cap:'Mutfak — ocak başı'},
+      {id:'photo-1546069901-ba9599a7e63c',cap:'Mevsim salatası'},
+      {id:'photo-1490645935967-10de6ba17061',cap:'Günün tencere yemekleri'},
+      {id:'photo-1517248135467-4c7edcad34c4',cap:'Pencere kenarı masalar'}
+    ];
+    var stage=document.getElementById('mdStage');
+    var thumbs=[].slice.call(document.querySelectorAll('#mdThumbs .rd-thumb'));
+    var gallery=thumbs.map(function(t){
+      return {src:t.getAttribute('data-img'),cap:t.getAttribute('aria-label')||'Nalia Karadeniz Mutfağı'};
+    }).concat(EXTRA.map(function(e){
+      return {src:'https://images.unsplash.com/'+e.id+'?w=1200&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5',cap:e.cap};
+    }));
+    function activeIdx(){
+      var i=thumbs.findIndex(function(t){return t.classList.contains('active');});
+      return i<0?0:i;
+    }
+    /* thumb tıkla → sahne değişir; "+8" thumb'ı doğrudan lightbox açar (TD tmore) */
+    thumbs.forEach(function(t,i){
+      t.addEventListener('click',function(){
+        if(t.id==='mdThumbMore'){open(gallery,i);return;}
+        thumbs.forEach(function(x){x.classList.remove('active');});
+        t.classList.add('active');
+        stage.style.backgroundImage="url('"+t.getAttribute('data-img')+"')";
       });
-    },{passive:true});
+    });
+    /* sahne tıkla → lightbox (aktif thumb'dan başlar); üstündeki butonlar hariç */
+    stage.addEventListener('click',function(e){
+      if(e.target.closest('.md-stage-acts,a'))return;
+      open(gallery,activeIdx());
+    });
+
+    /* yorum fotoğrafları → lightbox (yorum başına grup; TD davranışı) */
+    document.querySelectorAll('.c-item').forEach(function(item){
+      var phs=[].slice.call(item.querySelectorAll('.c-photos .c-ph'));
+      if(!phs.length)return;
+      var who=item.querySelector('.c-head b').textContent;
+      phs.forEach(function(p,i){
+        p.addEventListener('click',function(){
+          var g=phs.map(function(x){return {src:bgUrl(x),cap:'Yorum fotoğrafı — '+who};});
+          open(g,i);
+        });
+      });
+    });
   })();
 })();
 </script>

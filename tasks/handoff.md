@@ -1,10 +1,13 @@
 # DadaMutfak — PROJE TAMAMLANDI 🏁 MOCKUP SETİ TESLİME HAZIR
 
-> Tek doğruluk kaynağı. Güncelleme: 2026-06-12 akşam (**MEKAN MODÜLÜ TURU**:
-> mekan-liste-v1 **KABUL** · mekan-detay-v1 **TASARIM REDDEDİLDİ** — Beyar:
-> yerleşim kullanışsız, sağdaki görsel slider kötü; baştan tasarlanacak
-> (eski template + Zomato referanslı). Köprüler + kanıt:
-> `outputs/kesfet-mekan-rapor.md`. Envanter 62→64 sayfa.)
+> Tek doğruluk kaynağı. Güncelleme: 2026-06-12 gece (**KEŞFET MEKAN MODÜLÜ
+> TAMAM — Beyar onaylı, commit+push'lu**: mekan-detay nihai kurgu TARİF-DETAY
+> ANATOMİSİ MİRASI — rd-gallery sahne+thumb+kunye-col, GERÇEK tab paneli
+> `?tab=`, TD iki kolon ritmi. Kanıt 12/12 + köprü 4/4 + konsol 0:
+> `outputs/kesfet-mekan-rapor.md`. Dersler `tasks/lessons.md`e işlendi.
+> Sıradaki oturum: TOPLU CİLA + Beyar/patron revizeleri.)
+> Önceki: 2026-06-12 akşam (mekan-liste-v1 **KABUL** · mekan-detay-v1 Tur 1
+> reddedildi. Envanter 62→64 sayfa.)
 > Önceki: 2026-06-12 (**REVİZE-2 TAMAM** — site geneli
 > mobil sabit-katman disiplini: 🔴1+🟡53 çözüldü, kanonik pattern 55 dosyada,
 > kılavuz §3b; keşfet konsepte geri çekildi (Mekânlar · Gurme Lezzetler ·
@@ -80,12 +83,14 @@
 
 ## ➡️ SONRAKİ ADIM (Beyar kararı — 2026-06-12)
 
-1. **Keşfet mekan modülü:** TUR 1 BİTTİ (2026-06-12) — `mekan-liste-v1` ✅ KABUL
-   (facet + v3a mekan kartı dili); `mekan-detay-v1` ❌ TASARIM REDDEDİLDİ —
-   Beyar: yerleşim kullanışsız, sağdaki görsel slider kötü; **baştan
-   tasarlanacak** (eski template `kesfet-detay.html` L1 envanteri +
-   Zomato referanslı). Köprüler (anasayfa/kesfet → liste/detay) kuruldu ve
-   kalıyor. Kanıt + L1 + açık sorular: `outputs/kesfet-mekan-rapor.md`.
+1. **KEŞFET MEKAN MODÜLÜ TAMAM ✅ (liste + detay v3, 2026-06-12 gece, Beyar
+   onaylı + commit'li)** — `mekan-liste-v1` (facet + v3a kart dili) +
+   `mekan-detay-v1` (tarif-detay anatomisi mirası: tek sahne + thumb şeridi +
+   kc-card künye kolonu; gerçek tab paneli `?tab=` derin linkli; TD iki kolon
+   ritmi + sağ sticky künye; benzer mekânlar altta 3'lü). Tarihçe + kanıt:
+   `outputs/kesfet-mekan-rapor.md`. Dersler işlendi: `tasks/lessons.md`
+   (TD-anatomi-önce kuralı + overlay stacking + CSS yorum `*/`).
+   **Sıradaki oturum: TOPLU CİLA (cila-2) + Beyar/patron revizeleri.**
 2. **Toplu cila** (cila-2 — revize-2 tereddütleri dahil: hesabim 38px buton,
    gerçek cihaz mobil teyit turu).
 3. Sonrası: stack kararı (Laravel mi statik mi) + EN dil stratejisi.
