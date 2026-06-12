@@ -218,6 +218,90 @@
   sayfada bağımsız doğdu, final cilada KANONİK ilan edildi (kaynak
   `dyt-randevular-v1.html`); yeni panel görünüm geçişleri bu dilden
 
+## 2f. HERO + BREADCRUMB KANONU (CİLA-2 Faz 3 — site geneli, yeniden icat YASAK)
+
+> Kaynak: mevcut en iyi örneklerden TÜRETİLDİ (icat yok). Liste/landing hero
+> atası `tarif-liste-v1` `.lst-top/.lst-hero`; detay editoryal hero atası
+> `puf-noktasi-detay-v1` `.art-hero` (Faz 1 overlay-crumb düzeltmesi); detay
+> yapısal hero atası `tarif-detay-v1` `.rd-top/.rd-head`. Krem-zemin hero
+> REDDEDİLDİ (§2b) — saglik-testler vakası bunun son tortusuydu, temizlendi.
+
+### Breadcrumb — `.rd-crumb` TEK KANON
+- Markup: `<nav class="rd-crumb" aria-label="Sayfa yolu">` → `<a><i fa-house></a>`
+  → ayraç `<i fa-chevron-right>` → ara seviye `<a>` → son seviye `<b>`
+  (ellipsis + `max-width`). 55 sayfada birebir bu yapı.
+- Renk bağlamı 2 mod: **açık zemin** = default (muted link / slate `<b>`);
+  **koyu hero üstü** = beyaz override (`.lst-top .rd-crumb{color:#c9c3b8...}`
+  ya da görselli detayda `.rd-crumb.art-hero-crumb` beyaz + `text-shadow`).
+- Header-altı nefes: crumb ilk içerik satırıdır, header çizgisinden **≥16px**
+  (§3 kuralı). Yeni breadcrumb İCAT EDİLMEZ — `.rd-crumb` kopyalanır.
+- **🔴 H1 KOYU HERO HEADER-ALTI NEFESİ (Beyar canlı inceleme, reklam-ver vakası):**
+  Koyu hero ile header arasında kart-ayrımı YOK; standart 112/62 offset + crumb
+  18px = 18px nefes SIKIŞIK görünür. KANON: H1 koyu hero konteyneri
+  (`.lst-top` / `.sh-top` / `.tst-top`-sağlık) **`padding-top:128px` (mobil 74px)**
+  = standart 112/62 header offset **+ 16px (mobil +12px) ek nefes**. Crumb global
+  18/14 korunur → toplam header-altı nefes ~34px (mobil ~24px). Crumb→hero
+  içeriği ritmi (crumb alt 14 + `.lst-hero` üst 10) DEĞİŞMEZ. Açık zemin H3/light
+  crumb'da standart 112/62 YETERLİ (kart-ayrımı var, bump YAPILMAZ). vhub-hero
+  (crumb'sız immersive) bu kuraldan muaf.
+- Crumb taşımayan kasıtlı sayfalar: anasayfa, hata-404, video-mutfagi (koyu
+  hub), panel ailesi (chrome'suz). Bunlara crumb EKLENMEZ.
+
+### Hero — 3 KANON VARYANTI + "hak-ediş" kuralı
+Sayfa tipi → varyant eşlemesi TEK kurala bağlı:
+
+**H1 · Landing/Hub hero (koyu-overlay görselli)** — `.lst-top` + `.lst-hero`
+(+ `.lh-main .lh-chips`, opsiyonel `.lst-stats`). Overlay = `linear-gradient(
+90deg, rgba(28,25,18,.93), rgba(33,30,22,.72))` + Unsplash cover/center (v3a
+filtre suffix'i). Beyaz crumb + eyebrow + h1 + lead + cam-chip rayı.
+- **Sağlık yeşil-tint varyantı** `.sh-top` (overlay `rgba(18,28,22,.94),
+  rgba(20,32,25,.74)`) — sağlık ailesi hub'ları (saglik-hub, saglik-testler).
+- **Koyu hub varyantı** `.vhub-hero` (video-mutfagi) — aynı aileden, kendi
+  oynatma kuyruğu ekli; H1 sayılır.
+- KİMLER: içerik dizini/kategori/koleksiyon/sezon/landing/SEO/hub/keşif vitrin
+  sayfaları (tarif-liste, kategori, koleksiyon, sezon, gunun-menusu, seo-landing,
+  ansiklopedi, sss, mekan-liste, akademi, diyetisyen-dizin, puf-noktalari,
+  reklam-ver, hakkimizda, mutfaga-giris, saglik-hub, saglik-testler).
+
+**H2 · Detay hero** — iki KABUL EDİLMİŞ alt-desen (sayfanın doğasına göre):
+- **H2a editoryal/makale** `.art-hero` (+ `.art-hero-top/.art-hero-crumb/
+  .art-back/.art-hero-main/.art-cat/.art-hmeta`): görselli koyu, alt-hizalı,
+  overlay-içi beyaz crumb + "Geri" butonu + başlık + yazar/okunma meta. Overlay
+  bottom-gradient (.12→.34→.82). KİMLER: puf-noktasi-detay, mutfaga-giris-detay,
+  ansiklopedi-detay.
+- **H2b yapısal/künyeli** `.rd-top` + `.rd-crumb` + `.rd-head` + `.kunye-col`:
+  açık zemin crumb + 2-kolon hero + dikey künye. KİMLER: tarif-detay, mekan-detay,
+  (shop: urun-detay — DOKUNMA), siparislerim (ord-top künye).
+
+**H3 · Kompakt fonksiyonel üst (hero görseli YOK)** — `*-top{bg-white|bg-cream;
+border-bottom:1px solid var(--line)}` + `.rd-crumb` + kompakt başlık. KİMLER:
+kullanıcı GÖREVİ sayfaları — form/wizard (tarif-ekle, puf-ekle, diyetisyen-ol,
+onboarding), arama, bildirimler, hesabim, profil-ayar,
+tarif-bulucu, haftalik-menu, alisveris-listesi, kesfet, besin-kutuphanesi,
+diyet-listeleri/program-detay, giris(au-top), hesaplayıcılar (calc-top muaf dil).
+(NOT: checkout sepet/odeme H3 DEĞİL — shop kabuğu, KAPSAM DIŞI; siparislerim H2b verify-only.)
+
+**HAK-EDİŞ KURALI (hangi sayfa hangi varyant):**
+1. İçerik KEŞFİ / pazarlama / SEO / kategori-koleksiyon vitrin → **H1** koyu hero.
+2. Tek bir kayıt/varlık DETAYI → **H2** (editoryal=H2a, yapısal-künyeli=H2b).
+3. Kullanıcı GÖREVİ (form, checkout, arama, ayar, hesaplayıcı, app-list) → **H3** kompakt.
+> Şüphede: "bu sayfa içerik mi sergiliyor (H1), bir şeyi mi anlatıyor (H2),
+> yoksa kullanıcıya iş mi yaptırıyor (H3)?" Krem-zemin ORTALI head ARTIK YASAK —
+> bir hub/landing'e denk geliyorsa H1'e, göreve denk geliyorsa H3 (sol-hizalı
+> kompakt crumb+başlık) düzenine çekilir.
+
+### Profil & muaf
+- Profil hero `.pf-top` (banner+avatar+sayaç, §2b) kendi dilidir — H1/H2/H3 dışı.
+- Hesaplayıcı `.calc-top` fonksiyonel muaf dil (H3 akrabası).
+- Shop ailesi + panel ailesi KAPSAM DIŞI (dokunma).
+
+### 🔴 Faz 3 ZORUNLU düzeltme
+- **saglik-testler-v1** `.tst-top{background:var(--bg-cream)}` ortalı head →
+  H1 sağlık yeşil-tint (`.sh-top` dili, saglik-hub ile birebir): koyu-overlay
+  görselli, sol-hizalı, beyaz crumb. İçerik (eyebrow/h1/lead/`.tst-meta`) korunur.
+- **test-detay-v1** `.tst-top` krem: lead kararına bağlı — fonksiyonel test-çözme
+  ise H3 kalır, sağlık aile tutarlılığı isteniyorsa H1 yeşil hero'ya çekilir.
+
 ## 3. Dil kuralları (kısa)
 
 - Radius: SADECE token (`--radius-sm/md/lg/xl/circle`); `--radius-pill` yalnız bottom-nav mirası — YENİ pill yok

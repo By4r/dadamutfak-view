@@ -1,6 +1,24 @@
 # DadaMutfak — PROJE TAMAMLANDI 🏁 MOCKUP SETİ TESLİME HAZIR
 
-> Tek doğruluk kaynağı. Güncelleme: 2026-06-12 gece (**CİLA-2 FAZ 2 TAMAM —
+> Tek doğruluk kaynağı. Güncelleme: 2026-06-13 (**CİLA-2 FAZ 3 TAMAM — agent
+> team cila2-faz3 (lead+kanon+uygula-b+qa+ramazan), 26 görev kanıtlı kabul**:
+> hero/breadcrumb KANONU kılavuz §2f (rd-crumb tek form + H1/H2a-b/H3 +
+> hak-ediş; saglik-testler patron-fix krem→yeşil koyu hero; nefes 128/74
+> 17 H1'de; crumb simetri 15 sayfa) · kurumsal: hakkımızda yasal 3'lü grid +
+> 🆕 sefler-v1 (envanter 69→**70**) + Şef Ol→tarif-ekle (m12 ara çözüm) +
+> Günün Tarifi Keşfet sonrasına (Patron #1 ÇÖZÜLDÜ) + v3a Store dropdown fix ·
+> Beyar canlı feedback 6 iş (reklam-ver nefes, BNP mod rayı native-outline
+> kök neden, ansiklopedi 2-katman İA → Excel'in 19 GERÇEK kategorisiyle,
+> tarif-bulucu mega CTA 57 sayfa + köprü, dz-card sade link) · 🌙 RAMAZAN MODU
+> konsepti (5 sayfa; ?ramazan=1/0+localStorage+body.is-ramazan; otomatik
+> iftar↔sahur flip; ?demo=1; PATRON ONAYINA) · lg-gate 3 detay sayfası ·
+> footer/şef sweep 45 dosya · reklam-ver "Yerleşimler" (9 yerleşim, mock
+> metrik) · ölü CSS −102 · FİNAL QA: 70 sayfa × auth × 390 = 0 taşma/0
+> çift-katman/0 konsol. Kategori Excel'i alındı → `tasks/kategori-haritasi.md`
+> (entegrasyon Faz 4). Sentez+inceleme listesi: `outputs/cila2-faz3-sentez.md`.
+> Lessons +5 ders. **COMMIT ATILMADI — öneri sentez §9'da, Beyar onayı.**
+> Takım kapatıldı.)
+> Önceki: 2026-06-12 gece (**CİLA-2 FAZ 2 TAMAM —
 > ÜYELİK/PROFİL MODÜLÜ, agent team cila2-faz2**: İA `tasks/uyelik-ia.md`
 > (kilitli, M1–M8 lead kararlı) · login simülasyonu `?auth=1/0` + localStorage
 > `dm_auth` + `body.is-auth` · header login-state 55 sayfaya sweep (avatar
@@ -59,10 +77,14 @@
 
 ---
 
-## 📦 SAYFA ENVANTERİ — 69 üretim sayfası
+## 📦 SAYFA ENVANTERİ — 70 üretim sayfası
 
-- **67 × `*-v1.html`** + `anasayfa-portal-v3a.html` (kanonik baz) +
+- **68 × `*-v1.html`** + `anasayfa-portal-v3a.html` (kanonik baz) +
   `panel-shell.html` (diyetisyen paneli iskeleti)
+- CİLA-2 Faz 3'te doğan (2026-06-13): `sefler-v1.html` (şef dizini — _shell +
+  diyetisyen-dizin H1 hero + chef-card dilinde sef-card grid; "Şefler" hedefi).
+  Hero/breadcrumb kanonu: kılavuz **§2f**. Ramazan modu 5 sayfada
+  (`?ramazan=1/0`, patron onayı bekliyor)
 - CİLA-2 Faz 2'de doğan (2026-06-12): `puf-noktasi-ekle-v1` (tarif-ekle form
   kiti mirası, tek adım). Üyelik akışı: `tasks/uyelik-ia.md` (İA) + login-state
   55 sayfada (`?auth=1/0`)
@@ -125,12 +147,24 @@
 3. **Bekleyen 3 madde:** DadaStore marka dili kararı · mekan-detay 5px göz
    teyidi · BNP ölü wizard CSS temizliği (isteğe bağlı mini iş).
 
+## 🗂️ FAZ 4 GİRDİSİ — Kategori entegrasyonu (2026-06-13)
+
+Gerçek üretim kategorileri alındı: `tasks/KategoriEkle.xlsx` (11 sheet).
+**Kategori entegrasyonu Faz 4'te, harita `tasks/kategori-haritasi.md`'de**
+(sheet → sayfa/modül eşlemesi + yapısal fark notları: BNP mod 8→14, püf
+soru-format, keşfet 6'lı, ölçü iki seviye). Faz 3'te tek istisna uygulandı:
+ansiklopedi Katman-1 gerçek Sözlük kategorileriyle kuruldu.
+
 ## ⏳ PATRON BEKLEYENLER (Yasin Bey / iş kararı — dokunulmadı)
 
-1. Günün Tarifi bandının ana sayfa yeri (iki koyu band ard arda)
+1. ~~Günün Tarifi bandının ana sayfa yeri~~ → **ÇÖZÜLDÜ Faz 3** (Keşfet
+   sonrasına taşındı, ritim düzeldi)
+1b. 🌙 **RAMAZAN MODU konsepti onayı (YENİ — Faz 3)**: 5 sayfada canlı demo
+   (`?ramazan=1&demo=1`); onaylanırsa site-geneli yayılım + gerçek vakit API'si
 2. Mutfak Sırları arka plan videosu (statik foto ile çözüldü)
 3. Mobil app tanıtım landing'i (m3) — app bandı + footer rozetleri buna bağlı
-4. Reklam alan yerleşimi (m29) + reklam paket fiyatları ("Teklif İste" kalır)
+4. ~~Reklam alan yerleşimi (m29)~~ → **Faz 3'te "Yerleşimler" bölümü kuruldu**
+   (9 yerleşim + mock metrik); paket fiyatları kararı hâlâ patronda
 5. EN dil stratejisi (dil menüsü mock)
 6. Malzeme başı dış market "Sipariş Et" dropdown'ı
 7. Video ray modeli (m13) — "Seriyi Aç" hedefi buna bağlı
@@ -139,7 +173,8 @@
    5. sekme mi · BMH pediatrik kapsamı · vücut tipi eşikleri (diyetisyen onayı)
 10. Header bildirim zili (yeni chrome UI) · haftalık menü→alışveriş köprüsü
 11. Yasal metinler hukukçu onayı + künye tüzel bilgileri + ekip isimleri
-12. Sezon "Günün Ayeti" bloğu (editöryel) · "Şef Ol" hedefi
+12. Sezon "Günün Ayeti" bloğu (editöryel) · "Şef Ol" hedefi (**Faz 3 ara
+    çözümü: →tarif-ekle**; patron farklı isterse tek href sweep'i)
 
 ## ➡️ SONRAKİ ADIM (Beyar kararı — 2026-06-12)
 

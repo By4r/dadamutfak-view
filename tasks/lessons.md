@@ -167,3 +167,81 @@ yanlış "hepsi temiz" verdi; ikinci turda yakalandı, sonuçlar yeniden üretil
 **How to apply:** Toplu probe yazarken ilk iş sanity-check: 1 bilinen-kirli +
 1 bilinen-temiz sayfayı koş, beklenen sonucu vermiyorsa probe'un kendisini
 debug et; "0 bulgu" raporu ancak sanity-check'ten sonra güvenilirdir.
+
+## 390 taşma probe'unda scrollWidth'e güvenilmez — element-rect ölç (2026-06-13, cila-2 faz 3)
+
+**Kural:** Mobil yatay taşma denetiminde `document.scrollWidth` TEK BAŞINA
+kullanılmaz — clipped taşma (overflow-x:hidden altında içerik taşar ama scroll
+alanı uzamaz) scrollWidth'te GÖRÜNMEZ ve FALSE-PASS üretir. Doğru ölçüm:
+tüm elementlerde `rect.right > viewport` taraması (+ rect.left < 0).
+
+**Why:** sefler-v1 hero'su 390'da ~42px taşıyordu; uygula-b'nin scrollWidth
+probe'u sayfayı "temiz" geçirdi, qa'nın element-rect probe'u yakaladı.
+
+**How to apply:** Probe şablonlarında taşma dedektörü element-rect tabanlı
+yazılır; scrollWidth yalnız hızlı ön-eleme. Sanity-check fixture'ına clipped
+taşma örneği de eklenir (9999px değil, hidden-altı taşma).
+
+## Public grid kolonları da HEP minmax(0,1fr) + türetmede referans-diff (2026-06-13, cila-2 faz 3)
+
+**Kural:** Kılavuz §2e'deki GRID KURALI (kolonlar `minmax(0,1fr)`, `1fr`'nin
+min-width:auto şişmesi) yalnız panel değil PUBLIC sayfalar için de geçerli —
+özellikle `.lst-hero` ailesi. Yeni sayfa mevcut bir sayfadan türetilirken
+`min-width:0` içeren satırlar atlanmaya çok müsait: türetme sonrası kaynak
+sayfayla CSS diff'i zorunlu.
+
+**Why:** sefler-v1, diyetisyen-dizin'den türetilirken `.lh-chips`'teki
+`min-width:0` atlandı + `.lst-hero{1fr}` kaldı → uzun stat etiketleri 390'da
+42px taşırdı. Kardeş sayfalar aynı 1fr'ye sahipti ama min-width:0'ları olduğu
+için taşmıyordu — fark tek satırdı.
+
+**How to apply:** (1) Yeni `.lst-hero`/grid sayfası türetilince
+`grep -n 'min-width:0\|minmax(0' kaynak.html turev.html` diff'i; (2) kılavuz
+§2e kuralını public'e de uygula; (3) 390 element-rect probe'u teslim şartı.
+
+## Headless/iframe probe altyapı tuzakları — Chrome 149 sonrası (2026-06-13, cila-2 faz 3)
+
+**Kural:** (1) Chrome 149 headless `--dump-dom`'u kaldırdı — dump-dom'a dayalı
+eski probe script'leri 0 byte döndürür, Playwright'a geç. (2) Offscreen iframe
+timer-throttle yer — iframe'i viewport içinde görünür tut, yoksa setTimeout'lu
+öğeler (çerez 700ms) hiç tetiklenmez. (3) Uzun iframe'in alt bölgesinde
+transition'lar settle olmaz — §3b çift-katman denetimi GEOMETRİ ile değil
+CLASS-STATE ile ölçülür (çerez `.show` ⇒ nav `.bn-hidden` var mı).
+
+**Why:** Faz 3 final süpürmesinde eski sweep.py CLI ölü çıktı; iframe-batch'e
+geçişte iki tuzak sanity-check fixture'larıyla yakalandı (kirli fixture
+çift-katmanı ancak class-state ölçümüyle stabil verdi).
+
+**How to apply:** Probe runner şablonu: Playwright + görünür iframe + class-state
+denetimi + (önceki ders) element-rect taşma + sanity-check (kirli+temiz) ön şart.
+
+## Paralel takımda batch işi öncesi SAHİPLİK çapraz-grep'i (2026-06-13, cila-2 faz 3)
+
+**Kural:** Bir teammate çok-dosyalı batch (örn. "tüm H1 sayfalarına nefes
+patch'i") koşmadan önce hedef listesini ENVANTER tip-listesinden değil
+SAHİPLİK matrisinden süzer — "tip listesi ≠ sahiplik listesi". Batch script'e
+girmeden önce her hedef dosya kendi setiyle çapraz-grep'lenir.
+
+**Why:** Kanon, H1 nefes batch'inde envanterindeki tüm H1 sayfalarını taradı;
+mekan-liste SET B'deydi (uygula-b'nin) ama tip olarak H1 olduğu için batch'e
+girdi → sahiplik ihlali (içerik doğruydu, fiili çakışma şans eseri olmadı).
+
+**How to apply:** Batch öncesi: hedef listesi ∩ kendi-set listesi = hedef
+listesi olmalı; fark çıkarsa lead'e sor. Lead nabız taramasında "değişen dosya
+× sahip" çaprazını her turda koşar (bu fazda yakalanma yolu buydu).
+
+## Agent team kurulumunda tasarım-kalite disiplini prompt'a gömülür (2026-06-12, cila-2 faz 3)
+
+**Kural:** (1) Tasarım üretimi yapacak her teammate'in spawn prompt'una
+"tasarım üretimi/redesign'da frontend-design skill ZORUNLU" satırı yazılır
+(proje CLAUDE.md kuralı — prompt'a girmezse uygulanmıyor). (2) Lead kabulü
+yapısal kanıtla (grep/numstat/konsol) yetinmez: SS'e TASARIM GÖZÜYLE bakılır
+(bitişiklik, nefes, ritim, hizalama) ve değerlendirme yazılır.
+
+**Why:** Faz 3'te lead, reklam-ver Yerleşimler bölümünü yapısal kanıtla kabul
+etti; Beyar aynı sayfada hero başlığının menüye bitişik olduğunu (tasarım
+sorunu) canlıda yakaladı: "kabul diyorsun, tasarımdan uzaksın olmaz." Skill
+zorunluluğu da teammate prompt'larında eksikti, sonradan yayıldı.
+
+**How to apply:** Takım kurulum şablonuna iki satır: teammate prompt'una skill
+zorunluluğu + lead kabul checklist'ine "tasarım gözü değerlendirmesi yazıldı mı".
