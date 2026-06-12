@@ -106,6 +106,53 @@ görevi olarak ayır; sweep script'i idempotent yaz; bitince (1) negatif grep
 (`eski-öğe VAR ama yeni-öğe YOK`), (2) kabuk-sapması ailelere sızıntı grep'i,
 (3) 4+ farklı aileden örnek sayfada render probe'u koş.
 
+## İnceleme noktası sunarken "bilinen sınırlamalar" PEŞİNEN bildirilir (2026-06-12, cila-2 faz 2)
+
+**Kural:** Beyar'a herhangi bir inceleme noktası sunulurken (link listesi, SS,
+durum raporu, teslim mesajı) o anda ÇALIŞMAYAN, YARIM veya YANILTICI
+görünebilecek her şey açıkça "henüz çalışmaz / kısmen çalışır / X'ten sonra
+aktif olur" diye işaretlenir. Teşhisi sonradan açıklamak YETMEZ — Beyar'ın bir
+şeyi deneyip boş bulması denetim hatasıdır. Tüm rapor ve teslimlerde
+"Bilinen Sınırlamalar" bölümü ZORUNLUDUR.
+
+**Why:** CİLA-2 Faz 2'de login-state önce _shell + 6 içerik dosyasına yazıldı,
+68-sayfa yayılımı plan gereği faz-sonu sweep'e ertelendi. Lead bunu biliyordu
+ama Beyar'a sunulan ara çıktılarında "anasayfa dahil diğer sayfalarda ?auth=1
+henüz çalışmaz" notu düşülmedi; Beyar anasayfa-portal-v3a?auth=1'i deneyip
+header'ı boş buldu, teşhis ancak sonradan açıklandı.
+
+**How to apply:** (1) Her teslim/rapor şablonuna "Bilinen Sınırlamalar"
+bölümü ekle — boşsa "yok" yaz, atlama. (2) Link/SS paylaşmadan önce kendine
+sor: "Beyar bunun yanındaki/devamındaki neyi tıklar ve ne boş çıkar?" —
+cevabı nota dönüştür. (3) Aşamalı yayılan değişikliklerde (sweep, faz-sonu
+işler) kapsam listesi PEŞİNEN verilir: "şu N dosyada aktif, kalanı X sonrası".
+
+## Region-swap'li sweep'te CSS hayatta-kalma denetimi zorunlu (2026-06-12, cila-2 faz 2)
+
+**Kural:** Çok-dosyalı sweep script'i region-swap (anchor'dan anchor'a değiştir)
+kullanıyorsa: (1) CSS eklemeleri INSERT olur, region-swap OLMAZ; (2) her swap
+SPAN-GUARD taşır (beklenenden büyük eşleşme, örn. >3000 karakter → ABORT);
+(3) sweep sonrası `git diff --numstat` denetimi zorunlu — NET NEGATİF dosya =
+yutma şüphesi; (4) görsel render probe'u (SS + temel blok stilli mi) teslimin
+ÖN ŞARTIDIR, lead denetimine veya Beyar'a bırakılmaz. DOM/state doğrulaması
+(class var mı) CSS yutmasını YAKALAMAZ.
+
+**Why:** Faz 2 login-state sweep'inde anasayfa-portal-v3a'nın CSS sıralaması
+shell'den divergent çıktı; R1 region-swap'i iki anchor arasındaki ~308 satır
+sayfa CSS'ini (hero, searchcard, chips, stats) sessizce yuttu. DOM probe'ları
+geçti (is-auth/acct-wrap doğruydu), bozulmayı Beyar canlı incelemede ve lead'in
+görsel/genişlik probe'u aynı anda yakaladı. Aynı turda R6 lg-gate region-swap'i
+de detay sayfalarındaki overlay'leri silecekti (teslim öncesi yakalandı) — iki
+vaka aynı dersin iki yüzü. Ayrıca kaçak tespiti dosya ADINA güvenince şaştı:
+alisveris-listesi "shop" sanılıp atlandı; aile üyeliği marker grep'iyle
+(lm-modal var mı?) belirlenir, adla değil.
+
+**How to apply:** Sweep script şablonuna span-guard + CSS-INSERT kuralını koy;
+sweep teslim checklist'i = idempotent re-run + negatif grep + sızıntı grep +
+numstat (net-negatif 0) + silinen-CSS-selector grep'i (`git diff -U0 | grep
+'^-.*{'` → bilinçli bölge dışı 0) + 2+ aileden görsel SS. Divergent bilinen
+sayfalar (v3a, tarif-detay) script'e SOKULMAZ — kendi anchor'larıyla elle patch.
+
 ## Probe çıktısı inject klasörünün İÇİNE yazılmaz (2026-06-12, cila-2 faz 1)
 
 **Kural:** iframe-tabanlı toplu probe'da probe HTML'i inject kopyaların

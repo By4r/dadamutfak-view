@@ -217,6 +217,69 @@ img{display:block;max-width:100%}
 .btn-login i{font-size:14px}
 .btn-login:hover{background:var(--tomato-dark);border-color:var(--tomato-dark)}
 
+/* ===== LOGIN-STATE (cila-2 faz 2) — header logged-in chrome ===== */
+/* varsayılan logged-out: ekle/zil/avatar gizli. body.is-auth → açılır, btn-login gizlenir */
+.head-add,.head-bell,.acct-wrap{display:none}
+body.is-auth .btn-login{display:none}
+body.is-auth .head-add,body.is-auth .acct-wrap{display:flex}
+body.is-auth .head-bell{display:grid}
+/* ekle + hesap menüsü ortak konteyner (header sağ blok dropdown'ı)
+   NOT: display BASE'te VERİLMEZ — gizle/göster yalnız .head-add/.acct-wrap kurallarınca
+   yönetilir (aksi halde display:flex, üstteki display:none'ı kaynak sırasıyla yener → logged-out sızıntı) */
+.acct-item{position:relative;align-items:center;height:72px}
+.acct-btn{display:inline-flex;align-items:center;gap:7px;height:43px;padding:0 9px 0 5px;background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-md);cursor:pointer;font-family:inherit;transition:.2s var(--ease)}
+.acct-btn:hover{border-color:var(--tomato)}
+.acct-ava{width:33px;height:33px;border-radius:var(--radius-circle);background-size:cover;background-position:center;flex:none}
+.acct-caret{font-size:9px;color:var(--muted);transition:transform .2s var(--ease)}
+.acct-item.open .acct-caret{transform:rotate(180deg)}
+/* bildirim zili + sayaç */
+.head-bell{position:relative}
+.hb-badge{position:absolute;top:-4px;right:-4px;min-width:17px;height:17px;padding:0 4px;border-radius:var(--radius-circle);background:var(--tomato);color:#fff;font-size:10px;font-weight:700;display:grid;place-items:center;border:2px solid #fff}
+/* dropdown panel (header sağa hizalı; nav dropdown diliyle aynı) */
+.acct-menu{position:absolute;top:calc(100% + 12px);right:0;min-width:236px;background:#fff;border:1px solid var(--line);border-radius:var(--radius-lg);box-shadow:var(--sh-lg);padding:10px;opacity:0;visibility:hidden;transform:translateY(8px);transition:.22s var(--ease);z-index:80}
+.acct-item:hover .acct-menu,.acct-item.open .acct-menu{opacity:1;visibility:visible;transform:translateY(0)}
+.acct-menu::before{content:"";position:absolute;top:-7px;right:24px;width:13px;height:13px;background:#fff;border-left:1px solid var(--line);border-top:1px solid var(--line);transform:rotate(45deg)}
+.acct-menu>a{display:flex;align-items:flex-start;gap:12px;padding:11px 13px;border-radius:var(--radius-md);font-size:14px;font-weight:500;color:var(--slate);transition:.16s var(--ease)}
+.acct-menu>a i{width:18px;text-align:center;color:var(--tomato);font-size:14px;margin-top:2px}
+.acct-menu>a span{display:block}
+.acct-menu>a small{display:block;font-size:11.5px;color:var(--muted);font-weight:500;margin-top:1px}
+.acct-menu>a:hover{background:var(--tomato-tint);color:var(--tomato);padding-left:16px}
+.acct-menu .acct-logout,.acct-menu .acct-logout i{color:var(--tomato)}
+/* hesap menüsü kimlik başlığı */
+.acct-id{display:flex;align-items:center;gap:11px;padding:8px 11px 12px}
+.acct-id .acct-ava{width:42px;height:42px}
+.acct-id-txt{min-width:0}
+.acct-id-txt b{display:block;font-size:14.5px;color:var(--slate);font-weight:700}
+.acct-id-txt small{display:block;font-size:12px;color:var(--muted);font-weight:500}
+.acct-div{height:1px;background:var(--line);margin:6px 4px}
+/* drawer logged-in kimlik satırı (mobil) */
+.drawer-acct{display:none;align-items:center;gap:12px;padding:2px 2px 12px}
+body.is-auth .drawer-acct{display:flex}
+body.is-auth .drawer-login{display:none}
+.drawer-acct .da-ava{width:46px;height:46px;border-radius:var(--radius-circle);background-size:cover;background-position:center;flex:none}
+.drawer-acct .da-info{min-width:0}
+.drawer-acct .da-info b{display:block;font-size:15px;color:var(--slate);font-weight:700}
+.da-links{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:3px}
+.da-links a{font-size:12.5px;font-weight:700;color:var(--tomato)}
+.da-links a:not(:last-child)::after{content:"·";margin-left:8px;color:var(--muted);font-weight:500}
+/* ===== /LOGIN-STATE ===== */
+
+/* ===== LG-GATE (cila-2 faz 2) — logged-out mikro-aksiyon giriş kapısı ===== */
+.lg-overlay{position:fixed;inset:0;background:rgba(20,18,12,.5);z-index:97;opacity:0;visibility:hidden;transition:opacity .25s var(--ease),visibility .25s}
+.lg-overlay.show{opacity:1;visibility:visible}
+.lg-gate{position:fixed;inset:0;z-index:98;display:grid;place-items:center;padding:20px;opacity:0;visibility:hidden;pointer-events:none;transition:opacity .25s var(--ease),visibility .25s}
+.lg-gate.show{opacity:1;visibility:visible;pointer-events:auto}
+.lg-panel{position:relative;width:min(382px,100%);background:#fff;border-radius:var(--radius-lg);box-shadow:var(--sh-lg);padding:32px 26px 26px;text-align:center;transform:translateY(14px);transition:transform .3s var(--ease)}
+.lg-gate.show .lg-panel{transform:translateY(0)}
+.lg-close{position:absolute;top:13px;right:13px;width:36px;height:36px;border-radius:var(--radius-md);border:1px solid var(--line);background:var(--paper);color:var(--slate);font-size:15px;cursor:pointer;display:grid;place-items:center;transition:.2s var(--ease)}
+.lg-close:hover{border-color:var(--tomato);color:var(--tomato)}
+.lg-ico{width:62px;height:62px;border-radius:var(--radius-circle);background:var(--tomato-tint);color:var(--tomato);display:grid;place-items:center;font-size:25px;margin:0 auto 16px}
+.lg-gate h4{font-size:19px;margin-bottom:8px}
+.lg-gate p{font-size:13.5px;color:var(--muted);font-weight:500;max-width:300px;margin:0 auto 22px;line-height:1.55}
+.lg-acts{display:flex;gap:10px}
+.lg-acts .btn{flex:1}
+/* ===== /LG-GATE ===== */
+
 /* ---- NAV DROPDOWNS ---- */
 .nav .nav-item{position:relative}
 /* nav item tek katın tam yüksekliğini doldursun → hover sürekliliği (mega'ya geçişte kopmaz) */
@@ -558,6 +621,8 @@ html,body{overflow-x:hidden}
   .brand img{height:32px}
   .head-actions{gap:6px}
   .btn-login{display:none}                                   /* giriş → drawer + bottom-nav */
+  /* logged-in header öğeleri mobilde drawer + bottom-nav'a devreder (kaynak sıra ile is-auth'u yener) */
+  body.is-auth .head-add,body.is-auth .head-bell,body.is-auth .acct-wrap{display:none}
   .icon-btn{width:40px;height:40px;font-size:15px}
 
   /* fixed header offseti mobilde tek kat */
@@ -947,6 +1012,38 @@ html,body{overflow-x:hidden}
       <div class="head-actions">
         <button class="icon-btn" aria-label="Ara" onclick="location.href='arama-v1.html'"><i class="fa-solid fa-magnifying-glass"></i></button>
         <button class="btn-login" onclick="location.href='giris-v1.html'"><i class="fa-regular fa-user"></i> Giriş Yap</button>
+        <!-- LOGIN-STATE: Ekle ▾ (logged-in) -->
+        <div class="acct-item head-add">
+          <button class="icon-btn" aria-label="Ekle" aria-haspopup="true"><i class="fa-solid fa-plus"></i></button>
+          <div class="acct-menu">
+            <a href="tarif-ekle-v1.html"><i class="fa-solid fa-utensils"></i> <span>Tarif Ekle<small>Yeni bir tarif paylaş</small></span></a>
+            <a href="puf-noktasi-ekle-v1.html"><i class="fa-solid fa-lightbulb"></i> <span>Püf Noktası Ekle<small>Küçük bir mutfak sırrı</small></span></a>
+          </div>
+        </div>
+        <!-- LOGIN-STATE: bildirim zili (logged-in) -->
+        <a class="icon-btn head-bell" href="bildirimler-v1.html" aria-label="Bildirimler"><i class="fa-solid fa-bell"></i><span class="hb-badge">3</span></a>
+        <!-- LOGIN-STATE: hesap avatarı ▾ (logged-in) — persona Elif Şahin -->
+        <div class="acct-item acct-wrap">
+          <button class="acct-btn" aria-label="Hesabım" aria-haspopup="true">
+            <span class="acct-ava" style="background-image:url('https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')"></span>
+            <i class="fa-solid fa-chevron-down acct-caret"></i>
+          </button>
+          <div class="acct-menu">
+            <div class="acct-id">
+              <span class="acct-ava" style="background-image:url('https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')"></span>
+              <span class="acct-id-txt"><b>Elif Şahin</b><small>@elifsahin</small></span>
+            </div>
+            <div class="acct-div"></div>
+            <a href="mutfak-defteri-v1.html"><i class="fa-solid fa-book-bookmark"></i> <span>Mutfak Defterim</span></a>
+            <a href="mutfak-defteri-v1.html?tab=tarifler"><i class="fa-solid fa-utensils"></i> <span>Tariflerim</span></a>
+            <a href="mutfak-defteri-v1.html?tab=kaydedilenler"><i class="fa-solid fa-bookmark"></i> <span>Kaydedilenler</span></a>
+            <a href="mutfak-defteri-v1.html?tab=menuler"><i class="fa-solid fa-layer-group"></i> <span>Menülerim</span></a>
+            <a href="bildirimler-v1.html"><i class="fa-solid fa-bell"></i> <span>Bildirimler</span></a>
+            <a href="hesabim-v1.html"><i class="fa-solid fa-gear"></i> <span>Ayarlar / Hesabım</span></a>
+            <div class="acct-div"></div>
+            <a href="anasayfa-portal-v3a.html?auth=0" class="acct-logout"><i class="fa-solid fa-right-from-bracket"></i> <span>Çıkış</span></a>
+          </div>
+        </div>
         <button class="icon-btn hamburger" id="hamburger" aria-label="Menü"><i class="fa-solid fa-bars"></i></button>
       </div>
     </div>
@@ -1008,8 +1105,23 @@ html,body{overflow-x:hidden}
     <div class="d-item"><a class="d-link" href="akademi-v1.html">Dada Akademi <span class="soon">Yakında</span></a></div>
   </nav>
   <div class="drawer-foot">
-    <button class="btn btn-primary" style="width:100%" onclick="location.href='giris-v1.html'"><i class="fa-regular fa-user"></i> Giriş Yap</button>
+    <!-- LOGIN-STATE: logged-out giriş butonu -->
+    <button class="btn btn-primary drawer-login" style="width:100%" onclick="location.href='giris-v1.html'"><i class="fa-regular fa-user"></i> Giriş Yap</button>
+    <!-- LOGIN-STATE: logged-in kimlik satırı (persona Elif Şahin) -->
+    <div class="drawer-acct">
+      <span class="da-ava" style="background-image:url('https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')"></span>
+      <div class="da-info">
+        <b>Elif Şahin</b>
+        <div class="da-links">
+          <a href="mutfak-defteri-v1.html">Defterim</a>
+          <a href="bildirimler-v1.html">Bildirimler</a>
+          <a href="hesabim-v1.html">Ayarlar</a>
+          <a href="anasayfa-portal-v3a.html?auth=0">Çıkış</a>
+        </div>
+      </div>
+    </div>
     <a href="tarif-ekle-v1.html" class="drawer-add"><i class="fa-solid fa-circle-plus"></i> Tarif Ekle</a>
+    <a href="puf-noktasi-ekle-v1.html" class="drawer-add"><i class="fa-solid fa-lightbulb"></i> Püf Noktası Ekle</a>
     <div class="drawer-lang" id="drawerLang">
       <button class="drawer-lang-toggle" type="button" aria-haspopup="true" aria-expanded="false">
         <span class="drawer-lang-label"><i class="fa-solid fa-globe"></i> Dil</span>
@@ -1029,7 +1141,7 @@ html,body{overflow-x:hidden}
   <a href="tarif-liste-v1.html" class="bn-item"><i class="fa-solid fa-bowl-food"></i><span>Tarifler</span></a>
   <a href="bugun-ne-pisirsem-v1.html" class="bn-item bn-center"><span class="bn-fab"><i class="fa-solid fa-wand-magic-sparkles"></i></span><span>Bugün?</span></a>
   <a href="saglik-hub-v1.html" class="bn-item"><i class="fa-solid fa-heart-pulse"></i><span>Sağlık</span></a>
-  <a href="hesabim-v1.html" class="bn-item"><i class="fa-solid fa-user"></i><span>Hesap</span></a>
+  <a href="giris-v1.html" id="bnAccount" class="bn-item"><i class="fa-solid fa-user"></i><span>Hesap</span></a>
 </nav>
 
 <!-- ===== GÖRÜŞ BİLDİR (sağ kenar sabit etiket) ===== -->
@@ -1500,6 +1612,25 @@ html,body{overflow-x:hidden}
 
 </main><!-- /.page-main -->
 
+<!-- ===== LG-GATE (giriş kapısı) — logged-out mikro-aksiyon (yorum/kaydet/takip) =====
+     Markup </main> SONRASINA (lessons: fixed overlay page-main stacking context'ine girmez).
+     body.is-auth iken hiç açılmaz; data-lg-gate taşıyan öğeler tetikler. SS: ?lg=1 -->
+<div class="lg-overlay" id="lgOverlay"></div>
+<div class="lg-gate" id="lgGate" role="dialog" aria-modal="true" aria-label="Giriş gerekli">
+  <div class="lg-panel">
+    <button class="lg-close" id="lgClose" type="button" aria-label="Kapat"><i class="fa-solid fa-xmark"></i></button>
+    <span class="lg-ico"><i class="fa-solid fa-lock"></i></span>
+    <h4 id="lgTitle">Bu işlem için giriş yap</h4>
+    <p id="lgDesc">Kaydetmek, yorum yapmak ve takip etmek için DadaMutfak hesabına giriş yapman gerekiyor.</p>
+    <div class="lg-acts">
+      <a class="btn btn-primary" href="giris-v1.html"><i class="fa-regular fa-user"></i> Giriş Yap</a>
+      <a class="btn btn-ghost" href="giris-v1.html?tab=kayit">Üye Ol</a>
+    </div>
+  </div>
+</div>
+
+
+
 <!-- ===== FOOTER ===== -->
 <footer class="footer orange">
   <div class="wrap">
@@ -1563,6 +1694,21 @@ html,body{overflow-x:hidden}
    heroMode bayrağını kendi kopyasında true yapar (v3a davranışı). */
 
 // SS paramları
+// ===== Login-state simülasyonu (mockup) — İA §2.3 sözleşmesi =====
+// ?auth=1 → localStorage dm_auth='1' + body.is-auth ; ?auth=0 → temizle (logout)
+// param yoksa localStorage'a bakılır. Çıkış linkleri ?auth=0'a yönlendirir (M7).
+(function(){
+  var qs = location.search;
+  if(qs.indexOf('auth=1')>-1){ try{localStorage.setItem('dm_auth','1');}catch(e){} }
+  else if(qs.indexOf('auth=0')>-1){ try{localStorage.removeItem('dm_auth');}catch(e){} }
+  var authed = false;
+  try{ authed = localStorage.getItem('dm_auth')==='1'; }catch(e){}
+  if(authed){ document.body.classList.add('is-auth'); }
+  // M6 — bottom-nav "Hesap" hedefi: logged-in → Defter, logged-out → giriş
+  var bnAcc = document.getElementById('bnAccount');
+  if(bnAcc){ bnAcc.setAttribute('href', authed ? 'mutfak-defteri-v1.html' : 'giris-v1.html'); }
+})();
+
 if(location.search.indexOf('dd=1')>-1){document.querySelector('.nav-item').classList.add('open');var _l=document.getElementById('tbLang');if(_l)_l.classList.add('open');}
 if(location.search.indexOf('drawer=1')>-1){window.addEventListener('DOMContentLoaded',function(){document.getElementById('drawer').classList.add('open');document.getElementById('drawerOverlay').classList.add('open');var _s=document.querySelector('.d-has-sub');if(_s)_s.classList.add('open');});}
 
@@ -1610,6 +1756,49 @@ document.querySelectorAll('.nav-item').forEach(function(it){
 document.addEventListener('click',function(e){
   if(!e.target.closest('.nav-item'))document.querySelectorAll('.nav-item.open').forEach(function(o){o.classList.remove('open')});
 });
+
+// ---- HESAP / EKLE dropdown (header sağ blok, login-state) tıkla-aç ----
+document.querySelectorAll('.acct-item').forEach(function(it){
+  var trigger=it.querySelector('.icon-btn,.acct-btn');
+  if(!trigger||!it.querySelector('.acct-menu'))return;
+  trigger.addEventListener('click',function(e){
+    e.preventDefault();
+    var wasOpen=it.classList.contains('open');
+    document.querySelectorAll('.acct-item.open').forEach(function(o){o.classList.remove('open')});
+    if(!wasOpen)it.classList.add('open');
+  });
+});
+document.addEventListener('click',function(e){
+  if(!e.target.closest('.acct-item'))document.querySelectorAll('.acct-item.open').forEach(function(o){o.classList.remove('open')});
+});
+
+// ---- LG-GATE (giriş kapısı) — logged-out mikro-aksiyon kapısı ----
+(function(){
+  var gate=document.getElementById('lgGate');
+  var overlay=document.getElementById('lgOverlay');
+  if(!gate)return;
+  function open(title,desc){
+    if(document.body.classList.contains('is-auth'))return false;   // logged-in: kapı yok
+    if(title)document.getElementById('lgTitle').textContent=title;
+    if(desc)document.getElementById('lgDesc').textContent=desc;
+    gate.classList.add('show');overlay.classList.add('show');document.body.style.overflow='hidden';
+    return true;
+  }
+  function close(){gate.classList.remove('show');overlay.classList.remove('show');document.body.style.overflow='';}
+  window.__lgGate=open;window.__lgGateClose=close;
+  document.getElementById('lgClose').addEventListener('click',close);
+  overlay.addEventListener('click',close);
+  document.addEventListener('keydown',function(e){if(e.key==='Escape'&&gate.classList.contains('show'))close();});
+  // data-lg-gate taşıyan öğeler logged-out'ta kapıyı açar (capture: sayfa toggle'ından önce keser)
+  document.addEventListener('click',function(e){
+    var t=e.target.closest('[data-lg-gate]');
+    if(!t)return;
+    if(document.body.classList.contains('is-auth'))return;          // logged-in: normal davranış
+    e.preventDefault();e.stopPropagation();
+    open(t.getAttribute('data-lg-title'),t.getAttribute('data-lg-desc'));
+  },true);
+  if(location.search.indexOf('lg=1')>-1){open();}                    // SS paramı
+})();
 
 // ---- DİL SEÇİCİ (üst bant dropdown) ----
 (function(){
