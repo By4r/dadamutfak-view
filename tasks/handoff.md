@@ -1,10 +1,12 @@
 # DadaMutfak — PROJE TAMAMLANDI 🏁 MOCKUP SETİ TESLİME HAZIR
 
-> Tek doğruluk kaynağı. Güncelleme: 2026-06-11 (FİNAL CİLA TURU kapandı —
-> tutarlılık taraması + yazdır görünümü + persona birleştirme + test ailesi +
-> görsel/buton onarımı. Commit: `chore(mockup): final polish pass`)
-> Detay raporlar: `outputs/cila-raporu.md` · `outputs/testler-rapor.md` ·
-> `outputs/gorsel-rapor.md`
+> Tek doğruluk kaynağı. Güncelleme: 2026-06-12 (**REVİZE-2 TAMAM** — site geneli
+> mobil sabit-katman disiplini: 🔴1+🟡53 çözüldü, kanonik pattern 55 dosyada,
+> kılavuz §3b; keşfet konsepte geri çekildi (Mekânlar · Gurme Lezzetler ·
+> Etkinlikler). Commit: `a8d45b7 fix(mockup): revize-2`. Detay:
+> `outputs/revize2-sentez.md` + `revize2-{mobil1,mobil2,kesfet}.md`)
+> Önceki: 2026-06-11 final cila (`outputs/cila-raporu.md` ·
+> `outputs/testler-rapor.md` · `outputs/gorsel-rapor.md`)
 
 ---
 
@@ -69,10 +71,15 @@
 11. Yasal metinler hukukçu onayı + künye tüzel bilgileri + ekip isimleri
 12. Sezon "Günün Ayeti" bloğu (editöryel) · "Şef Ol" hedefi
 
-## ➡️ SONRAKİ ADIM
+## ➡️ SONRAKİ ADIM (Beyar kararı — 2026-06-12)
 
-**Stack kararı** (Laravel mi, statik mi — CLAUDE.md gereği ayrı konuşma) +
-EN dil stratejisi. Mockup seti dondu; değişiklikler cila-2 olarak planlanır.
+1. **Keşfet mekan modülü:** `mekan-liste` + `mekan-detay` (Zomato-vari hafif —
+   eski sitenin mekan keşfi vaadi geri geliyor ama foursquare filtre/harita
+   ağırlığı OLMADAN; kesfet-v1'in Mekânlar pillar'ı bu modüle köprü olur).
+   Kaynak: `outputs/revize2-kesfet.md` fark tablosu + eski `kesfet-detay.html`.
+2. **Toplu cila** (cila-2 — revize-2 tereddütleri dahil: hesabim 38px buton,
+   gerçek cihaz mobil teyit turu).
+3. Sonrası: stack kararı (Laravel mi statik mi) + EN dil stratejisi.
 
 ---
 
