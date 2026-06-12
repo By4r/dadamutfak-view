@@ -1,6 +1,25 @@
 # DadaMutfak — PROJE TAMAMLANDI 🏁 MOCKUP SETİ TESLİME HAZIR
 
-> Tek doğruluk kaynağı. Güncelleme: 2026-06-12 akşam (**CİLA-2 FAZ 1 REVİZE
+> Tek doğruluk kaynağı. Güncelleme: 2026-06-12 gece (**CİLA-2 FAZ 2 TAMAM —
+> ÜYELİK/PROFİL MODÜLÜ, agent team cila2-faz2**: İA `tasks/uyelik-ia.md`
+> (kilitli, M1–M8 lead kararlı) · login simülasyonu `?auth=1/0` + localStorage
+> `dm_auth` + `body.is-auth` · header login-state 55 sayfaya sweep (avatar
+> dropdown + ➕Ekle + 🔔 zil; shop/panel/hesaplayıcı bilinçli muaf) · defter
+> own↔public mod (`?view=public`) + durum chip filtresi · hesabim yalnız-ayar +
+> 38px borç kapandı · giris demo pre-fill (tek tık → login) · 🆕
+> `puf-noktasi-ekle-v1` · BNP "Deftere Kaydet"→defter köprüsü · puf/tarif-detay
+> yorum+kaydet gate'leri (lg-gate) · persona Elif Şahin hizalı. Envanter
+> 68→**69**. Denetim: 36-ölçüm örneklem probe + 4 bulgu kapandı (en kritiği:
+> sweep'in anasayfa CSS'ini yutması — restore+elle patch, lessons'a işlendi).
+> Sentez + inceleme listesi: `outputs/cila2-faz2-sentez.md`. Beyar incelemesi
+> TAMAM; commit `c10c43b` + PUSH onaylı (Pages patron turu için güncel).
+> CİLA-2 Faz 2 takımı (cila2-faz2) kapatıldı. **SIRADA: FAZ 3** — hero/
+> breadcrumb kanonu (saglik-testler dahil) + kurumsal düzeltmeler + QA.
+> Bekleyen patron kararları: DadaStore marka dili · M2 sosyal login seti
+> (ana site FB ↔ shop Apple) · mekan-detay 5px göz teyidi. İsteğe bağlı mini:
+> lg-gate Faz 3 genişletmesi · ölü CSS temizliği (puf-ekle stepper + BNP
+> wizard).)
+> Önceki: 2026-06-12 akşam (**CİLA-2 FAZ 1 REVİZE
 > TURU TAMAM — Beyar incelemesinden çıkan 17 iş kanıtlı kabul**: Premium rozet ·
 > TD galeri/video sadeleşme · görselli facet (tarif-liste+kategori) · rota
 > yatay step rail v2 · mutfağa-giriş one-page gnav · püf+kesfet hero overlay
@@ -40,10 +59,13 @@
 
 ---
 
-## 📦 SAYFA ENVANTERİ — 68 üretim sayfası
+## 📦 SAYFA ENVANTERİ — 69 üretim sayfası
 
-- **66 × `*-v1.html`** + `anasayfa-portal-v3a.html` (kanonik baz) +
+- **67 × `*-v1.html`** + `anasayfa-portal-v3a.html` (kanonik baz) +
   `panel-shell.html` (diyetisyen paneli iskeleti)
+- CİLA-2 Faz 2'de doğan (2026-06-12): `puf-noktasi-ekle-v1` (tarif-ekle form
+  kiti mirası, tek adım). Üyelik akışı: `tasks/uyelik-ia.md` (İA) + login-state
+  55 sayfada (`?auth=1/0`)
 - CİLA-2 Faz 1'de doğan (2026-06-12): `mutfaga-giris-detay-v1` (TD anatomisi)
   + `puf-noktasi-detay-v1` (blog detay + rev-* yorum) + `ansiklopedi-v1` +
   `ansiklopedi-detay-v1` (YENİ SEO modülü "Mutfak Ansiklopedisi"; sozluk-v1
@@ -121,6 +143,9 @@
 
 ## ➡️ SONRAKİ ADIM (Beyar kararı — 2026-06-12)
 
+0. **CİLA-2 FAZ 2 TAMAM ✅ (2026-06-12 gece)** — üyelik/profil modülü; detay
+   ve commit önerisi `outputs/cila2-faz2-sentez.md`. Sıradaki adaylar: commit
+   onayı → hero kanonu (Faz 3) + lg-gate genişletmesi + M2 patron kararı.
 1. **CİLA-2 FAZ 1 TAMAM ✅ (2026-06-12, agent team: lead + 4 teammate)** —
    patron (Yasin Bey) revize turu 25 iş kalemi kanıtlı kabul; envanter 64→68;
    site-geneli dropdown sweep (Mutfağa Giriş + Mutfak Ansiklopedisi, 52 dosya);
@@ -149,6 +174,9 @@ open "http://localhost:8765/mockups/panel-shell.html"           # panel
 Canlı (Pages): https://by4r.github.io/dadamutfak-view/mockups/<sayfa>.html
 
 - **Ortak:** `?dd=1` mega+dil · `?drawer=1` · `?cc=1` · `?fb=1` · panel `?nav=1`
+- **Üyelik (Faz 2):** `?auth=1` login / `?auth=0` çıkış (localStorage kalıcı;
+  shop+panel+hesaplayıcı MUAF) · defter `?view=public` · `?tab=` · giris
+  ön-dolu (tek tık) · tarif-ekle `?mode=edit` · puf-ekle `?state=`
 - **Test ailesi:** `test-detay-v1.html?test=metabolizma|su-hidrasyon|
   temel-pisirme|hangi-yemek` (+`&sonuc=1` sonuç kartı)
 - **Tarif detay:** `?cook=1` pişirme modu · yazıcı ikonu = print görünümü
