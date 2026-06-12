@@ -1,6 +1,17 @@
 # DadaMutfak — PROJE TAMAMLANDI 🏁 MOCKUP SETİ TESLİME HAZIR
 
-> Tek doğruluk kaynağı. Güncelleme: 2026-06-12 (**CİLA-2 FAZ 1 TAMAM — patron
+> Tek doğruluk kaynağı. Güncelleme: 2026-06-12 akşam (**CİLA-2 FAZ 1 REVİZE
+> TURU TAMAM — Beyar incelemesinden çıkan 17 iş kanıtlı kabul**: Premium rozet ·
+> TD galeri/video sadeleşme · görselli facet (tarif-liste+kategori) · rota
+> yatay step rail v2 · mutfağa-giriş one-page gnav · püf+kesfet hero overlay
+> crumb · ansiklopedi IA (kategori + tıkla-aç) · dz-card v2 simetrik · BNP
+> sihirbazsız (mod→menü→koleksiyon) · shop login modalı · kampanya bandı hero ·
+> Boyut/Ölçü SVG facet · tarif-bulucu üst-geniş düzen (R14) · legacy anasayfa
+> varyantları mockups/arsiv/ altında (15 dosya, envanter dışı). Checkpoint:
+> `c5e8826`. Revize sentezi: `outputs/cila2-faz1-sentez.md` (REVİZE TURU
+> bölümü). **FIX COMMIT BEYAR ONAYI BEKLİYOR; PUSH YOK.** Beklemede: DadaStore
+> marka dili · mekan-detay 5px.)
+> Önceki: 2026-06-12 (**CİLA-2 FAZ 1 TAMAM — patron
 > revize turu, 4 modül paralel, agent team**: 25 iş kalemi kanıtlı kabul.
 > TARİF (₺ rozet, grid⇄liste, ikonlu facet, TD video modal) · SIRLAR (Mutfağa
 > Giriş IA + detay, püf liste/blog-detay + rev-* yorum, YENİ Mutfak
@@ -78,6 +89,17 @@
 7. Arama "Son Aramalar" (localStorage/hesap)
 8. SEO meta description'ları (61 sayfada bilinçli yok — gerçek copy ile)
 9. Test sonuç paylaşımının gerçek OG/link altyapısı
+
+## 🔜 FAZ 2 GİRDİLERİ (CİLA-2 kapanışında not edildi — 2026-06-12)
+
+1. **BNP → üyelik modülü köprüsü:** bugun-ne-pisirsem'deki menü ekleme/çıkarma/
+   düzenleme aksiyonları (Değiştir · Çıkar · Kap Ekle · Adını Değiştir ·
+   Deftere Kaydet) Faz 2 üyelik modülüne bağlanacak — menü = kullanıcının
+   kaydedip düzenleyebildiği koleksiyon.
+2. **Püf yorumları → üye akışı:** puf-noktasi-detay'daki .rev-* yorum bölümünün
+   üye akışına bağlanması Faz 2 İA'sında ele alınacak.
+3. **Bekleyen 3 madde:** DadaStore marka dili kararı · mekan-detay 5px göz
+   teyidi · BNP ölü wizard CSS temizliği (isteğe bağlı mini iş).
 
 ## ⏳ PATRON BEKLEYENLER (Yasin Bey / iş kararı — dokunulmadı)
 

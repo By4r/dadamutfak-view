@@ -102,3 +102,80 @@ Paylaşımlı Playwright kilitliydi → aynı-origin iframe probe (headless Chro
    öğesini kapsıyordu, "anasayfada başka şeye dokunma" kuralı). İstenirse mobil
    drawer öğesi de direkt-link yapılabilir.
 4. **Bottom-nav "Favoriler"** `href="#"` (favori sayfası bu dalga kapsamında yok).
+
+---
+
+# REVİZE TURU — R11-R13 (görev #9)
+
+## R11 — "Giriş Yap" shop kabuğu içinde kalır (login modal)
+Önceden header + drawer "Giriş Yap" → `giris-v1.html` (ana site auth sayfası, ana
+site chrome'u) navigasyonu yapıyordu. Artık **shop login MODALI** açılıyor (5 dosyada):
+- 3 pane: **Giriş** (Google/Apple social + e-posta/şifre + beni hatırla + şifremi unuttum),
+  **Kayıt** (ad/e-posta/şifre + KVKK), **Şifre sıfırla** (e-posta) — `data-goto` ile geçiş.
+- Şifre göster/gizle (lm-eye), DadaStore markalı başlık, ESC/overlay/×ile kapanır.
+- Auth dili korundu (giris-v1 fk-pass/eye/soc-btn deseni → lm-* eşleniği).
+- Markup `</main>` SONRASINA konuldu (overlay kuralı, lessons L); `data-login-open`
+  ile header btn-login + drawer butonu bağlandı; `location.href='giris-v1.html'` = 0 kaldı.
+- SS paramı: `?login=1`. Script: `.ss-scratch/cila2/shop/apply_r11.py`.
+
+## R12 — Shop hero 2. tur (kampanya bandı + canlı geri sayım + fırsat rayı)
+1. turun tekil billboard-kartı yaklaşımından AYRI, ürün-odaklı yeni yaklaşım:
+- **Kampanya bandı:** sol kopya/CTA + sağ **canlı geri sayım** (02:14:37:12 → her sn tik,
+  slate kutular + domates ayraç) — aciliyet hissi.
+- **Öne çıkan fırsat rayı:** 4 indirimli ürün tile (görsel + kategori + ad + fiyat/eski fiyat).
+- Diğer sayfaların koyu landing hero'larından net ayrışır; token/radius/tipografi ORTAK.
+  `cmp-band/cmp-count/cmp-rail/cmp-tile` + countdown JS. (yalnız dada-shop-v1)
+
+## R13 — Görselli filtre önizleme yayılımı (kategori pattern'ı diğer facet'lere)
+Kategori panelindeki görsel-önizleme dili diğer filtre bölümlerine yayıldı (urun-liste):
+- **Özellik facet'i** → her özelliğe ikon swatch (Organik=seedling, El Yapımı=hand-sparkles,
+  Vegan=leaf, Glutensiz=bowl-rice, İndüksiyon=bolt; seçili → dolu domates).
+- **Marka facet'i** → her markaya monogram swatch (D/K/E/S/Y; seçili → dolu domates).
+- Filtre mekaniği (checkbox/fcnt/chips) KORUNDU (checkbox gizli, state intact).
+  Script: `apply_r13.py`.
+  NOT (Beyar): "ölçek/ölçü filtre-bölüm" ifadesi belirsizdi; FULL AUTO gereği
+  "kategori görsel-önizleme dilini kalan facet bölümlerine yay" olarak yorumlandı
+  (Özellik+Marka). urun-liste'de ölçü/boyut facet'i mevcut değil.
+
+## Revize kanıt — probe (`.ss-scratch/cila2/shop/r-probe2-top.png`) hepsi PASS
+- R11 login modal açıldı (navigate yok, onclick=null) · pane geçişi (giriş→kayıt) · şifre göster toggle
+- R13 görselli facet (fe-ico=5, bm-ico=5) · filtre mekaniği korundu (checkbox toggle)
+- R12 hero geri sayım canlı (sn değişti) + fırsat rayı 4 tile
+- Regresyon yok: .p-fav toggle, dmCart, shop kabuğu, fatura formu, 390 taşma YOK ×5 — hepsi PASS
+SS: `r11-login.png` (modal), `r12-hero-crop.png` (kampanya bandı), `r13b-crop.png` (monogram/ikon facet)
+
+## Disiplin (revize sonrası)
+loginModal 5/5 dosyada · data-login-open bağlı · leftover giris-v1 onclick=0 ·
+"Dada Denedi"=0 · CSS `*/` trap=0 · modal `</main>` sonrası 5/5 (lessons L).
+
+## Beyar BEKLEMEDE (dokunulmadı, talimat gereği)
+- DadaStore marka dili (modal başlığı dahil "DadaStore" korundu — Beyar inceleme listesinde)
+- mekan-detay 5px (shop kapsamı dışı)
+
+## R13 — REVİZE (lead netleştirmesi: "aynı thumbnail dili" + "ölçek/ölçü ile ilgili")
+Lead'in 2. brief'i "aynı thumbnail dili" (kategori panelindeki GÖRSEL thumbnail) +
+"ölçek/ölçü ile ilgili filtre" dedi. Bu yüzden urun-liste'ye **"Boyut / Ölçü" facet'i**
+eklendi — kategori panelinin BİREBİR thumbnail dili (`cat-fct`/`cn-thumb`): 5 satır
+(Küçük·18–20cm, Orta·22–24cm, Büyük·26–28cm, Geniş·30cm+, Hacim·1–2L), her satırda
+ürün thumbnail'ı; seçili → domates outline + bold. Önceki Özellik(ikon)+Marka(monogram)
+swatch'ları KORUNDU (görsel-önizleme dilini diğer facet'lere de yaydı). Filtre mekaniği
+(checkbox/fcnt/chips) korundu; 390 taşma yok.
+Kanıt: `r13c-crop.png` (Boyut/Ölçü thumbnail facet) + `r-probe3-top.png`/`-bot.png`
+(probe: "R13 Boyut/Ölçü thumbnail facet (aynı dil + filtre)" PASS thumb=5 checked=true;
+PROBE TAMAM 0 fail, 390 taşma yok ×5).
+
+## R13 — REVİZE-2 (lead denetim netleştirmesi: ölçü facet'i EKLE, ölçüye özgü görsel)
+Lead "ölçü/kapasite facet'i EKLE, olcu-birimleri ikon yaklaşımı ref" dedi.
+- **Hedef netleştirme (denetim sorusuna cevap):** Sayfada gerçek bir ölçü/boyut facet'i
+  YOKTU (Kategori/Fiyat/Puan/Marka/Özellik/Durum). İlk turda görsel muameleyi Özellik
+  (ikon) + Marka (monogram)'a yaymıştım; talimatın LAFZI "ölçek/ölçü ile ilgili" olduğu
+  için yeni bir **"Boyut / Ölçü" facet'i EKLENDİ** (tercih edilen yol).
+- **Görsel dil:** ölçüye özgü, DadaMutfak-markalı **SVG boyut tile'ları** — kategori
+  panelinin tile şekli/boyutu (38px tomato-tint kutu) korunur ama içerik ölçüye uygun:
+  artan çaplı halkalar (Küçük→Geniş) + hacim için kupa glifi. Fotoğraf yerine SVG çünkü
+  ölçü/boyut bir fotoğrafla okunmaz (olcu-birimleri'nin temiz ikon yaklaşımı ref).
+- 5 satır: Küçük·18–20cm / Orta·22–24cm / Büyük·26–28cm / Geniş·30cm+ / Hacim·1–2L.
+  Seçili → dolu domates tile + bold. Filtre mekaniği (checkbox/fcnt/chips) korundu.
+- Kanıt: `r13d-crop.png` (SVG ölçü tile'ları) + `r-probe4-mid/bot.png`
+  (probe: "R13 Boyut/Ölçü SVG ölçü tile facet" PASS sz-tile=5 checked=true; PROBE TAMAM
+  0 fail; 390 taşma yok ×5 — urun-liste yeni facet'le temiz).

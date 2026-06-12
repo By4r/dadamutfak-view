@@ -662,6 +662,44 @@ html,body{overflow-x:hidden}
 .ke-filter .chip.active{border-color:var(--tomato);background:var(--tomato-tint);color:var(--tomato);font-weight:700}
 .ans-count{font-size:13px;color:var(--muted);font-weight:500;margin-bottom:18px}
 .ans-count b{color:var(--slate);font-weight:700}
+
+/* ---- R7: ESKİ SÖZLÜK MODELİ — görünür ana kategoriler + tıkla-aç maddeler ---- */
+.ans-jump{display:flex;align-items:center;gap:9px;flex-wrap:wrap;padding:6px 0 18px}
+.ans-jump .jl{font-size:12.5px;color:var(--muted);font-weight:600;margin-right:2px}
+.ans-jump .chip{white-space:nowrap}
+.ans-catsec{padding:28px 0 8px;border-top:1px solid var(--line);scroll-margin-top:120px}
+.ans-catsec:first-of-type{border-top:none;padding-top:8px}
+.ans-cathead{display:flex;align-items:center;gap:13px;flex-wrap:wrap;margin-bottom:16px}
+.ans-cathead .ci{flex:none;width:44px;height:44px;border-radius:var(--radius-md);background:var(--tomato-tint);color:var(--tomato);display:grid;place-items:center;font-size:18px}
+.ans-cathead h2{font-size:22px;letter-spacing:-.01em}
+.ans-cathead .cc{font-size:12.5px;color:var(--muted);font-weight:600}
+.ans-cathead .cgo{margin-left:auto;font-size:13px;font-weight:700;color:var(--tomato);display:inline-flex;align-items:center;gap:7px;transition:.2s var(--ease)}
+.ans-cathead .cgo i{font-size:11px;transition:transform .2s var(--ease)}
+.ans-cathead .cgo:hover i{transform:translateX(3px)}
+.ans-acc{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-lg);overflow:hidden;box-shadow:var(--sh-sm)}
+.ans-item{border-bottom:1px solid var(--line)}
+.ans-item:last-child{border-bottom:none}
+.ans-row{display:flex;align-items:center;gap:16px;width:100%;text-align:left;font-family:inherit;background:var(--paper);border:none;padding:14px 18px;cursor:pointer;transition:.15s var(--ease)}
+.ans-row:hover{background:var(--tomato-tint)}
+.ans-thumb{flex:none;width:54px;height:54px;border-radius:var(--radius-md);background-size:cover;background-position:center}
+.ans-name{flex:1;min-width:0}
+.ans-name b{display:block;font-size:16px;color:var(--slate)}
+.ans-name span{display:block;font-size:12.5px;color:var(--muted);font-weight:500;font-style:italic;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ans-badge{flex:none;font-size:11px;font-weight:700;color:var(--green-deep);background:#EAF7F0;padding:5px 11px;border-radius:var(--radius-sm)}
+.ans-go{flex:none;color:var(--muted);font-size:14px;transition:.2s var(--ease)}
+.ans-row:hover .ans-go{color:var(--tomato)}
+.ans-item.open .ans-go{transform:rotate(90deg);color:var(--tomato)}
+.ans-detail{display:none;padding:2px 18px 22px 88px;animation:fadeUp .3s var(--ease)}
+.ans-item.open .ans-detail{display:block}
+.ans-detail h5{font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--tomato);margin:12px 0 5px}
+.ans-detail h5:first-child{margin-top:0}
+.ans-detail p{font-size:14.5px;color:var(--slate-2);font-weight:500;line-height:1.7;margin-bottom:8px;max-width:780px}
+.ans-detail strong{color:var(--slate);font-weight:700}
+.ans-dgo{display:inline-flex;align-items:center;gap:8px;font-size:13px;font-weight:700;color:var(--tomato);margin-top:8px;transition:.2s var(--ease)}
+.ans-dgo i{font-size:11px;transition:transform .2s var(--ease)}
+.ans-dgo:hover i{transform:translateX(3px)}
+.ans-catsec.is-hidden{display:none}
+.ans-item.is-hidden{display:none}
 /* madde kartı = disc-card (v3a VERBATIM) */
 .disc-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:26px}
 .disc-card{cursor:pointer;display:block}
@@ -705,6 +743,12 @@ html,body{overflow-x:hidden}
   .lst-hero h1{font-size:29px}
   .lst-stats{gap:10px}.lst-stats .st{flex:1}
   .ans-sec{padding:24px 0 50px}
+  .ans-detail{padding-left:18px}
+  .ans-cathead h2{font-size:19px}
+  .ans-thumb{width:46px;height:46px}
+  .ans-jump{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none}
+  .ans-jump::-webkit-scrollbar{display:none}
+  .ans-jump .chip{flex:none}
   .ke-filter{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none}
   .ke-filter::-webkit-scrollbar{display:none}.ke-filter .chip{flex:none}
   .disc-grid{display:flex;gap:14px;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;padding-bottom:6px}
@@ -1071,138 +1115,171 @@ html,body{overflow-x:hidden}
       <i class="fa-solid fa-magnifying-glass"></i>
       <input type="search" id="ansSearch" placeholder="Malzeme ara — örn. barbunya, ıspanak, zencefil…" aria-label="Ansiklopedide ara" />
     </div>
-    <div class="az-bar" id="azBar" role="group" aria-label="Harfe göre filtrele"><button class="az az-all active" type="button" data-ltr="*">Tümü</button><button class="az" type="button" data-ltr="A">A</button><button class="az" type="button" data-ltr="B">B</button><button class="az" type="button" data-ltr="C" disabled>C</button><button class="az" type="button" data-ltr="Ç" disabled>Ç</button><button class="az" type="button" data-ltr="D" disabled>D</button><button class="az" type="button" data-ltr="E">E</button><button class="az" type="button" data-ltr="F" disabled>F</button><button class="az" type="button" data-ltr="G" disabled>G</button><button class="az" type="button" data-ltr="Ğ" disabled>Ğ</button><button class="az" type="button" data-ltr="H" disabled>H</button><button class="az" type="button" data-ltr="I">I</button><button class="az" type="button" data-ltr="I">I</button><button class="az" type="button" data-ltr="J" disabled>J</button><button class="az" type="button" data-ltr="K">K</button><button class="az" type="button" data-ltr="L" disabled>L</button><button class="az" type="button" data-ltr="M" disabled>M</button><button class="az" type="button" data-ltr="N" disabled>N</button><button class="az" type="button" data-ltr="O" disabled>O</button><button class="az" type="button" data-ltr="Ö" disabled>Ö</button><button class="az" type="button" data-ltr="P">P</button><button class="az" type="button" data-ltr="R" disabled>R</button><button class="az" type="button" data-ltr="S" disabled>S</button><button class="az" type="button" data-ltr="Ş" disabled>Ş</button><button class="az" type="button" data-ltr="T" disabled>T</button><button class="az" type="button" data-ltr="U" disabled>U</button><button class="az" type="button" data-ltr="Ü" disabled>Ü</button><button class="az" type="button" data-ltr="V" disabled>V</button><button class="az" type="button" data-ltr="Y" disabled>Y</button><button class="az" type="button" data-ltr="Z">Z</button></div>
-    <div class="ke-filter" id="ansCats" role="group" aria-label="Kategori filtresi">
-      <button class="chip active" type="button" data-cat="*">Tümü</button>
-      <button class="chip" type="button" data-cat="sebze">Sebzeler</button>
-      <button class="chip" type="button" data-cat="meyve">Meyveler</button>
-      <button class="chip" type="button" data-cat="bakliyat">Bakliyat &amp; Tahıl</button>
-      <button class="chip" type="button" data-cat="baharat">Baharat &amp; Kök</button>
+    <div class="az-bar" id="azBar" role="group" aria-label="Harfe göre filtrele"><button class="az az-all active" type="button" data-ltr="*">Tümü</button><button class="az" type="button" data-ltr="A">A</button><button class="az" type="button" data-ltr="B">B</button><button class="az" type="button" data-ltr="E">E</button><button class="az" type="button" data-ltr="I">I</button><button class="az" type="button" data-ltr="K">K</button><button class="az" type="button" data-ltr="P">P</button><button class="az" type="button" data-ltr="Z">Z</button></div>
+    <div class="ans-jump" id="ansJump"><span class="jl">Kategoriler:</span><button class="chip" type="button" data-jump="cat-sebze">Sebzeler</button><button class="chip" type="button" data-jump="cat-meyve">Meyveler</button><button class="chip" type="button" data-jump="cat-bakliyat">Bakliyat & Tahıl</button><button class="chip" type="button" data-jump="cat-baharat">Baharat & Kök</button></div>
+    <p class="ans-count" id="ansCount"><b>9</b> madde · <b>4</b> kategori gösteriliyor <span class="muted">· toplam 480 madde</span></p>
+    
+    <div class="ans-catsec" id="cat-sebze" data-cat="sebze">
+      <div class="ans-cathead">
+        <span class="ci"><i class="fa-solid fa-carrot"></i></span>
+        <h2>Sebzeler</h2>
+        <span class="cc">4 madde</span>
+        <a class="cgo" href="ansiklopedi-v1.html">Kategoriyi gör <i class="fa-solid fa-arrow-right"></i></a>
+      </div>
+      <div class="ans-acc">
+        <div class="ans-item" data-ltr="I" data-name="ispanak">
+          <button class="ans-row" type="button" aria-expanded="false">
+            <span class="ans-thumb" style="background-image:url('https://images.unsplash.com/photo-1576045057995-568f588f82fb?w=200&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')"></span>
+            <span class="ans-name"><b>Ispanak</b><span>Spinacia oleracea</span></span>
+            <span class="ans-badge">Demir kaynağı</span>
+            <i class="fa-solid fa-chevron-right ans-go"></i>
+          </button>
+          <div class="ans-detail">
+            <h5>Nedir?</h5><p>Demir, folat ve K vitamini açısından zengin yapraklı yeşillik. Çiğ salatadan kavurmaya, börekten smoothie'ye kadar çok yönlü.</p>
+            <h5>Faydaları</h5><p>Kansızlığa karşı destekleyici demir ve folat içerir; düşük kalorili, yüksek lifli.</p>
+            <a class="ans-dgo" href="ansiklopedi-detay-v1.html">Maddenin tamamını oku <i class="fa-solid fa-arrow-right"></i></a>
+          </div>
+        </div>
+        <div class="ans-item" data-ltr="K" data-name="kabak">
+          <button class="ans-row" type="button" aria-expanded="false">
+            <span class="ans-thumb" style="background-image:url('https://images.unsplash.com/photo-1592417817098-8fd3d9eb14a5?w=200&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')"></span>
+            <span class="ans-name"><b>Kabak</b><span>Cucurbita pepo</span></span>
+            <span class="ans-badge">Düşük kalori</span>
+            <i class="fa-solid fa-chevron-right ans-go"></i>
+          </button>
+          <div class="ans-detail">
+            <h5>Nedir?</h5><p>Hafif ve sulu yaz sebzesi. Mücverden zeytinyağlısına, dolmadan gratene uzanır.</p>
+            <h5>Faydaları</h5><p>%95 su içeriğiyle çok düşük kalorili; sindirimi kolay, bol potasyumlu.</p>
+            <a class="ans-dgo" href="ansiklopedi-detay-v1.html">Maddenin tamamını oku <i class="fa-solid fa-arrow-right"></i></a>
+          </div>
+        </div>
+        <div class="ans-item" data-ltr="E" data-name="enginar">
+          <button class="ans-row" type="button" aria-expanded="false">
+            <span class="ans-thumb" style="background-image:url('https://images.unsplash.com/photo-1551888419-7b7a520fe0ca?w=200&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')"></span>
+            <span class="ans-name"><b>Enginar</b><span>Cynara cardunculus</span></span>
+            <span class="ans-badge">Bahar sebzesi</span>
+            <i class="fa-solid fa-chevron-right ans-go"></i>
+          </button>
+          <div class="ans-detail">
+            <h5>Nedir?</h5><p>Karaciğer dostu, lif zengini bahar sebzesi. Zeytinyağlısı baş tacıdır.</p>
+            <h5>Faydaları</h5><p>Sinarin bileşeniyle karaciğer ve safra fonksiyonlarını destekler; tok tutar.</p>
+            <a class="ans-dgo" href="ansiklopedi-detay-v1.html">Maddenin tamamını oku <i class="fa-solid fa-arrow-right"></i></a>
+          </div>
+        </div>
+        <div class="ans-item" data-ltr="P" data-name="pırasa">
+          <button class="ans-row" type="button" aria-expanded="false">
+            <span class="ans-thumb" style="background-image:url('https://images.unsplash.com/photo-1635774855536-9728f2610245?w=200&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')"></span>
+            <span class="ans-name"><b>Pırasa</b><span>Allium ampeloprasum</span></span>
+            <span class="ans-badge">Kış sebzesi</span>
+            <i class="fa-solid fa-chevron-right ans-go"></i>
+          </button>
+          <div class="ans-detail">
+            <h5>Nedir?</h5><p>Soğangillerden hafif tatlı kış sebzesi. Zeytinyağlısından böreğine yumuşacık.</p>
+            <h5>Faydaları</h5><p>Prebiyotik lif ve C vitamini içerir; bağışıklığı ve bağırsak florasını destekler.</p>
+            <a class="ans-dgo" href="ansiklopedi-detay-v1.html">Maddenin tamamını oku <i class="fa-solid fa-arrow-right"></i></a>
+          </div>
+        </div>
+      </div>
     </div>
-    <p class="ans-count" id="ansCount"><b>9</b> madde gösteriliyor <span class="muted">· toplam 480 madde</span></p>
-    <div class="disc-grid" id="ansGrid">
-      <a class="disc-card" href="ansiklopedi-detay-v1.html" data-ltr="B" data-cat="bakliyat" data-name="barbunya">
-        <div class="disc-fig">
-          <div class="bg" style="background-image:url('https://images.unsplash.com/photo-1515543237350-b3eea1ec8082?w=800&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')"></div>
-          <div class="disc-badges"><span class="lvl lvl-1"><i class="fa-solid fa-seedling"></i> Yüksek lif</span></div>
+    <div class="ans-catsec" id="cat-meyve" data-cat="meyve">
+      <div class="ans-cathead">
+        <span class="ci"><i class="fa-solid fa-apple-whole"></i></span>
+        <h2>Meyveler</h2>
+        <span class="cc">1 madde</span>
+        <a class="cgo" href="ansiklopedi-v1.html">Kategoriyi gör <i class="fa-solid fa-arrow-right"></i></a>
+      </div>
+      <div class="ans-acc">
+        <div class="ans-item" data-ltr="A" data-name="avokado">
+          <button class="ans-row" type="button" aria-expanded="false">
+            <span class="ans-thumb" style="background-image:url('https://images.unsplash.com/photo-1523049673857-eb18f1d7b578?w=200&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')"></span>
+            <span class="ans-name"><b>Avokado</b><span>Persea americana</span></span>
+            <span class="ans-badge">Sağlıklı yağ</span>
+            <i class="fa-solid fa-chevron-right ans-go"></i>
+          </button>
+          <div class="ans-detail">
+            <h5>Nedir?</h5><p>Kremamsı, sağlıklı tekli doymamış yağ içeren meyve. Kahvaltıdan tatlıya uzanır.</p>
+            <h5>Faydaları</h5><p>İyi yağlar, lif ve potasyum açısından zengin; kalp sağlığını destekler.</p>
+            <a class="ans-dgo" href="ansiklopedi-detay-v1.html">Maddenin tamamını oku <i class="fa-solid fa-arrow-right"></i></a>
+          </div>
         </div>
-        <span class="disc-cat">Bakliyat</span>
-        <h3>Barbunya</h3>
-        <p>Lif ve bitkisel protein deposu kuru baklagil; pilakisinden çorbasına Türk sofrasının temeli.</p>
-        <div class="disc-meta">
-          <span><i class="fa-solid fa-circle-info"></i> Nedir · Faydaları</span>
-          <span class="disc-stats"><span><i class="fa-solid fa-utensils"></i> Tarifler</span></span>
+      </div>
+    </div>
+    <div class="ans-catsec" id="cat-bakliyat" data-cat="bakliyat">
+      <div class="ans-cathead">
+        <span class="ci"><i class="fa-solid fa-wheat-awn"></i></span>
+        <h2>Bakliyat & Tahıl</h2>
+        <span class="cc">3 madde</span>
+        <a class="cgo" href="ansiklopedi-v1.html">Kategoriyi gör <i class="fa-solid fa-arrow-right"></i></a>
+      </div>
+      <div class="ans-acc">
+        <div class="ans-item" data-ltr="B" data-name="barbunya">
+          <button class="ans-row" type="button" aria-expanded="false">
+            <span class="ans-thumb" style="background-image:url('https://images.unsplash.com/photo-1515543237350-b3eea1ec8082?w=200&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')"></span>
+            <span class="ans-name"><b>Barbunya</b><span>Phaseolus vulgaris</span></span>
+            <span class="ans-badge">Yüksek lif</span>
+            <i class="fa-solid fa-chevron-right ans-go"></i>
+          </button>
+          <div class="ans-detail">
+            <h5>Nedir?</h5><p>Üzerindeki kırmızı beneklerle tanınan kuru baklagil. Pilakiden etlisine yüzlerce tarif.</p>
+            <h5>Faydaları</h5><p>Bitkisel protein, lif, demir ve folat deposu; tok tutar, kan şekerini dengeler.</p>
+            <a class="ans-dgo" href="ansiklopedi-detay-v1.html">Maddenin tamamını oku <i class="fa-solid fa-arrow-right"></i></a>
+          </div>
         </div>
-      </a>
-      <a class="disc-card" href="ansiklopedi-detay-v1.html" data-ltr="I" data-cat="sebze" data-name="ispanak">
-        <div class="disc-fig">
-          <div class="bg" style="background-image:url('https://images.unsplash.com/photo-1576045057995-568f588f82fb?w=800&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')"></div>
-          <div class="disc-badges"><span class="lvl lvl-1"><i class="fa-solid fa-leaf"></i> Demir kaynağı</span></div>
+        <div class="ans-item" data-ltr="K" data-name="kırmızı mercimek">
+          <button class="ans-row" type="button" aria-expanded="false">
+            <span class="ans-thumb" style="background-image:url('https://images.unsplash.com/photo-1614961233913-a5113a4a34ed?w=200&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')"></span>
+            <span class="ans-name"><b>Kırmızı Mercimek</b><span>Lens culinaris</span></span>
+            <span class="ans-badge">Hızlı pişer</span>
+            <i class="fa-solid fa-chevron-right ans-go"></i>
+          </button>
+          <div class="ans-detail">
+            <h5>Nedir?</h5><p>Islatma gerektirmeyen, 20 dakikada pişen baklagil. Çorbanın ve köftenin temeli.</p>
+            <h5>Faydaları</h5><p>Protein ve lif yoğun; demir ve B vitaminleri açısından zengin, hafif sindirilir.</p>
+            <a class="ans-dgo" href="ansiklopedi-detay-v1.html">Maddenin tamamını oku <i class="fa-solid fa-arrow-right"></i></a>
+          </div>
         </div>
-        <span class="disc-cat">Sebze</span>
-        <h3>Ispanak</h3>
-        <p>Demir ve folat açısından zengin yapraklı yeşillik; çiğ salatadan kavurmaya çok yönlü.</p>
-        <div class="disc-meta">
-          <span><i class="fa-solid fa-circle-info"></i> Nedir · Faydaları</span>
-          <span class="disc-stats"><span><i class="fa-solid fa-utensils"></i> Tarifler</span></span>
+        <div class="ans-item" data-ltr="K" data-name="kinoa">
+          <button class="ans-row" type="button" aria-expanded="false">
+            <span class="ans-thumb" style="background-image:url('https://images.unsplash.com/photo-1505576633757-0ac1084af824?w=200&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')"></span>
+            <span class="ans-name"><b>Kinoa</b><span>Chenopodium quinoa</span></span>
+            <span class="ans-badge">Tam protein</span>
+            <i class="fa-solid fa-chevron-right ans-go"></i>
+          </button>
+          <div class="ans-detail">
+            <h5>Nedir?</h5><p>Dokuz esansiyel amino asidi içeren sözde tahıl. Bulgur ve pirinç alternatifi.</p>
+            <h5>Faydaları</h5><p>Glütensiz tam protein kaynağı; lif, magnezyum ve demir bakımından zengin.</p>
+            <a class="ans-dgo" href="ansiklopedi-detay-v1.html">Maddenin tamamını oku <i class="fa-solid fa-arrow-right"></i></a>
+          </div>
         </div>
-      </a>
-      <a class="disc-card" href="ansiklopedi-detay-v1.html" data-ltr="A" data-cat="meyve" data-name="avokado">
-        <div class="disc-fig">
-          <div class="bg" style="background-image:url('https://images.unsplash.com/photo-1523049673857-eb18f1d7b578?w=800&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')"></div>
-          <div class="disc-badges"><span class="lvl lvl-1"><i class="fa-solid fa-heart"></i> Sağlıklı yağ</span></div>
+      </div>
+    </div>
+    <div class="ans-catsec" id="cat-baharat" data-cat="baharat">
+      <div class="ans-cathead">
+        <span class="ci"><i class="fa-solid fa-mortar-pestle"></i></span>
+        <h2>Baharat & Kök</h2>
+        <span class="cc">1 madde</span>
+        <a class="cgo" href="ansiklopedi-v1.html">Kategoriyi gör <i class="fa-solid fa-arrow-right"></i></a>
+      </div>
+      <div class="ans-acc">
+        <div class="ans-item" data-ltr="Z" data-name="zencefil">
+          <button class="ans-row" type="button" aria-expanded="false">
+            <span class="ans-thumb" style="background-image:url('https://images.unsplash.com/photo-1615485290382-441e4d049cb5?w=200&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')"></span>
+            <span class="ans-name"><b>Zencefil</b><span>Zingiber officinale</span></span>
+            <span class="ans-badge">Sindirim dostu</span>
+            <i class="fa-solid fa-chevron-right ans-go"></i>
+          </button>
+          <div class="ans-detail">
+            <h5>Nedir?</h5><p>Keskin aromalı kök. Çay, çorba, tatlı ve marinatlarda ısıtıcı dokunuş.</p>
+            <h5>Faydaları</h5><p>Gingerol bileşeniyle bulantıyı azaltır, sindirimi destekler, antienflamatuardır.</p>
+            <a class="ans-dgo" href="ansiklopedi-detay-v1.html">Maddenin tamamını oku <i class="fa-solid fa-arrow-right"></i></a>
+          </div>
         </div>
-        <span class="disc-cat">Meyve</span>
-        <h3>Avokado</h3>
-        <p>Sağlıklı tekli doymamış yağ içeren kremamsı meyve; kahvaltıdan tatlıya uzanır.</p>
-        <div class="disc-meta">
-          <span><i class="fa-solid fa-circle-info"></i> Nedir · Faydaları</span>
-          <span class="disc-stats"><span><i class="fa-solid fa-utensils"></i> Tarifler</span></span>
-        </div>
-      </a>
-      <a class="disc-card" href="ansiklopedi-detay-v1.html" data-ltr="Z" data-cat="baharat" data-name="zencefil">
-        <div class="disc-fig">
-          <div class="bg" style="background-image:url('https://images.unsplash.com/photo-1615485290382-441e4d049cb5?w=800&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')"></div>
-          <div class="disc-badges"><span class="lvl lvl-1"><i class="fa-solid fa-mortar-pestle"></i> Sindirim dostu</span></div>
-        </div>
-        <span class="disc-cat">Baharat & Kök</span>
-        <h3>Zencefil</h3>
-        <p>Keskin aromalı kök; çay, çorba ve tatlıda sindirimi destekleyen ısıtıcı dokunuş.</p>
-        <div class="disc-meta">
-          <span><i class="fa-solid fa-circle-info"></i> Nedir · Faydaları</span>
-          <span class="disc-stats"><span><i class="fa-solid fa-utensils"></i> Tarifler</span></span>
-        </div>
-      </a>
-      <a class="disc-card" href="ansiklopedi-detay-v1.html" data-ltr="K" data-cat="bakliyat" data-name="kırmızı mercimek">
-        <div class="disc-fig">
-          <div class="bg" style="background-image:url('https://images.unsplash.com/photo-1614961233913-a5113a4a34ed?w=800&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')"></div>
-          <div class="disc-badges"><span class="lvl lvl-1"><i class="fa-solid fa-bowl-food"></i> Hızlı pişer</span></div>
-        </div>
-        <span class="disc-cat">Bakliyat</span>
-        <h3>Kırmızı Mercimek</h3>
-        <p>Hızlı pişen, protein ve lif dolu baklagil; çorbanın ve köftenin vazgeçilmezi.</p>
-        <div class="disc-meta">
-          <span><i class="fa-solid fa-circle-info"></i> Nedir · Faydaları</span>
-          <span class="disc-stats"><span><i class="fa-solid fa-utensils"></i> Tarifler</span></span>
-        </div>
-      </a>
-      <a class="disc-card" href="ansiklopedi-detay-v1.html" data-ltr="K" data-cat="sebze" data-name="kabak">
-        <div class="disc-fig">
-          <div class="bg" style="background-image:url('https://images.unsplash.com/photo-1592417817098-8fd3d9eb14a5?w=800&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')"></div>
-          <div class="disc-badges"><span class="lvl lvl-1"><i class="fa-solid fa-leaf"></i> Düşük kalori</span></div>
-        </div>
-        <span class="disc-cat">Sebze</span>
-        <h3>Kabak</h3>
-        <p>Hafif ve sulu yaz sebzesi; mücverden zeytinyağlısına, dolmadan graten tarifine kadar.</p>
-        <div class="disc-meta">
-          <span><i class="fa-solid fa-circle-info"></i> Nedir · Faydaları</span>
-          <span class="disc-stats"><span><i class="fa-solid fa-utensils"></i> Tarifler</span></span>
-        </div>
-      </a>
-      <a class="disc-card" href="ansiklopedi-detay-v1.html" data-ltr="E" data-cat="sebze" data-name="enginar">
-        <div class="disc-fig">
-          <div class="bg" style="background-image:url('https://images.unsplash.com/photo-1551888419-7b7a520fe0ca?w=800&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')"></div>
-          <div class="disc-badges"><span class="lvl lvl-1"><i class="fa-solid fa-leaf"></i> Bahar sebzesi</span></div>
-        </div>
-        <span class="disc-cat">Sebze</span>
-        <h3>Enginar</h3>
-        <p>Karaciğer dostu, lif zengini bahar sebzesi; zeytinyağlısı baş tacıdır.</p>
-        <div class="disc-meta">
-          <span><i class="fa-solid fa-circle-info"></i> Nedir · Faydaları</span>
-          <span class="disc-stats"><span><i class="fa-solid fa-utensils"></i> Tarifler</span></span>
-        </div>
-      </a>
-      <a class="disc-card" href="ansiklopedi-detay-v1.html" data-ltr="P" data-cat="sebze" data-name="pırasa">
-        <div class="disc-fig">
-          <div class="bg" style="background-image:url('https://images.unsplash.com/photo-1635774855536-9728f2610245?w=800&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')"></div>
-          <div class="disc-badges"><span class="lvl lvl-1"><i class="fa-solid fa-leaf"></i> Kış sebzesi</span></div>
-        </div>
-        <span class="disc-cat">Sebze</span>
-        <h3>Pırasa</h3>
-        <p>Soğangillerden hafif tatlı kış sebzesi; zeytinyağlısından böreğine yumuşacık.</p>
-        <div class="disc-meta">
-          <span><i class="fa-solid fa-circle-info"></i> Nedir · Faydaları</span>
-          <span class="disc-stats"><span><i class="fa-solid fa-utensils"></i> Tarifler</span></span>
-        </div>
-      </a>
-      <a class="disc-card" href="ansiklopedi-detay-v1.html" data-ltr="K" data-cat="bakliyat" data-name="kinoa">
-        <div class="disc-fig">
-          <div class="bg" style="background-image:url('https://images.unsplash.com/photo-1505576633757-0ac1084af824?w=800&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')"></div>
-          <div class="disc-badges"><span class="lvl lvl-1"><i class="fa-solid fa-wheat-awn"></i> Tam protein</span></div>
-        </div>
-        <span class="disc-cat">Tahıl</span>
-        <h3>Kinoa</h3>
-        <p>Tam protein içeren sözde tahıl; salatada bulgur ve pirinç alternatifi.</p>
-        <div class="disc-meta">
-          <span><i class="fa-solid fa-circle-info"></i> Nedir · Faydaları</span>
-          <span class="disc-stats"><span><i class="fa-solid fa-utensils"></i> Tarifler</span></span>
-        </div>
-      </a>
+      </div>
     </div>
     <div class="ans-empty" id="ansEmpty">
       <span class="ae-ico"><i class="fa-solid fa-seedling"></i></span>
       <h3>Aradığın malzeme bulunamadı</h3>
-      <p>Farklı bir harf ya da kategori dene, ya da filtreyi temizle.</p>
+      <p>Farklı bir harf ya da arama dene, ya da filtreyi temizle.</p>
       <button class="btn btn-primary" type="button" id="ansClear">Filtreyi Temizle</button>
     </div>
     <nav class="pagi" aria-label="Sayfalama">
@@ -1213,7 +1290,7 @@ html,body{overflow-x:hidden}
       <span class="pg-dots">…</span>
       <button class="pg">40</button>
       <button class="pg arrow" aria-label="Sonraki sayfa"><i class="fa-solid fa-chevron-right"></i></button>
-      <span class="pagi-note">480 maddeden 1–9 arası gösteriliyor</span>
+      <span class="pagi-note">480 maddeden ilk 9'u (4 kategori) gösteriliyor</span>
     </nav>
   </div>
 </section>
@@ -1528,37 +1605,49 @@ document.addEventListener('click',function(e){
 
 /* ===== SAYFA JS — sayfa-spesifik script BU İŞARETİN ALTINA eklenir ===== */
 
-/* ===== SAYFA JS — ANSİKLOPEDİ LİSTE: arama + A-Z + kategori filtresi ===== */
+/* ===== SAYFA JS — ANSİKLOPEDİ LİSTE: akordeon + arama + A-Z + kategori jump (eski sözlük modeli) ===== */
 (function(){
-  var cards=[].slice.call(document.querySelectorAll('#ansGrid .disc-card'));
+  var items=[].slice.call(document.querySelectorAll('.ans-item'));
+  var secs=[].slice.call(document.querySelectorAll('.ans-catsec'));
   var azs=[].slice.call(document.querySelectorAll('#azBar .az'));
-  var cats=[].slice.call(document.querySelectorAll('#ansCats .chip'));
+  var jumps=[].slice.call(document.querySelectorAll('#ansJump .chip'));
   var search=document.getElementById('ansSearch');
   var count=document.getElementById('ansCount');
   var empty=document.getElementById('ansEmpty');
   var pagi=document.querySelector('.pagi');
-  var fLtr='*',fCat='*',fQ='';
+  var fLtr='*',fQ='';
+  // akordeon aç/kapa
+  items.forEach(function(it){
+    var row=it.querySelector('.ans-row');
+    row.addEventListener('click',function(){
+      var open=it.classList.toggle('open');
+      row.setAttribute('aria-expanded',open?'true':'false');
+    });
+  });
+  // kategori jump → bölüme smooth scroll
+  jumps.forEach(function(b){b.addEventListener('click',function(){var el=document.getElementById('cat-'+b.getAttribute('data-jump').replace('cat-',''));if(!el)el=document.getElementById(b.getAttribute('data-jump'));if(el)el.scrollIntoView({behavior:'smooth',block:'start'});});});
   function apply(){
     var n=0;
-    cards.forEach(function(c){
-      var okL=fLtr==='*'||c.getAttribute('data-ltr')===fLtr;
-      var okC=fCat==='*'||c.getAttribute('data-cat')===fCat;
-      var okQ=!fQ||c.getAttribute('data-name').indexOf(fQ)>-1;
-      var show=okL&&okC&&okQ;
-      c.style.display=show?'':'none';if(show)n++;
+    items.forEach(function(it){
+      var okL=fLtr==='*'||it.getAttribute('data-ltr')===fLtr;
+      var okQ=!fQ||it.getAttribute('data-name').indexOf(fQ)>-1;
+      var show=okL&&okQ;
+      it.classList.toggle('is-hidden',!show);if(show)n++;
     });
-    count.innerHTML='<b>'+n+'</b> madde gösteriliyor <span class="muted">· toplam 480 madde</span>';
+    var cn=0;
+    secs.forEach(function(sec){
+      var vis=sec.querySelectorAll('.ans-item:not(.is-hidden)').length;
+      sec.classList.toggle('is-hidden',vis===0);if(vis>0)cn++;
+    });
+    count.innerHTML='<b>'+n+'</b> madde · <b>'+cn+'</b> kategori gösteriliyor <span class="muted">· toplam 480 madde</span>';
     empty.style.display=n===0?'block':'none';
-    if(pagi)pagi.style.display=(fLtr==='*'&&fCat==='*'&&!fQ)?'':'none';
+    if(pagi)pagi.style.display=(fLtr==='*'&&!fQ)?'':'none';
   }
   azs.forEach(function(b){b.addEventListener('click',function(){azs.forEach(function(x){x.classList.remove('active')});b.classList.add('active');fLtr=b.getAttribute('data-ltr');apply();});});
-  cats.forEach(function(b){b.addEventListener('click',function(){cats.forEach(function(x){x.classList.remove('active')});b.classList.add('active');fCat=b.getAttribute('data-cat');apply();});});
   search.addEventListener('input',function(){fQ=search.value.trim().toLocaleLowerCase('tr');apply();});
   document.getElementById('ansClear').addEventListener('click',function(){
-    fLtr='*';fCat='*';fQ='';search.value='';
-    azs.forEach(function(x){x.classList.remove('active')});azs[0].classList.add('active');
-    cats.forEach(function(x){x.classList.remove('active')});cats[0].classList.add('active');
-    apply();
+    fLtr='*';fQ='';search.value='';
+    azs.forEach(function(x){x.classList.remove('active')});azs[0].classList.add('active');apply();
   });
 })();
 

@@ -79,3 +79,79 @@ SS dizini: `mockups/.ss-scratch/cila2/tarif/`
 3. **Ölü CSS**: `.rd-thumbs/.rd-thumb/.rd-stage-play/.video-mode` taban kuralları dosyada
    kaldı (markup yok → zararsız). İstenirse temizlik turunda silinebilir.
 4. Kart maliyet seviyeleri mockup verisi — gerçek tarif maliyetiyle eşlenmedi (tasarım amaçlı dağıtım).
+
+---
+
+## REVİZE TURU (Görev #6 — R0-R3 + Arşiv)
+
+### R0 — ₺₺₺ etiketi "Yüksek Bütçe" → "Premium"
+- kategori-v1 + tarif-liste-v1: `.r-cost title="Yüksek bütçe"` → `title="Premium"` (4 kart).
+- tarif-liste Bütçe facet: `value="Yüksek Bütçe"` + label "Yüksek (₺₺₺)" → `value="Premium"` + "Premium (₺₺₺)".
+- CSS açıklama yorumları güncellendi. TD chip ₺₺ (Orta) olduğundan değişmedi. Grep: "Yüksek bütçe" = 0.
+
+### R1 — tarif-detay galeri boşluğu giderildi
+- Sorun: thumb şeridi kalkınca künye kolonu sahneden uzun kalıp sahne ALTINDA boşluk bırakıyordu.
+- Çözüm: `.rd-gallery{align-items:stretch}` + `.rd-stage{height:100%;min-height:480px}` → sahne künye
+  yüksekliğine uzar. Probe: stageH=584 = kunyeH=584, **dif=0** (boşluk yok).
+
+### R2 — video butonu sadeleşti
+- `▶ Tarif Videosu` glass pill → sade **`▶ 04:32` süre rozeti** (radius-sm, .mt dili; blur+shadow "süs"
+  kaldırıldı). Tıkla → mevcut `.video-modal` açılır (probe: vm0=false→vm1=true→vm2=false).
+- Sahnedeki yedek `.m-types` (▶8:40 + 🖼10) KALDIRILDI (artık galeri yok, mükerrer katmandı).
+  vm-title süresi 04:32'ye eşitlendi. Mobil: rozet süre görünür (icon-only değil).
+
+### R3 — facet kategori ikonları → görselli panel (urun-liste mirası)
+- `.fct-ico` (FA mini ikon) KALDIRILDI → urun-liste-v1 `.cat-fct .cn-thumb` görselli pattern'ı VERBATIM mirası
+  (38px gerçek yemek görseli, cbx gizli, seçili → tomato outline).
+- kategori-v1 "Alt Kategori" (8 görsel) + tarif-liste "Kategori" (10 görsel). Tüm görsel URL'leri curl 200.
+  Dünya Mutfağı bayrak pattern'ı korundu.
+
+### ARŞİV — legacy anasayfa varyantları
+- `git mv` ile mockups/arsiv/ altına taşındı (15 dosya): tüm `anasayfa-*` (v3a HARİÇ) +
+  anasayfa.html + `.anasayfa-cookpad-deneme.bak.html`.
+  (athleats/cookpad/kinfolk/obys-deneme, masa, modern, myrecipes, premium, uzman, portal, portal-v2/v3b/v3c)
+- KANIT: `mockups/` root'ta tek anasayfa* = `anasayfa-portal-v3a.html` (266 inbound ref, canonical home intact).
+  Hiçbir root sayfası arşivlenen dosyaya link vermiyor (href/src + onclick/JS + düz "anasayfa.html" tarandı → NONE).
+
+### Revize kanıt (probe6, iframe deterministik)
+`vbtn_txt=04:32 | mtypes_on_stage=false | vm0/1/2=false/true/false | stageH=584 kunyeH=584 dif=0 |
+kat_cnthumb=8 | lst_cnthumb=10 | ovf k=OK l=OK d=OK` · CSS */ trap CLEAN · fct-ico=0.
+SS: mockups/.ss-scratch/cila2/tarif/{detay-r1r2-crop, liste-r3-facet, detay-r1check}.png
+
+---
+
+## REVİZE R14 — tarif-bulucu üst bölge ferahlatma (Görev #11)
+
+### Sorun
+Dolap (malzeme seçimi) + filtreler 316px dar sol sticky panele sıkışmıştı; raf malzemeleri
+2-3'erli dar sarıyor, birincil etkileşim daralıyordu.
+
+### Araştırma
+- **Eski template (tarif-bulucu.html):** ORTADA tam genişlik arama bandı ("Dolapta Ne Var? / Ne Yok?"
+  sekmeleri) + seçilen malzeme chip'leri + ALTTA 3 kolon sonuç grid'i (col-lg-4).
+- **nefisyemektarifleri.com (malzemeye göre arama):** direkt WebFetch 403 verdi; WebSearch + referans
+  uygulamalar (SuperCook, nepisirsem.com) ile doğrulandı → belirgin/öne çıkan malzeme seçici (liste/chip) +
+  sonuçlar bitişik/altta. Sol-dar-panel deseni DEĞİL.
+- Ortak desen: **üst geniş kriter → altta geniş sonuç**. v1 bunu sol sidebar'a sıkıştırarak sapmış.
+
+### Değerlendirilen 3 yerleşim
+- **A (SEÇİLDİ):** Tam genişlik ÜST dolap kartı — arama hero + seçilenler şeridi tam genişlik;
+  altta RAFLAR (geniş, nefes alır) | FİLTRELER (dar sağ kolon). Sonuçlar altta 3 kolon.
+  Eski template + nefis pattern'ına sadık; **tüm öğeler tek `#dolap` wrapper'ında kalır → JS ve
+  mobil sheet kurgusu sıfır risk** (pure CSS).
+- **B (red):** Üstte yatay sekmeli (kategori tab) raf seçici. Daha kompakt ama YENİ tab JS gerektirir,
+  mevcut `.fct` akordeon mirasını bozar → "işlev bozulmaz + 1 turda oturt" ilkesine aykırı, risk yüksek.
+- **C (red):** Üst dar arama + sol ikincil filtre + sağ sonuç (rafları top'a almadan). Asıl sıkışıklığı
+  (raflar) çözmez.
+
+### Uygulama (A — yalnız yerleşim, pure CSS `@media (min-width:1025px)`)
+- `.tb-layout` 2-kolon grid → tek kolon (dolap üstte tam genişlik, sonuç altta).
+- `.dolap` desktop: sticky-dar → statik tam genişlik kart.
+- `.dolap-body` `grid-template-areas` ile: `search` / `hint` / `strip` tam genişlik; `shelves`(1fr) | `filters`(304px).
+- `.tb-grid` desktop 2→3 kolon. DOM ve JS'e **dokunulmadı**; ≤1024 sheet kurgusu aynen.
+
+### Kanıt (probe7, iframe deterministik)
+`desk_ovf=OK | mob_ovf=OK | dolapW=1176 = gridW=1176 (artık tam genişlik, eski 316px) |
+dolap_above_results=true | raf_sel=true count 4→5 (seçim+sayaç çalışıyor) | tbgrid_cols=3 |
+mob_sheet_open=true (mobil sheet açılıyor)` · CSS */ trap CLEAN.
+SS: mockups/.ss-scratch/cila2/tarif/{bulucu-desk, bulucu-mob}.png (1440 + 500)

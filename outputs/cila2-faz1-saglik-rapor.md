@@ -122,3 +122,67 @@ bnp-hazir-load     step5active=true menuTitle="Pazar Kahvaltısı menüsü"
 3. **Beslenme testi** test-detay'a taşındı (içerik kaybını önlemek için, kendi
    dosyam). 8 soru korundu, sonuç tipleri/tarifler yeniden yazıldı.
 4. **Hazır menü "+N" rozetleri** ve toplam süreler mock değerler.
+
+---
+
+# REVİZE TURU — Task #8 (R9 + R10)
+
+## R9 — diyetisyen-dizin kart iç düzeni SIFIRDAN
+`.dz-card` iç anatomisi yeniden kuruldu — **hairline'lı 3 zon ritmi**:
+- **Zon 1 (header):** avatar (58px, kimlikle dikey ortalı) + ad+✓ / ünvan / puan;
+  `.dz-id` flex-column 5px iç ritim. Ad ve ünvan tek satır clamp; puan satırı nowrap.
+- **hairline** → **Zon 2 (gövde):** 2 etiket satırı + meta satırı (şehir·görüşme), 12px ritim.
+- **hairline** → **Zon 3 (foot):** krem zemin; "Seans başı ₺750" solda, "Profili Gör →" sağda.
+- Önceki turdaki tutarsız zon padding'leri (tags `2/18/14`, meta `0/18/16`) → hepsi
+  16px tabanına hizalı tek ritim. Avatar 72→58 (sağ kolonla denge). Ribbon varsa
+  header'a `:has()` ile +nefes.
+- Kanıt yakın plan SS: `.ss-scratch/cila2/saglik/r8/card-closeup.png` + grid: `dizin-grid.png`.
+- Probe: 390 ovf=0, konsol 0.
+
+## R10 — BNP sihirbaz TAMAMEN kaldırıldı → mod + hazır menü koleksiyon modeli
+Stepper'lı 4-adım sihirbaz HTML+JS'ten **tamamen söküldü** (runtime ref = 0).
+Yeni akış = eski site modeli, yeni dille:
+1. **Yemek Modları** (`.mode-bar` chip rayı): Tüm Menüler · Günlük · Misafir · Hızlı ·
+   Sağlıklı · Çocuklu · Vejetaryen · Kahvaltı. Mod seçilince menüler filtrelenir.
+2. **Menü listesi** (`.hm-card` koleksiyon kartı + mod rozetleri): seçili moda uygun
+   hazır menüler. 8 menü; her menü = kaplara bölünmüş koleksiyon.
+3. **Menü detayı = koleksiyon mantığı** (`mc-course/menu-set` MİRAS): menü açılır,
+   her kapta **Değiştir** (havuzda döner) + **Çıkar**; sona **+ Kap Ekle** tile'ı
+   (kap tipi seçtirir); **Adını Değiştir** (contenteditable rename) + **Deftere Kaydet**
+   (toast). Tümü çalışan JS mock.
+- Derin link: `?mod=<key>` · `?menu=<key>`. Geri = "Menülere dön".
+- Kanıt SS: `r8/bnp-list.png`, `bnp-detail.png`, `bnp-mode.png`, `m-bnp-detail.png`.
+- Etkileşim probe (iframe, 0 konsol hatası): mod filtre (hizli→2 kart) · menü aç
+  (4 kap + add tile) · swap (Ezogelin→Mercimekli) · çıkar (4→3) · ekle (2→3).
+- Probe: 390 ovf=0 (liste + detay), konsol 0.
+
+### Tereddüt / Beyar incelemesi bekleyen
+- **İnert wizard CSS:** sihirbaz HTML+JS silindi ama ~43 wizard-only CSS kuralı
+  (stepper/pick/form-card/res-grid…) `.bnp-body` ile İÇ İÇE geçtiği için cerrahi
+  silme yüksek riskli; görünmez/ölü bırakıldı. İstenirse ayrı temizlik turu açarım.
+
+## R9 v2 (2. tur — kompozisyon SIFIRDAN, simetrik merkezli)
+1. tur (yan-yana 3 zon) Beyar'da "avatar altı boşluk fazla, dengesiz/asimetrik"
+diye reddedildi. Kompozisyon baştan kuruldu — **tek dikey simetri ekseni**:
+- Avatar (72px) ÜSTTE ortalı → ad✓ → ünvan → puan: hepsi MERKEZ hizalı (yan-yana
+  float kalktı → "avatar altı boşluk" sorunu kökten bitti).
+- hairline → merkezli etiketler + merkezli meta → hairline.
+- Foot (krem): "Seans başı ₺750" satırı + **tam-genişlik "Profili Gör" CTA** (hover'da
+  domates dolar). Footer artık simetrik, sol-sağ asimetri yok.
+- Kanıt: yakın plan `r8/card-closeup2.png` + grid `r8/dizin-grid2.png`; 390 ovf=0, konsol 0.
+
+R10 değişmedi (zaten istenen mod→liste→koleksiyon modeli); re-probe: mod "hızlı"→2 kart,
+ovf=0, konsol 0.
+
+## R15 (revize) — BNP mod chip'leri GÖRSELLİ yapıldı
+Sade metin+ikon mod chip'leri → **görsel mod kartı rayı** (kategori `cat-card` görsel
+dilinden ilham; eski template "Yemek Modları" image-card sunumuna uygun).
+- Her mod = arka plan görselli kart (148×94) + alt gradient overlay + ikon+etiket
+  (beyaz, görsel üstünde) + sağ-üst onay rozeti (`.mc-chk`); aktif modda domates
+  border + ring + rozet belirir. Hover'da görsel zoom + kart kalkar.
+- 8 moda temalı Unsplash görseli atandı (THQ filtre suffix'i ile, retina çarpma yok).
+- `<img>` değil `div.mc-bg + background-image cover/center` (Kerem Bey pattern'ı).
+- JS değişmedi (yalnız chip markup'ı görselleşti); mod seç → liste filtrele akışı aynı.
+- KANIT: r8/r15-modes-1440.png + r15-modes-390.png (mobil yatay snap rayı).
+  Probe: 8 kart (mc-bg+mc-chk var), aktif geçiş tumu→misafir (tek aktif), filtre→1 kart,
+  390 ovf=0, konsol 0.

@@ -69,3 +69,71 @@
 Tek commit önerisi:
 `feat(mockup): cila-2 faz 1 — patron revize turu, 4 modul paralel (tarif/sirlar/saglik/shop) + ansiklopedi modulu + shop kabugu + sitewide dropdown sweep`
 Kapsam: 70 değişen + 4 yeni html, 5 rapor, handoff+lessons. İstenirse modül başına 4-5 ayrı commit de bölünebilir.
+
+---
+
+# REVİZE TURU SENTEZİ (Beyar incelemesi sonrası — 2026-06-12 akşam)
+
+> 13 madde (R1-R13) + R0 Premium rename + arşiv taşıma + kesfet R6 (Beyar
+> onayıyla kapsama alındı) + R14 (tarif-bulucu) = **17 iş, tamamı kanıtlı kabul**.
+> Loop sigortası ihlali YOK; hiçbir madde 3. tura kalmadı.
+
+## Kapanan kararlar
+- Rozet adı **"Premium"** (₺₺₺) — uygulandı, "Yüksek Bütçe" grep=0
+- **"Mutfak Ansiklopedisi"** modül adı onaylı
+- Legacy anasayfa varyantları **mockups/arsiv/** altına taşındı (15 dosya,
+  git mv; kanonik v3a kaldı; üretimden arşive ölü link 0) — envanter dışı
+- BEKLEMEDE (dokunulmadı): DadaStore marka dili · mekan-detay 5px artefakt
+
+## Modül modül revizeler
+**TARİF:** R0 Premium · R1 TD galeri boşluğu kapandı (sahne künye yüksekliğine
+uzar, stageH=kunyeH=584) · R2 video butonu sadeleşti (▶ 04:32 süre rozeti;
+süs/mükerrer badge kalktı) · R3 facet kategorileri görselli (urun-liste
+cat-fct/cn-thumb verbatim; kategori-v1'e de tutarlılık için uygulandı) ·
+R14 tarif-bulucu: dolap tam genişlik üst banda (arama+seçilenler tam genişlik,
+raflar geniş + ikincil filtreler dar sağ kolon, sonuçlar altta 3 kolon) —
+salt CSS, DOM/JS/mobil sheet bire bir korundu; eski template +
+nefisyemektarifleri araştırması ve 3 yerleşim önerisi raporda.
+
+**SIRLAR:** R4 Önerilen Rota yatay step rail v2 (faz gruplama TEMEL/PİŞİRME/
+HAMUR/SOS/İLERİ + "Adım X/12" ilerleme barı + ok navigasyonu; 12 adım kaydırma
+kanıtlı sw=3516) · R5 one-page gnav çapa çubuğu (olcu mirası, scrollspy) ·
+R6 püf detay breadcrumb hero üstüne overlay (art-hero-crumb) · R7 ansiklopedi
+IA: görünür ana kategoriler + tıkla-aç madde satırları (eski sözlük modeli) ·
+R8 modüler bloklar + blok-başı dikey paylaş rayı (eski referans birebir) ·
+EK: kesfet-v1 R6 aynı pattern'le düzeltildi (Beyar onayı; art-crumb-bar
+grep=0, toggle id'leri korundu).
+
+**SAĞLIK:** R9 v2 dz-card simetrik merkezli kompozisyon (avatar üstte ortalı,
+merkez hizalı kimlik/etiket/meta, krem foot + tam genişlik CTA) · R10 BNP
+sihirbaz TAMAMEN kaldırıldı → mod chip rayı → menü listesi → koleksiyon
+düzenleme (Değiştir/Çıkar/Kap Ekle/Adını Değiştir/Deftere Kaydet; ?mod= ?menu=
+derin link). Not: ~43 kurallık ölü wizard CSS'i bilinçli bırakıldı (iç içe,
+cerrahi silme riskli) — isteğe bağlı temizlik maddesi.
+
+**SHOP:** R11 shop-içi login MODALI (5 dosya; giris-v1'e sızıntı 0) · R12 hero
+kurgu değişimi: kampanya bandı + canlı geri sayım + 4'lü fırsat rayı ·
+R13 YENİ "Boyut/Ölçü" facet'i — **SVG ölçü-tile** (artan çaplı halkalar +
+hacim kupası; fotoğraf ölçüyü okutmadığı için bilinçli SVG; kategori=foto,
+Özellik=ikon, Marka=monogram swatch'larıyla görsel dil 4 facet'e yayıldı).
+
+## Denetim sonuçları (lead, bağımsız)
+- Tüm kabuller grep + probe log + SS üçlüsüyle doğrulandı; SS'ler Beyar'a
+  sohbette açıldı.
+- R14 diff'i salt CSS teyitli; arşiv taşıması link-kırılmasız (grep 0).
+- 390 taşma: değişen sayfalarda 0 (teammate probe'ları; kesfet ?detay=1 dahil).
+
+## Beyar incelemesi bekleyenler (revize sonrası güncel liste)
+1. DadaStore marka dili (beklemede, karar verilmedi)
+2. mekan-detay 5px artefakt göz teyidi (beklemede)
+3. BNP ölü wizard CSS temizliği (isteğe bağlı, ayrı mini iş)
+4. Shop chrome placeholder linkleri (Sipariş Takibi/Yardım) — Laravel fazı
+
+## FIX COMMIT ÖNERİSİ (Beyar onayı bekliyor — ATILMADI)
+`fix(mockup): cila-2 faz 1 revize turu — 17 madde (premium rozet, TD galeri/video, gorselli facet, rota step rail, puf/kesfet hero overlay, ansiklopedi IA, dz-card v2, BNP sihirbazsiz, shop login/hero/boyut facet, tarif-bulucu ust duzen) + legacy arsiv`
+
+## R15 (kapanış öncesi son ek — Beyar)
+BNP mod chip'leri görselli mod kartı rayına dönüştürüldü: arka plan görselli
+148×94 kart + gradient overlay + ikon/etiket + aktif domates ring/rozet;
+mobilde yatay snap rayı. JS filtre akışı değişmedi. (saglik — BNP 2. tur,
+loop sigortası sınırında kabul.)

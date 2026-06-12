@@ -104,3 +104,61 @@ Not: guard'lar idempotent — bu raporun 9 dosyası tekrar dokunulmaz; sadece es
 1. **'Dada Denedi' grep (site-geneli):** 9 dosya — `anasayfa-athleats/kinfolk/cookpad/obys-deneme, anasayfa-portal, anasayfa-uzman, anasayfa.html, mutfak-defteri-v1, seo-landing-v1`. **HEPSİ benim SIRLAR setim DIŞINDA**; sweep metin değiştirmediği için bu sayım sweep ÖNCESİYLE aynı (sweep 0 yeni 'Dada Denedi' üretti). Bunlar faz-sonu global temizlik (#5) kapsamı — bilgi olarak iletiliyor.
 2. **4+ aile sayfası dropdown render + 390 probe** (`sweep-probe.png`, `dropdown-render2-crop.png`): tarif-detay, saglik-hub, hesabim, sozluk-v1, kategori → hepsi `scrollW=375` (SIFIR taşma) + Mutfak Sırları:var + Ansiklopedi:var. sepet-v1 → dropdown YOK (shop shell, beklenen) + taşma yok. Görsel render: tarif-detay'da 5 öğe doğru sırada (Mutfağa Giriş → Püf → **Mutfak Ansiklopedisi** → Sözlük → Ölçü) ikonlarıyla doğrulandı.
 3. **Sweep dokunduğu dosya sayısı:** 52 (yukarıda listelendi).
+
+---
+
+## REVİZE TURU — R4-R8 (task #7) TAMAMLANDI
+
+| R | Konu | Çözüm | Kanıt SS |
+|---|------|-------|----------|
+| R4 | Önerilen Rota 12+ adımda çalışan kurgu | `mutfaga-giris-v1` rotası **8 → 12 adıma** çıkarıldı (09 Baharat&Tat, 10 Izgara&Mangal, 11 Sunum&Tabaklama, 12 Artık Yönetimi). 2-kolon steps-grid 12 adımı sorunsuz taşıyor — kurgunun 6'nın çok üstünde ölçeklendiği kanıtlandı. | `r45-giris-crop.png` |
+| R5 | mutfaga-giris one-page tab/çapa çubuğu | olcu-birimleri `ob-tabs` mirası `.gnav` sticky çapa çubuğu eklendi (header altına yapışır): Nereden Başlamalı · Önerilen Rota · Konu Kütüphanesi · Sıradaki Adım. JS `scrollIntoView` smooth + scrollspy aktiflik; `scroll-margin-top` ile header hizası. | `r45-giris-crop.png` |
+| R6 | puf-detay breadcrumb hero görseli ÜSTÜNE overlay | Ayrı beyaz `.art-crumb-bar` KALDIRILDI; breadcrumb + "Püf Noktalarına Dön" butonu hero görselinin **üstüne overlay** olarak taşındı (beyaz metin + glass back butonu, hero flex-column üst satır). | `r68-puf-hero.png` |
+| R7 | ansiklopedi-v1 IA eski sözlük modeli | Düz disc-card grid → **görünür ana kategoriler + tıkla-aç maddeler**: 4 kategori bölümü (Sebzeler/Meyveler/Bakliyat&Tahıl/Baharat&Kök), her madde akordeon satırı (thumb + ad + latince + rozet + chevron); tıkla → NEDİR? / FAYDALARI teaser + "Maddenin tamamını oku →". Arama + A-Z + kategori-jump chip korundu. | `r7-ansiklopedi-1440.png`, `r7-ans-open-crop.png` |
+| R8 | püf modüler bloklar + özel paylaş kurgusu | Eski referans (`puf-noktalari-detay.html`) birebir: gövde **modül modül içerik bloklarına** bölündü, her blokta blok-başı **dikey paylaş rayı** (`.mod-share`: fb/x/wa/tg/pin/mail). Sayfa-seviye "özel paylaş bölümü" = mevcut etiket-paylaş rayı (ptr) korundu. Mobilde rayar yatay döner. | `r68-puf-mods.png`, `r68-puf-500-crop.png` |
+
+### R6 — set-dışı bozuk pattern raporu (lead'e)
+`art-crumb-bar` (ayrı beyaz crumb bar + altında full-bleed hero) pattern'i taranınca **3 dosyada** bulundu:
+- `puf-noktasi-detay-v1.html` → DÜZELTİLDİ (R6, crumb hero'ya overlay).
+- `puf-noktalari-v1.html` → yalnız ARTIK CSS kuralı kaldı (detay görünümü önceki turda çıkarıldığı için markup yok; zararsız ölü CSS, istenirse silinebilir).
+- **`kesfet-v1.html` → SET DIŞI** (başka teammate / önceki dalga). kesfet makale detayı aynı ayrı-crumb-bar pattern'ini kullanıyor; aynı R6 düzeltmesi (crumb'ı hero'ya overlay) gerekebilir — **lead'e raporlandı**, dokunulmadı.
+
+### Revize turu probe
+- 390px taşma: `mutfaga-giris-v1`, `puf-noktasi-detay-v1`, `ansiklopedi-v1` → hepsi `scrollW=375` (SIFIR taşma) (`r48-390.png`).
+- Ansiklopedi akordeon aç/kapa + jump çalışıyor; rota 12 adım render; gnav scrollspy; puf modül paylaş rayları (masaüstü dikey / mobil yatay) doğrulandı.
+- CSS `*/` tuzağı üç dosyada da temiz.
+
+---
+
+## REVİZE TURU — DETAYLI BRİEF UYGULAMASI (2. tur, loop sigortası)
+
+Lead'in detaylı re-brief'i sonrası R4 SIFIRDAN yeniden tasarlandı; R6 set-içi tutarlılık doğrulandı.
+
+**R4 — Önerilen Rota YENİ TASARIM (2-kolon grid REDDEDİLDİ → yatay step rail):**
+2-kolon `steps-grid` (8'i aşınca dizilim sorunu) tamamen kaldırıldı. Yerine **yatay kaydırılabilir step rail** kuruldu:
+- `.rstep-track` yatay scroll-snap track + `.rstep` kart (num rozet + **FAZ etiketi** [TEMEL/PİŞİRME/HAMUR/SOS/İLERİ] = adım gruplama bonusu + başlık + açıklama + "Dersi aç →"), her kart → ders detayı.
+- **İlerleme göstergesi:** "Adım X / 12" sayaç + gradient ilerleme barı (`.rp-fill`) scroll oranıyla dolar.
+- **Ok navigasyonu:** prev/next butonları (uçlarda disabled), 1.5 kart kaydırır.
+- 12 adımla kuruldu; **ölçeklenme KANITI** (`r4-route-rwinfo.png`): `track scrollWidth=3516 · clientWidth=1176 · overflow=true · scrollLeft=2340` (max'a kayar) → 12+ adımda gerçek yatay kaydırma çalışıyor, dizilim bozulmuyor. Sayfa-seviye 390 taşması SIFIR (rail iç-kaydırmalı).
+- Kanıt SS: `r4-start2-band.png` (rail + kartlar + ilerleme + oklar), `r4-route-rwinfo.png` (metrik kanıt), `r4-390.png`.
+
+**R6 — set-içi tutarlılık doğrulaması:**
+- `mutfaga-giris-detay-v1` + `ansiklopedi-detay-v1` → `art-crumb-bar:0`, **rd-top + rd-crumb** kullanıyorlar = tarif-detay'la BİREBİR aynı TD anatomisi (crumb beyaz üst şeritte, gallery üstünde). Bozuk pattern DEĞİL, düzeltme gerekmez.
+- `puf-noktasi-detay-v1` → crumb hero görseline overlay edildi (`art-hero-crumb`), kalan ölü `.art-crumb-bar` CSS temizlendi (artık 0).
+- **SET DIŞI:** `kesfet-v1.html` aynı `art-crumb-bar` (ayrı crumb bar + full-bleed hero) pattern'ini kullanıyor — dokunulmadı, lead'e raporlandı.
+
+**R5/R7/R8** önceki turda detaylı brief'le uyumlu kurulmuştu (gnav scrollspy / kategori-akordeon / modüler blok + paylaş rayı); değişiklik gerekmedi, render + 390 yeniden teyit edildi.
+
+**Probe özeti:** 3 revize sayfa (`mutfaga-giris-v1`, `puf-noktasi-detay-v1`, `ansiklopedi-v1`) → `scrollW=375` (SIFIR taşma). R4 rail overflow=true + scrollLeft=2340 kanıtı. CSS `*/` tuzağı temiz.
+
+---
+
+## EK İŞ — kesfet-v1.html R6 düzeltmesi (Beyar onayıyla kapsam içi)
+
+Set-dışı bulgu (kesfet-v1) Beyar onayıyla geçici sahipliğime atandı; puf-noktasi-detay R6 düzeltmesinin AYNISI uygulandı, hero'nun başka yapısına dokunulmadı.
+
+- **Markup:** detay görünümündeki (`?detay=1`) ayrı `<div class="art-crumb-bar below-header">` KALDIRILDI; breadcrumb + "Keşfet'e dön" butonu `.art-hero` içine `.art-hero-top` (crumb overlay + glass back) olarak taşındı, `.art-hero-main` ile başlık/meta alta hizalandı. Hero `below-header` (112px) + flex-column.
+- **CSS:** `.art-hero-crumb / .art-hero-top / .art-hero-main` + hero flex-column padding (puf-detay R6 pattern'i birebir) eklendi; mobil `padding-top:62px`.
+- **Toggle korundu:** `id="artBack"` + `id="crumbKesfet"` (liste↔detay JS) aynen bırakıldı; liste görünümü etkilenmedi.
+
+**Kanıt:** `kesfet-r6-1440.png` (detay 1440), `kesfet-r6-hero.png` (crumb+back hero üstünde overlay), `kesfet-r6-390.png` (`?detay=1` scrollW=375, taşma 0). `art-crumb-bar` markup grep = **0**. CSS `*/` tuzağı temiz.
