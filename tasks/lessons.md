@@ -19,3 +19,19 @@ istemek zorunda kaldı.
 agent gönder → numaralı blok envanteri → yeni tasarım kapsamıyla diff tablosu
 (karşılanan / bilinçli atılan / karar gereken) → plan dosyasına koy, onayla
 birlikte sun.
+
+## CSS yorumunda `*/` içeren ifade yazılmaz (2026-06-12, mekan modülü)
+
+**Kural:** CSS yorum bloklarının içine `lst-*/fct-*`, `rev-*/c-item` gibi
+`*/` dizisi içeren glob/ifade YAZILMAZ — `*/` yorumu erken kapatır, kalan
+metin bir sonraki `{...}` bloğunu (ilk kuralı) sessizce yutar. Ayraç olarak
+`ve`, `+` veya boşluklu `* /` kullan.
+
+**Why:** mekan-liste-v1 + mekan-detay-v1'de açıklama yorumundaki
+"tarif-liste-v1 lst-*/fct-* facet kiti" ifadesi `.lst-top` kuralını yuttu —
+hero koyu overlay'siz, beyaz üstüne beyaz başlıkla render oldu. Konsol hatası
+YOK; sadece probe/SS'te yakalandı (CSSOM'da kuralın hiç olmadığı görüldü).
+
+**How to apply:** Yeni sayfa CSS bloğu yazarken yorum içinde `*/` grep'i
+(`grep -n '\*/[^ ]' <dosya>`); şüpheli render'da kuralın CSSOM'da varlığını
+`document.styleSheets` üzerinden doğrula.

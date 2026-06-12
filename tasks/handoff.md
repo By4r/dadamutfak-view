@@ -1,6 +1,11 @@
 # DadaMutfak — PROJE TAMAMLANDI 🏁 MOCKUP SETİ TESLİME HAZIR
 
-> Tek doğruluk kaynağı. Güncelleme: 2026-06-12 (**REVİZE-2 TAMAM** — site geneli
+> Tek doğruluk kaynağı. Güncelleme: 2026-06-12 akşam (**MEKAN MODÜLÜ TURU**:
+> mekan-liste-v1 **KABUL** · mekan-detay-v1 **TASARIM REDDEDİLDİ** — Beyar:
+> yerleşim kullanışsız, sağdaki görsel slider kötü; baştan tasarlanacak
+> (eski template + Zomato referanslı). Köprüler + kanıt:
+> `outputs/kesfet-mekan-rapor.md`. Envanter 62→64 sayfa.)
+> Önceki: 2026-06-12 (**REVİZE-2 TAMAM** — site geneli
 > mobil sabit-katman disiplini: 🔴1+🟡53 çözüldü, kanonik pattern 55 dosyada,
 > kılavuz §3b; keşfet konsepte geri çekildi (Mekânlar · Gurme Lezzetler ·
 > Etkinlikler). Commit: `a8d45b7 fix(mockup): revize-2`. Detay:
@@ -10,10 +15,12 @@
 
 ---
 
-## 📦 SAYFA ENVANTERİ — 62 üretim sayfası
+## 📦 SAYFA ENVANTERİ — 64 üretim sayfası
 
-- **60 × `*-v1.html`** + `anasayfa-portal-v3a.html` (kanonik baz) +
+- **62 × `*-v1.html`** + `anasayfa-portal-v3a.html` (kanonik baz) +
   `panel-shell.html` (diyetisyen paneli iskeleti)
+- Mekan modülü (2026-06-12): `mekan-liste-v1` (kabul) + `mekan-detay-v1`
+  (tasarım reddedildi — yeniden yapılacak, sayfa envanterde)
 - İskeletler: `_shell.html` (public) + `panel-shell.html` (panel)
 - Final cilada doğan: **`test-detay-v1.html`** (?test=metabolizma|su-hidrasyon|
   temel-pisirme|hangi-yemek — Onedio tarzı görselli test akışı, kişilik kartı
@@ -73,10 +80,12 @@
 
 ## ➡️ SONRAKİ ADIM (Beyar kararı — 2026-06-12)
 
-1. **Keşfet mekan modülü:** `mekan-liste` + `mekan-detay` (Zomato-vari hafif —
-   eski sitenin mekan keşfi vaadi geri geliyor ama foursquare filtre/harita
-   ağırlığı OLMADAN; kesfet-v1'in Mekânlar pillar'ı bu modüle köprü olur).
-   Kaynak: `outputs/revize2-kesfet.md` fark tablosu + eski `kesfet-detay.html`.
+1. **Keşfet mekan modülü:** TUR 1 BİTTİ (2026-06-12) — `mekan-liste-v1` ✅ KABUL
+   (facet + v3a mekan kartı dili); `mekan-detay-v1` ❌ TASARIM REDDEDİLDİ —
+   Beyar: yerleşim kullanışsız, sağdaki görsel slider kötü; **baştan
+   tasarlanacak** (eski template `kesfet-detay.html` L1 envanteri +
+   Zomato referanslı). Köprüler (anasayfa/kesfet → liste/detay) kuruldu ve
+   kalıyor. Kanıt + L1 + açık sorular: `outputs/kesfet-mekan-rapor.md`.
 2. **Toplu cila** (cila-2 — revize-2 tereddütleri dahil: hesabim 38px buton,
    gerçek cihaz mobil teyit turu).
 3. Sonrası: stack kararı (Laravel mi statik mi) + EN dil stratejisi.
