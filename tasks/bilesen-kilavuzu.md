@@ -232,6 +232,32 @@
   (breadcrumb / chip / eyebrow) header çizgisinden **≥16px iç nefes** alır (Dalga 1
   standardı ~17px; saglik-hub vakası `.rd-crumb{margin-top:16px}` ile çözüldü)
 
+## 3b. MOBİL SABİT-ALT-KATMAN KURALI (Revize-2 — yeniden icat YASAK)
+
+> Kaynak vaka: tarif-detay mobilde actbar+çerez+nav 3 katman yığılması (Beyar
+> gerçek cihazda yakaladı). Detay: `outputs/revize2-mobil1.md` §1–§3.
+
+- **Kural:** Bir mobil ekranda en fazla **1 sabit alt şerit** görünür.
+- **Öncelik sırası:** çerez onayı (geçici gate, en üst) > sayfanın kendi aksiyon
+  şeridi > global bottom-nav.
+- **Mekanizma (55 sayfada aynı, kaynak `_shell.html`):** `.bottom-nav.bn-hidden`
+  (translateY gizleme, .26s) + `window.__bnUpdate` yöneticisi. Sayfanın kendi
+  sabit şeridi varsa `window.__bottomStrips=['#selector']` ile kaydedilir; şerit
+  `.show` iken nav gizlenir. Şeritli sayfada nav ayrıca scroll-down'da gizlenir
+  (threshold 12px; tepe <80px'te görünür). Çerez açıkken nav VE şerit bastırılır.
+- **Birleştirme YAPILMAZ:** aksiyon şeridi tam genişlik kalır, nav ona feda olur
+  (bottom-nav'a buton gömmek dili bozar — Revize-2 kararı).
+- **Yeni sayfa:** `_shell.html`'den türet → kural otomatik gelir. Kendi sabit
+  şeridi olan yeni sayfa SADECE `__bottomStrips`'e selector ekler.
+- **Muaf:** panel ailesi (panel-shell + dyt-*) ve hesaplayici-v1 — public chrome
+  (çerez+bottom-nav) taşımazlar.
+- **Probe tuzağı:** alt katman taramasında filtre bandını dar tutma — çerez kartı
+  mobilde `bottom:calc(80px+safe-area)` ile nav'ın ÜSTÜNDE durur; `bottom>vh-20`
+  filtresi onu kaçırır (Revize-2'de yakalanan kör nokta). Doğru tanım: **bottom-pinned**
+  (fixed + CSS `bottom` set + alta sabit + kısa/geniş); sticky-top şeritleri
+  (`.dl-filter`/`.pf-tabbar`) ve ekran-altı `bn-hidden` nav'ı hariç tut. Ayrıca çerez
+  `setTimeout(700ms)` ile belirir — erken snapshot onu görmez, probe'u ≥1s beklet.
+
 ## 4. Bilinen SS notu (kök neden bulundu — profil teammate)
 
 Headless Chrome'un MIN pencere genişliği 500px: `--window-size=390` verilse de

@@ -408,7 +408,9 @@ html,body{overflow-x:hidden}
   -webkit-backdrop-filter:blur(30px) saturate(190%);backdrop-filter:blur(30px) saturate(190%);
   border:none;
   box-shadow:0 10px 30px rgba(33,30,22,.16),0 2px 8px rgba(33,30,22,.07),inset 0 1px 0 rgba(255,255,255,.6);
+  transition:transform .26s var(--ease);
 }
+.bottom-nav.bn-hidden{transform:translateY(calc(100% + 30px));pointer-events:none}
 .bn-item{
   flex:none;position:relative;display:grid;place-items:center;
   width:40px;height:40px;border-radius:var(--radius-lg);
@@ -1854,10 +1856,10 @@ document.addEventListener('click',function(e){
   function stored(){try{return localStorage.getItem(KEY);}catch(e){return null;}}
   function dismiss(val){
     try{localStorage.setItem(KEY,val);}catch(e){}
-    banner.classList.remove('show');
+    banner.classList.remove('show');if(window.__bnUpdate)window.__bnUpdate();
   }
   if(force || !stored()){
-    setTimeout(function(){banner.classList.add('show');},700);
+    setTimeout(function(){banner.classList.add('show');if(window.__bnUpdate)window.__bnUpdate();},700);
   }
   document.getElementById('cookieAccept').addEventListener('click',function(){dismiss('accepted');});
   document.getElementById('cookieReject').addEventListener('click',function(){dismiss('rejected');});
@@ -2048,6 +2050,32 @@ document.querySelectorAll('.p-add').forEach(function(b){
     complete.innerHTML='<i class="fa-solid fa-spinner fa-spin"></i> Sipariş oluşturuluyor…';
     setTimeout(function(){location.href='siparislerim-v1.html?yeni=1';},700);
   });
+})();
+</script>
+<script>
+/* ===== MOBİL ALT KATMAN YÖNETİCİSİ (revize2/mobil1 — kanonik) =====
+   Kural: ekranda en fazla 1 sabit alt şerit. Çerez onayı (geçici, öncelikli)
+   ya da sayfanın kendi aksiyon şeridi (window.__bottomStrips) açıkken global
+   bottom-nav gizlenir; şerit olan sayfalarda nav ayrıca aşağı kaydırınca gizlenir. */
+window.__bottomStrips=window.__bottomStrips||[];
+(function(){
+  var nav=document.querySelector('.bottom-nav');
+  if(!nav)return;
+  var cookie=document.getElementById('cookieBanner');
+  var strips=window.__bottomStrips.map(function(s){return document.querySelector(s);}).filter(Boolean);
+  var lastY=window.scrollY||0;
+  function stripShown(){for(var i=0;i<strips.length;i++){if(strips[i]&&strips[i].classList.contains('show'))return true;}return false;}
+  function update(){
+    var y=window.scrollY||0;
+    if((cookie&&cookie.classList.contains('show'))||stripShown()){nav.classList.add('bn-hidden');lastY=y;return;}
+    if(strips.length===0||y<80){nav.classList.remove('bn-hidden');lastY=y;return;}
+    if(y-lastY>12){nav.classList.add('bn-hidden');lastY=y;}
+    else if(lastY-y>12){nav.classList.remove('bn-hidden');lastY=y;}
+  }
+  window.addEventListener('scroll',update,{passive:true});
+  window.addEventListener('resize',update,{passive:true});
+  document.addEventListener('click',function(){setTimeout(update,60);},true);
+  window.__bnUpdate=update;update();
 })();
 </script>
 </body>

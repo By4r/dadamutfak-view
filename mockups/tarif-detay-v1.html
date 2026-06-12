@@ -409,7 +409,9 @@ html,body{overflow-x:hidden}
   -webkit-backdrop-filter:blur(30px) saturate(190%);backdrop-filter:blur(30px) saturate(190%);
   border:none;
   box-shadow:0 10px 30px rgba(33,30,22,.16),0 2px 8px rgba(33,30,22,.07),inset 0 1px 0 rgba(255,255,255,.6);
+  transition:transform .26s var(--ease);
 }
+.bottom-nav.bn-hidden{transform:translateY(calc(100% + 30px));pointer-events:none}
 .bn-item{
   flex:none;position:relative;display:grid;place-items:center;
   width:40px;height:40px;border-radius:var(--radius-lg);
@@ -3046,9 +3048,10 @@ document.addEventListener('click',function(e){
   function dismiss(val){
     try{localStorage.setItem(KEY,val);}catch(e){}
     banner.classList.remove('show');
+    if(window.__bnUpdate)window.__bnUpdate();
   }
   if(force || !stored()){
-    setTimeout(function(){banner.classList.add('show');},700);
+    setTimeout(function(){banner.classList.add('show');if(window.__bnUpdate)window.__bnUpdate();},700);
   }
   document.getElementById('cookieAccept').addEventListener('click',function(){dismiss('accepted');});
   document.getElementById('cookieReject').addEventListener('click',function(){dismiss('rejected');});
@@ -3376,13 +3379,44 @@ document.querySelectorAll('.rd-follow').forEach(function(b){
   if(!bar||!head)return;
   var force=location.search.indexOf('bar=1')>-1;
   if(force){bar.classList.add('show');return;}
+  var ck=document.getElementById('cookieBanner');
   function onScroll(){
     var past=head.getBoundingClientRect().bottom<0;
     var nearEnd=(window.innerHeight+window.scrollY)>=document.body.scrollHeight-220;
-    bar.classList.toggle('show',past&&!nearEnd);
+    var cookieOpen=ck&&ck.classList.contains('show');
+    bar.classList.toggle('show',past&&!nearEnd&&!cookieOpen);
+    if(window.__bnUpdate)window.__bnUpdate();
   }
   onScroll();
   window.addEventListener('scroll',onScroll,{passive:true});
+})();
+
+// ---- MOBİL ALT KATMAN YÖNETİCİSİ (kanonik: ekranda en fazla 1 sabit alt şerit) ----
+// Kural: çerez onayı (geçici, öncelikli) ya da sayfanın kendi aksiyon şeridi (#actbar) açıkken
+// global bottom-nav gizlenir; aksi halde aşağı kaydırınca gizlenir, yukarı/tepe'de görünür.
+window.__bottomStrips=['#actbar'];
+(function(){
+  var nav=document.querySelector('.bottom-nav');
+  if(!nav)return;
+  var cookie=document.getElementById('cookieBanner');
+  var strips=(window.__bottomStrips||[]).map(function(s){return document.querySelector(s);}).filter(Boolean);
+  var lastY=window.scrollY||0;
+  function stripShown(){
+    for(var i=0;i<strips.length;i++){var el=strips[i];if(el&&el.classList.contains('show'))return true;}
+    return false;
+  }
+  function update(){
+    var y=window.scrollY||0;
+    var cookieOpen=cookie&&cookie.classList.contains('show');
+    if(cookieOpen||stripShown()){nav.classList.add('bn-hidden');lastY=y;return;}
+    if(y<80){nav.classList.remove('bn-hidden');lastY=y;return;}
+    if(y-lastY>12){nav.classList.add('bn-hidden');lastY=y;}
+    else if(lastY-y>12){nav.classList.remove('bn-hidden');lastY=y;}
+  }
+  window.addEventListener('scroll',update,{passive:true});
+  window.addEventListener('resize',update,{passive:true});
+  document.addEventListener('click',function(){setTimeout(update,60);},true);
+  window.__bnUpdate=update;update();
 })();
 // aksiyon barı buton davranışları (mock)
 document.querySelectorAll('.actbar .ab-act').forEach(function(b){
