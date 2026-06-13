@@ -340,3 +340,82 @@ capture'ı izole-altyapısı olan teammate'e devreder, görselleri kendi inceler
 (design-eye lead'de kalır). (3) headless fixed/blur paint + fullPage stitch
 artefaktları için channel:chrome (gerçek paint) tercih; bunlar canlıda yok,
 "bulgu değil" diye işaretlenir.
+
+## Sweep KABUL'ünde negatif grep SET-RÖLATİF değil GLOBAL koşulur (2026-06-13, faz5-revize)
+
+**Kural:** Bir çok-dosyalı sweep'in "artık kalmadı" kabulü, script'in İŞLEDİĞİ
+SET üzerinde değil, TÜM ENVANTER (`grep -rl ... mockups/*.html`) üzerinde
+koşulur. Set-rölatif negatif grep (yalnız dokunulan N dosyada artık ara)
+yapısal olarak FALSE-CLEAN üretir: bir sayfa anchor uyuşmazlığı yüzünden hedef
+listesine HİÇ girmediyse, aynı pattern'le koşan negatif grep onu da hiç görmez.
+Divergent KEŞFİ de hardcode-tahminle ({v3a, tarif-detay} gibi) değil GLOBAL
+NEGATİF GREP ile yapılır: "eski-marker VAR ∧ yeni-marker (done sentinel) YOK"
+= divergent/kaçak kümesi. Lead bu global grep'i teammate'ten BAĞIMSIZ koşar.
+
+**Why:** faz5-revize duplicate-menü sweep'inde header-fix 56 sayfayı temiz
+işledi, md5 idempotent, ve "negatif grep D2-kalan=[]" raporladı — KABUL gibi
+göründü. Ama mutfaga-giris-v1 + olcu-birimleri-v1 "Dada Store" nav-item'ı
+DIVERGENT'ti (`Dada Store <i chevron>` + 4-kategorili dropdown, hem desktop hem
+drawer; Faz-4 'Store düz link' sweep'inde de kaçmışlardı — kronik divergence).
+Kanonik D1 anchor uymadı → sayfa hedef listesine girmedi → set-rölatif negatif
+grep de onları görmedi. Lead'in BAĞIMSIZ global grep'i (`grep -rl 'Dada
+Akademi' ... ∧ drawer-world YOK`) tam bu 2'yi yakaladı. Set-içi temiz ≠ global
+temiz. (Aynı 2 sayfa Faz-4 kategori entegrasyonunda da kaçmıştı = iki kez
+aynı divergence.)
+
+**How to apply:** (1) Sweep kabul checklist'ine GLOBAL negatif grep zorunlu:
+"eski-marker taşıyan dosya = ∅ (bilinen meşru istisnalar hariç)" — script
+sayacı/set-rölatif grep KABUL kanıtı değil. (2) Divergent küme GLOBAL grep'le
+KEŞFEDİLİR (eski-VAR ∧ done-YOK), hardcode liste değil. (3) Lead bu grep'i
+teammate'ten bağımsız koşar (false-clean'i kıran bağımsızlıktır). (4) Bir sayfa
+kronik divergent çıkarsa (önceki fazlarda da kaçmış) flag'le — başka drift'ler
+de taşıyor olabilir.
+
+## position:sticky'yi öldüren overflow-x:hidden (site-geneli latent) — clip ile diril (2026-06-13, faz5-revize)
+
+**Kural:** Shell/kök seviyede `html,body{overflow-x:hidden}` varsa, tarayıcı
+`overflow-y`'yi `auto`'ya hesaplar ve BODY'yi scroll-container yapar →
+`position:sticky` taşıyan tüm yan paneller (form süreç paneli, `.lst-side`
+facet vb.) SESSİZCE yapışmaz (scroll'da viewport'tan kaçar). Konsol hatası YOK.
+Çözüm: yatay taşma kesimi gerekiyorsa `overflow-x:hidden` yerine
+`overflow-x:clip` kullan — clip yatayı keser ama scroll-container davranışı
+üretmez, `overflow-y`'yi `visible` bırakır → sticky GERÇEKTEN çalışır.
+
+**Why:** faz5-revize'de diyetisyen-ol + sef-ol "sağ panel sticky AMA çalışmıyor,
+sayfanın alt %60'ında sağ kolon boş" sorununun gerçek kök nedeni buydu (panel
+zaten `position:sticky`'ydi). Probe: panel scrollY=1400'de top=−508 (yapışsa
+130). Page-local `overflow-x:clip` override ile top=130'a döndü, 390 taşma 0
+korundu. Site-geneli latent: aynı bug shell'i kullanan başka sticky sayfaları
+da etkiliyor.
+
+**How to apply:** (1) "sticky çalışmıyor" şikayetinde ÖNCE kök/shell'de
+`overflow-x:hidden` ara — `position:sticky`'nin görünür ata zincirinde
+`overflow:hidden/auto/scroll` varsa sticky o ata içinde yapışır (viewport'a
+değil). (2) Yatay taşma kesimi için `clip` tercih et (`hidden` scroll-container
+yan etkisi yapar). (3) Sticky doğrulaması GÖRSEL değil PROBE ile: mid-scroll'da
+`getBoundingClientRect().top` beklenen sticky-offset'e eşit mi. (4) Bir sayfada
+bulunan shell-kaynaklı sticky bug'ı site-geneli FLAG'lenir (kapsam dışıysa
+Beyar kararına çıkar, sessiz geçilmez).
+
+## macOS iCloud/offload placeholder → cp 0-byte (kaynak dosya tuzağı) (2026-06-13, faz5-revize)
+
+**Kural:** Masaüstü/Belgeler iCloud-offload'lu bir kaynaktan (PDF, asset) dosya
+alırken: `ls -la` ve `wc -c` DOLU boyut gösterse bile (ikisi de stat-tabanlı
+optimize edebilir, içeriği okumaz) dosya yerel olarak materyalize OLMAYABİLİR;
+`cp` 0-byte üretir ya da indirmeye çalışırken ASILIR. `until [ -s dosya ]`
+gibi bekleme döngüsüne GİRME — sonsuza kadar takılırsın.
+
+**Why:** Bu turun açılışında `corporate-identity-guideline.pdf` masaüstünden
+kopyalanırken her cp 0-byte verdi + arka planda asıldı; bir bekleme döngüsü
+takıldı (Beyar kesti). Kaynak `~/Desktop/.../...pdf` iCloud placeholder'dı.
+Çözüm: materyalize bir kopya (`~/Downloads/...`) verilince tek seferde tuttu
+(8.8MB byte-birebir). Sonra PyMuPDF ile palet çıkarıldı.
+
+**How to apply:** (1) Kopya sonrası DAİMA `wc -c` ile DEĞİL, gerçek içerik
+teyidi yap — ama wc-c stat'tan okuyabileceği için en kesin kanıt: kopyayı bir
+araçla AÇ (PyMuPDF `fitz.open`, `file`, render). (2) cp 0-byte/asılırsa kaynak
+iCloud placeholder şüphesi: `brctl download` ya da Finder'da indir; materyalize
+kopya iste. (3) ASLA `until [ -s ]` bekleme döngüsüne girme — max 1 deneme,
+tutmazsa fallback'e geç (bu projede: bilinen kurumsal renklerle devam). (4)
+Render aracı yoksa (`pdftoppm` yok) macOS'ta `qlmanage -t` kapak verir,
+PyMuPDF (`fitz`) varsa keyfi sayfa + metin ekstraksiyonu yapar.

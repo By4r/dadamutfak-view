@@ -1,6 +1,42 @@
 # DadaMutfak — PROJE TAMAMLANDI 🏁 MOCKUP SETİ TESLİME HAZIR
 
-> Tek doğruluk kaynağı. Güncelleme: 2026-06-13 (**CİLA-2 FAZ 5 TAMAM — agent team
+> Tek doğruluk kaynağı. Güncelleme: 2026-06-13 (**FAZ 5 REVİZE TURU KAPANDI —
+> agent team `faz5-revize` (lead + 4 teammate), 8/8 madde kanıtlı kabul + COMMIT +
+> PUSH**). İlk 7 madde + mini-revize (A/B/C) hepsi lead bağımsız kanıtlı kabul
+> (grep + tıklama/DOM probe + kendi channel:chrome SS tasarım-gözü):
+> 1. **Duplicate menü temizliği** — DadaStore/DadaAkademi ana menüden kalktı (topbar
+>    markalı kapı kanon), 58 sayfa (56 sweep + 2 divergent patch mutfaga-giris/olcu),
+>    mobil drawer-foot kapı; global negatif grep=0, iki md5 idempotent.
+> 2. **Kurumsal kimlik kılavuzu projeye alındı** (`tasks/corporate-identity-guideline.pdf`
+>    + `tasks/kurumsal-renk.md`): petrol `#006072` = Pantone 3155 C BİREBİR →
+>    DadaAkademi petrol kararı kurumsal teyitli. akademi çift "Ana Site" kaldırıldı.
+> 3. **Shop section ritmi** — krem ÇIKARILDI (Beyar) → beyaz/gri(v3a)/KOYU band;
+>    hero/bambu/bej-kart kimlik korundu. (Görselli-band opsiyonu eklenmedi, koyu band onaylı.)
+> 4. **Form 2-kolon + Hibrit panel** (diyetisyen-ol+sef-ol): sticky-broken kök-neden
+>    (`overflow-x:hidden`→`clip`) çözüldü; Hibrit = örtüşen bölüm-nav + pasif başvuru
+>    süreci timeline.
+> 5. **BNP** — floating menü tepsisi (grid itmez overlay) + mod→2 alt-tab (Sıfırdan
+>    Kur/Hazır Menüler) + düzenlenebilir menü adı (dirty-flag, defter `#mdRename` bağı)
+>    + cookmode her-yemek-process + "Menülerime Git"; haftalik "Ekle" fix.
+> 6. **Markalı PDF** — alisveris-listesi jsPDF + Gilroy gömülü (TR glyph), "TAMAMLANDI" kalktı.
+> 7. **tarif-bulucu** kategori şeridi enableDrag fix + fade (Faz-4 enableDrag dersi).
+>
+> **COMMIT: feat `0ad9576` + docs kapanış commit + PUSH origin/main (Beyar onayı
+> 2026-06-13) — GitHub Pages güncel.** Sentez: `outputs/faz5-revize-sentez.md` +
+> 4 teammate raporu. Lessons +3 (global negatif grep · sticky-overflow · iCloud cp-tuzağı).
+> Takım KAPATILDI.
+>
+> 🔜 **SIRADA — FAZ 6** (detayı Beyar Faz 6 başlarken verecek). FAZ 6'YA TAŞINAN NOTLAR:
+> - **Hero tutarlılık denetimi** (çıplak herolar → zengin standart, §2f kanonu).
+> - **mutfaga-giris + olcu kronik kategori drift'i** (drawer Tarifler alt-menüsü eski
+>   etiketler — Çorbalar/Ana Yemekler vs kanonik Çorba/Kırmızı Et; Faz-4 entegrasyonuna girmemiş).
+> - **Site-geneli sticky bug** (`overflow-x:hidden`→`clip` shell'e mi sayfa-bazlı mı yayılsın).
+> - **Final mobil QA** → 3 agent paralel, viewport bölüşümü (390 / 768 / drawer+etkileşim), read-only test.
+> - **Faz 7 adayı: Sofra Düzeni modülü** (Mutfak Sırları altı, 8 kategori, DadaShop köprülü — patron talebi).
+> - Bekleyen patron kararları: Su Bardağı ölçü (200↔240ml) · Ramazan modu · M2 sosyal
+>   login seti · reklam paket fiyatları · "Şef Ol" hedefi (m12).
+>
+> Önceki: 2026-06-13 (**CİLA-2 FAZ 5 TAMAM — agent team
 > cila2-faz5 (lead delegate + 6 teammate), 6/6 görev kanıtlı kabul**: KABUKLAR +
 > ÜYELİK SOSYAL + BNP AKIŞI + ALIŞVERİŞ LİSTESİ. (1) **header**: siyah topbar
 > yeniden — Tarif Ekle/Testler KALKTI, sağda 2 markalı DÜNYA KAPISI DadaStore
