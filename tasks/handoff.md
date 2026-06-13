@@ -1,6 +1,42 @@
 # DadaMutfak — PROJE TAMAMLANDI 🏁 MOCKUP SETİ TESLİME HAZIR
 
-> Tek doğruluk kaynağı. Güncelleme: 2026-06-13 (**CİLA-2 FAZ 4 TAMAM — agent
+> Tek doğruluk kaynağı. Güncelleme: 2026-06-13 (**CİLA-2 FAZ 5 TAMAM — agent team
+> cila2-faz5 (lead delegate + 6 teammate), 6/6 görev kanıtlı kabul**: KABUKLAR +
+> ÜYELİK SOSYAL + BNP AKIŞI + ALIŞVERİŞ LİSTESİ. (1) **header**: siyah topbar
+> yeniden — Tarif Ekle/Testler KALKTI, sağda 2 markalı DÜNYA KAPISI DadaStore
+> (domates) + DadaAkademi (petrol, Yakında) + Tarifler dropdown standardı (22
+> kategori→`tarif-liste?kategori=<slug>`, "Tüm Tarifler" düzeniyle aynı). (2)
+> **akademi-kabuk**: DadaAkademi AYRI KABUK (dada-shop kardeş deseni — kendi nav
+> Akademi/Eğitimler/Eğitmenler/Sertifika/SSS, ana-site nav YOK, Ana Site dönüş;
+> Eğitim Setleri/Konular/Eğitmenler/Sertifika/SSS body; H1 koyu hero). (3)
+> **shop-cila**: çift "Ana Site" kaldır (dönüş tek+sol-üst) + hero-header nefes
+> (23px) + tekdüze zemin→cream-2 alternasyon + .shop-flow seam + bambu ayraç. (4)
+> **uyelik-sosyal**: telefon kayıt/giriş (au-seg) + diyetisyen kayıt köprü
+> (→diyetisyen-ol) + sosyal profil (diyetisyen-profil püf sekmesi + Takip Et) +
+> TAKİP/GİZLİLİK geçidi (?takip=1/0; public'te Kaydedilenler+Menüler .pf-fgate→
+> pf-lock/pf-full). (5) **bnp-akis**: BNP 2-TAB (Tarif Ara wizard / Yemek Modları)
+> + SIFIRDAN MENÜ (mod→tarif→tepsi→kur) + "MENÜYÜ PİŞİR" (cookmode miras,
+> KOLAYDAN ZORA adım adım, ?cook=1) + mod kartı büyüt (236×152) + gölge fix. (6)
+> **defter-menu**: menü içi düzenleme (?menu=/?havuz=, .pf-full içine, gizlilik
+> geçidi korundu) + ALIŞVERİŞ LİSTESİ akışı (tarif-detay→gerçek dm_shoplist
+> transfer + reyon eşleme + Yazdır/PDF + Paylaş popover). KONSOLİDE CHROME SWEEP
+> 58 sayfa (topbar+dropdown+Alışveriş Listem link): CSS-yutma 0, idempotent re-run
+> md5 birebir, sızıntı 0, net-neg 4=shop-back (meşru). Render SS turu (izole
+> channel:chrome) + lead tasarım-gözü. **⚠️ BEYAR KARARI: DadaAkademi kimlik
+> rengi — kabuk DOMATES ama topbar kapısı PETROL, tutarsız; petrol (önerilen) ya
+> da domates seçimi → tek-tur fix. akademi-kabuk petrol-varyant HAZIR (uygulamadı).**
+> Sentez+inceleme: `outputs/cila2-faz5-sentez.md`. **DEPLOY: feat commit `3b6bf82` +
+> docs commit (kapanış) + PUSH origin/main (Beyar onayı 2026-06-13) — GitHub Pages güncel.
+> DadaAkademi=PETROL Beyar kararı uygulandı (akademi-v1 token repoint). Takım kapatıldı.**
+>
+> 🔜 **SIRADA — FAZ 5-SONRASI REVİZE TURU (Yasin Bey/Beyar geri bildirimi):** (1) duplicate
+> menü temizliği · (2) DadaAkademi kurumsal renk (petrol uygulandı; kurumsal ince ayar) ·
+> (3) shop section keskinleştirme · (4) form 2-kolon düzeni · (5) BNP her-yemek-process +
+> "menüye git" butonu + sticky menü · (6) haftalik-menu "ekle" fix · (7) markalı PDF. SONRA
+> **FAZ 6**: tarif modülü + SEO + tutarlılık + final mobil QA. Bekleyen patron kararları
+> dursun: Su Bardağı ölçü (200ml↔240ml), Ramazan modu, M2 sosyal login seti, reklam paket
+> fiyatları, "Şef Ol" hedefi (m12).)
+> Önceki: 2026-06-13 (**CİLA-2 FAZ 4 TAMAM — agent
 > team cila2-faz4 (lead + kategori-tarif + kategori-sirlar + kategori-kesfet-bnp
 > + ux-revize)**: Excel `KategoriEkle.xlsx` (11 sheet) GERÇEK üretim kategorileri
 > mockup'a işlendi (temiz veri `tasks/kategori-veri.md`): tarif 27 kat + 14 tip ·

@@ -273,3 +273,70 @@ bakar (0 beklenir; >0 ise veri-zorunlu mu sapma mı incele). (3) Kabul SS'i
 onaylı sürümle YAN YANA çekilir: "görsel dil tanınabilir aynı, sadece veri
 zengin/derin" teyidi. (4) Sapma bulunursa onaylı commit'ten kabuk geri getirilir,
 veri korunur.
+
+## Cross-teammate marka-token (renk) koordinasyonu grep'le yakalanmaz (2026-06-13, cila-2 faz 5)
+
+**Kural:** İki teammate AYNI marka varlığının (DadaAkademi gibi) farklı yüzlerini
+bağımsız üretirse (biri topbar "kapı"sını, diğeri kabuğun iç aksanını), renk/token
+SEÇİMLERİ grep'le tutarlı GÖRÜNÜP görselde ÇELİŞEBİLİR. Token TANIMI varlığı (her
+ikisinde `--c-petrol` tanımlı) tutarlılık KANITI DEĞİLDİR — hangi tokenin BASKIN
+kullanıldığı yalnız render SS'te görülür. Lead faz-sonu tasarım-gözü pass'inde
+"aynı varlığın iki yüzü aynı kimliği mi taşıyor" diye bakar; çelişki marka kararı
+olarak Beyar'a çıkar, sessizce kabul edilmez.
+
+**Why:** Faz 5'te header DadaAkademi topbar kapısını PETROL yaptı (DadaStore=
+domates'ten ayrışsın diye); akademi-kabuk ise kabuğu DOMATES aksanla kurdu
+(mezuniyet-kepi + nav + hero + CTA = #E14827). Grep ikisinde de `--c-petrol:#006072`
+gördü → "tutarlı" sandı. Render SS petrol-kapı→turuncu-kabuk tutarsızlığını
+yakaladı. İki teammate çakışmadan farklı renk kararı vermişti; kimse yanlış
+değildi, koordinasyon boşluğuydu.
+
+**How to apply:** (1) Paralel takımda bir marka varlığının birden çok yüzü
+farklı teammate'lere düşüyorsa (kapı↔kabuk, ikon↔başlık), spawn'da "X'in kimlik
+rengi = <token>, sapma yok" diye SABİTLE. (2) Lead tasarım-gözü SS pass'inde
+token-TANIMI değil BASKIN-KULLANIM kıyaslanır (logo/nav-active/hero/CTA rengi).
+(3) Çelişki çıkarsa marka kararı Beyar'a; her iki teammate kendi yönünde tek-tur
+fix opsiyonunu HAZIRLAR (uygulamaz), Beyar seçer.
+
+## İdempotency script'in kendi sayacıyla DEĞİL, dış md5/numstat ile doğrulanır (2026-06-13, cila-2 faz 5)
+
+**Kural:** Bir sweep script'inin idempotent olduğu, script'in kendi "toplam
+dokunulan: N dosya" çıktısıyla DOĞRULANMAZ — sayaç çoğu zaman "zaten-var/skip"
+NOT'larını da sayar (yazma olmasa bile). Kesin kanıt: gerçek re-run ÖNCESİ ve
+SONRASI `git diff --numstat | md5` AYNI olmalı (0 fiili yazma). --dry modu da
+yetmez (yazmadığı için re-run davranışını göstermez).
+
+**Why:** Faz 5 konsolide chrome sweep'i 2. koşuda "toplam dokunulan: 58 dosya"
+yazdı — alarm gibi göründü. İnceleme: counter `process()` not listesi boş
+olmayınca artıyordu; "topbar-zaten/css-zaten/alisveris-zaten" skip-notları da
+sayılıyordu, fiili yazma 0'dı. Gerçek re-run numstat md5'i birebir aynı çıktı →
+idempotency sağlam, sayaç kozmetik. Sayaca güvenilseydi yanlış-pozitif "bozuk
+idempotency" paniği olurdu.
+
+**How to apply:** Sweep kabul checklist'ine "md5(numstat) before==after re-run"
+maddesi koy; script'in self-counter'ına tanı amaçlı bak ama KABUL kanıtı olarak
+kullanma. Counter'ı "değişen dosya" değil "dokunulan/incelenenmiş" diye yorumla.
+
+## Paralel takımda SS altyapısı: MCP tek-instance kilidi → channel:chrome izolasyonu (2026-06-13, cila-2 faz 5)
+
+**Kural:** Paylaşılan Playwright-MCP Chrome TEK instance'tır; bir teammate
+kullanırken diğerleri "Browser is already in use" alır — faz boyunca SS kuyruğu
+oluşur ve lead'in faz-sonu MCP SS turu da kilide takılır. Çözüm: teammate'ler
+kendi SS'lerini İZOLE sistem-Chrome ile alır (`playwright channel:chrome` +
+ayrı user-data-dir + kendi local server portu), MCP'yi serbest bırakır. Lead
+faz-sonu render turunu, MCP kilitliyse, izole-Chrome'u olan bir teammate'e
+KAPTIRIR (SS yakalar) ve görselleri KENDİ tasarım-gözüyle inceler — protokol
+(lead design-eye) korunur, sadece capture devredilir.
+
+**Why:** Faz 5'te 6 teammate + lead aynı MCP Chrome'a yarıştı; herkes "already
+in use" aldı, pixel SS alınamadı (ek olarak headless fixed/blur paint sorunu).
+defter `channel:chrome` izole instance + server 8848 ile gerçek-paint SS aldı
+(11 dosya); lead faz-sonu render turunu (MCP yine kilitli) ona aldırdı, kendisi
+inceledi — akademi renk bulgusu bu turda yakalandı.
+
+**How to apply:** (1) Takım kurulumunda SS politikası: teammate self-check =
+izole channel:chrome; MCP-SS lead faz-sonu için rezerve. (2) Lead MCP kilitliyse
+capture'ı izole-altyapısı olan teammate'e devreder, görselleri kendi inceler
+(design-eye lead'de kalır). (3) headless fixed/blur paint + fullPage stitch
+artefaktları için channel:chrome (gerçek paint) tercih; bunlar canlıda yok,
+"bulgu değil" diye işaretlenir.
