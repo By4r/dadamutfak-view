@@ -24,8 +24,13 @@
 >    _shell + tarif-detay-v1-headA scope dışı (revert).
 >
 > **BU OTURUM COMMIT'LERİ (hepsi push'lu):** dropdown chrome `b38c7ff` · alisveris hero
-> hover `a433e49` · drawer ikon yeşil `eaf26f7` (+ docs). Kanıt: lead Playwright
-> computed-style + SS (outputs/saglik-dropdown-ss/ + alisveris-hero-ss/). idempotent.
+> hover `a433e49` · drawer ikon yeşil `eaf26f7` · **dropdown aktif-item tüm menülerde
+> `3262be8`** (Mutfak Sırları 9 sayfa + Tarifler mega "Tüm Tarifler"; aktif item TURUNCU
+> kanonu, Sağlık yeşil korundu; generic .dropdown:not(.dropdown-health) a.active +
+> .mega-cats a.active bg-tint, underline gizli; BNP dropdown'suz) · **tarif-liste chip ×
+> ↔ subcat çift-yönlü senkron `16d2916`** (chip ×/Tümünü Temizle artık change dispatch
+> → subcat kart deaktif; kök neden: programatik .checked change fire etmiyordu) (+ docs).
+> Kanıt: lead Playwright computed-style + interaction probe + SS. idempotent.
 > Rapor: outputs/saglik-dropdown-rapor.md. Teammate + artefaktlar temizlendi.
 >
 > ✅ **alisveris hero buton HOVER ÇÖZÜLDÜ** (commit a433e49): kök neden = base cam stili
