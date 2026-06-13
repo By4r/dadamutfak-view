@@ -1,6 +1,28 @@
 # DadaMutfak — PROJE TAMAMLANDI 🏁 MOCKUP SETİ TESLİME HAZIR
 
-> Tek doğruluk kaynağı. Güncelleme: 2026-06-13 (**FAZ 7 — SOFRA DÜZENİ MODÜLÜ —
+> Tek doğruluk kaynağı. Güncelleme: 2026-06-14 (**MOBİL QA TAM TUR + 2 CİLA FIX —
+> unattended, 5 tester paralel (T1-T5). Branch `qa/cila-fixes` (2 commit önde), main
+> `55c2d87` DEĞİŞMEDİ, PUSH/MERGE YOK — Beyar dönünce inceleyip kendi merge edecek.**
+> FAZ A — MOBİL QA (read-only, tamam): 74 üretim sayfası × 390/768/drawer = 219 full-page SS,
+> clip-aware ölçüm (`outputs/mobil-qa/measure.cjs`) + tasarımcı-gözü SS incelemesi. Lead
+> self-partition doğrulama (tam-partition, çakışma 0) + adversarial doğrulama. **Sonuç: gerçek
+> ölçülü taşma YALNIZ 1** (dyt-danisanlar @768, `.ptable` overflow-x:auto yalnız ≤640'ta → 768'de
+> docSW=870). 🟠×5 (ansiklopedi 3-kol grid · urun-liste/dada-shop 2-kol · tarif-detay chip ·
+> dyt-randevular + dyt-recete-builder scroll-affordance) · 🟡×7. **3 YANLIŞ-POZİTİF elendi**
+> (T1 "drawer'a içerik sızması" hakkimizda/akademi/reklam-ver = fullPage SS artefaktı; lead DOM+
+> viewport-SS ile kanıtladı drawer z96 fixed temiz, sayfa içeriği overlay ARKASINDA).
+> Tam rapor: `outputs/mobil-qa/MASTER-findings.md` (severity-sıralı + "KARAR GEREKEN IA/UX" ayrı).
+> FAZ B — 2 CİLA FIX (branch, tamam): (1) **tarif-liste hero seam** sert kesim → krem gövde yuvarlak
+> köşe(22px)+yumuşak üst-gölge+-22px overlap = "yükselen panel" bitişi. (2) **tarif-detay chip tekrarı**
+> → hero `.rd-badges`'ten özellik chip'leri (Protein/Baharatlı) kaldırıldı, yalnız editöryal rozet
+> kaldı (özellik chip'leri kc-chips panelinde; headA deseni). İkisi de desktop+390 before/after render-
+> doğrulamalı. Commit `d11db92`. **DOKUNULMADI (Beyar kararı):** navigasyon tutarsızlığı (kategori-v1 vs
+> tarif-liste) · Sofra Ramazan/Bayram/Açık Büfe görsel tonu.
+> **🔜 SONRAKİ:** Beyar MASTER-findings'i inceleyip (a) qa/cila-fixes merge/push kararı, (b) MAJOR/MINOR
+> bulgu fix turu (özellikle C1 dyt-danisanlar 768 taşma + ansiklopedi/urun grid + sağlık nav-aktif renk),
+> (c) navigasyon IA kararı. RUN-STATUS: `outputs/mobil-qa/RUN-STATUS.md`.
+>
+> Önceki: 2026-06-13 (**FAZ 7 — SOFRA DÜZENİ MODÜLÜ —
 > agent team `faz7-sofra` (lead delegate + 2 teammate: sofra-sayfa A + dropdown-sweep B).
 > COMMIT+PUSH onaylı, HEAD `3c1a2a5` (60 dosya +2253).**
 > TAMAM:
