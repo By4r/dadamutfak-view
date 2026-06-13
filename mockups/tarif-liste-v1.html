@@ -2601,7 +2601,7 @@ document.addEventListener('click',function(e){
       c.innerHTML=(flag?'<img class="chip-flag" src="https://flagcdn.com/w40/'+flag+'.png" alt="" /> ':'')
         +inp.value+' <span class="x"><i class="fa-solid fa-xmark"></i></span>';
       c.setAttribute('aria-label','Filtreyi kaldır: '+inp.value);
-      c.addEventListener('click',function(){inp.checked=false;render();});
+      c.addEventListener('click',function(){inp.checked=false;inp.dispatchEvent(new Event('change',{bubbles:true}));}); // change → render() (2642) + subcat sync (2771)
       chipsEl.appendChild(c);
     });
     if(state.searchOn||checked.length){
@@ -2633,8 +2633,10 @@ document.addEventListener('click',function(e){
   }
 
   function clearAll(includeSearch){
-    side.querySelectorAll('.fct-row input:checked').forEach(function(i){i.checked=false;});
+    var wasChecked=Array.prototype.slice.call(side.querySelectorAll('.fct-row input:checked'));
+    wasChecked.forEach(function(i){i.checked=false;});
     if(includeSearch===true)state.searchOn=false;
+    if(wasChecked.length){wasChecked[0].dispatchEvent(new Event('change',{bubbles:true}));} // subcat sync (2771) tetikle → tüm kart deaktif + Tümü aktif
     render();
   }
 
