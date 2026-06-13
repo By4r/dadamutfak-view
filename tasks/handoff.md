@@ -1,6 +1,35 @@
 # DadaMutfak — PROJE TAMAMLANDI 🏁 MOCKUP SETİ TESLİME HAZIR
 
-> Tek doğruluk kaynağı. Güncelleme: 2026-06-13 (**CİLA-2 FAZ 3 TAMAM — agent
+> Tek doğruluk kaynağı. Güncelleme: 2026-06-13 (**CİLA-2 FAZ 4 TAMAM — agent
+> team cila2-faz4 (lead + kategori-tarif + kategori-sirlar + kategori-kesfet-bnp
+> + ux-revize)**: Excel `KategoriEkle.xlsx` (11 sheet) GERÇEK üretim kategorileri
+> mockup'a işlendi (temiz veri `tasks/kategori-veri.md`): tarif 27 kat + 14 tip ·
+> ölçü 2-seviye 10/65 · mutfağa-giriş 7/36 · püf 9 soru-format · keşfet alt-filtre ·
+> BNP 14 mod + **tarif havuzu modalı** (eksik kurgu kapatıldı). UX: tarif-bulucu
+> YENİDEN (dar panel→geniş ferah ızgara) · iletisim OSM harita · DadaStore dropdown
+> site-geneli kaldırıldı (64 sayfa düz link) · **Şef Ol→sef-ol başvuru sayfası YENİ**
+> (envanter 70→**71**) + 65 sayfa sweep · sef-ol DERİN (4 bölüm, pre-fill dolu,
+> sosyal medya, gerçek kategori uzmanlık). REGRESYON: mutfaga-giris + olcu kategori
+> işinde tasarım dili bozulmuştu → a463329 dili korunarak düzeltildi (kural+lessons:
+> kategori işi=SADECE veri; `tasks/kategori-regresyon-raporu.md`). 4 CANLI BULGU FIX:
+> BNP ray kaydırma + kategori-v1 ray (enableDrag selector dersi) + kesfet tek-katman
+> bağlamsal + "Tümünü Gör"→liste. Kanıtlı kabul (git diff CSS-kural 0 / yan-yana SS /
+> tıklama+scrollLeft probe). Sentez: `outputs/cila2-faz4-sentez.md`. Lessons +2.
+> HERO/PANEL REVİZE TURU (Beyar canlı): tarif-liste sol panel dengelendi (cap
+> kaldırıldı, oran 1.14) · BNP mod chip büyütüldü (194×122, ray korundu) + hero H3
+> kesfet'le hizalandı · kategori-v1 ray kaydırılır (enableDrag) · sozluk hero §2f H1
+> koyu'ya çekildi (ansiklopedi kardeşi) · olcu hero zaten canon H3 (no-op).
+> **DEPLOY: commit + push origin/main (Beyar onayı 2026-06-13) — GitHub Pages güncel.
+> Takım kapatıldı.**
+>
+> 🔜 **SIRADAKİ TUR KARARLARI (Yasin Bey / patron):** (1) **Su Bardağı 200ml vs Excel
+> 240ml** — olcu gram değerleri 200ml-bazlı (TR standart); Excel 240ml (US cup). 240
+> seçilirse dönüştürücü + 65 satır gram güncellenir. (2) **olcu tab konumu** — 10 uzun
+> kategori başlığı sağa sığmadı, tam-genişlik wrap satırına taşındı (pill stili a463329
+> birebir); veri-zorunlu minimum kabul edildi, patron veto ederse alternatif. (3)
+> **Ramazan modu** (Faz 3'ten) — `?ramazan=1` demo, site-geneli yayılım + gerçek vakit
+> API'si patron onayında.
+> Önceki: 2026-06-13 (**CİLA-2 FAZ 3 TAMAM — agent
 > team cila2-faz3 (lead+kanon+uygula-b+qa+ramazan), 26 görev kanıtlı kabul**:
 > hero/breadcrumb KANONU kılavuz §2f (rd-crumb tek form + H1/H2a-b/H3 +
 > hak-ediş; saglik-testler patron-fix krem→yeşil koyu hero; nefes 128/74
@@ -77,7 +106,14 @@
 
 ---
 
-## 📦 SAYFA ENVANTERİ — 70 üretim sayfası
+## 📦 SAYFA ENVANTERİ — 71 üretim sayfası
+
+- CİLA-2 Faz 4'te doğan (2026-06-13): `sef-ol-v1.html` (şef başvuru sayfası —
+  diyetisyen-ol kardeşinden türev: 4 bölüm Kişisel/Uzmanlık/Deneyim/Sosyal Medya,
+  pre-fill dolu, gerçek Tarif Kategori uzmanlık çoklu seçim; "Şef Ol" 65 sayfa →
+  buraya). Faz 4 kategori verisi `tasks/kategori-veri.md` + regresyon denetimi
+  `tasks/kategori-regresyon-raporu.md`.
+
 
 - **68 × `*-v1.html`** + `anasayfa-portal-v3a.html` (kanonik baz) +
   `panel-shell.html` (diyetisyen paneli iskeleti)

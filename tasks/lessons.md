@@ -245,3 +245,31 @@ zorunluluğu da teammate prompt'larında eksikti, sonradan yayıldı.
 
 **How to apply:** Takım kurulum şablonuna iki satır: teammate prompt'una skill
 zorunluluğu + lead kabul checklist'ine "tasarım gözü değerlendirmesi yazıldı mı".
+
+## Kategori/veri entegrasyonu = SADECE veri; tasarım dili korunur (2026-06-13, cila-2 faz 4)
+
+**Kural:** Bir "kategori/mock veriyi gerçek veriyle değiştir" işi yapılırken
+sayfanın LAYOUT/KURGU/TASARIM DİLİ'ne (kart stili, renk, tipografi, grid,
+one-page/rail kurgusu) DOKUNULMAZ — yalnız metin/li/href/data-slug/chip etiketi
+değişir. Tek istisna: veri **yapısal olarak zorunlu** kılıyorsa (örn. tek-seviye
+mock → iki-seviyeli gerçek veri) yalnız o veriyi göstermek için gereken
+**MİNİMUM** yapı eklenir; mevcut görsel dil yine korunur (sıfırdan yeni tasarım
+DEĞİL). Onaylı sayfa = onaylı kabuk + gerçek veri. Her kategori sayfası iş
+sonrası onaylı commit (`a463329`) ile diff'lenir: `git diff <onaylı> -- <sayfa>`
+→ CSS-kural değişimi 0 (veri-zorunlu minimum hariç).
+
+**Why:** Faz 4'te kategori entegrasyonunda iki sayfada sınır aşıldı: mutfaga-giris
+onaylı yatay step-rail + gnav + konu kütüphanesi kurgusunu BOZDU (net -145 satır,
+regresyon); olcu-birimleri iki-seviye veriyi (meşru) gösterirken 52 CSS kuralıyla
+tasarım dilini de sıfırdan-akordeon'a çevirdi. İkisi de "veri işi" sanıldığı için
+ilk turda görsel denetimden geçti; Beyar canlıda yakaladı. Lead'in
+`git diff a463329` + CSS-kural/yapısal/veri sınıflandırması olcu'daki 52-CSS
+sapmasını Beyar'dan önce yakaladı (sayaç tabanlı denetim işe yaradı).
+
+**How to apply:** (1) Kategori/veri işi spawn prompt'una "SADECE veri, kurgu/
+tasarım dili DOKUNULMAZ; veri-zorunlu minimum yapı istisnası" satırı gömülür.
+(2) Lead her kategori sayfasını onaylı commit ile diff'ler ve CSS-kural sayısına
+bakar (0 beklenir; >0 ise veri-zorunlu mu sapma mı incele). (3) Kabul SS'i
+onaylı sürümle YAN YANA çekilir: "görsel dil tanınabilir aynı, sadece veri
+zengin/derin" teyidi. (4) Sapma bulunursa onaylı commit'ten kabuk geri getirilir,
+veri korunur.
