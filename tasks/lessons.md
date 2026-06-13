@@ -419,3 +419,39 @@ kopya iste. (3) ASLA `until [ -s ]` bekleme döngüsüne girme — max 1 deneme,
 tutmazsa fallback'e geç (bu projede: bilinen kurumsal renklerle devam). (4)
 Render aracı yoksa (`pdftoppm` yok) macOS'ta `qlmanage -t` kapak verir,
 PyMuPDF (`fitz`) varsa keyfi sayfa + metin ekstraksiyonu yapar.
+
+## Global grep'te eski-etiket ≠ drift; NAV-bağlamına daralt + beyaz-liste (2026-06-13, faz6)
+
+**Kural:** Bir "kronik drift etiketi" (örn. "Çorbalar/Ana Yemekler/Tatlılar")
+site-geneli grep'le aranırken, eşleşen her dosya drift DEĞİLDİR — aynı kelime
+meşru içerikte geçebilir: prose tanımı (ansiklopedi/sözlük), `r-chip`/`puf-tag`
+kategori rozeti, koleksiyon adı ("Ramazan Tatlıları"), reklam hedef metni. Drift
+kabulü NAV-BAĞLAMINA daraltılır (dropdown/drawer Tarifler menüsü) ve kalan
+global-grep eşleşmeleri bir BEYAZ-LİSTE ile teyit edilir ("bu N dosya meşru
+içerik"). En ayırt edici drift imzası seçilir (burada "Ana Yemekler" = sadece
+eski nav'da vardı, içerikte yok) → onun global=0 olması temiz kabul kanıtı.
+
+**Why:** faz6 drift kabulünde `grep -rl 'Çorbalar|Tatlılar'` 10 dosya verdi;
+2'si gerçek nav drift (mutfaga-giris, olcu), 8'i meşru içerikti (çikolata tanımı,
+r-chip, Ramazan koleksiyonu, sözlük). Teammate'e "8 dosya beyaz-liste + Ana
+Yemekler=0" kriteri verilmeseydi ya meşru içerik bozulurdu ya temiz iş drift
+sanılırdı. "Ana Yemekler" tek-imza seçimi kabulü kesinleştirdi.
+
+**How to apply:** (1) Drift sweep'inde grep terimini en ayırt edici/nav-özgü
+etikete daralt. (2) Genel terim çok eşleşiyorsa kalanları beyaz-liste yap,
+teammate'e "bu listeye dokunma" + "imza-etiket global=0" ver. (3) Kabul =
+imza-etiket global 0 + beyaz-liste birebir + nav-bağlam grep'i 0.
+
+## Probe disk-cache tuzağı: persistent channel:chrome → ?cb= cache-buster (2026-06-13, faz6)
+
+**Kural:** İzole `channel:chrome` (persistent user-data-dir) ile koşulan sticky/
+render probe'unda tarayıcı, dosya değişse bile DİSK CACHE'ten eski sürümü servis
+edip false-BROKEN/false-CLEAN verebilir. Probe URL'ine `?cb=<artan>` cache-buster
+ekle; aksi halde fix uygulanmış sayfa "hâlâ bozuk" görünür.
+
+**Why:** faz6 sticky-clip probe'unda fix'li sayfa disk-cache yüzünden BROKEN
+raporlandı; `?cb=` ile gerçek sürüm yüklenince 19/19 STICK-OK çıktı. (Lead MCP
+turunda da aynı sebeple `?cb=1/2` kullanıldı.)
+
+**How to apply:** Tekrar-koşulan tüm izole-Chrome probe'larına `?cb=` ekle;
+"fix sonrası hâlâ bozuk" şüphesinde İLK kontrol cache-buster'dır.

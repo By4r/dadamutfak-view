@@ -1,6 +1,64 @@
 # DadaMutfak — PROJE TAMAMLANDI 🏁 MOCKUP SETİ TESLİME HAZIR
 
-> Tek doğruluk kaynağı. Güncelleme: 2026-06-13 (**FAZ 5 REVİZE TURU KAPANDI —
+> Tek doğruluk kaynağı. Güncelleme: 2026-06-13 (**FAZ 6 KAPANDI + COMMIT + PUSH —
+> son cila + tarif modülü; agent team `faz6` (lead + 5 teammate), 5 ana görev +
+> 2 EK REVİZE + Flag 2 hepsi LEAD BAĞIMSIZ KANITLI KABUL (git diff + grep +
+> DOM/element-rect probe + faz-sonu MCP/izole-chrome render SS tasarım-gözü).
+> feat `12044a4` + docs kapanış + PUSH origin/main (Beyar onayı 2026-06-13).
+> Baz `0ad9576` → 72 dosya +1540/-443 (Flag 2 dahil).**
+> 1. **Hero tutarlılık** — sistem zaten ~%97 §2f uyumlu; tek gerçek kırık
+>    mutfak-sirlari → H1 koyu-overlay (+54/-20). bugun-ne-pisirsem/tarif-bulucu/
+>    kesfet bu commit'te H3 kaldı — Beyar HERO TURUNDA hepsini görselli yapacak (aşağı).
+> 2. **Tarif modülü** (tarif-ekle-v1 zenginleştirildi, sıfırdan değil): çoklu
+>    kategori(27)+mutfak (ms-* token-chip) · AI ile İyileştir (mockup sim) ·
+>    gerçek drag-drop (SortableJS 1.15.2 CDN, sitede İLK — malzeme+adım renumber).
+> 3. **Tarif liste**: 9→15 kart (grid dengeli) · Öğün facet (ayrı eksen) ·
+>    `.r-diet` görsel rozet · h4 2-satır clamp · page-local sticky clip. +EK REVİZE:
+>    Beslenme/Tip facet 14 satıra FA6 ikon (kart↔filtre 4 tip birebir).
+> 4. **SEO içerik**: ansiklopedi-v1 15 kategori × 30 gerçek madde (Nedir/Faydaları);
+>    "yakında" placeholder=0 (kapı rozeti korundu); öksüz CSS silindi. sozluk +
+>    ansiklopedi-detay zaten doluydu (dokunulmadı).
+> 5. **Tutarlılık temizlik**: DadaStore birliği (14 dosya, "Dada Store"=0) +
+>    kronik drift kapandı (mutfaga-giris/olcu Tarifler dropdown kanonik,
+>    "Ana Yemekler"=0, data-slug=22) + sticky clip 20 sayfa (19/19 stick-ok).
+> 6. **EK REVİZE BNP havuz**: yuvarlak pill `.rp-tab` → alt-çizgi segment (§2e
+>    .vw-seg akrabası); aktif radius=0, filtre 31→6→5, CSS-only.
+> + anasayfa shop eyebrow "Dada Shop"→"DadaStore" (lead kapattı).
+>
+> + anasayfa shop eyebrow + Flag 2: tüm "DadaShop"/"Dada Shop" → **DadaStore**
+>   (65 dosya + _shell, global grep=0). Marka artık her yerde DadaStore.
+>
+> Sentez+inceleme: `outputs/faz6-sentez.md`. Lessons +2 (global-grep drift ayrımı ·
+> probe disk-cache ?cb=). SS: `outputs/faz6-tour/` + `faz6-ss/`. Takım kapatıldı.
+>
+> **FLAG KARARLARI (Beyar 2026-06-13):** Flag 2 (DadaShop→DadaStore) ✅ YAPILDI.
+> Flag 3 (r-chip "Çorbalar/Tatlılar" tekilleştirme — hata-v1/mekan-detay-v1) ⏸️
+> ERTELENDİ (kozmetik). Flag 4 (ansiklopedi "480 madde" sayacı temsilî → Laravel
+> fazı) ⏸️ ERTELENDİ. Flag 1 (3 hero) → aşağıdaki HERO TURUNA dahil edildi.
+>
+> 🔜 **SIRADA — ÖNCELİK SIRASIYLA:**
+> 1. **HERO ZENGİNLEŞTİRME TURU** (Beyar net istedi, AYRI TEMİZ SESSION — bu
+>    session ctx %70'te kapatıldı, başlatılmadı): TÜM üretim sayfalarında (71) hero'su
+>    SADE/GÖRSELSİZ (düz beyaz, kompakt, arka plan resmi yok — BNP, tarif-bulucu,
+>    olcu-birimleri, kesfet ve benzeri HEPSİ — **İSTİSNA YOK, araç sayfaları dahil**)
+>    olan her sayfa → zengin görselli H1 hero. Referans kanon = mutfaga-giris-v1
+>    (arka plan görseli + koyu overlay + başlık + breadcrumb + uygunsa metrik şeridi).
+>    **§2f H1 OVERRIDE edilecek** (önceki "H3 görev sayfası görselsiz" kuralı patron
+>    kararıyla geçersiz). Akış: ÖNCE 71 sayfa hero denetim raporu
+>    (`outputs/faz6-hero-denetim.md` — sade hero listesi + sayfa-başı görsel teması
+>    önerisi: BNP=yemek/menü, tarif-bulucu=malzeme/dolap, olcu=tartı/ölçek/alet,
+>    sağlık=sağlıklı tabak vb) → BEYAR ONAYI → uygula. Mevcut hero içeriği
+>    (başlık/altbaşlık/breadcrumb) korunur, sadece görselli zemin+overlay eklenir;
+>    SAYFA GÖVDESİNE DOKUNMA. Kanıt: değişen her sayfa render SS + tasarım gözü.
+> 2. **FİNAL MOBİL QA** — 3 agent paralel viewport bölüşümü (390/768/drawer+etkileşim),
+>    read-only. **Yasin Bey mobil bulguları DAHİL** (Ramazan bandı taşması, hero
+>    okunabilirlik vb).
+> 3. **FAZ 7 — Sofra Düzeni modülü** (Mutfak Sırları altı, 8 kategori, DadaShop[Store]
+>    köprülü — patron talebi).
+> Ertelenen flag'ler (3, 4 yukarıda) + bekleyen patron kararları (Su Bardağı ölçü,
+> Ramazan modu, M2 sosyal login, reklam paket fiyatları, Şef Ol hedefi) dursun.
+>
+> Önceki: 2026-06-13 (**FAZ 5 REVİZE TURU KAPANDI —
 > agent team `faz5-revize` (lead + 4 teammate), 8/8 madde kanıtlı kabul + COMMIT +
 > PUSH**). İlk 7 madde + mini-revize (A/B/C) hepsi lead bağımsız kanıtlı kabul
 > (grep + tıklama/DOM probe + kendi channel:chrome SS tasarım-gözü):
