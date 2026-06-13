@@ -17,8 +17,16 @@
 >    Sağlık, probe teyitli). **REGRESYON yakalandı+fix:** saglik-testler + saglik-hub
 >    nav-active green override eksikti (saglik-renk 10'una dahil değildi) → turuncuydu,
 >    eklendi (lead Playwright: ikisi de yeşil ✅).
-> Kanıt: lead Playwright computed-style + SS (outputs/saglik-dropdown-ss/). idempotent
-> (md5 before==after). Rapor: outputs/saglik-dropdown-rapor.md. Teammate artefaktları temizlendi.
+> 4. **DRAWER (mobil) kapanış fix** (commit eaf26f7): dropdown turu desktop'u yeşilledi
+>    ama mobil drawer Sağlık alt-menü ikonları (.d-sub a i) TURUNCU kalmıştı (Beyar
+>    mobilden yakaladı) → scoped `.d-sub-health` class (57 sayfa) + yeşil CSS; diğer
+>    drawer submenu'lar (Tarifler/Mutfak Sırları) turuncu kaldı (Playwright teyitli).
+>    _shell + tarif-detay-v1-headA scope dışı (revert).
+>
+> **BU OTURUM COMMIT'LERİ (hepsi push'lu):** dropdown chrome `b38c7ff` · alisveris hero
+> hover `a433e49` · drawer ikon yeşil `eaf26f7` (+ docs). Kanıt: lead Playwright
+> computed-style + SS (outputs/saglik-dropdown-ss/ + alisveris-hero-ss/). idempotent.
+> Rapor: outputs/saglik-dropdown-rapor.md. Teammate + artefaktlar temizlendi.
 >
 > ✅ **alisveris hero buton HOVER ÇÖZÜLDÜ** (commit a433e49): kök neden = base cam stili
 > (.al-top .al-head .see-all/.al-act, spec 0,3,0) `.see-all:hover/.al-act:hover` (0,2,0)
@@ -90,6 +98,11 @@
 >    net olmalı). Mobil QA turunda navigasyon haritası çıkarılıp tutarlı bağlanacak.
 > 2. **tarif-liste hero alt-gölge/sınır kesik:** tarif-liste-v1 hero'sunun alt
 >    gölgesi/sınırı düzgün değil (kesikli) → cila turunda düzeltilecek.
+> 3. **tarif-detay-v1 hero özellik-chip tekrarı:** hero görselinin ÜSTÜNDEKİ özellik
+>    chip'leri (Protein Ağırlıklı / Baharatlı / Acılı vb) sağdaki "Mutfak & Özellikler"
+>    panelinde ZATEN var = tekrar, kalabalık. Cila turunda NET KARAR: ya görsel
+>    üstündeki ÖZELLİK chip'lerini kaldır (Editör Onaylı/Diyetisyen Yorumlu FARKLI,
+>    kalsın), ya sağ panelle tekrarı temizle.
 >
 > Önceki: 2026-06-13 (**HERO TURU + tarif-liste düzeltmeleri
 > — agent team `hero-turu` (lead + 4 teammate: hero-zengin, tarif-liste-fix,
