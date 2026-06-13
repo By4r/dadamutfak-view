@@ -844,6 +844,29 @@ html,body{overflow-x:clip}
 .sheet-head,.sheet-foot{display:none}
 
 /* ---- SONUÇ KOLONU ---- */
+/* ===== ALT-KATEGORİ / PİŞİRME-TİPİ RAYI (kategori-v1 .subcat deseni BİREBİR port — görselli, kaydırılabilir; facet'ten AYRI eksen) ===== */
+.subcat-strip{margin:0 0 22px}
+.subcat-head{display:flex;align-items:baseline;justify-content:space-between;gap:14px;margin-bottom:14px}
+.subcat-head h2{font-size:17px}
+.subcat-head .sc-note{font-size:12.5px;color:var(--muted);font-weight:500}
+/* sağ-kenar fade — kaydırılabilirlik sinyali (shelf-tabs sh-more mirası); JS sona gelince kaldırır */
+.subcat-wrap{position:relative}
+.subcat-wrap.cs-more{-webkit-mask-image:linear-gradient(90deg,#000 calc(100% - 46px),transparent);mask-image:linear-gradient(90deg,#000 calc(100% - 46px),transparent)}
+.subcat-track{display:flex;gap:12px;overflow-x:auto;-webkit-overflow-scrolling:touch;scroll-snap-type:x proximity;scrollbar-width:none;padding:4px 2px 8px}
+.subcat-track::-webkit-scrollbar{display:none}
+.subcat-track.drag-scroll{cursor:grab}
+.subcat-track.dragging{cursor:grabbing;scroll-snap-type:none}
+.subcat{flex:none;scroll-snap-align:start;display:flex;align-items:center;gap:12px;background:var(--bg-cream);border:1px solid var(--line);border-radius:var(--radius-md);padding:11px 16px 11px 11px;cursor:pointer;text-decoration:none;transition:.2s var(--ease);-webkit-user-drag:none;user-select:none}
+.subcat:hover{border-color:rgba(225,72,39,.4);background:var(--tomato-tint);transform:translateY(-2px)}
+/* RAFİNE aktif state (EK-5 #2): dolu-blok DEĞİL → ince tomato border + inset ring + hafif tint zemin + tomato metin/ikon-halka (zarif vurgu) */
+.subcat.active{border-color:var(--tomato);background:var(--tomato-tint);box-shadow:inset 0 0 0 1px var(--tomato)}
+.subcat .sc-ico{flex:none;width:40px;height:40px;border-radius:var(--radius-sm);background-size:cover;background-position:center}
+.subcat.active .sc-ico{box-shadow:0 0 0 2px var(--tomato)}
+.subcat b{font-size:14px;font-weight:700;color:var(--slate);line-height:1.2;white-space:nowrap}
+.subcat.active b{color:var(--tomato)}
+.subcat span span{display:block;font-size:11.5px;color:var(--muted);font-weight:500;margin-top:1px;white-space:nowrap}
+.subcat.active span span{color:var(--tomato);opacity:.8}
+
 .lst-bar{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
 .lst-sum{font-size:15px;color:var(--muted);font-weight:500;min-width:0}
 .lst-sum b{color:var(--slate);font-weight:700;font-size:17px}
@@ -945,11 +968,19 @@ html,body{overflow-x:clip}
 .r-cost .rc-on{color:var(--tomato)}
 .r-cost .rc-off{color:#d6d6d6}
 /* tarif kartı anatomisi (v3a 783–796) */
-.r-body h4{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;min-height:2.4em}
-.r-facts{display:flex;align-items:center;font-size:12.5px;color:var(--muted);font-weight:500;margin-bottom:13px}
-.r-facts span{display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
+/* KÖK NEDEN FIX (tarif-liste-fix): h4, .r-body'nin (display:flex) DOĞRUDAN flex
+   çocuğu → flex item blockification ile display:-webkit-box → flow-root'a düşüyor
+   ve -webkit-line-clamp ÖLÜYOR (3. satır hard-clip, ellipsis yok). Çözüm: clamp'i
+   flex item OLMAYAN iç anchor'a taşı; h4 yalnız yükseklik rezervi + güvenlik overflow. */
+.r-body h4{overflow:hidden;min-height:2.4em}
+.r-body h4 a{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+/* META HİZALAMA FIX (tarif-liste-fix): 4 olgu + 3 ayraç (12px pad+12px mar=24px)
+   275px kartta taşıyordu (scrollW 257 > clientW 237). Ayraç boşluğu 24→16px,
+   font 12.5→12px, gap 6→5px; nowrap + flex:none ile son eleman (maliyet) sabit kalır. */
+.r-facts{display:flex;align-items:center;flex-wrap:nowrap;min-width:0;font-size:12px;color:var(--muted);font-weight:500;margin-bottom:13px}
+.r-facts span{display:inline-flex;align-items:center;gap:5px;white-space:nowrap;flex:none}
 .r-facts i{font-size:12px;color:var(--tomato)}
-.r-facts span+span{border-left:1px solid var(--line);padding-left:12px;margin-left:12px}
+.r-facts span+span{border-left:1px solid var(--line);padding-left:8px;margin-left:8px}
 .r-foot{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:auto;padding-top:13px;border-top:1px solid var(--line)}
 .r-foot .r-author{margin-top:0;padding-top:0;border-top:none;min-width:0}
 .r-foot .r-author span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
@@ -1672,6 +1703,31 @@ body.is-ramazan .below-header,body.rmz-ask .below-header,body.is-ramazan .rd-top
 
       <!-- ---- SONUÇ KOLONU ---- -->
       <div class="lst-main">
+        <!-- ALT-KATEGORİ / PİŞİRME-TİPİ RAYI — kategori-v1 .subcat deseni port (görselli, facet'ten AYRI keşif ekseni, kanonik facet value'larıyla eşleşir) -->
+        <div class="subcat-strip" aria-label="Tematik alt-kategoriler">
+          <div class="subcat-head">
+            <h2>Tema &amp; pişirme tipi</h2>
+            <span class="sc-note">Bir alt dala in — seçim facet'lerle birlikte daraltır</span>
+          </div>
+          <div class="subcat-wrap" id="subcatWrap">
+            <div class="subcat-track" id="subcatTrack" role="group" aria-label="Tematik alt-kategori rayı">
+              <a class="subcat active" href="#" data-all aria-current="true"><span class="sc-ico" style="background-image:url('https://images.unsplash.com/photo-1604908176997-125f25cc6f3d?w=160&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')"></span><span><b>Tümü</b><span>248 tarif</span></span></a>
+              <a class="subcat" href="#" data-cat="Fırın İşleri"><span class="sc-ico" style="background-image:url('https://images.unsplash.com/photo-1473093295043-cdd812d0e601?w=160&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')"></span><span><b>Fırın Yemekleri</b><span>52 tarif</span></span></a>
+              <a class="subcat" href="#" data-cat="Tek Tencere"><span class="sc-ico" style="background-image:url('https://images.unsplash.com/photo-1547592166-23ac45744acd?w=160&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')"></span><span><b>Tek Tencere</b><span>38 tarif</span></span></a>
+              <a class="subcat" href="#" data-cat="Airfryer"><span class="sc-ico" style="background-image:url('https://images.unsplash.com/photo-1509440159596-0249088772ff?w=160&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')"></span><span><b>Airfryer</b><span>9 tarif</span></span></a>
+              <a class="subcat" href="#" data-cat="Günlük Pratik"><span class="sc-ico" style="background-image:url('https://images.unsplash.com/photo-1540420773420-3366772f4999?w=160&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')"></span><span><b>Pratik &amp; Hızlı</b><span>121 tarif</span></span></a>
+              <a class="subcat" href="#" data-cat="Sebzeli Yemek Tarifleri"><span class="sc-ico" style="background-image:url('https://images.unsplash.com/photo-1551183053-bf91a1d81141?w=160&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')"></span><span><b>Sebze Yemekleri</b><span>14 tarif</span></span></a>
+              <a class="subcat" href="#" data-cat="Çorba"><span class="sc-ico" style="background-image:url('https://images.unsplash.com/photo-1547592180-85f173990554?w=160&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')"></span><span><b>Çorbalar</b><span>22 tarif</span></span></a>
+              <a class="subcat" href="#" data-cat="Kırmızı Et"><span class="sc-ico" style="background-image:url('https://images.unsplash.com/photo-1432139555190-58524dae6a55?w=160&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')"></span><span><b>Köfte &amp; Et</b><span>18 tarif</span></span></a>
+              <a class="subcat" href="#" data-cat="Beyaz Et"><span class="sc-ico" style="background-image:url('https://images.unsplash.com/photo-1604909052743-94e838986d24?w=160&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')"></span><span><b>Tavuk Yemekleri</b><span>16 tarif</span></span></a>
+              <a class="subcat" href="#" data-cat="Hamur İşi"><span class="sc-ico" style="background-image:url('https://images.unsplash.com/photo-1563245372-f21724e3856d?w=160&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')"></span><span><b>Hamur İşleri</b><span>12 tarif</span></span></a>
+              <a class="subcat" href="#" data-cat="Makarna"><span class="sc-ico" style="background-image:url('https://images.unsplash.com/photo-1476718406336-bb5a9690ee2a?w=160&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')"></span><span><b>Makarnalar</b><span>10 tarif</span></span></a>
+              <a class="subcat" href="#" data-cat="Pilav"><span class="sc-ico" style="background-image:url('https://images.unsplash.com/photo-1516684732162-798a0062be99?w=160&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')"></span><span><b>Pilavlar</b><span>11 tarif</span></span></a>
+              <a class="subcat" href="#" data-cat="Zeytinyağlı"><span class="sc-ico" style="background-image:url('https://images.unsplash.com/photo-1505253716362-afaea1d3d1af?w=160&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')"></span><span><b>Zeytinyağlılar</b><span>13 tarif</span></span></a>
+              <a class="subcat" href="#" data-cat="Tatlı"><span class="sc-ico" style="background-image:url('https://images.unsplash.com/photo-1565958011703-44f9829ba187?w=160&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')"></span><span><b>Tatlılar</b><span>14 tarif</span></span></a>
+            </div>
+          </div>
+        </div>
         <div class="lst-bar">
           <p class="lst-sum" id="lstSum"><b>248 tarif</b> bulundu — <span class="q">&ldquo;mantı&rdquo;</span> araması için</p>
           <div class="lst-tools">
@@ -1932,7 +1988,7 @@ body.is-ramazan .below-header,body.rmz-ask .below-header,body.is-ramazan .rd-top
           </article>
 
           <article class="r-card">
-            <div class="r-media-wrap"><div class="r-media" style="background-image:url('https://images.unsplash.com/photo-1572441710534-87b73d3cf2fa?w=600&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')">
+            <div class="r-media-wrap"><div class="r-media" style="background-image:url('https://images.unsplash.com/photo-1505253716362-afaea1d3d1af?w=600&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')">
               <span class="r-chip">Zeytinyağlı</span><button class="r-save" aria-label="Kaydet"><i class="fa-regular fa-heart"></i></button>
               <div class="r-diet"><span class="rd-b rd-vegan" title="Vegan" aria-label="Vegan"><i class="fa-solid fa-seedling"></i></span><span class="rd-b rd-glutensiz" title="Glutensiz" aria-label="Glutensiz"><i class="fa-solid fa-wheat-awn-circle-exclamation"></i></span></div>
               <div class="m-types"><span class="mt"><i class="fa-solid fa-images"></i> 4</span></div></div></div>
@@ -2359,7 +2415,7 @@ document.addEventListener('click',function(e){
       e.preventDefault();el.scrollLeft+=e.deltaY;
     },{passive:false});
   }
-  ['.row-track','.cat-track','.grid-4','.vid-grid','.chips','.chef-row','.disc-grid'].forEach(function(sel){
+  ['.row-track','.cat-track','.subcat-track','.grid-4','.vid-grid','.chips','.chef-row','.disc-grid'].forEach(function(sel){
     document.querySelectorAll(sel).forEach(enableDrag);
   });
 })();
@@ -2643,6 +2699,77 @@ document.addEventListener('click',function(e){
     side.querySelector('input[data-x="et"]').checked=true;
   }
   render();
+})();
+
+/* ===== ALT-KATEGORİ / PİŞİRME-TİPİ RAYI — facet tetikle + active senkron + fade kenar (kategori-v1 subcat deseni)
+   facet'lerden AYRI eksen; tek doğruluk kaynağı sidebar checkbox'ları. render IIFE'sine DOKUNMAZ. */
+(function(){
+  var track=document.getElementById('subcatTrack');
+  var wrap=document.getElementById('subcatWrap');
+  var side=document.getElementById('lstSide');
+  if(!track||!side)return;
+  var cards=Array.prototype.slice.call(track.querySelectorAll('.subcat'));
+  function findInput(val){try{return side.querySelector('.fct-row input[value="'+val.replace(/"/g,'\\"')+'"]');}catch(e){return null;}}
+  // subcat aktif state'i checkbox durumuna göre senkron (anyOn yoksa "Tümü" aktif)
+  function sync(){
+    var anyOn=false;
+    cards.forEach(function(c){
+      if(c.hasAttribute('data-all'))return;
+      var inp=findInput(c.getAttribute('data-cat'));var on=!!(inp&&inp.checked);
+      c.classList.toggle('active',on);
+      if(on)anyOn=true;
+    });
+    var all=track.querySelector('.subcat[data-all]');
+    if(all)all.classList.toggle('active',!anyOn);
+  }
+  cards.forEach(function(c){
+    c.addEventListener('click',function(e){
+      e.preventDefault(); // href="#" sıçramasını engelle
+      if(c.hasAttribute('data-all')){
+        var checked=Array.prototype.slice.call(side.querySelectorAll('.fct-row input:checked'));
+        if(!checked.length){sync();return;}
+        checked.forEach(function(i){i.checked=false;});
+        checked[0].dispatchEvent(new Event('change',{bubbles:true})); // mevcut render() yeniden hesaplar; sync 'change'den gelir
+        return;
+      }
+      var inp=findInput(c.getAttribute('data-cat'));
+      if(!inp)return; // savunmacı: eşleşmezse sessizce yut
+      var row=inp.closest('.fct-row');
+      if(row&&row.classList.contains('xtra')){ // hedef .xtra ise grubunu aç (sidebar'da görünür kalsın — ?kategori deseni)
+        var grp=inp.closest('.fct');
+        if(grp){grp.classList.add('more-open');var mb=grp.querySelector('.fct-more');
+          if(mb)mb.innerHTML=(mb.getAttribute('data-less')||'Daha az göster')+' <i class="fa-solid fa-chevron-down"></i>';}
+      }
+      inp.checked=!inp.checked;
+      inp.dispatchEvent(new Event('change',{bubbles:true})); // mevcut render() çalışır
+    });
+  });
+  side.addEventListener('change',function(e){if(e.target.matches('.fct-row input'))sync();}); // hero/?kategori/facet her değişimde senkron
+  // MOUSE DRAG-SCROLL (EK-5 #1): .subcat <a> öğeleri native link-drag başlatıp pointer'ı kaçırıyordu →
+  // explicit mouse handler (kategori-v1 desenine eşdeğer). mousedown→tut, mousemove→kaydır, mouseup/mouseleave→bırak, cursor grab/grabbing.
+  track.classList.add('drag-scroll');
+  var mDown=false,mStartX=0,mStartScroll=0,mMoved=false;
+  track.addEventListener('mousedown',function(e){
+    if(e.button!==0)return;
+    mDown=true;mMoved=false;mStartX=e.clientX;mStartScroll=track.scrollLeft;
+    e.preventDefault(); // native <a> sürükleme + metin seçimini engelle
+  });
+  document.addEventListener('mousemove',function(e){
+    if(!mDown)return;
+    var dx=e.clientX-mStartX;
+    if(Math.abs(dx)>4){mMoved=true;track.classList.add('dragging');}
+    track.scrollLeft=mStartScroll-dx;
+  });
+  function mUp(){if(!mDown)return;mDown=false;setTimeout(function(){track.classList.remove('dragging');},0);}
+  document.addEventListener('mouseup',mUp);
+  track.addEventListener('mouseleave',mUp);
+  // sürükleme sonrası yanlışlıkla kategori seçimini engelle (capture → bubble'daki .subcat click'ine ulaşmadan kes)
+  track.addEventListener('click',function(e){if(mMoved){e.preventDefault();e.stopPropagation();mMoved=false;}},true);
+  // fade kenar: sağda daha varsa cs-more, sona gelince kaldır (shelf-tabs sh-more mirası)
+  function updFade(){if(!wrap)return;wrap.classList.toggle('cs-more',track.scrollWidth-track.clientWidth-track.scrollLeft>8);}
+  track.addEventListener('scroll',updFade,{passive:true});
+  window.addEventListener('resize',updFade,{passive:true});
+  updFade();sync();
 })();
 
 // hero popüler çipleri → ilgili facet'i işaretle + sonuçlara in (Beyar revize)

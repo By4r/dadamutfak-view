@@ -772,8 +772,14 @@ html,body{overflow-x:hidden}
 /* ---- liste bölümü ---- */
 .pufl-sec{padding:38px 0 74px;background:var(--bg-cream)}
 .pufl-bar{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:22px}
-.ke-filter{display:flex;align-items:center;gap:9px;flex-wrap:wrap;flex:1;min-width:0}
-.ke-filter .chip{white-space:nowrap}
+/* EK-4: çift satıra taşan filtre chip'leri → TEK SATIR yatay kaydırılır şerit
+   (flex nowrap + overflow-x + drag-scroll + sağ-kenar fade). disc-tabs ayrı, sağda kalır. */
+.ke-filter{display:flex;align-items:center;gap:9px;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;flex:1;min-width:0;cursor:grab;-webkit-overflow-scrolling:touch}
+.ke-filter::-webkit-scrollbar{display:none}
+.ke-filter:focus{outline:none}
+/* sağda daha chip varsa kenar fade (kaydırılabilirlik sinyali; JS .kf-more toggle, sona gelince kalkar) */
+.ke-filter.kf-more{-webkit-mask-image:linear-gradient(90deg,#000 calc(100% - 38px),transparent);mask-image:linear-gradient(90deg,#000 calc(100% - 38px),transparent)}
+.ke-filter .chip{white-space:nowrap;flex:none}
 .ke-filter .chip.active{border-color:var(--tomato);background:var(--tomato-tint);color:var(--tomato);font-weight:700}
 .disc-tabs{flex:none;display:flex;gap:4px;background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-md);padding:4px}
 .dt{font-family:inherit;font-weight:700;font-size:13px;color:var(--muted);background:transparent;border:none;border-radius:var(--radius-sm);padding:9px 16px;cursor:pointer;display:inline-flex;align-items:center;gap:7px;transition:.2s var(--ease)}
@@ -1789,9 +1795,18 @@ document.addEventListener('click',function(e){
       e.preventDefault();el.scrollLeft+=e.deltaY;
     },{passive:false});
   }
-  ['.row-track','.cat-track','.grid-4','.vid-grid','.chips','.chef-row','.disc-grid'].forEach(function(sel){
+  ['.row-track','.cat-track','.grid-4','.vid-grid','.chips','.chef-row','.disc-grid','#pufFilter'].forEach(function(sel){
     document.querySelectorAll(sel).forEach(enableDrag);
   });
+})();
+
+// ---- EK-4: filtre şeridi sağ-kenar fade (tek-satır kaydırılır chip şeridi; sona gelince kalkar) ----
+(function(){
+  var kf=document.getElementById('pufFilter'); if(!kf)return;
+  function upd(){kf.classList.toggle('kf-more', kf.scrollLeft + kf.clientWidth < kf.scrollWidth - 2);}
+  kf.addEventListener('scroll',upd,{passive:true});
+  window.addEventListener('resize',upd);
+  upd();
 })();
 
 // ---- FOOTER REVEAL — footer yüksekliğini ölç, içerik sonuna boşluk aç ----

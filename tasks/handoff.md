@@ -1,6 +1,49 @@
 # DadaMutfak — PROJE TAMAMLANDI 🏁 MOCKUP SETİ TESLİME HAZIR
 
-> Tek doğruluk kaynağı. Güncelleme: 2026-06-13 (**FAZ 6 KAPANDI + COMMIT + PUSH —
+> Tek doğruluk kaynağı. Güncelleme: 2026-06-13 (**HERO TURU + tarif-liste düzeltmeleri
+> — agent team `hero-turu` (lead + 4 teammate: hero-zengin, tarif-liste-fix,
+> tarif-liste-kategori, anchor-offset). COMMIT YOK (Beyar onayı bekliyor). Baz `66a33d5`.**
+> YAPILANLAR:
+> 1. **23/23 sade hero → görselli H1** (hero-zengin): denetim raporu (`outputs/hero-denetim.md`)
+>    → Beyar onayı → uygulama. §2f H1 OVERRIDE (patron kararı, araç sayfaları dahil). Reçete
+>    kanonu = mutfaga-giris .lst-top (`outputs/hero-sablon.md`): koyu/yeşil overlay + Unsplash
+>    v3a + padding-top:128/74 + beyaz crumb. sh-yeşil 9 (sağlık ailesi) + lst-domates 14. 3 wrapper
+>    (alisveris-listesi=markup-split .al-body krem · siparislerim=bg-band 252px · giris=login-hero
+>    split) CERRAHİ — bleed yok, lead render+göz teyitli.
+> 2. **tarif-liste subcat görselli şeridi** (tarif-liste-kategori, #4): düz pill REDDEDİLDİ →
+>    kategori-v1 `.subcat-sec` deseni port (14 görselli kart sc-ico + ad + sayaç, .lst-bar üstü,
+>    tıkla→facet Çorba 248→22). **EK-5 (#11) DEVAM EDİYOR:** mouse drag-scroll fix + aktif state
+>    rafine + isabetli görseller + list-view görselsiz kart (Zeytinyağlı Enginar) doldurma.
+> 3. **#3 kart başlık taşması + meta hizalama** (clamp `.r-body h4 a` doğru elemana) ·
+>    **#5 mutfaga-giris scroll-spy son sekme** (sayfa-sonu override) · **#6 tarif-detay satır
+>    tam-tıklanabilir** (tek anchor) · **#7 BNP wizard çoklu sonuç** (computeMatches grace/backfill) ·
+>    **#9 puf-noktalari chip tek-satır şerit** (.ke-filter nowrap+overflow+fade) — hepsi tarif-liste-fix.
+> 4. **#10 anchor-offset scroll-offset fix** (anchor-offset): 8 sayfa (reklam-ver, akademi, hakkimizda,
+>    sozluk, mutfak-defteri, urun-detay, video-mutfagi, mutfaga-giris-detay) sticky-nav→section jump
+>    başlık sticky altında kalıyordu → scroll-padding-top (header + sticky-sub-nav yüksekliği, per-page).
+>
+> **⚠️ MCP DOĞRULAMA YENİ SESSION'A:** ctx limiti nedeniyle lead faz-sonu MCP etkileşim turu
+> YAPILMADI. Yeni session'da KISA tut: #4 subcat scroll+facet · #6 satır-nav · #7 wizard akış ·
+> #9 chip scroll · #11 subcat mouse-drag + liste görselsiz-kart=0 · anchor-offset 8 sayfa başlık-
+> görünürlük · 23 hero + 3 wrapper mobil 390 taşma örneklemi. Her birinde 1 probe yeter. (3 wrapper
+> hero + render-riskli olanlar lead'çe zaten render-göz teyitli; kalan etkileşim + mobil 390.)
+>
+> **🔜 SONRAKİ TUR (mini, mobil QA sonrası):** arama-v1 **autocomplete dropdown** — input'a yazdıkça
+> öneren dropdown (debounce ~150ms, klavye ok+Enter, son aramalar + popüler öneriler, ARIA combobox).
+> AYRI mini-tur. + **Final mobil QA** (3 agent paralel 390/768/drawer) + **Faz 7 Sofra Düzeni modülü**
+> (Mutfak Sırları altı, 8 kategori, DadaStore köprülü).
+> + **Sağlık ailesi RENK TUTARLILIĞI** — diyetisyen-dizin-v1 + Sağlık dropdown menü/butonu + diğer
+>   sağlık sayfaları TURUNCU (domates) vurgu yerine SAĞLIK YEŞİLİ (#3BB77E) kullanmalı. diyetisyen-dizin
+>   sağlık ailesinde ama hero/vurgu/popüler-chip TURUNCU kalmış (tutarsız). **NOT: kurumsal petrol
+>   #006072 = DadaAkademi'ye ait, KARIŞTIRMA.** Beyar hangi yeşil tonu net seçecek (sağlık-tint #3BB77E
+>   mi başka mı). Tüm sh grubunda (bazal-metabolizma, BMI, gunluk-kalori, gunluk-su, ideal-kilo,
+>   vucut-tipi, besin-kutuphanesi, test-detay, diyetisyen-dizin/diyetisyen-ol) vurgu rengi denetimi.
+>
+> Lessons +2 (zsh word-split → kör lead sayacı → yanlış stall/devir; numstat+name-only birincil ·
+> render-zorunlu-kabul: grep "done" der ama lead göz/SS teyidi şart, 2 wrapper bleed bunu kanıtladı).
+> Raporlar: `outputs/hero-turu-*-rapor.md` + `outputs/hero-denetim.md` + `outputs/hero-sablon.md`.
+>
+> Önceki: 2026-06-13 (**FAZ 6 KAPANDI + COMMIT + PUSH —
 > son cila + tarif modülü; agent team `faz6` (lead + 5 teammate), 5 ana görev +
 > 2 EK REVİZE + Flag 2 hepsi LEAD BAĞIMSIZ KANITLI KABUL (git diff + grep +
 > DOM/element-rect probe + faz-sonu MCP/izole-chrome render SS tasarım-gözü).

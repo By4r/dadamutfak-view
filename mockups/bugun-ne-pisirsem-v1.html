@@ -3088,18 +3088,21 @@ document.addEventListener('click',function(e){
       else showResults();
     });
     function lblOf(q,v){var a=WZQ[q];for(var i=0;i<a.length;i++)if(a[i].v===v)return a[i].b;return v;}
+    /* EK-3 FIX: eski mantık süre/zorluğu SERT filtre olarak uyguluyordu (min>sure ELE,
+       zorluk kademesi tutmuyorsa ELE) → "baslangic+15dk" gibi makul seçimlerde havuz TEK
+       tarife (ya da 0'a) çöküyor, araç tek-sonuç gibi hissettiriyordu. Yeni mantık:
+       (1) süre artık SERT eşik değil, yarı-tolerans + skor sinyali (altı bonus, üstü ceza);
+       (2) her tarife uygunluk yüzdesi hesaplanır (rozet); (3) en az 1 sıkı eşleşme varsa
+       aynı kaptan en yakın tariflerle EN AZ 3 karta tamamlanır (çoklu sonuç garantisi);
+       (4) hiç sıkı eşleşme yoksa boş durum korunur (kriterleri gevşet). */
     function computeMatches(){
-      var ck=wz.ans.ogun,sure=wz.ans.sure,zor=wz.ans.zorluk;
+      var ck=wz.ans.ogun,sure=+wz.ans.sure||0,zor=wz.ans.zorluk;
       var allowed={cokkolay:['Çok Kolay'],kolay:['Çok Kolay','Kolay'],orta:['Çok Kolay','Kolay','Orta'],farketmez:null}[zor];
       var pool=(POOL[ck]||[]).map(function(r,i){return {ck:ck,idx:i,r:r};});
-      var out=pool.filter(function(p){
-        if(sure&&sure!==999&&p.r.min>sure)return false;
-        if(allowed&&allowed.indexOf(p.r.d)<0)return false;
-        return true;
-      });
-      out.forEach(function(p){
-        var sc=74+Math.round((parseFloat(p.r.r)-4.5)*40);
-        if(sure&&sure!==999)sc+=Math.max(0,Math.round((sure-p.r.min)/sure*10));
+      // 1) HER tarife uygunluk skoru (puan + süre yakınlığı + damak) → %match rozeti
+      pool.forEach(function(p){
+        var sc=72+Math.round((parseFloat(p.r.r)-4.5)*30);
+        if(sure&&sure!==999)sc+=Math.round((sure-p.r.min)/sure*14); // süre altındaysa bonus, üstündeyse ceza
         var nm=p.r.n.toLowerCase();
         wz.ans.damak.forEach(function(d){
           if(d==='hafif'&&/(salata|sebze|yoğurt|çorba|mevsim|humus)/.test(nm))sc+=6;
@@ -3109,10 +3112,21 @@ document.addEventListener('click',function(e){
           if(d==='kacamak'&&p.ck==='tatli')sc+=8;
           if(d==='gelenek'&&/(sarma|mantı|helva|sütlaç|karnıyarık|börek|menemen)/.test(nm))sc+=6;
         });
-        p.match=Math.max(60,Math.min(99,sc));
+        p.match=Math.max(52,Math.min(99,sc));
       });
-      out.sort(function(a,b){return b.match-a.match;});
-      return out;
+      function byScore(a,b){return b.match-a.match;}
+      // 2) SIKI eşleşme: süre yarı-toleransla + zorluk kademesi
+      var grace=(sure&&sure!==999)?Math.max(10,Math.round(sure*0.5)):0;
+      var strict=pool.filter(function(p){
+        if(sure&&sure!==999&&p.r.min>sure+grace)return false;
+        if(allowed&&allowed.indexOf(p.r.d)<0)return false;
+        return true;
+      }).sort(byScore);
+      if(!strict.length)return [];               // gerçekten uyan yok → boş durum
+      if(strict.length>=3)return strict;          // zaten çoklu sonuç
+      // 3) 1-2 sıkı eşleşme: aynı kaptan en yakın tariflerle EN AZ 3 karta tamamla
+      var rest=pool.filter(function(p){return strict.indexOf(p)<0;}).sort(byScore);
+      return strict.concat(rest).slice(0,3);
     }
     function showResults(){
       var list=computeMatches();

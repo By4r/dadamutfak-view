@@ -455,3 +455,47 @@ turunda da aynı sebeple `?cb=1/2` kullanıldı.)
 
 **How to apply:** Tekrar-koşulan tüm izole-Chrome probe'larına `?cb=` ekle;
 "fix sonrası hâlâ bozuk" şüphesinde İLK kontrol cache-buster'dır.
+
+## Lead doğrulama komutunun KENDİSİ buglıysa tüm karar zinciri çöker — zsh word-split (2026-06-13, hero-turu)
+
+**Kural:** Agent-team lead'i teammate ilerlemesini nabızla doğrularken `for f in
+$LIST; do ...; done` gibi **unquoted değişken iterasyonu KULLANMA** — Bash tool
+zsh çalıştırır, **zsh unquoted parametre expansion'ı word-split ETMEZ** (bash eder).
+Tüm liste tek `$f` olur, var olmayan dosya adı → her sayfa "değişmemiş" yanlış
+okunur. Çok-dosya doğrulamada DAİMA birincil kanıt = `git diff --name-only` +
+`git diff --numstat` (liste döndürür, iterasyona gerek yok). İterasyon şartsa
+zsh-safe: `echo $LIST | tr ' ' '\n' | while read f; do ...; done` ya da `${(s: :)LIST}`.
+
+**Why:** hero-turu'nda lead'in sade-sayfa sayacı (`for f in $SADE`) zsh'de tek
+iterasyona düştü → her nabızda "0/23 yapıldı" yanlış verdi. hero-zengin aslında
+20/23 üretmişti; lead kör sayaca güvenip "stall" sandı, agent'a shutdown gönderdi,
+22 sayfalık işi 2 teammate'e DEVRETTİ → neredeyse çift-yazım/çakışma. `git diff
+--numstat` (ayrı komut) 20 değişmiş sayfayı doğru gösteriyordu; erken esas alınsaydı
+kriz olmazdı. Halt mesajları zamanında yetişti, hasar=0.
+
+**How to apply:** (1) Sert karardan (agent kapatma, iş devri, geri-alma) ÖNCE DAİMA
+`git diff --name-only` + `numstat` ile teyit; tek-satır sayaç loop'una GÜVENME.
+(2) numstat ile teammate iddiası çelişirse numstat KAZANIR (git yalan söylemez,
+shell-loop söyler). (3) Geri-alınması zor kararda "üç kez ölç bir kez kes":
+name-only + numstat + bir dosyada içerik grep'i üçü uyuşmalı.
+
+## Kanıtlı kabul = grep DEĞİL, lead GÖZÜ + render SS (2026-06-13, hero-turu)
+
+**Kural:** Bir teammate "X sayfa bitti" dediğinde ve grep/numstat "imza var" dediğinde
+bile, GÖRSEL bir iş (hero, layout, görsel yerleşim) ise lead MUTLAKA render alıp
+GÖZÜYLE bakmalı. standalone chrome `--headless --screenshot` + Read ile PNG aç,
+tasarımcı gözüyle denetle.
+
+**Why:** hero-turu'nda tarif-liste-fix 2 wrapper sayfasına (alisveris-listesi/
+siparislerim) hero reçetesini bastı; grep "bg-image VAR, h1 beyaz VAR" dedi (imza
+geçti). AMA o sayfalarda `.X-top` section TÜM gövdeyi sarıyordu → render aldığımda
+koyu hero görseli TÜM içeriğin arkasına bleed etmişti (kartlar koyu görsel üstünde
+= bozuk). grep'e güvenip kabul etseydim 2 bozuk sayfa teslim edilirdi. Çözüm: wrapper
+sayfa = hero band ayrı section (markup-split) ya da gövde-wrapper'ına açık zemin
+(bg-band); reçete sadece hero-band-only sayfalarda güvenli.
+
+**How to apply:** (1) Görsel iş kabulünde imza-grep YETMEZ; lead render+göz ZORUNLU.
+(2) Section tüm gövdeyi mi sarıyor şüphesinde başlangıç-bitiş satır aralığına bak
+(`grep -n 'class=.X-top|</section>'`) — 100+ satırlık section'a `background-size:cover`
+= bleed riski. (3) Şablon/reçete uygularken "hero-band-only mu wrapper mı" ayrımını
+ÖNCE yap; wrapper ise cerrahi gerekir, naive reçete bozar.

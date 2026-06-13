@@ -2633,6 +2633,12 @@ document.addEventListener('click',function(e){
   function setActive(){
     var y=(window.scrollY||0)+180,cur=ids[0];
     ids.forEach(function(id){var el=document.getElementById(id);if(el&&el.offsetTop<=y)cur=id;});
+    /* EK-1 FIX: son section sayfa dibinde — 180px eşik çizgisi onun offsetTop'una ASLA
+       yetişemiyor (ör. sonraki.offsetTop 8662 > maxScroll+180 8627 → 35px açık), bu yüzden
+       son sekme scroll'da hiç aktif olmuyordu. Çözüm: sayfa sonuna inildiğinde (viewport
+       dibi belge dibine değdiğinde) son sekmeyi zorla aktif say — son section dipte iken
+       zaten görünür baskın bölüm odur. */
+    if((window.scrollY||0)+window.innerHeight>=document.documentElement.scrollHeight-2){cur=ids[ids.length-1];}
     tabs.forEach(function(t){t.classList.toggle('active',t.getAttribute('data-target')===cur);});
   }
   window.addEventListener('scroll',setActive,{passive:true});setActive();
