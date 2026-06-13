@@ -1,6 +1,30 @@
 # DadaMutfak — PROJE TAMAMLANDI 🏁 MOCKUP SETİ TESLİME HAZIR
 
-> Tek doğruluk kaynağı. Güncelleme: 2026-06-13 (**KAPANIŞ DOĞRULAMA + 2+2 İŞ TURU —
+> Tek doğruluk kaynağı. Güncelleme: 2026-06-13 (**SAĞLIK DROPDOWN CHROME MİNİ-TUR —
+> agent team (lead delegate + 1 teammate saglik-dropdown). 57 sayfa, COMMIT+PUSH onaylı.**
+> Sağlık nav dropdown'u kanona çekildi (chrome-fork'suz, scoped):
+> 1. **Yeşil chrome (57 sayfa):** `.dropdown-health` scoped class + `[href=saglik-hub]`
+>    attribute-selector → Sağlık dropdown ikon/hover + nav-item hover YEŞİL #3BB77E.
+>    Global `.dropdown a`/`.nav a:hover` EZİLMEDİ → diğer dropdownlar (Tarifler/Mutfak
+>    Sırları/BNP) TURUNCU kaldı (lead Playwright: non-health ikon rgb(225,72,39) ✅).
+> 2. **Item tutarlılığı:** desktop kanon 3 item (Hesaplayıcılar→hesaplayici-v1.html [11
+>    href sapması fix] + Testler [3 eksik eklendi] + Diyetisyen Ara); drawer Testler 57
+>    sayfada eksikti → eklendi.
+> 3. **Aktif-state (12 sağlık sayfası):** dropdown current item .active yeşil (mapping:
+>    Hesaplayıcılar×7+hub, Testler×2, Diyetisyen×2, besin=yok); aktif item turuncu
+>    underline `::after{display:none}` (Beyar: diğer dropdownlarda yok, tutarlı).
+>    **test-detay çift-active düzeldi** (Tarifler .active kaldırıldı → nav active=1 sadece
+>    Sağlık, probe teyitli). **REGRESYON yakalandı+fix:** saglik-testler + saglik-hub
+>    nav-active green override eksikti (saglik-renk 10'una dahil değildi) → turuncuydu,
+>    eklendi (lead Playwright: ikisi de yeşil ✅).
+> Kanıt: lead Playwright computed-style + SS (outputs/saglik-dropdown-ss/). idempotent
+> (md5 before==after). Rapor: outputs/saglik-dropdown-rapor.md. Teammate artefaktları temizlendi.
+>
+> ⏳ **AÇIK (bu commit SONRASI ayrı iş):** alisveris-listesi-v1 hero buton HOVER — Beyar
+> canlıda hâlâ zayıf/yok görüyor (kapanış turu "repro edemedik" demişti, YETMEZ). Playwright
+> hover-öncesi/sonrası computed-style farkı alınıp cam-buton hover'ı görünür yapılacak.
+>
+> Önceki: 2026-06-13 (**KAPANIŞ DOĞRULAMA + 2+2 İŞ TURU —
 > agent team `kapanis-turu` (lead delegate + 3 teammate). COMMIT YOK (Beyar onayı
 > bekliyor). Baz `48773db`. 15 dosya +466/-93, hepsi numstat+render kabul.**
 > YAPILANLAR:
@@ -54,6 +78,16 @@
 > köprülü) → **SONRA kapsamlı TEK mobil QA** (3 agent 390/768/drawer; Yasin Bey mobil
 > bulguları dahil — Ramazan bandı, hero okunabilirlik). Bekleyen patron kararları +
 > diyetisyen-ol captcha-link + #6 alisveris repro durur. Sentez: `outputs/kapanis-turu-sentez.md`.
+>
+> **🧹 CİLA/MOBİL QA TURU BULGULARI (fix sonraki turda, mobil QA ile birlikte):**
+> 1. **Kategori navigasyon tutarsızlığı:** Anasayfa "Kategoriler & Dünya Mutfakları"
+>    kartı → `kategori-v1.html` (Anadolu Mutfağı + "Alt kategoriler" şeridi); Tarifler
+>    menüsü → `tarif-liste-v1.html` ("Tema & pişirme tipi" şeridi). İKİ farklı liste
+>    sayfası = kafa karıştırıcı. KARAR GEREK: hangi giriş hangisini açmalı (öneri:
+>    kategori-v1 = belirli kategori detayı, tarif-liste = genel dizin — ama kullanıcıya
+>    net olmalı). Mobil QA turunda navigasyon haritası çıkarılıp tutarlı bağlanacak.
+> 2. **tarif-liste hero alt-gölge/sınır kesik:** tarif-liste-v1 hero'sunun alt
+>    gölgesi/sınırı düzgün değil (kesikli) → cila turunda düzeltilecek.
 >
 > Önceki: 2026-06-13 (**HERO TURU + tarif-liste düzeltmeleri
 > — agent team `hero-turu` (lead + 4 teammate: hero-zengin, tarif-liste-fix,
