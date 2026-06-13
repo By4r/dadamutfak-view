@@ -477,6 +477,23 @@ html,body{overflow-x:hidden}
 .drawer-foot{padding:18px 20px;border-top:1px solid var(--line);display:flex;flex-direction:column;gap:11px;flex:none}
 .drawer-add{display:flex;align-items:center;justify-content:center;gap:9px;font-weight:700;font-size:14.5px;color:var(--slate);padding:13px;border:1px solid var(--line);border-radius:var(--radius-md);transition:.2s var(--ease)}
 .drawer-add:hover{border-color:var(--tomato);color:var(--tomato)}
+/* drawer dünya kapıları (mobilde üst bant gizli — DadaStore/DadaAkademi buradan) — tb-world kimliği */
+.drawer-worlds{display:grid;grid-template-columns:1fr;gap:9px;margin-top:7px}
+.drawer-world{display:flex;align-items:center;gap:9px;min-height:48px;padding:0 15px;border-radius:var(--radius-md);font-size:14px;font-weight:700;letter-spacing:.01em;border:1px solid transparent;transition:background .2s var(--ease),border-color .2s var(--ease),color .2s var(--ease)}
+.drawer-world i{font-size:13px}
+.drawer-world .dw-name{line-height:1.1}
+.drawer-world .dw-arr{font-size:9px;margin-left:auto;opacity:.7}
+.drawer-world .dw-soon{font-size:9px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;padding:2px 6px;border-radius:var(--radius-sm);margin-left:auto;line-height:1}
+.dw-store{background:rgba(225,72,39,.10);border-color:rgba(225,72,39,.40);color:var(--tomato)}
+.dw-store i{color:var(--tomato)}
+.dw-store:hover{background:var(--tomato);border-color:var(--tomato);color:#fff}
+.dw-store:hover i,.dw-store:hover .dw-arr{color:#fff}
+.dw-akademi{background:rgba(0,96,114,.10);border-color:rgba(0,96,114,.34);color:var(--c-petrol)}
+.dw-akademi i{color:var(--c-petrol)}
+.dw-akademi .dw-soon{background:rgba(0,96,114,.14);color:var(--c-petrol)}
+.dw-akademi:hover{background:var(--c-petrol);border-color:var(--c-petrol);color:#fff}
+.dw-akademi:hover i{color:#fff}
+.dw-akademi:hover .dw-soon{background:rgba(255,255,255,.20);color:#fff}
 /* drawer dil seçici (mobilde üst bant yok) — aç/kapa liste: N dile ölçeklenir */
 .drawer-lang{display:flex;flex-direction:column;margin-top:3px}
 .drawer-lang-toggle{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;background:none;border:none;font-family:inherit;padding:4px 0;cursor:pointer}
@@ -1015,10 +1032,6 @@ html,body{overflow-x:hidden}
             <a href="diyetisyen-dizin-v1.html"><i class="fa-solid fa-stethoscope"></i> <span>Diyetisyen Ara<small>Uzmanla randevu al</small></span></a>
           </div>
         </div>
-        <div class="nav-item">
-          <a href="dada-shop-v1.html">Dada Store</a>
-        </div>
-        <div class="nav-item"><a href="akademi-v1.html">Dada Akademi <span class="soon">Yakında</span></a></div>
       </nav>
       <div class="head-actions">
         <button class="icon-btn" aria-label="Ara" onclick="location.href='arama-v1.html'"><i class="fa-solid fa-magnifying-glass"></i></button>
@@ -1120,8 +1133,6 @@ html,body{overflow-x:hidden}
         <a href="diyetisyen-dizin-v1.html"><i class="fa-solid fa-stethoscope"></i> Diyetisyen Ara</a>
       </div>
     </div>
-    <div class="d-item"><a class="d-link" href="dada-shop-v1.html">Dada Store</a></div>
-    <div class="d-item"><a class="d-link" href="akademi-v1.html">Dada Akademi <span class="soon">Yakında</span></a></div>
   </nav>
   <div class="drawer-foot">
     <!-- LOGIN-STATE: logged-out giriş butonu -->
@@ -1141,6 +1152,11 @@ html,body{overflow-x:hidden}
     </div>
     <a href="tarif-ekle-v1.html" class="drawer-add"><i class="fa-solid fa-circle-plus"></i> Tarif Ekle</a>
     <a href="puf-noktasi-ekle-v1.html" class="drawer-add"><i class="fa-solid fa-lightbulb"></i> Püf Noktası Ekle</a>
+    <!-- DÜNYA KAPILARI: mobilde topbar gizli (≤640 display:none) → kapılar buradan erişilir -->
+    <div class="drawer-worlds">
+      <a class="drawer-world dw-store" href="dada-shop-v1.html"><i class="fa-solid fa-bag-shopping"></i><span class="dw-name">DadaStore</span><i class="fa-solid fa-arrow-right dw-arr"></i></a>
+      <a class="drawer-world dw-akademi" href="akademi-v1.html"><i class="fa-solid fa-graduation-cap"></i><span class="dw-name">DadaAkademi</span><span class="dw-soon">Yakında</span></a>
+    </div>
     <div class="drawer-lang" id="drawerLang">
       <button class="drawer-lang-toggle" type="button" aria-haspopup="true" aria-expanded="false">
         <span class="drawer-lang-label"><i class="fa-solid fa-globe"></i> Dil</span>
@@ -1500,6 +1516,8 @@ html,body{overflow-x:hidden}
   </div>
 </footer>
 
+<!-- jsPDF (client-side, harici servis YOK; CDN sadece kütüphane dosyasını getirir) -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script>
 /* ===== ORTAK CHROME JS (v3a'dan, sayfa-bağımsız hale getirildi) =====
    SS paramları: ?dd=1 (mega+dil açık) · ?drawer=1 · ?cc=1 (çerez) · ?fb=1 (görüş modal)
@@ -1998,8 +2016,10 @@ document.querySelectorAll('.p-add').forEach(function(b){
     }
   }
 
-  // ---- YAZDIR / PDF ----
-  document.getElementById('alPrint').addEventListener('click',function(){window.print();});
+  // ---- YAZDIR / PDF (markalı client-side PDF; jsPDF yoksa print'e düşer) ----
+  document.getElementById('alPrint').addEventListener('click',function(){
+    if(window.genListPdf)window.genListPdf();else window.print();
+  });
 
   // ---- PAYLAŞ (popover + bağlantı kopyala + WhatsApp + PDF) ----
   (function(){
@@ -2020,11 +2040,132 @@ document.querySelectorAll('.p-add').forEach(function(b){
     var wa=pop.querySelector('[data-share="wa"]');
     var txt='DadaMutfak alışveriş listem: '+full;
     wa.setAttribute('href','https://wa.me/?text='+encodeURIComponent(txt));
-    pop.querySelector('[data-share="pdf"]').addEventListener('click',function(){setOpen(false);window.print();});
+    pop.querySelector('[data-share="pdf"]').addEventListener('click',function(){setOpen(false);if(window.genListPdf)window.genListPdf();else window.print();});
   })();
 
   consumeQueue();
   prog();
+})();
+</script>
+<script>
+/* ===== MARKALI ALIŞVERİŞ LİSTESİ PDF'İ (client-side, jsPDF) =====
+   Kurumsal renk (tasks/kurumsal-renk.md): domates #e14827 · koyu #211E16 · krem #efe5d3.
+   Gilroy-Medium.ttf gömülür (Türkçe ş/ğ/ı/İ doğru render). Logo addImage ile basılır.
+   Süslü değil — temiz, reyon-gruplu, profesyonel. Harici servis YOK. */
+(function(){
+  var TOMATO=[225,72,39], DARK=[33,30,22], CREAM=[239,229,211], MUTED=[138,132,122], LINE=[228,222,211], GREEN=[59,183,126];
+  var fontReady=false;
+  function b64FromBuf(buf){var bin='',b=new Uint8Array(buf);for(var i=0;i<b.length;i++)bin+=String.fromCharCode(b[i]);return btoa(bin);}
+  function loadFont(doc){
+    return Promise.resolve().then(function(){
+      if(window.__gilroyB64)return;
+      return fetch('assets/fonts/Gilroy-Medium.ttf').then(function(r){return r.arrayBuffer();}).then(function(buf){window.__gilroyB64=b64FromBuf(buf);});
+    }).then(function(){
+      try{doc.addFileToVFS('Gilroy-Medium.ttf',window.__gilroyB64);doc.addFont('Gilroy-Medium.ttf','Gilroy','normal');fontReady=true;}catch(e){fontReady=false;}
+    }).catch(function(){fontReady=false;});
+  }
+  function loadLogo(){
+    return new Promise(function(resolve){
+      if(window.__logoPdf!==undefined)return resolve(window.__logoPdf);
+      var img=new Image();
+      img.onload=function(){try{var c=document.createElement('canvas');c.width=img.naturalWidth;c.height=img.naturalHeight;c.getContext('2d').drawImage(img,0,0);window.__logoPdf={data:c.toDataURL('image/png'),w:img.naturalWidth,h:img.naturalHeight};}catch(e){window.__logoPdf=null;}resolve(window.__logoPdf);};
+      img.onerror=function(){window.__logoPdf=null;resolve(null);};
+      img.src='assets/img/logo-official-white.png';
+    });
+  }
+  var TR={'ş':'s','Ş':'S','ğ':'g','Ğ':'G','ı':'i','İ':'I','ç':'c','Ç':'C','ö':'o','Ö':'O','ü':'u','Ü':'U'};
+  function T(s){return fontReady?s:(s||'').replace(/[şŞğĞıİçÇöÖüÜ]/g,function(m){return TR[m]||m;});}
+  function trDate(){
+    var d=new Date(),ay=['Ocak','Şubat','Mart','Nisan','Mayıs','Haziran','Temmuz','Ağustos','Eylül','Ekim','Kasım','Aralık'];
+    return d.getDate()+' '+ay[d.getMonth()]+' '+d.getFullYear();
+  }
+  function groups(){
+    var out=[];
+    document.querySelectorAll('#shopList .shop-group').forEach(function(g){
+      if(g.offsetParent===null&&getComputedStyle(g).display==='none')return;
+      var bEl=g.querySelector('.shop-ghead b'); if(!bEl)return;
+      var items=[];
+      g.querySelectorAll('.shop-item').forEach(function(it){
+        var nameEl=it.querySelector('.si-name'); if(!nameEl)return;
+        var name=(nameEl.childNodes[0]?nameEl.childNodes[0].textContent:nameEl.textContent).trim();
+        var qtyEl=it.querySelector('.si-qty');
+        var inp=it.querySelector('input');
+        items.push({name:name,qty:qtyEl?qtyEl.textContent.trim():'',done:!!(inp&&inp.checked)||it.classList.contains('done')});
+      });
+      if(items.length)out.push({label:bEl.textContent.trim(),items:items});
+    });
+    return out;
+  }
+  window.genListPdf=function(){
+    if(!window.jspdf||!window.jspdf.jsPDF){window.print();return;}
+    var jsPDF=window.jspdf.jsPDF;
+    var doc=new jsPDF({unit:'mm',format:'a4',compress:true});
+    Promise.all([loadFont(doc),loadLogo()]).then(function(res){
+      var logo=res[1];
+      var PW=210,LM=16,RM=194,PH=297;
+      var grps=groups();
+      var totItems=grps.reduce(function(a,g){return a+g.items.length;},0);
+      var F=fontReady?'Gilroy':'helvetica';
+      function setC(arr,fill){if(fill)doc.setFillColor(arr[0],arr[1],arr[2]);else doc.setTextColor(arr[0],arr[1],arr[2]);}
+
+      function header(){
+        // domates üst bant
+        setC(TOMATO,true); doc.rect(0,0,PW,32,'F');
+        if(logo){var h=11,w=logo.w/logo.h*h; if(w>78){w=78;h=logo.h/logo.w*w;} doc.addImage(logo.data,'PNG',LM,16-h/2,w,h);}
+        else{doc.setFont(F,'normal');doc.setFontSize(21);doc.setTextColor(255,255,255);doc.text('DadaMutfak',LM,18);}
+        doc.setFont(F,'normal');
+        doc.setFontSize(15);doc.setTextColor(255,255,255);
+        doc.text(T('Alışveriş Listesi'),RM,14,{align:'right'});
+        doc.setFontSize(9);doc.setTextColor(255,225,214);
+        doc.text('dadamutfak.com',RM,20,{align:'right'});
+        // krem meta şerit
+        setC(CREAM,true); doc.rect(0,32,PW,12,'F');
+        doc.setFontSize(9.5);setC(DARK);
+        doc.text(T(trDate()),LM,39.5);
+        doc.text(T(totItems+' kalem  ·  '+grps.length+' reyon'),RM,39.5,{align:'right'});
+      }
+      function footer(pageNo){
+        setC(MUTED);doc.setFontSize(8.5);doc.setFont(F,'normal');
+        doc.text(T('DadaMutfak — Lezzet topluluğu · dadamutfak.com'),LM,PH-9);
+        doc.text('Sayfa '+pageNo,RM,PH-9,{align:'right'});
+        setC(LINE,true);doc.rect(LM,PH-13,RM-LM,0.3,'F');
+      }
+      var page=1; header(); footer(page);
+      var y=53;
+      function ensure(need){
+        if(y+need>PH-16){doc.addPage();page++;header();footer(page);y=53;}
+      }
+      grps.forEach(function(g){
+        ensure(16);
+        // reyon başlığı: domates kare bullet + ad + sayaç
+        setC(TOMATO,true); doc.roundedRect(LM,y-4,3.6,3.6,0.8,0.8,'F');
+        doc.setFont(F,'normal');doc.setFontSize(12.5);setC(DARK);
+        doc.text(T(g.label),LM+6,y-1);
+        setC(MUTED);doc.setFontSize(9);
+        doc.text(T(g.items.length+' kalem'),RM,y-1,{align:'right'});
+        y+=2.5;
+        setC(LINE,true);doc.rect(LM,y,RM-LM,0.4,'F'); y+=6.5;
+        g.items.forEach(function(it){
+          ensure(9);
+          var cy=y-3.1;
+          // onay kutusu — TAZE yazdırılabilir liste: hepsi BOŞ (markette işaretlemek için).
+          // Mockup statik olduğundan ekrandaki "tamamlandı" durumu PDF'e taşınmaz (yanıltıcı).
+          doc.setDrawColor(LINE[0],LINE[1],LINE[2]);doc.setLineWidth(0.4);doc.roundedRect(LM,cy,4,4,1,1,'S');
+          doc.setFont(F,'normal');doc.setFontSize(10.5);setC(DARK);
+          doc.text(T(it.name),LM+7.5,y);
+          // miktar — krem pill
+          if(it.qty){doc.setFontSize(9);var qw=doc.getTextWidth(T(it.qty))+6;
+            setC(CREAM,true);doc.roundedRect(RM-qw,y-4,qw,5.6,1.2,1.2,'F');
+            setC(DARK);doc.text(T(it.qty),RM-qw/2,y-0.2,{align:'center'});}
+          y+=4.2;
+          setC(LINE,true);doc.rect(LM+7.5,y-1.6,RM-LM-7.5,0.2,'F');
+          y+=3.4;
+        });
+        y+=4;
+      });
+      doc.save('dadamutfak-alisveris-listesi.pdf');
+    }).catch(function(e){try{console.error('PDF',e);}catch(_){}{window.print();}});
+  };
 })();
 </script>
 <script>
