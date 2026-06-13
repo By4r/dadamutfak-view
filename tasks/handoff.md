@@ -1,8 +1,50 @@
 # DadaMutfak — PROJE TAMAMLANDI 🏁 MOCKUP SETİ TESLİME HAZIR
 
-> Tek doğruluk kaynağı. Güncelleme: 2026-06-13 (**HERO TURU + tarif-liste düzeltmeleri
+> Tek doğruluk kaynağı. Güncelleme: 2026-06-13 (**KAPANIŞ DOĞRULAMA + 2+2 İŞ TURU —
+> agent team `kapanis-turu` (lead delegate + 3 teammate). COMMIT YOK (Beyar onayı
+> bekliyor). Baz `48773db`. 15 dosya +466/-93, hepsi numstat+render kabul.**
+> YAPILANLAR:
+> 1. **MCP doğrulama** (read-only): hero turu 48773db **6/6 ✅, 🔴=0** — subcat+facet
+>    (248→22)+mouse-drag · tarif-detay tek-anchor · BNP grace/backfill · puf chip
+>    nowrap+fade · anchor-offset 8 sayfa scroll-padding-top:128 · 3 wrapper bleed=0.
+>    (🟡 container gerçek class `.subcat-strip`.) Rapor `outputs/dogrulama-rapor.md`.
+> 2. **arama-v1 autocomplete dropdown**: `.sr-ac` panel, debounce 150ms, klavye
+>    ↑↓/Enter/Esc/Home/End, ARIA combobox tam, veri kaynağı `#srPop`, `<mark>` vurgu,
+>    ikon div+bg-image. (300/1.)
+> 3. **Sağlık ailesi renk tutarlılığı** (10 sh sayfası): turuncu sağlık-aksanı →
+>    **#3BB77E** CERRAHİ. Marka chrome (logo/topbar/Diyetisyen-Ol-CTA/FAB/footer/
+>    §2f hero overlay/r-card/gauge-risk/besin-yağ-makro) DOKUNULMADI. diyetisyen-dizin
+>    handoff-işaretli tutarsızlık çözüldü (hero accent + facet + CTA yeşil + nav
+>    aktif-link cerrahi). Petrol #006072=DadaAkademi karıştırılmadı.
+> 4. **tarif-liste subcat aktif-state modernize**: kaba çift-çerçeve (inset ring +
+>    ikon 2px ring) KALDIRILDI → ince tomato border(.32)+yumuşak elevation+ikon-altı
+>    minimal indicator. facet/drag/§2f dokunulmadı. (11/4.)
+> 5. **alisveris hero buton katman fix**: 3 buton (Haftalık Menü→haftalik-menu /
+>    Yazdır-PDF / Paylaş-popover) z-index sertleştirme (.wrap z:5, .al-actions z:6
+>    pe:auto, popover z:40) + siparislerim/giris guard. **LEAD Playwright tıklama
+>    teyitli** (navigasyon çalıştı). ⚠️ Agent+lead orijinal "çalışmıyor" semptomunu
+>    ÜRETEMEDI — şu an 3 buton fonksiyonel; Beyar belirli state'te görürse repro lazım.
+> 6. **EK — topbar DadaStore pill iç hizalama** (lead, 58 sayfa sweep): görünmez hover
+>    oku `.tw-arr` (opacity:0 ama flow'da) sağda yer rezerve edip içeriği 15px sola
+>    kaydırıyordu → `.tw-arr` rest ayak izi sıfırlandı (max-width:0+margin-left:-8px+
+>    overflow:hidden), hover reveal korundu (max-width:16px+margin-left:0). LEAD
+>    Playwright: asimetri 15px→-1px, hover ok 0→8px çalışıyor. Sadece DadaStore içeriği;
+>    pill konumu/DadaAkademi/§2f dokunulmadı. **TOPLAM TUR: 58 dosya +582/-209.**
+>
+> **🔑 saglik-renk LEAD KARARLARI:** (1) zorunlu-yıldız `.req` turuncu KALDI (form-
+> semantik). (2) Sağlık dropdown İÇİ hover ikonları DOKUNULMADI (chrome-fork riski →
+> Beyar'a defer) → bu kararla **arama-v1 Sağlık-dropdown seri-patch'i İPTAL** (arama
+> saglik sayfası değil). (3) diyetisyen-ol captcha yasal link yeşil (geri alınabilir).
+> (4) test-detay ikili-active (Tarifler+Sağlık) ayrı tutarsızlık, kapsam dışı.
+>
+> **🔜 SIRADA:** Faz 7 Sofra Düzeni modülü (Mutfak Sırları altı, 8 kategori, DadaStore
+> köprülü) → **SONRA kapsamlı TEK mobil QA** (3 agent 390/768/drawer; Yasin Bey mobil
+> bulguları dahil — Ramazan bandı, hero okunabilirlik). Bekleyen patron kararları + sağlık
+> dropdown-içi hover + #6 repro durur. Sentez: `outputs/kapanis-turu-sentez.md`.
+>
+> Önceki: 2026-06-13 (**HERO TURU + tarif-liste düzeltmeleri
 > — agent team `hero-turu` (lead + 4 teammate: hero-zengin, tarif-liste-fix,
-> tarif-liste-kategori, anchor-offset). COMMIT YOK (Beyar onayı bekliyor). Baz `66a33d5`.**
+> tarif-liste-kategori, anchor-offset). COMMIT (48773db) + push. Baz `66a33d5`.**
 > YAPILANLAR:
 > 1. **23/23 sade hero → görselli H1** (hero-zengin): denetim raporu (`outputs/hero-denetim.md`)
 >    → Beyar onayı → uygulama. §2f H1 OVERRIDE (patron kararı, araç sayfaları dahil). Reçete
