@@ -1,6 +1,42 @@
 # DadaMutfak — PROJE TAMAMLANDI 🏁 MOCKUP SETİ TESLİME HAZIR
 
-> Tek doğruluk kaynağı. Güncelleme: 2026-06-13 (**SAĞLIK DROPDOWN CHROME MİNİ-TUR —
+> Tek doğruluk kaynağı. Güncelleme: 2026-06-13 (**FAZ 7 — SOFRA DÜZENİ MODÜLÜ —
+> agent team `faz7-sofra` (lead delegate + 2 teammate: sofra-sayfa A + dropdown-sweep B).
+> COMMIT+PUSH onaylı, HEAD `3c1a2a5` (60 dosya +2253).**
+> TAMAM:
+> 1. **Yeni hub sayfa `sofra-duzeni-v1.html`** (2135 satır, A — frontend-design skill;
+>    mutfaga-giris mirası): §2f H1 koyu-overlay hero (h1 "Sofra Düzeni" accent "Düzeni",
+>    lead AYNEN, breadcrumb Ana Sayfa › Mutfak Sırları › Sofra Düzeni, metrik 8 Kategori/
+>    32 İpucu/A–Z) + gnav scroll-spy (8 çapa, overflow-x:auto BAŞTAN, 390 taşma=0
+>    scrollWidth=375) + seo-intro + 8 disc-card vitrin (#anchor) + 8 `.sof-row` detay
+>    bölüm (media + AYNEN açıklama + 32 `.sof-tip` İpucu). 8 kategori isim+açıklama AYNEN.
+>    ⛔ **SHOP/DadaStore köprüsü YOK** (grep+göz teyit; sadece miras topbar dünya-kapısı).
+>    Kapanış = yalnız Mutfak Sırları köprüsü.
+> 2. **Dropdown sweep — 60 sayfada "Sofra Düzeni" item** (Mutfak Sırları, Ölçü Birimleri'nden
+>    SONRA, fa-utensils, TURUNCU kanon). B: 59 mevcut sayfa (_shell dahil, href-agnostik
+>    anchor → olcu/headA href="#" varyantları da yakalandı = lead'in href-grep false-clean'i
+>    düzeltildi) + A'nın sayfası kendi aktif-item'ı (class="active", alt-metin kanona hizalı).
+>    Kanıt: 59×(+2/-0) saf insert, GLOBAL negatif grep ∅ (desktop+drawer), .dropdown-health
+>    (Sağlık yeşili) + Tarifler mega DOKUNULMADI, idempotent, 5 aileden dropdown-açık SS.
+> 3. **Görseller table-setting'e çekildi** (v1 eski tarif/tabak ID'leriydi = konu yanlış,
+>    patron yakaladı): lead web araması + curl-200 + thumbnail göz-teyit ile 9 ID küratörlüğü,
+>    A replace-all (her id 2 instance + hero 1, v3a suffix korundu). Çocuklu v3 = kurulmuş
+>    renkli parti masası (`1642267877584`; mavi-kavanoz reddedildi). **Ramazan
+>    (`1773314863076`) + Bayram (`1780586383003`) MEVCUT KALDI — patron kararı (R-A hurma /
+>    B-A tatlı tepsisi adayları sunuldu, "kalsın" denildi).** Rapor: `outputs/sofra-duzeni-gorsel-ID.md`,
+>    SS: `outputs/sofra-duzeni-ss/`.
+>
+> **OPSİYONEL CİLA (Sofra Düzeni):** Ramazan+Bayram görselleri "kurulmuş masa" tutarlılığı
+> %100 değil (mevcut tutuldu, tema-tanınması yeterli görüldü); Açık Büfe görseli biraz karanlık.
+> İstenirse tek-satır swap (adaylar gorsel-ID.md yedek havuzunda + R-A `1723134638440` /
+> B-A `1766773443039` hazır).
+>
+> **🔜 SONRAKİ FAZ:** kapsamlı MOBİL QA (3 agent 390/768/drawer — Yasin Bey bulguları:
+> Ramazan bandı taşma, hero okunabilirlik) + **cila bugları SİSTEMATİK tarama**: (1) kategori-v1
+> vs tarif-liste nav tutarsızlığı (iki farklı liste sayfası), (2) tarif-liste hero alt-gölge
+> kesik, (3) tarif-detay hero özellik-chip tekrarı (sağ panelle). Detaylar aşağıda "CİLA/MOBİL QA".
+>
+> Önceki: 2026-06-13 (**SAĞLIK DROPDOWN CHROME MİNİ-TUR —
 > agent team (lead delegate + 1 teammate saglik-dropdown). 57 sayfa, COMMIT+PUSH onaylı.**
 > Sağlık nav dropdown'u kanona çekildi (chrome-fork'suz, scoped):
 > 1. **Yeşil chrome (57 sayfa):** `.dropdown-health` scoped class + `[href=saglik-hub]`
