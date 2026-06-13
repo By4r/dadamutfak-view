@@ -499,3 +499,24 @@ sayfa = hero band ayrı section (markup-split) ya da gövde-wrapper'ına açık 
 (`grep -n 'class=.X-top|</section>'`) — 100+ satırlık section'a `background-size:cover`
 = bleed riski. (3) Şablon/reçete uygularken "hero-band-only mu wrapper mı" ayrımını
 ÖNCE yap; wrapper ise cerrahi gerekir, naive reçete bozar.
+
+## fullPage SS taşma/bug bulgusu YANLIŞ-POZİTİF verebilir — viewport-only + DOM ile teyit (2026-06-14, mobil-qa)
+
+**Kural:** `fullPage:true` screenshot ile "drawer'a içerik sızmış / overlay kapatmıyor /
+band taşıyor" gibi bulgular YANLIŞ-POZİTİF olabilir. Bir bulguyu rapora kritik yazmadan
+ÖNCE (1) viewport-only SS (`fullPage:false`) + (2) DOM/computed-style ölçümü ile teyit et.
+
+**Why:** Mobil QA turunda bir tester `fullPage` SS'lerine bakıp 3 sayfada (hakkimizda/
+akademi/reklam-ver) drawer'a "sayfa içeriği sızıyor 🔴/overlay kapatmıyor" dedi. Lead DOM
+probe'u: `#drawer` z96 fixed, h=viewport, tam 3 düzgün child (head/nav/foot); `#drawerOverlay`
+z95 opacity:1 tüm viewport'u kaplıyor. Gerçek: `position:fixed` drawer viewport yüksekliğinde,
+ama `fullPage` SS tüm doküman boyunu dikine STITCH'liyor → fixed drawer'ın ALTINA sayfanın
+geri kalanı ekleniyor = "içerik sızmış" sanrısı. 3 sahte 🔴 elendi. Aynı şekilde Ramazan
+bandı: `.wrap{overflow:hidden}` yüzünden `docSW=390` (taşma YOK) ama içerik dikine sarıp
+bandı şişiriyordu — ölçüm "temiz" derken görsel bozuktu (tersi yön: ölçüm temiz ama göz bozuk).
+
+**How to apply:** (1) Sabit/overlay eleman (drawer, sticky, modal, fixed band) içeren
+bulguda `fullPage` SS'e GÜVENME → viewport-only SS al. (2) "Taşıyor mu" sorusunda iki ölçü
+birden bak: `documentElement.scrollWidth` (gerçek yatay taşma) VE elemanın görsel sarması
+(`overflow:hidden` klipliyorsa docSW temiz çıkar ama görsel bozuk olabilir). (3) Şüpheli
+bulguyu DOM computed-style (`position/zIndex/transform/children`) ile kanıtla, sonra raporla.

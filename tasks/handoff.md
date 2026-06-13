@@ -1,8 +1,10 @@
 # DadaMutfak — PROJE TAMAMLANDI 🏁 MOCKUP SETİ TESLİME HAZIR
 
-> Tek doğruluk kaynağı. Güncelleme: 2026-06-14 (**MOBİL QA TAM TUR + 2 CİLA FIX —
-> unattended, 5 tester paralel (T1-T5). Branch `qa/cila-fixes` (2 commit önde), main
-> `55c2d87` DEĞİŞMEDİ, PUSH/MERGE YOK — Beyar dönünce inceleyip kendi merge edecek.**
+> Tek doğruluk kaynağı. Güncelleme: 2026-06-14 (**MOBİL QA TAM TUR + 3 CİLA FIX SHIP'LENDİ ✅ —
+> unattended, 5 tester paralel (T1-T5). `qa/cila-fixes` → main FF-merge + PUSH origin/main
+> TAMAM, HEAD `9173124`, GH Pages canlı. 3 fix: (1) tarif-liste hero seam · (2) tarif-detay
+> chip tekrarı · (3) Ramazan invite bandı mobil (5 sayfa, uzun metin gizle/sarı "Ramazan
+> geldi" kalsın, desktop AYNEN). Hepsi desktop+390 before/after render-doğrulamalı.**
 > FAZ A — MOBİL QA (read-only, tamam): 74 üretim sayfası × 390/768/drawer = 219 full-page SS,
 > clip-aware ölçüm (`outputs/mobil-qa/measure.cjs`) + tasarımcı-gözü SS incelemesi. Lead
 > self-partition doğrulama (tam-partition, çakışma 0) + adversarial doğrulama. **Sonuç: gerçek
