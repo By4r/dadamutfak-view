@@ -37,10 +37,23 @@
 > saglik sayfası değil). (3) diyetisyen-ol captcha yasal link yeşil (geri alınabilir).
 > (4) test-detay ikili-active (Tarifler+Sağlık) ayrı tutarsızlık, kapsam dışı.
 >
-> **🔜 SIRADA:** Faz 7 Sofra Düzeni modülü (Mutfak Sırları altı, 8 kategori, DadaStore
+> **🔜 SONRAKİ MİNİ-TUR — SAĞLIK DROPDOWN CHROME DÜZELTMESİ** (commit e1a26cd sonrası,
+> AYRI tur; bu turda YAPILMADI — saglik-renk chrome-fork riski diye bırakmıştı). 3 madde
+> AYNI KÖK = Sağlık nav dropdown chrome, tek mini-turda birlikte:
+> 1. **Dropdown İÇİ aktif item yeşil:** "Sağlık" mega-menü dropdown'ında aktif item
+>    ("Testler" vb) hâlâ TURUNCU/krem → sağlık ailesinde YEŞİL `#3BB77E` olmalı.
+> 2. **Item listesi tutarlılığı:** dropdown item listesi sayfalar arası tutarsız (bazı
+>    sayfada "Testler" girişi eksik/yanlış aktif) → TÜM sağlık sayfalarında item listesi
+>    AYNI+TAM (Hesaplayıcılar + Testler + Diyetisyen Ara), aktif-state TEK doğru.
+> 3. **test-detay ikili-active:** markup'ta hem Tarifler hem Sağlık `.active` → SADECE Sağlık.
+> KÖK NEDEN İLK: Sağlık dropdown ortak `_shell` mi sayfa-inline mi tespit (topbar gibi
+> inline+birebir olabilir) → tek-tip fix. `.nav-item.health` hook gerekebilir (chrome-fork
+> dikkat — saglik-renk bu yüzden bırakmıştı). Kanıt: dropdown açık render SS + aktif item rengi.
+>
+> **🔜 SONRA:** Faz 7 Sofra Düzeni modülü (Mutfak Sırları altı, 8 kategori, DadaStore
 > köprülü) → **SONRA kapsamlı TEK mobil QA** (3 agent 390/768/drawer; Yasin Bey mobil
-> bulguları dahil — Ramazan bandı, hero okunabilirlik). Bekleyen patron kararları + sağlık
-> dropdown-içi hover + #6 repro durur. Sentez: `outputs/kapanis-turu-sentez.md`.
+> bulguları dahil — Ramazan bandı, hero okunabilirlik). Bekleyen patron kararları +
+> diyetisyen-ol captcha-link + #6 alisveris repro durur. Sentez: `outputs/kapanis-turu-sentez.md`.
 >
 > Önceki: 2026-06-13 (**HERO TURU + tarif-liste düzeltmeleri
 > — agent team `hero-turu` (lead + 4 teammate: hero-zengin, tarif-liste-fix,
