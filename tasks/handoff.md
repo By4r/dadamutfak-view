@@ -20,9 +20,11 @@
 > Kanıt: lead Playwright computed-style + SS (outputs/saglik-dropdown-ss/). idempotent
 > (md5 before==after). Rapor: outputs/saglik-dropdown-rapor.md. Teammate artefaktları temizlendi.
 >
-> ⏳ **AÇIK (bu commit SONRASI ayrı iş):** alisveris-listesi-v1 hero buton HOVER — Beyar
-> canlıda hâlâ zayıf/yok görüyor (kapanış turu "repro edemedik" demişti, YETMEZ). Playwright
-> hover-öncesi/sonrası computed-style farkı alınıp cam-buton hover'ı görünür yapılacak.
+> ✅ **alisveris hero buton HOVER ÇÖZÜLDÜ** (commit a433e49): kök neden = base cam stili
+> (.al-top .al-head .see-all/.al-act, spec 0,3,0) `.see-all:hover/.al-act:hover` (0,2,0)
+> tomato kuralını EZİYORDU → 3 buton hover'da hiç değişmiyordu (Playwright CHANGED:false
+> kanıtladı — kapanış turu "repro edemedik" hatası buydu). Fix: yüksek-spec görünür cam
+> hover (bg .12→.26 + border .22→.6 + translateY(-1px) + shadow); 3 buton CHANGED:true.
 >
 > Önceki: 2026-06-13 (**KAPANIŞ DOĞRULAMA + 2+2 İŞ TURU —
 > agent team `kapanis-turu` (lead delegate + 3 teammate). COMMIT YOK (Beyar onayı
