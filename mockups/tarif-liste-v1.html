@@ -767,6 +767,14 @@ html,body{overflow-x:hidden}
   .lst-stats{flex-direction:row;gap:34px;padding-left:0;border-left:none;padding-top:18px;border-top:1px solid rgba(255,255,255,.18)}
 }
 
+/* ---- STICKY CLIP FIX (T3 · page-local, _shell'e DOKUNULMADI) ----
+   Shell'de html,body{overflow-x:hidden} (≈439) tarayıcıyı body'yi scroll-container
+   yapmaya zorluyor → .lst-side{position:sticky} viewport'a değil body'ye yapışıyor =
+   ölü sticky (lessons §374). overflow-x:clip yatayı keser ama scroll-container
+   üretmez, overflow-y:visible kalır → sticky GERÇEKTEN çalışır. Page-local override
+   (kaynak sırası şell'den sonra → kazanır). 390 taşmasızlık korunur. */
+html,body{overflow-x:clip}
+
 /* ---- yerleşim: facet sidebar + sonuç kolonu ---- */
 .lst-sec{padding:38px 0 74px;background:var(--bg-cream)}
 .lst-layout{display:grid;grid-template-columns:272px minmax(0,1fr);gap:30px;align-items:start}
@@ -819,6 +827,13 @@ html,body{overflow-x:hidden}
 .cat-fct .fct-row input:checked ~ .ft{color:var(--tomato);font-weight:700}
 .cat-fct .fct-row input:checked ~ .fcnt{color:var(--tomato);font-weight:700}
 .cat-fct .fct-more{padding-left:8px}
+/* Beslenme/Tip facet — bağlama uygun FA ikonu; kart üstü .r-diet rozetiyle TUTARLI
+   (aynı tip → aynı glif). Satır sade kalsın: ikon muted; bitkisel tip (vegan/vejetaryen)
+   yeşil (kart semantiğini facet'e taşır). Düzen: [cbx] [ikon] [etiket] [sayı]. */
+.dt-fct .fct-ico{flex:none;width:19px;text-align:center;color:var(--muted);font-size:13px;transition:color .15s}
+.dt-fct .fct-ico.fi-veg{color:var(--green)}
+.dt-fct .fct-row:hover .fct-ico:not(.fi-veg){color:var(--tomato)}
+.dt-fct .fct-row input:checked ~ .fct-ico:not(.fi-veg){color:var(--tomato)}
 /* "daha fazla" aç-kapa */
 .fct-more{background:none;border:none;font-family:inherit;font-size:12.5px;font-weight:700;color:var(--tomato);cursor:pointer;padding:7px 0 0 30px;display:inline-flex;align-items:center;gap:7px}
 .fct-more i{font-size:10px;transition:transform .25s var(--ease)}
@@ -915,6 +930,15 @@ html,body{overflow-x:hidden}
 /* medya tipi rozet grubu (v3a 775–776) */
 .m-types{position:absolute;bottom:13px;right:13px;display:flex;gap:6px}
 .mt{display:inline-flex;align-items:center;gap:5px;background:rgba(20,18,12,.72);color:#fff;font-size:11px;font-weight:700;padding:6px 10px;border-radius:var(--radius-sm);backdrop-filter:blur(4px)}
+/* beslenme tipi GÖRSEL ikon rozeti — kart medya sol-üstte, r-chip ALTINDA dikey
+   istif (T3 #3). r-save/r-chip cam-zemin diliyle aynı yuvarlak rozet; yeşil yalnız
+   bitkisel/sağlık beslenme semantiği (kılavuz: yeşil = sağlık). Yeni sınıf .r-diet. */
+.r-diet{position:absolute;top:51px;left:13px;z-index:2;display:flex;flex-direction:column;gap:7px}
+.r-diet .rd-b{width:30px;height:30px;border-radius:var(--radius-circle);background:rgba(255,255,255,.94);display:grid;place-items:center;font-size:13px;box-shadow:var(--sh-sm);cursor:default;transition:.2s var(--ease)}
+.r-card:hover .r-diet .rd-b{background:#fff}
+.r-diet .rd-vegan,.r-diet .rd-vejetaryen{color:var(--green)}
+.r-diet .rd-glutensiz{color:var(--slate)}
+.r-diet .rd-laktozsuz{color:var(--c-petrol)}
 /* maliyet seviye rozeti — TL fiyat değil, 3 kademeli ₺ ölçek (Bütçe facet'iyle aynı dil:
    ₺ Ekonomik · ₺₺ Orta · ₺₺₺ Premium). Dolu ₺ domates, boş ₺ soluk. */
 .r-facts .r-cost{display:inline-flex;align-items:center;gap:1px;font-weight:700;letter-spacing:-.02em}
@@ -1028,6 +1052,8 @@ html,body{overflow-x:hidden}
   .lst-grid .r-chip{font-size:10px;padding:4px 9px;top:9px;left:9px}
   .lst-grid .r-save{width:32px;height:32px;font-size:13px;top:8px;right:8px}
   .lst-grid .r-tried{display:none}   /* dar mini kartta m-types ile çakışır — rozet detayda görünür */
+  .lst-grid .r-diet{top:36px;left:9px;gap:5px}
+  .lst-grid .r-diet .rd-b{width:24px;height:24px;font-size:11px}
   .lst-grid .m-types{bottom:9px;right:9px}
   .lst-grid .mt{font-size:9.5px;padding:4px 7px}
   .pagi{gap:6px;margin-top:30px}
@@ -1334,7 +1360,7 @@ body.is-ramazan .below-header,body.rmz-ask .below-header,body.is-ramazan .rd-top
           <div class="fb-chiprow" role="group" aria-label="İlgili alan">
             <button class="chip active" type="button">Tarifler</button>
             <button class="chip" type="button">Keşfet</button>
-            <button class="chip" type="button">DadaShop</button>
+            <button class="chip" type="button">DadaStore</button>
             <button class="chip" type="button">Uygulama</button>
             <button class="chip" type="button">Diğer</button>
           </div>
@@ -1349,7 +1375,7 @@ body.is-ramazan .below-header,body.rmz-ask .below-header,body.is-ramazan .rd-top
               <option>Üyelik & Hesap</option>
               <option>Tarif ekleme</option>
               <option>Diyetisyen randevusu</option>
-              <option>Sipariş & DadaShop</option>
+              <option>Sipariş & DadaStore</option>
               <option>Diğer</option>
             </select>
           </div>
@@ -1365,7 +1391,7 @@ body.is-ramazan .below-header,body.rmz-ask .below-header,body.is-ramazan .rd-top
               <option>Tarif sayfası</option>
               <option>Arama / Tarif Bulucu</option>
               <option>Üyelik & Giriş</option>
-              <option>DadaShop</option>
+              <option>DadaStore</option>
               <option>Mobil uygulama</option>
             </select>
           </div>
@@ -1567,6 +1593,18 @@ body.is-ramazan .below-header,body.rmz-ask .below-header,body.is-ramazan .rd-top
             </div>
           </div>
 
+          <div class="fct open" data-group="Öğün">
+            <button class="fct-head" type="button">Öğün <span class="fct-dot">0</span><i class="fa-solid fa-chevron-down fct-car"></i></button>
+            <div class="fct-body">
+              <label class="fct-row"><input type="checkbox" value="Kahvaltı" data-count="58" /><span class="cbx"></span><span class="ft">Kahvaltı</span><span class="fcnt">58</span></label>
+              <label class="fct-row"><input type="checkbox" value="Öğle Yemeği" data-count="112" /><span class="cbx"></span><span class="ft">Öğle Yemeği</span><span class="fcnt">112</span></label>
+              <label class="fct-row"><input type="checkbox" value="Akşam Yemeği" data-count="167" /><span class="cbx"></span><span class="ft">Akşam Yemeği</span><span class="fcnt">167</span></label>
+              <label class="fct-row"><input type="checkbox" value="Ara Öğün" data-count="46" /><span class="cbx"></span><span class="ft">Ara Öğün <span class="muted">/ Atıştırmalık</span></span><span class="fcnt">46</span></label>
+              <label class="fct-row"><input type="checkbox" value="İkindi & Çay Saati" data-count="39" /><span class="cbx"></span><span class="ft">İkindi &amp; Çay Saati</span><span class="fcnt">39</span></label>
+              <label class="fct-row"><input type="checkbox" value="Gece Atıştırması" data-count="21" /><span class="cbx"></span><span class="ft">Gece Atıştırması</span><span class="fcnt">21</span></label>
+            </div>
+          </div>
+
           <div class="fct open" data-group="Süre">
             <button class="fct-head" type="button">Süre <span class="fct-dot">0</span><i class="fa-solid fa-chevron-down fct-car"></i></button>
             <div class="fct-body">
@@ -1587,23 +1625,23 @@ body.is-ramazan .below-header,body.rmz-ask .below-header,body.is-ramazan .rd-top
             </div>
           </div>
 
-          <div class="fct open" data-group="Beslenme">
+          <div class="fct dt-fct open" data-group="Beslenme">
             <button class="fct-head" type="button">Beslenme / Tip <span class="fct-dot">0</span><i class="fa-solid fa-chevron-down fct-car"></i></button>
             <div class="fct-body">
-              <label class="fct-row"><input type="checkbox" value="Vegan" data-count="7" data-x="vegan" /><span class="cbx"></span><span class="ft">Vegan</span><span class="fcnt">7</span></label>
-              <label class="fct-row"><input type="checkbox" value="Vejetaryen" data-count="31" /><span class="cbx"></span><span class="ft">Vejetaryen</span><span class="fcnt">31</span></label>
-              <label class="fct-row"><input type="checkbox" value="Glutensiz" data-count="6" /><span class="cbx"></span><span class="ft">Glutensiz</span><span class="fcnt">6</span></label>
-              <label class="fct-row"><input type="checkbox" value="Protein Ağırlıklı" data-count="42" /><span class="cbx"></span><span class="ft">Protein Ağırlıklı</span><span class="fcnt">42</span></label>
-              <label class="fct-row"><input type="checkbox" value="Az Yağlı" data-count="24" /><span class="cbx"></span><span class="ft">Az Yağlı</span><span class="fcnt">24</span></label>
-              <label class="fct-row xtra"><input type="checkbox" value="Glutenli" data-count="188" /><span class="cbx"></span><span class="ft">Glutenli</span><span class="fcnt">188</span></label>
-              <label class="fct-row xtra"><input type="checkbox" value="Laktozsuz" data-count="14" /><span class="cbx"></span><span class="ft">Laktozsuz</span><span class="fcnt">14</span></label>
-              <label class="fct-row xtra"><input type="checkbox" value="Süt İçermez" data-count="11" /><span class="cbx"></span><span class="ft">Süt İçermez</span><span class="fcnt">11</span></label>
-              <label class="fct-row xtra"><input type="checkbox" value="Yumurta İçermez" data-count="9" /><span class="cbx"></span><span class="ft">Yumurta İçermez</span><span class="fcnt">9</span></label>
-              <label class="fct-row xtra"><input type="checkbox" value="Şeker İlavesiz" data-count="16" /><span class="cbx"></span><span class="ft">Şeker İlavesiz</span><span class="fcnt">16</span></label>
-              <label class="fct-row xtra"><input type="checkbox" value="Yüksek Lifli" data-count="21" /><span class="cbx"></span><span class="ft">Yüksek Lifli</span><span class="fcnt">21</span></label>
-              <label class="fct-row xtra"><input type="checkbox" value="Tam Tahıllı" data-count="18" /><span class="cbx"></span><span class="ft">Tam Tahıllı</span><span class="fcnt">18</span></label>
-              <label class="fct-row xtra"><input type="checkbox" value="Acılı" data-count="33" /><span class="cbx"></span><span class="ft">Acılı</span><span class="fcnt">33</span></label>
-              <label class="fct-row xtra"><input type="checkbox" value="Baharatlı" data-count="47" /><span class="cbx"></span><span class="ft">Baharatlı</span><span class="fcnt">47</span></label>
+              <label class="fct-row"><input type="checkbox" value="Vegan" data-count="7" data-x="vegan" /><span class="cbx"></span><span class="fct-ico fi-veg"><i class="fa-solid fa-seedling"></i></span><span class="ft">Vegan</span><span class="fcnt">7</span></label>
+              <label class="fct-row"><input type="checkbox" value="Vejetaryen" data-count="31" /><span class="cbx"></span><span class="fct-ico fi-veg"><i class="fa-solid fa-leaf"></i></span><span class="ft">Vejetaryen</span><span class="fcnt">31</span></label>
+              <label class="fct-row"><input type="checkbox" value="Glutensiz" data-count="6" /><span class="cbx"></span><span class="fct-ico"><i class="fa-solid fa-wheat-awn-circle-exclamation"></i></span><span class="ft">Glutensiz</span><span class="fcnt">6</span></label>
+              <label class="fct-row"><input type="checkbox" value="Protein Ağırlıklı" data-count="42" /><span class="cbx"></span><span class="fct-ico"><i class="fa-solid fa-drumstick-bite"></i></span><span class="ft">Protein Ağırlıklı</span><span class="fcnt">42</span></label>
+              <label class="fct-row"><input type="checkbox" value="Az Yağlı" data-count="24" /><span class="cbx"></span><span class="fct-ico"><i class="fa-solid fa-droplet"></i></span><span class="ft">Az Yağlı</span><span class="fcnt">24</span></label>
+              <label class="fct-row xtra"><input type="checkbox" value="Glutenli" data-count="188" /><span class="cbx"></span><span class="fct-ico"><i class="fa-solid fa-wheat-awn"></i></span><span class="ft">Glutenli</span><span class="fcnt">188</span></label>
+              <label class="fct-row xtra"><input type="checkbox" value="Laktozsuz" data-count="14" /><span class="cbx"></span><span class="fct-ico"><i class="fa-solid fa-glass-water"></i></span><span class="ft">Laktozsuz</span><span class="fcnt">14</span></label>
+              <label class="fct-row xtra"><input type="checkbox" value="Süt İçermez" data-count="11" /><span class="cbx"></span><span class="fct-ico"><i class="fa-solid fa-mug-saucer"></i></span><span class="ft">Süt İçermez</span><span class="fcnt">11</span></label>
+              <label class="fct-row xtra"><input type="checkbox" value="Yumurta İçermez" data-count="9" /><span class="cbx"></span><span class="fct-ico"><i class="fa-solid fa-egg"></i></span><span class="ft">Yumurta İçermez</span><span class="fcnt">9</span></label>
+              <label class="fct-row xtra"><input type="checkbox" value="Şeker İlavesiz" data-count="16" /><span class="cbx"></span><span class="fct-ico"><i class="fa-solid fa-cube"></i></span><span class="ft">Şeker İlavesiz</span><span class="fcnt">16</span></label>
+              <label class="fct-row xtra"><input type="checkbox" value="Yüksek Lifli" data-count="21" /><span class="cbx"></span><span class="fct-ico"><i class="fa-solid fa-carrot"></i></span><span class="ft">Yüksek Lifli</span><span class="fcnt">21</span></label>
+              <label class="fct-row xtra"><input type="checkbox" value="Tam Tahıllı" data-count="18" /><span class="cbx"></span><span class="fct-ico"><i class="fa-solid fa-bowl-rice"></i></span><span class="ft">Tam Tahıllı</span><span class="fcnt">18</span></label>
+              <label class="fct-row xtra"><input type="checkbox" value="Acılı" data-count="33" /><span class="cbx"></span><span class="fct-ico"><i class="fa-solid fa-pepper-hot"></i></span><span class="ft">Acılı</span><span class="fcnt">33</span></label>
+              <label class="fct-row xtra"><input type="checkbox" value="Baharatlı" data-count="47" /><span class="cbx"></span><span class="fct-ico"><i class="fa-solid fa-mortar-pestle"></i></span><span class="ft">Baharatlı</span><span class="fcnt">47</span></label>
               <button class="fct-more" type="button" data-more="9 tip daha" data-less="Daha az göster">9 tip daha <i class="fa-solid fa-chevron-down"></i></button>
             </div>
           </div>
@@ -1738,6 +1776,7 @@ body.is-ramazan .below-header,body.rmz-ask .below-header,body.is-ramazan .rd-top
           <article class="r-card">
             <div class="r-media-wrap"><div class="r-media" style="background-image:url('https://images.unsplash.com/photo-1551183053-bf91a1d81141?w=600&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')">
               <span class="r-chip">Vejetaryen</span><button class="r-save" aria-label="Kaydet"><i class="fa-regular fa-heart"></i></button>
+              <div class="r-diet"><span class="rd-b rd-vejetaryen" title="Vejetaryen" aria-label="Vejetaryen"><i class="fa-solid fa-leaf"></i></span></div>
               <div class="m-types"><span class="mt"><i class="fa-solid fa-images"></i> 5</span></div></div></div>
             <div class="r-body">
               <h4><a href="tarif-detay-v1.html">Yalancı Mantı — Kıymasız, Patatesli</a></h4>
@@ -1827,6 +1866,7 @@ body.is-ramazan .below-header,body.rmz-ask .below-header,body.is-ramazan .rd-top
           <article class="r-card">
             <div class="r-media-wrap"><div class="r-media" style="background-image:url('https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?w=600&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')">
               <span class="r-chip">Vegan</span><button class="r-save" aria-label="Kaydet"><i class="fa-regular fa-heart"></i></button>
+              <div class="r-diet"><span class="rd-b rd-vegan" title="Vegan" aria-label="Vegan"><i class="fa-solid fa-seedling"></i></span><span class="rd-b rd-glutensiz" title="Glutensiz" aria-label="Glutensiz"><i class="fa-solid fa-wheat-awn-circle-exclamation"></i></span></div>
               <div class="m-types"><span class="mt"><i class="fa-solid fa-images"></i> 6</span></div></div></div>
             <div class="r-body">
               <h4><a href="tarif-detay-v1.html">Vegan Mercimekli Mantı — Zeytinyağlı Sos</a></h4>
@@ -1863,6 +1903,143 @@ body.is-ramazan .below-header,body.rmz-ask .below-header,body.is-ramazan .rd-top
                 <div class="r-stats">
                   <span class="r-rate"><i class="fa-solid fa-star"></i> 4.7</span>
                   <span class="r-views"><i class="fa-solid fa-eye"></i> 45B</span>
+                </div>
+              </div>
+            </div>
+          </article>
+
+          <article class="r-card">
+            <div class="r-media-wrap"><div class="r-media" style="background-image:url('https://images.unsplash.com/photo-1565299507177-b0ac66763828?w=600&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')">
+              <span class="r-chip">Hamur İşi</span><button class="r-save" aria-label="Kaydet"><i class="fa-regular fa-heart"></i></button>
+              <div class="r-diet"><span class="rd-b rd-vejetaryen" title="Vejetaryen" aria-label="Vejetaryen"><i class="fa-solid fa-leaf"></i></span></div>
+              <div class="m-types"><span class="mt"><i class="fa-solid fa-images"></i> 9</span></div></div></div>
+            <div class="r-body">
+              <h4><a href="tarif-detay-v1.html">Fırında Köz Patlıcanlı ve Lor Peynirli Fırın Mantısı — Annemin Ev Yapımı Özel Tarifi</a></h4>
+              <div class="r-facts">
+                <span><i class="fa-solid fa-clock"></i> 70 dk</span>
+                <span><i class="fa-solid fa-gauge-simple"></i> Orta</span>
+                <span class="f-serv"><i class="fa-solid fa-utensils"></i> 5 kişilik</span>
+                <span class="r-cost" title="Orta bütçe"><b class="rc-on">₺</b><b class="rc-on">₺</b><b class="rc-off">₺</b></span>
+              </div>
+              <div class="r-foot">
+                <div class="r-author"><div class="av" style="background-image:url('https://images.unsplash.com/photo-1531123897727-8f129e1688ce?w=100&q=80&auto=format&fit=crop')"></div><span><b>Fatma Nur</b></span></div>
+                <div class="r-stats">
+                  <span class="r-rate"><i class="fa-solid fa-star"></i> 4.9</span>
+                  <span class="r-views"><i class="fa-solid fa-eye"></i> 38B</span>
+                </div>
+              </div>
+            </div>
+          </article>
+
+          <article class="r-card">
+            <div class="r-media-wrap"><div class="r-media" style="background-image:url('https://images.unsplash.com/photo-1572441710534-87b73d3cf2fa?w=600&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')">
+              <span class="r-chip">Zeytinyağlı</span><button class="r-save" aria-label="Kaydet"><i class="fa-regular fa-heart"></i></button>
+              <div class="r-diet"><span class="rd-b rd-vegan" title="Vegan" aria-label="Vegan"><i class="fa-solid fa-seedling"></i></span><span class="rd-b rd-glutensiz" title="Glutensiz" aria-label="Glutensiz"><i class="fa-solid fa-wheat-awn-circle-exclamation"></i></span></div>
+              <div class="m-types"><span class="mt"><i class="fa-solid fa-images"></i> 4</span></div></div></div>
+            <div class="r-body">
+              <h4><a href="tarif-detay-v1.html">Zeytinyağlı Enginar Dolması</a></h4>
+              <div class="r-facts">
+                <span><i class="fa-solid fa-clock"></i> 55 dk</span>
+                <span><i class="fa-solid fa-gauge-simple"></i> Orta</span>
+                <span class="f-serv"><i class="fa-solid fa-utensils"></i> 4 kişilik</span>
+                <span class="r-cost" title="Orta bütçe"><b class="rc-on">₺</b><b class="rc-on">₺</b><b class="rc-off">₺</b></span>
+              </div>
+              <div class="r-foot">
+                <div class="r-author"><div class="av" style="background-image:url('https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&q=80&auto=format&fit=crop')"></div><span><b>Sevgi Aydın</b></span></div>
+                <div class="r-stats">
+                  <span class="r-rate"><i class="fa-solid fa-star"></i> 4.7</span>
+                  <span class="r-views"><i class="fa-solid fa-eye"></i> 22B</span>
+                </div>
+              </div>
+            </div>
+          </article>
+
+          <article class="r-card">
+            <div class="r-media-wrap"><div class="r-media" style="background-image:url('https://images.unsplash.com/photo-1547592180-85f173990554?w=600&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')">
+              <span class="r-chip">Çorba</span><button class="r-save" aria-label="Kaydet"><i class="fa-regular fa-heart"></i></button>
+              <div class="r-diet"><span class="rd-b rd-vejetaryen" title="Vejetaryen" aria-label="Vejetaryen"><i class="fa-solid fa-leaf"></i></span></div>
+              <div class="m-types"><span class="mt"><i class="fa-solid fa-play"></i> 5:18</span></div></div></div>
+            <div class="r-body">
+              <h4><a href="tarif-detay-v1.html">Köz Domatesli Ev Çorbası</a></h4>
+              <div class="r-facts">
+                <span><i class="fa-solid fa-clock"></i> 25 dk</span>
+                <span><i class="fa-solid fa-gauge-simple"></i> Kolay</span>
+                <span class="f-serv"><i class="fa-solid fa-utensils"></i> 4 kişilik</span>
+                <span class="r-cost" title="Ekonomik"><b class="rc-on">₺</b><b class="rc-off">₺</b><b class="rc-off">₺</b></span>
+              </div>
+              <div class="r-foot">
+                <div class="r-author"><div class="av" style="background-image:url('https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&q=80&auto=format&fit=crop')"></div><span><b>Gül Demir</b></span></div>
+                <div class="r-stats">
+                  <span class="r-rate"><i class="fa-solid fa-star"></i> 4.6</span>
+                  <span class="r-views"><i class="fa-solid fa-eye"></i> 51B</span>
+                </div>
+              </div>
+            </div>
+          </article>
+
+          <article class="r-card">
+            <div class="r-media-wrap"><div class="r-media" style="background-image:url('https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=600&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')">
+              <span class="r-chip">Salata</span><button class="r-save" aria-label="Kaydet"><i class="fa-regular fa-heart"></i></button>
+              <div class="m-types"><span class="mt"><i class="fa-solid fa-images"></i> 6</span></div></div></div>
+            <div class="r-body">
+              <h4><a href="tarif-detay-v1.html">Izgara Tavuklu Sezar Salata</a></h4>
+              <div class="r-facts">
+                <span><i class="fa-solid fa-clock"></i> 20 dk</span>
+                <span><i class="fa-solid fa-gauge-simple"></i> Çok Kolay</span>
+                <span class="f-serv"><i class="fa-solid fa-utensils"></i> 2 kişilik</span>
+                <span class="r-cost" title="Orta bütçe"><b class="rc-on">₺</b><b class="rc-on">₺</b><b class="rc-off">₺</b></span>
+              </div>
+              <div class="r-foot">
+                <div class="r-author"><div class="av" style="background-image:url('https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&q=80&auto=format&fit=crop')"></div><span><b>Onur T.</b></span></div>
+                <div class="r-stats">
+                  <span class="r-rate"><i class="fa-solid fa-star"></i> 4.5</span>
+                  <span class="r-views"><i class="fa-solid fa-eye"></i> 73B</span>
+                </div>
+              </div>
+            </div>
+          </article>
+
+          <article class="r-card">
+            <div class="r-media-wrap"><div class="r-media" style="background-image:url('https://images.unsplash.com/photo-1476718406336-bb5a9690ee2a?w=600&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')">
+              <span class="r-chip">Anadolu Mutfağı'ndan</span><button class="r-save" aria-label="Kaydet"><i class="fa-regular fa-heart"></i></button>
+              <span class="r-tried"><i class="fa-solid fa-award"></i> Şefin Tercihi</span>
+              <div class="m-types"><span class="mt"><i class="fa-solid fa-play"></i> 12:40</span></div></div></div>
+            <div class="r-body">
+              <h4><a href="tarif-detay-v1.html">Annemin Sırrı: Tereyağında Kavrulmuş İç Pilavla Doldurulmuş Közlenmiş Dolmalık Biber</a></h4>
+              <div class="r-facts">
+                <span><i class="fa-solid fa-clock"></i> 90 dk</span>
+                <span><i class="fa-solid fa-gauge-simple"></i> Zor</span>
+                <span class="f-serv"><i class="fa-solid fa-utensils"></i> 6 kişilik</span>
+                <span class="r-cost" title="Orta bütçe"><b class="rc-on">₺</b><b class="rc-on">₺</b><b class="rc-off">₺</b></span>
+              </div>
+              <div class="r-foot">
+                <div class="r-author"><div class="av" style="background-image:url('https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&q=80&auto=format&fit=crop')"></div><span><b>Hatice Şef</b></span></div>
+                <div class="r-stats">
+                  <span class="r-rate"><i class="fa-solid fa-star"></i> 4.9</span>
+                  <span class="r-views"><i class="fa-solid fa-eye"></i> 64B</span>
+                </div>
+              </div>
+            </div>
+          </article>
+
+          <article class="r-card">
+            <div class="r-media-wrap"><div class="r-media" style="background-image:url('https://images.unsplash.com/photo-1455619452474-d2be8b1e70cd?w=600&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')">
+              <span class="r-chip">Kek</span><button class="r-save" aria-label="Kaydet"><i class="fa-regular fa-heart"></i></button>
+              <div class="r-diet"><span class="rd-b rd-glutensiz" title="Glutensiz" aria-label="Glutensiz"><i class="fa-solid fa-wheat-awn-circle-exclamation"></i></span><span class="rd-b rd-laktozsuz" title="Laktozsuz" aria-label="Laktozsuz"><i class="fa-solid fa-glass-water"></i></span></div>
+              <div class="m-types"><span class="mt"><i class="fa-solid fa-images"></i> 7</span></div></div></div>
+            <div class="r-body">
+              <h4><a href="tarif-detay-v1.html">Glutensiz Karabuğdaylı Limonlu Kek</a></h4>
+              <div class="r-facts">
+                <span><i class="fa-solid fa-clock"></i> 45 dk</span>
+                <span><i class="fa-solid fa-gauge-simple"></i> Kolay</span>
+                <span class="f-serv"><i class="fa-solid fa-utensils"></i> 8 dilim</span>
+                <span class="r-cost" title="Orta bütçe"><b class="rc-on">₺</b><b class="rc-on">₺</b><b class="rc-off">₺</b></span>
+              </div>
+              <div class="r-foot">
+                <div class="r-author"><div class="av" style="background-image:url('https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?w=100&q=80&auto=format&fit=crop')"></div><span><b>Pınar Yıldız</b></span></div>
+                <div class="r-stats">
+                  <span class="r-rate"><i class="fa-solid fa-star"></i> 4.8</span>
+                  <span class="r-views"><i class="fa-solid fa-eye"></i> 29B</span>
                 </div>
               </div>
             </div>

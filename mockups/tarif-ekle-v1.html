@@ -11,6 +11,8 @@
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
       integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A=="
       crossorigin="anonymous" referrerpolicy="no-referrer" />
+<!-- SortableJS — malzeme + adım sürükle-bırak sıralama (FAZ6; sitede ilk kez eklendi) -->
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js" defer></script>
 <style>
 /* =====================================================================
    _SHELL.HTML — KANONİK İSKELET (anasayfa-portal-v3a.html'den BİREBİR)
@@ -951,6 +953,127 @@ html,body{overflow-x:hidden}
 .st-side{flex:none;display:flex;flex-direction:column;align-items:center;gap:7px}
 .st-side .ie-drag{padding:6px 4px}
 
+/* ============================================================
+   FAZ6 — ÇOKLU SEÇİM (kategori + mutfak); chip dili miras (.chip)
+   token-input deseni: seçilenler chip, içinde arama girişi, açılır havuz
+   ============================================================ */
+.ms-field{position:relative}
+.ms-box{
+  display:flex;flex-wrap:wrap;align-items:center;gap:8px;width:100%;
+  background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-md);
+  padding:9px 11px;cursor:text;transition:border-color .2s var(--ease),box-shadow .2s var(--ease);
+}
+.ms-box:hover{border-color:#dcdcdc}
+.ms-box.is-open{border-color:var(--tomato);box-shadow:0 0 0 3px rgba(225,72,39,.10)}
+.fk-field.has-error .ms-box{border-color:var(--tomato);box-shadow:0 0 0 3px rgba(225,72,39,.10)}
+/* seçili chip — beslenme etiketlerinin aktif diliyle birebir (tomato-tint) */
+.ms-chip{
+  display:inline-flex;align-items:center;gap:7px;font-size:13px;font-weight:700;
+  color:var(--tomato);background:var(--tomato-tint);border:1px solid var(--tomato);
+  padding:6px 8px 6px 12px;border-radius:var(--radius-sm);white-space:nowrap;
+  animation:msPop .2s var(--ease);
+}
+.ms-chip .ms-ico{font-size:11px;opacity:.85}
+.ms-chip .ms-x{
+  display:grid;place-items:center;width:18px;height:18px;border:none;border-radius:var(--radius-sm);
+  background:rgba(225,72,39,.14);color:var(--tomato);font-size:10px;cursor:pointer;transition:.16s var(--ease);
+}
+.ms-chip .ms-x:hover{background:var(--tomato);color:#fff}
+@keyframes msPop{from{opacity:0;transform:scale(.86)}to{opacity:1;transform:scale(1)}}
+.ms-search{
+  flex:1;min-width:120px;font-family:inherit;font-size:14px;font-weight:500;color:var(--slate);
+  background:transparent;border:none;outline:none;padding:6px 2px;
+}
+.ms-search::placeholder{color:#a7a7a7}
+/* açılır havuz — .ie-sugg görsel DNA'sı (popover) */
+.ms-menu{
+  position:absolute;left:0;right:0;top:calc(100% + 6px);z-index:60;
+  background:#fff;border:1px solid var(--line);border-radius:var(--radius-md);box-shadow:var(--sh-md);
+  padding:6px;max-height:248px;overflow-y:auto;display:none;
+}
+.ms-menu.show{display:block;animation:fadeUp .18s var(--ease)}
+.ms-opt{
+  display:flex;align-items:center;gap:10px;width:100%;text-align:left;font-family:inherit;font-size:13.5px;
+  font-weight:500;color:var(--slate);background:none;border:none;border-radius:var(--radius-sm);
+  padding:9px 11px;cursor:pointer;transition:.14s var(--ease);
+}
+.ms-opt i{width:16px;text-align:center;color:var(--muted);font-size:12px}
+.ms-opt:hover,.ms-opt.kbd-active{background:var(--tomato-tint);color:var(--tomato)}
+.ms-opt:hover i,.ms-opt.kbd-active i{color:var(--tomato)}
+.ms-opt .ms-check{margin-left:auto;color:var(--tomato);font-size:12px;display:none}
+.ms-opt.is-sel{color:var(--tomato);font-weight:700}
+.ms-opt.is-sel .ms-check{display:inline}
+.ms-empty{padding:12px;text-align:center;font-size:12.5px;color:var(--muted);font-weight:500}
+
+/* ============================================================
+   FAZ6 — AI İLE İYİLEŞTİR (mockup simülasyonu; gerçek AI Laravel fazı)
+   ============================================================ */
+.fk-label .ai-btn{margin-left:auto}
+.ai-btn{
+  display:inline-flex;align-items:center;gap:7px;font-family:inherit;font-size:12px;font-weight:700;
+  letter-spacing:.01em;color:var(--tomato);background:var(--tomato-tint);
+  border:1px solid rgba(225,72,39,.32);border-radius:var(--radius-sm);
+  padding:6px 12px;cursor:pointer;transition:.18s var(--ease);
+}
+.ai-btn i{font-size:12px}
+.ai-btn:hover:not(:disabled){background:var(--tomato);color:#fff;border-color:var(--tomato)}
+.ai-btn:disabled{opacity:.7;cursor:default}
+.ai-btn .ai-spin{animation:aiSpin .8s linear infinite}
+@keyframes aiSpin{to{transform:rotate(360deg)}}
+/* iyileştirme sırasında metin alanı — domates fısıltısı glow */
+.fk-textarea.ai-working{border-color:var(--tomato);box-shadow:0 0 0 3px rgba(225,72,39,.10)}
+.fk-textarea.ai-applied{
+  border-color:var(--tomato);
+  background:
+    linear-gradient(var(--paper),var(--paper)) padding-box,
+    linear-gradient(120deg,rgba(225,72,39,.05),rgba(225,72,39,.0)) border-box;
+}
+/* sonuç bandı — AI önerisi uygulandı + Kabul Et / Geri Al */
+.ai-result{
+  display:none;align-items:center;gap:12px;margin-top:10px;padding:11px 14px;
+  background:var(--tomato-tint);border:1px solid rgba(225,72,39,.28);border-radius:var(--radius-md);
+  animation:fadeUp .22s var(--ease);
+}
+.ai-result.show{display:flex}
+.ai-result .ai-badge{
+  flex:none;display:inline-flex;align-items:center;gap:7px;font-size:11.5px;font-weight:700;
+  color:#fff;background:var(--tomato);padding:5px 11px;border-radius:var(--radius-sm);letter-spacing:.02em;
+}
+.ai-result .ai-msg{flex:1;min-width:0;font-size:12.5px;font-weight:500;color:var(--slate-2);line-height:1.4}
+.ai-result .ai-acts{flex:none;display:flex;gap:8px}
+.ai-result .ai-acts button{
+  font-family:inherit;font-size:12.5px;font-weight:700;border-radius:var(--radius-sm);
+  padding:7px 14px;cursor:pointer;transition:.16s var(--ease);border:1px solid transparent;
+}
+.ai-keep{background:var(--tomato);color:#fff}
+.ai-keep:hover{background:var(--tomato-dark)}
+.ai-undo{background:var(--paper);color:var(--slate);border-color:var(--line)}
+.ai-undo:hover{border-color:var(--slate)}
+@media(max-width:520px){
+  .ai-result{flex-wrap:wrap}
+  .ai-result .ai-acts{width:100%}
+  .ai-result .ai-acts button{flex:1}
+}
+
+/* ============================================================
+   FAZ6 — SÜRÜKLE-BIRAK görsel geri bildirimi (SortableJS sınıfları)
+   ============================================================ */
+.ie-row,.ie-group,.st-card{transition:box-shadow .18s var(--ease)}
+body.is-dragging{cursor:grabbing}
+body.is-dragging .ie-drag{cursor:grabbing}
+/* sürüklenen öğenin bıraktığı yer — kesik domates hayalet */
+.sortable-ghost{opacity:.5}
+.ie-row.sortable-ghost,.st-card.sortable-ghost{
+  background:var(--tomato-tint)!important;border:1.5px dashed var(--tomato)!important;
+}
+.ie-group.sortable-ghost{opacity:.4}
+/* kavranan öğe — hafif kalkık + gölge */
+.sortable-chosen{box-shadow:0 10px 26px rgba(33,30,22,.16)}
+.ie-row.sortable-chosen,.st-card.sortable-chosen{border-color:var(--tomato)}
+/* taşınan klon */
+.sortable-drag{opacity:.96;box-shadow:0 14px 34px rgba(33,30,22,.22)!important}
+.ie-drag{touch-action:none}
+
 /* ---- sihirbaz alt barı ---- */
 .wiz-foot{display:flex;align-items:center;gap:14px;margin-top:24px}
 .wf-note{display:inline-flex;align-items:center;gap:8px;font-size:12.5px;color:var(--muted);font-weight:500}
@@ -1305,7 +1428,7 @@ html,body{overflow-x:hidden}
           <div class="fb-chiprow" role="group" aria-label="İlgili alan">
             <button class="chip active" type="button">Tarifler</button>
             <button class="chip" type="button">Keşfet</button>
-            <button class="chip" type="button">DadaShop</button>
+            <button class="chip" type="button">DadaStore</button>
             <button class="chip" type="button">Uygulama</button>
             <button class="chip" type="button">Diğer</button>
           </div>
@@ -1320,7 +1443,7 @@ html,body{overflow-x:hidden}
               <option>Üyelik & Hesap</option>
               <option>Tarif ekleme</option>
               <option>Diyetisyen randevusu</option>
-              <option>Sipariş & DadaShop</option>
+              <option>Sipariş & DadaStore</option>
               <option>Diğer</option>
             </select>
           </div>
@@ -1336,7 +1459,7 @@ html,body{overflow-x:hidden}
               <option>Tarif sayfası</option>
               <option>Arama / Tarif Bulucu</option>
               <option>Üyelik & Giriş</option>
-              <option>DadaShop</option>
+              <option>DadaStore</option>
               <option>Mobil uygulama</option>
             </select>
           </div>
@@ -1502,38 +1625,16 @@ html,body{overflow-x:hidden}
                 <span class="fk-help"><i class="fa-solid fa-lightbulb"></i> Yöre veya tekniği başlığa taşı: “Fırında”, “Kayseri Usulü”, “Pratik” gibi ekler aramada öne çıkarır.</span>
               </div>
 
-              <div class="fk-field">
-                <label class="fk-label" for="fCat">Kategori <span class="req">*</span></label>
-                <select class="fk-select" id="fCat" required>
-                  <option value="" disabled>Kategori seç</option>
-                  <option>Anadolu Mutfağı'ndan</option>
-                  <option>Aperatif</option>
-                  <option>Bakliyat</option>
-                  <option>Balık ve Deniz Ürünleri</option>
-                  <option>Bebekler İçin</option>
-                  <option>Beyaz Et</option>
-                  <option>Çorba</option>
-                  <option>Çocuklar İçin Tarifler</option>
-                  <option>Diğer Tarifler</option>
-                  <option>Diyet</option>
-                  <option>Dolma-Sarma</option>
-                  <option>Dünya Mutfağı</option>
-                  <option selected>Hamur İşi</option>
-                  <option>İçecek</option>
-                  <option>Kahvaltılık</option>
-                  <option>Kek</option>
-                  <option>Kırmızı Et</option>
-                  <option>Makarna</option>
-                  <option>Meze</option>
-                  <option>Pilav</option>
-                  <option>Pizza</option>
-                  <option>Salata</option>
-                  <option>Sebzeli Yemek Tarifleri</option>
-                  <option>Tatlı</option>
-                  <option>Tuzlu</option>
-                  <option>Vegan ve Vejetaryen</option>
-                  <option>Zeytinyağlı</option>
-                </select>
+              <div class="fk-field" id="fldCat">
+                <label class="fk-label">Kategori <span class="req">*</span><span class="opt">(çoklu seçim)</span><span class="fk-count" id="catCount">2 kategori</span></label>
+                <div class="ms-field" id="msCat" data-ms="cat" data-icon="fa-folder-open">
+                  <div class="ms-box" id="msCatBox">
+                    <input class="ms-search" id="msCatSearch" type="text" placeholder="Kategori ara veya seç…" aria-label="Kategori ara" autocomplete="off" role="combobox" aria-expanded="false" aria-controls="msCatMenu" />
+                  </div>
+                  <div class="ms-menu" id="msCatMenu" role="listbox" aria-multiselectable="true"></div>
+                </div>
+                <span class="fk-error" id="errCat"><i class="fa-solid fa-circle-exclamation"></i> En az bir kategori seç — tarifin doğru raflarda görünsün.</span>
+                <span class="fk-help"><i class="fa-solid fa-lightbulb"></i> Bir tarif birden çok kategoriye girebilir (örn. hem “Hamur İşi” hem “Anadolu Mutfağı’ndan”). İlk seçtiğin <b>ana kategori</b> sayılır.</span>
               </div>
 
               <div class="fk-field">
@@ -1558,8 +1659,18 @@ html,body{overflow-x:hidden}
               </div>
 
               <div class="fk-field">
-                <label class="fk-label" for="fDesc">Açıklama / Hikâye <span class="req">*</span></label>
+                <label class="fk-label" for="fDesc">Açıklama / Hikâye <span class="req">*</span>
+                  <button class="ai-btn" type="button" id="aiEnhance" title="Metnini akıcı ve zengin bir anlatıma dönüştür"><i class="fa-solid fa-wand-magic-sparkles"></i> AI ile İyileştir</button>
+                </label>
                 <textarea class="fk-textarea" id="fDesc" placeholder="Bu tarif sana nereden geliyor? Okuyana neden denemesi gerektiğini anlat...">Anneannemin Kayseri'den getirdiği, hamuru kulak memesi kıvamında açılan gerçek bir mantı tarifi. Püf noktası, mantıları haşlamadan önce fırında 10 dakika kurutmak — böylece haşlarken dağılmıyor ve sosu çok daha iyi tutuyor.</textarea>
+                <div class="ai-result" id="aiResult" role="status">
+                  <span class="ai-badge"><i class="fa-solid fa-wand-magic-sparkles"></i> AI önerisi</span>
+                  <span class="ai-msg">Hikâyen daha akıcı ve iştah açan bir anlatıma dönüştürüldü. Beğenmezsen geri alabilirsin.</span>
+                  <span class="ai-acts">
+                    <button class="ai-undo" type="button" id="aiUndo"><i class="fa-solid fa-rotate-left"></i> Geri Al</button>
+                    <button class="ai-keep" type="button" id="aiKeep"><i class="fa-solid fa-check"></i> Kabul Et</button>
+                  </span>
+                </div>
                 <span class="fk-help"><i class="fa-solid fa-lightbulb"></i> İlk iki cümle tarif kartında önizleme olarak görünür — en güçlü cümlenle başla.</span>
               </div>
             </div>
@@ -1704,19 +1815,15 @@ html,body{overflow-x:hidden}
                   <option>Çok Zor</option>
                 </select>
               </div>
-              <div class="fk-field">
-                <label class="fk-label" for="fCuisine">Mutfak <span class="req">*</span></label>
-                <select class="fk-select" id="fCuisine" required>
-                  <option value="" disabled>Seç</option>
-                  <option selected>Türk Mutfağı</option>
-                  <option>İtalyan Mutfağı</option>
-                  <option>Fransız Mutfağı</option>
-                  <option>Uzak Doğu Mutfağı</option>
-                  <option>Orta Doğu Mutfağı</option>
-                  <option>Meksika Mutfağı</option>
-                  <option>Hint Mutfağı</option>
-                  <option>Dünya Mutfağı</option>
-                </select>
+              <div class="fk-field" id="fldCuisine">
+                <label class="fk-label">Mutfak <span class="req">*</span><span class="opt">(çoklu)</span></label>
+                <div class="ms-field" id="msCuisine" data-ms="cuisine" data-icon="fa-utensils">
+                  <div class="ms-box" id="msCuisineBox">
+                    <input class="ms-search" id="msCuisineSearch" type="text" placeholder="Mutfak ara veya seç…" aria-label="Mutfak ara" autocomplete="off" role="combobox" aria-expanded="false" aria-controls="msCuisineMenu" />
+                  </div>
+                  <div class="ms-menu" id="msCuisineMenu" role="listbox" aria-multiselectable="true"></div>
+                </div>
+                <span class="fk-error" id="errCuisine"><i class="fa-solid fa-circle-exclamation"></i> En az bir mutfak seç.</span>
               </div>
               <div class="fk-field">
                 <label class="fk-label" for="fHeat">Pişirme Derecesi <span class="opt">(opsiyonel)</span></label>
@@ -2581,6 +2688,157 @@ document.addEventListener('click',function(e){
     var c=e.target.closest('.chip');
     if(c){c.classList.toggle('active');c.setAttribute('aria-pressed',c.classList.contains('active'));}
   });}
+
+  /* ============================================================
+     FAZ6-1 — ÇOKLU SEÇİM (kategori + mutfak); token-input + .chip dili
+     Bir tarif birden çok kategoriye/mutfağa girebilir.
+     ============================================================ */
+  var MS_DATA={
+    cat:{
+      // kategori-veri.md §1 — GERÇEK 27 tarif kategorisi
+      options:["Anadolu Mutfağı'ndan","Aperatif","Bakliyat","Balık ve Deniz Ürünleri","Bebekler İçin","Beyaz Et","Çorba","Çocuklar İçin Tarifler","Diğer Tarifler","Diyet","Dolma-Sarma","Dünya Mutfağı","Hamur İşi","İçecek","Kahvaltılık","Kek","Kırmızı Et","Makarna","Meze","Pilav","Pizza","Salata","Sebzeli Yemek Tarifleri","Tatlı","Tuzlu","Vegan ve Vejetaryen","Zeytinyağlı"],
+      selected:["Hamur İşi","Anadolu Mutfağı'ndan"],
+      noun:"kategori", count:document.getElementById('catCount'),
+      fld:document.getElementById('fldCat')
+    },
+    cuisine:{
+      // makul mutfak listesi (Türk/Anadolu/Dünya/İtalyan/Asya/Akdeniz…)
+      options:["Türk Mutfağı","Anadolu Mutfağı","Ege Mutfağı","Akdeniz Mutfağı","Karadeniz Mutfağı","Dünya Mutfağı","İtalyan Mutfağı","Fransız Mutfağı","Asya Mutfağı","Uzak Doğu Mutfağı","Orta Doğu Mutfağı","Meksika Mutfağı","Hint Mutfağı"],
+      selected:["Türk Mutfağı","Anadolu Mutfağı"],
+      noun:"mutfak", count:null,
+      fld:document.getElementById('fldCuisine')
+    }
+  };
+  function msTrL(s){return s.replace(/İ/g,'i').replace(/I/g,'ı').toLowerCase();}
+  function msEsc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;');}
+  function msAttr(s){return s.replace(/"/g,'&quot;');}
+  function initMS(fieldId){
+    var field=document.getElementById(fieldId);
+    if(!field)return;
+    var key=field.getAttribute('data-ms');
+    var icon=field.getAttribute('data-icon')||'fa-tag';
+    var data=MS_DATA[key];
+    var box=field.querySelector('.ms-box');
+    var input=field.querySelector('.ms-search');
+    var menu=field.querySelector('.ms-menu');
+    var kbdIdx=-1;
+    function updCount(){if(data.count)data.count.textContent=data.selected.length+' '+data.noun;}
+    function renderChips(){
+      field.querySelectorAll('.ms-chip').forEach(function(c){c.remove();});
+      data.selected.forEach(function(v){
+        var chip=document.createElement('span');
+        chip.className='ms-chip';
+        chip.innerHTML='<i class="fa-solid '+icon+' ms-ico"></i>'+msEsc(v)+
+          '<button type="button" class="ms-x" title="Kaldır" aria-label="'+msAttr(v)+' kaldır" data-v="'+msAttr(v)+'"><i class="fa-solid fa-xmark"></i></button>';
+        box.insertBefore(chip,input);
+      });
+      updCount();
+      if(data.fld)data.fld.classList.remove('has-error');
+    }
+    function add(v){if(data.selected.indexOf(v)<0){data.selected.push(v);renderChips();}}
+    function rem(v){var i=data.selected.indexOf(v);if(i>-1){data.selected.splice(i,1);renderChips();}}
+    function toggle(v){if(data.selected.indexOf(v)>-1)rem(v);else add(v);}
+    function renderMenu(){
+      var q=msTrL(input.value.trim());
+      var avail=data.options.filter(function(o){return !q||msTrL(o).indexOf(q)>-1;});
+      if(!avail.length){menu.innerHTML='<div class="ms-empty">Eşleşen seçenek yok</div>';return;}
+      menu.innerHTML=avail.map(function(o){
+        var sel=data.selected.indexOf(o)>-1;
+        return '<button type="button" class="ms-opt'+(sel?' is-sel':'')+'" role="option" aria-selected="'+sel+'" data-v="'+msAttr(o)+'">'+
+          '<i class="fa-solid '+icon+'"></i>'+msEsc(o)+'<i class="fa-solid fa-check ms-check"></i></button>';
+      }).join('');
+    }
+    function openMenu(){box.classList.add('is-open');menu.classList.add('show');input.setAttribute('aria-expanded','true');renderMenu();}
+    function closeMenu(){box.classList.remove('is-open');menu.classList.remove('show');input.setAttribute('aria-expanded','false');kbdIdx=-1;}
+    function hl(opts){opts.forEach(function(o,i){o.classList.toggle('kbd-active',i===kbdIdx);});if(opts[kbdIdx])opts[kbdIdx].scrollIntoView({block:'nearest'});}
+    box.addEventListener('click',function(e){
+      var x=e.target.closest('.ms-x');
+      if(x){e.stopPropagation();rem(x.getAttribute('data-v'));return;}
+      input.focus();openMenu();
+    });
+    input.addEventListener('focus',openMenu);
+    input.addEventListener('input',function(){openMenu();kbdIdx=-1;});
+    menu.addEventListener('mousedown',function(e){
+      var opt=e.target.closest('.ms-opt');if(!opt)return;
+      e.preventDefault();                                   // blur'dan önce işle
+      toggle(opt.getAttribute('data-v'));
+      input.value='';renderMenu();input.focus();
+    });
+    input.addEventListener('keydown',function(e){
+      var opts=Array.prototype.slice.call(menu.querySelectorAll('.ms-opt'));
+      if(e.key==='ArrowDown'){e.preventDefault();if(!menu.classList.contains('show'))openMenu();kbdIdx=Math.min(kbdIdx+1,opts.length-1);hl(opts);}
+      else if(e.key==='ArrowUp'){e.preventDefault();kbdIdx=Math.max(kbdIdx-1,0);hl(opts);}
+      else if(e.key==='Enter'){e.preventDefault();if(kbdIdx>-1&&opts[kbdIdx]){toggle(opts[kbdIdx].getAttribute('data-v'));input.value='';renderMenu();}}
+      else if(e.key==='Backspace'&&input.value===''&&data.selected.length){rem(data.selected[data.selected.length-1]);}
+      else if(e.key==='Escape'){closeMenu();input.blur();}
+    });
+    document.addEventListener('click',function(e){if(!field.contains(e.target))closeMenu();});
+    renderChips();
+  }
+  initMS('msCat');
+  initMS('msCuisine');
+
+  /* ============================================================
+     FAZ6-2 — AI İLE İYİLEŞTİR (MOCKUP SİMÜLASYONU)
+     Gerçek AI metin zenginleştirme Laravel fazında bağlanacak;
+     burada önce/sonra + Kabul Et/Geri Al akışı simüle edilir.
+     ============================================================ */
+  (function(){
+    var btn=document.getElementById('aiEnhance');
+    var ta=document.getElementById('fDesc');
+    var bar=document.getElementById('aiResult');
+    var keep=document.getElementById('aiKeep');
+    var undo=document.getElementById('aiUndo');
+    if(!btn||!ta)return;
+    var original=null;
+    var ENRICHED="Anneannemin Kayseri sofralarından miras kalan, hamuru kulak memesi yumuşaklığında elde açılan gerçek bir mantı tarifi. Sırrı sabırda gizli: mantılar haşlanmadan önce 180°C fırında tam 10 dakika kurutuluyor — böylece haşlama suyunda asla dağılmıyor, üzerine gezdirilen sarımsaklı yoğurdu ve kızdırılmış salçalı tereyağını kat kat daha iyi tutuyor. İlk lokmada çıtır kenarıyla yumuşacık iç dokusu aynı anda damağında buluşuyor; bir kez denedikten sonra hazır mantıya elin gitmiyor.";
+    function resetBtn(){btn.disabled=false;btn.innerHTML='<i class="fa-solid fa-wand-magic-sparkles"></i> AI ile İyileştir';}
+    btn.addEventListener('click',function(){
+      if(btn.disabled)return;
+      original=ta.value;                                    // geri alma için sakla
+      btn.disabled=true;
+      btn.innerHTML='<i class="fa-solid fa-spinner ai-spin"></i> İyileştiriliyor…';
+      ta.classList.add('ai-working');
+      setTimeout(function(){                                 // mock gecikme = gerçek AI çağrısı simülasyonu
+        ta.classList.remove('ai-working');
+        ta.classList.add('ai-applied');
+        ta.value=ENRICHED;
+        bar.classList.add('show');
+        btn.disabled=false;
+        btn.innerHTML='<i class="fa-solid fa-wand-magic-sparkles"></i> Yeniden Dene';
+      },900);
+    });
+    keep.addEventListener('click',function(){
+      bar.classList.remove('show');ta.classList.remove('ai-applied');original=null;resetBtn();
+    });
+    undo.addEventListener('click',function(){
+      if(original!=null)ta.value=original;
+      bar.classList.remove('show');ta.classList.remove('ai-applied');original=null;resetBtn();
+    });
+  })();
+
+  /* ============================================================
+     FAZ6-3 — GERÇEK SÜRÜKLE-BIRAK (malzeme satırları/grupları + adımlar)
+     SortableJS; handle = .ie-drag (mevcut tutamaç). DOMContentLoaded ile
+     bekler çünkü Sortable defer ile yüklenir.
+     ============================================================ */
+  function initSortable(){
+    if(typeof Sortable==='undefined'){console.warn('FAZ6: SortableJS yüklenemedi — sürükle-bırak pasif.');return;}
+    var ieListEl=document.getElementById('ieList');
+    var stListEl=document.getElementById('stList');
+    var base={handle:'.ie-drag',animation:170,ghostClass:'sortable-ghost',chosenClass:'sortable-chosen',dragClass:'sortable-drag',
+      onStart:function(){document.body.classList.add('is-dragging');},
+      onEnd:function(){document.body.classList.remove('is-dragging');}};
+    if(ieListEl)Sortable.create(ieListEl,base);
+    if(stListEl)Sortable.create(stListEl,{handle:'.ie-drag',animation:170,ghostClass:'sortable-ghost',chosenClass:'sortable-chosen',dragClass:'sortable-drag',
+      onStart:function(){document.body.classList.add('is-dragging');},
+      onEnd:function(){
+        document.body.classList.remove('is-dragging');
+        stListEl.querySelectorAll('.st-card .st-num').forEach(function(n,i){n.textContent=i+1;}); // sıra değişince yeniden numarala
+      }});
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',initSortable);
+  else initSortable();
 
   render();
 })();
