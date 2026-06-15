@@ -1,6 +1,30 @@
 # DadaMutfak — PROJE TAMAMLANDI 🏁 MOCKUP SETİ TESLİME HAZIR
 
-> Tek doğruluk kaynağı. Güncelleme: 2026-06-15 (**KEŞFET HUB MILESTONE TAMAM ✅**
+> Tek doğruluk kaynağı. Güncelleme: 2026-06-15 (**KEŞFET HUB CİLA — HERO TUTARLILIK + ALT-KATEGORİ KALDIRMA ✅**
+> commit `3252c3e` origin/main'e push'lu. 1 dosya (`mockups/kesfet-v1.html`) +2/−38. Beyar canlı SS bulgusu.
+> İKİ SORUN:
+> 1. **Hero tab'lar arası tutarsız (KÖK NEDEN = scroll, markup değil):** Doğrudan yüklemede hero (`ke-top`:
+>    crumb + LEZZET REHBERİ eyebrow + H1 + lead) her iki tab'da TAM + birebir aynıydı (zaten tek/ortak
+>    kardeş eleman). Kırpılma yalnız **tab geçiş anında** çıkıyordu: `setTab()` scroll sıfırlamıyordu →
+>    Mekanlar uzun (facet+18 kart) / Gurme kısa, kaydırılmış/clamp'lenmiş `scrollY` ortak hero'yu 112px
+>    sabit header altında bırakıp crumb+eyebrow gizliyor, H1 kırpıyordu. **FIX:** `setTab()` içine
+>    `window.scrollTo(0,0)` → her tab değişiminde (click + deep-link/popstate/back) hero hep tepeden
+>    aynı çerçevelenir.
+> 2. **Gurme ikinci-seviye alt-kategori şeridi KALDIRILDI (patron sevmedi):** `#keSub` div + `SUBMAP`/
+>    `renderSub` mantığı + öksüz `.ke-subfilter/.ke-subchip/.sf-lbl` CSS (desktop+@640) silindi. Üst ana
+>    chip rayı (Hepsi / Gurme Lezzetler / Etkinlikler / Lezzet Rotaları / Söyleşi) KORUNDU; chip handler
+>    artık yalnız aktif-state toggle. `data-concept` attribut'ları inert kaldı (grid'i filtrelemiyordu).
+> DOĞRULAMA (headless Chrome 149 — bu yeni mac'te Node/Playwright YOK, sistem Chrome ile): `?tab=mekan` +
+> `?tab=gurme` desktop 1280 + mobil 390 → hero ikisinde TAM+aynı, Gurme'de alt-kategori şeridi ∅. Residual
+> grep temiz (keSub/renderSub/SUBMAP/ke-subfilter = 0).
+> ALTYAPI: git committer kimliği global ayarlandı (`By4r` / `beyarguness@gmail.com`); geçmiş commit'lere
+> dokunulmadı (amend/force-push yok).
+>
+> **🔜 SONRAKİ:** Kalan **DadaMutfak revize maddeleri** (biriken liste) sıradaki iş. Ayrıca: Keşfet nav
+> tıklama davranışı (Beyar referans pattern detayını verecekti) + mobil QA MAJOR/MINOR fix turu + diğer IA
+> bulguları — `outputs/mobil-qa/MASTER-findings.md`.
+>
+> Önceki: 2026-06-15 (**KEŞFET HUB MILESTONE TAMAM ✅**
 > commit `8d8710b` origin/main'e push'lu. 4 dosya +747/−2307. Plan: `tasks/kesfet-hub-plan.md` (Yaklaşım A).
 > YAPILDI — nav "Keşfet" artık **tek tab'lı kanonik hub** (Mekanlar | Gurme Lezzetler), ana sayfa
 > discover'ın `paneMekan/paneGurme` tab mantığı tam sayfaya taşındı:
