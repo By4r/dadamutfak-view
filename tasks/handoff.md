@@ -1,6 +1,41 @@
 # DadaMutfak — PROJE TAMAMLANDI 🏁 MOCKUP SETİ TESLİME HAZIR
 
-> Tek doğruluk kaynağı. Güncelleme: 2026-06-14 (**MOBİL QA TAM TUR + 3 CİLA FIX SHIP'LENDİ ✅ —
+> Tek doğruluk kaynağı. Güncelleme: 2026-06-15 (**MOCKUP REVİZE TURU — 5 MADDE SHIP'LENDİ ✅**
+> commit `01a18e5` origin/main'e push'lu, GH Pages canlı teyitli (`by4r.github.io/dadamutfak-view`).
+> 66 dosya +907/−515. Tek idempotent Python sweep (regex, active-class koruyan) + 2 dosya elle (AI).
+> YAPILDI:
+> 1. **Ana menüye 2 yeni öğe** — "Keşfet" (`kesfet-v1.html`) + "Dolapta Ne Var?" ("Tarif Bulucu"dan
+>    rename, `tarif-bulucu-v1.html`) — nav + drawer, **60 public-nav sayfası**. Bottom-nav dolu →
+>    EKLENMEDİ (mobilde drawer'dan erişim — Beyar kararı). Aktif-state: kesfet→Keşfet, tarif-bulucu→
+>    Dolap (yanlış Bugün-active temizlendi). +6 shop/akademi sayfası yalnız "Arama / Tarif Bulucu"
+>    option rename aldı (toplam 66 dosya).
+> 2. **AI desteği** — `tarif-ekle` Hazırlanış Adımları (3 statik kart + `addStep` template) +
+>    `puf-noktasi-ekle` İçerik/Paragraf bloğu (CSS+JS PORT, sayfada yoktu). fDesc "Açıklama/Hikâye"
+>    pattern'ı BİREBİR (`.ai-btn` "AI ile İyileştir" + `.ai-result` band Geri Al/Kabul Et;
+>    spinner→900ms→enriched→"Yeniden Dene"). **Delegasyonlu** → dinamik eklenen bloklarda da çalışır.
+>    Headless tık-testi: changed=true, band göründü, Keep/Undo mevcut (153→287 / 167→296 kr).
+> 3. **"Sağlık" → "Sağlıklı Yaşam"** site geneli (nav/drawer/bottom-nav/breadcrumb/title/eyebrow).
+>    **DOKUNULMADI (Beyar kararı):** "Sağlık & Beslenme" tab, "Sağlık Editörü" ünvanı, recipe
+>    "Sağlıklı", href/slug/`.dropdown-health`/`.d-sub-health`, "Eline Sağlık" deyimi, prose.
+> 4. **"Bugün Ne Pişirsem?" → "Ne Pişirsem?"** (nav/drawer/bottom-nav/title/breadcrumb/eyebrow +
+>    **v3a hero H1** "Ne pişirsem?"). Prose "Bugün ne pişireceğine birlikte karar verelim" DOKUNULMADI.
+> 5. **Nav sırası:** Tarifler ▾ · Ne Pişirsem? · Dolapta Ne Var? · Keşfet · Mutfak Sırları ▾ · Sağlıklı Yaşam ▾.
+> DOĞRULAMA: idempotent (2. çalıştırma 0 değişiklik) + global negatif grep ∅ (eski isimler 0; kalan
+> tek "Tarif Bulucu" = dokunulmayan CSS yorumu) + pozitif 60/60 + **nav taşma YOK** (Chrome headless
+> ölçüm: 1025px & 1280px `overflow=false`; ~1040px logo↔Tarifler boşluğu sıkışık ama sarma/scroll yok).
+> ALTYAPI (yeni mac): **gh CLI 2.94.0** `~/.local/bin`'e kuruldu (brew/sudo'suz, arm64 zip), SSH auth
+> (By4r), remote HTTPS→SSH (`git@github.com:By4r/dadamutfak-view.git`), `~/.local/bin` PATH `.zshrc`'de.
+>
+> **🔜 SONRAKİ AÇIK KONU (gelecek oturum):**
+> 1. **"Keşfet" nav tıklama davranışı** gözden geçirilecek — şu an Keşfet'e tıklayınca DOĞRUDAN
+>    gurme/liste sayfası (`kesfet-v1.html`) açılıyor; beklenen davranış netleştirilecek. Beyar referans
+>    olarak ana sayfadaki **"2 tab + Tümünü Gör aktif tab'a gider"** pattern'ından bahsetti → DETAYINI
+>    BEYAR VERECEK.
+> 2. **Diğer DadaMutfak revize maddeleri** (bu kolay batch sonrası kalanlar) bekliyor.
+> 3. Önceki turdan devam: mobil QA MAJOR/MINOR bulgu fix turu + navigasyon IA kararı (kategori-v1 vs
+>    tarif-liste) — `outputs/mobil-qa/MASTER-findings.md`.
+>
+> Önceki: 2026-06-14 (**MOBİL QA TAM TUR + 3 CİLA FIX SHIP'LENDİ ✅ —
 > unattended, 5 tester paralel (T1-T5). `qa/cila-fixes` → main FF-merge + PUSH origin/main
 > TAMAM, HEAD `9173124`, GH Pages canlı. 3 fix: (1) tarif-liste hero seam · (2) tarif-detay
 > chip tekrarı · (3) Ramazan invite bandı mobil (5 sayfa, uzun metin gizle/sarı "Ramazan
