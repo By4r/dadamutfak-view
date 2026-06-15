@@ -1,6 +1,72 @@
-# DadaMutfak — PROJE TAMAMLANDI 🏁 MOCKUP SETİ TESLİME HAZIR
+# DadaMutfak — REVİZE TURU · WAVE 1 DONE ✅ · WAVE 2 PENDING
 
-> Tek doğruluk kaynağı. Güncelleme: 2026-06-15 (**KEŞFET HERO SİTE STANDARDINA UYDURULDU ✅**
+> Tek doğruluk kaynağı. Güncelleme: 2026-06-16 (**WAVE 1 DONE ✅ — revize turu mockup'ları**
+> commit `80f64cf` origin/main'e push'lu. 3 değişen dosya + 12 yeni sayfa. Agent team (lead delegate
+> + 2 teammate T-A/T-B paralel, çakışmasız dosya setleri, NAV SWEEP YOK → Wave 3'e ertelendi).
+>
+> **WAVE 1 YAPILDI (madde 3 / 12 / 11 / 5a):**
+> - **Madde 3 — `tarif-bulucu-v1.html`** (+123/−19): (a) malzeme içeriği tamamlandı (Sebzeler 7→22,
+>   Meyveler 6→18, Baklagiller 5→9, Kırmızı Et 3→8, Beyaz Et 2→5, Balık 5→9, Süt&Temel +8; FA 6.5.2
+>   dışı ikon yok). (b) kategori-bazlı renk token `--cat` (sebze yeşil / meyve turuncu / et kırmızı /
+>   balık mavi / süt açık mavi; FA korundu sadece renklendirme). (c) oval `.sh-tab` `border-radius`
+>   999px→**12px** rounded-rect (aktif filled-tomato+border korundu). (d) İstemediklerim `#alerjenBlock`
+>   → belirgin koyu slate uyarı bandı + "X malzeme hariç tutuluyor" canlı tomato sayaç + alerjen 8→14.
+> - **Madde 12 — `reklam-ver-v1.html`** (+216/−9): 9 `.yer-card`'a `data-placement`+role/aria → tık ile
+>   **placement-preview modal** (sol browser-chrome'lu sayfa şeması + vurgulu tomato-dashed pulse yuva,
+>   sağ konum/format/metrik; veri-driven `P{}` map; mobil placement için dar şema). Kapatma ×+backdrop+
+>   Esc, hover "Önizle" rozeti, Enter/Space erişimi.
+> - **Madde 11 — Sofra 8 detay sayfası** (`sofra-{gunluk,misafir,kahvalti,resmi,ramazan,bayram,cocuklu,
+>   acik-bufe}-v1.html`): `_shell` + §2f koyu-overlay hero (breadcrumb Mutfak Sırları › Sofra Düzeni ›
+>   kategori) + 3p giriş + 4 adımlı kart grid + ipucu bandı + "diğer düzenler" köprüsü. Görsel = gri
+>   placeholder + **`data-img-pending`** (highfield görselleri sonra). Hub `sofra-duzeni-v1.html` (+8/−8):
+>   8 `.disc-card` href `#anchor`→`sofra-<slug>-v1.html` (kalan `#anchor`=0, yeni link=8 — lead teyitli).
+> - **Madde 5a — 4 besin rehberi** (`besin-kalori-cetveli`, `protein-rehberi`, `karbonhidrat-rehberi`,
+>   `yag-rehberi-v1.html`): `besin-kutuphanesi` tablo dili + §2f hero (yeşil aksan) + editöryal giriş +
+>   3 bilgi kartı + makro-vurgulu referans tablosu + temsilî-veri uyarısı (veri mock ama gerçekçi).
+> DOĞRULAMA: her teammate Playwright (1280+390) — **0 JS hatası** (T-A 4 ctx, T-B 12 sayfa); placement
+> modal 9/9 aç/kapa, alerjen sayaç + 12px radius + kategori renkleri teyitli, sofra hub tık-navigasyon OK.
+> Lead numstat+grep teyidi yapıldı. SS/progress: `mockups/outputs/wave1-{ta,tb}-*`.
+>
+> **🧱 FOUNDATION KARARLARI (Wave 2'den ÖNCE implement edilecek — patron onaylı 2026-06-16):**
+> - **F1 — Pro üyelik:** tek SİTE-GENELİ tier'lı üyelik (Pro 1/2/3, reklam-ver `.pk-card` tier dili
+>   mirası: bronz/gümüş/altın → t1/t2/t3, featured+flag). Tam UX: `pro-v1.html` (landing+karşılaştırma)
+>   → `pro-odeme-v1.html` (odeme-v1 deseni) → `.pro-gate` (lg-gate kardeşi, `[data-pro-gate]`). Madde
+>   8/10/13 hepsi bu TEK üyeliğin tier faydaları; per-creator ayrı ödeme YOK. **NET AYRI 2. katman:**
+>   ücretsiz **"Abone Ol"** takip (`.creator-sub`, YouTube subscribe modeli: bildirim+feed, PARA YOK) —
+>   içeriği AÇMAZ; premium kilidi yalnız ücretli **Pro** açar. (YouTube: subscribe ücretsiz, membership ücretli.)
+> - **F2 — Rozet/şef-kademe:** 8 kademe CS:GO şef merdiveni (Çömez→Komi→Çırak→Aşçı→Usta Aşçı→Şef→Usta
+>   Şef→Dada Üstadı), rozet birikimi→kademe atlama + progress bar. Referans: `mutfak-defteri` `.badge-band`
+>   (kazanılan+kilitli kart dili). Yeni `rozetler-v1.html` galeri + `tasks/rozet-veri.md` + admin STUB.
+> - **F3 — Nav:** YENİ top-level menü öğesi YOK; tüm nav eklemeleri tek idempotent sweep'te (Wave 3).
+>
+> **🌊 WAVE 2 PENDING (Foundation F1/F2/F3 implement SONRASI):** önce Foundation → sonra **8∥13∥9 paralel**:
+> - **8 (diyetisyen pro):** `diyetisyen-profil` sat.~1457 `.pf-panel` linki kaldır + profil↔panel kuplajı
+>   kopar + panele Pro özellik bandı + pro içerik `.pro-gate`. Panel zaten ayrı kabuk (panel-shell + 7 dyt).
+> - **13 (video pro):** `video-mutfagi` — ücretsiz `.creator-sub` "Abone Ol" + premium seride `.pro-gate`
+>   (ikisi NET AYRI) + creator profil/sosyal link. F1 tüketir, 8/10'dan bağımsız.
+> - **9 (rozet):** F2 galeri+kademe dağıtımı; **`diyetisyen-profil` rozet bloğunu T-C ile KOORDİNE**
+>   (8 profili sabitleyince 9 rozet bloğunu üstüne ekler — R3 çakışması).
+> - **SONRA 10 (restoran):** 8'i mirror — `mekan-detay`'a "Rezervasyon Yap" modal (diyetisyen `.apt-modal`
+>   3-ADIM İSKELETİ + **MASA REZERVASYONU semantiği**: Adım1 kişi sayısı → Adım2 tarih/saat → Adım3 onay/
+>   başarı) + mekan paneli (panel-shell yeşil kardeşi: Rezervasyonlar/Müsaitlik/İşletme Profili) + "İşletmeni
+>   Ekle" formu (diyetisyen-ol kardeşi). Ücret/depozito yok.
+>
+> **🧹 WAVE 3 PENDING — nav chrome-sweep (TEK idempotent sweep, ~57 dosya):** besin rehberleri + sofra
+> detayları + Sağlıklı Yaşam besin submenu + restoran IA girişi (Keşfet-içi) + video pro etiketi + header
+> "Pro'ya Yükselt". **ŞU AN besin/sofra sayfaları nav'a BAĞLI DEĞİL** (bilinçli) — breadcrumb + hub
+> köprüleri üzerinden erişiliyor. Diğer dropdownlar (Tarifler/Mutfak Sırları) DOKUNULMAZ. Negatif grep +
+> 2× idempotent re-run + dropdown-açık SS ile doğrula.
+>
+> **🔍 LEAD DENETİM PROTOKOLÜ (Wave 2'de de uygula):** teammate "bitti" deyince KANITLA doğrula — render
+> SS 1440/768/390 + diff özeti (numstat) + acceptance kriteri kontrolü; her ~10 dk durum yokla; KANITSIZ
+> done sayma. (İş bitince `tasks/bilesen-kilavuzu.md` Bölüm 5 "Agent Teams"e kalıcı kural eklenecek.)
+>
+> **📁 KÜÇÜK NOT:** Wave 1 SS/progress `mockups/outputs/` altında (kök `outputs/` yerine) — Wave 2'de
+> tutarlılık için aynı yeri kullan.
+> **📋 PLAN DOKÜMANI:** `tasks/revize-turu-plan.md` (madde→dosya eşlemesi, domain matrisi, wave planı,
+> foundation spec F1/F2/F3, işaretli varsayımlar, teammate brief taslakları).
+>
+> Önceki: 2026-06-15 (**KEŞFET HERO SİTE STANDARDINA UYDURULDU ✅**
 > commit `861657c` origin/main'e push'lu. 1 dosya (`mockups/kesfet-v1.html`) +51/−16. Beyar canlı SS turu.
 > Keşfet hub hero'su, hub yeniden tasarımında bilinçli "düz beyaz hero" yapılmıştı → site geneli koyu
 > görselli banner kullandığı için tutarsızdı. İKİ ADIMDA standarda çekildi:
