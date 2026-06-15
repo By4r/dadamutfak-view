@@ -1,6 +1,30 @@
 # DadaMutfak — PROJE TAMAMLANDI 🏁 MOCKUP SETİ TESLİME HAZIR
 
-> Tek doğruluk kaynağı. Güncelleme: 2026-06-15 (**KEŞFET HUB CİLA — HERO TUTARLILIK + ALT-KATEGORİ KALDIRMA ✅**
+> Tek doğruluk kaynağı. Güncelleme: 2026-06-15 (**KEŞFET HERO SİTE STANDARDINA UYDURULDU ✅**
+> commit `861657c` origin/main'e push'lu. 1 dosya (`mockups/kesfet-v1.html`) +51/−16. Beyar canlı SS turu.
+> Keşfet hub hero'su, hub yeniden tasarımında bilinçli "düz beyaz hero" yapılmıştı → site geneli koyu
+> görselli banner kullandığı için tutarsızdı. İKİ ADIMDA standarda çekildi:
+> 1. **Koyu görselli banner hero (site kanonu = `lst-top`/kategori/mekan-detay):** `.ke-top` →
+>    `linear-gradient(90deg,rgba(28,25,18,.93),rgba(33,30,22,.72))` + Unsplash v3a banner, `cover/center`,
+>    `padding-top:128/74`. breadcrumb/eyebrow/H1/lead beyaza çekildi (crumb `#c9c3b8`, eyebrow `#ffd9cf`+
+>    tomato dash, H1 `#fff`+text-shadow, accent `#ff7a5c`, lead `#e7edf1`). Sadece CSS — markup/gövde sabit.
+> 2. **İstatistikler hero banner İÇİNE taşındı, TAB-ÖZEL:** beyaz gövdedeki `mkl-intro` stat'ı kaldırılıp
+>    hero'ya `.ke-hero` 2-kolon grid + sağ `.ke-stats` kolonu eklendi (`lst-stats` birebir: dikey sol-ayraçlı,
+>    ≤1024 yatay üst-ayraçlı). İki set markup'ta: `#keStatsMekan` (124 mekân/9 şehir/8.4B değerlendirme) +
+>    `#keStatsGurme` (92 lezzet yazısı/18 lezzet rotası/9 şehir). `setTab` aktif tab'a göre toggle →
+>    banner+başlık+lead ORTAK, yalnız sağ istatistik kolonu tab'a göre değişiyor. `mkl-intro`'da popüler
+>    hızlı-filtre chip'leri kaldı. (Gurme sayıları temsilî mockup, 124/9/8.4B gibi.)
+> DOĞRULAMA (Playwright 1440+390, Mekanlar direct + Gurme click): hero iki tab'da koyu banner + beyaz H1;
+> `statsInsideHeroBanner=true` ikisinde; tab swap doğru (keStatsMekan↔keStatsGurme). Önceki hero tutarlılık
+> fix'leriyle (scroll-reframe + alt-kategori kaldırma) birlikte **Keşfet hub artık site geneliyle tam tutarlı.**
+> ALTYAPI: bu yeni mac'e **Node v24.16.0 (arm64 resmi tarball, ~/.local)** + **Playwright 1.61.0** (yalnız
+> chromium headless-shell) kuruldu (brew/sudo'suz). Proje script'i: `NODE_PATH=~/.local/lib/playwright-env/
+> node_modules node <script>.cjs`. + statusline.sh ctx penceresi düzeltildi (opus → 1M).
+>
+> **🔜 SONRAKİ:** Kalan **DadaMutfak revize maddeleri** (biriken liste) + mobil QA MAJOR/MINOR fix turu
+> (`outputs/mobil-qa/MASTER-findings.md`) + Keşfet nav tıklama davranışı (Beyar referans pattern verecekti).
+>
+> Önceki: 2026-06-15 (**KEŞFET HUB CİLA — HERO TUTARLILIK + ALT-KATEGORİ KALDIRMA ✅**
 > commit `3252c3e` origin/main'e push'lu. 1 dosya (`mockups/kesfet-v1.html`) +2/−38. Beyar canlı SS bulgusu.
 > İKİ SORUN:
 > 1. **Hero tab'lar arası tutarsız (KÖK NEDEN = scroll, markup değil):** Doğrudan yüklemede hero (`ke-top`:
