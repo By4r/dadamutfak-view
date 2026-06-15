@@ -1,6 +1,33 @@
 # DadaMutfak — PROJE TAMAMLANDI 🏁 MOCKUP SETİ TESLİME HAZIR
 
-> Tek doğruluk kaynağı. Güncelleme: 2026-06-15 (**MOCKUP REVİZE TURU — 5 MADDE SHIP'LENDİ ✅**
+> Tek doğruluk kaynağı. Güncelleme: 2026-06-15 (**KEŞFET HUB MILESTONE TAMAM ✅**
+> commit `8d8710b` origin/main'e push'lu. 4 dosya +747/−2307. Plan: `tasks/kesfet-hub-plan.md` (Yaklaşım A).
+> YAPILDI — nav "Keşfet" artık **tek tab'lı kanonik hub** (Mekanlar | Gurme Lezzetler), ana sayfa
+> discover'ın `paneMekan/paneGurme` tab mantığı tam sayfaya taşındı:
+> 1. **`kesfet-v1` = Keşfet hub.** Tek beyaz hub hero → `.ke-tabbar` (Mekanlar varsayılan aktif | Gurme) →
+>    `#keBrowse`{`#paneMekan` + `#paneGurme`} + `#keDetail` (uzun-form makale) kardeş.
+> 2. **Mekanlar pane** = `mekan-liste` facet kiti göçü (sticky facet sidebar semt/şehir/mutfak/bütçe/puan +
+>    sort dd + `mkl-grid` 18 kart + mobil bottom-sheet). CSS lst-/fct-/sort-/mkl-/sheet- + @1024/@640
+>    taşındı (dup kanon hariç); facet/sort/sheet JS göçü (shell JS taşınmadı).
+> 3. **KARAR 2 — Popüler chip + stats (124/9/8.4B) KORUNDU** ama hub hero'yu tekrarlamadan paneMekan
+>    içinde tek-satır kompakt `.mkl-intro` şerit (facet/grid üstünde). Tek hub hero kuralı bozulmadı.
+> 4. **Gurme pane** = mevcut editöryal feed; konsept chip rayından **"Mekânlar" çıkarıldı** (tab oldu);
+>    grid↔makale toggle korundu (keDetail artık `#keGrid` yerine `#keBrowse` gizler).
+> 5. **Derin link** `?tab=mekan|gurme` (varsayılan mekan) + `?detay=1` kombinasyonu + pushState/popstate.
+> 6. **KARAR 1 — `mekan-liste-v1` → redirect stub** (canonical + meta-refresh + JS replace + görünür
+>    fallback, noindex/follow; sweep-uyumlu minimal shell) → `kesfet-v1.html?tab=mekan`.
+> 7. **Linkler:** anasayfa discSeeAll + JS tab-swap + 3 gurme kart → `?tab=gurme`/`?tab=mekan`;
+>    mekan-detay breadcrumb + "Tüm Mekânlar" → `?tab=mekan`. Üretimde mekan-liste linki (stub hariç) 0.
+> DOĞRULAMA (headless Chrome render): desktop Mekanlar/Gurme tab + makale aç/kapa · mobil 390/768 intro
+> stack + facet bottom-sheet (`?sheet=1`) · derin link `?tab=mekan|gurme|gurme&detay=1` · stub uçtan uca
+> Mekanlar'a düştü · nav "Keşfet" `.active`. Çakışma yok (mekan-namespace CSS/ID kesfet'te ∅, enableDrag
+> `.mkl-grid`'i kapmıyor).
+>
+> **🔜 SONRAKİ:** Kalan **DadaMutfak revize maddeleri** (bu hub işinden sonra biriken liste) sıradaki iş.
+> Önceki turdan devam: mobil QA MAJOR/MINOR fix turu + (artık çözülen kategori-v1/tarif-liste değil ama)
+> diğer IA bulguları — `outputs/mobil-qa/MASTER-findings.md`.
+>
+> Önceki: 2026-06-15 (**MOCKUP REVİZE TURU — 5 MADDE SHIP'LENDİ ✅**
 > commit `01a18e5` origin/main'e push'lu, GH Pages canlı teyitli (`by4r.github.io/dadamutfak-view`).
 > 66 dosya +907/−515. Tek idempotent Python sweep (regex, active-class koruyan) + 2 dosya elle (AI).
 > YAPILDI:
@@ -506,8 +533,9 @@
   `ansiklopedi-detay-v1` (YENİ SEO modülü "Mutfak Ansiklopedisi"; sozluk-v1
   AYNEN korundu — patron şartı). Shop ailesi (5 dosya) artık AYRI MAĞAZA
   KABUĞU taşır (ana site nav'ı yok; "Ana Siteye Dön" + DadaStore SVG logo)
-- Mekan modülü (2026-06-12): `mekan-liste-v1` (kabul) + `mekan-detay-v1`
-  (tasarım reddedildi — yeniden yapılacak, sayfa envanterde)
+- Mekan modülü (2026-06-12): `mekan-liste-v1` **→ STUB (2026-06-15)** — içeriği Keşfet hub'ının
+  "Mekanlar" sekmesine (`kesfet-v1.html?tab=mekan`) taşındı; dosya artık redirect stub (yer-imi/eski
+  link emniyet ağı). + `mekan-detay-v1` (kabul, mekan kartları buraya gider)
 - İskeletler: `_shell.html` (public) + `panel-shell.html` (panel)
 - Final cilada doğan: **`test-detay-v1.html`** (?test=metabolizma|su-hidrasyon|
   temel-pisirme|hangi-yemek — Onedio tarzı görselli test akışı, kişilik kartı
