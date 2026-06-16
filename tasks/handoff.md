@@ -1,3 +1,13 @@
+> **🍳 MADDE 3 — Dolapta Ne Var? (tarif-bulucu) DONE ✅ (push'lu):** Patron (Yasin Bey) isteğiyle baştan revize.
+> **2 EŞİT SEKME** (Elimdekiler yeşil / İstemediklerim tomato) — sekme değişince tüm tezgah o renge boyanır.
+> **GERÇEK MALZEME GÖRSELLERİ** — TheMealDB seti (`mockups/assets/malzeme/`, 65 foto, ~200px, div+background-image
+> cover+center; markalı 6'sı + karşılığı olmayanlar FA fallback'te → `.has-photo` deseniyle gerçek foto gelince swap'a hazır).
+> **10 KATEGORİ ÇOKLU-AÇIK ACCORDION** (Sık Kullanılan açık başlar, kalan kapalı; kapalı başlıkta seçili-sayı rozeti;
+> atla-çubuğu chip'i → kaydır + otomatik aç). **KOMPAKT KARTLAR** (98px masaüstü / 4 sütun mobil, 1px border, tek-satır isim).
+> Türkçe normalize arama + autocomplete, sonuç eşleşme rozeti ("N/M malzeme sende var"), İstemediklerim'de alerjen
+> hızlı satırı + EXMAP hariç tutma. Render SS 1440/390 + headless engine testi (0 JS hatası) doğrulandı.
+> **SIRADAKİ:** Wave 3 nav-sweep (besin submenu + "Pro'ya Yükselt" + "Tüm Rozetler" + video Pro etiketi).
+
 > **🗂️ dizin.html CİLA DONE ✅ (push'lu, HEAD `b0155aa`):** Patron-inceleme sayfa dizini (`mockups/dizin.html`,
 > 93 sayfa · 16 grup · mobil-first · canlı filtre + grup atlama çipleri). Beyar canlı-SS turunda yakalanan 3
 > bulgu düzeltildi: (1) çipe tıklayınca section başlığı sticky header altında kalıyordu →
