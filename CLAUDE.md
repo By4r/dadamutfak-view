@@ -52,6 +52,12 @@ hedef sade, fonksiyonel, modern bir arayüze taşımak.
 - Çıktı: kısa **YAZILI** rapor (ne değişti + kontrol sonucu). Tek öğe için
   dakikalarca crop'la uğraşma.
 
+## Soru Sorma Kuralı
+
+- Bana açık soru sorduğunda (ask_user_input widget ya da plan içi açık soru),
+  her seçeneğe kendi gerekçeli önerini belirt — hangisini neden önerdiğini tek
+  cümleyle yaz. Araştırma temelli hızlı karar vermemi sağlar.
+
 ## Marka Renkleri — KANONİK KAYNAK (yeniden tarama YOK)
 
 > 🎯 **Resmi kurumsal palet bulundu ve dokümante edildi — bir daha dosya araması YAPMA.**

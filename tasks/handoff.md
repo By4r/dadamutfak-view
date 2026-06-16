@@ -1,3 +1,24 @@
+> **🟢 WAVE 4 — DADAFIT HAREKET MERKEZİ HUB DONE ✅ (2026-06-16, push'lu):** Modülün lokomotif vitrin
+> sayfası sıfırdan üretildi: **`mockups/dadafit-hub-v1.html`** (saglik-hub chrome'u birebir inline splice,
+> nav'a DadaFit EKLENMEDİ). **İmza dili oturdu:** koyu `#211E16` + **`#009d4f` yeşil gradient + gerçek
+> kadın-ağırlıklı desatüre görsel + cam/blur panel** ("Modülün Kalbi" dili) — tüm feature alanlarına yayıldı.
+> **12 section** (sıra sabit): Hero(VİDEO) · Köprü(kalp) · **Hedefin ne?**(hedef seçici) · Egzersiz kütüphanesi ·
+> Programlar(8) · Challenge · **TDEE köprü**(koyu feature'a dönüştü) · **Beslenme×Hareket combo** · **Kadın
+> sporu/döngü bandı** · Antrenör(sertifika rozeti, diploma-no DEĞİL) · Pro-gate teaser · Kapanış CTA(görselli).
+> **Signature = Enerji Defteri** (aldığın `#E14827` ↔ yaktığın `#009d4f`, iki ayrı bağlam, koyu zemin, Noel-çift-renk değil).
+> **Hero = gerçek video** (`mockups/assets/video/dadafit-hero.mp4`, Mixkit free "woman barbell" 720p 4.1MB,
+> autoplay/muted/loop/playsinline, poster=foto, desatüre + koyu overlay üstte). **HİÇ ikon-tile yok** — tüm
+> kartlar gerçek kadın-ağırlıklı görsel (metinsiz/objektifleştirmesiz, `div+bg cover+center`, retina çarpma yok).
+> **Topbar:** worlds kuşağı **DadaStore · DadaAkademi · DadaFit** (Diyetisyen Ara KALDIRILDI — işlevi Sağlıklı
+> Yaşam dropdown'da duruyor). **Hibrit kimlik:** header altı **yapışkan DadaFit alt-nav bandı** (Hareket Merkezi
+> aktif · linkler placeholder). **CLAUDE.md'ye "Soru Sorma Kuralı" eklendi.** Render SS 1440/1280/390 (`mockups/outputs/`),
+> 0 yatay taşma (390'daki 15px = tasarım gereği yatay-kayan alt-nav, scrollW=390). ⚠️ **KARAR:** topbar/kabuk
+> stratejisinde **ayrı-site-kabuğu (c) REDDEDİLDİ** → **Hibrit** seçildi (kilitli K2 ile uyumlu: `_shell` İÇİNDE
+> modül, global nav hep üstte → köprü korunur). ⚠️ Hub şu an **tek dosya**; topbar DadaFit world + alt-nav bandını
+> diğer ~93 dosyaya/şablona **YAYMA AYRI İŞ** (yapılmadı). ⚠️ Hero videosu **harici Mixkit free asset** (repoya eklendi).
+> **SIRADAKİ:** Wave 4 sonraki DadaFit sayfaları — **egzersiz kütüphanesi → program-detay → köprü/TDEE entegrasyonu
+> (gunluk-kalori)**; alt-nav placeholder linkleri FAZ 2'de bağlanır; hibrit chrome'u şablona yayma kararı Beyar'da.
+
 > **🏃 WAVE 4 — ARAŞTIRMA + KARARLAR DONE ✅ (2026-06-16):** DadaFit (spor/hareket modülü) onaylandı.
 > 4 paralel araştırma raporu + sentez `mockups/outputs/spor-arastirma/` (00-SENTEZ + 01-ic-modul +
 > 02-pazar-trend + 03-icerik-senaryo + 04-kitle-konum). **Kilitli kararlar:** **K1** ad = **DadaFit** ·
