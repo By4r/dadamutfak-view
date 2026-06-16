@@ -1017,6 +1017,50 @@ html,body{overflow-x:hidden}
 /* sheet/mobil-özet parçaları artık KULLANILMIYOR (tek-kolon ferah yerleşim) — gizle */
 .dlp-sheet-head,.dlp-sheet-foot,.dlp-sheet-close,.dlp-bar,.sheet-overlay{display:none !important}
 
+/* ===================================================================
+   REVİZE (patron Yasin Bey · WhatsApp) — 3 düzeltme:
+   1) Kategoriler 2 KOLON (yan yana) → sayfa ~yarıya iner
+   2) Kategori akışına nötr REKLAM SLOTU (idari yerleşim)
+   3) Üst panel ORTALI (başlık + arama + boş-durum + sekmeler)
+   =================================================================== */
+
+/* 1 · İKİ KOLON KATEGORİ AKIŞI — çoklu-açık accordion blokları yan yana dizilir.
+   align-items:start → bir blok açıldığında komşu blok yukarı yaslı kalır; açık
+   kategorinin malzeme ızgarası (mz-grid auto-fill) bozulmaz, yarım kolonda daha
+   az sütunla akar. Sık Kullanılan tam genişlik featured satır (varsayılan açık →
+   üst boşluk dengesi, "Sebzeler | Meyveler" gerçek çiftler altta yan yana). */
+.cat-cols{display:grid;grid-template-columns:1fr 1fr;column-gap:36px;align-items:start;margin-top:4px}
+.cat-cols>.mz-cat[data-cat="sik"]{grid-column:1/-1}
+
+/* 2 · SPONSORLU ÜRÜN KARTI — malzeme grid'i İÇİNE gömülü, normal kart boyutunda
+   (kategoriyle alakalı marka+ürün). Köşede koyu "Sponsorlu" rozeti ile ayrışır;
+   seçim durumu YOK (malzeme değil → seçilemez). Görsel idarelik placeholder —
+   gerçek ürün görseli .mz-img background-image ile sonra swap edilir. */
+.mz-sponsor{text-decoration:none;border-color:rgba(225,72,39,.32);background:linear-gradient(180deg,#fff,#fff7f4)}
+.mz-sponsor:hover{border-color:var(--tomato);transform:translateY(-1px);box-shadow:var(--sh-sm)}
+.mz-sponsor .mz-img{background-color:color-mix(in srgb,var(--tomato) 7%,#fff)}
+.mz-sponsor .mz-img i{color:color-mix(in srgb,var(--tomato) 72%,#000)}
+.mz-sponsor .mz-name{white-space:normal;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;color:var(--slate);font-weight:700}
+.mz-spon{position:absolute;top:6px;left:6px;z-index:2;display:inline-flex;align-items:center;gap:4px;
+  background:var(--slate);color:#fff;font-size:9px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;
+  padding:3px 7px;border-radius:var(--radius-sm);line-height:1;box-shadow:0 2px 7px rgba(33,30,22,.28)}
+.mz-spon i{font-size:8px;opacity:.9}
+
+/* 3 · ÜST PANEL ORTALI — kontrol bloğu dar max-width sütunda ortalanır;
+   alttaki kategori ızgarası (cat-jump + cat-cols) tam genişlikte kalır. */
+.dolap-top{max-width:680px;margin:0 auto}
+.dolap-top .pan-search{max-width:none}
+.dolap-top .pan-search-hint{justify-content:center;text-align:center}
+.dolap-top .dlp-strip{align-items:center}
+.dolap-top .dlp-strip .ds-empty{justify-content:center;text-align:center}
+.dolap-top .ds-group{justify-content:center}
+.dolap-top .mode-note{justify-content:center}
+@media (min-width:641px){
+  .dolap-head{justify-content:center;position:relative}
+  .dolap-head .dlp-count{flex:0 1 auto}
+  .dolap-head .dolap-clear{position:absolute;right:26px;top:50%;transform:translateY(-50%)}
+}
+
 /* ===================== TABLET (≤1024px) ===================== */
 @media (max-width:1024px){
   .tb-head h1{font-size:32px}
@@ -1044,6 +1088,9 @@ html,body{overflow-x:hidden}
   .mz-name{font-size:11px;padding:6px 4px 8px}
   .mz-img i{font-size:22px}
   .mz-cat-h{padding:14px 2px}
+  /* Revize 1 — 390'da tek kolon (yan yana akış kalkar) */
+  .cat-cols{grid-template-columns:1fr;column-gap:0}
+  .cat-cols>.mz-cat[data-cat="sik"]{grid-column:auto}
   .tb-grid{grid-template-columns:1fr;gap:13px}
   .tb-grid .r-card{flex-direction:row}
   .tb-grid .r-media-wrap{width:40%;flex:none}
@@ -1484,6 +1531,8 @@ html,body{overflow-x:hidden}
         </div>
 
         <div class="dolap-body">
+          <!-- ÜST PANEL — ortalı kontrol bloğu (Revize 3) -->
+          <div class="dolap-top">
           <!-- BİRİNCİL arama -->
           <div class="pan-search">
             <i class="fa-solid fa-magnifying-glass"></i>
@@ -1504,6 +1553,7 @@ html,body{overflow-x:hidden}
             <button class="mode-tab" type="button" data-mode="no" role="tab" aria-selected="false"><i class="fa-solid fa-ban mt-ic"></i> İstemediklerim <span class="mt-dot" id="dotNo">0</span></button>
           </div>
           <div class="mode-note show" id="modeNote"></div>
+          </div><!-- /.dolap-top -->
 
           <!-- KATEGORİ ATLA-ÇUBUĞU (sticky) — JS doldurur -->
           <div class="cat-jump" id="catJump" aria-label="Kategoriye atla"></div>
@@ -2162,24 +2212,46 @@ document.addEventListener('click',function(e){
       '<span class="mz-name">'+tr+'</span>'+
       '<span class="mz-ck"><i class="fa-solid '+(mode==='no'?'fa-ban':'fa-check')+'"></i></span></button>';
   }
+  // ===== SPONSORLU ÜRÜN — kategoriyle alakalı idarelik ürün, malzeme grid'ine gömülü =====
+  // [key] = {marka+ürün, fa-ikon, img}. img boş → .mz-img placeholder; gerçek ürün
+  // görseli sonra background-image ile swap edilir (.has-photo deseni). Seçilemez.
+  var SPONSOR={
+    sik:{name:'Komili Zeytinyağı',icon:'fa-bottle-droplet',img:''},        // Sık Kullanılan (varsayılan açık → ilk bakışta görünür)
+    tahil:{name:'Filiz Makarna',icon:'fa-plate-wheat',img:''},             // Tahıl · Makarna · Ekmek
+    sut:{name:'Sütaş Süt',icon:'fa-bottle-water',img:''}                   // Süt & Yumurta
+  };
+  function sponsorCardHTML(sp){
+    var hasPhoto=!!sp.img;
+    var imgStyle=hasPhoto?' style="background-image:url(\''+sp.img+'\')"':'';
+    return '<a href="#" class="mz mz-sponsor'+(hasPhoto?' has-photo':'')+'" data-sponsor="1" aria-label="Sponsorlu ürün: '+sp.name+'">'+
+      '<span class="mz-img"'+imgStyle+'><i class="fa-solid '+sp.icon+'"></i></span>'+
+      '<span class="mz-name">'+sp.name+'</span>'+
+      '<span class="mz-spon"><i class="fa-solid fa-bullhorn"></i> Sponsorlu</span></a>';
+  }
   function buildBlock(cat,mode){
     var hasXtra=cat.items.some(function(it){return it[3];});
     var cards=cat.items.map(function(it){
       var h=cardHTML(it[0],it[1],it[2],mode);
       return it[3]?h.replace('class="mz','class="mz xtra'):h;
     }).join('');
+    var sp=SPONSOR[cat.key], sponsor=sp?sponsorCardHTML(sp):'';
     var more=hasXtra?'<button type="button" class="mz-more"><i class="fa-solid fa-chevron-down"></i> Daha fazla</button>':'';
     var openDef=cat.key==='sik';          // varsayılan yalnız Sık Kullanılan açık
     return '<section class="mz-cat'+(openDef?' open':'')+'" id="cat-'+mode+'-'+cat.key+'" data-cat="'+cat.key+'" style="--cat:'+cat.color+'">'+
       '<button type="button" class="mz-cat-h" aria-expanded="'+(openDef?'true':'false')+'"><span class="mh-ic"><i class="fa-solid '+cat.icon+'"></i></span><h4>'+cat.name+'</h4><span class="mh-n">'+cat.items.length+' malzeme</span><span class="mh-sp"></span><span class="mh-sel">0</span><i class="fa-solid fa-chevron-down mh-chev"></i></button>'+
-      '<div class="mz-grid">'+cards+more+'</div></section>';
+      '<div class="mz-grid">'+cards+sponsor+more+'</div></section>';
+  }
+  // kategori blokları 2 KOLON sarmalda (Revize 1)
+  function buildCols(mode){
+    var blocks=CATS.map(function(c){return buildBlock(c,mode);});
+    return '<div class="cat-cols">'+blocks.join('')+'</div>';
   }
   // render: have paneli
-  paneHave.innerHTML=CATS.map(function(c){return buildBlock(c,'have');}).join('');
-  // render: no paneli (alerjen hızlı satırı + kategori blokları)
+  paneHave.innerHTML=buildCols('have');
+  // render: no paneli (alerjen hızlı satırı + 2-kolon kategori blokları)
   var nq='<div class="nope-quick"><div class="nq-head"><span class="nq-ic"><i class="fa-solid fa-triangle-exclamation"></i></span><div><b>Sık hariç tutulanlar</b> <small>· tek dokunuşla alerjen grubu çıkar</small></div></div><div class="nq-row">'+
     ALLERGENS.map(function(a){return '<button type="button" class="nq-chip" data-no="'+a[0]+'"><i class="fa-solid '+a[1]+'"></i> '+a[0]+'</button>';}).join('')+'</div></div>';
-  paneNo.innerHTML=nq+CATS.map(function(c){return buildBlock(c,'no');}).join('');
+  paneNo.innerHTML=nq+buildCols('no');
 
   // kategori atla-çubuğu (mod-bağımsız chip seti; tıklayınca aktif moda göre kaydırır)
   catJump.innerHTML=CATS.map(function(c){
@@ -2337,6 +2409,10 @@ document.addEventListener('click',function(e){
     var h=e.target.closest('.mz-cat-h'); if(!h)return;
     var sec=h.closest('.mz-cat'); var open=sec.classList.toggle('open');
     h.setAttribute('aria-expanded',open?'true':'false');
+  });
+  // SPONSORLU ürün kartı — reklam linki gibi davranır (mockup: # yerine no-op; seçilemez)
+  dolap.addEventListener('click',function(e){
+    if(e.target.closest('.mz-sponsor')){ e.preventDefault(); /* reklam hedefi sonra bağlanır */ }
   });
 
   // ---- MOD GEÇİŞİ ----
