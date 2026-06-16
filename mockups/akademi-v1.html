@@ -866,6 +866,24 @@ html,body{overflow-x:hidden}
 /* ---- eğitim setleri · kurs kartı (disc-card ve p-card dilinden türetildi) ---- */
 .ak-courses{padding:64px 0;background:var(--bg-cream)}
 .crs-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:24px;margin-top:8px}
+/* ----- Sayfa-içi eğitim arama (petrol aksanı) ----- */
+.crs-search{margin:18px 0 6px;display:flex;align-items:center;gap:12px;max-width:560px;background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-md);padding:0 16px;transition:border-color .2s var(--ease),box-shadow .2s var(--ease)}
+.crs-search:focus-within{border-color:var(--tomato);box-shadow:0 0 0 3px var(--tomato-tint)}
+.crs-search>i{color:var(--muted);font-size:15px}
+.crs-search input{flex:1;border:none;background:transparent;font-family:inherit;font-weight:500;font-size:15px;color:var(--slate);padding:14px 0;outline:none}
+.crs-search input::placeholder{color:#a7a7a7;font-weight:500}
+.crs-search .cs-clear{flex:none;width:28px;height:28px;border:none;background:transparent;color:var(--muted);font-size:14px;cursor:pointer;border-radius:var(--radius-circle);display:none;place-items:center;transition:.16s var(--ease)}
+.crs-search .cs-clear:hover{background:var(--tomato-tint);color:var(--tomato)}
+.crs-search.has-q .cs-clear{display:grid}
+.crs-count{margin:10px 0 0;font-size:13.5px;font-weight:500;color:var(--muted);display:none}
+.crs-count.show{display:block}
+.crs-count b{color:var(--slate);font-weight:700}
+.crs-card.cs-hide{display:none}
+.crs-empty{display:none;grid-column:1/-1;text-align:center;padding:46px 20px;color:var(--muted)}
+.crs-empty.show{display:block}
+.crs-empty i{font-size:30px;color:var(--tomato);opacity:.55;margin-bottom:12px;display:block}
+.crs-empty b{display:block;font-size:17px;color:var(--slate);margin-bottom:5px}
+.crs-empty span{font-size:14px}
 .crs-card{position:relative;display:flex;flex-direction:column;background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-lg);overflow:hidden;box-shadow:var(--sh-sm);transition:.25s var(--ease);cursor:pointer}
 .crs-card:hover{transform:translateY(-5px);border-color:#dcdcdc;box-shadow:var(--sh-md)}
 .crs-fig{position:relative;aspect-ratio:16/10;background-size:cover;background-position:center}
@@ -1306,6 +1324,12 @@ html,body{overflow-x:hidden}
         <p class="lead">Her set alanında usta bir şefle çekiliyor — temelden ileri seviyeye, uygulama tarifleriyle biten dersler.</p>
       </div>
     </div>
+    <label class="crs-search" id="crsSearch">
+      <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+      <input type="text" id="crsSearchInput" placeholder="Eğitim, şef veya konu ara… (ör. ekmek, Selin, tatlı)" aria-label="Eğitimlerde ara" autocomplete="off" />
+      <button type="button" class="cs-clear" id="crsSearchClear" aria-label="Aramayı temizle"><i class="fa-solid fa-xmark"></i></button>
+    </label>
+    <p class="crs-count" id="crsCount" role="status" aria-live="polite"></p>
     <div class="crs-grid">
       <article class="crs-card">
         <div class="crs-fig" style="background-image:url('https://images.unsplash.com/photo-1556910103-1c02745aae4d?w=600&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')">
@@ -1391,6 +1415,11 @@ html,body{overflow-x:hidden}
           <div class="crs-meta"><span><i class="fa-solid fa-circle-play"></i> 8 ders</span><span><i class="fa-regular fa-clock"></i> 3 sa 30 dk</span><span><i class="fa-solid fa-utensils"></i> 5 uygulama</span></div>
         </div>
       </article>
+      <div class="crs-empty" id="crsEmpty">
+        <i class="fa-regular fa-face-frown" aria-hidden="true"></i>
+        <b>Eşleşen eğitim bulunamadı</b>
+        <span>Farklı bir anahtar kelime dene — eğitim adı, şef ya da konu.</span>
+      </div>
     </div>
   </div>
 </section>
@@ -2095,6 +2124,58 @@ window.__bottomStrips=window.__bottomStrips||[];
   window.addEventListener('resize',update,{passive:true});
   document.addEventListener('click',function(){setTimeout(update,60);},true);
   window.__bnUpdate=update;update();
+})();
+</script>
+<script>
+/* ===== DadaAkademi — sayfa-içi eğitim arama (canlı süzme) ===== */
+(function(){
+  var box=document.getElementById('crsSearch');
+  var input=document.getElementById('crsSearchInput');
+  var clear=document.getElementById('crsSearchClear');
+  var count=document.getElementById('crsCount');
+  var empty=document.getElementById('crsEmpty');
+  if(!input)return;
+  var cards=[].slice.call(document.querySelectorAll('.crs-grid .crs-card'));
+  // her kart için aranabilir metin: başlık + konu etiketi + şef adı
+  var index=cards.map(function(c){
+    var t=(c.querySelector('h3')||{}).textContent||'';
+    var track=(c.querySelector('.crs-track-lbl')||{}).textContent||'';
+    var chef=(c.querySelector('.crs-chef b')||{}).textContent||'';
+    var lvl=(c.querySelector('.crs-lvl')||{}).textContent||'';
+    return norm(t+' '+track+' '+chef+' '+lvl);
+  });
+  // Türkçe duyarlı normalize (İ/ı, büyük-küçük, aksan)
+  function norm(s){
+    return s.toLocaleLowerCase('tr-TR')
+      .replace(/ı/g,'i').replace(/ş/g,'s').replace(/ğ/g,'g')
+      .replace(/ü/g,'u').replace(/ö/g,'o').replace(/ç/g,'c')
+      .replace(/â/g,'a').replace(/î/g,'i').replace(/û/g,'u')
+      .replace(/\s+/g,' ').trim();
+  }
+  function apply(){
+    var q=norm(input.value);
+    box.classList.toggle('has-q',input.value.length>0);
+    if(!q){
+      cards.forEach(function(c){c.classList.remove('cs-hide');});
+      empty.classList.remove('show');
+      count.classList.remove('show');count.textContent='';
+      return;
+    }
+    var n=0;
+    cards.forEach(function(c,i){
+      var hit=index[i].indexOf(q)>-1;
+      c.classList.toggle('cs-hide',!hit);
+      if(hit)n++;
+    });
+    empty.classList.toggle('show',n===0);
+    count.classList.add('show');
+    count.innerHTML=n>0
+      ? '<b>'+n+'</b> eğitim eşleşti'
+      : 'Sonuç yok';
+  }
+  input.addEventListener('input',apply);
+  clear.addEventListener('click',function(){input.value='';apply();input.focus();});
+  input.addEventListener('keydown',function(e){if(e.key==='Escape'&&input.value){input.value='';apply();}});
 })();
 </script>
 </body>

@@ -716,6 +716,27 @@ html,body{overflow-x:hidden}
 
 /* ---- kategori girişleri (cat-card v3a VERBATIM) ---- */
 .catstrip{padding:62px 0 64px}
+/* ----- Sayfa-içi ürün arama (domates aksanı) ----- */
+.shop-search{margin:0 0 30px;display:flex;align-items:center;gap:12px;max-width:560px;background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-md);padding:0 16px;transition:border-color .2s var(--ease),box-shadow .2s var(--ease)}
+.shop-search:focus-within{border-color:var(--tomato);box-shadow:0 0 0 3px var(--tomato-tint)}
+.shop-search>i{color:var(--muted);font-size:15px}
+.shop-search input{flex:1;border:none;background:transparent;font-family:inherit;font-weight:500;font-size:15px;color:var(--slate);padding:14px 0;outline:none}
+.shop-search input::placeholder{color:#a7a7a7;font-weight:500}
+.shop-search .ss-clear{flex:none;width:28px;height:28px;border:none;background:transparent;color:var(--muted);font-size:14px;cursor:pointer;border-radius:var(--radius-circle);display:none;place-items:center;transition:.16s var(--ease)}
+.shop-search .ss-clear:hover{background:var(--tomato-tint);color:var(--tomato)}
+.shop-search.has-q .ss-clear{display:grid}
+/* arama aktifken: kart süzme + bölüm/empty durum */
+.p-card.ss-hide{display:none}
+.shop-sec.ss-sec-hide{display:none}
+.shop-sec .sec-cnt{display:none;margin-left:10px;font-size:13px;font-weight:600;color:var(--muted)}
+body.shop-searching .shop-sec .sec-cnt{display:inline}
+body.shop-searching .shop-sec .sec-tools{visibility:hidden}
+body.shop-searching .catstrip .cat-track,body.shop-searching .catstrip .sec-tools{display:none}
+.shop-noresult{display:none;padding:50px 20px 4px;text-align:center;color:var(--muted)}
+.shop-noresult.show{display:block}
+.shop-noresult i{font-size:32px;color:var(--tomato);opacity:.55;margin-bottom:13px;display:block}
+.shop-noresult b{display:block;font-size:18px;color:var(--slate);margin-bottom:5px}
+.shop-noresult span{font-size:14px}
 .cat-head{margin-bottom:30px}
 .cat-head h2{font-size:30px}
 .cat-nav{flex:none;display:flex;gap:8px}
@@ -1255,6 +1276,11 @@ html,body{overflow-x:hidden}
         </div>
       </div>
     </div>
+    <label class="shop-search" id="shopSearch">
+      <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+      <input type="text" id="shopSearchInput" placeholder="Üründe ara… (ör. döküm tencere, cezve, zeytinyağı)" aria-label="Mağazada ürün ara" autocomplete="off" />
+      <button type="button" class="ss-clear" id="shopSearchClear" aria-label="Aramayı temizle"><i class="fa-solid fa-xmark"></i></button>
+    </label>
     <div class="cat-track" id="catTrack">
       <a class="cat-card" href="urun-liste-v1.html"><div class="cat-thumb" style="background-image:url('https://images.unsplash.com/photo-1556909212-d5b604d0c90d?w=400&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')"></div><b>Pişirme Gereçleri</b><span>412 ürün</span></a>
       <a class="cat-card" href="urun-liste-v1.html"><div class="cat-thumb" style="background-image:url('https://images.unsplash.com/photo-1610701596007-11502861dcfa?w=400&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')"></div><b>Sofra & Sunum</b><span>286 ürün</span></a>
@@ -1266,6 +1292,11 @@ html,body{overflow-x:hidden}
       <a class="cat-card" href="urun-liste-v1.html"><div class="cat-thumb" style="background-image:url('https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=400&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')"></div><b>Kahve & Çay</b><span>241 ürün</span></a>
       <a class="cat-card" href="urun-liste-v1.html"><div class="cat-thumb" style="background-image:url('https://images.unsplash.com/photo-1563729784474-d77dbb933a9e?w=400&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')"></div><b>Fırın & Pasta</b><span>192 ürün</span></a>
     </div>
+    <div class="shop-noresult" id="shopNoResult" role="status" aria-live="polite">
+      <i class="fa-regular fa-face-frown" aria-hidden="true"></i>
+      <b>Aradığın ürün vitrinde yok</b>
+      <span>Farklı bir kelime dene ya da <a href="urun-liste-v1.html" style="color:var(--tomato);font-weight:700">tüm ürünleri</a> gör.</span>
+    </div>
   </div>
 </section>
 
@@ -1275,7 +1306,7 @@ html,body{overflow-x:hidden}
     <div class="sec-head">
       <div>
         <span class="eyebrow"><i class="fa-solid fa-fire"></i> Bu Hafta</span>
-        <h2>Çok satanlar</h2>
+        <h2>Çok satanlar<span class="sec-cnt" data-track="bestTrack"></span></h2>
         <p class="lead">Dada mutfağının en çok tercih edilen gereçleri.</p>
       </div>
       <div class="sec-tools">
@@ -1374,7 +1405,7 @@ html,body{overflow-x:hidden}
     <div class="sec-head">
       <div>
         <span class="eyebrow"><i class="fa-solid fa-tags"></i> Mutfak Şenliği</span>
-        <h2>İndirimdeki ürünler</h2>
+        <h2>İndirimdeki ürünler<span class="sec-cnt" data-track="saleTrack"></span></h2>
         <p class="lead">Stoklarla sınırlı — kaçırmadan sepete at.</p>
       </div>
       <div class="sec-tools">
@@ -1449,7 +1480,7 @@ html,body{overflow-x:hidden}
     <div class="sec-head">
       <div>
         <span class="eyebrow"><i class="fa-solid fa-sparkles"></i> Vitrine Yeni</span>
-        <h2>Yeni gelenler</h2>
+        <h2>Yeni gelenler<span class="sec-cnt" data-track="newTrack"></span></h2>
         <p class="lead">Rafa taze çıkan ürünler — ilk sen keşfet.</p>
       </div>
       <div class="sec-tools">
@@ -2013,6 +2044,65 @@ window.__bottomStrips=window.__bottomStrips||[];
   modal.querySelectorAll('[data-goto]').forEach(function(b){b.addEventListener('click',function(){goto(b.getAttribute('data-goto'));});});
   modal.querySelectorAll('.lm-eye').forEach(function(eye){eye.addEventListener('click',function(){var inp=eye.previousElementSibling;var on=inp.type==='password';inp.type=on?'text':'password';eye.querySelector('i').className=on?'fa-regular fa-eye-slash':'fa-regular fa-eye';});});
   if(location.search.indexOf('login=1')>-1){goto('giris');open();}
+})();
+</script>
+<script>
+/* ===== DadaStore — sayfa-içi ürün arama (canlı süzme) ===== */
+(function(){
+  var box=document.getElementById('shopSearch');
+  var input=document.getElementById('shopSearchInput');
+  var clear=document.getElementById('shopSearchClear');
+  var noRes=document.getElementById('shopNoResult');
+  if(!input)return;
+  // Türkçe duyarlı normalize
+  function norm(s){
+    return (s||'').toLocaleLowerCase('tr-TR')
+      .replace(/ı/g,'i').replace(/ş/g,'s').replace(/ğ/g,'g')
+      .replace(/ü/g,'u').replace(/ö/g,'o').replace(/ç/g,'c')
+      .replace(/â/g,'a').replace(/î/g,'i').replace(/û/g,'u')
+      .replace(/\s+/g,' ').trim();
+  }
+  // ürün kartlarını rail bazında topla (ürün adı + kategori)
+  var sections=[].slice.call(document.querySelectorAll('.shop-sec')).map(function(sec){
+    var cnt=sec.querySelector('.sec-cnt');
+    var cards=[].slice.call(sec.querySelectorAll('.p-card')).map(function(c){
+      var name=(c.querySelector('h4')||{}).textContent||'';
+      var cat=(c.querySelector('.p-cat')||{}).textContent||'';
+      return {el:c,key:norm(name+' '+cat)};
+    });
+    return {sec:sec,cnt:cnt,cards:cards};
+  });
+  function apply(){
+    var q=norm(input.value);
+    var searching=input.value.length>0;
+    box.classList.toggle('has-q',searching);
+    document.body.classList.toggle('shop-searching',searching);
+    if(!searching){
+      sections.forEach(function(s){
+        s.sec.classList.remove('ss-sec-hide');
+        if(s.cnt)s.cnt.textContent='';
+        s.cards.forEach(function(c){c.el.classList.remove('ss-hide');});
+      });
+      noRes.classList.remove('show');
+      return;
+    }
+    var total=0;
+    sections.forEach(function(s){
+      var n=0;
+      s.cards.forEach(function(c){
+        var hit=c.key.indexOf(q)>-1;
+        c.el.classList.toggle('ss-hide',!hit);
+        if(hit)n++;
+      });
+      total+=n;
+      s.sec.classList.toggle('ss-sec-hide',n===0);
+      if(s.cnt)s.cnt.textContent=n>0?'· '+n+' ürün':'';
+    });
+    noRes.classList.toggle('show',total===0);
+  }
+  input.addEventListener('input',apply);
+  clear.addEventListener('click',function(){input.value='';apply();input.focus();});
+  input.addEventListener('keydown',function(e){if(e.key==='Escape'&&input.value){input.value='';apply();}});
 })();
 </script>
 </body>

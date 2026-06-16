@@ -548,7 +548,7 @@ html,body{overflow-x:hidden}
 .bottom-nav.bn-hidden{transform:translateY(calc(100% + 30px));pointer-events:none}
 .bn-item{
   flex:none;position:relative;display:grid;place-items:center;
-  width:40px;height:40px;border-radius:var(--radius-lg);
+  width:44px;height:44px;border-radius:var(--radius-lg);
   color:var(--slate-2);font-size:19px;transition:background .2s var(--ease),color .2s var(--ease),transform .12s var(--ease);
 }
 /* etiketler görsel gizli (icon-only, IG tarzı) — erişilebilirlik için DOM'da kalır */
@@ -696,7 +696,7 @@ html,body{overflow-x:hidden}
   .btn-login{display:none}                                   /* giriş → drawer + bottom-nav */
   /* logged-in header öğeleri mobilde drawer + bottom-nav'a devreder (kaynak sıra ile is-auth'u yener) */
   body.is-auth .head-add,body.is-auth .head-bell,body.is-auth .acct-wrap{display:none}
-  .icon-btn{width:40px;height:40px;font-size:15px}
+  .icon-btn{width:44px;height:44px;font-size:15px}
 
   /* fixed header offseti mobilde tek kat */
   .below-header{padding-top:62px}
@@ -740,7 +740,7 @@ html,body{overflow-x:hidden}
   /* çerez banner: floating bottom-nav'ın ÜSTÜNDE, alt alta */
   .cookie-banner{
     width:calc(100% - 24px);padding:15px 16px;
-    bottom:calc(80px + env(safe-area-inset-bottom,0px));
+    bottom:calc(92px + env(safe-area-inset-bottom,0px));
   }
   .cookie-inner{flex-direction:column;align-items:stretch;gap:13px}
   .cookie-text{align-items:flex-start}
@@ -773,6 +773,28 @@ html,body{overflow-x:hidden}
 /* sayfa genel: yeşil eyebrow (fit bölümleri) */
 .sec-fit .eyebrow{color:var(--fit-deep)}
 .sec-fit .eyebrow::before{background:var(--fit)}
+/* ----- Sayfa-içi hareket/program arama (DadaFit yeşili) ----- */
+.df-search{margin:0 0 22px;display:flex;align-items:center;gap:12px;max-width:560px;background:var(--paper);border:1px solid var(--fit-line);border-radius:var(--radius-md);padding:0 16px;transition:border-color .2s var(--ease),box-shadow .2s var(--ease)}
+.df-search:focus-within{border-color:var(--fit);box-shadow:0 0 0 3px var(--fit-tint)}
+.df-search>i{color:var(--fit-deep);font-size:15px}
+.df-search input{flex:1;border:none;background:transparent;font-family:inherit;font-weight:500;font-size:15px;color:var(--slate);padding:14px 0;outline:none}
+.df-search input::placeholder{color:#a7a7a7;font-weight:500}
+.df-search .dfs-clear{flex:none;width:28px;height:28px;border:none;background:transparent;color:var(--muted);font-size:14px;cursor:pointer;border-radius:var(--radius-circle);display:none;place-items:center;transition:.16s var(--ease)}
+.df-search .dfs-clear:hover{background:var(--fit-tint);color:var(--fit-deep)}
+.df-search.has-q .dfs-clear{display:grid}
+.df-scount{margin:0 0 22px;font-size:13.5px;font-weight:500;color:var(--muted);display:none}
+.df-scount.show{display:block}
+.df-scount b{color:var(--fit-deep);font-weight:700}
+/* arama aktifken kart/bölüm süzme + dekoratif filtre/kategori gizle */
+.hub-card.dfs-hide{display:none}
+.df-searchable.dfs-sec-hide{display:none}
+body.df-searching .df-searchable .sec-tools{visibility:hidden}
+body.df-searching #kutuphane .df-filterbar,body.df-searching #kutuphane .df-fcards{display:none}
+.df-noresult{display:none;padding:46px 20px 4px;text-align:center;color:var(--muted)}
+.df-noresult.show{display:block}
+.df-noresult i{font-size:32px;color:var(--fit);opacity:.62;margin-bottom:13px;display:block}
+.df-noresult b{display:block;font-size:18px;color:var(--slate);margin-bottom:5px}
+.df-noresult span{font-size:14px}
 .btn-fit{background:var(--fit);color:#fff}
 .btn-fit:hover{background:var(--fit-deep);transform:translateY(-2px)}
 
@@ -1632,7 +1654,7 @@ html,body{overflow-x:hidden}
 </section>
 
 <!-- ===== 3 · EGZERSİZ KÜTÜPHANESİ girişi ===== -->
-<section class="sec sec-fit" id="kutuphane" style="background:var(--bg-white)">
+<section class="sec sec-fit df-searchable" id="kutuphane" style="background:var(--bg-white)">
   <div class="wrap">
     <div class="sec-head">
       <div>
@@ -1641,6 +1663,18 @@ html,body{overflow-x:hidden}
         <p class="lead">Kas grubu, ekipman ya da seviyeye göre filtrele — her harekette görsel ve adım adım anlatım.</p>
       </div>
       <div class="sec-tools"><a class="see-all" href="egzersiz-kutuphane-v1.html" style="color:var(--fit-deep)">Tüm Egzersizler <i class="fa-solid fa-arrow-right"></i></a></div>
+    </div>
+
+    <label class="df-search" id="dfSearch">
+      <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+      <input type="text" id="dfSearchInput" placeholder="Hareket veya program ara… (ör. plank, HIIT, esneklik)" aria-label="Hareket ve programlarda ara" autocomplete="off" />
+      <button type="button" class="dfs-clear" id="dfSearchClear" aria-label="Aramayı temizle"><i class="fa-solid fa-xmark"></i></button>
+    </label>
+    <p class="df-scount" id="dfCount" role="status" aria-live="polite"></p>
+    <div class="df-noresult" id="dfNoResult" role="status" aria-live="polite">
+      <i class="fa-regular fa-face-frown" aria-hidden="true"></i>
+      <b>Eşleşen hareket bulunamadı</b>
+      <span>Farklı bir kelime dene — hareket adı, kas grubu ya da program.</span>
     </div>
 
     <div class="df-filterbar" role="group" aria-label="Hızlı filtre">
@@ -1707,7 +1741,7 @@ html,body{overflow-x:hidden}
 </section>
 
 <!-- ===== 4 · PROGRAMLAR showcase ===== -->
-<section class="sec sec-fit" id="programlar" style="background:var(--bg-cream)">
+<section class="sec sec-fit df-searchable" id="programlar" style="background:var(--bg-cream)">
   <div class="wrap">
     <div class="sec-head">
       <div>
@@ -2489,7 +2523,7 @@ window.__bottomStrips=window.__bottomStrips||[];
   function stripShown(){for(var i=0;i<strips.length;i++){if(strips[i]&&strips[i].classList.contains('show'))return true;}return false;}
   function update(){
     var y=window.scrollY||0;
-    if((cookie&&cookie.classList.contains('show'))||stripShown()){nav.classList.add('bn-hidden');lastY=y;return;}
+    if(stripShown()){nav.classList.add('bn-hidden');lastY=y;return;}
     if(strips.length===0||y<80){nav.classList.remove('bn-hidden');lastY=y;return;}
     if(y-lastY>12){nav.classList.add('bn-hidden');lastY=y;}
     else if(lastY-y>12){nav.classList.remove('bn-hidden');lastY=y;}
@@ -2500,5 +2534,93 @@ window.__bottomStrips=window.__bottomStrips||[];
   window.__bnUpdate=update;update();
 })();
 </script>
+<script>
+/* ===== DadaFit — sayfa-içi hareket/program arama (canlı süzme, DadaFit yeşili) ===== */
+(function(){
+  var box=document.getElementById('dfSearch');
+  var input=document.getElementById('dfSearchInput');
+  var clear=document.getElementById('dfSearchClear');
+  var count=document.getElementById('dfCount');
+  var noRes=document.getElementById('dfNoResult');
+  if(!input)return;
+  // Türkçe duyarlı normalize
+  function norm(s){
+    return (s||'').toLocaleLowerCase('tr-TR')
+      .replace(/ı/g,'i').replace(/ş/g,'s').replace(/ğ/g,'g')
+      .replace(/ü/g,'u').replace(/ö/g,'o').replace(/ç/g,'c')
+      .replace(/â/g,'a').replace(/î/g,'i').replace(/û/g,'u')
+      .replace(/\s+/g,' ').trim();
+  }
+  // hareket adı (h4) + açıklama (p) + kategori (.hub-cat) + etiketler (.hub-tag)
+  function indexCards(root){
+    return [].slice.call(root.querySelectorAll('.hub-card')).map(function(c){
+      var t=(c.querySelector('h4')||{}).textContent||'';
+      var d=(c.querySelector('p')||{}).textContent||'';
+      var cat=(c.querySelector('.hub-cat')||{}).textContent||'';
+      var tags=[].slice.call(c.querySelectorAll('.hub-tag')).map(function(x){return x.textContent;}).join(' ');
+      return {el:c,key:norm(t+' '+d+' '+cat+' '+tags)};
+    });
+  }
+  var lib=document.getElementById('kutuphane');   // search UI'yi barındırır → section gizlenmez
+  var prog=document.getElementById('programlar'); // 0 eşleşmede komple gizlenir
+  var libCards=indexCards(lib);
+  var progGroup={sec:prog,cards:indexCards(prog)};
+  function apply(){
+    var q=norm(input.value);
+    var searching=input.value.length>0;
+    box.classList.toggle('has-q',searching);
+    document.body.classList.toggle('df-searching',searching);
+    if(!searching){
+      libCards.forEach(function(c){c.el.classList.remove('dfs-hide');});
+      progGroup.sec.classList.remove('dfs-sec-hide');
+      progGroup.cards.forEach(function(c){c.el.classList.remove('dfs-hide');});
+      count.classList.remove('show');count.textContent='';
+      noRes.classList.remove('show');
+      return;
+    }
+    var total=0;
+    libCards.forEach(function(c){
+      var hit=c.key.indexOf(q)>-1;c.el.classList.toggle('dfs-hide',!hit);if(hit)total++;
+    });
+    var pn=0;
+    progGroup.cards.forEach(function(c){
+      var hit=c.key.indexOf(q)>-1;c.el.classList.toggle('dfs-hide',!hit);if(hit)pn++;
+    });
+    progGroup.sec.classList.toggle('dfs-sec-hide',pn===0);
+    total+=pn;
+    count.classList.add('show');
+    count.innerHTML=total>0?'<b>'+total+'</b> sonuç eşleşti':'Sonuç yok';
+    noRes.classList.toggle('show',total===0);
+  }
+  input.addEventListener('input',apply);
+  clear.addEventListener('click',function(){input.value='';apply();input.focus();});
+  input.addEventListener('keydown',function(e){if(e.key==='Escape'&&input.value){input.value='';apply();}});
+})();
+</script>
+<!-- DADAFIT-ACTIVE-NAV — aktif nav item boş-tık feedback'i (aria-current + self smooth-scroll) -->
+<script>
+(function(){
+  if(window.__dfActiveNav)return; window.__dfActiveNav=true;
+  // mevcut sayfa dosya adı (querystring/hash hariç)
+  var here=(location.pathname.split('/').pop()||'').toLowerCase();
+  // aktif nav linkleri: desktop nav, mobil drawer, bottom-nav
+  var sel='.nav a.active, .d-link.active, .bn-item.active';
+  var links=document.querySelectorAll(sel);
+  links.forEach(function(a){
+    if(a.tagName!=='A')return;                 // drawer'da <button> trigger'lar hariç
+    a.setAttribute('aria-current','page');
+    var href=(a.getAttribute('href')||'').trim();
+    if(!href||href.charAt(0)==='#')return;     // pür anchor → dokunma
+    var file=href.split('#')[0].split('?')[0].split('/').pop().toLowerCase();
+    if(file && file===here){                   // SELF link → boş-tık yerine başa kaydır
+      a.addEventListener('click',function(e){
+        e.preventDefault();
+        window.scrollTo({top:0,behavior:'smooth'});
+      });
+    }
+  });
+})();
+</script>
+
 </body>
 </html>

@@ -1,3 +1,25 @@
+> **🟢 WAVE 5 — DADAFIT MOBİL CİLA + P2 ENVANTERİ + AGENT-TEAM (randevu/nav/turuncu/marka-arama) DONE ✅ (2026-06-17):**
+> 3 iş bloğu, 14 dosya değişti (1010+/193−), READ-ONLY korundu (gunluk-kalori/dyt-recete-builder/sef-ol/diyetisyen-dizin git-clean).
+> **BLOK 1 — DadaFit mobil 🟡 cila (10 sayfa, `tasks/dadafit-mobile-polish.py` idempotent sweep):** touch target icon-btn/
+> hamburger/bn-item 40→44 · egzersiz-detay set-takip check/del 34→44 · font ≥11 (challenge `.chl-mini` 9.5→11, kopru
+> `.met`/`small` <11→11) · **bottom-nav cookie-coupling kaldırıldı** (mobilde nav coexist, cookie strip 80→92px). 390px Playwright 10/10 PASS.
+> **BLOK 2 — Eksik/P2 envanteri (READ-ONLY audit):** `outputs/dadafit-eksik-p2-envanteri.md`. Tek gerçek nav hatası N1 (sonra fix'lendi);
+> "Hareket Merkezi" doğru çalışıyordu. Mock veri-varyantı (8 antrenör→1 profil · 9 program→1 detay · 12 egzersiz→1 detay) = **P2 açık**.
+> **BLOK 3 — AGENT-TEAM (4 teammate, lead delegate+denetim modu, her "bitti" bağımsız Playwright/grep doğrulandı):**
+> • **randevu** → `antrenor-detay`: "Randevu Al" CTA + seans slot-modal (apt-modal semantik çeviri) → onay=**login-gate** (sahte
+>   rezervasyon onayı yok, gerçek booking backend ileri faz). • **dropdown-nav** → N1 Egzersizler ▾ deep-link filtre (kütüphane
+>   `?bolge=/?ekipman=` okur, chip auto-activate, 10/10 sayfa param'lı) + F2 program-detay "Programa Başla" gate + N2 challenge
+>   "Tümünü gör" kaldırıldı + **N4 aktif-nav boş-tık fix** (`DADAFIT-ACTIVE-NAV` script, aria-current+self smooth-scroll, 10/10) +
+>   N5 challenge "Katıl" gate doğrulandı (zaten çalışıyordu). • **turuncu** → keşif→fix: tek sağlık-turuncu sızıntısı `diyetisyen-profil`
+>   yeşillendi (booking CTA/modal `--green`, global `.btn-primary` tomato KORUNDU); **saglik-hub zaten doğruydu** (yeşil body). •
+>   **marka-arama** → 4 marka hub'ına sayfa-içi canlı arama: dada-shop(domates)/akademi(petrol)/**saglik-hub(yeşil)**/**dadafit-hub
+>   (#009d4f yeşil)**, yazınca süzme+boş-durum+Türkçe-normalize, header arama-v1 redirect'e dokunulmadı.
+> **⚠️ OLAY (çözüldü):** marka-arama'nın dadafit-hub'a **full-file write**'ı dropdown-nav N4 + mobil-cila'yı geri aldı (lost-update);
+> denetim yakaladı → dropdown-nav idempotent script'lerle (activenav.py + mobile-polish.py) onardı; final: arama+N4+mobil-cila üçü
+> birlikte 0 JS hata, 0 overflow (convergence audit PASS). **Ders:** paylaşılan dosyada full-file write değil hedefli Edit + lead sırası.
+> **SIRADAKİ:** P2 veri-varyantı katmanı (antrenör/program/egzersiz çoğullaması) + gerçek seans-booking akışı · çoklu-challenge arşivi
+> (F9) · egzersiz GIF/video içeriği (F6) · DadaFit header+N4+marka-arama desenini diğer ~93 dosyaya yayma (hâlâ ayrı iş).
+
 > **🟢 WAVE 4 — DADAFIT MODÜLÜ TAMAMLANDI: 9 YENİ SAYFA + NAV/CTA REBIND + QA DONE ✅ (2026-06-16):**
 > DadaFit modülü **10 sayfaya** çıktı (hub + 9 yeni). Spec'ler: `tasks/dadafit-modul-spec.md` (10 sayfa + tam
 > gezinme haritası), `tasks/dadafit-faz2-spec.md`. CTA/eksik envanteri + mobil QA: `outputs/dadafit-*.md` (ignore'lı).

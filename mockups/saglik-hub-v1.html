@@ -763,6 +763,27 @@ html,body{overflow-x:hidden}
 /* ---- sağlık eyebrow yeşil (genel) ---- */
 .sec-green .eyebrow{color:var(--green-deep)}
 .sec-green .eyebrow::before{background:var(--green)}
+/* ----- Sayfa-içi sağlık aracı arama (YEŞİL aksan — sağlık bağlamı) ----- */
+.sh-search{margin:6px 0 4px;display:flex;align-items:center;gap:12px;max-width:560px;background:var(--paper);border:1px solid #e2efe8;border-radius:var(--radius-md);padding:0 16px;transition:border-color .2s var(--ease),box-shadow .2s var(--ease)}
+.sh-search:focus-within{border-color:var(--green);box-shadow:0 0 0 3px rgba(59,183,126,.16)}
+.sh-search>i{color:var(--green-deep);font-size:15px}
+.sh-search input{flex:1;border:none;background:transparent;font-family:inherit;font-weight:500;font-size:15px;color:var(--slate);padding:14px 0;outline:none}
+.sh-search input::placeholder{color:#a7a7a7;font-weight:500}
+.sh-search .shs-clear{flex:none;width:28px;height:28px;border:none;background:transparent;color:var(--muted);font-size:14px;cursor:pointer;border-radius:var(--radius-circle);display:none;place-items:center;transition:.16s var(--ease)}
+.sh-search .shs-clear:hover{background:rgba(59,183,126,.12);color:var(--green-deep)}
+.sh-search.has-q .shs-clear{display:grid}
+.sh-count{margin:14px 0 0;font-size:13.5px;font-weight:500;color:var(--muted);display:none}
+.sh-count.show{display:block}
+.sh-count b{color:var(--green-deep);font-weight:700}
+/* arama aktifken kart/bölüm süzme */
+.calc-card.shs-hide,.hub-card.shs-hide{display:none}
+.sh-searchable.shs-sec-hide{display:none}
+body.sh-searching .sh-searchable .sec-tools{visibility:hidden}
+.sh-noresult{display:none;padding:48px 20px 4px;text-align:center;color:var(--muted)}
+.sh-noresult.show{display:block}
+.sh-noresult i{font-size:32px;color:var(--green);opacity:.6;margin-bottom:13px;display:block}
+.sh-noresult b{display:block;font-size:18px;color:var(--slate);margin-bottom:5px}
+.sh-noresult span{font-size:14px}
 
 /* ---- HESAPLAYICILAR: calc-card grid (v3a) — 3 sütun ---- */
 .calc-grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
@@ -1299,7 +1320,7 @@ html,body{overflow-x:hidden}
 </section>
 
 <!-- ===== HESAPLAYICILAR ===== -->
-<section class="sec sec-green" style="background:var(--bg-white)">
+<section class="sec sec-green sh-searchable" id="shSecCalc" style="background:var(--bg-white)">
   <div class="wrap">
     <div class="sec-head">
       <div>
@@ -1307,6 +1328,17 @@ html,body{overflow-x:hidden}
         <h2>Vücudunu rakamlarla tanı</h2>
         <p class="lead">Birkaç saniyede sonucunu öğren, sana uygun tarif ve porsiyon önerilerine geç.</p>
       </div>
+    </div>
+    <label class="sh-search" id="shSearch">
+      <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+      <input type="text" id="shSearchInput" placeholder="Araç, test veya program ara… (ör. kalori, su, Akdeniz)" aria-label="Sağlık araçlarında ara" autocomplete="off" />
+      <button type="button" class="shs-clear" id="shSearchClear" aria-label="Aramayı temizle"><i class="fa-solid fa-xmark"></i></button>
+    </label>
+    <p class="sh-count" id="shCount" role="status" aria-live="polite"></p>
+    <div class="sh-noresult" id="shNoResult" role="status" aria-live="polite">
+      <i class="fa-regular fa-face-frown" aria-hidden="true"></i>
+      <b>Eşleşen bir araç bulunamadı</b>
+      <span>Farklı bir kelime dene — hesaplayıcı, test ya da program adı.</span>
     </div>
     <div class="calc-grid3">
       <a class="calc-card" href="bazal-metabolizma-v1.html">
@@ -1344,7 +1376,7 @@ html,body{overflow-x:hidden}
 </section>
 
 <!-- ===== BESLENME TESTLERİ ===== -->
-<section class="sec sec-green" style="background:var(--bg-cream)">
+<section class="sec sec-green sh-searchable" id="shSecTest" style="background:var(--bg-cream)">
   <div class="wrap">
     <div class="sec-head">
       <div>
@@ -1404,7 +1436,7 @@ html,body{overflow-x:hidden}
 </section>
 
 <!-- ===== DİYET LİSTELERİ ===== -->
-<section class="sec sec-green" style="background:var(--bg-white)">
+<section class="sec sec-green sh-searchable" id="shSecDiet" style="background:var(--bg-white)">
   <div class="wrap">
     <div class="sec-head">
       <div>
@@ -1930,6 +1962,71 @@ window.__bottomStrips=window.__bottomStrips||[];
   window.addEventListener('resize',update,{passive:true});
   document.addEventListener('click',function(){setTimeout(update,60);},true);
   window.__bnUpdate=update;update();
+})();
+</script>
+<script>
+/* ===== Sağlık Merkezi — sayfa-içi araç arama (canlı süzme, yeşil) ===== */
+(function(){
+  var box=document.getElementById('shSearch');
+  var input=document.getElementById('shSearchInput');
+  var clear=document.getElementById('shSearchClear');
+  var count=document.getElementById('shCount');
+  var noRes=document.getElementById('shNoResult');
+  if(!input)return;
+  // Türkçe duyarlı normalize
+  function norm(s){
+    return (s||'').toLocaleLowerCase('tr-TR')
+      .replace(/ı/g,'i').replace(/ş/g,'s').replace(/ğ/g,'g')
+      .replace(/ü/g,'u').replace(/ö/g,'o').replace(/ç/g,'c')
+      .replace(/â/g,'a').replace(/î/g,'i').replace(/û/g,'u')
+      .replace(/\s+/g,' ').trim();
+  }
+  // calc-card: search UI'yi barındıran bölüm hiç gizlenmez; sadece kartları süzülür
+  var calcSec=document.getElementById('shSecCalc');
+  // her aranabilir bölüm: kart adı + açıklama + kategori etiketi
+  function indexCards(root,selector){
+    return [].slice.call(root.querySelectorAll(selector)).map(function(c){
+      var t=(c.querySelector('h4')||{}).textContent||'';
+      var d=(c.querySelector('p')||{}).textContent||'';
+      var cat=(c.querySelector('.hub-cat')||{}).textContent||'';
+      return {el:c,key:norm(t+' '+d+' '+cat)};
+    });
+  }
+  var hideableSecs=[].slice.call(document.querySelectorAll('.sh-searchable')).filter(function(s){return s!==calcSec;});
+  var calcCards=indexCards(calcSec,'.calc-card');
+  var groups=hideableSecs.map(function(sec){return {sec:sec,cards:indexCards(sec,'.hub-card')};});
+  function apply(){
+    var q=norm(input.value);
+    var searching=input.value.length>0;
+    box.classList.toggle('has-q',searching);
+    document.body.classList.toggle('sh-searching',searching);
+    if(!searching){
+      calcCards.forEach(function(c){c.el.classList.remove('shs-hide');});
+      groups.forEach(function(g){
+        g.sec.classList.remove('shs-sec-hide');
+        g.cards.forEach(function(c){c.el.classList.remove('shs-hide');});
+      });
+      count.classList.remove('show');count.textContent='';
+      noRes.classList.remove('show');
+      return;
+    }
+    var total=0;
+    calcCards.forEach(function(c){
+      var hit=c.key.indexOf(q)>-1;c.el.classList.toggle('shs-hide',!hit);if(hit)total++;
+    });
+    groups.forEach(function(g){
+      var n=0;
+      g.cards.forEach(function(c){var hit=c.key.indexOf(q)>-1;c.el.classList.toggle('shs-hide',!hit);if(hit)n++;});
+      g.sec.classList.toggle('shs-sec-hide',n===0);
+      total+=n;
+    });
+    count.classList.add('show');
+    count.innerHTML=total>0?'<b>'+total+'</b> sonuç eşleşti':'Sonuç yok';
+    noRes.classList.toggle('show',total===0);
+  }
+  input.addEventListener('input',apply);
+  clear.addEventListener('click',function(){input.value='';apply();input.focus();});
+  input.addEventListener('keydown',function(e){if(e.key==='Escape'&&input.value){input.value='';apply();}});
 })();
 </script>
 </body>
