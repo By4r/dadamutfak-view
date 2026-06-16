@@ -1,3 +1,18 @@
+> **🧹 WAVE 3 — NAV CHROME-SWEEP DONE ✅ (commit YOK — working tree):** Tek idempotent geçiş
+> (`tasks/w3-nav-sweep.py`, href-agnostik + class-tolerant). 4 değişiklik: (1) **Besin Değerleri**
+> gruplu submenu — Sağlıklı Yaşam dropdown'a (desktop **76** + drawer **76**) "Diyetisyen Ara"'dan sonra
+> `.dd-group`/`.d-sub-group` ince ayraçlı başlık + 4 öğe (Kalori Cetveli/Protein/Karbonhidrat/Yağ Rehberi,
+> FA fire-flame/drumstick/wheat-awn/bottle-droplet; health-yeşil ailesine uydu). (2) **"Pro'ya Yükselt"**
+> avatar dropdown'a (**73**, "Ayarlar/Hesabım" ÖNCESİ, `.acct-pro` altın `fa-crown`→`pro-v1.html`).
+> (3) **"Rozetlerim"** avatar dropdown'a (**73**, "Mutfak Defterim" SONRASI, `fa-medal`→`rozetler-v1.html`).
+> (4) **Video Pro etiketi** — anasayfa + arama video bölüm `<h2>` içine altın `.vid-pro` "Pro" pill (video
+> sayfasının `.pro-flag` altın dili). `mutfak-defteri` "Tüm Rozetler→" ZATEN `rozetler-v1.html` (M9'da).
+> İDEMPOTENT (2× re-run = 0 değişiklik, HTML-comment/class marker guard). href-agnostik teyit: `class="active"`
+> (3 dosya) + `href="#"` (headA) varyantları da yakalandı. tb-util topbar + Tarifler/Mutfak Sırları
+> DOKUNULMADI (leak testi: her besin bloğu "Diyetisyen Ara" anchor'ı hemen ardında, 0 sapma). Render SS
+> 1440 (anasayfa + tarif-detay, dropdown'lar açık + video pill): `mockups/outputs/w3-nav-ss/`, 0 JS hatası.
+> "Rezervasyonlarım" TEKRAR EKLENMEDİ (5f23244'te vardı). **SIRADAKİ:** Beyar canlı-SS onayı + bekleyen madde 3.
+
 > **🍳 MADDE 3 — tarif-bulucu PATRON REVİZESİ DONE ✅ (push'lu, HEAD `d7e8436`):** Yasin Bey WhatsApp feedback'i.
 > (1) **Kategoriler 2 KOLON** — accordion blokları yan yana (`.cat-cols` grid, `align-items:start`; Sık Kullanılan
 > tam-genişlik featured açık satır); sayfa ~yarıya indi; 390'da tek kolon. (2) **ÜRÜN-BAZLI SPONSORLU KARTLAR** —

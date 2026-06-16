@@ -40,6 +40,18 @@ hedef sade, fonksiyonel, modern bir arayüze taşımak.
 - Slider/banner overlay opacity: 0.3–0.4
 - Bullet list reset override gerekebilir
 
+## Görsel QA Kuralı (self-verify)
+
+- Bir değişiklik sonrası kendi kontrolün için **TAM SAYFA** render screenshot al
+  (1440, gerekiyorsa 390) ve **KENDİN** değerlendir — self-verify evet.
+- **CROP YAPMA.** Tek bir öğeyi (badge, pill, buton, ikon) doğrulamak için
+  crop/zoom render döngüsüne GİRME. Öğe full SS'te zaten görünür; emin olamıyorsan
+  grep/kod ile teyit et.
+- SS'ler `outputs/` altında diskte kalsın (ignore'lı). Beyar'a "şu SS'e bak" diye
+  sunma; isterse kendisi açar.
+- Çıktı: kısa **YAZILI** rapor (ne değişti + kontrol sonucu). Tek öğe için
+  dakikalarca crop'la uğraşma.
+
 ## Marka Renkleri (mevcut siteden — başlangıç paleti, revize edilebilir)
 
 - Primary (sıcak domates): `#e14827`
