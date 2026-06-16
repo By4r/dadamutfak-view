@@ -1,3 +1,31 @@
+> **🟢 WAVE 4 — DADAFIT KENDİ HEADER'I (ALT-MARKA) + RÖTUŞLAR DONE ✅ (2026-06-16):** DadaFit, DadaStore/
+> DadaAkademi seviyesinde **tam alt-marka header'ına** çıkarıldı (Store/Akademi pattern'i replicate).
+> **Plan:** `tasks/dadafit-header-plan.md` · **yeniden-kullanım kılavuzu:** `tasks/dadafit-header-blok.md`.
+> **Kilitli kararlar (Beyar):** topbar = Store/Akademi birebir sade (worlds kuşağı KALDIRILDI, "← DadaMutfak'a dön"
+> + promo + dil) · mark = şimşek ⚡ **SVG yeşil rounded-badge** + "Dada**Fit**" wordmark (Dada ink/Fit yeşil) ·
+> DadaMutfak tarif mega-nav'ı **tamamen kalktı** (saf sub-brand) · kapsam = yalnız hub + doküman.
+> **`mockups/dadafit-hub-v1.html` değişti:** (1) topbar→sade köprü+promo "Yediğini hareketle dengele"+dil;
+> (2) header→DadaFit mark+nav (Hareket Merkezi · Egzersizler[▾vücut bölgesi/ekipman] · Programlar · Challenge ·
+> Antrenörler), login-state auth makinesi (arama/giriş/zil/avatar/hamburger) DOKUNULMADI; (3) **df-subnav bandı
+> KALDIRILDI → header'a yükseldi** (redundans gitti, chrome **166→112px**, hero `margin-top:112`); (4) recolor
+> **`--tomato`→`#009d4f`** (chrome aksanı yeşil; Enerji Defteri kırmızısı `--food`/hardcoded → KORUNDU, güvenli);
+> (5) drawer+bottom-nav DadaFit'e, drawer foot'ta **"DadaMutfak'a dön" köprüsü** (K2, mobil topbar gizli);
+> (6) nav anchor'ları gerçek section'lara (`#kutuphane/#programlar/#challenge/#antrenor/#kopru` id eklendi),
+> `scroll-padding-top:112`. **Footer:** `logo-official` (DadaMutfak) korundu (üst-marka/köprü).
+> **RÖTUŞLAR (2. tur):** (a) Challenge kartına imza görseli eklendi (tek gradient-only karttı; → açık-hava
+> **koşu** görseli `photo-1487956382158`, alışkanlık/baskısız tonu, gym değil); (b) **footer okunabilirlik**:
+> zemin `#009d4f`→**`--fit-deep #007a3d`** (#009d4f beyazla AA imkansız ~3.5:1) + beyaz/near-white metin (≥4.5:1);
+> (c) **topbar dengesi**: sağa challenge mini-duyuru "🏆 Haziran Challenge başladı · Katıl" (→#challenge,
+> ≤1024 gizli); (d) **hero viewport-fill**: `.df-top min-height:calc(100svh−112px)`+dikey ortalama (sonraki
+> section peek'i temizlendi); (e) chip radius: `.df-women-tags span` + `.vid-pro` pill→**`--radius-sm`** (standart).
+> **`mockups/anasayfa-portal-v3a.html` değişti:** topbar+drawer worlds kuşağına **DadaFit** (yeşil, hub'a link)
+> eklendi → ana sayfadan erişim açıldı; **"Diyetisyen Ara" topbar'dan kaldırıldı** (hub ile tutarlı, işlevi
+> Sağlıklı Yaşam dropdown'da). ⚠️ **YAYMA AYRI İŞ:** DadaFit header + worlds tutarlılığı diğer ~93 dosyaya
+> YAYILMADI. ⚠️ Worlds-strip/mega CSS (`.tb-world-*`,`.dw-*`,`.mega-cats`) hub'da artık ÖLÜ ama zararsız (bilinçli
+> bırakıldı, churn min). Render SS 1440/390, 0 yatay taşma (`outputs/dadafit-header`,`/dadafit-rotus`,`/dadafit-2fix`).
+> **SIRADAKİ:** Wave 4 sonraki DadaFit sayfaları (egzersiz kütüphanesi → program-detay → köprü/TDEE entegrasyonu),
+> header bloğunu `tasks/dadafit-header-blok.md`'den kopyala; nav placeholder linklerini gerçek sayfalara bağla.
+
 > **🟢 WAVE 4 — DADAFIT HAREKET MERKEZİ HUB DONE ✅ (2026-06-16, push'lu):** Modülün lokomotif vitrin
 > sayfası sıfırdan üretildi: **`mockups/dadafit-hub-v1.html`** (saglik-hub chrome'u birebir inline splice,
 > nav'a DadaFit EKLENMEDİ). **İmza dili oturdu:** koyu `#211E16` + **`#009d4f` yeşil gradient + gerçek
