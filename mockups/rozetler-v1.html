@@ -731,8 +731,10 @@ html,body{overflow-x:hidden}
 
 /* §2f H1 koyu-overlay hero — GÖRSEL PENDING: gri placeholder (data-img-pending) */
 .tb-top{position:relative;padding-top:128px;padding-bottom:46px;overflow:hidden;background:#3a352c}
-.tb-top .tb-hero-img{position:absolute;inset:0;background:#c9c4ba;z-index:0}
-.tb-top .tb-hero-img::after{content:"GÖRSEL YAKINDA";position:absolute;inset:0;display:grid;place-items:center;color:#8c867a;font-size:13px;font-weight:700;letter-spacing:.14em;text-transform:uppercase}
+/* temsilî hero görseli (Unsplash) — highfield gelince swap edilecek (data-img-pending).
+   §2f koyu-overlay kanonu: alttaki .tb-top::after gradient karartmayı sürdürür. */
+.tb-top .tb-hero-img{position:absolute;inset:0;z-index:0;background:#c9c4ba center/cover no-repeat;
+  background-image:url("https://images.unsplash.com/photo-1556909212-d5b604d0c90d?auto=format&fit=crop&w=1600&q=70")}
 .tb-top::after{content:"";position:absolute;inset:0;z-index:1;background:linear-gradient(90deg,rgba(28,25,18,.93),rgba(33,30,22,.72))}
 .tb-top .wrap{position:relative;z-index:2}
 .tb-top .rd-crumb,.tb-top .rd-crumb a{color:#c9c3b8}
@@ -771,7 +773,9 @@ html,body{overflow-x:hidden}
 .rn-points span{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.55)}
 
 /* 8-kademe merdiven şeridi */
-.ladder{display:grid;grid-template-columns:repeat(8,1fr);gap:10px;margin-top:22px}
+.ladder-hint{display:inline-flex;align-items:center;gap:8px;margin-top:20px;font-size:12.5px;font-weight:600;color:var(--slate-2)}
+.ladder-hint i{color:var(--tomato);font-size:12px}
+.ladder{display:grid;grid-template-columns:repeat(8,1fr);gap:10px;margin-top:12px}
 .rank-step{position:relative;text-align:center;background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-md);padding:16px 8px 13px;transition:.2s var(--ease)}
 .rs-ico{width:46px;height:46px;margin:0 auto 9px;border-radius:var(--radius-circle);background:var(--bg);color:#bdbdbd;display:grid;place-items:center;font-size:18px;border:1.5px solid var(--line)}
 .rank-step b{display:block;font-size:12.5px;font-weight:700;color:var(--slate);line-height:1.2}
@@ -781,10 +785,66 @@ html,body{overflow-x:hidden}
 /* mevcut kademe — vurgulu */
 .rank-step.current{border-color:var(--tomato);box-shadow:0 6px 18px rgba(225,72,39,.16);background:#fff}
 .rank-step.current .rs-ico{background:radial-gradient(circle at 35% 30%,#ffd9a0,#e8a13c 65%,#b8801f);color:#3a2510;border-color:#e8a13c;box-shadow:0 5px 14px rgba(184,128,31,.4)}
-.rs-now{position:absolute;top:-9px;left:50%;transform:translateX(-50%);font-size:9.5px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:#fff;background:var(--tomato);padding:3px 9px;border-radius:999px;white-space:nowrap}
+.rs-now{position:absolute;top:-10px;left:50%;transform:translateX(-50%);z-index:2;font-size:9px;line-height:1;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:#fff;background:var(--tomato);padding:4px 10px;border-radius:999px;white-space:nowrap;box-shadow:0 3px 8px rgba(225,72,39,.32)}
 /* kilitli (gelecek) kademe */
 .rank-step.locked{border-style:dashed;background:transparent}
 .rank-step.locked .rs-lock{position:absolute;top:8px;right:9px;font-size:9px;color:#c8c8c8}
+
+/* TIKLANABİLİR KADEME (revize) — her kart o kademenin rozet setini açar */
+.rank-step{cursor:pointer;font-family:inherit;width:100%;appearance:none}
+.rank-step:hover{border-color:var(--tomato);transform:translateY(-2px);box-shadow:0 6px 16px rgba(225,72,39,.12)}
+.rank-step.locked:hover{border-color:var(--tomato)}
+.rank-step:focus-visible{outline:2px solid var(--tomato);outline-offset:2px}
+/* seçili kademe (galeri buna filtrelendi) — ince marka halkası + alt işaret */
+.rank-step.sel{border-color:var(--tomato);border-style:solid;box-shadow:0 0 0 3px rgba(225,72,39,.14),0 8px 20px rgba(225,72,39,.16)}
+.rs-pick{position:absolute;bottom:-10px;left:50%;transform:translateX(-50%);z-index:2;opacity:0;visibility:hidden;font-size:9px;line-height:1;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:#fff;background:var(--tomato);padding:4px 10px;border-radius:999px;white-space:nowrap;box-shadow:0 3px 8px rgba(225,72,39,.32);transition:opacity .18s var(--ease)}
+.rank-step.sel .rs-pick{opacity:1;visibility:visible}
+.rank-step .rs-cnt{display:block;font-size:9.5px;font-weight:700;color:#bdb6a8;margin-top:4px;letter-spacing:.02em}
+.rank-step.done .rs-cnt,.rank-step.current .rs-cnt{color:var(--green-deep)}
+
+/* FİLTRE DURUM ŞERİDİ — hangi kademeye filtrelendiğini gösterir + temizle */
+.bgal-filter{display:none;align-items:center;gap:12px;margin:0 0 22px;padding:13px 18px;background:linear-gradient(120deg,var(--tomato-tint),#fff 80%);border:1px solid rgba(225,72,39,.28);border-radius:var(--radius-md)}
+.bgal-filter.show{display:flex}
+.bgal-filter .bf-ico{flex:none;width:34px;height:34px;border-radius:var(--radius-sm);background:var(--tomato);color:#fff;display:grid;place-items:center;font-size:14px}
+.bgal-filter .bf-txt{flex:1;min-width:0;font-size:13.5px;font-weight:600;color:var(--slate)}
+.bgal-filter .bf-txt b{font-weight:800;color:var(--tomato)}
+.bgal-filter .bf-txt small{display:block;font-size:11.5px;font-weight:500;color:var(--slate-2);margin-top:1px}
+.bgal-clear{flex:none;display:inline-flex;align-items:center;gap:7px;font-family:inherit;font-size:12.5px;font-weight:700;color:var(--slate);background:#fff;border:1px solid var(--line);border-radius:var(--radius-sm);padding:8px 14px;cursor:pointer;transition:.18s var(--ease)}
+.bgal-clear:hover{border-color:var(--tomato);color:var(--tomato)}
+
+/* FİLTRE UYGULANDIĞINDA — eşleşmeyen kart soluk, eşleşen vurgulu; boş kategori gizli */
+.badge-sec.filtering .badge-card:not(.match){opacity:.28;filter:grayscale(.5)}
+.badge-sec.filtering .badge-card.match{box-shadow:0 0 0 2px rgba(225,72,39,.32),var(--sh-sm);border-color:var(--tomato)}
+.badge-cat.cat-empty{display:none}
+
+/* ROZET DURUM NOTU (kart altı) — earned "kazanıldı" / locked ilerleme çubuğu+kalan */
+.badge-card{flex-wrap:wrap}
+.badge-card>div{flex:1;min-width:0}
+.b-note{flex-basis:100%;display:flex;align-items:center;gap:7px;margin-top:10px;font-size:10.5px;font-weight:700;letter-spacing:.01em}
+.b-note.earned{color:var(--green-deep)}
+.b-note.earned i{font-size:10px}
+.b-note.locked{color:#b07f3a;flex-wrap:wrap}
+.b-prog{flex:1;min-width:60px;height:5px;border-radius:999px;background:#ececec;overflow:hidden;order:2}
+.b-prog span{display:block;height:100%;border-radius:999px;background:linear-gradient(90deg,#f0b15a,#e8902f)}
+.b-note.locked .b-left{order:3;flex-basis:100%;color:#a07433;font-weight:600;font-size:10px;margin-top:1px}
+.b-note.locked > i{order:1;font-size:10px}
+
+/* HOVER TOOLTIP — rozet ne + nasıl kazanılır */
+.badge-card{outline:none}
+.badge-tip{
+  position:absolute;left:50%;bottom:calc(100% + 10px);transform:translateX(-50%) translateY(6px);
+  width:max(210px,100%);background:var(--slate);color:#f3ede1;border-radius:var(--radius-md);
+  padding:12px 14px;box-shadow:var(--sh-lg);z-index:30;
+  opacity:0;visibility:hidden;pointer-events:none;transition:opacity .18s var(--ease),transform .18s var(--ease),visibility .18s;
+}
+.badge-card:hover .badge-tip,.badge-card:focus-within .badge-tip,.badge-card.tip-open .badge-tip{opacity:1;visibility:visible;transform:translateX(-50%) translateY(0)}
+.badge-tip::after{content:"";position:absolute;top:100%;left:50%;transform:translateX(-50%) rotate(45deg) translateY(-5px);width:11px;height:11px;background:var(--slate)}
+.badge-tip b{display:block;font-size:12.5px;font-weight:800;color:#fff;margin-bottom:4px;letter-spacing:0}
+.badge-tip p{font-size:11.5px;font-weight:500;line-height:1.5;color:#cfc6b6}
+.badge-tip .tip-how{display:flex;align-items:flex-start;gap:7px;margin-top:8px;padding-top:8px;border-top:1px solid rgba(255,255,255,.12);font-size:11px;font-weight:600;color:#ffd9a0}
+.badge-tip .tip-how i{font-size:10px;margin-top:2px;flex:none}
+/* tooltip kademe rozeti */
+.tip-rank{display:inline-flex;align-items:center;gap:5px;margin-top:8px;font-size:9.5px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:#ffd9a0}
 
 /* ROZET GALERİSİ */
 .badge-sec{padding:34px 0 64px;background:var(--bg-white)}
@@ -834,6 +894,17 @@ html,body{overflow-x:hidden}
   .rn-bar,.rn-bar-meta{max-width:none}
   .ladder{grid-template-columns:repeat(2,1fr)}
   .badge-grid{grid-template-columns:1fr}
+  .bgal-filter{flex-wrap:wrap}
+  .bgal-filter .bf-txt{flex-basis:calc(100% - 46px)}
+  .bgal-clear{margin-left:46px}
+  /* mobilde tooltip kartın altında açılır (üstte taşma riski) */
+  .badge-tip{bottom:auto;top:calc(100% + 10px);transform:translateX(-50%) translateY(-6px)}
+  .badge-card:hover .badge-tip,.badge-card:focus-within .badge-tip,.badge-card.tip-open .badge-tip{transform:translateX(-50%) translateY(0)}
+  .badge-tip::after{top:auto;bottom:100%;transform:translateX(-50%) rotate(45deg) translateY(5px)}
+}
+@media (prefers-reduced-motion:reduce){
+  .rank-step:hover{transform:none}
+  .badge-tip{transition:opacity .01s}
 }
 
 </style>
@@ -1245,16 +1316,17 @@ html,body{overflow-x:hidden}
       <div class="rn-points"><b>8.450</b><span>Topluluk Puanı</span></div>
     </div>
 
-    <!-- 8-kademe merdiven şeridi -->
+    <!-- 8-kademe merdiven şeridi — her kart TIKLANABİLİR: galeri o kademe rozet setine filtrelenir -->
+    <p class="ladder-hint"><i class="fa-solid fa-hand-pointer"></i> Bir kademeye dokun — o basamakta açılan rozetleri aşağıda gör.</p>
     <div class="ladder" role="list" aria-label="Şef kademe merdiveni">
-      <div class="rank-step done" role="listitem"><div class="rs-ico"><i class="fa-solid fa-egg"></i></div><b>Çömez</b><span>0 rozet</span></div>
-      <div class="rank-step done" role="listitem"><div class="rs-ico"><i class="fa-solid fa-utensils"></i></div><b>Komi</b><span>2 rozet</span></div>
-      <div class="rank-step done" role="listitem"><div class="rs-ico"><i class="fa-solid fa-spoon"></i></div><b>Çırak</b><span>5 rozet</span></div>
-      <div class="rank-step done" role="listitem"><div class="rs-ico"><i class="fa-solid fa-bowl-food"></i></div><b>Aşçı</b><span>9 rozet</span></div>
-      <div class="rank-step current" role="listitem" aria-current="true"><span class="rs-now">Buradasın</span><div class="rs-ico"><i class="fa-solid fa-medal"></i></div><b>Usta Aşçı</b><span>14 rozet</span></div>
-      <div class="rank-step locked" role="listitem"><i class="fa-solid fa-lock rs-lock"></i><div class="rs-ico"><i class="fa-solid fa-award"></i></div><b>Şef</b><span>20 + 1 nadir</span></div>
-      <div class="rank-step locked" role="listitem"><i class="fa-solid fa-lock rs-lock"></i><div class="rs-ico"><i class="fa-solid fa-trophy"></i></div><b>Usta Şef</b><span>28 + 2 nadir</span></div>
-      <div class="rank-step locked" role="listitem"><i class="fa-solid fa-lock rs-lock"></i><div class="rs-ico"><i class="fa-solid fa-crown"></i></div><b>Dada Üstadı</b><span>35 + editör</span></div>
+      <button type="button" class="rank-step done" role="listitem" data-rank="comez" aria-pressed="false"><div class="rs-ico"><i class="fa-solid fa-egg"></i></div><b>Çömez</b><span>0 rozet</span><span class="rs-cnt">3 rozet açıldı</span><span class="rs-pick">Seçili</span></button>
+      <button type="button" class="rank-step done" role="listitem" data-rank="komi" aria-pressed="false"><div class="rs-ico"><i class="fa-solid fa-utensils"></i></div><b>Komi</b><span>2 rozet</span><span class="rs-cnt">3 rozet açıldı</span><span class="rs-pick">Seçili</span></button>
+      <button type="button" class="rank-step done" role="listitem" data-rank="cirak" aria-pressed="false"><div class="rs-ico"><i class="fa-solid fa-spoon"></i></div><b>Çırak</b><span>5 rozet</span><span class="rs-cnt">4 rozet açıldı</span><span class="rs-pick">Seçili</span></button>
+      <button type="button" class="rank-step done" role="listitem" data-rank="asci" aria-pressed="false"><div class="rs-ico"><i class="fa-solid fa-bowl-food"></i></div><b>Aşçı</b><span>9 rozet</span><span class="rs-cnt">5 rozet açıldı</span><span class="rs-pick">Seçili</span></button>
+      <button type="button" class="rank-step current" role="listitem" data-rank="usta-asci" aria-current="true" aria-pressed="false"><span class="rs-now">Buradasın</span><div class="rs-ico"><i class="fa-solid fa-medal"></i></div><b>Usta Aşçı</b><span>14 rozet</span><span class="rs-cnt">5 rozet açıldı</span><span class="rs-pick">Seçili</span></button>
+      <button type="button" class="rank-step locked" role="listitem" data-rank="sef" aria-pressed="false"><i class="fa-solid fa-lock rs-lock"></i><div class="rs-ico"><i class="fa-solid fa-award"></i></div><b>Şef</b><span>20 + 1 nadir</span><span class="rs-cnt">5 rozet bekliyor</span><span class="rs-pick">Seçili</span></button>
+      <button type="button" class="rank-step locked" role="listitem" data-rank="usta-sef" aria-pressed="false"><i class="fa-solid fa-lock rs-lock"></i><div class="rs-ico"><i class="fa-solid fa-trophy"></i></div><b>Usta Şef</b><span>28 + 2 nadir</span><span class="rs-cnt">4 rozet bekliyor</span><span class="rs-pick">Seçili</span></button>
+      <button type="button" class="rank-step locked" role="listitem" data-rank="ustad" aria-pressed="false"><i class="fa-solid fa-lock rs-lock"></i><div class="rs-ico"><i class="fa-solid fa-crown"></i></div><b>Dada Üstadı</b><span>35 + editör</span><span class="rs-cnt">4 rozet bekliyor</span><span class="rs-pick">Seçili</span></button>
     </div>
   </div>
 </section>
@@ -1269,74 +1341,88 @@ html,body{overflow-x:hidden}
     </div></div>
 
     <div class="bgal-stat">
-      <span class="bgal-pill"><i class="fa-solid fa-circle-check pill-earn"></i> <b>15</b> kazanıldı</span>
-      <span class="bgal-pill"><i class="fa-solid fa-lock pill-lock"></i> <b>7</b> yolda</span>
+      <span class="bgal-pill"><i class="fa-solid fa-circle-check pill-earn"></i> <b>18</b> kazanıldı</span>
+      <span class="bgal-pill"><i class="fa-solid fa-lock pill-lock"></i> <b>12</b> yolda</span>
       <span class="bgal-pill"><i class="fa-solid fa-star pill-lock"></i> <b>2</b> nadir rozet</span>
     </div>
 
+    <!-- KADEME FİLTRE ŞERİDİ — merdiven kartına tıklayınca dolar/görünür -->
+    <div class="bgal-filter" id="bgalFilter" role="status" aria-live="polite">
+      <span class="bf-ico"><i class="fa-solid fa-medal"></i></span>
+      <span class="bf-txt"><b id="bfRank">—</b> kademesinin rozetleri<small id="bfMeta">Bu basamakta açılan rozetler vurgulu.</small></span>
+      <button type="button" class="bgal-clear" id="bgalClear"><i class="fa-solid fa-xmark"></i> Filtreyi temizle</button>
+    </div>
+
     <!-- Başlangıç -->
-    <div class="badge-cat">
-      <div class="badge-head"><h3><i class="fa-solid fa-flag-checkered"></i> Başlangıç</h3><span class="bh-cnt">3 / 4</span></div>
+    <div class="badge-cat" data-cat="baslangic">
+      <div class="badge-head"><h3><i class="fa-solid fa-flag-checkered"></i> Başlangıç</h3><span class="bh-cnt">3 / 5</span></div>
       <div class="badge-grid">
-        <div class="badge-card"><span class="badge-ico"><i class="fa-solid fa-seedling"></i></span><div><b>İlk Tarif</b><span>Mar 2021</span></div></div>
-        <div class="badge-card"><span class="badge-ico"><i class="fa-solid fa-image"></i></span><div><b>İlk Fotoğraf</b><span>Mar 2021</span></div></div>
-        <div class="badge-card"><span class="badge-ico"><i class="fa-solid fa-comment"></i></span><div><b>İlk Yorum</b><span>Nis 2021</span></div></div>
-        <div class="badge-card locked"><i class="fa-solid fa-lock badge-lock"></i><span class="badge-ico"><i class="fa-solid fa-layer-group"></i></span><div><b>İlk Menü</b><span>1 menü kaldı</span></div></div>
+        <div class="badge-card" tabindex="0" data-rank="comez"><span class="badge-ico"><i class="fa-solid fa-seedling"></i></span><div><b>İlk Tarif</b><span>Mar 2021</span></div><span class="b-note earned"><i class="fa-solid fa-circle-check"></i> Kazanıldı · Mar 2021</span><div class="badge-tip"><b>İlk Tarif</b><p>Toplulukla paylaştığın ilk tarif için verilir.</p><div class="tip-how"><i class="fa-solid fa-bullseye"></i> İlk tarifini paylaş</div><span class="tip-rank"><i class="fa-solid fa-egg"></i> Çömez kademesi</span></div></div>
+        <div class="badge-card" tabindex="0" data-rank="comez"><span class="badge-ico"><i class="fa-solid fa-image"></i></span><div><b>İlk Fotoğraf</b><span>Mar 2021</span></div><span class="b-note earned"><i class="fa-solid fa-circle-check"></i> Kazanıldı · Mar 2021</span><div class="badge-tip"><b>İlk Fotoğraf</b><p>Bir tarifine ilk fotoğrafını eklediğinde açılır.</p><div class="tip-how"><i class="fa-solid fa-bullseye"></i> Bir tarife fotoğraf ekle</div><span class="tip-rank"><i class="fa-solid fa-egg"></i> Çömez kademesi</span></div></div>
+        <div class="badge-card" tabindex="0" data-rank="comez"><span class="badge-ico"><i class="fa-solid fa-bookmark"></i></span><div><b>İlk Kayıt</b><span>Mar 2021</span></div><span class="b-note earned"><i class="fa-solid fa-circle-check"></i> Kazanıldı · Mar 2021</span><div class="badge-tip"><b>İlk Kayıt</b><p>Beğendiğin ilk tarifi defterine kaydettiğinde verilir.</p><div class="tip-how"><i class="fa-solid fa-bullseye"></i> İlk tarifini kaydet</div><span class="tip-rank"><i class="fa-solid fa-egg"></i> Çömez kademesi</span></div></div>
+        <div class="badge-card" tabindex="0" data-rank="komi"><span class="badge-ico"><i class="fa-solid fa-comment"></i></span><div><b>İlk Yorum</b><span>Nis 2021</span></div><span class="b-note earned"><i class="fa-solid fa-circle-check"></i> Kazanıldı · Nis 2021</span><div class="badge-tip"><b>İlk Yorum</b><p>Bir tarife ilk yorumunu yazdığında açılır.</p><div class="tip-how"><i class="fa-solid fa-bullseye"></i> İlk yorumunu yaz</div><span class="tip-rank"><i class="fa-solid fa-utensils"></i> Komi kademesi</span></div></div>
+        <div class="badge-card locked" tabindex="0" data-rank="komi"><i class="fa-solid fa-lock badge-lock"></i><span class="badge-ico"><i class="fa-solid fa-layer-group"></i></span><div><b>İlk Menü</b><span>Yolda</span></div><span class="b-note locked"><span class="b-left">1 menü daha kaldı</span><span class="b-prog"><span style="width:0%"></span></span></span><div class="badge-tip"><b>İlk Menü</b><p>İlk haftalık menünü oluşturduğunda açılır.</p><div class="tip-how"><i class="fa-solid fa-lock"></i> 1 haftalık menü oluştur</div><span class="tip-rank"><i class="fa-solid fa-utensils"></i> Komi kademesi</span></div></div>
       </div>
     </div>
 
     <!-- Üretim -->
-    <div class="badge-cat">
-      <div class="badge-head"><h3><i class="fa-solid fa-utensils"></i> Üretim</h3><span class="bh-cnt">3 / 5</span></div>
+    <div class="badge-cat" data-cat="uretim">
+      <div class="badge-head"><h3><i class="fa-solid fa-utensils"></i> Üretim</h3><span class="bh-cnt">3 / 7</span></div>
       <div class="badge-grid">
-        <div class="badge-card"><span class="badge-ico"><i class="fa-solid fa-bread-slice"></i></span><div><b>Hamur İşi Uzmanı</b><span>Eki 2023</span></div></div>
-        <div class="badge-card"><span class="badge-ico"><i class="fa-solid fa-fire-burner"></i></span><div><b>Izgara Kralı</b><span>Tem 2024</span></div></div>
-        <div class="badge-card"><span class="badge-ico"><i class="fa-solid fa-egg"></i></span><div><b>Kahvaltı Şefi</b><span>Şub 2023</span></div></div>
-        <div class="badge-card locked"><i class="fa-solid fa-lock badge-lock"></i><span class="badge-ico"><i class="fa-solid fa-bowl-food"></i></span><div><b>Çorba Ustası</b><span>8 çorba kaldı</span></div></div>
-        <div class="badge-card locked"><i class="fa-solid fa-lock badge-lock"></i><span class="badge-ico"><i class="fa-solid fa-ice-cream"></i></span><div><b>Tatlı Şefi</b><span>4 tatlı kaldı</span></div></div>
+        <div class="badge-card" tabindex="0" data-rank="cirak"><span class="badge-ico"><i class="fa-solid fa-bread-slice"></i></span><div><b>Hamur İşi Uzmanı</b><span>Eki 2023</span></div><span class="b-note earned"><i class="fa-solid fa-circle-check"></i> Kazanıldı · Eki 2023</span><div class="badge-tip"><b>Hamur İşi Uzmanı</b><p>20 hamur işi tarifi paylaşan aşçılara verilir.</p><div class="tip-how"><i class="fa-solid fa-bullseye"></i> 20 hamur işi tarifi paylaş</div><span class="tip-rank"><i class="fa-solid fa-spoon"></i> Çırak kademesi</span></div></div>
+        <div class="badge-card" tabindex="0" data-rank="asci"><span class="badge-ico"><i class="fa-solid fa-fire-burner"></i></span><div><b>Izgara Kralı</b><span>Tem 2024</span></div><span class="b-note earned"><i class="fa-solid fa-circle-check"></i> Kazanıldı · Tem 2024</span><div class="badge-tip"><b>Izgara Kralı</b><p>20 ızgara tarifi paylaşan aşçılara verilir.</p><div class="tip-how"><i class="fa-solid fa-bullseye"></i> 20 ızgara tarifi paylaş</div><span class="tip-rank"><i class="fa-solid fa-bowl-food"></i> Aşçı kademesi</span></div></div>
+        <div class="badge-card" tabindex="0" data-rank="komi"><span class="badge-ico"><i class="fa-solid fa-egg"></i></span><div><b>Kahvaltı Şefi</b><span>Şub 2023</span></div><span class="b-note earned"><i class="fa-solid fa-circle-check"></i> Kazanıldı · Şub 2023</span><div class="badge-tip"><b>Kahvaltı Şefi</b><p>15 kahvaltılık tarifi paylaşan aşçılara verilir.</p><div class="tip-how"><i class="fa-solid fa-bullseye"></i> 15 kahvaltılık tarifi paylaş</div><span class="tip-rank"><i class="fa-solid fa-utensils"></i> Komi kademesi</span></div></div>
+        <div class="badge-card locked" tabindex="0" data-rank="cirak"><i class="fa-solid fa-lock badge-lock"></i><span class="badge-ico"><i class="fa-solid fa-leaf"></i></span><div><b>Salata Uzmanı</b><span>Yolda</span></div><span class="b-note locked"><span class="b-left">9 / 15 salata · 6 kaldı</span><span class="b-prog"><span style="width:60%"></span></span></span><div class="badge-tip"><b>Salata Uzmanı</b><p>15 salata tarifi paylaşan aşçılara verilir.</p><div class="tip-how"><i class="fa-solid fa-lock"></i> 6 salata tarifi daha paylaş</div><span class="tip-rank"><i class="fa-solid fa-spoon"></i> Çırak kademesi</span></div></div>
+        <div class="badge-card locked" tabindex="0" data-rank="usta-asci"><i class="fa-solid fa-lock badge-lock"></i><span class="badge-ico"><i class="fa-solid fa-bowl-food"></i></span><div><b>Çorba Ustası</b><span>Yolda</span></div><span class="b-note locked"><span class="b-left">17 / 25 çorba · 8 kaldı</span><span class="b-prog"><span style="width:68%"></span></span></span><div class="badge-tip"><b>Çorba Ustası</b><p>25 çorba tarifi paylaşan aşçılara verilir.</p><div class="tip-how"><i class="fa-solid fa-lock"></i> 8 çorba tarifi daha paylaş</div><span class="tip-rank"><i class="fa-solid fa-medal"></i> Usta Aşçı kademesi</span></div></div>
+        <div class="badge-card locked" tabindex="0" data-rank="asci"><i class="fa-solid fa-lock badge-lock"></i><span class="badge-ico"><i class="fa-solid fa-ice-cream"></i></span><div><b>Tatlı Şefi</b><span>Yolda</span></div><span class="b-note locked"><span class="b-left">21 / 25 tatlı · 4 kaldı</span><span class="b-prog"><span style="width:84%"></span></span></span><div class="badge-tip"><b>Tatlı Şefi</b><p>25 tatlı tarifi paylaşan aşçılara verilir.</p><div class="tip-how"><i class="fa-solid fa-lock"></i> 4 tatlı tarifi daha paylaş</div><span class="tip-rank"><i class="fa-solid fa-bowl-food"></i> Aşçı kademesi</span></div></div>
+        <div class="badge-card locked" tabindex="0" data-rank="sef"><i class="fa-solid fa-lock badge-lock"></i><span class="badge-ico"><i class="fa-solid fa-list-check"></i></span><div><b>Hamarat Eller</b><span>Yolda</span></div><span class="b-note locked"><span class="b-left">88 / 100 tarif · 12 kaldı</span><span class="b-prog"><span style="width:88%"></span></span></span><div class="badge-tip"><b>Hamarat Eller</b><p>Toplam 100 tarif paylaşan aşçılara verilir.</p><div class="tip-how"><i class="fa-solid fa-lock"></i> 12 tarif daha paylaş</div><span class="tip-rank"><i class="fa-solid fa-award"></i> Şef kademesi</span></div></div>
       </div>
     </div>
 
     <!-- Topluluk -->
-    <div class="badge-cat">
-      <div class="badge-head"><h3><i class="fa-solid fa-users"></i> Topluluk</h3><span class="bh-cnt">4 / 4</span></div>
+    <div class="badge-cat" data-cat="topluluk">
+      <div class="badge-head"><h3><i class="fa-solid fa-users"></i> Topluluk</h3><span class="bh-cnt">4 / 5</span></div>
       <div class="badge-grid">
-        <div class="badge-card"><span class="badge-ico"><i class="fa-solid fa-comments"></i></span><div><b>Yorum Sever</b><span>Kas 2023</span></div></div>
-        <div class="badge-card"><span class="badge-ico"><i class="fa-solid fa-heart"></i></span><div><b>1.000 Beğeni</b><span>Nis 2025</span></div></div>
-        <div class="badge-card"><span class="badge-ico"><i class="fa-solid fa-user-plus"></i></span><div><b>Takip Mıknatısı</b><span>Oca 2025</span></div></div>
-        <div class="badge-card"><span class="badge-ico"><i class="fa-solid fa-bookmark"></i></span><div><b>Koleksiyoncu</b><span>Haz 2024</span></div></div>
+        <div class="badge-card" tabindex="0" data-rank="cirak"><span class="badge-ico"><i class="fa-solid fa-comments"></i></span><div><b>Yorum Sever</b><span>Kas 2023</span></div><span class="b-note earned"><i class="fa-solid fa-circle-check"></i> Kazanıldı · Kas 2023</span><div class="badge-tip"><b>Yorum Sever</b><p>100 yorum yazan topluluk üyelerine verilir.</p><div class="tip-how"><i class="fa-solid fa-bullseye"></i> 100 yorum yaz</div><span class="tip-rank"><i class="fa-solid fa-spoon"></i> Çırak kademesi</span></div></div>
+        <div class="badge-card" tabindex="0" data-rank="usta-asci"><span class="badge-ico"><i class="fa-solid fa-heart"></i></span><div><b>1.000 Beğeni</b><span>Nis 2025</span></div><span class="b-note earned"><i class="fa-solid fa-circle-check"></i> Kazanıldı · Nis 2025</span><div class="badge-tip"><b>1.000 Beğeni</b><p>Tariflerinde toplam 1.000 beğeni topladığında açılır.</p><div class="tip-how"><i class="fa-solid fa-bullseye"></i> 1.000 beğeni topla</div><span class="tip-rank"><i class="fa-solid fa-medal"></i> Usta Aşçı kademesi</span></div></div>
+        <div class="badge-card" tabindex="0" data-rank="asci"><span class="badge-ico"><i class="fa-solid fa-user-plus"></i></span><div><b>Takip Mıknatısı</b><span>Oca 2025</span></div><span class="b-note earned"><i class="fa-solid fa-circle-check"></i> Kazanıldı · Oca 2025</span><div class="badge-tip"><b>Takip Mıknatısı</b><p>500 takipçiye ulaşan aşçılara verilir.</p><div class="tip-how"><i class="fa-solid fa-bullseye"></i> 500 takipçiye ulaş</div><span class="tip-rank"><i class="fa-solid fa-bowl-food"></i> Aşçı kademesi</span></div></div>
+        <div class="badge-card" tabindex="0" data-rank="cirak"><span class="badge-ico"><i class="fa-solid fa-bookmark"></i></span><div><b>Koleksiyoncu</b><span>Haz 2024</span></div><span class="b-note earned"><i class="fa-solid fa-circle-check"></i> Kazanıldı · Haz 2024</span><div class="badge-tip"><b>Koleksiyoncu</b><p>50 tarif kaydeden üyelere verilir.</p><div class="tip-how"><i class="fa-solid fa-bullseye"></i> 50 tarif kaydet</div><span class="tip-rank"><i class="fa-solid fa-spoon"></i> Çırak kademesi</span></div></div>
+        <div class="badge-card locked" tabindex="0" data-rank="usta-sef"><i class="fa-solid fa-lock badge-lock"></i><span class="badge-ico"><i class="fa-solid fa-people-group"></i></span><div><b>Topluluk Lideri</b><span>Yolda</span></div><span class="b-note locked"><span class="b-left">750 / 2.000 takipçi</span><span class="b-prog"><span style="width:37%"></span></span></span><div class="badge-tip"><b>Topluluk Lideri</b><p>2.000 takipçiye ulaşan aşçılara verilir.</p><div class="tip-how"><i class="fa-solid fa-lock"></i> 1.250 takipçi daha</div><span class="tip-rank"><i class="fa-solid fa-trophy"></i> Usta Şef kademesi</span></div></div>
       </div>
     </div>
 
     <!-- Ustalık -->
-    <div class="badge-cat">
-      <div class="badge-head"><h3><i class="fa-solid fa-star"></i> Ustalık</h3><span class="bh-cnt">3 / 4</span></div>
+    <div class="badge-cat" data-cat="ustalik">
+      <div class="badge-head"><h3><i class="fa-solid fa-star"></i> Ustalık</h3><span class="bh-cnt">4 / 5</span></div>
       <div class="badge-grid">
-        <div class="badge-card"><span class="badge-ico"><i class="fa-solid fa-lightbulb"></i></span><div><b>Püf Bilgini</b><span>Şub 2025</span></div></div>
-        <div class="badge-card"><span class="badge-ico"><i class="fa-solid fa-camera"></i></span><div><b>Fotoğraf Ustası</b><span>Haz 2024</span></div></div>
-        <div class="badge-card"><span class="badge-ico"><i class="fa-solid fa-circle-check"></i></span><div><b>Editör Onaylı</b><span>Eyl 2024</span></div></div>
-        <div class="badge-card locked"><i class="fa-solid fa-lock badge-lock"></i><span class="badge-ico"><i class="fa-solid fa-list-check"></i></span><div><b>Tarif Maratonu</b><span>12 tarif kaldı</span></div></div>
+        <div class="badge-card" tabindex="0" data-rank="usta-asci"><span class="badge-ico"><i class="fa-solid fa-lightbulb"></i></span><div><b>Püf Bilgini</b><span>Şub 2025</span></div><span class="b-note earned"><i class="fa-solid fa-circle-check"></i> Kazanıldı · Şub 2025</span><div class="badge-tip"><b>Püf Bilgini</b><p>10 püf noktası onaylanan aşçılara verilir.</p><div class="tip-how"><i class="fa-solid fa-bullseye"></i> 10 püf noktası onaylansın</div><span class="tip-rank"><i class="fa-solid fa-medal"></i> Usta Aşçı kademesi</span></div></div>
+        <div class="badge-card" tabindex="0" data-rank="asci"><span class="badge-ico"><i class="fa-solid fa-camera"></i></span><div><b>Fotoğraf Ustası</b><span>Haz 2024</span></div><span class="b-note earned"><i class="fa-solid fa-circle-check"></i> Kazanıldı · Haz 2024</span><div class="badge-tip"><b>Fotoğraf Ustası</b><p>50 fotoğrafı beğenilen aşçılara verilir.</p><div class="tip-how"><i class="fa-solid fa-bullseye"></i> 50 fotoğrafın beğenilsin</div><span class="tip-rank"><i class="fa-solid fa-bowl-food"></i> Aşçı kademesi</span></div></div>
+        <div class="badge-card" tabindex="0" data-rank="usta-asci"><span class="badge-ico"><i class="fa-solid fa-circle-check"></i></span><div><b>Editör Onaylı</b><span>Eyl 2024</span></div><span class="b-note earned"><i class="fa-solid fa-circle-check"></i> Kazanıldı · Eyl 2024</span><div class="badge-tip"><b>Editör Onaylı</b><p>Editörlerin öne çıkardığı bir tarifin olduğunda verilir.</p><div class="tip-how"><i class="fa-solid fa-bullseye"></i> Editör tarifini öne çıkarsın</div><span class="tip-rank"><i class="fa-solid fa-medal"></i> Usta Aşçı kademesi</span></div></div>
+        <div class="badge-card" tabindex="0" data-rank="usta-asci"><span class="badge-ico"><i class="fa-solid fa-bolt"></i></span><div><b>Hızlı Eller</b><span>May 2025</span></div><span class="b-note earned"><i class="fa-solid fa-circle-check"></i> Kazanıldı · May 2025</span><div class="badge-tip"><b>Hızlı Eller</b><p>Bir ayda 10 tarif paylaşan üretken aşçılara verilir.</p><div class="tip-how"><i class="fa-solid fa-bullseye"></i> Bir ayda 10 tarif paylaş</div><span class="tip-rank"><i class="fa-solid fa-medal"></i> Usta Aşçı kademesi</span></div></div>
+        <div class="badge-card locked" tabindex="0" data-rank="sef"><i class="fa-solid fa-lock badge-lock"></i><span class="badge-ico"><i class="fa-solid fa-trophy"></i></span><div><b>Tarif Maratonu</b><span>Yolda</span></div><span class="b-note locked"><span class="b-left">88 / 100 tarif · 12 kaldı</span><span class="b-prog"><span style="width:88%"></span></span></span><div class="badge-tip"><b>Tarif Maratonu</b><p>100 tarif paylaşan deneyimli aşçılara verilir.</p><div class="tip-how"><i class="fa-solid fa-lock"></i> 12 tarif daha paylaş</div><span class="tip-rank"><i class="fa-solid fa-award"></i> Şef kademesi</span></div></div>
       </div>
     </div>
 
     <!-- Sadakat / seri -->
-    <div class="badge-cat">
-      <div class="badge-head"><h3><i class="fa-solid fa-calendar-check"></i> Sadakat &amp; Seri</h3><span class="bh-cnt">2 / 4</span></div>
+    <div class="badge-cat" data-cat="sadakat">
+      <div class="badge-head"><h3><i class="fa-solid fa-calendar-check"></i> Sadakat &amp; Seri</h3><span class="bh-cnt">3 / 5</span></div>
       <div class="badge-grid">
-        <div class="badge-card"><span class="badge-ico"><i class="fa-solid fa-trophy"></i></span><div><b>Haftanın Aşçısı</b><span>3 kez kazandı</span></div></div>
-        <div class="badge-card"><span class="badge-ico"><i class="fa-solid fa-cake-candles"></i></span><div><b>3 Yıl Dada'lı</b><span>Mar 2024</span></div></div>
-        <div class="badge-card locked"><i class="fa-solid fa-lock badge-lock"></i><span class="badge-ico"><i class="fa-solid fa-fire"></i></span><div><b>Maraton Aşçı</b><span>30 gün seri</span></div></div>
-        <div class="badge-card locked"><i class="fa-solid fa-lock badge-lock"></i><span class="badge-ico"><i class="fa-solid fa-calendar-check"></i></span><div><b>Sadık Dadalı</b><span>2 yıl kaldı</span></div></div>
+        <div class="badge-card" tabindex="0" data-rank="sef"><span class="badge-ico"><i class="fa-solid fa-trophy"></i></span><div><b>Haftanın Aşçısı</b><span>3 kez</span></div><span class="b-note earned"><i class="fa-solid fa-circle-check"></i> Kazanıldı · 3 kez</span><div class="badge-tip"><b>Haftanın Aşçısı</b><p>Haftanın aşçısı seçilen üyelere verilir.</p><div class="tip-how"><i class="fa-solid fa-bullseye"></i> Haftanın aşçısı seçil</div><span class="tip-rank"><i class="fa-solid fa-award"></i> Şef kademesi</span></div></div>
+        <div class="badge-card" tabindex="0" data-rank="usta-sef"><span class="badge-ico"><i class="fa-solid fa-cake-candles"></i></span><div><b>3 Yıl Dada'lı</b><span>Mar 2024</span></div><span class="b-note earned"><i class="fa-solid fa-circle-check"></i> Kazanıldı · Mar 2024</span><div class="badge-tip"><b>3 Yıl Dada'lı</b><p>3 yıldır toplulukla birlikte olan üyelere verilir.</p><div class="tip-how"><i class="fa-solid fa-bullseye"></i> 3 yıl üye kal</div><span class="tip-rank"><i class="fa-solid fa-trophy"></i> Usta Şef kademesi</span></div></div>
+        <div class="badge-card" tabindex="0" data-rank="sef"><span class="badge-ico"><i class="fa-solid fa-snowflake"></i></span><div><b>Mevsim Aşçısı</b><span>Ara 2024</span></div><span class="b-note earned"><i class="fa-solid fa-circle-check"></i> Kazanıldı · Ara 2024</span><div class="badge-tip"><b>Mevsim Aşçısı</b><p>Dört mevsimde de tarif paylaşan aşçılara verilir.</p><div class="tip-how"><i class="fa-solid fa-bullseye"></i> 4 mevsimde de tarif paylaş</div><span class="tip-rank"><i class="fa-solid fa-award"></i> Şef kademesi</span></div></div>
+        <div class="badge-card locked" tabindex="0" data-rank="usta-sef"><i class="fa-solid fa-lock badge-lock"></i><span class="badge-ico"><i class="fa-solid fa-fire"></i></span><div><b>Maraton Aşçı</b><span>Yolda</span></div><span class="b-note locked"><span class="b-left">19 / 30 gün seri · 11 kaldı</span><span class="b-prog"><span style="width:63%"></span></span></span><div class="badge-tip"><b>Maraton Aşçı</b><p>30 gün üst üste aktif kalan aşçılara verilir.</p><div class="tip-how"><i class="fa-solid fa-lock"></i> 11 gün daha üst üste aktif ol</div><span class="tip-rank"><i class="fa-solid fa-trophy"></i> Usta Şef kademesi</span></div></div>
+        <div class="badge-card locked" tabindex="0" data-rank="ustad"><i class="fa-solid fa-lock badge-lock"></i><span class="badge-ico"><i class="fa-solid fa-calendar-check"></i></span><div><b>Sadık Dadalı</b><span>Yolda</span></div><span class="b-note locked"><span class="b-left">3 / 5 yıl · 2 yıl kaldı</span><span class="b-prog"><span style="width:60%"></span></span></span><div class="badge-tip"><b>Sadık Dadalı</b><p>5 yıldır toplulukla olan en sadık üyelere verilir.</p><div class="tip-how"><i class="fa-solid fa-lock"></i> 2 yıl daha üye kal</div><span class="tip-rank"><i class="fa-solid fa-crown"></i> Dada Üstadı kademesi</span></div></div>
       </div>
     </div>
 
     <!-- Nadir / özel -->
-    <div class="badge-cat">
-      <div class="badge-head"><h3><i class="fa-solid fa-gem"></i> Nadir &amp; Özel</h3><span class="bh-cnt">2 / 3</span></div>
+    <div class="badge-cat" data-cat="nadir">
+      <div class="badge-head"><h3><i class="fa-solid fa-gem"></i> Nadir &amp; Özel</h3><span class="bh-cnt">2 / 4</span></div>
       <div class="badge-grid">
-        <div class="badge-card"><i class="fa-solid fa-star b-rare" title="Nadir rozet"></i><span class="badge-ico"><i class="fa-solid fa-medal"></i></span><div><b>Dada Şefi</b><span>Oca 2026 · nadir</span></div></div>
-        <div class="badge-card"><i class="fa-solid fa-star b-rare" title="Nadir rozet"></i><span class="badge-ico"><i class="fa-solid fa-star"></i></span><div><b>Şefin Tercihi</b><span>Eyl 2025 · nadir</span></div></div>
-        <div class="badge-card locked"><i class="fa-solid fa-lock badge-lock"></i><span class="badge-ico"><i class="fa-solid fa-ranking-star"></i></span><div><b>Sezon Şampiyonu</b><span>Yarışmada · nadir</span></div></div>
+        <div class="badge-card" tabindex="0" data-rank="sef"><i class="fa-solid fa-star b-rare" title="Nadir rozet"></i><span class="badge-ico"><i class="fa-solid fa-medal"></i></span><div><b>Dada Şefi</b><span>Oca 2026 · nadir</span></div><span class="b-note earned"><i class="fa-solid fa-circle-check"></i> Kazanıldı · Oca 2026</span><div class="badge-tip"><b>Dada Şefi · nadir</b><p>Editöryal seçkiye giren özel bir rozet.</p><div class="tip-how"><i class="fa-solid fa-bullseye"></i> Editöryal seçkiye gir</div><span class="tip-rank"><i class="fa-solid fa-award"></i> Şef kademesi</span></div></div>
+        <div class="badge-card" tabindex="0" data-rank="usta-sef"><i class="fa-solid fa-star b-rare" title="Nadir rozet"></i><span class="badge-ico"><i class="fa-solid fa-star"></i></span><div><b>Şefin Tercihi</b><span>Eyl 2025 · nadir</span></div><span class="b-note earned"><i class="fa-solid fa-circle-check"></i> Kazanıldı · Eyl 2025</span><div class="badge-tip"><b>Şefin Tercihi · nadir</b><p>Bir şefin ayın tarifi olarak seçtiği rozet.</p><div class="tip-how"><i class="fa-solid fa-bullseye"></i> Şef ayın tarifi seçsin</div><span class="tip-rank"><i class="fa-solid fa-trophy"></i> Usta Şef kademesi</span></div></div>
+        <div class="badge-card locked" tabindex="0" data-rank="ustad"><i class="fa-solid fa-lock badge-lock"></i><span class="badge-ico"><i class="fa-solid fa-ranking-star"></i></span><div><b>Sezon Şampiyonu</b><span>nadir · yolda</span></div><span class="b-note locked"><span class="b-left">Sezon yarışmasında</span><span class="b-prog"><span style="width:45%"></span></span></span><div class="badge-tip"><b>Sezon Şampiyonu · nadir</b><p>Sezon yarışmasını birinci bitiren aşçıya verilir.</p><div class="tip-how"><i class="fa-solid fa-lock"></i> Sezon yarışmasını 1. bitir</div><span class="tip-rank"><i class="fa-solid fa-crown"></i> Dada Üstadı kademesi</span></div></div>
+        <div class="badge-card locked" tabindex="0" data-rank="ustad"><i class="fa-solid fa-lock badge-lock"></i><span class="badge-ico"><i class="fa-solid fa-gem"></i></span><div><b>Efsane Tarif</b><span>nadir · yolda</span></div><span class="b-note locked"><span class="b-left">3.600 / 10.000 beğeni</span><span class="b-prog"><span style="width:36%"></span></span></span><div class="badge-tip"><b>Efsane Tarif · nadir</b><p>Tek bir tarifin 10.000 beğeniye ulaştığında açılır.</p><div class="tip-how"><i class="fa-solid fa-lock"></i> 6.400 beğeni daha</div><span class="tip-rank"><i class="fa-solid fa-crown"></i> Dada Üstadı kademesi</span></div></div>
       </div>
     </div>
   </div>
@@ -1740,6 +1826,87 @@ document.addEventListener('click',function(e){
 
 /* ===== SAYFA JS — sayfa-spesifik script BU İŞARETİN ALTINA eklenir ===== */
 </script>
+<script>
+/* ===== ROZET SAYFASI ETKİLEŞİMİ (revize/rozet) =====
+   1) Merdiven kademe kartı tıklanınca → galeri o kademenin rozetlerine filtrelenir
+      (eşleşen .match vurgulu, diğerleri soluk, boş kategori gizli).
+   2) Aynı kademeye tekrar tıkla / "Filtreyi temizle" → filtre kalkar.
+   3) Rozet kartı hover/focus → tooltip (CSS); dokunmatik için tıkla→tip aç/kapa. */
+(function(){
+  var RANK_LABEL={comez:"Çömez",komi:"Komi",cirak:"Çırak",asci:"Aşçı","usta-asci":"Usta Aşçı",sef:"Şef","usta-sef":"Usta Şef",ustad:"Dada Üstadı"};
+  var steps=Array.prototype.slice.call(document.querySelectorAll(".rank-step[data-rank]"));
+  var sec=document.querySelector(".badge-sec");
+  var cards=Array.prototype.slice.call(document.querySelectorAll(".badge-card[data-rank]"));
+  var cats=Array.prototype.slice.call(document.querySelectorAll(".badge-cat"));
+  var filterBar=document.getElementById("bgalFilter");
+  var bfRank=document.getElementById("bfRank");
+  var bfMeta=document.getElementById("bfMeta");
+  var clearBtn=document.getElementById("bgalClear");
+  if(!sec||!cards.length)return;
+  var active=null;
+
+  function clearFilter(){
+    active=null;
+    sec.classList.remove("filtering");
+    cards.forEach(function(c){c.classList.remove("match");});
+    cats.forEach(function(c){c.classList.remove("cat-empty");});
+    steps.forEach(function(s){s.classList.remove("sel");s.setAttribute("aria-pressed","false");});
+    if(filterBar)filterBar.classList.remove("show");
+  }
+
+  function applyFilter(rank){
+    active=rank;
+    sec.classList.add("filtering");
+    var n=0;
+    cards.forEach(function(c){
+      var hit=c.getAttribute("data-rank")===rank;
+      c.classList.toggle("match",hit);
+      if(hit)n++;
+    });
+    cats.forEach(function(cat){
+      var has=cat.querySelector(".badge-card.match");
+      cat.classList.toggle("cat-empty",!has);
+    });
+    steps.forEach(function(s){
+      var on=s.getAttribute("data-rank")===rank;
+      s.classList.toggle("sel",on);
+      s.setAttribute("aria-pressed",on?"true":"false");
+    });
+    if(filterBar){
+      filterBar.classList.add("show");
+      if(bfRank)bfRank.textContent=RANK_LABEL[rank]||rank;
+      if(bfMeta)bfMeta.textContent=n+" rozet bu kademede vurgulandı — diğerleri soluk.";
+    }
+  }
+
+  steps.forEach(function(s){
+    s.addEventListener("click",function(){
+      var rank=s.getAttribute("data-rank");
+      if(active===rank){clearFilter();return;}            // aynı kademe → toggle off
+      applyFilter(rank);
+      if(sec.scrollIntoView)sec.scrollIntoView({behavior:"smooth",block:"start"});
+    });
+  });
+  if(clearBtn)clearBtn.addEventListener("click",clearFilter);
+
+  /* dokunmatik tooltip — karta tıkla→tip aç (yalnız bir tane açık kalsın) */
+  cards.forEach(function(c){
+    c.addEventListener("click",function(e){
+      if(e.target.closest(".badge-tip"))return;
+      var was=c.classList.contains("tip-open");
+      cards.forEach(function(x){x.classList.remove("tip-open");});
+      if(!was)c.classList.add("tip-open");
+    });
+  });
+  document.addEventListener("click",function(e){
+    if(!e.target.closest(".badge-card"))cards.forEach(function(x){x.classList.remove("tip-open");});
+  });
+  document.addEventListener("keydown",function(e){
+    if(e.key==="Escape"){if(active)clearFilter();cards.forEach(function(x){x.classList.remove("tip-open");});}
+  });
+})();
+</script>
+
 <script>
 /* ===== MOBİL ALT KATMAN YÖNETİCİSİ (revize2/mobil1 — kanonik) =====
    Kural: ekranda en fazla 1 sabit alt şerit. Çerez onayı (geçici, öncelikli)

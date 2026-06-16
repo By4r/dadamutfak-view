@@ -396,6 +396,14 @@ img{display:block;max-width:100%}
                 <button class="fp on" type="button"><i class="fa-solid fa-children"></i> Aile Dostu</button>
                 <button class="fp on" type="button"><i class="fa-solid fa-tree"></i> Bahçe</button>
                 <button class="fp on" type="button"><i class="fa-solid fa-credit-card"></i> Kart Geçerli</button>
+                <button class="fp" type="button"><i class="fa-solid fa-leaf"></i> Vejetaryen</button>
+                <button class="fp" type="button"><i class="fa-solid fa-seedling"></i> Vegan Seçenek</button>
+                <button class="fp" type="button"><i class="fa-solid fa-guitar"></i> Canlı Müzik</button>
+                <button class="fp" type="button"><i class="fa-solid fa-umbrella-beach"></i> Teras</button>
+                <button class="fp" type="button"><i class="fa-solid fa-mountain-sun"></i> Manzara</button>
+                <button class="fp" type="button"><i class="fa-solid fa-bag-shopping"></i> Paket Servis</button>
+                <button class="fp" type="button"><i class="fa-solid fa-paw"></i> Evcil Dostu</button>
+                <button class="fp" type="button"><i class="fa-solid fa-people-group"></i> Grup Rezervasyonu</button>
                 <button class="fp" type="button"><i class="fa-solid fa-square-parking"></i> Otopark</button>
                 <button class="fp" type="button"><i class="fa-solid fa-wheelchair"></i> Engelli Erişimi</button>
                 <button class="fp" type="button"><i class="fa-solid fa-wifi"></i> Ücretsiz Wi-Fi</button>
@@ -508,18 +516,30 @@ img{display:block;max-width:100%}
   if(q.get('nav')==='1') document.body.classList.add('nav-open');
 })();
 
-/* ============ SAYFA JS — sekme geçişi + steper + özellik toggle ============ */
+/* ============ SAYFA JS — sekme geçişi + steper + özellik toggle ============
+   Sekme bug fix: setTab her zaman geçerli bir sekmeye düşer (bilinmeyen/null
+   tab'da musaitlik'e); tıklamada URL (?tab=) + sidebar aktif durumu senkronlanır
+   ki "İşletme Profili" hem tab hem sidebar'dan tutarlı açılsın. */
 (function(){
   var q=new URLSearchParams(location.search);
-  var tabs=document.querySelectorAll('.st-btn'),
-      panes=document.querySelectorAll('.set-pane');
-  function setTab(t){
+  var tabs=Array.prototype.slice.call(document.querySelectorAll('.st-btn')),
+      panes=Array.prototype.slice.call(document.querySelectorAll('.set-pane')),
+      navLinks=Array.prototype.slice.call(document.querySelectorAll('.pnl-nav .pnl-link[data-nav]'));
+  var VALID=tabs.map(function(b){return b.dataset.tab;});
+  var NAVMAP={musaitlik:'musaitlik',profil:'isletme',bildirim:'bildirim'};
+  function setTab(t,push){
+    if(VALID.indexOf(t)===-1) t='musaitlik';
     tabs.forEach(function(b){b.classList.toggle('is-on',b.dataset.tab===t)});
     panes.forEach(function(p){p.classList.toggle('active',p.dataset.pane===t)});
+    navLinks.forEach(function(l){l.classList.toggle('is-active',l.dataset.nav===NAVMAP[t])});
+    if(push){
+      var u=new URL(location.href);
+      if(t==='musaitlik') u.searchParams.delete('tab'); else u.searchParams.set('tab',t);
+      history.replaceState(null,'',u);
+    }
   }
-  tabs.forEach(function(b){b.addEventListener('click',function(){setTab(b.dataset.tab)})});
-  var initTab=q.get('tab');
-  if(initTab==='profil'||initTab==='bildirim') setTab(initTab);
+  tabs.forEach(function(b){b.addEventListener('click',function(){setTab(b.dataset.tab,true)})});
+  setTab(q.get('tab')||'musaitlik',false);
 
   /* masa kapasitesi stepper */
   document.querySelectorAll('.stepper[data-step]').forEach(function(st){

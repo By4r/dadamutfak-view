@@ -696,6 +696,70 @@ body.detay-open .apt-drawer{transform:translateX(0)}
   </div>
 </aside>
 
+<!-- ============ MANUEL REZERVASYON MODALI (boş hücre / üst buton) ============ -->
+<style>
+.man-overlay{position:fixed;inset:0;background:rgba(20,18,12,.5);z-index:120;opacity:0;visibility:hidden;transition:opacity .25s var(--ease),visibility .25s}
+.man-overlay.show{opacity:1;visibility:visible}
+.man-modal{position:fixed;z-index:121;left:50%;top:50%;transform:translate(-50%,-46%);width:min(520px,calc(100vw - 32px));max-height:calc(100vh - 48px);overflow-y:auto;background:var(--paper);border-radius:var(--radius-lg);box-shadow:var(--sh-lg);opacity:0;visibility:hidden;transition:opacity .25s var(--ease),visibility .25s,transform .25s var(--ease)}
+.man-modal.show{opacity:1;visibility:visible;transform:translate(-50%,-50%)}
+.man-head{display:flex;align-items:flex-start;gap:12px;padding:20px 22px 16px;border-bottom:1px solid var(--line)}
+.man-head .mh-ico{flex:none;width:42px;height:42px;border-radius:var(--radius-md);background:var(--green-tint);color:var(--green-deep);display:grid;place-items:center;font-size:16px}
+.man-head h3{font-size:18px;margin:0;color:var(--slate)}
+.man-head p{font-size:12.5px;color:var(--muted);font-weight:600;margin-top:3px}
+.man-close{margin-left:auto;background:none;border:none;font-size:17px;color:var(--muted);cursor:pointer;padding:4px;line-height:1;transition:.18s var(--ease)}
+.man-close:hover{color:var(--slate)}
+.man-body{padding:18px 22px 20px}
+.man-field{margin-bottom:14px}
+.man-field>label{display:block;font-size:12.5px;font-weight:700;color:var(--slate);margin-bottom:6px}
+.man-field input,.man-field select,.man-field textarea{width:100%;font-family:inherit;font-size:14px;color:var(--slate);background:var(--bg);border:1px solid var(--line);border-radius:var(--radius-md);padding:11px 13px;transition:.18s var(--ease)}
+.man-field input:focus,.man-field select:focus,.man-field textarea:focus{outline:none;border-color:var(--green);background:#fff;box-shadow:0 0 0 3px rgba(59,183,126,.12)}
+.man-field textarea{resize:vertical;min-height:62px}
+.man-row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.man-foot{display:flex;gap:10px;justify-content:flex-end;margin-top:4px}
+.man-ok{display:none;text-align:center;padding:32px 24px 28px}
+.man-ok .mo-ico{width:56px;height:56px;border-radius:50%;background:var(--green);color:#fff;display:grid;place-items:center;font-size:24px;margin:0 auto 14px}
+.man-ok h3{font-size:18px;margin-bottom:6px;color:var(--slate)}
+.man-ok p{font-size:13.5px;color:var(--muted);font-weight:500;line-height:1.55;max-width:330px;margin:0 auto 18px}
+.man-modal.done .man-body{display:none}
+.man-modal.done .man-ok{display:block}
+@media(max-width:640px){.man-row2{grid-template-columns:1fr}}
+</style>
+<div class="man-overlay" id="manOverlay"></div>
+<div class="man-modal" id="manModal" role="dialog" aria-modal="true" aria-labelledby="manTitle">
+  <div class="man-head">
+    <span class="mh-ico"><i class="fa-solid fa-calendar-plus"></i></span>
+    <div>
+      <h3 id="manTitle">Manuel Rezervasyon</h3>
+      <p id="manSlotInfo">Boş bir masaya misafir ekle</p>
+    </div>
+    <button class="man-close" id="manClose" type="button" aria-label="Kapat"><i class="fa-solid fa-xmark"></i></button>
+  </div>
+  <form class="man-body" id="manForm">
+    <div class="man-field"><label for="manName">Misafir adı</label><input type="text" id="manName" placeholder="Ad Soyad" autocomplete="off" required></div>
+    <div class="man-row2">
+      <div class="man-field"><label for="manDate">Tarih</label><input type="text" id="manDate" placeholder="—"></div>
+      <div class="man-field"><label for="manTime">Saat</label><input type="text" id="manTime" placeholder="—"></div>
+    </div>
+    <div class="man-row2">
+      <div class="man-field"><label for="manPeople">Kişi sayısı</label>
+        <select id="manPeople"><option>1 kişi</option><option selected>2 kişi</option><option>3 kişi</option><option>4 kişi</option><option>5 kişi</option><option>6 kişi</option><option>7+ kişi</option></select></div>
+      <div class="man-field"><label for="manServis">Servis</label>
+        <select id="manServis"><option>Öğle servisi</option><option>Akşam servisi</option></select></div>
+    </div>
+    <div class="man-field"><label for="manNote">Not (opsiyonel)</label><textarea id="manNote" placeholder="Masa tercihi, özel istek, telefon…"></textarea></div>
+    <div class="man-foot">
+      <button type="button" class="btn btn-ghost btn-sm" id="manCancel">Vazgeç</button>
+      <button type="submit" class="btn btn-green btn-sm"><i class="fa-solid fa-check"></i> Rezervasyon Ekle</button>
+    </div>
+  </form>
+  <div class="man-ok" id="manOk">
+    <div class="mo-ico"><i class="fa-solid fa-check"></i></div>
+    <h3>Rezervasyon eklendi</h3>
+    <p id="manOkMsg">Misafir takvime eklendi.</p>
+    <button type="button" class="btn btn-green btn-sm" id="manDone">Tamam</button>
+  </div>
+</div>
+
 <script>
 /* ============ PANEL ORTAK JS — kopyala, dokunma ============ */
 (function(){
@@ -754,6 +818,79 @@ body.detay-open .apt-drawer{transform:translateX(0)}
 
   /* SS paramı: ?detay=1 drawer açık */
   if(q.get('detay')==='1') openDrawer(null);
+})();
+
+/* ============ MANUEL REZERVASYON MODALI — boş hücre/üst buton ============ */
+(function(){
+  var ov=document.getElementById('manOverlay'),
+      modal=document.getElementById('manModal'),
+      form=document.getElementById('manForm'),
+      grid=document.querySelector('.cal-grid');
+  if(!modal||!form) return;
+  var fName=document.getElementById('manName'),
+      fDate=document.getElementById('manDate'),
+      fTime=document.getElementById('manTime'),
+      fServis=document.getElementById('manServis'),
+      slotInfo=document.getElementById('manSlotInfo'),
+      okMsg=document.getElementById('manOkMsg');
+
+  function openModal(o){
+    o=o||{};
+    modal.classList.remove('done');
+    form.reset(); fName.value='';
+    fDate.value=o.date||''; fTime.value=o.time||'';
+    if(o.servis) fServis.value=o.servis;
+    slotInfo.textContent=(o.date&&o.time)? (o.date+' · '+o.time+(o.servis?' · '+o.servis:'')) : 'Boş bir masaya misafir ekle';
+    ov.classList.add('show'); modal.classList.add('show');
+    document.body.style.overflow='hidden';
+    setTimeout(function(){fName.focus()},90);
+  }
+  function closeModal(){ ov.classList.remove('show'); modal.classList.remove('show'); document.body.style.overflow=''; }
+
+  /* boş hücrenin gün+saatini takvim grid'indeki konumundan türet */
+  function slotContext(btn){
+    var cell=btn.closest('.cal-cell'); if(!cell||!grid) return {};
+    var kids=Array.prototype.slice.call(grid.children);
+    var i=kids.indexOf(cell); if(i<8) return {};
+    var pos=i%8; if(pos===0) return {};
+    var dayEl=kids[pos], hourEl=kids[Math.floor(i/8)*8];
+    var dB=dayEl&&dayEl.querySelector('b')?dayEl.querySelector('b').textContent.trim():'';
+    var dS=dayEl&&dayEl.querySelector('span')?dayEl.querySelector('span').textContent.trim():'';
+    var time=hourEl?hourEl.textContent.trim():'';
+    var hh=parseInt(time,10);
+    return { date:(dB+', '+dS).replace(/^,\s*/,''), time:time, servis:(hh<17?'Öğle servisi':'Akşam servisi') };
+  }
+
+  document.querySelectorAll('.slot.free').forEach(function(s){
+    s.addEventListener('click',function(){ openModal(slotContext(s)); });
+  });
+  /* gün görünümü "Manuel Ekle" boş satırı */
+  document.querySelectorAll('.appt-row.is-free .btn').forEach(function(b){
+    b.addEventListener('click',function(){
+      var t=b.closest('.appt-row').querySelector('.appt-time');
+      var time=t?t.childNodes[0].textContent.trim():'';
+      var hh=parseInt(time,10);
+      openModal({date:'Per, 11 Haz',time:time,servis:(hh<17?'Öğle servisi':'Akşam servisi')});
+    });
+  });
+  /* üstteki "+ Manuel Rezervasyon" → boş form */
+  var add=document.getElementById('addRsv');
+  if(add) add.addEventListener('click',function(){ openModal({}); });
+
+  form.addEventListener('submit',function(e){
+    e.preventDefault();
+    var nm=fName.value.trim()||'Misafir';
+    okMsg.textContent=nm+(fDate.value?' · '+fDate.value:'')+(fTime.value?' · '+fTime.value:'')+' takvime eklendi. (Mockup — gerçek kayıt yapılmaz.)';
+    modal.classList.add('done');
+  });
+  document.getElementById('manClose').addEventListener('click',closeModal);
+  document.getElementById('manCancel').addEventListener('click',closeModal);
+  document.getElementById('manDone').addEventListener('click',closeModal);
+  ov.addEventListener('click',closeModal);
+  document.addEventListener('keydown',function(e){ if(e.key==='Escape'&&modal.classList.contains('show')) closeModal(); });
+
+  /* SS paramı: ?manuel=1 modal açık (boş hücre senaryosu) */
+  if(new URLSearchParams(location.search).get('manuel')==='1') openModal({date:'Per, 11 Haz',time:'20.00',servis:'Akşam servisi'});
 })();
 </script>
 
