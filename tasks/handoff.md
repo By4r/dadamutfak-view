@@ -1,3 +1,12 @@
+> **🗂️ dizin.html CİLA DONE ✅ (push'lu, HEAD `b0155aa`):** Patron-inceleme sayfa dizini (`mockups/dizin.html`,
+> 93 sayfa · 16 grup · mobil-first · canlı filtre + grup atlama çipleri). Beyar canlı-SS turunda yakalanan 3
+> bulgu düzeltildi: (1) çipe tıklayınca section başlığı sticky header altında kalıyordu →
+> `scroll-padding-top` `html`'e taşındı + `.group`'a `scroll-margin-top:132px` (başlık payla görünür);
+> (2) radius tutarsızdı → tek ölçek: çip/arama/ikon **12px** · sayaç **8px** · kart **14px** (tam pill kalmadı);
+> (3) zemin krem'di → **site grisi `#f9f9f9`** (line/topbar da nötrlendi). Render SS 1440/390 doğrulandı.
+> Canlı: https://by4r.github.io/dadamutfak-view/mockups/dizin.html
+> **SIRADAKİ değişmedi:** Wave 3 nav-sweep (besin submenu + "Pro'ya Yükselt" + "Tüm Rozetler" + video etiketi).
+
 # DadaMutfak — REVİZE TURU + PILL CİLA DONE ✅ (HEAD `d931115`) · SIRADAKİ: Wave 3 nav-sweep · Ne Pişirsem revizesi · madde 3 Dolapta Ne Var
 
 > **✅ REVİZE TURU + PILL CİLA DONE (push'lu, HEAD `d931115`):** Tüm revize işleri + Beyar canlı-SS cila turu
