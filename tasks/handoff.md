@@ -1,4 +1,13 @@
-# DadaMutfak — REVİZE TURU DONE ✅ + cila/dropdown (HEAD `5f23244`) · WAVE 3 (kalan nav-sweep) SIRADA · madde 3 BEKLİYOR
+# DadaMutfak — REVİZE TURU + PILL CİLA DONE ✅ (HEAD `d931115`) · SIRADAKİ: Wave 3 nav-sweep · Ne Pişirsem revizesi · madde 3 Dolapta Ne Var
+
+> **✅ REVİZE TURU + PILL CİLA DONE (push'lu, HEAD `d931115`):** Tüm revize işleri + Beyar canlı-SS cila turu
+> tamam. Son cila (`d931115`): rozet kademe pill ("BURADASIN"/"SEÇİLİ") metni gri/soluk görünüyordu →
+> specificity fix (`.rank-step span` 0,1,1 eziyordu → `.rank-step .rs-now`/`.rs-pick` 0,2,0) → metin **#fff +
+> font-weight 800**, computed (`rgb(255,255,255)`/800) + render SS 1440 doğrulandı.
+> **SIRADAKİ:** (1) **Wave 3 nav-sweep** — besin submenu + "Pro'ya Yükselt" avatar dropdown + "Tüm Rozetler"
+> link + video Pro etiketi (NOT: "Rezervasyonlarım" dropdown öğesi `5f23244`'te zaten eklendi, tekrar etme).
+> (2) **Ne Pişirsem revizesi.** (3) **madde 3 — Dolapta Ne Var?** (Beyar detay verecek).
+>
 
 > **🔁 REVİZE SONRASI EK COMMIT'LER (Beyar canlı-SS turu, hepsi push'lu):**
 > - `c9f9b16` — `rozetler-v1` cila: (1) rozet tooltip BAŞLIK+kademe görünmüyordu → CSS specificity bug
