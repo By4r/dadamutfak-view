@@ -1,10 +1,71 @@
-# DadaMutfak — REVİZE TURU · WAVE 2 FOUNDATION DONE ✅ · WAVE 2 (8/13/9/10) PENDING
+# DadaMutfak — REVİZE TURU · WAVE 2 DONE+COMMIT ✅ (`65b0047`) · REVİZE TURU SIRADA · WAVE 3 (nav-sweep) EN SON
 
-> Tek doğruluk kaynağı. Güncelleme: 2026-06-16 (**WAVE 2 FOUNDATION DONE ✅** commit `b31e4d4`
-> origin/main'e push'lu. 3 yeni sayfa + `_shell.html` primitive + 2 doküman. Tek session (izole iş,
-> agent team yok), her parça render SS 1440/768/390 + etkileşim testi + 0 JS hatası ile doğrulandı.).
+> Tek doğruluk kaynağı. Güncelleme: 2026-06-16 (**WAVE 2 MODÜLLERİ DONE ✅ — commit `65b0047`
+> origin/main'e push'lu, Beyar SS turu onayladı**. Agent team: lead delegate + 3 teammate (diyetisyen-restoran ardışık 8→10 · video · rozet-
+> dagitim ardışık 9→9b), çakışmasız/disjoint dosya setleri. 5 task (shared task list) hepsi lead bağımsız
+> KANITLI kabul: numstat + grep + render SS 1440/768/390 + tık-testi + 0 JS hatası. Foundation primitive'leri
+> (`.pro-gate` / `.creator-sub` / `.badge-band` / 8-kademe merdiven) TÜKETİLDİ — yeniden icat YOK (byte-match
+> teyitli). NAV'a DOKUNULMADI (Wave 3 sweep). SS: `mockups/outputs/wave2-m{8,9,9b,10,13}-ss/`.
 >
-> **🧱 WAVE 2 FOUNDATION YAPILDI (F1/F2/F3 — patron onaylı 2026-06-16):**
+> **🌊 WAVE 2 MODÜLLERİ YAPILDI (madde 8/13/9/10 — kanıtlı):**
+> - **M8 — Diyetisyen Pro** (`diyetisyen-profil-v1.html` +95/−1 · `panel-shell.html` +124/−0): profil↔panel
+>   nav linki (`<a class="pf-panel">`) KALDIRILDI (CSS def `.pf-panel{` korundu) → public profil sahibin
+>   yönetim arayüzüne atlamıyor. `panel-shell` dashboard'a canonical `[data-pro-gate]`'li `.pro-band` (Pro+
+>   tier · 3 pro-only kart: pro içerik/danışan indirimi/öne çıkan profil · CTA→`pro-v1.html`) + profil
+>   tarifler pane'inde `.pf-pro-band` ("Elif'in Pro koleksiyonu", `[data-pro-gate]`). Gate primitive `_shell`
+>   ile byte-identical, her dosyada tek `#proGate`. Tık-test: gate aç→X/backdrop/Esc kapa, 0 JS hatası.
+> - **M13 — Video Pro/Abone** (`video-mutfagi-v1.html` +241/−1): İKİ KAVRAM NET AYRI — (1) ücretsiz
+>   `.creator-sub`/`[data-abone-takip]` "Abone Ol" (3 creator kartı: Ayşe Tülin/Şef Kaan/Zeynep Usta +
+>   rütbe rozeti + sosyal link); (2) ücretli premium "Restoran Sırları" serisi `[data-pro-gate]` kilit →
+>   `pro-v1.html`. Tık-test: abone toggle çalışıyor VE `gateOpenedBySub=false` (abone içeriği AÇMIYOR);
+>   pro-gate ayrı çalışıyor. İki primitive canonical, 0 JS hatası.
+> - **M9 — Rozet dağıtımı** (`hesabim` +86 · `sefler` +19 · `sef-ol` +46 · `mutfak-defteri` +1/−1 ·
+>   YENİ `admin-rozet-v1.html` ~330L): hesabim'e `rank-now` kademe paneli (Usta Aşçı·15 rozet·8.450 puan·
+>   Şef'e %75) + `.badge-band` teaser; sefler 13 karta `.sef-rank` kademe rozeti; sef-ol'a 8-kademe `.ladder`
+>   teaser; mutfak-defteri "Tüm Rozetler →" `href="#"`→`rozetler-v1.html`; admin stub (`panel-shell` tüketildi,
+>   23 disabled buton + "CRUD pasif/Laravel fazına not"). Foundation `.badge-band`/`.ladder` VERBATIM,
+>   persona `rozet-veri.md` ile birebir.
+> - **M9b — diyetisyen-profil rozet bloğu** (M8 SONRASI ardışık): `.pf-head`↔`.pf-stats` arasına `.badge-band`
+>   teaser (`.pf-badges`: Usta Aşçı + 15/20 + 5 vitrin rozet + "Tüm Rozetler →"`rozetler-v1`). M8'in sabit
+>   marker'ına konumlandı; FORBIDDEN bölgelere (`.pf-actions`/`.pf-pro-band`/`.pro-gate`) 0 dokunuş (teyitli);
+>   pro-gate hâlâ çalışıyor.
+> - **M10 — Restoran→Randevu** (`mekan-detay-v1.html` +303/−0 · YENİ `mekan-panel`584L/`mekan-rezervasyonlar`
+>   761L/`mekan-ayarlar`562L/`isletme-ekle`2032L): mekan-detay'a **masa rezervasyonu** modalı (diyetisyen
+>   apt-modal 3-adım İSKELETİ miras, semantik masa rez.: **Adım1 kişi sayısı → Adım2 tarih/saat → Adım3
+>   onay/başarı**; ücret/depozito YOK, "ön ödeme alınmaz"); mekan paneli = panel-shell **yeşil** kardeşi
+>   (Rezervasyonlar=dyt-randevular takvim/drawer mirror · Müsaitlik&Ayarlar · İşletme Profili) + Pro+ `.pro-band`
+>   canonical gate; "İşletmeni Ekle" = diyetisyen-ol kardeşi form. Tık-test: 3-adım akış (4 kişi·Cum 14·20:00·
+>   Doğum günü recap) uçtan uca + Geri/İleri sağlaması, 0 JS hatası. Nav-sweep YOK (§8.2 Keşfet-içi).
+> - **✅ COMMIT'Lİ** (`65b0047`, origin/main): 8 değişen + 5 yeni mockup tek commit'te. `isletme-ekle`'deki
+>   5 "diyetisyen" geçişi = miras chrome (topbar/drawer nav + paylaşılan form option + 1 CSS yorum) → Wave 3
+>   sweep kapsamı, içerik hatası DEĞİL. **SS commit'e girmedi** (`mockups/outputs/wave2-*-ss/` — bilinçli hariç).
+>
+> **🔧 REVİZE TURU PENDING (paralel agent — Wave 3 nav-sweep'ten ÖNCE):** Beyar SS turu bulguları. Domain'ler
+> büyük ölçüde disjoint → paralel teammate'ler (restoran / rozet / video / sofra ayrı dosya setleri; R-hero
+> çok-dosya ama yalnız hero görsel swap).
+> - **R-restoran** (`mekan-detay` + `mekan-panel` + yeni `rezervasyonlarim-v1.html`): (a) mekan-detay
+>   "Rezervasyon Yap" butonu KAYIYOR → konum/katman fix. (b) rezervasyon modalı **kişi seçici UI küçült**
+>   (büyük 1–6 blokları → kompakt selector). (c) **YENİ `rezervasyonlarim-v1.html`** — kullanıcının kendi
+>   rezervasyonları sayfası (mekan paneli işletme tarafı; bu kullanıcı tarafı). (d) mekan paneli **"İşletme
+>   Profili" tab TIKLANAMIYOR — BUG fix**. (e) özellik seçenekleri artır: vejetaryen/vegan · canlı müzik ·
+>   teras · manzara · paket servis · evcil dostu · grup rezervasyonu. (f) **rezervasyon ek özellik (öneri):**
+>   özel istek/not · masa tercihi · iptal-değiştir · özel gün notu.
+> - **R-rozet** (`rozetler-v1.html` derinleştir): kademe kartları **tıklanabilir** (o kademenin rozetlerini
+>   göster) · rozet **hover→açıklama** · her rozette "almak için gereken" küçük not · kademe çeşit/sayı artır.
+> - **R-video** (`video-mutfagi`): "Dada Akış" şeridine premium içerik (`.pro-gate`).
+> - **R-sofra** (`sofra-duzeni-v1.html` hub): one-page sekme + sol-sağ bilgi KALDIR → yalnız kart→detay akışı.
+> - **R-hero** (çok-dosya, yalnız hero görsel): yeni sayfalara idarelik/temsilî hero görseli (highfield gelince
+>   swap) — `pro-v1` · `pro-odeme-v1` · `rozetler-v1` · 8 sofra detay · 4 besin rehberi · mekan sayfaları · video.
+> - **BEKLEYEN — madde 3 (Dolapta Ne Var? yeniden revize):** Beyar detay verecek, henüz başlama.
+>
+> **🧹 WAVE 3 PENDING — nav chrome-sweep (TEK sahip, EN SON, paralel DEĞİL):** `tasks/nav-degisiklik-
+> listesi.md` → tek idempotent Python regex sweep ~61 dosya, **href-agnostik**. Kapsam: 5b besin submenu
+> (4 öğe) + F1 "Pro'ya Yükselt" avatar dropdown + F2 "Tüm Rozetler" link + 13 video Pro etiketi + (M10
+> mekan paneli erişimi zaten panel-shell footer/CTA üzerinden, nav-sweep gerektirmez). `isletme-ekle` miras
+> chrome'u da bu sweep'te tutarlılaşır. Negatif grep + 2× idempotent re-run + dropdown-açık SS ile doğrula.
+> Tarifler/Mutfak Sırları DOKUNULMAZ.
+>
+> **🧱 ÖNCEKİ ADIM — WAVE 2 FOUNDATION (F1/F2/F3 — patron onaylı 2026-06-16, commit `b31e4d4` push'lu):**
 > - **F1 — Pro abonelik + tier (site-geneli TEK üyelik):**
 >   - `pro-v1.html` (yeni, 1903 L): §2f hero + 3-tier `.pro-grid` (**Pro / Pro+ / Pro Max** — nötr/ticari
 >     isim, şef-kademeden AYRI; `reklam-ver .pk-card` dili miras: t1/t2/t3, t2 `.featured`+`.pro-flag`
