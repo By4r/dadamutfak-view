@@ -1,4 +1,16 @@
-# DadaMutfak — REVİZE TURU DONE+COMMIT ✅ (`51c7445`) · WAVE 3 (nav-sweep) SIRADA · madde 3 (Dolapta Ne Var?) BEKLİYOR
+# DadaMutfak — REVİZE TURU DONE ✅ + cila/dropdown (HEAD `5f23244`) · WAVE 3 (kalan nav-sweep) SIRADA · madde 3 BEKLİYOR
+
+> **🔁 REVİZE SONRASI EK COMMIT'LER (Beyar canlı-SS turu, hepsi push'lu):**
+> - `c9f9b16` — `rozetler-v1` cila: (1) rozet tooltip BAŞLIK+kademe görünmüyordu → CSS specificity bug
+>   (`.badge-card b/span`, `.badge-tip`'i eziyordu) `.badge-card .badge-tip ...` ile çözüldü; (2) kademe
+>   "BURADASIN"/"SEÇİLİ" pill'leri kart DIŞINA taşıyordu → sticky header kırpıyordu → kart İÇİNE alındı
+>   (uniform padding, ikonlar hizalı, artık asla kırpılmaz).
+> - `5f23244` — **NAV (avatar dropdown):** "Rezervasyonlarım" profil dropdown'ına eklendi (Alışveriş Listem↔
+>   Bildirimler arası, `fa-calendar-check`). İdempotent sweep **73 dosya** (`.acct-menu` olan tümü), her biri
+>   +1/−0; idempotent re-run=0; render-doğrulamalı. ⚠️ **Wave 3 bu öğeyi TEKRAR EKLEMESİN** (zaten yapıldı);
+>   Wave 3'ün avatar-dropdown işi yalnız "Pro'ya Yükselt" kaldı.
+>
+
 
 > Tek doğruluk kaynağı. Güncelleme: 2026-06-16 (**REVİZE TURU DONE ✅ — commit `51c7445` origin/main'e
 > push'lu**. Agent team: lead delegate + 4 paralel teammate (restoran · rozet · video · sofra-hero),
