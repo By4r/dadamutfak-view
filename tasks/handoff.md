@@ -1,3 +1,31 @@
+> **🟢 WAVE 4 — DADAFIT MODÜLÜ TAMAMLANDI: 9 YENİ SAYFA + NAV/CTA REBIND + QA DONE ✅ (2026-06-16):**
+> DadaFit modülü **10 sayfaya** çıktı (hub + 9 yeni). Spec'ler: `tasks/dadafit-modul-spec.md` (10 sayfa + tam
+> gezinme haritası), `tasks/dadafit-faz2-spec.md`. CTA/eksik envanteri + mobil QA: `outputs/dadafit-*.md` (ignore'lı).
+> **YENİ SAYFALAR (9, hepsi DadaFit imza dili + header-blok miras, paralel teammate'lerle üretildi):**
+> `egzersiz-kutuphane-v1` (liste+filtre) · `egzersiz-detay-v1` (set×tekrar×ağırlık inline set-takip + canlı hacim) ·
+> `program-detay-v1` (4 Hafta Ev Antrenmanı, haftalık akordeon) · `program-liste-v1` (filtre + süre-omurgası kart) ·
+> `dadafit-kopru-v1` (beslenme↔hareket köprü, MET yakım→bütçe, Mifflin TDEE türevi — gunluk-kalori BOZULMADI) ·
+> `challenge-v1` (Haziran Challenge, 30-gün takvim) · `antrenorler-v1` (dizin, uzmanlık SLIDER filtre, Onaylı kart) ·
+> `antrenor-ol-v1` (başvuru, sef-ol klonu) · `antrenor-detay-v1` (Selin Aksoy profil, diyetisyen-profil klonu).
+> **`dadafit-hub-v1.html` değişti:** nav rebind (Egzersizler→kütüphane, Programlar→**program-liste**, Challenge→
+> challenge-v1, Antrenörler→antrenorler-v1) + TÜM gövde teaser/CTA bağlandı (df-goal→program-liste, df-fcard/see-all→
+> kütüphane, hub-card örnekler→detay/program-detay, Antrenör Ol→antrenor-ol, Profili Gör→antrenor-detay). **Dead nav `#`=0.**
+> **BUG FIX'LERİ (lead inline):** (a) **egzersiz-detay footer kopması** → `.pro-gate` CSS'i eksikti, modal akışta 194px
+> yer kaplıyordu → program-detay'dan miras, boşluk 194→0px; (b) **challenge gate** → "Challenge'a Katıl"/"Bugünün
+> hareketini yap" hard `giris` redirect yerine sayfa-içi `data-lg-gate` modali (modül pattern'i), fiilen tıklayarak test;
+> (c) **antrenor-detay** "Danışan Ol"/"Mesaj Gönder" dead#→data-lg-gate; (d) **antrenorler** kırık 3. kart görseli +
+> uzmanlık filtresi 2-satır→tek-satır SLIDER (sticky etiket); (e) egzersiz-detay üst boşluk sıkıştırma + hero görseli
+> eklendi (kütüphane hero'su da hub df-hero-media deseniyle: desatüre görsel+gradient).
+> **DOĞRULAMA:** davranışsal final regresyon (Playwright tıklama — 10 sayfa console-temiz/0 yatay-taşma, 0 kırık link,
+> nav+gate+çapraz link); desktop review; **mobil QA 0 KRİTİK** (30/30 viewport kombinasyonu taşma yok, tüm etkileşim çalışıyor).
+> **⚠️ P1'E BIRAKILDI (Beyar kararı, mobil cila):** touch target 40→44px (icon-btn/hamburger/bn-item global) ·
+> challenge/kopru <11px (7px'e kadar) fontlar → ≥11px · 360px dar-cihaz birkaç-px clip'leri · challenge/antrenorler
+> promo-strip bottom-nav gizleme. Detay: `outputs/dadafit-mobile-qa-rapor.md`. ⚠️ challenge geçmiş/yaklaşan challenge
+> kartları (`cc-card`) hâlâ `#` (P1, çoklu-challenge arşivi gelince). ⚠️ reCAPTCHA Gizlilik/Şartlar = dış placeholder (kasıtlı `#`).
+> **READ-ONLY korundu (git-clean):** gunluk-kalori, dyt-recete-builder, sef-ol, diyetisyen-profil, diyetisyen-dizin.
+> **SIRADAKİ:** mobil 🟡 cila turu (P1 listesi) · DadaFit header+nav'ı diğer ~93 dosyaya YAYMA hâlâ ayrı iş ·
+> antrenör-profil veri varyantları + çoklu-challenge arşivi = ileri faz.
+
 > **🟢 WAVE 4 — DADAFIT KENDİ HEADER'I (ALT-MARKA) + RÖTUŞLAR DONE ✅ (2026-06-16):** DadaFit, DadaStore/
 > DadaAkademi seviyesinde **tam alt-marka header'ına** çıkarıldı (Store/Akademi pattern'i replicate).
 > **Plan:** `tasks/dadafit-header-plan.md` · **yeniden-kullanım kılavuzu:** `tasks/dadafit-header-blok.md`.
