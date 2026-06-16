@@ -1,6 +1,53 @@
-# DadaMutfak — REVİZE TURU · WAVE 2 DONE+COMMIT ✅ (`65b0047`) · REVİZE TURU SIRADA · WAVE 3 (nav-sweep) EN SON
+# DadaMutfak — REVİZE TURU DONE+COMMIT ✅ (`51c7445`) · WAVE 3 (nav-sweep) SIRADA · madde 3 (Dolapta Ne Var?) BEKLİYOR
 
-> Tek doğruluk kaynağı. Güncelleme: 2026-06-16 (**WAVE 2 MODÜLLERİ DONE ✅ — commit `65b0047`
+> Tek doğruluk kaynağı. Güncelleme: 2026-06-16 (**REVİZE TURU DONE ✅ — commit `51c7445` origin/main'e
+> push'lu**. Agent team: lead delegate + 4 paralel teammate (restoran · rozet · video · sofra-hero),
+> çakışmasız/disjoint dosya setleri, her biri lead bağımsız KANITLI kabul (render SS 1440/768/390 + numstat +
+> tık-test + 0 JS hatası). Sonrasında Beyar canlı-SS turunda yakaladığı UI/UX bulguları lead tarafından
+> doğrudan düzeltildi (frontend-design skill + render-doğrulamalı). NAV'a DOKUNULMADI (Wave 3). SS:
+> `mockups/outputs/revize-{restoran,rozet,video,sofra,uifix,hero2}-ss/` (commit'e GİRMEDİ — bilinçli hariç).
+>
+> **🔧 REVİZE TURU YAPILDI (4 teammate + lead UI fix turu — commit `51c7445`):**
+> - **R-restoran** (`mekan-detay` +109/−37 · `mekan-ayarlar` +27/−7 · `mekan-rezervasyonlar` +137 · YENİ
+>   `rezervasyonlarim-v1.html`): (a) "Rezervasyon Yap" buton kayması fix (≤1024 `flex-basis` yok→`flex:1 1 100%`);
+>   (b) rez modalı kompakt kişi seçici (stepper+pill) + masa tercihi/özel istek/özel gün; (c) "İşletme Profili"
+>   tab TIKLANAMIYOR bug fix (`?tab=profil` senkron) + 8 yeni özellik (vejetaryen/vegan/canlı müzik/teras/manzara/
+>   paket servis/evcil/grup rez); (d) YENİ kullanıcı `rezervasyonlarim` (yaklaşan/geçmiş + değiştir/iptal);
+>   (e) mekan hero görselleri.
+> - **R-rozet** (`rozetler-v1` +218/−51 · `rozet-veri.md` +86/−58): kademe kartları TIKLANABİLİR→o kademenin
+>   rozetlerine filtre (eşleşen tomato-outline, diğerleri soluk); rozet HOVER→açıklama tooltip; her rozette
+>   "almak için gereken"/ilerleme notu; 24→30 rozet; 8 kademe↔rozet eşlemesi; hero görseli.
+> - **R-video** (`video-mutfagi` +21/−10): "Dada Akış" şeridine 2 premium kart `.pro-gate` kilitli (gold/crown
+>   "Pro" rozeti → canonical `#proGate`→`pro-v1`). Abone (ücretsiz) ≠ Pro (kilit) ayrımı korundu
+>   (`gateOpenedBySub=false` teyitli). hero görseli.
+> - **R-sofra-hero** (15 dosya): `sofra-duzeni` hub +10/−271 sadeleştirme (one-page sekme + sol-sağ `.sof-row`
+>   KALDIRILDI → yalnız 8 kart→detay); 14 sayfa hero idarelik Unsplash görseli (8 sofra detay + 4 besin rehberi +
+>   pro-v1 + pro-odeme; `data-img-pending` korundu, highfield gelince swap). `besin-kutuphanesi` DOKUNULMADI.
+> - **LEAD UI/UX FIX TURU (Beyar canlı-SS bulguları, doğrudan lead):**
+>   - `rozetler-v1`: "BURADASIN"/"SEÇİLİ" kademe etiketleri kırpık/metne biniyordu → simetrik kenar-pill
+>     (üst/alt, `line-height:1`, çakışmasız).
+>   - `rezervasyonlarim-v1`: HERO ne-pisirsem diline uyduruldu — sabit-bant tek bölüm → cover hero + ayrı
+>     `.rez-body`; `.rez-head` 2-kolon grid (solda başlık+lead+"Mekân Keşfet", **sağda `.rez-stats` özet blok**:
+>     2 Yaklaşan/3 Geçmiş/4 Mekân) = sağ-boş/lone-buton gitti; "Mekân Keşfet" cam-buton hover'ı (alisveris
+>     kanonu); tam-genişlik simetrik wrap. `.rez-count` JS stat sayısına bağlandı.
+>   - `mekan-detay-v1`: "Rezervasyon Yap" butonu kart kenarına yapışıktı (gap 1px) → `align-self:stretch` +
+>     `margin:16px 16px 0` (gap 17/17).
+>   - `mekan-rezervasyonlar-v1`: takvim "+ Boş" hücreleri + üst "+ Manuel Rezervasyon" + gün-görünümü
+>     "Manuel Ekle" → YENİ manuel rezervasyon modalı (gün+saat hücre konumundan türetilip ÖN-SEÇİLİ; form→
+>     başarı state; Esc/overlay/X kapat). Mockup — gerçek kayıt yok.
+>   - `kesfet-v1`: zaten ne-pisirsem cover+sağ-stats dili + simetrik wrap → DEĞİŞİKLİK GEREKMEDİ (teyitli).
+>
+> **⏭️ KALAN İŞ (sırasıyla):**
+> 1. **Wave 3 — nav chrome-sweep (TEK sahip, EN SON, paralel DEĞİL):** `tasks/nav-degisiklik-listesi.md` →
+>    tek idempotent Python regex sweep ~61 dosya, **href-agnostik**. Kapsam: 5b besin submenu (4 öğe) +
+>    F1 "Pro'ya Yükselt" avatar dropdown + F2 "Tüm Rozetler" link + 13 video Pro etiketi. Negatif grep +
+>    2× idempotent re-run + dropdown-açık SS ile doğrula. Tarifler/Mutfak Sırları DOKUNULMAZ.
+>    `rezervasyonlarim` yeni public sayfa → nav aktif-state'i de bu sweep'te tutarlılaşır.
+> 2. **BEKLEYEN — madde 3 (Dolapta Ne Var? yeniden revize):** Beyar detay verecek, henüz başlama.
+>
+> ---
+>
+> Önceki: 2026-06-16 (**WAVE 2 MODÜLLERİ DONE ✅ — commit `65b0047`
 > origin/main'e push'lu, Beyar SS turu onayladı**. Agent team: lead delegate + 3 teammate (diyetisyen-restoran ardışık 8→10 · video · rozet-
 > dagitim ardışık 9→9b), çakışmasız/disjoint dosya setleri. 5 task (shared task list) hepsi lead bağımsız
 > KANITLI kabul: numstat + grep + render SS 1440/768/390 + tık-testi + 0 JS hatası. Foundation primitive'leri
