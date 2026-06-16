@@ -1,6 +1,70 @@
-# DadaMutfak — REVİZE TURU · WAVE 1 DONE ✅ · WAVE 2 PENDING
+# DadaMutfak — REVİZE TURU · WAVE 2 FOUNDATION DONE ✅ · WAVE 2 (8/13/9/10) PENDING
 
-> Tek doğruluk kaynağı. Güncelleme: 2026-06-16 (**WAVE 1 DONE ✅ — revize turu mockup'ları**
+> Tek doğruluk kaynağı. Güncelleme: 2026-06-16 (**WAVE 2 FOUNDATION DONE ✅** commit `b31e4d4`
+> origin/main'e push'lu. 3 yeni sayfa + `_shell.html` primitive + 2 doküman. Tek session (izole iş,
+> agent team yok), her parça render SS 1440/768/390 + etkileşim testi + 0 JS hatası ile doğrulandı.).
+>
+> **🧱 WAVE 2 FOUNDATION YAPILDI (F1/F2/F3 — patron onaylı 2026-06-16):**
+> - **F1 — Pro abonelik + tier (site-geneli TEK üyelik):**
+>   - `pro-v1.html` (yeni, 1903 L): §2f hero + 3-tier `.pro-grid` (**Pro / Pro+ / Pro Max** — nötr/ticari
+>     isim, şef-kademeden AYRI; `reklam-ver .pk-card` dili miras: t1/t2/t3, t2 `.featured`+`.pro-flag`
+>     "En popüler"; ikon `fa-bolt/fa-star/fa-gem`) + özellik karşılaştırma tablosu (§6.2: reklamsız/pro
+>     tarif/creator 1·3·∞/diyetisyen/mekan/öncelikli; ₺49·99·199 temsilî) + SSS akordeon + CTA. **DEMO
+>     bloğu = iki katman NET ayrı:** ücretsiz "Abone Ol" (`.creator-sub`) ↔ ücretli "Pro Gate".
+>   - `pro-odeme-v1.html` (yeni, 1799 L): public-shell + sade checkout (`odeme-v1` `fk-`/`card-visual`
+>     deseni; shop-shell DEĞİL). `?plan=t1/t2/t3` → plan özeti dolar; canlı kart önizleme (numara/isim/
+>     SKT formatlama); agree-gate (onaysız ilerlemez); başarı state (`?ok=1` / "Aboneliği Başlat").
+>   - `_shell.html` (+86): **canonical `.pro-gate`** (ÜCRETLİ premium kilit; `[data-pro-gate]`,
+>     `data-pro-title/desc`; `lg-gate` kardeşi; `?pro=1` SS param) + **canonical `.creator-sub`**
+>     (ÜCRETSİZ takip toggle; `[data-abone-takip]`; "Abone Olundu ✓"; PARA/KİLİT YOK). İkisi NET ayrı —
+>     abone olmak içeriği AÇMAZ, yalnız Pro açar. Wave 2/3 buradan kopyalar (site-geneli dağıtım Wave 3).
+>   - DOĞRULAMA: Abone toggle gate AÇMIYOR (`gateOpenedBySub=0`); pro-gate kilit→modal→X kapanış; ödeme
+>     `plan=t3`→"Pro Max/₺199" + agree-gate + başarı; `_shell ?pro=1`→gate OK. Hepsi 0 JS hatası.
+> - **F2 — Rozet / şef-kademe oyunlaştırma:**
+>   - `rozetler-v1.html` (yeni, 1770 L): §2f hero + **8-kademe şef merdiveni** (`.chef`/`.ladder`/
+>     `.rank-step`: Çömez→Komi→Çırak→Aşçı **done** → Usta Aşçı **current** "Buradasın" altın insignia →
+>     Şef/Usta Şef/Dada Üstadı **locked** dashed; koyu `.rank-now` panel + progress bar 15/20 + 8.450
+>     puan) + **24 rozet galerisi** (`.badge-grid`/`.badge-card(.locked)` mutfak-defteri dili: 17
+>     kazanılan + 7 kilitli, 6 kategori, nadir `.b-rare` işareti). FA6.5.2 free ikon (Pro `fa-hat-chef`
+>     YOK → Şef=`fa-award`). `mutfak-defteri` "Tüm Rozetler →" hedefi.
+>   - `tasks/rozet-veri.md` (yeni, 116 L): 6 kategori rozet seti + tetik + 8-kademe eşik + demo persona.
+>   - **Profil/hesabım dağıtımı Foundation DIŞI** → Wave 2 madde 9 (T-E). Foundation = galeri+veri+kademe.
+> - **F3 — Nav/IA (sadece SPEC, nav'a DOKUNULMADI):** `tasks/nav-degisiklik-listesi.md` (yeni, 133 L) —
+>   Wave 3 tek idempotent sweep listesi: 5b besin submenu 4 öğe (~61 dosya, `diyetisyen-dizin` anchor) +
+>   F1 "Pro'ya Yükselt" avatar dropdown (~80) + F2 "Tüm Rozetler" link + 13 video Pro (içerik-içi). **⚠️
+>   VARYANS:** 4 besin rehber sayfası sade shell (`.dropdown`/`.d-sub`, Testler eksik) → sweep
+>   **href-agnostik** olmalı. Tarifler/Mutfak Sırları dropdownları DOKUNULMAZ.
+> - **SS/script:** `mockups/outputs/wave2-foundation-ss/` (pro/odeme/rozetler ×3 vp + pro-gate-open +
+>   odeme-success + shot.cjs/interact-*.cjs). **COMMIT'E GİRMEDİ** (outputs ignore).
+>
+> **🌊 WAVE 2 PENDING (Foundation primitive'leri HAZIR — teammate'li paralel):**
+> - **8 (diyetisyen pro) ∥ 13 (video abone) ∥ 9 (rozet dağıtımı):** paralel. F1/F2 tüketir.
+>   - **8:** `diyetisyen-profil` sat.~1457 `.pf-panel` linki kaldır + profil↔panel kuplajı kopar + panele
+>     Pro özellik bandı + pro içerik `.pro-gate` (F1'den). Panel zaten ayrı kabuk (panel-shell + 7 dyt).
+>   - **13:** `video-mutfagi` — ücretsiz `.creator-sub` "Abone Ol" + premium seride `.pro-gate` (ikisi NET
+>     AYRI, F1 demo'sunu mirror) + creator profil/sosyal link. F1 tüketir, 8/10'dan bağımsız.
+>   - **9:** F2 `.badge-band` teaser + kademe rozeti dağıtımı (mutfak-defteri "Tüm Rozetler"→`rozetler-v1`
+>     link + diyetisyen-profil/sefler/sef-ol/hesabim) + admin stub (`admin-rozet-v1`). `diyetisyen-profil`
+>     rozet bloğunu **T-C (madde 8) ile KOORDİNE** (8 profili sabitleyince 9 üstüne ekler — R3 çakışması).
+> - **SONRA 10 (restoran) — 8'den SONRA ARDIŞIK (tercihen aynı teammate):** `mekan-detay`'a "Rezervasyon
+>   Yap" modal (diyetisyen `.apt-modal` 3-ADIM İSKELETİ + **MASA REZERVASYONU semantiği**: Adım1 kişi
+>   sayısı → Adım2 tarih/saat → Adım3 onay/başarı) + mekan paneli (panel-shell yeşil kardeşi:
+>   Rezervasyonlar/Müsaitlik/İşletme Profili) + "İşletmeni Ekle" formu (diyetisyen-ol kardeşi). Pro tier
+>   (Pro+/Max) mekan avantajları F1'den. Ücret/depozito yok.
+>
+> **🧹 WAVE 3 PENDING — nav chrome-sweep (TEK sahip, paralel DEĞİL, EN SON):** `tasks/nav-degisiklik-
+> listesi.md` listesi → tek idempotent Python regex sweep ~61 dosya, **href-agnostik** (besin sayfaları
+> sade-shell varyantı dahil). Negatif grep + 2× idempotent re-run + 5 aileden dropdown-açık SS + nav
+> taşma yok (1025/1280 overflow=false) ile doğrula. Tarifler/Mutfak Sırları DOKUNULMAZ.
+>
+> **🔍 DENETİM PROTOKOLÜ (Wave 2/3'te uygula):** teammate "bitti" deyince KANITLA doğrula — render SS
+> 1440/768/390 + diff özeti (numstat) + acceptance kriteri; her ~10 dk durum yokla; KANITSIZ done sayma.
+>
+> **📋 PLAN:** `tasks/revize-turu-plan.md` (madde→dosya, domain matrisi, F1/F2/F3 spec). SS: `mockups/outputs/`.
+>
+> ---
+>
+> Önceki: 2026-06-16 (**WAVE 1 DONE ✅ — revize turu mockup'ları**
 > commit `80f64cf` origin/main'e push'lu. 3 değişen dosya + 12 yeni sayfa. Agent team (lead delegate
 > + 2 teammate T-A/T-B paralel, çakışmasız dosya setleri, NAV SWEEP YOK → Wave 3'e ertelendi).
 >
