@@ -1,3 +1,13 @@
+> **🍳 MADDE 3 — tarif-bulucu PATRON REVİZESİ DONE ✅ (push'lu, HEAD `d7e8436`):** Yasin Bey WhatsApp feedback'i.
+> (1) **Kategoriler 2 KOLON** — accordion blokları yan yana (`.cat-cols` grid, `align-items:start`; Sık Kullanılan
+> tam-genişlik featured açık satır); sayfa ~yarıya indi; 390'da tek kolon. (2) **ÜRÜN-BAZLI SPONSORLU KARTLAR** —
+> eski boş "Reklam Alanı" banner'ları kaldırıldı; yerine malzeme kartı formatında sponsorlu ürün (Komili Zeytinyağı→
+> Sık Kullanılan, Filiz Makarna→Tahıl, Sütaş Süt→Süt&Yumurta), köşede koyu **Sponsorlu** rozeti, **seçilemez**
+> (ad-link `preventDefault`), görsel idarelik placeholder (`.mz-img` background-image swap'a hazır). (3) **ÜST PANEL
+> ORTALI** — başlık+arama+boş-durum+sekmeler `max-width:680px` ortalı sütunda; alttaki kategori ızgarası tam genişlik.
+> Render SS 1440/390 doğrulandı (`mockups/outputs/revize-bulucu-ss/` + `revize-sponsor-ss/`).
+> **SIRADAKİ:** Wave 3 nav-sweep (besin submenu gruplu + "Pro'ya Yükselt" + "Tüm Rozetler" + video Pro etiketi).
+
 > **🍳 MADDE 3 — Dolapta Ne Var? (tarif-bulucu) DONE ✅ (push'lu):** Patron (Yasin Bey) isteğiyle baştan revize.
 > **2 EŞİT SEKME** (Elimdekiler yeşil / İstemediklerim tomato) — sekme değişince tüm tezgah o renge boyanır.
 > **GERÇEK MALZEME GÖRSELLERİ** — TheMealDB seti (`mockups/assets/malzeme/`, 65 foto, ~200px, div+background-image
