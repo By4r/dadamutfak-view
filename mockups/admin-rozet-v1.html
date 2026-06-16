@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Rozet Yönetimi — DadaMutfak Admin</title>
+<link rel="shortcut icon" type="image/x-icon" href="assets/img/favicon.ico" />
+<!-- FontAwesome 6.5.2 (kilitli ikon seti) -->
+<link rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+      integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A=="
+      crossorigin="anonymous" referrerpolicy="no-referrer" />
+<style>
+/* =====================================================================
+   ADMIN-ROZET-V1.HTML — ROZET YÖNETİMİ STUB (Wave 2 madde 9)
+   panel-shell.html KANONİK İSKELETİ tüketildi (sidebar + üst bar + .pnl-card
+   + .ptable + .pstat). Diyetisyen yeşili yerine ADMIN ekseni = domates aksan.
+   STUB: gerçek CRUD YOK — "Düzenle"/"Yeni Rozet" butonları PASİF (disabled).
+   Gerçek rozet düzenleme/atama mantığı LARAVEL FAZINA NOT.
+   Veri kaynağı: tasks/rozet-veri.md (6 kategori + 8-kademe + persona Elif).
+   ===================================================================== */
+
+@font-face{
+  font-family:"Gilroy";
+  src:url("assets/fonts/Gilroy-Medium.ttf") format("truetype");
+  font-weight:500; font-style:normal; font-display:swap;
+}
+
+:root{
+  --tomato:#E14827;--tomato-dark:#C43D20;--tomato-deep:#A8331A;--tomato-tint:#FBE9E3;
+  --slate:#211E16;--slate-2:#56514a;--green:#3BB77E;--green-deep:#2c9963;--green-tint:#E7F6EF;
+  --yellow:#FAC045;--muted:#7E7E7E;--line:#ECECEC;--cream:#EFE5D3;--cream-2:#F7F1E6;
+  --paper:#ffffff;--bg:#f9f9f9;--ink:#211E16;--bg-white:#ffffff;--bg-cream:#f9f9f9;
+  --radius-sm:8px;--radius-md:12px;--radius-lg:16px;--radius-xl:24px;--radius-pill:999px;--radius-circle:50%;
+  --sh-sm:0 1px 2px rgba(33,30,22,.04), 0 2px 6px rgba(33,30,22,.05);
+  --sh-md:0 6px 22px rgba(33,30,22,.09);
+  --sh-lg:0 18px 50px rgba(33,30,22,.16);
+  --ease:cubic-bezier(.22,.61,.36,1);
+  --pnl-side-w:248px;--pnl-top-h:64px;
+}
+
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:"Gilroy",system-ui,sans-serif;font-weight:500;color:var(--ink);background:var(--bg);line-height:1.55;-webkit-font-smoothing:antialiased}
+h1,h2,h3,h4{font-weight:700;color:var(--slate);line-height:1.12;letter-spacing:-.02em}
+a{color:inherit;text-decoration:none}
+img{display:block;max-width:100%}
+.muted{color:var(--muted);font-weight:500}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;font-family:inherit;font-weight:700;font-size:14.5px;cursor:pointer;border:none;padding:14px 26px;border-radius:var(--radius-md);transition:.25s var(--ease)}
+.btn-primary{background:var(--tomato);color:#fff}
+.btn-primary:hover{background:var(--tomato-dark);transform:translateY(-2px)}
+.btn-ghost{background:var(--paper);color:var(--slate);border:1px solid var(--line)}
+.btn-ghost:hover{border-color:var(--slate);transform:translateY(-2px)}
+.btn-sm{padding:10px 16px;font-size:13px;border-radius:var(--radius-sm)}
+/* STUB: pasif buton (CRUD yok) */
+.btn[disabled],.btn:disabled{opacity:.55;cursor:not-allowed;pointer-events:none}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+
+/* ===== PANEL DÜZENİ — panel-shell tüketildi (admin = domates aksan) ===== */
+.pnl-app{min-height:100vh}
+.pnl-side{position:fixed;top:0;left:0;bottom:0;width:var(--pnl-side-w);z-index:80;background:var(--slate);color:#e9e2d6;display:flex;flex-direction:column;background-image:radial-gradient(420px 260px at -20% -10%, rgba(225,72,39,.18), transparent 60%)}
+.pnl-logo{display:flex;align-items:center;gap:10px;padding:22px 22px 18px;border-bottom:1px solid rgba(233,226,214,.1)}
+.pnl-logo img{height:30px;width:auto}
+.pnl-logo .pl-tag{font-size:10.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--tomato);background:rgba(225,72,39,.16);padding:3px 8px;border-radius:var(--radius-sm)}
+.pnl-nav{flex:1;overflow-y:auto;padding:18px 14px;display:flex;flex-direction:column;gap:3px}
+.pnl-sec-lbl{font-size:10.5px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:rgba(233,226,214,.42);padding:14px 12px 7px}
+.pnl-link{position:relative;display:flex;align-items:center;gap:12px;padding:11px 12px;border-radius:var(--radius-md);font-size:14px;font-weight:500;color:rgba(233,226,214,.78);transition:.2s var(--ease)}
+.pnl-link i{width:20px;text-align:center;font-size:15px;color:rgba(233,226,214,.55);transition:.2s var(--ease)}
+.pnl-link:hover{background:rgba(255,255,255,.06);color:#fff}
+.pnl-link:hover i{color:var(--tomato)}
+.pnl-link.is-active{background:rgba(225,72,39,.16);color:#fff;font-weight:700}
+.pnl-link.is-active i{color:var(--tomato)}
+.pnl-link.is-active::before{content:"";position:absolute;left:-14px;top:9px;bottom:9px;width:3px;background:var(--tomato);border-radius:0 var(--radius-sm) var(--radius-sm) 0}
+.pnl-link .pl-cnt{margin-left:auto;font-size:11.5px;font-weight:700;background:var(--tomato);color:#fff;min-width:20px;height:20px;display:inline-flex;align-items:center;justify-content:center;padding:0 6px;border-radius:var(--radius-sm)}
+.pnl-side-foot{padding:14px;border-top:1px solid rgba(233,226,214,.1);display:flex;flex-direction:column;gap:3px}
+.pnl-side-foot .pnl-link{font-size:13px}
+
+.pnl-top{position:fixed;top:0;left:var(--pnl-side-w);right:0;z-index:70;height:var(--pnl-top-h);background:var(--paper);border-bottom:1px solid var(--line);display:flex;align-items:center;gap:16px;padding:0 28px}
+.pnl-burger{display:none;width:40px;height:40px;border:1px solid var(--line);border-radius:var(--radius-md);background:var(--paper);cursor:pointer;font-size:16px;color:var(--slate);align-items:center;justify-content:center;flex:none}
+.pnl-search{flex:1;max-width:420px;position:relative}
+.pnl-search i{position:absolute;left:14px;top:50%;transform:translateY(-50%);font-size:13.5px;color:var(--muted);pointer-events:none}
+.pnl-search input{width:100%;height:40px;padding:0 14px 0 38px;font-family:inherit;font-size:13.5px;font-weight:500;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:var(--radius-md);outline:none;transition:.2s var(--ease)}
+.pnl-search input::placeholder{color:var(--muted)}
+.pnl-search input:focus{border-color:var(--tomato);background:var(--paper);box-shadow:0 0 0 3px rgba(225,72,39,.12)}
+.pnl-top-tools{margin-left:auto;display:flex;align-items:center;gap:10px}
+.pnl-me{display:flex;align-items:center;gap:11px;cursor:pointer;padding:6px 8px 6px 6px;border-radius:var(--radius-md);transition:.2s var(--ease)}
+.pnl-me:hover{background:var(--bg)}
+.pnl-me .pm-ava{width:36px;height:36px;border-radius:var(--radius-circle);flex:none;background-size:cover;background-position:center;box-shadow:0 0 0 2px var(--paper), 0 0 0 4px var(--tomato)}
+.pnl-me .pm-id{line-height:1.25}
+.pnl-me .pm-name{font-size:13.5px;font-weight:700;color:var(--slate)}
+.pnl-me .pm-role{font-size:11.5px;color:var(--muted)}
+.pnl-me>i{font-size:11px;color:var(--muted)}
+
+.pnl-main{margin-left:var(--pnl-side-w);padding:calc(var(--pnl-top-h) + 28px) 28px 48px;min-height:100vh}
+.pnl-page-head{display:flex;align-items:flex-end;justify-content:space-between;gap:18px;margin-bottom:24px;flex-wrap:wrap}
+.pnl-page-head h1{font-size:24px}
+.pnl-page-head .ph-sub{margin-top:5px;font-size:13.5px;color:var(--muted)}
+.pnl-page-head .ph-actions{display:flex;gap:10px;flex:none}
+
+.pnl-card{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-lg);box-shadow:var(--sh-sm)}
+.pc-head{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:18px 22px;border-bottom:1px solid var(--line)}
+.pc-title{font-size:16px;font-weight:700;color:var(--slate);display:flex;align-items:center;gap:10px}
+.pc-title i{color:var(--tomato);font-size:15px}
+.pc-link{font-size:13px;font-weight:700;color:var(--tomato);display:inline-flex;align-items:center;gap:7px;transition:.2s}
+.pc-link i{font-size:11.5px;transition:.25s var(--ease)}
+.pc-link:hover i{transform:translateX(3px)}
+.pc-body{padding:22px}
+.pc-body.flush{padding:0}
+
+/* KPI */
+.kpi-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;margin-bottom:24px}
+.kpi-card{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-lg);box-shadow:var(--sh-sm);padding:20px;display:flex;align-items:flex-start;gap:14px;transition:.25s var(--ease)}
+.kpi-card:hover{transform:translateY(-3px);box-shadow:var(--sh-md)}
+.kpi-ico{width:44px;height:44px;flex:none;border-radius:var(--radius-md);background:var(--tomato-tint);color:var(--tomato);display:inline-flex;align-items:center;justify-content:center;font-size:17px}
+.kpi-card.gold .kpi-ico{background:#FCF3DD;color:#B8860B}
+.kpi-card.cool .kpi-ico{background:var(--green-tint);color:var(--green-deep)}
+.kpi-num{font-size:26px;font-weight:700;color:var(--slate);line-height:1.05;letter-spacing:-.02em}
+.kpi-lbl{font-size:12.5px;color:var(--muted);margin-top:4px}
+
+/* durum rozeti */
+.pstat{display:inline-flex;align-items:center;gap:6px;font-size:11.5px;font-weight:700;padding:4px 10px;border-radius:var(--radius-sm);white-space:nowrap}
+.pstat::before{content:"";width:6px;height:6px;border-radius:var(--radius-circle);background:currentColor}
+.pstat.ok{background:var(--green-tint);color:var(--green-deep)}
+.pstat.rare{background:#FCF3DD;color:#B8860B}
+.pstat.off{background:var(--bg);color:var(--muted);border:1px solid var(--line)}
+
+/* tablo */
+.ptable{width:100%;border-collapse:collapse;font-size:13.5px}
+.ptable th{text-align:left;font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);padding:13px 22px;border-bottom:1px solid var(--line);background:var(--bg)}
+.ptable td{padding:14px 22px;border-bottom:1px solid var(--line);vertical-align:middle}
+.ptable tr:last-child td{border-bottom:none}
+.ptable tbody tr{transition:background .15s}
+.ptable tbody tr:hover{background:var(--bg)}
+.ptable th.num,.ptable td.num{text-align:right}
+.ptable td.act{text-align:right;white-space:nowrap}
+
+/* rozet adı hücresi — badge-card ikon dili (Foundation tüketildi) */
+.bz-name{display:flex;align-items:center;gap:11px}
+.bz-ico{flex:none;width:34px;height:34px;border-radius:var(--radius-md);background:var(--tomato-tint);color:var(--tomato);display:grid;place-items:center;font-size:14px}
+.bz-name b{font-size:13.5px;font-weight:700;color:var(--slate);display:block;line-height:1.2}
+.bz-name span{font-size:11.5px;color:var(--muted);display:block;margin-top:1px}
+/* kategori etiketi */
+.bz-cat{font-size:11px;font-weight:700;letter-spacing:.04em;color:var(--slate-2);background:var(--bg);border:1px solid var(--line);border-radius:var(--radius-sm);padding:4px 10px}
+/* mini pasif aksiyon (Düzenle / Sil) */
+.bz-edit{font-family:inherit;font-size:12.5px;font-weight:700;color:var(--slate-2);background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-sm);padding:7px 13px;cursor:not-allowed;opacity:.6}
+.bz-edit i{font-size:11px;margin-right:5px;color:var(--tomato)}
+
+/* kademe satırı (8-kademe merdiveni — özet liste) */
+.rk-step{display:inline-flex;align-items:center;gap:7px;font-size:11px;font-weight:700;color:var(--slate-2);background:var(--bg);border:1px solid var(--line);border-radius:var(--radius-pill);padding:5px 11px}
+.rk-step i{font-size:11px;color:#c2a06f}
+
+/* STUB uyarı bandı — Laravel fazı notu */
+.stub-note{display:flex;align-items:flex-start;gap:13px;background:#FCF3DD;border:1px solid #F0E0AE;border-radius:var(--radius-md);padding:15px 18px;margin-bottom:24px}
+.stub-note i{flex:none;font-size:18px;color:#B8860B;margin-top:1px}
+.stub-note b{font-size:13.5px;color:#7a5a09;display:block;font-weight:800}
+.stub-note span{font-size:12.5px;color:#8a6a18;font-weight:500;line-height:1.5}
+
+.pc-grid{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);gap:16px}
+
+/* mobil */
+.pnl-overlay{position:fixed;inset:0;background:rgba(33,30,22,.5);z-index:79;opacity:0;pointer-events:none;transition:.25s}
+@media(max-width:980px){
+  .pnl-side{transform:translateX(-100%);transition:transform .28s var(--ease)}
+  body.nav-open .pnl-side{transform:translateX(0)}
+  body.nav-open .pnl-overlay{opacity:1;pointer-events:auto}
+  .pnl-top{left:0}
+  .pnl-burger{display:inline-flex}
+  .pnl-main{margin-left:0;padding:calc(var(--pnl-top-h) + 20px) 16px 40px}
+  .kpi-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+  .pc-grid{grid-template-columns:minmax(0,1fr)}
+  .pnl-me .pm-id,.pnl-me>i{display:none}
+}
+@media(max-width:640px){
+  .pnl-search{max-width:none}
+  .kpi-num{font-size:21px}
+  .pnl-page-head h1{font-size:20px}
+  .pc-head,.pc-body{padding-left:16px;padding-right:16px}
+  .ptable th,.ptable td{padding-left:16px;padding-right:16px}
+  /* mobilde tablo: kategori + tarih sütunlarını gizle (yoğunluk) */
+  .ptable .col-cat,.ptable .col-date{display:none}
+}
+</style>
+</head>
+<body>
+
+<div class="pnl-app">
+
+  <!-- ===== SOL SIDEBAR ===== -->
+  <aside class="pnl-side" id="pnlSide">
+    <a class="pnl-logo" href="anasayfa-portal-v3a.html">
+      <img src="assets/img/logo-official-white.png" alt="DadaMutfak" />
+      <span class="pl-tag">Admin</span>
+    </a>
+    <nav class="pnl-nav">
+      <a class="pnl-link" href="#" data-nav="panel"><i class="fa-solid fa-gauge-high"></i> Panel</a>
+      <a class="pnl-link" href="#" data-nav="tarifler"><i class="fa-solid fa-utensils"></i> Tarifler</a>
+      <a class="pnl-link" href="#" data-nav="kullanicilar"><i class="fa-solid fa-user-group"></i> Kullanıcılar</a>
+      <a class="pnl-link" href="#" data-nav="sefler"><i class="fa-solid fa-id-badge"></i> Şefler</a>
+      <div class="pnl-sec-lbl">Oyunlaştırma</div>
+      <a class="pnl-link is-active" href="admin-rozet-v1.html" data-nav="rozet"><i class="fa-solid fa-award"></i> Rozetler <span class="pl-cnt">22</span></a>
+      <a class="pnl-link" href="#" data-nav="kademe"><i class="fa-solid fa-ranking-star"></i> Kademeler</a>
+    </nav>
+    <div class="pnl-side-foot">
+      <a class="pnl-link" href="rozetler-v1.html"><i class="fa-regular fa-eye"></i> Public Rozet Sayfası</a>
+      <a class="pnl-link" href="anasayfa-portal-v3a.html"><i class="fa-solid fa-arrow-left"></i> Siteye Dön</a>
+    </div>
+  </aside>
+  <div class="pnl-overlay" id="pnlOverlay"></div>
+
+  <!-- ===== ÜST BAR ===== -->
+  <header class="pnl-top">
+    <button class="pnl-burger" id="pnlBurger" aria-label="Menü"><i class="fa-solid fa-bars"></i></button>
+    <div class="pnl-search">
+      <i class="fa-solid fa-magnifying-glass"></i>
+      <input type="text" placeholder="Rozet ara…" />
+    </div>
+    <div class="pnl-top-tools">
+      <div class="pnl-me">
+        <span class="pm-ava" style="background-image:url('https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=120&q=80&auto=format&fit=crop')"></span>
+        <span class="pm-id"><span class="pm-name">Admin</span><span class="pm-role">Yönetici</span></span>
+        <i class="fa-solid fa-chevron-down"></i>
+      </div>
+    </div>
+  </header>
+
+  <!-- ===== İÇERİK ===== -->
+  <main class="pnl-main">
+    <div class="pnl-page-head">
+      <div>
+        <h1>Rozet Yönetimi</h1>
+        <p class="ph-sub">Topluluk rozetleri ve şef kademe eşikleri — 6 kategori, 22 rozet, 8 kademe.</p>
+      </div>
+      <div class="ph-actions">
+        <button class="btn btn-ghost btn-sm" disabled><i class="fa-solid fa-download"></i> Dışa Aktar</button>
+        <button class="btn btn-primary btn-sm" disabled><i class="fa-solid fa-plus"></i> Yeni Rozet</button>
+      </div>
+    </div>
+
+    <!-- STUB notu — Laravel fazı -->
+    <div class="stub-note">
+      <i class="fa-solid fa-screwdriver-wrench"></i>
+      <div>
+        <b>Önizleme (stub) — CRUD pasif</b>
+        <span>Bu ekran rozet yönetiminin arayüz taslağıdır. Rozet ekleme/düzenleme/silme ve eşik atama mantığı <b>Laravel fazında</b> bağlanacak; tüm aksiyon butonları şimdilik pasiftir. Veri kaynağı: <code>tasks/rozet-veri.md</code>.</span>
+      </div>
+    </div>
+
+    <!-- KPI -->
+    <div class="kpi-grid">
+      <div class="kpi-card"><span class="kpi-ico"><i class="fa-solid fa-award"></i></span><div><div class="kpi-num">22</div><div class="kpi-lbl">Tanımlı rozet</div></div></div>
+      <div class="kpi-card cool"><span class="kpi-ico"><i class="fa-solid fa-layer-group"></i></span><div><div class="kpi-num">6</div><div class="kpi-lbl">Rozet kategorisi</div></div></div>
+      <div class="kpi-card gold"><span class="kpi-ico"><i class="fa-solid fa-star"></i></span><div><div class="kpi-num">3</div><div class="kpi-lbl">Nadir rozet</div></div></div>
+      <div class="kpi-card"><span class="kpi-ico"><i class="fa-solid fa-ranking-star"></i></span><div><div class="kpi-num">8</div><div class="kpi-lbl">Şef kademesi</div></div></div>
+    </div>
+
+    <div class="pc-grid">
+      <!-- ROZET LİSTESİ TABLOSU -->
+      <div class="pnl-card">
+        <div class="pc-head">
+          <span class="pc-title"><i class="fa-solid fa-list"></i> Rozet Listesi</span>
+          <a class="pc-link" href="rozetler-v1.html">Public sayfada gör <i class="fa-solid fa-arrow-right"></i></a>
+        </div>
+        <div class="pc-body flush">
+          <table class="ptable">
+            <thead>
+              <tr>
+                <th>Rozet</th>
+                <th class="col-cat">Kategori</th>
+                <th>Tetik</th>
+                <th class="col-date">Durum</th>
+                <th class="act"></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><div class="bz-name"><span class="bz-ico"><i class="fa-solid fa-seedling"></i></span><div><b>İlk Tarif</b><span>fa-seedling</span></div></div></td>
+                <td class="col-cat"><span class="bz-cat">Başlangıç</span></td>
+                <td>İlk tarif paylaşımı</td>
+                <td class="col-date"><span class="pstat ok">Yayında</span></td>
+                <td class="act"><button class="bz-edit" disabled><i class="fa-solid fa-pen"></i>Düzenle</button></td>
+              </tr>
+              <tr>
+                <td><div class="bz-name"><span class="bz-ico"><i class="fa-solid fa-bread-slice"></i></span><div><b>Hamur İşi Uzmanı</b><span>fa-bread-slice</span></div></div></td>
+                <td class="col-cat"><span class="bz-cat">Üretim</span></td>
+                <td>20 hamur işi tarifi</td>
+                <td class="col-date"><span class="pstat ok">Yayında</span></td>
+                <td class="act"><button class="bz-edit" disabled><i class="fa-solid fa-pen"></i>Düzenle</button></td>
+              </tr>
+              <tr>
+                <td><div class="bz-name"><span class="bz-ico"><i class="fa-solid fa-fire-burner"></i></span><div><b>Izgara Kralı</b><span>fa-fire-burner</span></div></div></td>
+                <td class="col-cat"><span class="bz-cat">Üretim</span></td>
+                <td>20 ızgara tarifi</td>
+                <td class="col-date"><span class="pstat ok">Yayında</span></td>
+                <td class="act"><button class="bz-edit" disabled><i class="fa-solid fa-pen"></i>Düzenle</button></td>
+              </tr>
+              <tr>
+                <td><div class="bz-name"><span class="bz-ico"><i class="fa-solid fa-comments"></i></span><div><b>Yorum Sever</b><span>fa-comments</span></div></div></td>
+                <td class="col-cat"><span class="bz-cat">Topluluk</span></td>
+                <td>100 yorum</td>
+                <td class="col-date"><span class="pstat ok">Yayında</span></td>
+                <td class="act"><button class="bz-edit" disabled><i class="fa-solid fa-pen"></i>Düzenle</button></td>
+              </tr>
+              <tr>
+                <td><div class="bz-name"><span class="bz-ico"><i class="fa-solid fa-heart"></i></span><div><b>1.000 Beğeni</b><span>fa-heart</span></div></div></td>
+                <td class="col-cat"><span class="bz-cat">Topluluk</span></td>
+                <td>1.000 beğeni topla</td>
+                <td class="col-date"><span class="pstat ok">Yayında</span></td>
+                <td class="act"><button class="bz-edit" disabled><i class="fa-solid fa-pen"></i>Düzenle</button></td>
+              </tr>
+              <tr>
+                <td><div class="bz-name"><span class="bz-ico"><i class="fa-solid fa-lightbulb"></i></span><div><b>Püf Bilgini</b><span>fa-lightbulb</span></div></div></td>
+                <td class="col-cat"><span class="bz-cat">Ustalık</span></td>
+                <td>10 püf noktası onaylandı</td>
+                <td class="col-date"><span class="pstat ok">Yayında</span></td>
+                <td class="act"><button class="bz-edit" disabled><i class="fa-solid fa-pen"></i>Düzenle</button></td>
+              </tr>
+              <tr>
+                <td><div class="bz-name"><span class="bz-ico"><i class="fa-solid fa-circle-check"></i></span><div><b>Editör Onaylı</b><span>fa-circle-check</span></div></div></td>
+                <td class="col-cat"><span class="bz-cat">Ustalık</span></td>
+                <td>Editör tarifi öne çıkardı</td>
+                <td class="col-date"><span class="pstat ok">Yayında</span></td>
+                <td class="act"><button class="bz-edit" disabled><i class="fa-solid fa-pen"></i>Düzenle</button></td>
+              </tr>
+              <tr>
+                <td><div class="bz-name"><span class="bz-ico"><i class="fa-solid fa-cake-candles"></i></span><div><b>3 Yıl Dada'lı</b><span>fa-cake-candles</span></div></div></td>
+                <td class="col-cat"><span class="bz-cat">Sadakat</span></td>
+                <td>3 yıl üyelik</td>
+                <td class="col-date"><span class="pstat ok">Yayında</span></td>
+                <td class="act"><button class="bz-edit" disabled><i class="fa-solid fa-pen"></i>Düzenle</button></td>
+              </tr>
+              <tr>
+                <td><div class="bz-name"><span class="bz-ico"><i class="fa-solid fa-medal"></i></span><div><b>Dada Şefi</b><span>fa-medal</span></div></div></td>
+                <td class="col-cat"><span class="bz-cat">Nadir</span></td>
+                <td>Editöryal seçki</td>
+                <td class="col-date"><span class="pstat rare">Nadir</span></td>
+                <td class="act"><button class="bz-edit" disabled><i class="fa-solid fa-pen"></i>Düzenle</button></td>
+              </tr>
+              <tr>
+                <td><div class="bz-name"><span class="bz-ico"><i class="fa-solid fa-star"></i></span><div><b>Şefin Tercihi</b><span>fa-star</span></div></div></td>
+                <td class="col-cat"><span class="bz-cat">Nadir</span></td>
+                <td>Şef ayın tarifi seçti</td>
+                <td class="col-date"><span class="pstat rare">Nadir</span></td>
+                <td class="act"><button class="bz-edit" disabled><i class="fa-solid fa-pen"></i>Düzenle</button></td>
+              </tr>
+              <tr>
+                <td><div class="bz-name"><span class="bz-ico"><i class="fa-solid fa-ranking-star"></i></span><div><b>Sezon Şampiyonu</b><span>fa-ranking-star</span></div></div></td>
+                <td class="col-cat"><span class="bz-cat">Nadir</span></td>
+                <td>Sezon yarışması 1.'si</td>
+                <td class="col-date"><span class="pstat off">Taslak</span></td>
+                <td class="act"><button class="bz-edit" disabled><i class="fa-solid fa-pen"></i>Düzenle</button></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- KADEME MERDİVENİ ÖZETİ -->
+      <div class="pnl-card">
+        <div class="pc-head">
+          <span class="pc-title"><i class="fa-solid fa-ranking-star"></i> Şef Kademeleri</span>
+        </div>
+        <div class="pc-body flush">
+          <table class="ptable">
+            <thead>
+              <tr><th>Kademe</th><th class="num">Eşik</th><th class="act"></th></tr>
+            </thead>
+            <tbody>
+              <tr><td><span class="rk-step"><i class="fa-solid fa-egg"></i> Çömez</span></td><td class="num">0 rozet</td><td class="act"><button class="bz-edit" disabled><i class="fa-solid fa-pen"></i>Düzenle</button></td></tr>
+              <tr><td><span class="rk-step"><i class="fa-solid fa-utensils"></i> Komi</span></td><td class="num">2 rozet</td><td class="act"><button class="bz-edit" disabled><i class="fa-solid fa-pen"></i>Düzenle</button></td></tr>
+              <tr><td><span class="rk-step"><i class="fa-solid fa-spoon"></i> Çırak</span></td><td class="num">5 rozet</td><td class="act"><button class="bz-edit" disabled><i class="fa-solid fa-pen"></i>Düzenle</button></td></tr>
+              <tr><td><span class="rk-step"><i class="fa-solid fa-bowl-food"></i> Aşçı</span></td><td class="num">9 rozet</td><td class="act"><button class="bz-edit" disabled><i class="fa-solid fa-pen"></i>Düzenle</button></td></tr>
+              <tr><td><span class="rk-step"><i class="fa-solid fa-medal"></i> Usta Aşçı</span></td><td class="num">14 rozet</td><td class="act"><button class="bz-edit" disabled><i class="fa-solid fa-pen"></i>Düzenle</button></td></tr>
+              <tr><td><span class="rk-step"><i class="fa-solid fa-award"></i> Şef</span></td><td class="num">20 + 1 nadir</td><td class="act"><button class="bz-edit" disabled><i class="fa-solid fa-pen"></i>Düzenle</button></td></tr>
+              <tr><td><span class="rk-step"><i class="fa-solid fa-trophy"></i> Usta Şef</span></td><td class="num">28 + 2 nadir</td><td class="act"><button class="bz-edit" disabled><i class="fa-solid fa-pen"></i>Düzenle</button></td></tr>
+              <tr><td><span class="rk-step"><i class="fa-solid fa-crown"></i> Dada Üstadı</span></td><td class="num">35 + editör</td><td class="act"><button class="bz-edit" disabled><i class="fa-solid fa-pen"></i>Düzenle</button></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script>
+/* ============ PANEL ORTAK JS — panel-shell'den kopya ============ */
+(function(){
+  var burger=document.getElementById('pnlBurger'),
+      overlay=document.getElementById('pnlOverlay');
+  if(burger) burger.addEventListener('click',function(){document.body.classList.toggle('nav-open')});
+  if(overlay) overlay.addEventListener('click',function(){document.body.classList.remove('nav-open')});
+  var q=new URLSearchParams(location.search);
+  if(q.get('nav')==='1') document.body.classList.add('nav-open');
+})();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Müsaitlik &amp; İşletme Profili — DadaMutfak Mekân Paneli</title>
+<link rel="shortcut icon" type="image/x-icon" href="assets/img/favicon.ico" />
+<link rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+      integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A=="
+      crossorigin="anonymous" referrerpolicy="no-referrer" />
+<style>
+/* =====================================================================
+   MEKAN-AYARLAR-V1 (M10) — panel-shell.html yeşil kardeşi.
+   2 sekme: Müsaitlik & Ayarlar + İşletme Profili. ?tab=profil / ?tab=bildirim.
+   Token/sidebar/topbar panel-shell ile BİREBİR. Ücret/depozito YOK.
+   ===================================================================== */
+@font-face{font-family:"Gilroy";src:url("assets/fonts/Gilroy-Medium.ttf") format("truetype");font-weight:500;font-style:normal;font-display:swap}
+:root{
+  --tomato:#E14827;--tomato-dark:#C43D20;--tomato-deep:#A8331A;--tomato-tint:#FBE9E3;
+  --slate:#211E16;--slate-2:#56514a;--green:#3BB77E;--green-deep:#2c9963;--green-tint:#E7F6EF;
+  --yellow:#FAC045;--muted:#7E7E7E;--line:#ECECEC;--cream:#EFE5D3;--cream-2:#F7F1E6;
+  --paper:#ffffff;--bg:#f9f9f9;--ink:#211E16;--bg-white:#ffffff;--bg-cream:#f9f9f9;
+  --radius-sm:8px;--radius-md:12px;--radius-lg:16px;--radius-xl:24px;--radius-pill:999px;--radius-circle:50%;
+  --sh-sm:0 1px 2px rgba(33,30,22,.04), 0 2px 6px rgba(33,30,22,.05);
+  --sh-md:0 6px 22px rgba(33,30,22,.09);--sh-lg:0 18px 50px rgba(33,30,22,.16);
+  --ease:cubic-bezier(.22,.61,.36,1);--pnl-side-w:248px;--pnl-top-h:64px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:"Gilroy",system-ui,sans-serif;font-weight:500;color:var(--ink);background:var(--bg);line-height:1.55;-webkit-font-smoothing:antialiased}
+h1,h2,h3,h4{font-weight:700;color:var(--slate);line-height:1.12;letter-spacing:-.02em}
+a{color:inherit;text-decoration:none}
+img{display:block;max-width:100%}
+.muted{color:var(--muted);font-weight:500}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;font-family:inherit;font-weight:700;font-size:14.5px;cursor:pointer;border:none;padding:14px 26px;border-radius:var(--radius-md);transition:.25s var(--ease)}
+.btn-primary{background:var(--tomato);color:#fff}
+.btn-primary:hover{background:var(--tomato-dark);transform:translateY(-2px)}
+.btn-ghost{background:var(--paper);color:var(--slate);border:1px solid var(--line)}
+.btn-ghost:hover{border-color:var(--slate);transform:translateY(-2px)}
+.btn-green{background:var(--green);color:#fff}
+.btn-green:hover{background:var(--green-deep);transform:translateY(-2px)}
+.btn-sm{padding:10px 16px;font-size:13px;border-radius:var(--radius-sm)}
+.chip{font-size:13px;font-weight:500;color:var(--slate);background:var(--paper);border:1px solid var(--line);padding:8px 15px;border-radius:var(--radius-sm);cursor:pointer;transition:.2s var(--ease)}
+.chip:hover{border-color:var(--green);color:var(--green-deep);background:var(--green-tint)}
+.chip.is-on{border-color:var(--green);color:var(--green-deep);background:var(--green-tint);font-weight:700}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+
+/* PANEL DÜZENİ (panel-shell BİREBİR) */
+.pnl-app{min-height:100vh}
+.pnl-side{position:fixed;top:0;left:0;bottom:0;width:var(--pnl-side-w);z-index:80;background:var(--slate);color:#e9e2d6;display:flex;flex-direction:column;background-image:radial-gradient(420px 260px at -20% -10%, rgba(59,183,126,.16), transparent 60%)}
+.pnl-logo{display:flex;align-items:center;gap:10px;padding:22px 22px 18px;border-bottom:1px solid rgba(233,226,214,.1)}
+.pnl-logo img{height:30px;width:auto}
+.pnl-logo .pl-tag{font-size:10.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--green);background:rgba(59,183,126,.14);padding:3px 8px;border-radius:var(--radius-sm)}
+.pnl-nav{flex:1;overflow-y:auto;padding:18px 14px;display:flex;flex-direction:column;gap:3px}
+.pnl-sec-lbl{font-size:10.5px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:rgba(233,226,214,.42);padding:14px 12px 7px}
+.pnl-link{position:relative;display:flex;align-items:center;gap:12px;padding:11px 12px;border-radius:var(--radius-md);font-size:14px;font-weight:500;color:rgba(233,226,214,.78);transition:.2s var(--ease)}
+.pnl-link i{width:20px;text-align:center;font-size:15px;color:rgba(233,226,214,.55);transition:.2s var(--ease)}
+.pnl-link:hover{background:rgba(255,255,255,.06);color:#fff}
+.pnl-link:hover i{color:var(--green)}
+.pnl-link.is-active{background:rgba(59,183,126,.14);color:#fff;font-weight:700}
+.pnl-link.is-active i{color:var(--green)}
+.pnl-link.is-active::before{content:"";position:absolute;left:-14px;top:9px;bottom:9px;width:3px;background:var(--green);border-radius:0 var(--radius-sm) var(--radius-sm) 0}
+.pnl-link .pl-cnt{margin-left:auto;font-size:11.5px;font-weight:700;background:var(--green);color:#fff;min-width:20px;height:20px;display:inline-flex;align-items:center;justify-content:center;padding:0 6px;border-radius:var(--radius-sm)}
+.pnl-side-foot{padding:14px;border-top:1px solid rgba(233,226,214,.1);display:flex;flex-direction:column;gap:3px}
+.pnl-side-foot .pnl-link{font-size:13px}
+.pnl-top{position:fixed;top:0;left:var(--pnl-side-w);right:0;z-index:70;height:var(--pnl-top-h);background:var(--paper);border-bottom:1px solid var(--line);display:flex;align-items:center;gap:16px;padding:0 28px}
+.pnl-burger{display:none;width:40px;height:40px;border:1px solid var(--line);border-radius:var(--radius-md);background:var(--paper);cursor:pointer;font-size:16px;color:var(--slate);align-items:center;justify-content:center;flex:none}
+.pnl-search{flex:1;max-width:420px;position:relative}
+.pnl-search i{position:absolute;left:14px;top:50%;transform:translateY(-50%);font-size:13.5px;color:var(--muted);pointer-events:none}
+.pnl-search input{width:100%;height:40px;padding:0 14px 0 38px;font-family:inherit;font-size:13.5px;font-weight:500;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:var(--radius-md);outline:none;transition:.2s var(--ease)}
+.pnl-search input::placeholder{color:var(--muted)}
+.pnl-search input:focus{border-color:var(--green);background:var(--paper);box-shadow:0 0 0 3px rgba(59,183,126,.12)}
+.pnl-top-tools{margin-left:auto;display:flex;align-items:center;gap:10px}
+.pnl-bell{position:relative;width:40px;height:40px;border:1px solid var(--line);border-radius:var(--radius-md);background:var(--paper);cursor:pointer;font-size:15px;color:var(--slate);display:inline-flex;align-items:center;justify-content:center;transition:.2s var(--ease)}
+.pnl-bell:hover{border-color:var(--green);color:var(--green-deep)}
+.pnl-bell .pb-dot{position:absolute;top:9px;right:10px;width:8px;height:8px;background:var(--tomato);border:2px solid var(--paper);border-radius:var(--radius-circle)}
+.pnl-me{display:flex;align-items:center;gap:11px;cursor:pointer;padding:6px 8px 6px 6px;border-radius:var(--radius-md);transition:.2s var(--ease)}
+.pnl-me:hover{background:var(--bg)}
+.pnl-me .pm-ava{width:36px;height:36px;border-radius:var(--radius-circle);flex:none;background-size:cover;background-position:center;box-shadow:0 0 0 2px var(--paper), 0 0 0 4px var(--green)}
+.pnl-me .pm-id{line-height:1.25}
+.pnl-me .pm-name{font-size:13.5px;font-weight:700;color:var(--slate)}
+.pnl-me .pm-role{font-size:11.5px;color:var(--muted)}
+.pnl-me>i{font-size:11px;color:var(--muted)}
+.pnl-main{margin-left:var(--pnl-side-w);padding:calc(var(--pnl-top-h) + 28px) 28px 48px;min-height:100vh}
+.pnl-page-head{display:flex;align-items:flex-end;justify-content:space-between;gap:18px;margin-bottom:24px;flex-wrap:wrap}
+.pnl-page-head h1{font-size:24px}
+.pnl-page-head .ph-sub{margin-top:5px;font-size:13.5px;color:var(--muted)}
+.pnl-page-head .ph-actions{display:flex;gap:10px;flex:none}
+.pnl-card{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-lg);box-shadow:var(--sh-sm)}
+.pc-head{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:18px 22px;border-bottom:1px solid var(--line)}
+.pc-title{font-size:16px;font-weight:700;color:var(--slate);display:flex;align-items:center;gap:10px}
+.pc-title i{color:var(--green);font-size:15px}
+.pc-link{font-size:13px;font-weight:700;color:var(--green-deep);display:inline-flex;align-items:center;gap:7px;transition:.2s}
+.pc-body{padding:22px}
+.pc-foot{padding:14px 22px;border-top:1px solid var(--line)}
+.pstat{display:inline-flex;align-items:center;gap:6px;font-size:11.5px;font-weight:700;padding:4px 10px;border-radius:var(--radius-sm);white-space:nowrap}
+.pstat::before{content:"";width:6px;height:6px;border-radius:var(--radius-circle);background:currentColor}
+.pstat.ok{background:var(--green-tint);color:var(--green-deep)}
+.pnl-overlay{position:fixed;inset:0;background:rgba(33,30,22,.5);z-index:79;opacity:0;pointer-events:none;transition:.25s}
+
+/* ============ SAYFA CSS ============ */
+/* sekme barı (panel içi — diyetisyen .pf-tabs panel türevi, yeşil aktif) */
+.set-tabs{display:flex;gap:4px;background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-md);padding:4px;margin-bottom:22px;width:fit-content;max-width:100%;flex-wrap:wrap}
+.st-btn{font-family:inherit;font-weight:700;font-size:13.5px;color:var(--muted);background:transparent;border:none;border-radius:var(--radius-sm);padding:9px 18px;cursor:pointer;display:inline-flex;align-items:center;gap:8px;transition:.2s var(--ease);white-space:nowrap}
+.st-btn i{font-size:13px}
+.st-btn:hover{color:var(--green-deep)}
+.st-btn.is-on{background:var(--green);color:#fff}
+.set-pane{display:none}
+.set-pane.active{display:block;animation:fadeUp .3s var(--ease)}
+.set-grid{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:16px;align-items:start}
+.stack{display:flex;flex-direction:column;gap:16px}
+
+/* form alanları (diyetisyen .fk-* dilinin panel türevi) */
+.fk-field{margin-bottom:14px}
+.fk-field:last-child{margin-bottom:0}
+.fk-label{display:block;font-size:12.5px;font-weight:700;color:var(--slate);margin-bottom:7px}
+.fk-label .opt{font-weight:500;color:var(--muted);font-size:11.5px}
+.fk-input,.fk-select,.fk-textarea{width:100%;font-family:inherit;font-size:14px;font-weight:500;color:var(--slate);background:var(--bg);border:1px solid var(--line);border-radius:var(--radius-md);padding:12px 14px;outline:none;transition:border-color .2s var(--ease)}
+.fk-textarea{min-height:96px;resize:vertical}
+.fk-input:focus,.fk-select:focus,.fk-textarea:focus{border-color:var(--green);background:var(--paper)}
+.fk-input::placeholder,.fk-textarea::placeholder{color:#a7a7a7}
+.fk-grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.fk-help{display:flex;gap:8px;font-size:11.5px;color:var(--muted);font-weight:500;margin-top:7px;line-height:1.45}
+.fk-help i{color:var(--green-deep);margin-top:2px;flex:none}
+
+/* haftalık çalışma saatleri tablosu */
+.hr-list{display:flex;flex-direction:column}
+.hr-row{display:flex;align-items:center;gap:14px;padding:13px 22px;border-bottom:1px solid var(--line)}
+.hr-row:last-child{border-bottom:none}
+.hr-day{flex:none;width:96px;font-size:13.5px;font-weight:700;color:var(--slate)}
+.hr-times{flex:1;display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+.hr-times .fk-input{width:auto;min-width:96px;padding:9px 12px;font-size:13px}
+.hr-times .dash{color:var(--muted);font-weight:700}
+.hr-row.closed .hr-times{opacity:.45}
+.hr-row .hr-toggle{margin-left:auto;flex:none}
+/* toggle (panel switch) */
+.sw{position:relative;display:inline-flex;align-items:center;cursor:pointer;gap:9px;font-size:12.5px;font-weight:600;color:var(--slate-2)}
+.sw input{position:absolute;opacity:0;width:0;height:0}
+.sw .tr{width:42px;height:24px;border-radius:999px;background:#d8d8d8;position:relative;transition:.2s var(--ease);flex:none}
+.sw .tr::after{content:"";position:absolute;top:2px;left:2px;width:20px;height:20px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.2);transition:.2s var(--ease)}
+.sw input:checked~.tr{background:var(--green)}
+.sw input:checked~.tr::after{transform:translateX(18px)}
+
+/* masa kapasitesi adımlayıcı */
+.cap-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+.cap-card{border:1px solid var(--line);border-radius:var(--radius-md);padding:15px 16px}
+.cap-card .ct{font-size:12.5px;font-weight:700;color:var(--slate);display:flex;align-items:center;gap:8px;margin-bottom:11px}
+.cap-card .ct i{color:var(--green-deep)}
+.stepper{display:flex;align-items:center;gap:0;border:1px solid var(--line);border-radius:var(--radius-md);overflow:hidden;width:fit-content}
+.stepper button{width:38px;height:40px;border:none;background:var(--paper);color:var(--slate);font-size:15px;cursor:pointer;transition:.18s var(--ease)}
+.stepper button:hover{background:var(--green-tint);color:var(--green-deep)}
+.stepper .val{min-width:54px;height:40px;display:grid;place-items:center;font-size:15px;font-weight:700;color:var(--slate);border-left:1px solid var(--line);border-right:1px solid var(--line)}
+
+/* özellik seçici (toggle chip) */
+.feat-pick{display:flex;flex-wrap:wrap;gap:9px}
+.feat-pick .fp{display:inline-flex;align-items:center;gap:8px;font-size:13px;font-weight:600;color:var(--slate);background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-sm);padding:9px 14px;cursor:pointer;transition:.18s var(--ease)}
+.feat-pick .fp i{font-size:12px;color:var(--muted)}
+.feat-pick .fp:hover{border-color:var(--green)}
+.feat-pick .fp.on{border-color:var(--green);background:var(--green-tint);color:var(--green-deep)}
+.feat-pick .fp.on i{color:var(--green-deep)}
+
+/* görsel yükleme (diyetisyen .up-zone) */
+.up-zone{width:100%;border:1.5px dashed #d8d8d8;border-radius:var(--radius-md);background:var(--bg);padding:22px 16px;display:flex;flex-direction:column;align-items:center;gap:7px;cursor:pointer;text-align:center;transition:.2s var(--ease)}
+.up-zone i{font-size:22px;color:var(--green-deep)}
+.up-zone b{font-size:13.5px;color:var(--slate)}
+.up-zone small{font-size:11.5px;color:var(--muted)}
+.up-zone:hover{border-color:var(--green);background:var(--green-tint)}
+.gal-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:12px}
+.gal-thumb{position:relative;aspect-ratio:1;border-radius:var(--radius-md);background-size:cover;background-position:center}
+.gal-thumb .x{position:absolute;top:6px;right:6px;width:24px;height:24px;border:none;border-radius:50%;background:rgba(33,30,22,.6);color:#fff;font-size:11px;cursor:pointer;display:grid;place-items:center}
+
+/* kaydet bandı */
+.save-bar{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-top:6px}
+.save-bar .sn{font-size:12.5px;color:var(--muted)}
+
+@media(max-width:980px){
+  .pnl-side{transform:translateX(-100%);transition:transform .28s var(--ease)}
+  body.nav-open .pnl-side{transform:translateX(0)}
+  body.nav-open .pnl-overlay{opacity:1;pointer-events:auto}
+  .pnl-top{left:0}
+  .pnl-burger{display:inline-flex}
+  .pnl-main{margin-left:0;padding:calc(var(--pnl-top-h) + 20px) 16px 40px}
+  .set-grid{grid-template-columns:minmax(0,1fr)}
+  .pnl-me .pm-id,.pnl-me>i{display:none}
+  .gal-grid{grid-template-columns:repeat(3,1fr)}
+}
+@media(max-width:640px){
+  .pnl-search{max-width:none}
+  .fk-grid2,.cap-grid{grid-template-columns:1fr}
+  .hr-row{flex-wrap:wrap}
+  .hr-day{width:100%}
+  .pc-head,.pc-body,.hr-row{padding-left:16px;padding-right:16px}
+  .pnl-page-head h1{font-size:20px}
+  .gal-grid{grid-template-columns:repeat(2,1fr)}
+}
+</style>
+</head>
+<body>
+
+<div class="pnl-app">
+
+  <!-- ============ SOL SIDEBAR ============ -->
+  <aside class="pnl-side" id="pnlSide">
+    <a class="pnl-logo" href="anasayfa-portal-v3a.html">
+      <img src="assets/img/logo-official-white.png" alt="DadaMutfak" />
+      <span class="pl-tag">Mekân</span>
+    </a>
+    <nav class="pnl-nav">
+      <a class="pnl-link" href="mekan-panel-v1.html" data-nav="panel"><i class="fa-solid fa-gauge-high"></i> Panel</a>
+      <a class="pnl-link" href="mekan-rezervasyonlar-v1.html" data-nav="rezervasyonlar"><i class="fa-regular fa-calendar-check"></i> Rezervasyonlar <span class="pl-cnt">7</span></a>
+      <a class="pnl-link is-active" href="mekan-ayarlar-v1.html" data-nav="musaitlik"><i class="fa-solid fa-clock-rotate-left"></i> Müsaitlik &amp; Ayarlar</a>
+      <a class="pnl-link" href="mekan-ayarlar-v1.html?tab=profil" data-nav="isletme"><i class="fa-solid fa-store"></i> İşletme Profili</a>
+      <div class="pnl-sec-lbl">Hesap</div>
+      <a class="pnl-link" href="mekan-ayarlar-v1.html?tab=bildirim" data-nav="bildirim"><i class="fa-regular fa-bell"></i> Bildirim Ayarları</a>
+    </nav>
+    <div class="pnl-side-foot">
+      <a class="pnl-link" href="mekan-detay-v1.html"><i class="fa-regular fa-eye"></i> Public Sayfam</a>
+      <a class="pnl-link" href="anasayfa-portal-v3a.html"><i class="fa-solid fa-arrow-left"></i> Siteye Dön</a>
+    </div>
+  </aside>
+  <div class="pnl-overlay" id="pnlOverlay"></div>
+
+  <!-- ============ ÜST İNCE BAR ============ -->
+  <header class="pnl-top">
+    <button class="pnl-burger" id="pnlBurger" aria-label="Menü"><i class="fa-solid fa-bars"></i></button>
+    <div class="pnl-search">
+      <i class="fa-solid fa-magnifying-glass"></i>
+      <input type="text" placeholder="Ayar veya alan ara…" />
+    </div>
+    <div class="pnl-top-tools">
+      <button class="pnl-bell" aria-label="Bildirimler"><i class="fa-regular fa-bell"></i><span class="pb-dot"></span></button>
+      <div class="pnl-me">
+        <div class="pm-ava" style="background-image:url('https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=240&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')"></div>
+        <div class="pm-id">
+          <div class="pm-name">Nalia Karadeniz</div>
+          <div class="pm-role">Mekân · Doğrulanmış</div>
+        </div>
+        <i class="fa-solid fa-chevron-down"></i>
+      </div>
+    </div>
+  </header>
+
+  <!-- ============ İÇERİK ALANI ============ -->
+  <main class="pnl-main">
+
+    <div class="pnl-page-head">
+      <div>
+        <h1>Müsaitlik &amp; İşletme</h1>
+        <div class="ph-sub">Çalışma saatlerini, masa kapasiteni ve işletme profilini buradan yönet.</div>
+      </div>
+      <div class="ph-actions">
+        <a class="btn btn-ghost btn-sm" href="mekan-detay-v1.html"><i class="fa-regular fa-eye"></i> Public Sayfayı Gör</a>
+      </div>
+    </div>
+
+    <!-- sekme barı -->
+    <div class="set-tabs" id="setTabs">
+      <button class="st-btn is-on" type="button" data-tab="musaitlik"><i class="fa-solid fa-clock-rotate-left"></i> Müsaitlik &amp; Ayarlar</button>
+      <button class="st-btn" type="button" data-tab="profil"><i class="fa-solid fa-store"></i> İşletme Profili</button>
+      <button class="st-btn" type="button" data-tab="bildirim"><i class="fa-regular fa-bell"></i> Bildirim</button>
+    </div>
+
+    <!-- =================== PANE: MÜSAİTLİK & AYARLAR =================== -->
+    <section class="set-pane active" data-pane="musaitlik">
+      <div class="set-grid">
+        <div class="stack">
+          <!-- çalışma saatleri -->
+          <div class="pnl-card">
+            <div class="pc-head">
+              <div class="pc-title"><i class="fa-regular fa-clock"></i> Çalışma Saatleri</div>
+              <span class="muted" style="font-size:12.5px">Rezervasyona açık saat aralıkları</span>
+            </div>
+            <div class="hr-list">
+              <div class="hr-row"><span class="hr-day">Pazartesi</span><div class="hr-times"><input class="fk-input" type="text" value="12.00" /><span class="dash">–</span><input class="fk-input" type="text" value="23.00" /></div><label class="sw hr-toggle"><input type="checkbox" checked /><span class="tr"></span> Açık</label></div>
+              <div class="hr-row"><span class="hr-day">Salı</span><div class="hr-times"><input class="fk-input" type="text" value="12.00" /><span class="dash">–</span><input class="fk-input" type="text" value="23.00" /></div><label class="sw hr-toggle"><input type="checkbox" checked /><span class="tr"></span> Açık</label></div>
+              <div class="hr-row"><span class="hr-day">Çarşamba</span><div class="hr-times"><input class="fk-input" type="text" value="12.00" /><span class="dash">–</span><input class="fk-input" type="text" value="23.00" /></div><label class="sw hr-toggle"><input type="checkbox" checked /><span class="tr"></span> Açık</label></div>
+              <div class="hr-row"><span class="hr-day">Perşembe</span><div class="hr-times"><input class="fk-input" type="text" value="12.00" /><span class="dash">–</span><input class="fk-input" type="text" value="23.00" /></div><label class="sw hr-toggle"><input type="checkbox" checked /><span class="tr"></span> Açık</label></div>
+              <div class="hr-row"><span class="hr-day">Cuma</span><div class="hr-times"><input class="fk-input" type="text" value="12.00" /><span class="dash">–</span><input class="fk-input" type="text" value="23.30" /></div><label class="sw hr-toggle"><input type="checkbox" checked /><span class="tr"></span> Açık</label></div>
+              <div class="hr-row"><span class="hr-day">Cumartesi</span><div class="hr-times"><input class="fk-input" type="text" value="09.00" /><span class="dash">–</span><input class="fk-input" type="text" value="23.30" /></div><label class="sw hr-toggle"><input type="checkbox" checked /><span class="tr"></span> Açık</label></div>
+              <div class="hr-row closed"><span class="hr-day">Pazar</span><div class="hr-times"><input class="fk-input" type="text" value="—" disabled /><span class="dash">–</span><input class="fk-input" type="text" value="—" disabled /></div><label class="sw hr-toggle"><input type="checkbox" /><span class="tr"></span> Kapalı</label></div>
+            </div>
+            <div class="pc-foot">
+              <div class="save-bar">
+                <span class="sn"><i class="fa-solid fa-circle-info"></i> Değişiklikler public sayfana ve rezervasyon takvimine yansır.</span>
+                <button class="btn btn-green btn-sm" type="button"><i class="fa-solid fa-check"></i> Saatleri Kaydet</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- rezervasyon kuralları (ücret YOK) -->
+          <div class="pnl-card">
+            <div class="pc-head"><div class="pc-title"><i class="fa-solid fa-list-check"></i> Rezervasyon Kuralları</div></div>
+            <div class="pc-body">
+              <div class="fk-grid2">
+                <div class="fk-field"><label class="fk-label">Rezervasyon başına maks. kişi</label><input class="fk-input" type="number" value="10" min="1" /></div>
+                <div class="fk-field"><label class="fk-label">Masa süresi (dk)</label><input class="fk-input" type="number" value="90" min="30" step="15" /></div>
+              </div>
+              <div class="fk-field">
+                <label class="fk-label">Onay yöntemi</label>
+                <select class="fk-select">
+                  <option selected>Talepleri manuel onaylarım</option>
+                  <option>Uygun saatleri otomatik onayla</option>
+                </select>
+                <div class="fk-help"><i class="fa-solid fa-circle-info"></i><span>Manuel onayda misafir, sen onayladıktan sonra SMS/e-posta ile bilgilendirilir.</span></div>
+              </div>
+              <div class="fk-field" style="margin-top:4px">
+                <label class="sw"><input type="checkbox" checked /><span class="tr"></span> 8+ kişilik grup rezervasyonlarını kabul et</label>
+              </div>
+              <div class="fk-field">
+                <label class="sw"><input type="checkbox" checked /><span class="tr"></span> Özel gün notlarına (doğum günü, yıldönümü) izin ver</label>
+              </div>
+              <div class="fk-help"><i class="fa-solid fa-shield-halved"></i><span>DadaMutfak rezervasyonlarında <b>ön ödeme / depozito alınmaz</b> — masan sahada ödenir.</span></div>
+            </div>
+            <div class="pc-foot">
+              <div class="save-bar">
+                <span class="sn">Son güncelleme: 2 gün önce</span>
+                <button class="btn btn-green btn-sm" type="button"><i class="fa-solid fa-check"></i> Kuralları Kaydet</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- sağ: masa kapasitesi + tatil günü -->
+        <div class="stack">
+          <div class="pnl-card">
+            <div class="pc-head"><div class="pc-title"><i class="fa-solid fa-chair"></i> Masa Kapasitesi</div></div>
+            <div class="pc-body">
+              <div class="cap-grid">
+                <div class="cap-card">
+                  <div class="ct"><i class="fa-solid fa-utensils"></i> Öğle servisi</div>
+                  <div class="stepper" data-step><button type="button" data-d="-1">−</button><span class="val">8</span><button type="button" data-d="1">+</button></div>
+                </div>
+                <div class="cap-card">
+                  <div class="ct"><i class="fa-solid fa-moon"></i> Akşam servisi</div>
+                  <div class="stepper" data-step><button type="button" data-d="-1">−</button><span class="val">12</span><button type="button" data-d="1">+</button></div>
+                </div>
+              </div>
+              <div class="fk-help" style="margin-top:14px"><i class="fa-solid fa-circle-info"></i><span>Aynı saat diliminde kabul edilebilecek masa sayısı. Dolan saatler takvimde gri görünür.</span></div>
+            </div>
+          </div>
+
+          <div class="pnl-card">
+            <div class="pc-head"><div class="pc-title"><i class="fa-solid fa-calendar-xmark"></i> Tatil &amp; Kapalı Gün</div></div>
+            <div class="pc-body">
+              <div class="fk-field"><label class="fk-label">Geçici olarak rezervasyonu kapat</label>
+                <div class="fk-grid2">
+                  <input class="fk-input" type="text" value="15 Haz 2026" />
+                  <input class="fk-input" type="text" value="16 Haz 2026" />
+                </div>
+                <div class="fk-help"><i class="fa-solid fa-circle-info"></i><span>Bu aralıkta yeni rezervasyon alınmaz. Mevcut rezervasyonlar etkilenmez.</span></div>
+              </div>
+              <button class="btn btn-ghost btn-sm" type="button" style="width:100%"><i class="fa-solid fa-plus"></i> Kapalı Gün Ekle</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =================== PANE: İŞLETME PROFİLİ =================== -->
+    <section class="set-pane" data-pane="profil">
+      <div class="set-grid">
+        <div class="stack">
+          <div class="pnl-card">
+            <div class="pc-head"><div class="pc-title"><i class="fa-solid fa-store"></i> İşletme Bilgileri</div></div>
+            <div class="pc-body">
+              <div class="fk-field"><label class="fk-label">İşletme Adı</label><input class="fk-input" type="text" value="Nalia Karadeniz Mutfağı" /></div>
+              <div class="fk-grid2">
+                <div class="fk-field"><label class="fk-label">Mutfak Türü</label>
+                  <select class="fk-select"><option selected>Karadeniz Mutfağı</option><option>Ev Yemekleri</option><option>Et &amp; Kebap</option><option>Deniz Ürünleri</option><option>Dünya Mutfağı</option></select>
+                </div>
+                <div class="fk-field"><label class="fk-label">Fiyat Aralığı</label>
+                  <select class="fk-select"><option>₺ · Ekonomik</option><option selected>₺₺ · Orta seviye</option><option>₺₺₺ · Üst seviye</option></select>
+                </div>
+              </div>
+              <div class="fk-field"><label class="fk-label">Kısa Tanıtım</label>
+                <textarea class="fk-textarea">Of'tan İstanbul'a taşınan bir aile tarifi defteri: bakır tavada mıhlama, mevsiminde tepside hamsi, günlük açılan Laz böreği. Küçük salon, ocaktan demli çay.</textarea>
+              </div>
+              <div class="fk-grid2">
+                <div class="fk-field"><label class="fk-label">Telefon</label><input class="fk-input" type="tel" value="0216 469 96 10" /></div>
+                <div class="fk-field"><label class="fk-label">Web Sitesi <span class="opt">(opsiyonel)</span></label><input class="fk-input" type="url" value="nalia.com.tr" /></div>
+              </div>
+              <div class="fk-field"><label class="fk-label">Adres</label><input class="fk-input" type="text" value="İçerenköy Mah. Prof. Dr. Ali Nihat Tarlan Cad. No:103, Ataşehir / İstanbul" /></div>
+            </div>
+            <div class="pc-foot">
+              <div class="save-bar"><span class="sn"><i class="fa-solid fa-circle-check" style="color:var(--green-deep)"></i> Doğrulanmış mekân</span><button class="btn btn-green btn-sm" type="button"><i class="fa-solid fa-check"></i> Bilgileri Kaydet</button></div>
+            </div>
+          </div>
+
+          <div class="pnl-card">
+            <div class="pc-head"><div class="pc-title"><i class="fa-solid fa-tags"></i> Özellikler</div></div>
+            <div class="pc-body">
+              <div class="feat-pick" id="featPick">
+                <button class="fp on" type="button"><i class="fa-solid fa-mug-hot"></i> Kahvaltı Servisi</button>
+                <button class="fp on" type="button"><i class="fa-solid fa-calendar-check"></i> Rezervasyon</button>
+                <button class="fp on" type="button"><i class="fa-solid fa-children"></i> Aile Dostu</button>
+                <button class="fp on" type="button"><i class="fa-solid fa-tree"></i> Bahçe</button>
+                <button class="fp on" type="button"><i class="fa-solid fa-credit-card"></i> Kart Geçerli</button>
+                <button class="fp" type="button"><i class="fa-solid fa-square-parking"></i> Otopark</button>
+                <button class="fp" type="button"><i class="fa-solid fa-wheelchair"></i> Engelli Erişimi</button>
+                <button class="fp" type="button"><i class="fa-solid fa-wifi"></i> Ücretsiz Wi-Fi</button>
+                <button class="fp" type="button"><i class="fa-solid fa-wine-glass"></i> Alkol Servisi</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- sağ: görseller -->
+        <div class="stack">
+          <div class="pnl-card">
+            <div class="pc-head"><div class="pc-title"><i class="fa-solid fa-image"></i> Kapak Görseli</div></div>
+            <div class="pc-body">
+              <div class="gal-thumb" style="aspect-ratio:16/9;background-image:url('https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=800&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')">
+                <button class="x" type="button" aria-label="Değiştir"><i class="fa-solid fa-pen"></i></button>
+              </div>
+            </div>
+          </div>
+          <div class="pnl-card">
+            <div class="pc-head">
+              <div class="pc-title"><i class="fa-solid fa-images"></i> Galeri</div>
+              <span class="muted" style="font-size:12px">4 / 12 fotoğraf</span>
+            </div>
+            <div class="pc-body">
+              <button class="up-zone" type="button"><i class="fa-solid fa-file-arrow-up"></i><b>Fotoğraf yükle</b><small>JPG veya PNG — maks. 5MB</small></button>
+              <div class="gal-grid">
+                <div class="gal-thumb" style="background-image:url('https://images.unsplash.com/photo-1547592180-85f173990554?w=400&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')"><button class="x" type="button" aria-label="Kaldır"><i class="fa-solid fa-xmark"></i></button></div>
+                <div class="gal-thumb" style="background-image:url('https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=400&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')"><button class="x" type="button" aria-label="Kaldır"><i class="fa-solid fa-xmark"></i></button></div>
+                <div class="gal-thumb" style="background-image:url('https://images.unsplash.com/photo-1565958011703-44f9829ba187?w=400&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')"><button class="x" type="button" aria-label="Kaldır"><i class="fa-solid fa-xmark"></i></button></div>
+                <div class="gal-thumb" style="background-image:url('https://images.unsplash.com/photo-1559339352-11d035aa65de?w=400&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')"><button class="x" type="button" aria-label="Kaldır"><i class="fa-solid fa-xmark"></i></button></div>
+              </div>
+            </div>
+            <div class="pc-foot">
+              <div class="save-bar"><span class="sn"><i class="fa-solid fa-crown" style="color:var(--tomato)"></i> Sınırsız galeri Pro+ ile</span><a class="pc-link" href="#" data-pro-gate data-pro-title="Sınırsız galeri Pro+ üyelere özel" data-pro-desc="12'den fazla fotoğraf yüklemek ve dijital menü vitrini eklemek için Pro 2 (Pro+) üyeliğe yükselt.">Yükselt <i class="fa-solid fa-arrow-right"></i></a></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =================== PANE: BİLDİRİM =================== -->
+    <section class="set-pane" data-pane="bildirim">
+      <div class="pnl-card" style="max-width:680px">
+        <div class="pc-head"><div class="pc-title"><i class="fa-regular fa-bell"></i> Bildirim Tercihleri</div></div>
+        <div class="pc-body stack">
+          <label class="sw"><input type="checkbox" checked /><span class="tr"></span> Yeni rezervasyon talebinde SMS gönder</label>
+          <label class="sw"><input type="checkbox" checked /><span class="tr"></span> Yeni rezervasyon talebinde e-posta gönder</label>
+          <label class="sw"><input type="checkbox" checked /><span class="tr"></span> Misafir iptalinde anında bildir</label>
+          <label class="sw"><input type="checkbox" /><span class="tr"></span> Haftalık doluluk özeti e-postası</label>
+          <label class="sw"><input type="checkbox" checked /><span class="tr"></span> Yeni değerlendirme bildirimleri</label>
+        </div>
+        <div class="pc-foot">
+          <div class="save-bar"><span class="sn">Bildirim e-postası: rezervasyon@nalia.com.tr</span><button class="btn btn-green btn-sm" type="button"><i class="fa-solid fa-check"></i> Tercihleri Kaydet</button></div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<!-- ===== PRO-GATE (Foundation F1) — canonical (panel-shell BİREBİR kopya) ===== -->
+<div class="pg-overlay" id="pgOverlay"></div>
+<div class="pro-gate" id="proGate" role="dialog" aria-modal="true" aria-label="Pro içerik kilidi">
+  <div class="pg-panel">
+    <button class="pg-close" id="pgClose" type="button" aria-label="Kapat"><i class="fa-solid fa-xmark"></i></button>
+    <span class="pg-ico"><i class="fa-solid fa-crown"></i></span>
+    <span class="pg-tag"><i class="fa-solid fa-crown"></i> Pro</span>
+    <h4 id="pgTitle">Bu özellik Pro üyelere özel</h4>
+    <p id="pgDesc">Sınırsız galeri, dijital menü ve genişletilmiş vitrin için DadaMutfak Pro'ya yükselt.</p>
+    <ul class="pg-feats">
+      <li><i class="fa-solid fa-check"></i> Sınırsız fotoğraf galerisi</li>
+      <li><i class="fa-solid fa-check"></i> Dijital menü vitrini</li>
+      <li><i class="fa-solid fa-check"></i> Keşfet'te öne çıkan liste</li>
+    </ul>
+    <div class="pg-acts">
+      <a class="btn btn-primary" href="pro-v1.html"><i class="fa-solid fa-crown"></i> Pro'ya Yükselt</a>
+      <button class="btn btn-ghost" id="pgLater" type="button">Belki sonra</button>
+    </div>
+  </div>
+</div>
+<style>
+/* PRO-GATE CSS (canonical — panel-shell BİREBİR) */
+.pg-overlay{position:fixed;inset:0;background:rgba(20,18,12,.5);z-index:97;opacity:0;visibility:hidden;transition:opacity .25s var(--ease),visibility .25s}
+.pg-overlay.show{opacity:1;visibility:visible}
+.pro-gate{position:fixed;inset:0;z-index:98;display:grid;place-items:center;padding:20px;opacity:0;visibility:hidden;pointer-events:none;transition:opacity .25s var(--ease),visibility .25s}
+.pro-gate.show{opacity:1;visibility:visible;pointer-events:auto}
+.pg-panel{position:relative;width:min(420px,100%);background:#fff;border-radius:var(--radius-lg);box-shadow:var(--sh-lg);padding:32px 26px 26px;text-align:center;transform:translateY(14px);transition:transform .3s var(--ease)}
+.pro-gate.show .pg-panel{transform:translateY(0)}
+.pg-close{position:absolute;top:13px;right:13px;width:36px;height:36px;border-radius:var(--radius-md);border:1px solid var(--line);background:var(--paper);color:var(--slate);font-size:15px;cursor:pointer;display:grid;place-items:center;transition:.2s var(--ease)}
+.pg-close:hover{border-color:var(--tomato);color:var(--tomato)}
+.pg-ico{width:62px;height:62px;border-radius:var(--radius-circle);background:var(--tomato-tint);color:var(--tomato);display:grid;place-items:center;font-size:25px;margin:0 auto 14px}
+.pg-tag{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--tomato);background:var(--tomato-tint);padding:4px 11px;border-radius:999px;margin-bottom:10px}
+.pro-gate h4{font-size:19px;margin-bottom:8px}
+.pro-gate p{font-size:13.5px;color:var(--muted);font-weight:500;max-width:320px;margin:0 auto 16px;line-height:1.55}
+.pg-feats{list-style:none;max-width:300px;margin:0 auto 20px;text-align:left;display:flex;flex-direction:column;gap:9px}
+.pg-feats li{display:flex;gap:9px;font-size:13px;font-weight:600;color:var(--slate-2)}
+.pg-feats li i{color:var(--green-deep);font-size:12px;margin-top:3px;flex:none}
+.pg-acts{display:flex;gap:10px}
+.pg-acts .btn{flex:1}
+</style>
+
+<script>
+/* ============ PANEL ORTAK JS — panel-shell BİREBİR kopya ============ */
+(function(){
+  var burger=document.getElementById('pnlBurger'),overlay=document.getElementById('pnlOverlay');
+  if(burger) burger.addEventListener('click',function(){document.body.classList.toggle('nav-open')});
+  if(overlay) overlay.addEventListener('click',function(){document.body.classList.remove('nav-open')});
+  var q=new URLSearchParams(location.search);
+  if(q.get('nav')==='1') document.body.classList.add('nav-open');
+})();
+
+/* ============ SAYFA JS — sekme geçişi + steper + özellik toggle ============ */
+(function(){
+  var q=new URLSearchParams(location.search);
+  var tabs=document.querySelectorAll('.st-btn'),
+      panes=document.querySelectorAll('.set-pane');
+  function setTab(t){
+    tabs.forEach(function(b){b.classList.toggle('is-on',b.dataset.tab===t)});
+    panes.forEach(function(p){p.classList.toggle('active',p.dataset.pane===t)});
+  }
+  tabs.forEach(function(b){b.addEventListener('click',function(){setTab(b.dataset.tab)})});
+  var initTab=q.get('tab');
+  if(initTab==='profil'||initTab==='bildirim') setTab(initTab);
+
+  /* masa kapasitesi stepper */
+  document.querySelectorAll('.stepper[data-step]').forEach(function(st){
+    var val=st.querySelector('.val');
+    st.querySelectorAll('button').forEach(function(b){
+      b.addEventListener('click',function(){
+        var n=parseInt(val.textContent,10)+parseInt(b.dataset.d,10);
+        if(n<1)n=1; val.textContent=n;
+      });
+    });
+  });
+
+  /* özellik toggle */
+  document.querySelectorAll('#featPick .fp').forEach(function(f){
+    f.addEventListener('click',function(){f.classList.toggle('on')});
+  });
+})();
+
+// ---- PRO-GATE (Foundation F1) — canonical JS (panel-shell BİREBİR kopya) ----
+(function(){
+  var gate=document.getElementById('proGate'); if(!gate)return;
+  var overlay=document.getElementById('pgOverlay'),closeBtn=document.getElementById('pgClose'),
+      later=document.getElementById('pgLater'),title=document.getElementById('pgTitle'),desc=document.getElementById('pgDesc');
+  function open(t,d){ if(t)title.textContent=t; if(d)desc.textContent=d; overlay.classList.add('show'); gate.classList.add('show'); }
+  function close(){ overlay.classList.remove('show'); gate.classList.remove('show'); }
+  closeBtn.addEventListener('click',close);
+  if(later)later.addEventListener('click',close);
+  overlay.addEventListener('click',close);
+  document.addEventListener('keydown',function(e){if(e.key==='Escape'&&gate.classList.contains('show'))close();});
+  document.addEventListener('click',function(e){
+    var t=e.target.closest('[data-pro-gate]'); if(!t)return;
+    e.preventDefault();e.stopPropagation();
+    open(t.getAttribute('data-pro-title'),t.getAttribute('data-pro-desc'));
+  },true);
+  if(location.search.indexOf('pro=1')>-1){open();}
+})();
+</script>
+
+</body>
+</html>

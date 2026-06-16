@@ -1129,6 +1129,105 @@ body:not(.is-auth) .rev-login{display:flex}
 .dropdown-health a.active i{color:var(--green)}
 .dropdown-health a.active::after{display:none}
 
+/* =====================================================================
+   M10 — MASA REZERVASYONU MODALI (.rsv-*) — diyetisyen .apt-modal İSKELETİ
+   miras alınarak 3-ADIMLI yapıldı; SEMANTİK masa rezervasyonu:
+   Adım1 = kişi sayısı · Adım2 = tarih/saat · Adım3 = onay/başarı.
+   ÜCRET/DEPOZİTO YOK. Token/transition apt-modal ile aynı.
+   ===================================================================== */
+.kc-reserve{width:100%;margin-top:16px}
+.kc-reserve-note{display:flex;align-items:flex-start;gap:7px;margin-top:10px;font-size:11.5px;color:var(--muted);font-weight:500;line-height:1.4}
+.kc-reserve-note i{color:var(--green-deep);margin-top:2px;flex:none}
+
+.rsv-overlay{position:fixed;inset:0;background:rgba(20,18,12,.5);z-index:97;opacity:0;visibility:hidden;transition:opacity .25s var(--ease),visibility .25s}
+.rsv-overlay.show{opacity:1;visibility:visible}
+.rsv-modal{position:fixed;inset:0;z-index:98;display:grid;place-items:center;padding:20px;opacity:0;visibility:hidden;pointer-events:none;transition:opacity .25s var(--ease),visibility .25s}
+.rsv-modal.show{opacity:1;visibility:visible;pointer-events:auto}
+.rsv-panel{width:min(560px,100%);max-height:calc(100vh - 40px);overflow-y:auto;background:#fff;border-radius:var(--radius-lg);box-shadow:var(--sh-lg);transform:translateY(14px);transition:transform .3s var(--ease)}
+.rsv-modal.show .rsv-panel{transform:translateY(0)}
+.rsv-head{display:flex;align-items:center;gap:14px;padding:20px 24px;border-bottom:1px solid var(--line)}
+.rsv-av{flex:none;width:46px;height:46px;border-radius:var(--radius-md);background-size:cover;background-position:center}
+.rsv-head h3{font-size:18px}
+.rsv-head p{font-size:12.5px;color:var(--muted);font-weight:500;margin-top:2px;display:inline-flex;align-items:center;gap:6px}
+.rsv-head p i{color:var(--green-deep)}
+.rsv-close{margin-left:auto;flex:none;width:40px;height:40px;border-radius:var(--radius-md);border:1px solid var(--line);background:var(--paper);color:var(--slate);font-size:16px;cursor:pointer;display:grid;place-items:center;transition:.2s var(--ease)}
+.rsv-close:hover{border-color:var(--tomato);color:var(--tomato)}
+/* ADIM göstergesi — 3 nokta + çizgi */
+.rsv-prog{display:flex;align-items:center;gap:0;padding:16px 24px 4px}
+.rsv-prog .pstep{flex:none;display:flex;flex-direction:column;align-items:center;gap:6px;position:relative}
+.rsv-prog .pdot{width:30px;height:30px;border-radius:var(--radius-circle);border:1.5px solid var(--line);background:var(--paper);color:var(--muted);display:grid;place-items:center;font-size:13px;font-weight:700;transition:.2s var(--ease)}
+.rsv-prog .plbl{font-size:10.5px;font-weight:700;letter-spacing:.04em;color:var(--muted);text-transform:uppercase;white-space:nowrap}
+.rsv-prog .pline{flex:1;height:1.5px;background:var(--line);margin:0 6px;align-self:flex-start;margin-top:14px;transition:.2s var(--ease)}
+.rsv-prog .pstep.done .pdot,.rsv-prog .pstep.cur .pdot{border-color:var(--tomato);background:var(--tomato);color:#fff}
+.rsv-prog .pstep.done .plbl,.rsv-prog .pstep.cur .plbl{color:var(--slate)}
+.rsv-prog .pline.done{background:var(--tomato)}
+.rsv-body{padding:18px 24px 24px}
+.rsv-step{display:none}
+.rsv-step.active{display:block;animation:fadeUp .3s var(--ease)}
+.rsv-lbl{font-size:13px;font-weight:700;color:var(--slate);margin-bottom:11px;display:flex;align-items:center;gap:8px}
+.rsv-lbl i{color:var(--tomato);font-size:12px}
+.rsv-block+.rsv-block{margin-top:22px}
+/* Adım 1 — kişi sayısı seçici */
+.rsv-people{display:grid;grid-template-columns:repeat(4,1fr);gap:9px}
+.rsv-pp{padding:15px 0;text-align:center;border:1px solid var(--line);border-radius:var(--radius-md);background:var(--paper);cursor:pointer;font-family:inherit;transition:.18s var(--ease)}
+.rsv-pp i{display:block;font-size:15px;color:var(--muted);margin-bottom:5px}
+.rsv-pp b{display:block;font-size:18px;font-weight:700;color:var(--slate)}
+.rsv-pp small{display:block;font-size:10.5px;color:var(--muted);font-weight:600;margin-top:2px}
+.rsv-pp:hover{border-color:var(--tomato)}
+.rsv-pp.sel{border-color:var(--tomato);background:var(--tomato-tint)}
+.rsv-pp.sel i,.rsv-pp.sel b{color:var(--tomato)}
+.rsv-pp.lg{grid-column:span 4;display:flex;align-items:center;justify-content:center;gap:10px;padding:13px 0}
+.rsv-pp.lg b{font-size:14px}
+.rsv-occ{display:flex;flex-direction:column;gap:8px;margin-top:4px}
+.rsv-occ label{position:relative;display:flex;align-items:center;gap:12px;padding:12px 15px;border:1px solid var(--line);border-radius:var(--radius-md);cursor:pointer;transition:.18s var(--ease)}
+.rsv-occ input{position:absolute;opacity:0;pointer-events:none}
+.rsv-occ label:hover{border-color:var(--tomato)}
+.rsv-occ .rd{flex:none;width:20px;height:20px;border-radius:var(--radius-circle);border:1.5px solid #d8d8d8;display:grid;place-items:center;transition:.18s}
+.rsv-occ .rd::after{content:"";width:10px;height:10px;border-radius:var(--radius-circle);background:var(--tomato);transform:scale(0);transition:.18s}
+.rsv-occ input:checked~.rd{border-color:var(--tomato)}
+.rsv-occ input:checked~.rd::after{transform:scale(1)}
+.rsv-occ label:has(input:checked){border-color:var(--tomato);background:var(--tomato-tint)}
+.rsv-occ .si{flex:1;min-width:0;font-size:13.5px;font-weight:600;color:var(--slate)}
+.rsv-occ .si i{color:var(--tomato);width:18px;text-align:center;margin-right:8px}
+/* Adım 2 — tarih/saat (apt-day / apt-slot dili) */
+.rsv-days{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;padding-bottom:4px}
+.rsv-days::-webkit-scrollbar{display:none}
+.rsv-day{flex:none;min-width:66px;text-align:center;padding:11px 8px;border:1px solid var(--line);border-radius:var(--radius-md);background:var(--paper);cursor:pointer;font-family:inherit;transition:.18s var(--ease)}
+.rsv-day span{display:block;font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.03em}
+.rsv-day b{display:block;font-size:18px;color:var(--slate);font-weight:700;margin-top:3px}
+.rsv-day small{display:block;font-size:10px;color:var(--green-deep);font-weight:600;margin-top:3px}
+.rsv-day:hover{border-color:var(--tomato)}
+.rsv-day.sel{border-color:var(--tomato);background:var(--tomato)}
+.rsv-day.sel span,.rsv-day.sel b,.rsv-day.sel small{color:#fff}
+.rsv-day.off{opacity:.4;pointer-events:none}
+.rsv-slots{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.rsv-slot{padding:11px 0;text-align:center;border:1px solid var(--line);border-radius:var(--radius-md);background:var(--paper);cursor:pointer;font-family:inherit;font-size:13.5px;font-weight:700;color:var(--slate);transition:.18s var(--ease)}
+.rsv-slot:hover{border-color:var(--tomato);color:var(--tomato)}
+.rsv-slot.sel{border-color:var(--tomato);background:var(--tomato);color:#fff}
+.rsv-slot.off{opacity:.4;pointer-events:none;text-decoration:line-through}
+.rsv-note-field textarea{width:100%;font-family:inherit;font-size:13.5px;font-weight:500;color:var(--slate);background:var(--bg);border:1px solid var(--line);border-radius:var(--radius-md);padding:12px 14px;outline:none;min-height:64px;resize:vertical;transition:border-color .2s var(--ease)}
+.rsv-note-field textarea:focus{border-color:var(--tomato)}
+.rsv-note-field textarea::placeholder{color:#a7a7a7}
+/* alt bar — özet + ileri/onay/geri */
+.rsv-foot{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-top:24px;padding-top:18px;border-top:1px solid var(--line)}
+.rsv-sum{font-size:12px;color:var(--muted);font-weight:500}
+.rsv-sum b{display:block;font-size:14px;color:var(--slate);font-weight:700;margin-top:2px}
+.rsv-foot-acts{display:flex;gap:10px;flex:none}
+.rsv-success{text-align:center;padding:14px 0 6px}
+.rsv-success .ok{width:64px;height:64px;border-radius:var(--radius-circle);background:#EAF7F0;color:var(--green);display:grid;place-items:center;font-size:27px;margin:0 auto 16px}
+.rsv-success h4{font-size:19px;margin-bottom:8px}
+.rsv-success p{font-size:13.5px;color:var(--muted);font-weight:500;max-width:400px;margin:0 auto 18px;line-height:1.6}
+.rsv-recap{display:inline-flex;flex-wrap:wrap;justify-content:center;gap:9px;margin:0 auto 8px}
+.rsv-recap span{display:inline-flex;align-items:center;gap:7px;font-size:12.5px;font-weight:600;color:var(--slate-2);background:var(--bg);border:1px solid var(--line);padding:8px 13px;border-radius:var(--radius-sm)}
+.rsv-recap span i{color:var(--green-deep)}
+@media(max-width:560px){
+  .rsv-people{grid-template-columns:repeat(3,1fr)}
+  .rsv-pp.lg{grid-column:span 3}
+  .rsv-slots{grid-template-columns:repeat(3,1fr)}
+  .rsv-prog .plbl{display:none}
+}
+/* ===== /M10 REZERVASYON MODALI ===== */
+
 </style>
 </head>
 <body>
@@ -1555,6 +1654,9 @@ body:not(.is-auth) .rev-login{display:flex}
             <a class="chip" href="#" onclick="return false"><i class="fa-solid fa-tree"></i>Bahçe</a>
             <a class="chip" href="#" onclick="return false"><i class="fa-solid fa-credit-card"></i>Kart Geçerli</a>
           </div>
+          <!-- M10: masa rezervasyonu CTA — 3-adımlı .rsv-modal tetikler (ücret/depozito YOK) -->
+          <button class="btn btn-primary kc-reserve" id="openRsv" type="button"><i class="fa-solid fa-calendar-check"></i> Rezervasyon Yap</button>
+          <span class="kc-reserve-note"><i class="fa-solid fa-circle-info"></i> Ücretsiz · masan onaylanınca SMS ile bilgilendirilirsin</span>
         </div>
       </aside>
 
@@ -2048,7 +2150,126 @@ body:not(.is-auth) .rev-login{display:flex}
   </div>
 </div>
 
+<!-- ===== MASA REZERVASYONU MODALI (M10) — diyetisyen .apt-modal 3-adım İSKELETİ mirror =====
+     SEMANTİK: Adım1 kişi sayısı → Adım2 tarih/saat → Adım3 onay/başarı. ÜCRET/DEPOZİTO YOK.
+     Markup </main> SONRASINA (fixed overlay page-main stacking context'ine girmez). SS: ?rezervasyon=1 -->
+<div class="rsv-overlay" id="rsvOverlay"></div>
+<div class="rsv-modal" id="rsvModal" role="dialog" aria-modal="true" aria-label="Rezervasyon Yap">
+  <div class="rsv-panel">
+    <div class="rsv-head">
+      <div class="rsv-av" style="background-image:url('https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=300&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')"></div>
+      <div>
+        <h3>Rezervasyon Yap</h3>
+        <p><i class="fa-solid fa-utensils"></i> Nalia Karadeniz Mutfağı</p>
+      </div>
+      <button class="rsv-close" id="rsvClose" type="button" aria-label="Kapat"><i class="fa-solid fa-xmark"></i></button>
+    </div>
 
+    <!-- ADIM göstergesi -->
+    <div class="rsv-prog" id="rsvProg">
+      <div class="pstep cur" data-step="1"><span class="pdot">1</span><span class="plbl">Kişi</span></div>
+      <span class="pline" data-line="1"></span>
+      <div class="pstep" data-step="2"><span class="pdot">2</span><span class="plbl">Tarih &amp; Saat</span></div>
+      <span class="pline" data-line="2"></span>
+      <div class="pstep" data-step="3"><span class="pdot">3</span><span class="plbl">Onay</span></div>
+    </div>
+
+    <div class="rsv-body">
+      <!-- ===== ADIM 1 — KİŞİ SAYISI ===== -->
+      <div class="rsv-step active" data-pane="1">
+        <div class="rsv-block">
+          <div class="rsv-lbl"><i class="fa-solid fa-user-group"></i> Kaç kişilik masa?</div>
+          <div class="rsv-people" id="rsvPeople">
+            <button class="rsv-pp" type="button" data-people="1"><i class="fa-solid fa-user"></i><b>1</b><small>kişi</small></button>
+            <button class="rsv-pp sel" type="button" data-people="2"><i class="fa-solid fa-user-group"></i><b>2</b><small>kişi</small></button>
+            <button class="rsv-pp" type="button" data-people="3"><i class="fa-solid fa-user-group"></i><b>3</b><small>kişi</small></button>
+            <button class="rsv-pp" type="button" data-people="4"><i class="fa-solid fa-user-group"></i><b>4</b><small>kişi</small></button>
+            <button class="rsv-pp" type="button" data-people="5"><i class="fa-solid fa-users"></i><b>5</b><small>kişi</small></button>
+            <button class="rsv-pp" type="button" data-people="6"><i class="fa-solid fa-users"></i><b>6</b><small>kişi</small></button>
+            <button class="rsv-pp" type="button" data-people="7"><i class="fa-solid fa-users"></i><b>7</b><small>kişi</small></button>
+            <button class="rsv-pp" type="button" data-people="8"><i class="fa-solid fa-users"></i><b>8</b><small>kişi</small></button>
+            <button class="rsv-pp lg" type="button" data-people="8+"><i class="fa-solid fa-people-group"></i><b>8+ kişi · grup rezervasyonu</b></button>
+          </div>
+        </div>
+        <div class="rsv-block">
+          <div class="rsv-lbl"><i class="fa-solid fa-champagne-glasses"></i> Özel bir durum mu? <span class="muted" style="font-weight:500;font-size:11.5px;margin-left:4px">(opsiyonel)</span></div>
+          <div class="rsv-occ" id="rsvOcc">
+            <label><input type="radio" name="occ" data-occ="" checked /><span class="rd"></span><span class="si"><i class="fa-solid fa-utensils"></i> Standart rezervasyon</span></label>
+            <label><input type="radio" name="occ" data-occ="Doğum günü" /><span class="rd"></span><span class="si"><i class="fa-solid fa-cake-candles"></i> Doğum günü</span></label>
+            <label><input type="radio" name="occ" data-occ="Yıldönümü" /><span class="rd"></span><span class="si"><i class="fa-solid fa-heart"></i> Yıldönümü</span></label>
+            <label><input type="radio" name="occ" data-occ="İş yemeği" /><span class="rd"></span><span class="si"><i class="fa-solid fa-briefcase"></i> İş yemeği</span></label>
+          </div>
+        </div>
+        <div class="rsv-foot">
+          <div class="rsv-sum">Masa<b id="rsvSum1">2 kişi · Standart</b></div>
+          <div class="rsv-foot-acts">
+            <button class="btn btn-primary rsv-next" id="rsvNext1" type="button">Devam <i class="fa-solid fa-arrow-right"></i></button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== ADIM 2 — TARİH / SAAT ===== -->
+      <div class="rsv-step" data-pane="2">
+        <div class="rsv-block">
+          <div class="rsv-lbl"><i class="fa-solid fa-calendar-days"></i> Tarih seç</div>
+          <div class="rsv-days" id="rsvDays">
+            <button class="rsv-day" type="button" data-day="Bug 11 Haz"><span>Bug</span><b>11</b><small>açık</small></button>
+            <button class="rsv-day sel" type="button" data-day="Çar 12 Haz"><span>Çar</span><b>12</b><small>açık</small></button>
+            <button class="rsv-day" type="button" data-day="Per 13 Haz"><span>Per</span><b>13</b><small>az yer</small></button>
+            <button class="rsv-day" type="button" data-day="Cum 14 Haz"><span>Cum</span><b>14</b><small>açık</small></button>
+            <button class="rsv-day off" type="button" data-day="Cmt 15 Haz"><span>Cmt</span><b>15</b><small>dolu</small></button>
+            <button class="rsv-day" type="button" data-day="Paz 16 Haz"><span>Paz</span><b>16</b><small>açık</small></button>
+            <button class="rsv-day" type="button" data-day="Pzt 17 Haz"><span>Pzt</span><b>17</b><small>açık</small></button>
+          </div>
+        </div>
+        <div class="rsv-block">
+          <div class="rsv-lbl"><i class="fa-solid fa-clock"></i> Saat seç</div>
+          <div class="rsv-slots" id="rsvSlots">
+            <button class="rsv-slot" type="button" data-slot="12:00">12:00</button>
+            <button class="rsv-slot" type="button" data-slot="12:30">12:30</button>
+            <button class="rsv-slot off" type="button" data-slot="13:00">13:00</button>
+            <button class="rsv-slot" type="button" data-slot="13:30">13:30</button>
+            <button class="rsv-slot" type="button" data-slot="18:30">18:30</button>
+            <button class="rsv-slot" type="button" data-slot="19:00">19:00</button>
+            <button class="rsv-slot off" type="button" data-slot="19:30">19:30</button>
+            <button class="rsv-slot" type="button" data-slot="20:00">20:00</button>
+            <button class="rsv-slot" type="button" data-slot="20:30">20:30</button>
+            <button class="rsv-slot" type="button" data-slot="21:00">21:00</button>
+          </div>
+        </div>
+        <div class="rsv-block rsv-note-field">
+          <div class="rsv-lbl"><i class="fa-solid fa-pen"></i> Not <span class="muted" style="font-weight:500;font-size:11.5px;margin-left:4px">(opsiyonel)</span></div>
+          <textarea placeholder="Pencere kenarı, çocuk sandalyesi, alerji vb. bir isteğin varsa yazabilirsin."></textarea>
+        </div>
+        <div class="rsv-foot">
+          <div class="rsv-sum">Seçilen<b id="rsvSum2">12 Çar · saat seç</b></div>
+          <div class="rsv-foot-acts">
+            <button class="btn btn-ghost rsv-back" id="rsvBack2" type="button"><i class="fa-solid fa-arrow-left"></i> Geri</button>
+            <button class="btn btn-primary rsv-confirm" id="rsvConfirm" type="button"><i class="fa-solid fa-check"></i> Rezervasyonu Onayla</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== ADIM 3 — ONAY / BAŞARI ===== -->
+      <div class="rsv-step" data-pane="3">
+        <div class="rsv-success">
+          <span class="ok"><i class="fa-solid fa-check"></i></span>
+          <h4>Rezervasyon talebin alındı</h4>
+          <div class="rsv-recap" id="rsvRecap">
+            <span><i class="fa-solid fa-user-group"></i> 2 kişi</span>
+            <span><i class="fa-regular fa-calendar"></i> 12 Çar</span>
+            <span><i class="fa-regular fa-clock"></i> 20:00</span>
+          </div>
+          <p id="rsvSuccessText">Nalia Karadeniz Mutfağı talebini onayladığında SMS ve e-posta ile bilgilendirileceksin. Bu rezervasyon için herhangi bir ön ödeme alınmaz.</p>
+          <div class="rsv-foot-acts" style="justify-content:center">
+            <button class="btn btn-ghost" id="rsvDone" type="button"><i class="fa-solid fa-check"></i> Tamam</button>
+            <a class="btn btn-primary" href="hesabim-v1.html"><i class="fa-regular fa-calendar-check"></i> Rezervasyonlarım</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 
 <!-- ===== LIGHTBOX — tarif-detay VERBATIM; main DIŞINDA (stacking context) ===== -->
 <div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Görsel önizleme">
@@ -2635,6 +2856,88 @@ window.__bottomStrips=window.__bottomStrips||[];
   window.addEventListener("resize",update,{passive:true});
   document.addEventListener("click",function(){setTimeout(update,60);},true);
   window.__bnUpdate=update;update();
+})();
+</script>
+
+<script>
+/* ===== M10 — MASA REZERVASYONU MODALI (3-adım) =====
+   Adım1 kişi sayısı → Adım2 tarih/saat → Adım3 onay/başarı. Ücret/depozito YOK.
+   apt-modal mirası; tek modal, .rsv-step panelleri ile adımlanır. */
+(function(){
+  var modal=document.getElementById('rsvModal'),ov=document.getElementById('rsvOverlay');
+  if(!modal)return;
+  var prog=document.getElementById('rsvProg');
+  var steps=Array.prototype.slice.call(modal.querySelectorAll('.rsv-step'));
+  var sum1=document.getElementById('rsvSum1'),sum2=document.getElementById('rsvSum2');
+  var state={people:'2',occ:'',day:'12 Çar',slot:''};
+
+  function people(){return state.people==='8+'?'8+ kişi':state.people+' kişi';}
+  function refreshSum1(){sum1.textContent=people()+' · '+(state.occ||'Standart');}
+  function refreshSum2(){sum2.textContent=state.day.split(' ').slice(0,2).join(' ')+(state.slot?' · '+state.slot:' · saat seç');}
+
+  function go(n){
+    steps.forEach(function(s){s.classList.toggle('active',s.getAttribute('data-pane')===String(n));});
+    prog.querySelectorAll('.pstep').forEach(function(p){
+      var sn=parseInt(p.getAttribute('data-step'),10);
+      p.classList.toggle('cur',sn===n);
+      p.classList.toggle('done',sn<n);
+    });
+    prog.querySelectorAll('.pline').forEach(function(l){
+      l.classList.toggle('done',parseInt(l.getAttribute('data-line'),10)<n);
+    });
+    modal.querySelector('.rsv-panel').scrollTop=0;
+  }
+  function open(){go(1);refreshSum1();refreshSum2();ov.classList.add('show');modal.classList.add('show');document.body.style.overflow='hidden';}
+  function close(){ov.classList.remove('show');modal.classList.remove('show');document.body.style.overflow='';}
+
+  var openBtn=document.getElementById('openRsv');
+  if(openBtn)openBtn.addEventListener('click',function(){open();});
+  document.getElementById('rsvClose').addEventListener('click',close);
+  ov.addEventListener('click',close);
+  document.getElementById('rsvDone').addEventListener('click',close);
+
+  /* Adım 1 — kişi sayısı */
+  modal.querySelectorAll('#rsvPeople .rsv-pp').forEach(function(b){
+    b.addEventListener('click',function(){
+      modal.querySelectorAll('#rsvPeople .rsv-pp').forEach(function(x){x.classList.remove('sel');});
+      b.classList.add('sel');state.people=b.getAttribute('data-people');refreshSum1();
+    });
+  });
+  modal.querySelectorAll('#rsvOcc input').forEach(function(i){
+    i.addEventListener('change',function(){state.occ=i.getAttribute('data-occ');refreshSum1();});
+  });
+  document.getElementById('rsvNext1').addEventListener('click',function(){go(2);});
+
+  /* Adım 2 — tarih/saat */
+  modal.querySelectorAll('#rsvDays .rsv-day').forEach(function(d){
+    d.addEventListener('click',function(){
+      modal.querySelectorAll('#rsvDays .rsv-day').forEach(function(x){x.classList.remove('sel');});
+      d.classList.add('sel');state.day=d.getAttribute('data-day');refreshSum2();
+    });
+  });
+  modal.querySelectorAll('#rsvSlots .rsv-slot').forEach(function(sl){
+    sl.addEventListener('click',function(){
+      modal.querySelectorAll('#rsvSlots .rsv-slot').forEach(function(x){x.classList.remove('sel');});
+      sl.classList.add('sel');state.slot=sl.getAttribute('data-slot');refreshSum2();
+    });
+  });
+  document.getElementById('rsvBack2').addEventListener('click',function(){go(1);});
+
+  /* Adım 3 — onay/başarı */
+  document.getElementById('rsvConfirm').addEventListener('click',function(){
+    if(!state.slot)state.slot='20:00';
+    var recap=document.getElementById('rsvRecap');
+    var dshort=state.day.split(' ').slice(0,2).join(' ');
+    recap.innerHTML='<span><i class="fa-solid fa-user-group"></i> '+people()+'</span>'+
+      '<span><i class="fa-regular fa-calendar"></i> '+dshort+'</span>'+
+      '<span><i class="fa-regular fa-clock"></i> '+state.slot+'</span>'+
+      (state.occ?'<span><i class="fa-solid fa-star"></i> '+state.occ+'</span>':'');
+    document.getElementById('rsvSuccessText').textContent='Nalia Karadeniz Mutfağı '+dshort+' saat '+state.slot+' için '+people()+'lik masa talebini onayladığında SMS ve e-posta ile bilgilendirileceksin. Bu rezervasyon için herhangi bir ön ödeme alınmaz.';
+    go(3);
+  });
+
+  document.addEventListener('keydown',function(e){if(e.key==='Escape'&&modal.classList.contains('show'))close();});
+  if(new URLSearchParams(location.search).get('rezervasyon')==='1')open();
 })();
 </script>
 </body>
