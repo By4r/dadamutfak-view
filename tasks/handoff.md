@@ -1,3 +1,17 @@
+> **🏃 WAVE 4 — ARAŞTIRMA + KARARLAR DONE ✅ (2026-06-16):** DadaFit (spor/hareket modülü) onaylandı.
+> 4 paralel araştırma raporu + sentez `mockups/outputs/spor-arastirma/` (00-SENTEZ + 01-ic-modul +
+> 02-pazar-trend + 03-icerik-senaryo + 04-kitle-konum). **Kilitli kararlar:** **K1** ad = **DadaFit** ·
+> **K2** aksan = **`#009d4f` Koyu Yeşil** (Pantone 7482 C, kurumsal alt palet) + **DENGELİ koyu-vurgu**
+> (koyu `#211E16` YALNIZ hero/öne-çıkan/başlık bandında, atletik karakter) + **BEYAZ açık ana zemin**
+> (ferah/okunur), **tamamen dark theme DEĞİL**, **KREM `#EFE5D3` KULLANMA** (patron istemiyor) ·
+> **K3** MVP (hub + egzersiz kütüphanesi + 8-12 program + al↔harca + köprü + 1 challenge) · **K4** gym/
+> rezervasyon **P2** · **K5** freemium (mevcut Pro, **yeni tier yok**) · **K6** kadın sporu **P1** ·
+> **K7** **denge tonu** (kalori/kas değil). ⚠️ Düzeltme: önceki "petrol/nane" aksan önerisi yanlıştı —
+> petrol `#006072` DadaAkademi'ye kilitli (75 dosya), nane sağlık ailesinin. Token'lar `tasks/brand-tokens.md`
+> §7'ye eklendi (`--fit-accent #009d4f` · `--fit-dark #211E16`). **SIRADAKİ:** Wave 4 **tasarım fazı** —
+> Hareket Merkezi hub (frontend-design skill, plan onayı → dengeli koyu-vurgu + yeşil aksan + beyaz ana
+> zemin, **krem kullanma**).
+
 > **🧹 WAVE 3 — NAV CHROME-SWEEP DONE ✅ (commit YOK — working tree):** Tek idempotent geçiş
 > (`tasks/w3-nav-sweep.py`, href-agnostik + class-tolerant). 4 değişiklik: (1) **Besin Değerleri**
 > gruplu submenu — Sağlıklı Yaşam dropdown'a (desktop **76** + drawer **76**) "Diyetisyen Ara"'dan sonra

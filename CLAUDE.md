@@ -52,14 +52,23 @@ hedef sade, fonksiyonel, modern bir arayüze taşımak.
 - Çıktı: kısa **YAZILI** rapor (ne değişti + kontrol sonucu). Tek öğe için
   dakikalarca crop'la uğraşma.
 
-## Marka Renkleri (mevcut siteden — başlangıç paleti, revize edilebilir)
+## Marka Renkleri — KANONİK KAYNAK (yeniden tarama YOK)
 
-- Primary (sıcak domates): `#e14827`
-- Koyu metin (slate): `#253D4E`
-- Yeşil aksан (sağlıklı): `#3BB77E`
-- Sarı (vurgu): `#fac045`
-
-> Yeniden tasarımda palet sadeleştirilebilir/güncellenebilir — Beyar onayı ile.
+> 🎯 **Resmi kurumsal palet bulundu ve dokümante edildi — bir daha dosya araması YAPMA.**
+> - **Bağlayıcı:** `tasks/brand-tokens.md` (resmi kılavuz s.14/16'dan; UYUMSUZ renk listesi dahil)
+> - **Renk çıkarımı:** `tasks/kurumsal-renk.md` (PDF s.17–18 ham ekstraksiyon)
+> - **Birincil kaynak (PDF):** `brand/corporate-identity-guideline.pdf` (56 s.) · logo: `brand/logo.pdf`
+> - Kural: **"Bu renklerin dışına kesinlikle çıkılmamalıdır."**
+>
+> **Kilitli set:** PRIMARY domates `#E14827` (7597 C) · DARK `#211E16` (Process Black,
+> slate `#253D4E` DEĞİL) · CREAM `#EFE5D3` (P 15-1 C). **Alternatif** (ölçülü vurfu):
+> mor `#b14fc5` · nane `#6cca98` · yeşil `#009d4f` · petrol `#006072`. Font: **Gilroy**.
+> Sağlık aksanı `#3BB77E` (uyumlu). 🚫 Yasak (s.16): parlak pembe/magenta, parlak mor,
+> saf/turuncu sarı (`#fac045` dahil — eski başlangıç paletinden DÜŞTÜ), fıstık/parlak yeşil, açık mavi/cyan.
+>
+> **Modül aksan haritası:** DadaStore=domates `#e14827` · DadaAkademi=petrol `#006072` ·
+> Diyetisyen/sağlık=nane `#6cca98`+`#3BB77E` · **DadaFit=kurumsal yeşil `#009d4f`** (önerilen;
+> palet-içi, diyetisyen nanesinden daha koyu/doygun → ayrışır). Detay/gerekçe: bu CLAUDE.md geçmişi.
 
 ## Teknik Stack
 

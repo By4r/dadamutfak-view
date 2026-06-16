@@ -119,3 +119,27 @@ RADIUS    sm8 md12 lg16 xl24 pill999 circle50% (buton/tag pill DEĞİL)
 ```
 
 > Resmi kaynak dosyalar repoda: `brand/logo.pdf`, `brand/corporate-identity-guideline.pdf`.
+
+---
+
+## 7. DadaFit (Spor/Hareket Modülü) Tema Token'ları — ✅ ONAYLANDI (Beyar 2026-06-16)
+
+```
+--fit-accent  #009d4f   Pantone 7482 C  (kurumsal alternatif "Koyu yeşil" — DadaFit aksanı)
+--fit-dark    #211E16   Process Black C  (YALNIZ vurgu/hero zemini için — sayfa geneli DEĞİL)
+```
+
+**DadaFit görsel dili = DENGELİ koyu-vurgu + yeşil aksan + BEYAZ açık ana zemin:**
+- Koyu `#211E16` zemin **yalnız** vurgu/hero alanlarında (kahraman bölüm, öne çıkan kartlar,
+  başlık bandı) — atletik karakter için. **Tamamen dark theme DEĞİL.**
+- **Ana zemin açık/BEYAZ** kalır (ferah, okunur) — nötr skala `#FBF8F3`/`#FFFFFF`.
+- `#009d4f` yeşil = aksan (CTA, vurgu, aktif durum, ikon).
+- 🚫 **KREM (`#EFE5D3`) KULLANILMAYACAK — patron istemiyor.**
+
+**Neden #009d4f:** Kurumsal alternatif paletten (kılavuz s.18), boşta (0 aktif kullanım),
+tomato + sağlık-yeşili (`#3BB77E`) ailesine oturur, doygunlukla soft diyetisyen yeşilinden
+(`#6cca98`/`#3BB77E`) ayrışır → atletik yeşil.
+
+> ⚠️ **Alınmış renkler (DadaFit kullanamaz):** petrol `#006072` = DadaAkademi'ye kilitli
+> (75 dosya, Beyar 2026-06-13); nane `#6cca98` + yeşil `#3BB77E` = sağlık/diyetisyen ailesi.
+> (Önceki "petrol/nane" önerisi yanlıştı; düzeltildi.)
