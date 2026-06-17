@@ -2422,10 +2422,26 @@ document.addEventListener('click',function(e){
     m.innerHTML=icon+(open?' Daha az':' Daha fazla');
   });
   // ACCORDION — başlığa tıkla aç/kapa (ÇOKLU-açık: diğerleri etkilenmez)
+  // Açma senkron: karşı sütundaki eşlenik kategori de açılır; kapama tek taraflı.
   dolap.addEventListener('click',function(e){
     var h=e.target.closest('.mz-cat-h'); if(!h)return;
     var sec=h.closest('.mz-cat'); var open=sec.classList.toggle('open');
     h.setAttribute('aria-expanded',open?'true':'false');
+    // senkron eşlenik: sik (tam genişlik, grid-column:1/-1) hariç
+    if(open&&sec.dataset.cat!=='sik'){
+      var cols=sec.closest('.cat-cols');
+      if(cols){
+        var all=Array.prototype.slice.call(cols.querySelectorAll('.mz-cat:not([data-cat="sik"])'));
+        var idx=all.indexOf(sec);
+        var pairIdx=idx%2===0?idx+1:idx-1;
+        var pair=pairIdx>=0?all[pairIdx]:null;
+        if(pair&&!pair.classList.contains('open')){
+          pair.classList.add('open');
+          var ph=pair.querySelector('.mz-cat-h');
+          if(ph)ph.setAttribute('aria-expanded','true');
+        }
+      }
+    }
   });
   // SPONSORLU ürün kartı — reklam linki gibi davranır (mockup: # yerine no-op; seçilemez)
   dolap.addEventListener('click',function(e){

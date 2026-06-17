@@ -1092,6 +1092,20 @@ body.is-dragging .ie-drag{cursor:grabbing}
 .send-panel .sp-info a{color:var(--tomato);font-weight:700;text-decoration:underline;text-underline-offset:2px}
 .send-panel .sp-btns{flex:none;display:flex;gap:10px}
 
+/* ---- ONAYDA: form kilidi ---- */
+.fp-body.is-locked .form-card,.fp-body.is-locked .send-panel{opacity:.55;pointer-events:none;user-select:none}
+
+/* ---- GÖNDERILDI başarı ekranı ---- */
+.send-success{display:none;flex-direction:column;align-items:center;text-align:center;gap:28px;background:var(--cream);border:1px solid rgba(225,72,39,.18);border-radius:var(--radius-lg);box-shadow:var(--sh-sm);padding:56px 40px 48px;margin-top:20px;animation:fadeUp .35s var(--ease)}
+.send-success.show{display:flex}
+.ss-ico{width:68px;height:68px;border-radius:var(--radius-circle);background:var(--tomato-tint);color:var(--tomato);display:grid;place-items:center;font-size:26px;flex:none;box-shadow:0 6px 18px rgba(225,72,39,.18)}
+.ss-body{display:flex;flex-direction:column;gap:10px;align-items:center}
+.ss-body h2{font-size:24px;font-weight:700;color:var(--slate);letter-spacing:-.02em;line-height:1.2}
+.ss-body p{font-size:14px;color:var(--slate-2);font-weight:500;line-height:1.65;max-width:400px}
+.ss-body p b{color:var(--slate)}
+.ss-acts{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+.ss-acts .btn{padding:13px 26px;font-size:14px}
+
 /* ---- ipuçları sidebar'ı (adım 1) ---- */
 .tips-col{position:sticky;top:132px;display:flex;flex-direction:column;gap:14px}
 .tips-card{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-lg);box-shadow:var(--sh-sm);overflow:hidden}
@@ -1629,6 +1643,19 @@ body.is-dragging .ie-drag{cursor:grabbing}
         <q class="sb-quote"><i class="fa-solid fa-quote-left"></i>Kapak görseli bulanık ve İç Harç grubundaki malzemelerin miktarları eksik. Görseller ve Malzemeler adımlarını güncelleyip tekrar gönderir misin? — <b>Ayşe, Tarif Editörü</b></q>
       </div>
       <button class="btn btn-primary" type="button" id="sbRetry"><i class="fa-solid fa-rotate-right"></i> Düzenle ve Tekrar Gönder</button>
+    </div>
+
+    <!-- GÖNDERILDI başarı ekranı — sendApproval click'i sonrası gösterilir -->
+    <div class="send-success" id="sendSuccess" role="status" aria-live="polite">
+      <span class="ss-ico"><i class="fa-solid fa-paper-plane"></i></span>
+      <div class="ss-body">
+        <h2>Tarifin incelemeye gönderildi</h2>
+        <p>Editör ekibi tarifini inceliyor. Sonuç ortalama <b>24–48 saat</b> içinde bildirimle gelir — bu sürede tarif düzenlenemez.</p>
+      </div>
+      <div class="ss-acts">
+        <a class="btn btn-primary" href="tarif-ekle-v1.html"><i class="fa-solid fa-plus"></i> Yeni Tarif Ekle</a>
+        <a class="btn btn-ghost" href="mutfak-defteri-v1.html?tab=tarifler"><i class="fa-regular fa-folder-open"></i> Mutfak Defterime Dön</a>
+      </div>
     </div>
 
     <!-- STEPPER — geri tıklanır, ileri atlanmaz -->
@@ -2740,9 +2767,13 @@ document.addEventListener('click',function(e){
     setTimeout(function(){saveDraft.innerHTML=old;saveDraft.disabled=false;},1800);
   });
   document.getElementById('sendApproval').addEventListener('click',function(){
-    // mock: onaya gönderildi durumuna geç (ONAYDA bandı + adım 1)
+    // mock: onaya gönderildi — wizard gizle, sbanner + başarı ekranı göster
     document.querySelectorAll('.sbanner').forEach(function(b){b.classList.remove('show');});
     document.getElementById('sbReview').classList.add('show');
+    document.querySelectorAll('.wstep').forEach(function(s){s.style.display='none';});
+    document.getElementById('stepper').style.display='none';
+    document.getElementById('sendSuccess').classList.add('show');
+    document.querySelector('.fp-body').classList.add('is-locked');
     window.scrollTo({top:0,behavior:'smooth'});
   });
 

@@ -795,11 +795,15 @@ html,body{overflow-x:clip}
 .rdf b{display:block;font-size:14.5px;font-weight:700;color:var(--slate);white-space:nowrap}
 .rdf b.is-open{color:var(--green-deep)}
 .rdf.state i{background:#EAF7F0;color:var(--green-deep)}
-.kc-chips{border-top:1px solid var(--line);padding:13px 15px 15px;display:flex;flex-wrap:wrap;gap:6px;align-content:flex-start}
-.kc-chips .kcl{flex:0 0 100%;font-size:10.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:2px}
-.kc-chips .chip{padding:6px 11px;font-size:12px;background:var(--bg);border-color:transparent;color:var(--slate-2)}
+.kc-chips{border-top:1px solid var(--line);padding:13px 15px 15px;display:flex;flex-direction:column;gap:8px}
+.kc-chips .kcl{flex:none;font-size:10.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:1px}
+.kc-chips .chip{padding:6px 11px;font-size:12px;background:var(--bg);border-color:transparent;color:var(--slate-2);white-space:nowrap}
 .kc-chips .chip:hover{background:var(--tomato-tint);color:var(--tomato)}
 .kc-chips .chip i{font-size:10.5px;margin-right:5px;color:var(--tomato)}
+/* chip-row: yatay kaydırmalı tek satır (M15/27b ortak desen) */
+.chip-row{display:flex;flex-wrap:nowrap;align-items:center;gap:6px;overflow-x:auto;scrollbar-width:none;padding-bottom:3px;min-width:0;min-height:36px}
+.chip-row::-webkit-scrollbar{display:none}
+.chip-row .chip{display:inline-flex;align-items:center;flex-shrink:0}
 /* başlık bandı — yalnız kısa tanım (TD rd-head dili) */
 .rd-head{padding-bottom:22px}
 .rd-head .rd-sub{font-size:15px;color:var(--slate-2);font-weight:500;max-width:860px;margin:0}
@@ -1685,11 +1689,14 @@ body:not(.is-auth) .rev-login{display:flex}
           <div class="rdf state"><i class="fa-regular fa-clock"></i><div><span>Şu An</span><b class="is-open">Açık · 23.00'e kadar</b></div></div>
           <div class="kc-chips">
             <span class="kcl">Özellikler</span>
-            <a class="chip" href="#" onclick="return false"><i class="fa-solid fa-mug-hot"></i>Kahvaltı Servisi</a>
-            <a class="chip" href="#" onclick="return false"><i class="fa-solid fa-calendar-check"></i>Rezervasyon</a>
-            <a class="chip" href="#" onclick="return false"><i class="fa-solid fa-children"></i>Aile Dostu</a>
-            <a class="chip" href="#" onclick="return false"><i class="fa-solid fa-tree"></i>Bahçe</a>
-            <a class="chip" href="#" onclick="return false"><i class="fa-solid fa-credit-card"></i>Kart Geçerli</a>
+            <!-- 5+ chip: chip-row slider (M27b) -->
+            <div class="chip-row">
+              <a class="chip" href="#" onclick="return false"><i class="fa-solid fa-mug-hot"></i>Kahvaltı Servisi</a>
+              <a class="chip" href="#" onclick="return false"><i class="fa-solid fa-calendar-check"></i>Rezervasyon</a>
+              <a class="chip" href="#" onclick="return false"><i class="fa-solid fa-children"></i>Aile Dostu</a>
+              <a class="chip" href="#" onclick="return false"><i class="fa-solid fa-tree"></i>Bahçe</a>
+              <a class="chip" href="#" onclick="return false"><i class="fa-solid fa-credit-card"></i>Kart Geçerli</a>
+            </div>
           </div>
           <!-- M10: masa rezervasyonu CTA — 3-adımlı .rsv-modal tetikler (ücret/depozito YOK) -->
           <button class="btn btn-primary kc-reserve" id="openRsv" type="button"><i class="fa-solid fa-calendar-check"></i> Rezervasyon Yap</button>
@@ -1946,19 +1953,7 @@ body:not(.is-auth) .rev-login{display:flex}
                 <button class="btn btn-ghost" type="button"><i class="fa-solid fa-phone"></i> Ara</button>
               </div>
             </div>
-            <div class="ap-col">
-              <h3><i class="fa-regular fa-clock"></i> Çalışma Saatleri</h3>
-              <span class="hr-now"><i class="fa-solid fa-circle-check"></i> Şu an açık · 23.00'te kapanıyor</span>
-              <div class="hours-table">
-                <div class="hr-row"><span class="hr-day">Pazartesi</span><span class="hr-time">12.00 – 23.00</span></div>
-                <div class="hr-row"><span class="hr-day">Salı</span><span class="hr-time">12.00 – 23.00</span></div>
-                <div class="hr-row"><span class="hr-day">Çarşamba</span><span class="hr-time">12.00 – 23.00</span></div>
-                <div class="hr-row today"><span class="hr-day">Perşembe</span><span class="hr-time">12.00 – 23.00</span></div>
-                <div class="hr-row"><span class="hr-day">Cuma</span><span class="hr-time">12.00 – 23.30</span></div>
-                <div class="hr-row"><span class="hr-day">Cumartesi</span><span class="hr-time">09.00 – 23.30</span></div>
-                <div class="hr-row closed"><span class="hr-day">Pazar</span><span class="hr-time">Kapalı</span></div>
-              </div>
-            </div>
+            <!-- Çalışma saatleri sağ sticky kolonda (md-side) gösterilmektedir -->
           </div>
         </div>
 
@@ -2609,7 +2604,7 @@ document.addEventListener('click',function(e){
       e.preventDefault();el.scrollLeft+=e.deltaY;
     },{passive:false});
   }
-  ['.row-track','.cat-track','.grid-4','.vid-grid','.chips','.chef-row','.disc-grid'].forEach(function(sel){
+  ['.row-track','.cat-track','.grid-4','.vid-grid','.chips','.chef-row','.disc-grid','.chip-row'].forEach(function(sel){
     document.querySelectorAll(sel).forEach(enableDrag);
   });
 })();
