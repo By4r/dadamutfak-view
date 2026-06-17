@@ -727,6 +727,120 @@ html,body{overflow-x:hidden}
    Yukarıdaki chrome katmanına DOKUNMA (mega menü KİLİTLİ).
    ===================================================================== */
 
+/* ============ MEKAN BUL SİHİRBAZI (Dalga 2 · madde 23+24) ============
+   bugun-ne-pisirsem-v1 "Tarif Ara" sihirbaz motoru kesfet'e port edildi
+   (stepper/pick/wstep/wiz-foot/res-*). Sonuç kartları kesfet'in kendi
+   .disc-card dilini kullanır (r-card değil). Mesafe slider = madde 24,
+   liste-seviyesi canlı filtre (hem #paneMekan hem sihirbaz sonucu). */
+.mb-sec{padding:30px 0 64px}
+.mb-intro{text-align:center;max-width:640px;margin:0 auto 30px}
+.mb-intro .eyebrow{justify-content:center}
+.mb-intro h1{font-size:30px;margin:8px 0 10px}
+.mb-intro p{font-size:15px;color:var(--muted);font-weight:500;line-height:1.6}
+.wiz-solo{max-width:980px;margin:0 auto}
+/* --- stepper (tarif-ekle MİRAS) --- */
+.stepper{display:flex;align-items:center;gap:14px;background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-lg) var(--radius-lg) 0 0;border-bottom:none;box-shadow:var(--sh-sm);padding:18px 22px;position:relative;z-index:2}
+.stp{display:flex;align-items:center;gap:12px;background:none;border:none;font-family:inherit;text-align:left;cursor:default;padding:0}
+.stp-num{position:relative;flex:none;width:40px;height:40px;border-radius:var(--radius-circle);border:2px solid var(--line);background:var(--paper);display:grid;place-items:center;font-size:14px;font-weight:700;color:var(--muted);transition:.25s var(--ease)}
+.stp-num i{display:none;font-size:13px}
+.stp-lbl{min-width:0}
+.stp-lbl b{display:block;font-size:13.5px;font-weight:700;color:var(--muted);line-height:1.2;white-space:nowrap;transition:color .2s}
+.stp-lbl small{display:block;font-size:11px;color:var(--muted);font-weight:500;margin-top:2px;white-space:nowrap}
+.stp.active .stp-num{background:var(--tomato);border-color:var(--tomato);color:#fff;box-shadow:0 6px 14px rgba(225,72,39,.32)}
+.stp.active .stp-lbl b{color:var(--slate)}
+.stp.done{cursor:pointer}
+.stp.done .stp-num{background:var(--tomato-tint);border-color:rgba(225,72,39,.35);color:var(--tomato)}
+.stp.done .stp-num span{display:none}
+.stp.done .stp-num i{display:block}
+.stp.done .stp-lbl b{color:var(--slate-2)}
+.stp.done:hover .stp-num{background:var(--tomato);border-color:var(--tomato);color:#fff}
+.stp.done:hover .stp-lbl b{color:var(--tomato)}
+.stp-line{flex:1;height:2px;border-radius:var(--radius-sm);background:var(--line);min-width:16px;transition:background .25s}
+.stp-line.done{background:rgba(225,72,39,.38)}
+/* --- adım kartı + seçim tile'ları --- */
+.wstep{display:none}
+.wstep.active{display:block;animation:fadeUp .35s var(--ease)}
+.form-card{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-lg);box-shadow:var(--sh-sm);padding:28px}
+.form-card.attach{border-radius:0 0 var(--radius-lg) var(--radius-lg)}
+.fc-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:24px;padding-bottom:18px;border-bottom:1px solid var(--line)}
+.fc-head h2{font-size:20px;display:flex;align-items:center;gap:11px}
+.fc-head h2 i{flex:none;width:38px;height:38px;border-radius:var(--radius-md);background:var(--tomato-tint);color:var(--tomato);display:grid;place-items:center;font-size:15px}
+.fc-step{flex:none;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);background:var(--bg);border:1px solid var(--line);padding:6px 11px;border-radius:var(--radius-sm);white-space:nowrap}
+.pick-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.pick-grid.c2{grid-template-columns:repeat(2,1fr)}
+.pick{position:relative;display:flex;flex-direction:column;align-items:center;text-align:center;gap:11px;background:var(--paper);border:1.5px solid var(--line);border-radius:var(--radius-lg);padding:20px 14px;cursor:pointer;font-family:inherit;transition:transform .15s var(--ease),border-color .18s var(--ease),background .18s var(--ease),box-shadow .18s var(--ease)}
+.pick .pk-ico{width:52px;height:52px;border-radius:var(--radius-circle);background:var(--tomato-tint);color:var(--tomato);display:grid;place-items:center;font-size:22px;transition:transform .18s var(--ease),background .18s var(--ease),color .18s var(--ease)}
+.pick .pk-txt b{display:block;font-size:14.5px;color:var(--slate);font-weight:700;line-height:1.25}
+.pick .pk-txt small{display:block;font-size:11.5px;color:var(--muted);font-weight:500;margin-top:3px}
+.pick .pk-check{position:absolute;top:11px;right:11px;width:22px;height:22px;border-radius:var(--radius-circle);border:1.5px solid #d8d8d8;background:var(--paper);display:grid;place-items:center;color:#fff;font-size:10px;transform:scale(.8);opacity:0;transition:.18s var(--ease)}
+.pick:hover{border-color:rgba(225,72,39,.4);transform:translateY(-4px);box-shadow:var(--sh-md)}
+.pick:hover .pk-ico{transform:scale(1.06)}
+.pick.sel{border-color:var(--tomato);background:var(--tomato-tint)}
+.pick.sel .pk-ico{background:var(--tomato);color:#fff}
+.pick.sel .pk-check{background:var(--tomato);border-color:var(--tomato);opacity:1;transform:scale(1)}
+.pick-note{display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--muted);font-weight:500;margin-top:18px}
+.pick-note i{color:var(--tomato);font-size:12px}
+.wiz-foot{display:flex;align-items:center;gap:14px;margin-top:24px}
+.wf-note{display:inline-flex;align-items:center;gap:8px;font-size:12.5px;color:var(--muted);font-weight:500}
+.wf-note i{color:var(--green);font-size:13px}
+.wiz-foot .btn{padding:14px 24px}
+.wiz-foot .wf-actions{display:flex;gap:10px;margin-left:auto}
+/* --- sonuç ekranı --- */
+.res-summary{display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-lg);box-shadow:var(--sh-sm);padding:16px 18px;margin-bottom:18px}
+.res-summary .rs-lbl{font-size:12.5px;font-weight:700;color:var(--slate);display:inline-flex;align-items:center;gap:8px}
+.res-summary .rs-lbl i{color:var(--tomato)}
+.res-chip{display:inline-flex;align-items:center;gap:7px;font-size:13px;font-weight:700;color:var(--tomato);background:var(--tomato-tint);border:1px solid rgba(225,72,39,.25);padding:7px 12px;border-radius:var(--radius-sm)}
+.res-chip i{font-size:11px;opacity:.8}
+.res-edit{margin-left:auto;background:none;border:none;font-family:inherit;font-size:12.5px;font-weight:700;color:var(--muted);cursor:pointer;text-decoration:underline;text-underline-offset:3px;transition:.18s}
+.res-edit:hover{color:var(--tomato)}
+.res-bar{display:flex;align-items:baseline;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:18px}
+.res-bar h2{font-size:24px}
+.res-bar h2 .q{color:var(--tomato)}
+.res-bar p{font-size:13.5px;color:var(--muted);font-weight:500}
+.res-empty{display:none;text-align:center;background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-lg);padding:70px 30px}
+.res-empty.show{display:block;animation:fadeUp .35s var(--ease)}
+.re-ico{width:76px;height:76px;border-radius:var(--radius-lg);background:var(--tomato-tint);color:var(--tomato);display:grid;place-items:center;font-size:30px;margin:0 auto 20px}
+.res-empty h3{font-size:23px;margin-bottom:9px}
+.res-empty p{font-size:14.5px;color:var(--muted);font-weight:500;max-width:420px;margin:0 auto 24px;line-height:1.6}
+/* --- mesafe slider (madde 24) — tek değer, tarif-bulucu .kr-track thumb mirası --- */
+.dist-bar{display:flex;align-items:center;gap:18px;flex-wrap:wrap;background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-md);box-shadow:var(--sh-sm);padding:13px 18px;margin-bottom:18px}
+.dist-bar .db-lbl{display:inline-flex;align-items:center;gap:9px;font-size:13px;font-weight:700;color:var(--slate);white-space:nowrap}
+.dist-bar .db-lbl i{color:var(--tomato);font-size:14px}
+.dist-bar .db-lbl b{color:var(--tomato);font-size:15px;min-width:46px;text-align:right}
+.dist-wrap{position:relative;flex:1;min-width:170px;height:22px;display:flex;align-items:center}
+.dist-track{position:relative;width:100%;height:6px;background:var(--line);border-radius:var(--radius-pill)}
+.dist-fill{position:absolute;top:0;left:0;height:100%;background:var(--tomato);border-radius:var(--radius-pill);transition:width .07s linear}
+.dist-wrap input[type=range]{position:absolute;left:0;top:0;width:100%;height:22px;margin:0;-webkit-appearance:none;appearance:none;background:transparent;cursor:pointer}
+.dist-wrap input[type=range]:focus{outline:none}
+.dist-wrap input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:20px;height:20px;border-radius:var(--radius-circle);background:#fff;border:2px solid var(--tomato);box-shadow:0 2px 6px rgba(33,30,22,.2);cursor:grab;transition:transform .12s var(--ease)}
+.dist-wrap input[type=range]:active::-webkit-slider-thumb{cursor:grabbing;transform:scale(1.1)}
+.dist-wrap input[type=range]::-moz-range-thumb{width:20px;height:20px;border-radius:50%;background:#fff;border:2px solid var(--tomato);box-shadow:0 2px 6px rgba(33,30,22,.2);cursor:grab}
+.dist-ends{font-size:11px;color:var(--muted);font-weight:600;white-space:nowrap}
+/* --- sonuç mekan kartı eklentileri (disc-card miras) --- */
+.disc-fig .disc-match{position:absolute;top:10px;left:10px;display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:800;color:#fff;background:linear-gradient(135deg,var(--tomato),var(--tomato-deep));padding:6px 11px;border-radius:var(--radius-pill);box-shadow:0 4px 12px rgba(225,72,39,.38);z-index:3}
+.disc-fig .disc-match i{font-size:11px}
+.disc-fig .disc-status.tr{left:auto;right:10px}
+.disc-meta .disc-dist{display:inline-flex;align-items:center;gap:5px;font-size:12.5px;font-weight:700;color:var(--tomato)}
+.disc-meta .disc-dist i{font-size:11px}
+@media(max-width:760px){
+  .mb-intro h1{font-size:24px}
+  .stepper{overflow-x:auto;scrollbar-width:none;gap:8px;padding:14px}
+  .stepper::-webkit-scrollbar{display:none}
+  .stp-lbl{display:none}
+  .stp-line{min-width:10px}
+  .form-card{padding:20px 16px}
+  .pick-grid,.pick-grid.c2{grid-template-columns:1fr 1fr;gap:10px}
+  .pick{padding:14px}
+  .pick .pk-ico{width:40px;height:40px;font-size:17px}
+  .res-bar h2{font-size:20px}
+  .res-empty{padding:54px 20px}
+  .res-empty h3{font-size:19px}
+  .wiz-foot{flex-wrap:wrap}
+  .wf-note{order:2;width:100%}
+  .wiz-foot .wf-actions{order:1;width:100%}
+  .wiz-foot .wf-actions .btn{flex:1}
+}
+
 /* ============ KEŞFET (F4 / ara iş 3) — EDİTORYAL KEŞİF + UZUN-FORM DETAY ============
    Tek dosya, JS toggle (?detay=1). Miras: anasayfa-portal-v3a .disc-card /
    .disc-grid / .disc-tabs (editoryal görsel kart) · rd-crumb · shell .chip /
@@ -1529,6 +1643,7 @@ html,body{overflow-x:hidden}
       <div class="disc-tabs" role="tablist" aria-label="Keşfet görünümü">
         <button class="dt active" type="button" data-pane="paneMekan" role="tab"><i class="fa-solid fa-location-dot"></i> Mekanlar</button>
         <button class="dt" type="button" data-pane="paneGurme" role="tab"><i class="fa-solid fa-pen-nib"></i> Gurme Lezzetler</button>
+        <button class="dt" type="button" data-pane="paneMekanBul" role="tab"><i class="fa-solid fa-wand-magic-sparkles"></i> Mekan Bul</button>
       </div>
     </div>
   </div>
@@ -1547,6 +1662,15 @@ html,body{overflow-x:hidden}
             <button class="chip" type="button" data-pop="Deniz Ürünleri">Deniz Ürünleri</button>
             <button class="chip" type="button" data-pop="Kebap &amp; Ocakbaşı">Ocakbaşı</button>
           </div>
+        </div>
+        <!-- MESAFE SLIDER (madde 24) — yakınımdaki mekanları km'ye göre canlı filtreler -->
+        <div class="dist-bar" id="mklDistBar">
+          <span class="db-lbl"><i class="fa-solid fa-location-crosshairs"></i> Yakınımdaki mekanlar · <b id="mklDistVal">25 km</b></span>
+          <div class="dist-wrap">
+            <div class="dist-track"><div class="dist-fill" id="mklDistFill"></div></div>
+            <input type="range" min="1" max="25" value="25" step="1" id="mklDist" aria-label="Mesafe (km)">
+          </div>
+          <span class="dist-ends">en fazla 25 km</span>
         </div>
     <div class="lst-layout">
 
@@ -1861,6 +1985,70 @@ html,body{overflow-x:hidden}
       </div>
 
     </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- ===== PANE: MEKAN BUL (sihirbaz — 3 adım: yemek+ortam+bütçe → mesafe-filtreli mekan önerisi · madde 23+24) ===== -->
+  <div class="disc-pane" id="paneMekanBul" hidden>
+    <section class="mb-sec">
+      <div class="wrap">
+        <div class="mb-intro">
+          <span class="eyebrow">Mekan Bul Sihirbazı</span>
+          <h1>Sana göre mekanı bulalım</h1>
+          <p>Üç soru: ne yemek istiyorsun, nasıl bir ortam arıyorsun, bütçen ne? Sonunda mesafeyi de ayarla — yakınındaki en uygun mekanları puanlayıp sıralayalım.</p>
+        </div>
+        <div class="wiz-solo">
+          <!-- STEPPER -->
+          <div class="stepper" id="mbStepper"></div>
+          <!-- ADIM KARTLARI (JS .pick tile'larını doldurur) -->
+          <div class="form-card attach" id="mbCard">
+            <div class="wstep" data-step="0">
+              <div class="fc-head"><h2><i class="fa-solid fa-utensils"></i> Ne yemek istiyorsun?</h2><span class="fc-step">Adım 1 / 3</span></div>
+              <div class="pick-grid" data-q="mutfak" data-multi="0"></div>
+              <div class="pick-note"><i class="fa-solid fa-circle-info"></i> Bir mutfak / lezzet türü seç — mekanları buna göre eşleştirelim.</div>
+            </div>
+            <div class="wstep" data-step="1">
+              <div class="fc-head"><h2><i class="fa-solid fa-tree-city"></i> Nasıl bir ortam?</h2><span class="fc-step">Adım 2 / 3</span></div>
+              <div class="pick-grid" data-q="ortam" data-multi="1"></div>
+              <div class="pick-note"><i class="fa-solid fa-circle-info"></i> Birden fazla seçebilirsin — istersen boş bırak, hepsini tarayalım.</div>
+            </div>
+            <div class="wstep" data-step="2">
+              <div class="fc-head"><h2><i class="fa-solid fa-wallet"></i> Bütçen ne?</h2><span class="fc-step">Adım 3 / 3</span></div>
+              <div class="pick-grid c2" data-q="butce" data-multi="0"></div>
+            </div>
+            <div class="wiz-foot">
+              <span class="wf-note" id="mbNote"><i class="fa-solid fa-circle-check"></i> Seçimlerine göre mekanları puanlayıp sıralarız.</span>
+              <div class="wf-actions">
+                <button class="btn btn-ghost" type="button" id="mbPrev"><i class="fa-solid fa-chevron-left"></i> Geri</button>
+                <button class="btn btn-primary" type="button" id="mbNext" disabled>Devam <i class="fa-solid fa-chevron-right"></i></button>
+              </div>
+            </div>
+          </div>
+          <!-- SONUÇ (mesafe slider + disc-card grid) -->
+          <div id="mbResults" hidden style="margin-top:30px">
+            <div class="res-summary" id="mbSummary"></div>
+            <div class="dist-bar" id="mbDistBar">
+              <span class="db-lbl"><i class="fa-solid fa-location-crosshairs"></i> Yakınımdaki mekanlar · <b id="mbDistVal">10 km</b></span>
+              <div class="dist-wrap">
+                <div class="dist-track"><div class="dist-fill" id="mbDistFill"></div></div>
+                <input type="range" min="1" max="25" value="10" step="1" id="mbDist" aria-label="Mesafe (km)">
+              </div>
+              <span class="dist-ends">en fazla 25 km</span>
+            </div>
+            <div class="res-bar">
+              <h2><span class="q" id="mbResCount">0</span> mekan sana uygun</h2>
+              <p>Eşleşme oranı ve mesafeye göre sıralandı.</p>
+            </div>
+            <div class="mkl-grid" id="mbGrid"></div>
+            <div class="res-empty" id="mbEmpty">
+              <div class="re-ico"><i class="fa-regular fa-compass"></i></div>
+              <h3>Bu seçimlere uygun mekan bulamadık</h3>
+              <p>Mesafeyi genişlet ya da ortam filtresini gevşet — daha fazla mekan görelim.</p>
+              <button class="btn btn-primary" type="button" id="mbRetry"><i class="fa-solid fa-rotate-left"></i> Baştan dene</button>
+            </div>
+          </div>
+        </div>
       </div>
     </section>
   </div>
@@ -2551,11 +2739,12 @@ document.addEventListener('click',function(e){
       p.hidden=(p.id!==paneId);
     });
     // hero istatistik şeridi tab'a göre değişir (banner + başlık ortak kalır)
+    // Mekan Bul sihirbazı: stats şeridi alakasız → ikisi de gizli, sihirbaz temiz açılır
     var sm=document.getElementById('keStatsMekan'), sg=document.getElementById('keStatsGurme');
-    if(sm&&sg){ var isGurme=(paneId==='paneGurme'); sm.hidden=isGurme; sg.hidden=!isGurme; }
+    if(sm&&sg){ sm.hidden=(paneId!=='paneMekan'); sg.hidden=(paneId!=='paneGurme'); }
     window.scrollTo(0,0);   // ortak hero her tab geçişinde tepeden tam çerçevelenir (kayma/kırpılma fix)
     if(push!==false){
-      var key=(paneId==='paneGurme')?'gurme':'mekan';
+      var key=paneId==='paneGurme'?'gurme':(paneId==='paneMekanBul'?'mekanbul':'mekan');
       try{history.pushState({tab:key},'','?tab='+key);}catch(e){}
     }
   }
@@ -2595,7 +2784,8 @@ document.addEventListener('click',function(e){
   /* ---- derin link + browser geri/ileri ---- */
   function applyState(){
     var p=new URLSearchParams(location.search);
-    setTab(p.get('tab')==='gurme'?'paneGurme':'paneMekan', false);   // varsayılan Mekanlar
+    var t=p.get('tab');
+    setTab(t==='gurme'?'paneGurme':(t==='mekanbul'?'paneMekanBul':'paneMekan'), false);   // varsayılan Mekanlar
     if(p.get('detay')==='1'){ openDetail(false); }
     else { detail.hidden=true; browse.hidden=false; }
   }
@@ -2761,6 +2951,248 @@ document.addEventListener('click',function(e){
       if(target)target.scrollIntoView({behavior:'smooth',block:'start'});
     });
   });
+})();
+
+/* ===== MESAFE SLIDER — #paneMekan listesi (madde 24, liste-seviyesi canlı filtre) =====
+   Facet motoru MOCK (kartları gizlemez, sadece sayı). Mesafe slider GERÇEK görünür
+   filtre: data-dist'i aşan statik disc-card'ları gizler. Mesafeler + .disc-dist span
+   JS ile enjekte edilir (statik kart HTML'i elle düzenlenmez). lst-sum yalnız slider
+   etkileşiminde canlı sayıya geçer; ilk yüklemede facet'in "124 mekân"ı korunur. */
+(function(){
+  var grid=document.getElementById('mklGrid');
+  var slider=document.getElementById('mklDist');
+  if(!grid||!slider)return;
+  var fill=document.getElementById('mklDistFill'),
+      valEl=document.getElementById('mklDistVal'),
+      sum=document.getElementById('lstSum');
+  var cards=Array.prototype.slice.call(grid.querySelectorAll('.disc-card'));
+  var DISTS=[0.8,1.4,2.6,3.9,5.2,8.7,13.5,21.0];
+  cards.forEach(function(c,i){
+    var km=DISTS[i%DISTS.length];
+    c.setAttribute('data-dist',km);
+    var meta=c.querySelector('.disc-meta'), loc=c.querySelector('.disc-loc');
+    if(meta&&loc&&!meta.querySelector('.disc-dist')){
+      var s=document.createElement('span');
+      s.className='disc-dist'; s.setAttribute('data-km',km);
+      s.innerHTML='<i class="fa-solid fa-route"></i> '+km.toFixed(1).replace('.',',')+' km';
+      loc.insertAdjacentElement('afterend',s);
+    }
+  });
+  function apply(write){
+    var km=+slider.value, min=+slider.min, max=+slider.max;
+    fill.style.width=((km-min)/(max-min)*100)+'%';
+    valEl.textContent=km+' km';
+    var vis=0;
+    cards.forEach(function(c){
+      var show=parseFloat(c.getAttribute('data-dist'))<=km;
+      c.style.display=show?'':'none'; if(show)vis++;
+    });
+    if(write&&sum)sum.innerHTML='<b>'+vis+' mekân</b> · '+km+' km içinde';
+  }
+  slider.addEventListener('input',function(){apply(true);});
+  apply(false);   // ilk yükleme: kart görünürlüğü + fill, sum'a dokunma
+})();
+
+/* ===== MEKAN BUL SİHİRBAZI (madde 23) — bugun-ne-pisirsem "Tarif Ara" motoru port =====
+   3 adım: mutfak (tekli) → ortam (çoklu) → bütçe (tekli). Sonuç: mock POOL'dan
+   puanlanmış disc-card listesi + mesafe slider'ı ile canlı yarıçap filtresi. */
+(function(){
+  var stepperEl=document.getElementById('mbStepper'); if(!stepperEl)return;
+  var IMG='?w=700&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5';
+  var MB_Q={
+    mutfak:[
+      {v:'Türk Mutfağı',ico:'fa-utensils',b:'Türk Mutfağı'},
+      {v:'Karadeniz',ico:'fa-fish-fins',b:'Karadeniz'},
+      {v:'Ege & Zeytinyağlı',ico:'fa-seedling',b:'Ege & Zeytinyağlı'},
+      {v:'Kebap & Ocakbaşı',ico:'fa-fire',b:'Kebap & Ocakbaşı'},
+      {v:'Deniz Ürünleri',ico:'fa-shrimp',b:'Deniz Ürünleri'},
+      {v:'Esnaf Lokantası',ico:'fa-bowl-food',b:'Esnaf Lokantası'},
+      {v:'Kahvaltı & Serpme',ico:'fa-egg',b:'Kahvaltı & Serpme'},
+      {v:'Tatlı & Kafe',ico:'fa-mug-saucer',b:'Tatlı & Kafe'},
+      {v:'Dünya Mutfağı',ico:'fa-earth-americas',b:'Dünya Mutfağı'},
+      {v:'farketmez',ico:'fa-shuffle',b:'Fark etmez',s:'Hepsini tara'}
+    ],
+    ortam:[
+      {v:'Deniz Kenarı',ico:'fa-water',b:'Deniz Kenarı'},
+      {v:'Sahil / Plaj',ico:'fa-umbrella-beach',b:'Sahil / Plaj'},
+      {v:'Orman / Doğa',ico:'fa-tree',b:'Orman / Doğa'},
+      {v:'Manzaralı',ico:'fa-mountain-sun',b:'Manzaralı'},
+      {v:'Bahçe / Teras',ico:'fa-leaf',b:'Bahçe / Teras'},
+      {v:'Tarihi Doku',ico:'fa-landmark',b:'Tarihi Doku'},
+      {v:'Meydan / Şehir Merkezi',ico:'fa-city',b:'Meydan / Merkez'},
+      {v:'Sakin / Sessiz',ico:'fa-spa',b:'Sakin / Sessiz'},
+      {v:'Canlı / Hareketli',ico:'fa-music',b:'Canlı / Hareketli'},
+      {v:'Romantik',ico:'fa-heart',b:'Romantik'},
+      {v:'Aile Dostu',ico:'fa-people-roof',b:'Aile Dostu'}
+    ],
+    butce:[
+      {v:'Ekonomik',ico:'fa-wallet',b:'Ekonomik',s:'₺'},
+      {v:'Orta',ico:'fa-coins',b:'Orta',s:'₺₺'},
+      {v:'Özel Gün',ico:'fa-gem',b:'Özel Gün',s:'₺₺₺'},
+      {v:'farketmez',ico:'fa-shuffle',b:'Fark etmez',s:'Bütçe önemli değil'}
+    ]
+  };
+  var MB_STEPS=[
+    {q:'mutfak',lbl:'Yemek',small:'Ne yiyelim?'},
+    {q:'ortam',lbl:'Ortam',small:'Nasıl bir yer?'},
+    {q:'butce',lbl:'Bütçe',small:'Ne kadar?'}
+  ];
+  var POOL=[
+    {ad:'Liman Balıkçısı',mutfak:'Deniz Ürünleri',ortam:['Deniz Kenarı','Manzaralı','Romantik'],fiyat:'Özel Gün',dist:2.4,puan:4.8,views:'62B',konum:'Karaköy / İstanbul',cat:'Deniz Ürünleri',medya:18,durum:'open',img:'photo-1544025162-d76694265947',desc:'Boğaz’a sıfır; günlük balık ve zengin meze tabağı.'},
+    {ad:'Yamaç Karadeniz Sofrası',mutfak:'Karadeniz',ortam:['Orman / Doğa','Manzaralı','Aile Dostu'],fiyat:'Orta',dist:8.3,puan:4.7,views:'41B',konum:'Beykoz / İstanbul',cat:'Karadeniz',medya:22,durum:'open',img:'photo-1547592180-85f173990554',desc:'Mıhlama, kuymak ve karalahana; orman içinde aile sofrası.'},
+    {ad:'Sahil Kahvaltı Evi',mutfak:'Kahvaltı & Serpme',ortam:['Sahil / Plaj','Deniz Kenarı','Aile Dostu'],fiyat:'Orta',dist:3.1,puan:4.6,views:'55B',konum:'Caddebostan / İstanbul',cat:'Kahvaltı',medya:16,durum:'open',img:'photo-1509440159596-0249088772ff',desc:'Deniz manzaralı serpme kahvaltı; sınırsız çay.'},
+    {ad:'Ocakbaşı Dümen',mutfak:'Kebap & Ocakbaşı',ortam:['Canlı / Hareketli','Meydan / Şehir Merkezi'],fiyat:'Orta',dist:1.2,puan:4.5,views:'38B',konum:'Beyoğlu / İstanbul',cat:'Ocakbaşı',medya:12,durum:'closing',img:'photo-1565958011703-44f9829ba187',desc:'Mangal ateşinde adana, közde sebze; canlı ocakbaşı.'},
+    {ad:'Zeytin & Asma',mutfak:'Ege & Zeytinyağlı',ortam:['Bahçe / Teras','Sakin / Sessiz','Romantik'],fiyat:'Özel Gün',dist:12.6,puan:4.9,views:'29B',konum:'Alaçatı / İzmir',cat:'Ege',medya:20,durum:'open',img:'photo-1512621776951-a57141f2eefd',desc:'Otantik Ege otları ve zeytinyağlılar; asma altı sakin bahçe.'},
+    {ad:'Tarihi Han Lokantası',mutfak:'Esnaf Lokantası',ortam:['Tarihi Doku','Meydan / Şehir Merkezi'],fiyat:'Ekonomik',dist:0.8,puan:4.4,views:'73B',konum:'Eminönü / İstanbul',cat:'Esnaf Lokantası',medya:9,durum:'open',img:'photo-1517248135467-4c7edcad34c4',desc:'Asırlık handa ev usulü tencere yemekleri; hızlı ve uygun.'},
+    {ad:'Bulut Teras',mutfak:'Türk Mutfağı',ortam:['Manzaralı','Romantik','Sakin / Sessiz'],fiyat:'Özel Gün',dist:5.7,puan:4.8,views:'34B',konum:'Çamlıca / İstanbul',cat:'Türk Mutfağı',medya:24,durum:'open',img:'photo-1551183053-bf91a1d81141',desc:'Şehrin tepesinden 360° manzara eşliğinde modern Türk mutfağı.'},
+    {ad:'Meydan Esnaf',mutfak:'Esnaf Lokantası',ortam:['Meydan / Şehir Merkezi','Aile Dostu'],fiyat:'Ekonomik',dist:2.0,puan:4.3,views:'88B',konum:'Kadıköy / İstanbul',cat:'Esnaf Lokantası',medya:11,durum:'open',img:'photo-1466978913421-dad2ebd01d17',desc:'Çarşı meydanında günlük menü; öğle kalabalığının uğrağı.'},
+    {ad:'Koru Kahve & Tatlı',mutfak:'Tatlı & Kafe',ortam:['Orman / Doğa','Bahçe / Teras','Sakin / Sessiz'],fiyat:'Orta',dist:9.8,puan:4.6,views:'27B',konum:'Polonezköy / İstanbul',cat:'Tatlı & Kafe',medya:15,durum:'open',img:'photo-1525351484163-7529414344d8',desc:'Ağaçların arasında ev yapımı tatlılar ve filtre kahve.'},
+    {ad:'Liman Meyhane',mutfak:'Deniz Ürünleri',ortam:['Deniz Kenarı','Canlı / Hareketli'],fiyat:'Orta',dist:4.4,puan:4.5,views:'46B',konum:'Kumkapı / İstanbul',cat:'Deniz Ürünleri',medya:13,durum:'closing',img:'photo-1547592166-23ac45744acd',desc:'Fasıl eşliğinde rakı-balık; klasik liman meyhanesi.'},
+    {ad:'Bağ Evi Mangal',mutfak:'Kebap & Ocakbaşı',ortam:['Bahçe / Teras','Orman / Doğa','Aile Dostu'],fiyat:'Orta',dist:18.2,puan:4.7,views:'19B',konum:'Şile / İstanbul',cat:'Ocakbaşı',medya:17,durum:'open',img:'photo-1504674900247-0877df9cc836',desc:'Bağ içinde mangal başı; geniş bahçe, çocuklara oyun alanı.'},
+    {ad:'Pasaj Dünya Mutfağı',mutfak:'Dünya Mutfağı',ortam:['Meydan / Şehir Merkezi','Canlı / Hareketli','Romantik'],fiyat:'Özel Gün',dist:1.9,puan:4.6,views:'31B',konum:'Karaköy / İstanbul',cat:'Dünya Mutfağı',medya:19,durum:'open',img:'photo-1596040033229-a9821ebd058d',desc:'Tarihi pasajda fusion tabaklar ve doğal şarap listesi.'},
+    {ad:'Deniz Feneri Kahvaltı',mutfak:'Kahvaltı & Serpme',ortam:['Deniz Kenarı','Sahil / Plaj','Manzaralı'],fiyat:'Orta',dist:22.5,puan:4.8,views:'24B',konum:'Şile / İstanbul',cat:'Kahvaltı',medya:21,durum:'open',img:'photo-1565299507177-b0ac66763828',desc:'Fenerin dibinde, dalga sesiyle köy kahvaltısı.'},
+    {ad:'Sakin Köşe Zeytinyağlı',mutfak:'Ege & Zeytinyağlı',ortam:['Sakin / Sessiz','Bahçe / Teras'],fiyat:'Orta',dist:6.9,puan:4.5,views:'33B',konum:'Moda / İstanbul',cat:'Ege',medya:14,durum:'open',img:'photo-1631452180519-c014fe946bc7',desc:'Moda’nın arka sokağında sessiz bir bahçe; mevsim zeytinyağlıları.'}
+  ];
+  var mb={step:0,ans:{mutfak:null,ortam:[],butce:null}};
+  var card=document.getElementById('mbCard'),results=document.getElementById('mbResults'),
+      prevBtn=document.getElementById('mbPrev'),nextBtn=document.getElementById('mbNext'),
+      noteEl=document.getElementById('mbNote'),
+      slider=document.getElementById('mbDist'),fill=document.getElementById('mbDistFill'),
+      distVal=document.getElementById('mbDistVal'),
+      gridEl=document.getElementById('mbGrid'),emptyEl=document.getElementById('mbEmpty'),
+      countEl=document.getElementById('mbResCount');
+  // pick gridlerini doldur
+  MB_STEPS.forEach(function(st){
+    var grid=card.querySelector('.pick-grid[data-q="'+st.q+'"]');
+    MB_Q[st.q].forEach(function(o){
+      var b=document.createElement('button');b.type='button';b.className='pick';b.setAttribute('data-val',o.v);
+      b.innerHTML='<span class="pk-ico"><i class="fa-solid '+o.ico+'"></i></span>'+
+        '<span class="pk-txt"><b>'+o.b+'</b>'+(o.s?'<small>'+o.s+'</small>':'')+'</span>'+
+        '<span class="pk-check"><i class="fa-solid fa-check"></i></span>';
+      b.addEventListener('click',function(){onPick(st.q,o.v,b,grid);});
+      grid.appendChild(b);
+    });
+  });
+  function onPick(q,val,btn,grid){
+    var multi=grid.getAttribute('data-multi')==='1';
+    if(multi){
+      var arr=mb.ans[q],i=arr.indexOf(val);
+      if(i>=0){arr.splice(i,1);btn.classList.remove('sel');}else{arr.push(val);btn.classList.add('sel');}
+    }else{
+      grid.querySelectorAll('.pick').forEach(function(x){x.classList.remove('sel');});
+      btn.classList.add('sel');mb.ans[q]=val;
+    }
+    syncNav();
+  }
+  function renderStepper(){
+    stepperEl.innerHTML='';
+    MB_STEPS.forEach(function(st,i){
+      var done=i<mb.step, active=i===mb.step;
+      var b=document.createElement('div');b.className='stp'+(active?' active':'')+(done?' done':'');
+      b.innerHTML='<span class="stp-num"><span>'+(i+1)+'</span><i class="fa-solid fa-check"></i></span>'+
+        '<span class="stp-lbl"><b>'+st.lbl+'</b><small>'+st.small+'</small></span>';
+      if(done)b.addEventListener('click',function(){mb.step=i;renderMb();});
+      stepperEl.appendChild(b);
+      if(i<MB_STEPS.length-1){var ln=document.createElement('span');ln.className='stp-line'+(done?' done':'');stepperEl.appendChild(ln);}
+    });
+  }
+  function syncNav(){
+    var q=MB_STEPS[mb.step].q, ans=mb.ans[q];
+    var ok=(q==='ortam')?true:(ans!==null);             // ortam opsiyonel
+    nextBtn.disabled=!ok;
+    prevBtn.style.visibility=mb.step===0?'hidden':'visible';
+    nextBtn.innerHTML=(mb.step===MB_STEPS.length-1)?'Mekanları Göster <i class="fa-solid fa-arrow-right"></i>':'Devam <i class="fa-solid fa-chevron-right"></i>';
+    noteEl.innerHTML=(mb.step===MB_STEPS.length-1)?'<i class="fa-solid fa-circle-check"></i> Seçimlerine en uygun mekanları puanlayıp sıralarız.':'<i class="fa-solid fa-circle-check"></i> '+(mb.step+1)+' / '+MB_STEPS.length+' adım — istediğin an geri dönebilirsin.';
+  }
+  function renderMb(){
+    renderStepper();
+    card.querySelectorAll('.wstep').forEach(function(s){s.classList.toggle('active',+s.getAttribute('data-step')===mb.step);});
+    syncNav();
+  }
+  prevBtn.addEventListener('click',function(){if(mb.step>0){mb.step--;renderMb();}});
+  nextBtn.addEventListener('click',function(){
+    if(mb.step<MB_STEPS.length-1){mb.step++;renderMb();}
+    else showResults();
+  });
+  function lblOf(q,v){var a=MB_Q[q];for(var i=0;i<a.length;i++)if(a[i].v===v)return a[i].b;return v;}
+  /* her mekana uygunluk skoru: taban puan + mutfak (sert tercihli) + ortam kesişimi + bütçe.
+     mutfak seçiliyse uymayanlar eşik altına düşüp elenir → "uygun mekanlar" anlamlı kalır. */
+  function computeMb(){
+    var cu=mb.ans.mutfak, orts=mb.ans.ortam, bu=mb.ans.butce;
+    return POOL.map(function(m){
+      var sc=70+Math.round((m.puan-4.4)*28);
+      if(cu&&cu!=='farketmez')sc+=(m.mutfak===cu?18:-30);
+      if(orts.length){var hit=0;orts.forEach(function(o){if(m.ortam.indexOf(o)>=0)hit++;});sc+=hit*9-(orts.length-hit)*3;}
+      if(bu&&bu!=='farketmez')sc+=(m.fiyat===bu?10:-8);
+      return {m:m,match:Math.max(40,Math.min(99,sc))};
+    }).sort(function(a,b){return b.match-a.match;});
+  }
+  function pill(f){return f==='Ekonomik'?'<b>₺</b><span>₺₺</span>':f==='Orta'?'<b>₺₺</b><span>₺</span>':'<b>₺₺₺</b>';}
+  function statusEl(d){
+    if(d==='closing')return '<div class="disc-status tr"><span class="mt st-closing"><i class="fa-solid fa-clock"></i> Az sonra kapanıyor</span></div>';
+    if(d==='closed')return '<div class="disc-status tr"><span class="mt st-closed"><i class="fa-solid fa-circle-xmark"></i> Kapalı</span></div>';
+    return '<div class="disc-status tr"><span class="mt st-open"><i class="fa-solid fa-circle-check"></i> Açık</span></div>';
+  }
+  function cardEl(m,match){
+    var a=document.createElement('article');a.className='disc-card';
+    a.setAttribute('onclick',"location.href='mekan-detay-v1.html'");
+    a.innerHTML=
+      '<div class="disc-fig">'+
+        '<div class="bg" style="background-image:url(\'https://images.unsplash.com/'+m.img+IMG+'\')"></div>'+
+        '<span class="disc-match"><i class="fa-solid fa-bolt"></i> %'+match+' uygun</span>'+
+        statusEl(m.durum)+
+        '<div class="disc-badges"><span class="mt disc-price-pill">'+pill(m.fiyat)+'</span></div>'+
+        '<div class="m-types"><span class="mt"><i class="fa-solid fa-images"></i> '+m.medya+'</span></div>'+
+      '</div>'+
+      '<span class="disc-cat">'+m.cat+'</span>'+
+      '<h3>'+m.ad+'</h3>'+
+      '<p>'+m.desc+'</p>'+
+      '<div class="disc-meta">'+
+        '<span class="disc-loc"><i class="fa-solid fa-location-dot"></i> '+m.konum+'</span>'+
+        '<span class="disc-dist"><i class="fa-solid fa-route"></i> '+m.dist.toFixed(1).replace('.',',')+' km</span>'+
+        '<span class="disc-stats"><span class="r-rate"><i class="fa-solid fa-star"></i> '+m.puan+'</span><span class="r-views"><i class="fa-solid fa-eye"></i> '+m.views+'</span></span>'+
+      '</div>';
+    return a;
+  }
+  function renderGrid(km){
+    var within=computeMb().filter(function(x){return x.m.dist<=km && x.match>=58;});
+    gridEl.innerHTML='';
+    countEl.textContent=within.length;
+    emptyEl.classList.toggle('show',within.length===0);
+    gridEl.style.display=within.length?'':'none';
+    within.forEach(function(x){gridEl.appendChild(cardEl(x.m,x.match));});
+  }
+  function syncSlider(){
+    var km=+slider.value,min=+slider.min,max=+slider.max;
+    fill.style.width=((km-min)/(max-min)*100)+'%';
+    distVal.textContent=km+' km';
+  }
+  slider.addEventListener('input',function(){syncSlider();renderGrid(+slider.value);});
+  function showResults(){
+    card.style.display='none'; stepperEl.style.display='none';
+    results.hidden=false;
+    var chips=[];
+    if(mb.ans.mutfak&&mb.ans.mutfak!=='farketmez')chips.push({i:'fa-utensils',t:lblOf('mutfak',mb.ans.mutfak)});
+    mb.ans.ortam.forEach(function(o){chips.push({i:'fa-location-dot',t:lblOf('ortam',o)});});
+    if(mb.ans.butce&&mb.ans.butce!=='farketmez')chips.push({i:'fa-wallet',t:lblOf('butce',mb.ans.butce)});
+    document.getElementById('mbSummary').innerHTML=
+      '<span class="rs-lbl"><i class="fa-solid fa-sliders"></i> Seçimlerin:</span>'+
+      chips.map(function(c){return '<span class="res-chip"><i class="fa-solid '+c.i+'"></i> '+c.t+'</span>';}).join('')+
+      '<button class="res-edit" type="button" id="mbEdit">Düzenle</button>';
+    document.getElementById('mbEdit').addEventListener('click',resetMb);
+    syncSlider();
+    renderGrid(+slider.value);
+    results.scrollIntoView({behavior:'smooth',block:'start'});
+  }
+  function resetMb(){
+    mb.step=0;mb.ans={mutfak:null,ortam:[],butce:null};
+    card.querySelectorAll('.pick').forEach(function(x){x.classList.remove('sel');});
+    card.style.display='';stepperEl.style.display='';results.hidden=true;
+    renderMb();
+    document.getElementById('paneMekanBul').scrollIntoView({behavior:'smooth',block:'start'});
+  }
+  var retry=document.getElementById('mbRetry');if(retry)retry.addEventListener('click',resetMb);
+  renderMb();
 })();
 </script>
 <script>
