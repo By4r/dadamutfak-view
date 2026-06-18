@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Hesap Ayarları — DadaMutfak</title>
+<title>Üye Ol — Ödeme — DadaMutfak</title>
 <link rel="shortcut icon" type="image/x-icon"
       href="assets/img/favicon.ico" />
 <!-- FontAwesome 6.5.2 (kilitli ikon seti) -->
@@ -437,8 +437,6 @@ body.is-auth .drawer-login{display:none}
 
 /* yatay taşmayı global engelle */
 html,body{overflow-x:hidden}
-/* T5 STICKY FIX (faz6, page-local): kok overflow-x hidden body-yi scroll-container yapip position:sticky panelleri kiriyor; clip yatayi keser ama overflow-y visible kalir -> sticky calisir. */
-html,body{overflow-x:clip}
 
 /* sürükle-kaydır (mouse) imleci — yatay slider'lar */
 .drag-scroll.dragging{cursor:grabbing;user-select:none;scroll-behavior:auto}
@@ -729,279 +727,113 @@ html,body{overflow-x:clip}
    Yukarıdaki chrome katmanına DOKUNMA (mega menü KİLİTLİ).
    ===================================================================== */
 
-/* ============ F6 — HESAP AYARLARI (?tab=profil|sifre|gizlilik|bildirim) ============
-   Mutfak Defteri'nin İÇERİK profili DEĞİL — yalnız hesap/tercih ayarları.
-   Miras: TD .rd-crumb VERBATIM · mutfak-defteri .pf-tabbar/.pf-tabs/.dt/.pf-pane
-   VERBATIM (sticky sekme) · tarif-ekle .form-card/.fc-head + .fk-* kiti VERBATIM ·
-   giris-v1 .fk-pass/.fk-eye + onboarding .tgl (Dalga 3 auth ailesi ortak dili).
-   Yeni (son çare, raporda gerekçeli): .hs-* sayfa düzeni, .set-row tercih satırı,
-   .ntf-matrix kanal matrisi, .danger-card tehlikeli bölge. */
+/* ===== SAYFA CSS (T-B) ===== */
 
-/* breadcrumb — tarif-detay-v1 .rd-crumb VERBATIM */
-.rd-crumb{display:flex;align-items:center;flex-wrap:wrap;gap:9px;padding:18px 0 14px;font-size:13px;font-weight:500;color:var(--muted)}
+.tb-top{position:relative;padding-top:128px;padding-bottom:46px;overflow:hidden;background:#3a352c}
+/* §2f H1 koyu-overlay hero — temsilî Unsplash görseli (data-img-pending KORUNUR: highfield gelince bu URL swap edilir). Kerem Bey pattern'ı: bg-image cover/center. */
+.tb-top .tb-hero-img{position:absolute;inset:0;background:#3a352c url("https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=1600&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5") center/cover no-repeat;z-index:0}
+.tb-top::after{content:"";position:absolute;inset:0;z-index:1;background:linear-gradient(90deg,rgba(28,25,18,.82),rgba(33,30,22,.46))}
+.tb-top .wrap{position:relative;z-index:2}
+.tb-top .rd-crumb,.tb-top .rd-crumb a{color:#c9c3b8}
+.tb-top .rd-crumb a:hover{color:#fff}
+.tb-top .rd-crumb i{color:rgba(255,255,255,.4)}
+.tb-top .rd-crumb b{color:#fff}
+.rd-crumb{display:flex;align-items:center;flex-wrap:wrap;gap:9px;padding:0 0 14px;font-size:13px;font-weight:500;color:var(--muted)}
 .rd-crumb a{color:var(--muted);transition:.18s}
-.rd-crumb a:hover{color:var(--tomato)}
 .rd-crumb i{font-size:9px;color:#c7c7c7}
-.rd-crumb b{color:var(--slate);font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:340px}
+.rd-crumb b{color:var(--slate);font-weight:700}
+.tb-hero-main{max-width:760px}
+.tb-top .eyebrow{color:#ffb9a6}
+.tb-top h1{color:#fff;font-size:42px;margin:6px 0 12px;text-shadow:0 2px 24px rgba(0,0,0,.25)}
+.tb-top .lead{color:#e9e2d6;font-size:16.5px;font-weight:500;max-width:600px;text-shadow:0 1px 14px rgba(0,0,0,.3)}
+@media (max-width:1024px){.tb-top h1{font-size:34px}}
+@media (max-width:640px){.tb-top{padding-top:74px;padding-bottom:34px}.tb-top h1{font-size:27px}.tb-top .lead{font-size:15px}}
 
-/* ---- üst kimlik bandı ---- */
-.hs-top{position:relative;padding-top:128px;background-image:linear-gradient(90deg,rgba(28,25,18,.93),rgba(33,30,22,.72)),url('https://images.unsplash.com/photo-1495195134817-aeb325a55b65?w=1600&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5');background-size:cover;background-position:center}
-.hs-head{display:flex;align-items:center;gap:20px;padding:6px 0 26px}
-.hs-ava{flex:none;width:74px;height:74px;border-radius:var(--radius-circle);background-size:cover;background-position:center;border:3px solid #fff;box-shadow:var(--sh-md)}
-.hs-id{flex:1;min-width:0}
-.hs-id h1{font-size:28px;letter-spacing:-.02em}
-.hs-id p{font-size:13.5px;color:var(--muted);font-weight:500;margin-top:4px}
-.hs-id p a{color:var(--tomato);font-weight:700;transition:.18s}
-.hs-id p a:hover{color:var(--tomato-dark);text-decoration:underline;text-underline-offset:2px}
-.hs-tools{flex:none;display:flex;gap:10px;align-items:center}
+/* ===== SAYFA CSS — Pro Ödeme (Foundation F1) — odeme-v1 checkout deseni mirası ===== */
 
-/* ---- rozet & kademe özet bandı (Foundation F2 / rozetler-v1 rank-now + mutfak-defteri .badge-band TÜKETİLDİ) ---- */
-.hs-gam{background:var(--bg-cream);padding:30px 0 6px;border-bottom:1px solid var(--line)}
-.rank-now{display:grid;grid-template-columns:auto 1fr auto;gap:24px;align-items:center;background:linear-gradient(135deg,#2b2820,#211E16 60%,#3a2317);color:#fff;border-radius:var(--radius-lg);padding:24px 28px;box-shadow:var(--sh-md);position:relative;overflow:hidden}
-.rank-now::after{content:"";position:absolute;inset:0;background-image:radial-gradient(rgba(255,255,255,.05) 1px,transparent 1px);background-size:6px 6px;opacity:.45;pointer-events:none}
-.rn-insignia{position:relative;z-index:1;flex:none;width:80px;height:80px;border-radius:var(--radius-circle);background:radial-gradient(circle at 35% 30%,#ffd9a0,#e8a13c 60%,#b8801f);color:#3a2510;display:grid;place-items:center;font-size:34px;box-shadow:0 8px 22px rgba(184,128,31,.45),inset 0 2px 6px rgba(255,255,255,.4)}
-.rn-body{position:relative;z-index:1;min-width:0}
-.rn-eyebrow{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#ffd9a0;margin-bottom:5px}
-.rn-name{font-size:24px;font-weight:800;letter-spacing:-.01em;margin-bottom:4px}
-.rn-name small{font-size:13px;font-weight:600;color:rgba(255,255,255,.6);letter-spacing:0}
-.rn-next{font-size:13px;color:#e7ddcd;font-weight:500;margin-bottom:12px}
-.rn-next b{color:#fff;font-weight:700}
-.rn-bar{height:9px;border-radius:999px;background:rgba(255,255,255,.16);overflow:hidden;max-width:520px}
-.rn-bar span{display:block;height:100%;border-radius:999px;background:linear-gradient(90deg,#ffd9a0,#e8a13c)}
-.rn-bar-meta{display:flex;justify-content:space-between;max-width:520px;margin-top:7px;font-size:11.5px;font-weight:600;color:rgba(255,255,255,.65)}
-.rn-points{position:relative;z-index:1;flex:none;text-align:right}
-.rn-points b{display:block;font-size:22px;font-weight:800;color:#fff;letter-spacing:-.01em}
-.rn-points span{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.55)}
-/* badge-band teaser (mutfak-defteri VERBATIM dili) */
-.badge-band{padding:26px 0 30px}
-.badge-head{display:flex;align-items:center;gap:10px;margin-bottom:14px}
-.badge-head h3{font-size:17px;display:inline-flex;align-items:center;gap:9px}
-.badge-head h3 i{color:var(--tomato);font-size:14px}
-.badge-head .bh-cnt{font-size:12.5px;color:var(--muted);font-weight:500}
-.badge-head .see-all{margin-left:auto;padding:0;border:none;background:transparent;font-size:13px;color:var(--tomato)}
-.badge-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(176px,1fr));gap:10px}
-.badge-card{position:relative;display:flex;align-items:center;gap:11px;background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-md);padding:10px 13px;text-align:left;cursor:pointer;transition:.2s var(--ease)}
-.badge-card:hover{border-color:#dcdcdc}
-.badge-ico{flex:none;width:34px;height:34px;border-radius:var(--radius-md);background:var(--bg);color:var(--slate-2);display:grid;place-items:center;font-size:14px;transition:color .2s var(--ease)}
-.badge-card:hover .badge-ico{color:var(--tomato)}
-.badge-card b{display:block;font-size:12.5px;font-weight:700;color:var(--slate);line-height:1.2}
-.badge-card span{display:block;font-size:11px;color:var(--muted);font-weight:500;margin-top:2px}
-.badge-card.locked{border-style:dashed;border-color:#ddd;background:transparent}
-.badge-card.locked:hover{border-color:#c9c9c9}
-.badge-card.locked .badge-ico{background:transparent;color:#c2c2c2}
-.badge-card.locked b{color:var(--muted)}
-.badge-lock{position:absolute;top:9px;right:11px;font-size:10px;color:#c2c2c2}
-@media (max-width:1024px){
-  .rank-now{grid-template-columns:auto 1fr;gap:18px;padding:22px}
-  .rn-points{display:none}
-  .badge-grid{grid-template-columns:repeat(3,1fr)}
-}
-@media (max-width:640px){
-  .rank-now{grid-template-columns:1fr;text-align:center;gap:14px}
-  .rn-insignia{margin:0 auto}
-  .rn-bar,.rn-bar-meta{max-width:none}
-  .badge-grid{grid-template-columns:1fr 1fr;gap:12px}
-}
+/* form alanları (odeme fk-* kanonu) */
+.fk-input,.fk-select{width:100%;font-family:inherit;font-size:14px;font-weight:500;color:var(--slate);background:var(--bg);border:1px solid var(--line);border-radius:var(--radius-md);padding:13px 15px;outline:none;transition:border-color .2s var(--ease),box-shadow .2s var(--ease)}
+.fk-input::placeholder{color:#a7a7a7}
+.fk-input:focus,.fk-select:focus{border-color:var(--tomato);box-shadow:0 0 0 3px rgba(225,72,39,.10)}
+.fk-field{margin-bottom:22px}
+.fk-field:last-child{margin-bottom:0}
+.fk-label{display:flex;align-items:baseline;gap:7px;font-size:14px;font-weight:700;color:var(--slate);margin-bottom:9px}
+.fk-label .req{color:var(--tomato);font-weight:700}
+.fk-help{display:flex;align-items:flex-start;gap:7px;font-size:12.5px;color:var(--muted);font-weight:500;margin-top:8px;line-height:1.5}
+.fk-help i{color:var(--tomato);font-size:12px;margin-top:2px;flex:none}
+.fk-grid{display:grid;gap:16px 18px}
+.fk-grid .fk-field{margin-bottom:0}
+.fk-grid.c2{grid-template-columns:1fr 1fr}
 
-/* ---- sekme çubuğu — mutfak-defteri .pf-tabbar VERBATIM ---- */
-.pf-tabbar{position:sticky;top:112px;z-index:40;background:rgba(255,255,255,.93);-webkit-backdrop-filter:blur(10px) saturate(150%);backdrop-filter:blur(10px) saturate(150%);padding:12px 0;margin-bottom:30px}
-.pf-tabs{display:flex;gap:4px;background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-md);padding:4px;overflow-x:auto;scrollbar-width:none}
-.pf-tabs::-webkit-scrollbar{display:none}
-.pf-tabs .dt{font-family:inherit;font-weight:700;font-size:13px;color:var(--muted);background:transparent;border:none;border-radius:var(--radius-sm);padding:9px 16px;cursor:pointer;display:inline-flex;align-items:center;gap:7px;transition:.2s var(--ease);white-space:nowrap;flex:none}
-.pf-tabs .dt:hover{color:var(--tomato)}
-.pf-tabs .dt.active{background:var(--tomato);color:#fff}
-.pf-pane{animation:fadeUp .35s var(--ease)}
-.pf-pane[hidden]{display:none}
-
-/* gövde */
-.hs-body{background:var(--bg-cream);padding:0 0 74px}
-.hs-col{max-width:880px;margin:0 auto;display:flex;flex-direction:column;gap:20px}
-
-/* FORM KARTI — tarif-ekle-v1 VERBATIM */
+/* checkout layout */
+.ck-wrap{padding:46px 0 64px;background:var(--bg-white)}
+.wiz-grid{display:grid;grid-template-columns:minmax(0,1fr) 360px;gap:28px;align-items:start}
+.wiz-main{min-width:0}
 .form-card{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-lg);box-shadow:var(--sh-sm);padding:28px}
+.form-card+.form-card{margin-top:20px}
 .fc-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:24px;padding-bottom:18px;border-bottom:1px solid var(--line)}
 .fc-head h2{font-size:20px;display:flex;align-items:center;gap:11px}
 .fc-head h2 i{flex:none;width:38px;height:38px;border-radius:var(--radius-md);background:var(--tomato-tint);color:var(--tomato);display:grid;place-items:center;font-size:15px}
 .fc-head p{font-size:13px;color:var(--muted);font-weight:500;margin-top:5px}
 
-/* FK ALAN KİTİ — tarif-ekle-v1 VERBATIM */
-.fk-field{margin-bottom:22px}
-.fk-field:last-child{margin-bottom:0}
-.fk-label{display:flex;align-items:baseline;gap:7px;font-size:14px;font-weight:700;color:var(--slate);margin-bottom:9px}
-.fk-label .req{color:var(--tomato);font-weight:700}
-.fk-label .opt{font-size:11.5px;color:var(--muted);font-weight:500}
-.fk-label .fk-count{margin-left:auto;font-size:11.5px;color:var(--muted);font-weight:500;letter-spacing:.02em}
-.fk-input,.fk-select,.fk-textarea{
-  width:100%;font-family:inherit;font-size:14px;font-weight:500;color:var(--slate);
-  background:var(--bg);border:1px solid var(--line);border-radius:var(--radius-md);
-  padding:13px 15px;outline:none;transition:border-color .2s var(--ease),box-shadow .2s var(--ease);
-}
-.fk-input::placeholder,.fk-textarea::placeholder{color:#a7a7a7}
-.fk-input:focus,.fk-select:focus,.fk-textarea:focus{border-color:var(--tomato);box-shadow:0 0 0 3px rgba(225,72,39,.10)}
-.fk-textarea{min-height:110px;resize:vertical;line-height:1.6}
-.fk-select{
-  appearance:none;-webkit-appearance:none;cursor:pointer;
-  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%237E7E7E' stroke-width='1.6' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
-  background-repeat:no-repeat;background-position:right 15px center;padding-right:40px;
-}
-.fk-select:invalid{color:#a7a7a7}
-.fk-help{display:flex;align-items:flex-start;gap:7px;font-size:12.5px;color:var(--muted);font-weight:500;margin-top:8px;line-height:1.5}
-.fk-help i{color:var(--tomato);font-size:12px;margin-top:2px;flex:none}
-.fk-input[disabled]{opacity:.6;cursor:not-allowed}
-.fk-grid{display:grid;gap:16px 18px}
-.fk-grid .fk-field{margin-bottom:0}
-.fk-grid.c2{grid-template-columns:1fr 1fr}
-.fk-grid+.fk-grid{margin-top:18px}
-.fk-grid+.fk-field,.fk-field+.fk-grid{margin-top:22px}
+/* kart bilgisi + canlı önizleme (odeme card-visual) */
+.pay-grid{display:grid;grid-template-columns:minmax(0,1fr) 280px;gap:26px;align-items:start}
+.card-visual{position:relative;aspect-ratio:1.586;border-radius:var(--radius-lg);background:linear-gradient(135deg,#2b2820 0%,#211E16 55%,#3a2317 100%);color:#fff;padding:22px;display:flex;flex-direction:column;overflow:hidden;box-shadow:var(--sh-md)}
+.card-visual::after{content:"";position:absolute;inset:0;background-image:radial-gradient(rgba(255,255,255,.05) 1px,transparent 1px);background-size:5px 5px;opacity:.5;pointer-events:none}
+.cv-top{display:flex;align-items:center;justify-content:space-between}
+.cv-chip{width:38px;height:28px;border-radius:6px;background:linear-gradient(135deg,#e8c879,#b8923f)}
+.cv-brand{font-size:23px;color:rgba(255,255,255,.85)}
+.cv-num{font-size:19px;font-weight:700;letter-spacing:.14em;margin:auto 0 14px;font-variant-numeric:tabular-nums;white-space:nowrap}
+.cv-foot{display:flex;align-items:flex-end;justify-content:space-between;gap:12px}
+.cv-foot label{display:block;font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.55);margin-bottom:3px}
+.cv-foot b{font-size:13px;font-weight:700;letter-spacing:.04em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:170px}
+.tks-row{display:flex;flex-wrap:wrap;gap:8px}
+.tks-row .chip.active{border-color:var(--tomato);color:var(--tomato);background:var(--tomato-tint);font-weight:700}
 
-/* şifre göster/gizle — giris-v1 ile ortak (Dalga 3 auth ailesi) */
-.fk-pass{position:relative}
-.fk-pass .fk-input{padding-right:50px}
-.fk-eye{position:absolute;right:7px;top:50%;transform:translateY(-50%);width:36px;height:36px;border:none;border-radius:var(--radius-sm);background:transparent;color:var(--muted);font-size:14px;cursor:pointer;display:grid;place-items:center;transition:.18s var(--ease)}
-.fk-eye:hover{color:var(--tomato);background:var(--tomato-tint)}
+/* onay kutusu (odeme agree) */
+.agree{position:relative;display:flex;align-items:flex-start;gap:11px;padding:13px 15px;border:1px solid var(--line);border-radius:var(--radius-md);background:var(--bg);cursor:pointer;transition:.18s var(--ease)}
+.agree input{position:absolute;opacity:0;pointer-events:none}
+.cbx{flex:none;width:20px;height:20px;border-radius:var(--radius-sm);border:1.5px solid #d8d8d8;background:var(--paper);display:grid;place-items:center;transition:.18s var(--ease)}
+.cbx::after{content:"\f00c";font-family:"Font Awesome 6 Free";font-weight:900;font-size:10px;color:#fff;transform:scale(0);transition:transform .15s var(--ease)}
+.agree input:checked ~ .cbx{background:var(--tomato);border-color:var(--tomato)}
+.agree input:checked ~ .cbx::after{transform:scale(1)}
+.agree:hover .cbx{border-color:var(--tomato)}
+.agree span{font-size:13px;font-weight:500;color:var(--slate-2);line-height:1.55}
+.agree span a{color:var(--tomato);font-weight:700;text-decoration:underline;text-underline-offset:2px}
 
-/* ---- avatar değiştirme satırı ---- */
-.ava-row{display:flex;align-items:center;gap:18px;margin-bottom:24px}
-.ava-row .hs-ava{width:84px;height:84px}
-.ava-btns{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
-.ava-btns .btn{padding:11px 18px;font-size:13px}
-.ava-del{background:none;border:none;font-family:inherit;font-size:13px;font-weight:700;color:var(--muted);cursor:pointer;padding:10px 6px;transition:.18s}
-.ava-del:hover{color:var(--tomato)}
-.ava-note{width:100%;font-size:12px;color:var(--muted);font-weight:500}
+/* plan özet sidebar */
+.plan-sum{position:sticky;top:128px;background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-lg);box-shadow:var(--sh-sm);overflow:hidden}
+.ps-head{padding:20px 22px;background:linear-gradient(135deg,#fff,#fdf6f3);border-bottom:1px solid var(--line)}
+.ps-tier{display:flex;align-items:center;gap:11px;margin-bottom:5px}
+.ps-tier i{flex:none;width:40px;height:40px;border-radius:var(--radius-md);background:var(--tomato-tint);color:var(--tomato);display:grid;place-items:center;font-size:17px}
+.ps-tier b{font-size:20px;color:var(--slate)}
+.ps-tag{font-size:12.5px;color:var(--muted);font-weight:500}
+.ps-body{padding:18px 22px 22px}
+.ps-feats{list-style:none;display:flex;flex-direction:column;gap:9px;margin-bottom:18px}
+.ps-feats li{display:flex;gap:9px;font-size:13px;font-weight:500;color:var(--slate-2);line-height:1.4}
+.ps-feats li i{color:var(--green-deep);font-size:11px;margin-top:3px;flex:none}
+.ps-total{display:flex;align-items:baseline;justify-content:space-between;padding:15px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);margin-bottom:18px}
+.ps-total .pt-lbl{font-size:13px;color:var(--muted);font-weight:600}
+.ps-total .pt-val b{font-size:26px;color:var(--slate);letter-spacing:-.02em}
+.ps-total .pt-val span{font-size:12px;color:var(--muted);font-weight:500}
+.plan-sum .btn{width:100%}
+.ps-note{display:flex;gap:8px;font-size:11.5px;color:var(--muted);font-weight:500;line-height:1.5;margin-top:13px}
+.ps-note i{color:var(--green);margin-top:2px;flex:none}
+.ps-switch{font-size:12.5px;text-align:center;margin-top:14px;color:var(--muted);font-weight:500}
+.ps-switch a{color:var(--tomato);font-weight:700}
 
-/* ---- kaydet barı ---- */
-.hs-save{display:flex;align-items:center;gap:14px;margin-top:24px;padding-top:20px;border-top:1px solid var(--line)}
-.hs-save .note{font-size:12.5px;color:var(--muted);font-weight:500}
-.hs-save .btn{margin-left:auto;padding:14px 26px}
-.hs-saved{display:none;align-items:center;gap:7px;font-size:13px;font-weight:700;color:var(--green-deep)}
-.hs-saved.show{display:inline-flex;animation:fadeUp .3s var(--ease)}
+/* başarı state — body.pay-done ile toggle */
+.pay-success{display:none;padding:74px 0;text-align:center;background:var(--bg-white)}
+body.pay-done .ck-wrap{display:none}
+body.pay-done .pay-success{display:block}
+.suc-ico{width:84px;height:84px;border-radius:var(--radius-circle);background:#e8f6ef;color:var(--green-deep);display:grid;place-items:center;font-size:38px;margin:0 auto 22px}
+.suc-tier{display:inline-flex;align-items:center;gap:8px;font-size:13px;font-weight:700;color:var(--tomato);background:var(--tomato-tint);padding:7px 15px;border-radius:999px;margin-bottom:16px}
+.pay-success h2{font-size:28px;color:var(--slate);margin-bottom:12px}
+.pay-success p{font-size:15.5px;color:var(--muted);font-weight:500;max-width:480px;margin:0 auto 26px;line-height:1.6}
+.suc-acts{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
 
-/* ---- tercih satırı (gizlilik) + anahtar — onboarding .tgl ortak ---- */
-.set-list{display:flex;flex-direction:column}
-.set-row{display:flex;align-items:center;gap:16px;padding:17px 2px}
-.set-row+.set-row{border-top:1px solid var(--line)}
-.set-row .sr-ico{flex:none;width:40px;height:40px;border-radius:var(--radius-md);background:var(--bg);color:var(--slate-2);display:grid;place-items:center;font-size:15px}
-.set-row .sr-txt{flex:1;min-width:0}
-.set-row .sr-txt b{display:block;font-size:14px;color:var(--slate)}
-.set-row .sr-txt span{display:block;font-size:12.5px;color:var(--muted);font-weight:500;margin-top:2px;line-height:1.45}
-.set-row .fk-select{width:200px;flex:none;padding:10px 36px 10px 13px;font-size:13px}
-.tgl{position:relative;display:inline-flex;flex:none;cursor:pointer}
-.tgl input{position:absolute;opacity:0;pointer-events:none}
-.tgl .tk{width:46px;height:26px;border-radius:var(--radius-md);background:#dcd8d0;transition:background .2s var(--ease);position:relative}
-.tgl .tk::after{content:"";position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:var(--radius-circle);background:#fff;box-shadow:0 1px 4px rgba(33,30,22,.25);transition:transform .2s var(--ease)}
-.tgl input:checked+.tk{background:var(--tomato)}
-.tgl input:checked+.tk::after{transform:translateX(20px)}
-.tgl input:focus-visible+.tk{box-shadow:0 0 0 3px rgba(225,72,39,.18)}
-
-/* ---- bildirim kanal matrisi ---- */
-.ntf-matrix{width:100%}
-.ntf-row{display:grid;grid-template-columns:minmax(0,1fr) 92px 92px;gap:12px;align-items:center;padding:14px 2px}
-.ntf-row+.ntf-row{border-top:1px solid var(--line)}
-.ntf-row.head{padding:4px 2px 12px;border-top:none}
-.ntf-row.head span{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);text-align:center}
-.ntf-row.head span:first-child{text-align:left}
-.ntf-row .nf-txt b{display:block;font-size:14px;color:var(--slate)}
-.ntf-row .nf-txt span{display:block;font-size:12.5px;color:var(--muted);font-weight:500;margin-top:2px}
-.ntf-row .nf-cell{display:flex;justify-content:center}
-.ntf-foot{display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--muted);font-weight:500;margin-top:16px;padding-top:14px;border-top:1px solid var(--line)}
-.ntf-foot i{color:var(--tomato);font-size:12px}
-.ntf-foot a{color:var(--tomato);font-weight:700;transition:.18s}
-.ntf-foot a:hover{text-decoration:underline;text-underline-offset:2px}
-
-/* ---- tehlikeli bölge — ayrık kutu ---- */
-.danger-card{background:var(--paper);border:1px solid rgba(225,72,39,.35);border-radius:var(--radius-lg);padding:28px}
-.danger-card .fc-head{border-bottom-color:rgba(225,72,39,.18)}
-.danger-card .fc-head h2 i{background:rgba(225,72,39,.14);color:var(--tomato)}
-.dz-row{display:flex;align-items:center;gap:16px;padding:15px 2px}
-.dz-row+.dz-row{border-top:1px dashed rgba(225,72,39,.25)}
-.dz-row .sr-txt{flex:1;min-width:0}
-.dz-row .sr-txt b{display:block;font-size:14px;color:var(--slate)}
-.dz-row .sr-txt span{display:block;font-size:12.5px;color:var(--muted);font-weight:500;margin-top:2px;line-height:1.45}
-/* danger bölge butonları — 38px yükseklik standardı (revize-2 borç kapatma) */
-.dz-row .btn{flex:none;height:38px;padding:0 18px;font-size:13px}
-.btn-danger{background:var(--tomato-deep);color:#fff}
-.btn-danger:hover{background:#8d2a14;transform:translateY(-2px)}
-.dz-row .btn-ghost:hover{border-color:var(--tomato);color:var(--tomato)}
-
-/* ---- Üyeliklerim — ödenen ücretli üyelikler (madde 30, abone tarafı) ---- */
-.uys-list{display:flex;flex-direction:column;gap:14px}
-.uys-row{display:flex;align-items:center;gap:16px;background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-lg);padding:16px 18px;transition:.2s var(--ease)}
-.uys-row:hover{border-color:#dcdcdc;box-shadow:var(--sh-sm)}
-.uys-ava{flex:none;width:52px;height:52px;border-radius:var(--radius-circle);background-size:cover;background-position:center}
-.uys-info{flex:1;min-width:0}
-.uys-info b{font-size:14.5px;color:var(--slate);font-weight:700}
-.uys-info .uys-plan{display:block;font-size:13px;color:var(--muted);font-weight:500;margin-top:2px}
-.uys-info .uys-renew{display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--muted);font-weight:500;margin-top:6px}
-.uys-info .uys-renew i{color:var(--tomato);font-size:11px}
-.uys-price{flex:none;text-align:right}
-.uys-price b{font-size:17px;color:var(--slate);font-weight:700;letter-spacing:-.02em}
-.uys-price span{display:block;font-size:11.5px;color:var(--muted);font-weight:500}
-.uys-acts{flex:none;display:flex;align-items:center;gap:8px}
-.uys-manage{font-family:inherit;font-size:13px;font-weight:700;color:var(--slate);background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-md);padding:9px 16px;cursor:pointer;transition:.2s var(--ease);text-decoration:none;display:inline-flex;align-items:center;gap:7px;white-space:nowrap}
-.uys-manage:hover{border-color:var(--tomato);color:var(--tomato);background:var(--tomato-tint)}
-.uys-cancel{font-family:inherit;font-size:12.5px;font-weight:600;color:var(--muted);background:none;border:none;cursor:pointer;transition:color .2s var(--ease)}
-.uys-cancel:hover{color:var(--tomato)}
-
-/* ===================== TABLET (≤1024px) ===================== */
-@media (max-width:1024px){
-  .hs-id h1{font-size:25px}
-}
-/* ===================== MOBİL (≤640px) ===================== */
-@media (max-width:640px){
-  .rd-crumb{padding:14px 0 10px;font-size:12px}
-  .hs-head{flex-wrap:wrap;gap:14px;padding-bottom:20px}
-  .hs-ava{width:60px;height:60px}
-  .hs-id h1{font-size:22px}
-  .hs-tools{width:100%}
-  .hs-tools .see-all{padding:0;border:none;background:transparent;font-size:13.5px;color:var(--tomato)}
-  .pf-tabbar{top:62px;padding:10px 0;margin-bottom:22px}
-  .pf-tabs .dt{padding:9px 13px}
-  .hs-body{padding-bottom:56px}
-  .form-card,.danger-card{padding:20px 16px}
-  .fc-head{flex-direction:column;gap:10px;margin-bottom:18px;padding-bottom:14px}
-  .fk-grid.c2{grid-template-columns:1fr}
-  .ava-row{flex-wrap:wrap;gap:14px}
-  .set-row{flex-wrap:wrap;gap:10px 14px}
-  .uys-row{flex-wrap:wrap;gap:12px}
-  .uys-info{flex:1 1 100%;order:2}
-  .uys-price{order:1;margin-left:auto}
-  .uys-acts{order:3;flex:1 1 100%;justify-content:flex-end}
-  .set-row .fk-select{width:100%}
-  .set-row .tgl{margin-left:auto}
-  .ntf-row{grid-template-columns:minmax(0,1fr) 56px 56px;gap:8px}
-  .hs-save{flex-wrap:wrap}
-  .hs-save .btn{width:100%;margin-left:0;order:1}
-  .hs-save .note{order:2}
-  .dz-row{flex-wrap:wrap}
-  .dz-row .btn{width:100%}
-}
-/* HERO ZENGINLESTIRME (hero-zengin ADIM2) */
-.hs-top .wrap{position:relative}
-.hs-top .rd-crumb,.hs-top .rd-crumb a{color:#c9c3b8}
-.hs-top .rd-crumb a:hover{color:#ff8763}
-.hs-top .rd-crumb i{color:rgba(255,255,255,.4)}
-.hs-top .rd-crumb b{color:#fff}
-.hs-top .eyebrow{color:#ffd9cf}
-.hs-top h1{color:#fff;text-shadow:0 2px 24px rgba(0,0,0,.25)}
-.hs-top h1 .accent{color:#ff7a5c}
-.hs-top .lead{color:#e7edf1;text-shadow:0 1px 14px rgba(0,0,0,.3)}
-.hs-top .hs-id p{color:#cdd8e0}
-@media (max-width:640px){.hs-top{padding-top:74px}}
-
-/* saglik-dropdown: scoped health chrome */
-/* diğer dropdown/mega aktif-item (turuncu kanon, underline gizli) */
-.dropdown:not(.dropdown-health) a.active{background:var(--tomato-tint)}
-.dropdown a.active::after,.mega-cats a.active::after{display:none}
-.mega-cats a.active{background:var(--tomato-tint)}
-.d-sub-health a i{color:var(--green)}
-.d-sub-health a:hover{color:var(--green);background:rgba(59,183,126,.10)}
-.nav a[href="saglik-hub-v1.html"]:hover{color:var(--green);background:rgba(59,183,126,.10)}
-.header.at-top .nav>.nav-item>a[href="saglik-hub-v1.html"]:hover{color:#fff;background:rgba(255,255,255,.14)}
-.dropdown-health a i{color:var(--green)}
-.dropdown-health a:hover{background:rgba(59,183,126,.12);color:var(--green)}
-.dropdown-health a.active{background:rgba(59,183,126,.12);color:var(--green)}
-.dropdown-health a.active i{color:var(--green)}
-.dropdown-health a.active::after{display:none}
+@media (max-width:1024px){.wiz-grid{grid-template-columns:1fr;gap:20px}.pay-grid{grid-template-columns:1fr;gap:18px}.card-visual{max-width:380px}.plan-sum{position:static}}
+@media (max-width:640px){.form-card{padding:18px 16px}.fc-head{flex-direction:column;gap:10px}.fk-grid.c2{grid-template-columns:1fr 1fr}.cv-num{font-size:16px}.pay-success h2{font-size:23px}}
 
 </style>
 <style>
@@ -1036,7 +868,6 @@ html,body{overflow-x:clip}
         <a class="tb-world tb-world-store" href="dada-shop-v1.html"><i class="fa-solid fa-bag-shopping"></i><span class="tw-name">DadaStore</span><i class="fa-solid fa-arrow-right tw-arr"></i></a>
         <a class="tb-world tb-world-akademi" href="akademi-v1.html"><i class="fa-solid fa-graduation-cap"></i><span class="tw-name">DadaAkademi</span><span class="tw-soon">Yakında</span></a>
       </div>
-      
       <div class="tb-lang" id="tbLang">
         <button class="tb-lang-btn" id="tbLangBtn" type="button" aria-haspopup="true" aria-expanded="false">
           <i class="fa-solid fa-globe"></i><span>EN</span><i class="fa-solid fa-chevron-down tb-lang-caret"></i>
@@ -1113,7 +944,7 @@ html,body{overflow-x:clip}
         </div>
         <div class="nav-item">
           <a href="saglik-hub-v1.html">Sağlıklı Yaşam <i class="fa-solid fa-chevron-down"></i></a>
-          <div class="dropdown dropdown-health">
+          <div class="dropdown">
             <a href="hesaplayici-v1.html"><i class="fa-solid fa-calculator"></i> <span>Hesaplayıcılar<small>Kalori, BMI, metabolizma</small></span></a>
             <a href="saglik-testler-v1.html"><i class="fa-solid fa-clipboard-question"></i> <span>Testler<small>Kendini keşfet, eğlenceli testler</small></span></a>
             <a href="diyetisyen-dizin-v1.html"><i class="fa-solid fa-stethoscope"></i> <span>Diyetisyen Ara<small>Uzmanla randevu al</small></span></a>
@@ -1207,9 +1038,8 @@ html,body{overflow-x:clip}
     </div>
     <div class="d-item d-has-sub">
       <button class="d-link">Sağlıklı Yaşam <i class="fa-solid fa-chevron-down"></i></button>
-      <div class="d-sub d-sub-health">
+      <div class="d-sub">
         <a href="hesaplayici-v1.html"><i class="fa-solid fa-calculator"></i> Hesaplayıcılar</a>
-        <a href="saglik-testler-v1.html"><i class="fa-solid fa-clipboard-question"></i> Testler</a>
         <a href="diyetisyen-dizin-v1.html"><i class="fa-solid fa-stethoscope"></i> Diyetisyen Ara</a>
         <a href="besin-degerleri-v1.html"><i class="fa-solid fa-table-list"></i> Besin Değerleri</a>
       </div>
@@ -1391,365 +1221,125 @@ html,body{overflow-x:clip}
 <!-- ===== ANA İÇERİK (footer reveal perdesi) ===== -->
 <main class="page-main" id="pageMain">
 
-<!-- ===== HESAP AYARLARI (?tab=profil|sifre|gizlilik|bildirim) ===== -->
-<section class="hs-top below-header">
+<!-- SAYFA İÇERİĞİ -->
+<section class="below-header tb-top" aria-label="Sayfa başlığı">
+  <div class="tb-hero-img" data-img-pending aria-hidden="true"></div>
   <div class="wrap">
     <nav class="rd-crumb" aria-label="Sayfa yolu">
       <a href="anasayfa-portal-v3a.html"><i class="fa-solid fa-house"></i></a>
       <i class="fa-solid fa-chevron-right"></i>
-      <b>Hesap Ayarları</b>
+      <a href="mutfak-defteri-v1.html?view=public" id="ckBackProfile">Profil</a>
+      <i class="fa-solid fa-chevron-right"></i>
+      <b>Üye Ol</b>
     </nav>
-    <div class="hs-head">
-      <div class="hs-ava" style="background-image:url('https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=200&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')"></div>
-      <div class="hs-id">
-        <h1>Hesap Ayarları</h1>
-        <p>Elif Şahin · @elifsahin — <a href="mutfak-defteri-v1.html"><i class="fa-solid fa-book-open" style="font-size:10px"></i> Defterime Git <i class="fa-solid fa-arrow-right" style="font-size:10px"></i></a></p>
-      </div>
-      <div class="hs-tools">
-        <a class="see-all" href="bildirimler-v1.html"><i class="fa-regular fa-bell"></i> Bildirimlerim <i class="fa-solid fa-arrow-right"></i></a>
-      </div>
+    <div class="tb-hero-main">
+      <span class="eyebrow"><i class="fa-solid fa-star"></i> Üyelik</span>
+      <h1 id="ckTitle">Üyeliğini başlat</h1>
+      <p class="lead">Üreticinin üyelik planını onayla — kart bilgilerini gir, üyeliğin anında aktif olsun. İstediğin an iptal edebilirsin.</p>
     </div>
   </div>
 </section>
 
-<!-- ===== ROZET & KADEME ÖZET BANDI (Foundation F2 / rozet-veri.md persona Elif) ===== -->
-<section class="hs-gam">
+<!-- ÖDEME EKRANI -->
+<section class="ck-wrap">
   <div class="wrap">
-    <div class="rank-now">
-      <span class="rn-insignia"><i class="fa-solid fa-medal"></i></span>
-      <div class="rn-body">
-        <div class="rn-eyebrow">Şef Kademen · 5 / 8</div>
-        <div class="rn-name">Usta Aşçı <small>· 15 rozet</small></div>
-        <p class="rn-next">Sonraki kademe <b>Şef</b> — <b>5 rozet</b> kaldı <span style="opacity:.75">(≥1 nadir koşulu zaten sağlandı ✓)</span></p>
-        <div class="rn-bar"><span style="width:75%"></span></div>
-        <div class="rn-bar-meta"><span>15 rozet</span><span>Şef'e 20</span></div>
+    <div class="wiz-grid">
+
+      <!-- SOL: kart formu -->
+      <div class="wiz-main">
+        <div class="form-card">
+          <div class="fc-head">
+            <div>
+              <h2><i class="fa-regular fa-credit-card"></i> Kart Bilgileri</h2>
+              <p>Bilgilerin şifrelenir, kartın kaydedilmez — ödeme 3D Secure ile doğrulanır.</p>
+            </div>
+            <span class="fc-step"><i class="fa-solid fa-lock"></i> Güvenli</span>
+          </div>
+
+          <div class="pay-grid">
+            <div>
+              <div class="fk-field">
+                <label class="fk-label" for="ccName">Kart Üzerindeki İsim <span class="req">*</span></label>
+                <input class="fk-input" id="ccName" type="text" autocomplete="cc-name" placeholder="Kart sahibinin adı soyadı" />
+              </div>
+              <div class="fk-field">
+                <label class="fk-label" for="ccNum">Kart Numarası <span class="req">*</span></label>
+                <input class="fk-input" id="ccNum" type="text" inputmode="numeric" autocomplete="cc-number" maxlength="19" placeholder="0000 0000 0000 0000" />
+              </div>
+              <div class="fk-grid c2">
+                <div class="fk-field">
+                  <label class="fk-label" for="ccExp">Son Kullanma <span class="req">*</span></label>
+                  <input class="fk-input" id="ccExp" type="text" inputmode="numeric" autocomplete="cc-exp" maxlength="5" placeholder="AA/YY" />
+                </div>
+                <div class="fk-field">
+                  <label class="fk-label" for="ccCvv">CVV <span class="req">*</span></label>
+                  <input class="fk-input" id="ccCvv" type="password" inputmode="numeric" autocomplete="cc-csc" maxlength="3" placeholder="•••" />
+                </div>
+              </div>
+              <span class="fk-help"><i class="fa-solid fa-lightbulb"></i> Bu bir mockup'tır — gerçek ödeme alınmaz, kart bilgisi saklanmaz.</span>
+            </div>
+
+            <!-- canlı kart önizleme (maskeli) -->
+            <div class="card-visual" aria-hidden="true">
+              <div class="cv-top"><span class="cv-chip"></span><i class="fa-brands fa-cc-visa cv-brand" id="cvBrand"></i></div>
+              <div class="cv-num" id="cvNum">•••• •••• •••• ••••</div>
+              <div class="cv-foot">
+                <div><label>Kart Sahibi</label><b id="cvName">AD SOYAD</b></div>
+                <div><label>SKT</label><b id="cvExp">••/••</b></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-card">
+          <label class="agree">
+            <input type="checkbox" id="agreePro" />
+            <span class="cbx"></span>
+            <span><a href="yasal-v1.html">Üyelik Sözleşmesi</a> ve <a href="yasal-v1.html">otomatik yenileme koşullarını</a> okudum, onaylıyorum. <span class="req">*</span></span>
+          </label>
+        </div>
       </div>
-      <div class="rn-points"><b>8.450</b><span>Topluluk Puanı</span></div>
-    </div>
-  </div>
-  <div class="badge-band">
-    <div class="wrap">
-      <div class="badge-head">
-        <h3><i class="fa-solid fa-award"></i> Rozetlerin</h3>
-        <span class="bh-cnt">15 kazanıldı · 7 yolda</span>
-        <a class="see-all" href="rozetler-v1.html">Tüm Rozetler <i class="fa-solid fa-arrow-right"></i></a>
-      </div>
-      <div class="badge-grid">
-        <div class="badge-card"><span class="badge-ico"><i class="fa-solid fa-medal"></i></span><div><b>Dada Şefi</b><span>Oca 2026</span></div></div>
-        <div class="badge-card"><span class="badge-ico"><i class="fa-solid fa-star"></i></span><div><b>Şefin Tercihi</b><span>Eyl 2025</span></div></div>
-        <div class="badge-card"><span class="badge-ico"><i class="fa-solid fa-trophy"></i></span><div><b>Haftanın Aşçısı</b><span>3 kez kazandı</span></div></div>
-        <div class="badge-card"><span class="badge-ico"><i class="fa-solid fa-circle-check"></i></span><div><b>Editör Onaylı</b><span>Eyl 2024</span></div></div>
-        <div class="badge-card"><span class="badge-ico"><i class="fa-solid fa-camera"></i></span><div><b>Fotoğraf Ustası</b><span>Haz 2024</span></div></div>
-        <div class="badge-card"><span class="badge-ico"><i class="fa-solid fa-lightbulb"></i></span><div><b>Püf Bilgini</b><span>Şub 2025</span></div></div>
-        <div class="badge-card"><span class="badge-ico"><i class="fa-solid fa-heart"></i></span><div><b>1.000 Beğeni</b><span>Nis 2025</span></div></div>
-        <div class="badge-card"><span class="badge-ico"><i class="fa-solid fa-cake-candles"></i></span><div><b>3 Yıl Dada&rsquo;lı</b><span>Mar 2024</span></div></div>
-        <div class="badge-card locked"><i class="fa-solid fa-lock badge-lock"></i><span class="badge-ico"><i class="fa-solid fa-bowl-food"></i></span><div><b>Çorba Ustası</b><span>8 çorba kaldı</span></div></div>
-        <div class="badge-card locked"><i class="fa-solid fa-lock badge-lock"></i><span class="badge-ico"><i class="fa-solid fa-ice-cream"></i></span><div><b>Tatlı Şefi</b><span>4 tatlı kaldı</span></div></div>
-      </div>
+
+      <!-- SAĞ: plan özeti (?plan ile dolar) -->
+      <aside>
+        <div class="plan-sum">
+          <div class="ps-head">
+            <div class="ps-tier"><i class="fa-solid fa-star" id="psIco"></i><b id="psName">Elif&rsquo;in Mutfağı Üyeliği</b></div>
+            <span class="ps-tag" id="psTag">Elif Şahin&rsquo;e aylık üyelik · istediğin an iptal</span>
+          </div>
+          <div class="ps-body">
+            <ul class="ps-feats" id="psFeats">
+              <li><i class="fa-solid fa-check"></i> Haftalık üyelere özel tarif</li>
+              <li><i class="fa-solid fa-check"></i> Yeni tariflere 1 hafta erken erişim</li>
+              <li><i class="fa-solid fa-check"></i> Üyelere özel mevsim menüleri</li>
+              <li><i class="fa-solid fa-check"></i> Aylık canlı soru-cevap yayını</li>
+            </ul>
+            <div class="ps-total">
+              <span class="pt-lbl">Aylık toplam</span>
+              <span class="pt-val"><b id="psPrice">₺49</b> <span>/ ay</span></span>
+            </div>
+            <button class="btn btn-primary" id="startSub" type="button"><i class="fa-solid fa-star"></i> Üyeliği Başlat</button>
+            <p class="ps-note"><i class="fa-solid fa-shield-halved"></i> 3D Secure doğrulaması bankan tarafından yapılır. Temsilî fiyat.</p>
+            <p class="ps-switch">Vazgeçtin mi? <a href="mutfak-defteri-v1.html?view=public&amp;tab=uyelik" id="psBack">Profile dön</a></p>
+          </div>
+        </div>
+      </aside>
+
     </div>
   </div>
 </section>
 
-<!-- sekme çubuğu + gövde -->
-<section class="hs-body">
+<!-- BAŞARI STATE (body.pay-done ile görünür · ?ok=1) -->
+<section class="pay-success" aria-label="Üyelik başarılı">
   <div class="wrap">
-    <div class="pf-tabbar">
-      <div class="pf-tabs" role="tablist" aria-label="Hesap ayarları sekmeleri" id="hsTabs">
-        <button class="dt active" type="button" data-tab="profil" role="tab" aria-selected="true"><i class="fa-regular fa-user"></i> Profil</button>
-        <button class="dt" type="button" data-tab="sifre" role="tab" aria-selected="false"><i class="fa-solid fa-lock"></i> Şifre &amp; Güvenlik</button>
-        <button class="dt" type="button" data-tab="gizlilik" role="tab" aria-selected="false"><i class="fa-solid fa-shield-halved"></i> Gizlilik</button>
-        <button class="dt" type="button" data-tab="bildirim" role="tab" aria-selected="false"><i class="fa-regular fa-bell"></i> Bildirimler</button>
-        <button class="dt" type="button" data-tab="uyelikler" role="tab" aria-selected="false"><i class="fa-solid fa-star"></i> Üyeliklerim</button>
-      </div>
+    <span class="suc-ico"><i class="fa-solid fa-check"></i></span>
+    <span class="suc-tier"><i class="fa-solid fa-star"></i> <span id="sucName">Elif&rsquo;in Mutfağı Üyeliği</span> aktif</span>
+    <h2>Üyeliğin başladı 🎉</h2>
+    <p>Artık <b id="sucCreator">Elif Şahin</b>&rsquo;in üyelere özel tariflerine, erken erişime ve aylık soru-cevaba katılabilirsin. İçerik profilinde anında açıldı.</p>
+    <div class="suc-acts">
+      <a class="btn btn-primary" id="sucProfile" href="mutfak-defteri-v1.html?view=public&amp;uye=1&amp;tab=uyelik"><i class="fa-solid fa-star"></i> Üyelere Özel İçeriği Gör</a>
+      <a class="btn btn-ghost" href="hesabim-v1.html?tab=uyelikler"><i class="fa-solid fa-gear"></i> Üyeliklerim</a>
     </div>
-
-    <!-- ============ PANE: PROFİL ============ -->
-    <div class="pf-pane hs-col" data-pane="profil">
-      <form class="form-card" data-savecard>
-        <div class="fc-head">
-          <div><h2><i class="fa-regular fa-user"></i> Profil Bilgileri</h2><p>Bu bilgiler Mutfak Defteri sayfanda herkese görünür.</p></div>
-        </div>
-
-        <div class="ava-row">
-          <div class="hs-ava" style="background-image:url('https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=200&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')"></div>
-          <div class="ava-btns">
-            <button class="btn btn-ghost" type="button"><i class="fa-solid fa-camera"></i> Fotoğraf Yükle</button>
-            <button class="ava-del" type="button">Kaldır</button>
-            <span class="ava-note">JPG veya PNG, en az 200×200 px. Kare kırpılır.</span>
-          </div>
-        </div>
-
-        <div class="fk-grid c2">
-          <div class="fk-field">
-            <label class="fk-label" for="hsAd">Ad <span class="req">*</span></label>
-            <input class="fk-input" id="hsAd" type="text" value="Elif" required />
-          </div>
-          <div class="fk-field">
-            <label class="fk-label" for="hsSoyad">Soyad <span class="req">*</span></label>
-            <input class="fk-input" id="hsSoyad" type="text" value="Şahin" required />
-          </div>
-        </div>
-        <div class="fk-field">
-          <label class="fk-label" for="hsHandle">Kullanıcı adı <span class="req">*</span></label>
-          <input class="fk-input" id="hsHandle" type="text" value="elifsahin" required />
-          <span class="fk-help"><i class="fa-solid fa-link"></i> Defter adresin: dadamutfak.com/sef/<b>elifsahin</b></span>
-        </div>
-        <div class="fk-grid c2">
-          <div class="fk-field">
-            <label class="fk-label" for="hsEmail">E-posta <span class="req">*</span></label>
-            <input class="fk-input" id="hsEmail" type="email" value="elif.sahin@eposta.com" required />
-            <span class="fk-help"><i class="fa-solid fa-circle-info"></i> Değiştirirsen yeni adrese doğrulama bağlantısı gönderilir.</span>
-          </div>
-          <div class="fk-field">
-            <label class="fk-label" for="hsTel">Telefon <span class="opt">(opsiyonel)</span></label>
-            <input class="fk-input" id="hsTel" type="tel" value="0555 555 55 55" />
-          </div>
-        </div>
-        <div class="fk-grid c2">
-          <div class="fk-field">
-            <label class="fk-label" for="hsDogum">Doğum tarihi <span class="opt">(opsiyonel)</span></label>
-            <input class="fk-input" id="hsDogum" type="text" placeholder="gg.aa.yyyy" value="14.03.1992" />
-          </div>
-          <div class="fk-field">
-            <label class="fk-label" for="hsCinsiyet">Cinsiyet <span class="opt">(opsiyonel)</span></label>
-            <select class="fk-select" id="hsCinsiyet">
-              <option>Belirtmek istemiyorum</option>
-              <option selected>Kadın</option>
-              <option>Erkek</option>
-            </select>
-          </div>
-        </div>
-        <div class="fk-field">
-          <label class="fk-label" for="hsBio">Hakkımda <span class="opt">(opsiyonel)</span> <span class="fk-count" id="bioCount">96 / 160</span></label>
-          <textarea class="fk-textarea" id="hsBio" maxlength="160">Ev yemekleri ve hamur işi tutkunu. 8 yıldır mutfaktayım; pratik ama gösterişli tarifler peşindeyim.</textarea>
-        </div>
-
-        <div class="hs-save">
-          <span class="note">Son güncelleme: 2 gün önce</span>
-          <span class="hs-saved"><i class="fa-solid fa-circle-check"></i> Kaydedildi</span>
-          <button class="btn btn-primary" type="submit"><i class="fa-solid fa-floppy-disk"></i> Değişiklikleri Kaydet</button>
-        </div>
-      </form>
-
-      <!-- tehlikeli bölge — ayrık kutu -->
-      <div class="danger-card">
-        <div class="fc-head">
-          <div><h2><i class="fa-solid fa-triangle-exclamation"></i> Tehlikeli Bölge</h2><p>Bu işlemler hesabının görünürlüğünü ve verilerini etkiler — dikkatli ol.</p></div>
-        </div>
-        <div class="dz-row">
-          <div class="sr-txt">
-            <b>Hesabı geçici olarak dondur</b>
-            <span>Profilin ve tariflerin gizlenir; tekrar giriş yaptığında her şey geri gelir.</span>
-          </div>
-          <button class="btn btn-ghost" type="button"><i class="fa-regular fa-snowflake"></i> Hesabı Dondur</button>
-        </div>
-        <div class="dz-row">
-          <div class="sr-txt">
-            <b>Hesabı kalıcı olarak sil</b>
-            <span>Tüm tariflerin, defterin ve verilerin 30 gün sonra geri alınamaz şekilde silinir.</span>
-          </div>
-          <button class="btn btn-danger" type="button"><i class="fa-regular fa-trash-can"></i> Hesabı Sil</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- ============ PANE: ŞİFRE & GÜVENLİK ============ -->
-    <div class="pf-pane hs-col" data-pane="sifre" hidden>
-      <form class="form-card" data-savecard>
-        <div class="fc-head">
-          <div><h2><i class="fa-solid fa-lock"></i> Şifre Değiştir</h2><p>Güçlü bir şifre seç — başka sitelerde kullandığını tekrar etme.</p></div>
-        </div>
-        <div class="fk-field">
-          <label class="fk-label" for="pwCur">Mevcut şifren <span class="req">*</span></label>
-          <div class="fk-pass">
-            <input class="fk-input" id="pwCur" type="password" placeholder="••••••••" required />
-            <button class="fk-eye" type="button" data-eye="pwCur" aria-label="Şifreyi göster"><i class="fa-regular fa-eye"></i></button>
-          </div>
-        </div>
-        <div class="fk-grid c2">
-          <div class="fk-field">
-            <label class="fk-label" for="pwNew">Yeni şifre <span class="req">*</span></label>
-            <div class="fk-pass">
-              <input class="fk-input" id="pwNew" type="password" placeholder="En az 8 karakter" required />
-              <button class="fk-eye" type="button" data-eye="pwNew" aria-label="Şifreyi göster"><i class="fa-regular fa-eye"></i></button>
-            </div>
-          </div>
-          <div class="fk-field">
-            <label class="fk-label" for="pwNew2">Yeni şifre (tekrar) <span class="req">*</span></label>
-            <div class="fk-pass">
-              <input class="fk-input" id="pwNew2" type="password" placeholder="Tekrar yaz" required />
-              <button class="fk-eye" type="button" data-eye="pwNew2" aria-label="Şifreyi göster"><i class="fa-regular fa-eye"></i></button>
-            </div>
-          </div>
-        </div>
-        <span class="fk-help"><i class="fa-solid fa-circle-info"></i> En az 8 karakter; büyük harf, küçük harf, rakam ve özel karakter (!, @, #, $ vb.) içermeli.</span>
-        <div class="hs-save">
-          <span class="note">Son değişiklik: 4 ay önce</span>
-          <span class="hs-saved"><i class="fa-solid fa-circle-check"></i> Kaydedildi</span>
-          <button class="btn btn-primary" type="submit"><i class="fa-solid fa-key"></i> Şifreyi Güncelle</button>
-        </div>
-      </form>
-
-      <form class="form-card" data-savecard>
-        <div class="fc-head">
-          <div><h2><i class="fa-regular fa-envelope"></i> Giriş Yöntemleri</h2><p>Hesabına bağlı giriş yolları.</p></div>
-        </div>
-        <div class="set-list">
-          <div class="set-row">
-            <span class="sr-ico"><i class="fa-regular fa-envelope"></i></span>
-            <div class="sr-txt"><b>E-posta ile giriş</b><span>elif.sahin@eposta.com — birincil giriş yöntemin.</span></div>
-            <span style="flex:none;font-size:12px;font-weight:700;color:var(--green-deep)"><i class="fa-solid fa-circle-check"></i> Aktif</span>
-          </div>
-          <div class="set-row">
-            <span class="sr-ico"><i class="fa-brands fa-google"></i></span>
-            <div class="sr-txt"><b>Google hesabı</b><span>Bağlı değil — tek tıkla giriş için bağlayabilirsin.</span></div>
-            <button class="btn btn-ghost" type="button" style="flex:none;padding:10px 16px;font-size:12.5px">Bağla</button>
-          </div>
-          <div class="set-row">
-            <span class="sr-ico"><i class="fa-brands fa-facebook-f"></i></span>
-            <div class="sr-txt"><b>Facebook hesabı</b><span>Bağlı değil — tek tıkla giriş için bağlayabilirsin.</span></div>
-            <button class="btn btn-ghost" type="button" style="flex:none;padding:10px 16px;font-size:12.5px">Bağla</button>
-          </div>
-        </div>
-      </form>
-    </div>
-
-    <!-- ============ PANE: GİZLİLİK ============ -->
-    <div class="pf-pane hs-col" data-pane="gizlilik" hidden>
-      <form class="form-card" data-savecard>
-        <div class="fc-head">
-          <div><h2><i class="fa-solid fa-shield-halved"></i> Gizlilik Tercihleri</h2><p>Profilinin ve defterinin kimlere görüneceğini buradan yönet.</p></div>
-        </div>
-        <div class="set-list">
-          <div class="set-row">
-            <span class="sr-ico"><i class="fa-regular fa-id-badge"></i></span>
-            <div class="sr-txt"><b>Profilim herkese açık</b><span>Kapatırsan profilini yalnız takipçilerin görür.</span></div>
-            <label class="tgl" aria-label="Profil görünürlüğü"><input type="checkbox" checked /><span class="tk"></span></label>
-          </div>
-          <div class="set-row">
-            <span class="sr-ico"><i class="fa-solid fa-book-open"></i></span>
-            <div class="sr-txt"><b>Mutfak Defterim'i kimler görebilir?</b><span>Kaydettiklerin, koleksiyonların ve denediklerin.</span></div>
-            <select class="fk-select" aria-label="Defter görünürlüğü">
-              <option selected>Herkes</option>
-              <option>Takipçilerim</option>
-              <option>Sadece ben</option>
-            </select>
-          </div>
-          <div class="set-row">
-            <span class="sr-ico"><i class="fa-regular fa-comment"></i></span>
-            <div class="sr-txt"><b>Denediklerim ve yorumlarım profilimde görünsün</b><span>Tarif sayfalarındaki yorumların her zaman görünür kalır.</span></div>
-            <label class="tgl" aria-label="Denediklerim görünürlüğü"><input type="checkbox" checked /><span class="tk"></span></label>
-          </div>
-          <div class="set-row">
-            <span class="sr-ico"><i class="fa-solid fa-user-group"></i></span>
-            <div class="sr-txt"><b>Takipçi listem herkese açık</b><span>Kapatırsan takipçi/takip listenı yalnız sen görürsün.</span></div>
-            <label class="tgl" aria-label="Takipçi listesi görünürlüğü"><input type="checkbox" /><span class="tk"></span></label>
-          </div>
-          <div class="set-row">
-            <span class="sr-ico"><i class="fa-solid fa-magnifying-glass"></i></span>
-            <div class="sr-txt"><b>Arama motorlarında görün</b><span>Google gibi arama motorları profilini dizine ekleyebilir.</span></div>
-            <label class="tgl" aria-label="Arama motoru görünürlüğü"><input type="checkbox" checked /><span class="tk"></span></label>
-          </div>
-        </div>
-        <div class="hs-save">
-          <span class="note"><a href="#" style="color:var(--tomato);font-weight:700">KVKK kapsamında verilerimi indir</a></span>
-          <span class="hs-saved"><i class="fa-solid fa-circle-check"></i> Kaydedildi</span>
-          <button class="btn btn-primary" type="submit"><i class="fa-solid fa-floppy-disk"></i> Tercihleri Kaydet</button>
-        </div>
-      </form>
-    </div>
-
-    <!-- ============ PANE: BİLDİRİMLER ============ -->
-    <div class="pf-pane hs-col" data-pane="bildirim" hidden>
-      <form class="form-card" data-savecard>
-        <div class="fc-head">
-          <div><h2><i class="fa-regular fa-bell"></i> Bildirim Tercihleri</h2><p>Hangi bildirimi hangi kanaldan alacağını seç.</p></div>
-        </div>
-        <div class="ntf-matrix" role="table" aria-label="Bildirim kanal matrisi">
-          <div class="ntf-row head" role="row"><span>Bildirim</span><span>E-posta</span><span>Push</span></div>
-          <div class="ntf-row" role="row">
-            <div class="nf-txt"><b>Yeni takipçi</b><span>Biri seni takip etmeye başladığında.</span></div>
-            <span class="nf-cell"><label class="tgl" aria-label="Yeni takipçi e-posta"><input type="checkbox" /><span class="tk"></span></label></span>
-            <span class="nf-cell"><label class="tgl" aria-label="Yeni takipçi push"><input type="checkbox" checked /><span class="tk"></span></label></span>
-          </div>
-          <div class="ntf-row" role="row">
-            <div class="nf-txt"><b>Yorum &amp; yanıt</b><span>Tarifine yorum geldiğinde veya yorumuna yanıt verildiğinde.</span></div>
-            <span class="nf-cell"><label class="tgl" aria-label="Yorum e-posta"><input type="checkbox" checked /><span class="tk"></span></label></span>
-            <span class="nf-cell"><label class="tgl" aria-label="Yorum push"><input type="checkbox" checked /><span class="tk"></span></label></span>
-          </div>
-          <div class="ntf-row" role="row">
-            <div class="nf-txt"><b>Beğeni</b><span>Tarifin veya fotoğrafın beğenildiğinde.</span></div>
-            <span class="nf-cell"><label class="tgl" aria-label="Beğeni e-posta"><input type="checkbox" /><span class="tk"></span></label></span>
-            <span class="nf-cell"><label class="tgl" aria-label="Beğeni push"><input type="checkbox" checked /><span class="tk"></span></label></span>
-          </div>
-          <div class="ntf-row" role="row">
-            <div class="nf-txt"><b>Tarif onayı</b><span>Gönderdiğin tarif yayına alındığında veya düzeltme istendiğinde.</span></div>
-            <span class="nf-cell"><label class="tgl" aria-label="Tarif onayı e-posta"><input type="checkbox" checked /><span class="tk"></span></label></span>
-            <span class="nf-cell"><label class="tgl" aria-label="Tarif onayı push"><input type="checkbox" checked /><span class="tk"></span></label></span>
-          </div>
-          <div class="ntf-row" role="row">
-            <div class="nf-txt"><b>Haftalık menü önerisi</b><span>Pazar akşamları tercihlerine göre kurulmuş menü.</span></div>
-            <span class="nf-cell"><label class="tgl" aria-label="Haftalık menü e-posta"><input type="checkbox" checked /><span class="tk"></span></label></span>
-            <span class="nf-cell"><label class="tgl" aria-label="Haftalık menü push"><input type="checkbox" /><span class="tk"></span></label></span>
-          </div>
-          <div class="ntf-row" role="row">
-            <div class="nf-txt"><b>Sipariş durumu</b><span>DadaStore siparişlerinin kargo ve teslimat adımları.</span></div>
-            <span class="nf-cell"><label class="tgl" aria-label="Sipariş e-posta"><input type="checkbox" checked /><span class="tk"></span></label></span>
-            <span class="nf-cell"><label class="tgl" aria-label="Sipariş push"><input type="checkbox" checked /><span class="tk"></span></label></span>
-          </div>
-          <div class="ntf-row" role="row">
-            <div class="nf-txt"><b>Kampanya &amp; fırsatlar</b><span>İndirimler ve özel dönem seçkileri.</span></div>
-            <span class="nf-cell"><label class="tgl" aria-label="Kampanya e-posta"><input type="checkbox" /><span class="tk"></span></label></span>
-            <span class="nf-cell"><label class="tgl" aria-label="Kampanya push"><input type="checkbox" /><span class="tk"></span></label></span>
-          </div>
-        </div>
-        <div class="ntf-foot"><i class="fa-regular fa-bell"></i> Gelen bildirimlerini görmek için <a href="bildirimler-v1.html">Bildirim akışına git</a>.</div>
-        <div class="hs-save">
-          <span class="note">Onboarding seçimlerinle eşitlendi</span>
-          <span class="hs-saved"><i class="fa-solid fa-circle-check"></i> Kaydedildi</span>
-          <button class="btn btn-primary" type="submit"><i class="fa-solid fa-floppy-disk"></i> Tercihleri Kaydet</button>
-        </div>
-      </form>
-    </div>
-
-    <!-- ============ PANE: ÜYELİKLERİM (ödenen ücretli üyelikler — madde 30) ============ -->
-    <div class="pf-pane hs-col" data-pane="uyelikler" hidden>
-      <div class="form-card">
-        <div class="fc-head">
-          <div><h2><i class="fa-solid fa-star"></i> Üyeliklerim</h2><p>Ücretli üye olduğun üreticiler. Ücretsiz takip ettiklerinden ayrıdır; istediğin an iptal edebilirsin.</p></div>
-        </div>
-        <div class="uys-list">
-          <div class="uys-row">
-            <span class="uys-ava" style="background-image:url('https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=160&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')"></span>
-            <div class="uys-info">
-              <b>Elif Şahin</b>
-              <span class="uys-plan">Elif&rsquo;in Mutfağı Üyeliği</span>
-              <span class="uys-renew"><i class="fa-solid fa-rotate"></i> Sonraki yenileme: 18 Tem 2026</span>
-            </div>
-            <div class="uys-price"><b>₺49</b><span>/ ay</span></div>
-            <div class="uys-acts">
-              <a class="uys-manage" href="mutfak-defteri-v1.html?view=public&amp;uye=1&amp;tab=uyelik&amp;creator=elifsahin"><i class="fa-solid fa-arrow-up-right-from-square"></i> İçeriğe Git</a>
-              <button class="uys-cancel" type="button">İptal Et</button>
-            </div>
-          </div>
-          <div class="uys-row">
-            <span class="uys-ava" style="background-image:url('https://images.unsplash.com/photo-1583394293214-28a5b0d8a1bf?w=160&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')"></span>
-            <div class="uys-info">
-              <b>Mehmet Usta</b>
-              <span class="uys-plan">Anadolu Sofrası Üyeliği</span>
-              <span class="uys-renew"><i class="fa-solid fa-rotate"></i> Sonraki yenileme: 2 Tem 2026</span>
-            </div>
-            <div class="uys-price"><b>₺79</b><span>/ ay</span></div>
-            <div class="uys-acts">
-              <a class="uys-manage" href="mutfak-defteri-v1.html?view=public&amp;uye=1&amp;tab=uyelik&amp;creator=mehmetusta"><i class="fa-solid fa-arrow-up-right-from-square"></i> İçeriğe Git</a>
-              <button class="uys-cancel" type="button">İptal Et</button>
-            </div>
-          </div>
-        </div>
-        <div class="ntf-foot"><i class="fa-solid fa-circle-info"></i> Üyelik ücretleri her ay otomatik yenilenir. İptal edersen dönem sonuna kadar erişimin sürer.</div>
-      </div>
-    </div>
-
   </div>
 </section>
 
@@ -1771,8 +1361,6 @@ html,body{overflow-x:clip}
     </div>
   </div>
 </div>
-
-
 
 <!-- ===== FOOTER ===== -->
 <footer class="footer orange">
@@ -1836,7 +1424,6 @@ html,body{overflow-x:clip}
    Header VARSAYILAN KATI. Hero'lu sayfa şeffaf başlangıç isterse aşağıdaki
    heroMode bayrağını kendi kopyasında true yapar (v3a davranışı). */
 
-// SS paramları
 // ===== Login-state simülasyonu (mockup) — İA §2.3 sözleşmesi =====
 // ?auth=1 → localStorage dm_auth='1' + body.is-auth ; ?auth=0 → temizle (logout)
 // param yoksa localStorage'a bakılır. Çıkış linkleri ?auth=0'a yönlendirir (M7).
@@ -1852,6 +1439,7 @@ html,body{overflow-x:clip}
   if(bnAcc){ bnAcc.setAttribute('href', authed ? 'mutfak-defteri-v1.html' : 'giris-v1.html'); }
 })();
 
+// SS paramları
 if(location.search.indexOf('dd=1')>-1){document.querySelector('.nav-item').classList.add('open');var _l=document.getElementById('tbLang');if(_l)_l.classList.add('open');}
 if(location.search.indexOf('drawer=1')>-1){window.addEventListener('DOMContentLoaded',function(){document.getElementById('drawer').classList.add('open');document.getElementById('drawerOverlay').classList.add('open');var _s=document.querySelector('.d-has-sub');if(_s)_s.classList.add('open');});}
 
@@ -2138,61 +1726,6 @@ document.addEventListener('click',function(e){
 })();
 
 /* ===== SAYFA JS — sayfa-spesifik script BU İŞARETİN ALTINA eklenir ===== */
-/* ===== SAYFA JS — HESAP AYARLARI (?tab=profil|sifre|gizlilik|bildirim) ===== */
-(function(){
-  var tabs=document.getElementById('hsTabs'); if(!tabs)return;
-
-  function show(name){
-    document.querySelectorAll('.pf-pane').forEach(function(p){p.hidden=p.getAttribute('data-pane')!==name;});
-    tabs.querySelectorAll('.dt').forEach(function(t){
-      var on=t.getAttribute('data-tab')===name;
-      t.classList.toggle('active',on);
-      t.setAttribute('aria-selected',on?'true':'false');
-    });
-  }
-  tabs.querySelectorAll('.dt').forEach(function(t){
-    t.addEventListener('click',function(){show(t.getAttribute('data-tab'));});
-  });
-
-  // şifre göster/gizle (giris-v1 ile aynı desen)
-  document.querySelectorAll('.fk-eye').forEach(function(btn){
-    btn.addEventListener('click',function(){
-      var inp=document.getElementById(btn.getAttribute('data-eye'));
-      var i=btn.querySelector('i');
-      var showing=inp.type==='text';
-      inp.type=showing?'password':'text';
-      i.classList.toggle('fa-eye',showing);
-      i.classList.toggle('fa-eye-slash',!showing);
-      btn.setAttribute('aria-label',showing?'Şifreyi göster':'Şifreyi gizle');
-    });
-  });
-
-  // bio sayaç
-  var bio=document.getElementById('hsBio'), cnt=document.getElementById('bioCount');
-  if(bio&&cnt){
-    function syncCount(){cnt.textContent=bio.value.length+' / 160';}
-    bio.addEventListener('input',syncCount); syncCount();
-  }
-
-  // kaydet — mock: "Kaydedildi" izi 2.5 sn görünür
-  document.querySelectorAll('form[data-savecard]').forEach(function(f){
-    f.addEventListener('submit',function(e){
-      e.preventDefault();
-      var ok=f.querySelector('.hs-saved');
-      if(ok){
-        ok.classList.add('show');
-        clearTimeout(ok._t);
-        ok._t=setTimeout(function(){ok.classList.remove('show');},2500);
-      }
-    });
-  });
-
-  // URL paramı
-  var qs=new URLSearchParams(location.search);
-  var t=qs.get('tab');
-  if(t&&document.querySelector('.pf-pane[data-pane="'+t+'"]'))show(t);
-})();
-
 </script>
 <script>
 /* ===== MOBİL ALT KATMAN YÖNETİCİSİ (revize2/mobil1 — kanonik) =====
@@ -2201,23 +1734,90 @@ document.addEventListener('click',function(e){
    bottom-nav gizlenir; şerit olan sayfalarda nav ayrıca aşağı kaydırınca gizlenir. */
 window.__bottomStrips=window.__bottomStrips||[];
 (function(){
-  var nav=document.querySelector('.bottom-nav');
+  var nav=document.querySelector(".bottom-nav");
   if(!nav)return;
-  var cookie=document.getElementById('cookieBanner');
+  var cookie=document.getElementById("cookieBanner");
   var strips=window.__bottomStrips.map(function(s){return document.querySelector(s);}).filter(Boolean);
   var lastY=window.scrollY||0;
-  function stripShown(){for(var i=0;i<strips.length;i++){if(strips[i]&&strips[i].classList.contains('show'))return true;}return false;}
+  function stripShown(){for(var i=0;i<strips.length;i++){if(strips[i]&&strips[i].classList.contains("show"))return true;}return false;}
   function update(){
     var y=window.scrollY||0;
-    if((cookie&&cookie.classList.contains('show'))||stripShown()){nav.classList.add('bn-hidden');lastY=y;return;}
-    if(strips.length===0||y<80){nav.classList.remove('bn-hidden');lastY=y;return;}
-    if(y-lastY>12){nav.classList.add('bn-hidden');lastY=y;}
-    else if(lastY-y>12){nav.classList.remove('bn-hidden');lastY=y;}
+    if((cookie&&cookie.classList.contains("show"))||stripShown()){nav.classList.add("bn-hidden");lastY=y;return;}
+    if(strips.length===0||y<80){nav.classList.remove("bn-hidden");lastY=y;return;}
+    if(y-lastY>12){nav.classList.add("bn-hidden");lastY=y;}
+    else if(lastY-y>12){nav.classList.remove("bn-hidden");lastY=y;}
   }
-  window.addEventListener('scroll',update,{passive:true});
-  window.addEventListener('resize',update,{passive:true});
-  document.addEventListener('click',function(){setTimeout(update,60);},true);
+  window.addEventListener("scroll",update,{passive:true});
+  window.addEventListener("resize",update,{passive:true});
+  document.addEventListener("click",function(){setTimeout(update,60);},true);
   window.__bnUpdate=update;update();
+})();
+</script>
+
+<!-- ===== FOUNDATION F1 — Pro ödeme ekranı JS (plan özeti + canlı kart + başarı state) ===== -->
+<script>
+(function(){
+  // Üye-üye abonelik: üretici (creator) verisi — ?creator= ile seçilir (temsilî).
+  // Faz A mutfak-defteri plan kartıyla AYNI kontrat (başlık/fiyat/avantajlar).
+  var CREATORS={
+    elifsahin:{
+      ad:'Elif Şahin', planAd:'Elif’in Mutfağı Üyeliği', price:'₺49',
+      tag:'Elif Şahin’e aylık üyelik · istediğin an iptal',
+      feats:['Haftalık üyelere özel tarif','Yeni tariflere 1 hafta erken erişim','Üyelere özel mevsim menüleri','Aylık canlı soru-cevap yayını']
+    }
+  };
+  function qp(k){ var m=new RegExp('[?&]'+k+'=([^&]+)').exec(location.search); return m?decodeURIComponent(m[1]):null; }
+  var handle=qp('creator')||'elifsahin';
+  var cr=CREATORS[handle]||CREATORS.elifsahin;
+
+  // plan özetini doldur (creator'a göre)
+  var set=function(id,v){ var el=document.getElementById(id); if(el)el.textContent=v; };
+  set('psName',cr.planAd); set('psPrice',cr.price); set('psTag',cr.tag);
+  set('sucName',cr.planAd); set('sucCreator',cr.ad);
+  var fl=document.getElementById('psFeats');
+  if(fl){ fl.innerHTML=cr.feats.map(function(f){return '<li><i class="fa-solid fa-check"></i> '+f+'</li>';}).join(''); }
+  // başarı + profile dönüş linkleri creator'ı taşısın (gate açık: uye=1)
+  var prof=document.getElementById('sucProfile');
+  if(prof){ prof.href='mutfak-defteri-v1.html?view=public&uye=1&tab=uyelik&creator='+encodeURIComponent(handle); }
+  var back=document.getElementById('psBack');
+  if(back){ back.href='mutfak-defteri-v1.html?view=public&tab=uyelik&creator='+encodeURIComponent(handle); }
+
+  // canlı kart önizleme
+  var num=document.getElementById('ccNum'), name=document.getElementById('ccName'),
+      exp=document.getElementById('ccExp'), cvNum=document.getElementById('cvNum'),
+      cvName=document.getElementById('cvName'), cvExp=document.getElementById('cvExp');
+  if(num){
+    num.addEventListener('input',function(){
+      var d=num.value.replace(/\D/g,'').slice(0,16);
+      var grp=d.match(/.{1,4}/g); num.value=grp?grp.join(' '):'';
+      var disp=(d+'••••••••••••••••').slice(0,16).match(/.{1,4}/g).join(' ');
+      cvNum.textContent=disp;
+    });
+  }
+  if(name){ name.addEventListener('input',function(){ cvName.textContent=name.value.trim().toUpperCase()||'AD SOYAD'; }); }
+  if(exp){
+    exp.addEventListener('input',function(){
+      var d=exp.value.replace(/\D/g,'').slice(0,4);
+      if(d.length>=3)d=d.slice(0,2)+'/'+d.slice(2);
+      exp.value=d; cvExp.textContent=d||'••/••';
+    });
+  }
+
+  // başarı state toggle
+  function showSuccess(){ document.body.classList.add('pay-done'); window.scrollTo(0,0); }
+  if(qp('ok')==='1'){ showSuccess(); }
+  var start=document.getElementById('startSub');
+  if(start){
+    start.addEventListener('click',function(){
+      var agree=document.getElementById('agreePro');
+      if(agree && !agree.checked){
+        var box=agree.closest('.agree'); if(box){ box.style.borderColor='var(--tomato)'; }
+        agree.scrollIntoView({behavior:'smooth',block:'center'});
+        return;
+      }
+      showSuccess();
+    });
+  }
 })();
 </script>
 </body>

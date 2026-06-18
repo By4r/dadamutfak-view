@@ -844,6 +844,112 @@ body.pf-public:not(.is-following) .pf-tabs .dt.pf-fgate .pf-tlock{display:inline
 body.pf-public:not(.is-following) .pf-pane.pf-fgate > .pf-full{display:none}
 body.pf-public:not(.is-following) .pf-pane.pf-fgate > .pf-lock{display:block}
 
+/* =========================================================
+   ÜYELİK MODÜLÜ (madde 30) — üyeden üyeye ücretli abonelik (Patreon).
+   Member-gate = .pf-fgate kardeşi ama AYRI durum (is-member, ?uye=1):
+   public + üye değil → "Üyelere Özel" içerik kilitli; üye → açık.
+   Üyelik sekmesi iki alt-görüm: .pf-mpublic (katılma teklifi) ↔
+   .pf-mown (hafif yönetim). Aksan: tomato (Pro ailesi), yeni renk yok.
+   ========================================================= */
+body.pf-public:not(.is-member) .pf-mgate > .pf-full{display:none}
+body.pf-public:not(.is-member) .pf-mgate > .pf-lock{display:block}
+.pf-mpublic{display:none}
+body.pf-public .pf-mpublic{display:block}
+.pf-mown{display:block}
+body.pf-public .pf-mown{display:none}
+/* hero "Üye Ol" butonu — pf-follow dili; üye iken sönük onay.
+   display YOK: gizle/göster'i paylaşılan .pf-act-public kuralları yönetir
+   (own modda gizli, public modda inline-flex) — aksi halde own'a sızar. */
+.pf-member{align-items:center;gap:9px;font-family:inherit;font-size:13.5px;font-weight:700;color:#fff;background:var(--tomato);border:1px solid var(--tomato);border-radius:var(--radius-md);padding:12px 22px;cursor:pointer;transition:.2s var(--ease);white-space:nowrap}
+.pf-member:hover{background:var(--tomato-dark);border-color:var(--tomato-dark)}
+.pf-member.is-on{background:var(--tomato-tint);border-color:var(--tomato-tint);color:var(--tomato)}
+.pf-member.is-on:hover{background:var(--tomato-tint)}
+/* --- public görüm: plan kartı (sol) + üyelere özel içerik (sağ) --- */
+.uy-grid{display:grid;grid-template-columns:minmax(0,360px) minmax(0,1fr);gap:26px;align-items:start}
+.uy-plan{display:flex;flex-direction:column;background:var(--paper);border:1.5px solid rgba(225,72,39,.4);border-radius:var(--radius-lg);padding:26px 24px;box-shadow:0 12px 32px rgba(225,72,39,.07)}
+.uy-tag{align-self:flex-start;font-size:10.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--tomato);background:var(--tomato-tint);padding:5px 11px;border-radius:var(--radius-sm);margin-bottom:14px}
+.uy-ico{width:48px;height:48px;border-radius:var(--radius-md);background:var(--tomato-tint);color:var(--tomato);display:grid;place-items:center;font-size:19px;margin-bottom:16px}
+.uy-plan h3{font-size:19px;margin-bottom:7px}
+.uy-plan>p{font-size:13.5px;color:var(--muted);font-weight:500;line-height:1.6;margin-bottom:18px}
+.uy-price{display:flex;align-items:baseline;gap:6px;padding:14px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);margin-bottom:18px}
+.uy-price b{font-size:30px;font-weight:700;color:var(--slate);letter-spacing:-.02em}
+.uy-price span{font-size:13px;color:var(--muted);font-weight:500}
+.uy-feats{list-style:none;margin:0 0 22px;display:flex;flex-direction:column;gap:11px}
+.uy-feats li{display:flex;gap:10px;font-size:13.5px;color:var(--slate-2);font-weight:500;line-height:1.45}
+.uy-feats li i{flex:none;color:var(--tomato);font-size:13px;margin-top:3px}
+.uy-join{width:100%;display:inline-flex;align-items:center;justify-content:center;gap:9px;font-family:inherit;font-size:14px;font-weight:700;color:#fff;background:var(--tomato);border:1px solid var(--tomato);border-radius:var(--radius-md);padding:14px 22px;cursor:pointer;transition:.2s var(--ease)}
+.uy-join:hover{background:var(--tomato-dark);border-color:var(--tomato-dark);transform:translateY(-1px)}
+.uy-note{font-size:12px;color:var(--muted);font-weight:500;text-align:center;margin-top:13px;display:flex;align-items:center;justify-content:center;gap:7px}
+.uy-note i{color:var(--tomato);font-size:11px}
+.uy-excl-head{display:flex;align-items:center;gap:11px;margin-bottom:16px}
+.uy-excl-head h3{font-size:17px;display:inline-flex;align-items:center;gap:9px}
+.uy-excl-head h3 i{color:var(--tomato);font-size:14px}
+.uy-pill{font-size:10.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--tomato);background:var(--tomato-tint);padding:5px 11px;border-radius:var(--radius-pill)}
+.uy-excl-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}
+.uy-excl-tag{position:absolute;top:13px;left:13px;z-index:2;display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:700;padding:6px 11px;border-radius:var(--radius-sm);color:#fff;background:var(--tomato);box-shadow:0 4px 12px rgba(225,72,39,.32)}
+/* --- own görüm: hafif yönetim (KPI + plan editörü + abone listesi) --- */
+.uy-mtop{margin-bottom:22px}
+.uy-mtop h3{font-size:19px}
+.uy-mtop p{font-size:13.5px;color:var(--muted);font-weight:500;margin-top:4px}
+.uy-kpis{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin-bottom:24px}
+.uy-kpi{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-lg);padding:20px 22px}
+.uy-kpi .uy-kico{width:38px;height:38px;border-radius:var(--radius-md);background:var(--tomato-tint);color:var(--tomato);display:grid;place-items:center;font-size:15px;margin-bottom:12px}
+.uy-kpi b{display:block;font-size:25px;font-weight:700;color:var(--slate);letter-spacing:-.02em;line-height:1.05}
+.uy-kpi span{display:block;font-size:12px;color:var(--muted);font-weight:500;margin-top:4px}
+.uy-card{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-lg);padding:24px;margin-bottom:22px}
+.uy-card-head{display:flex;align-items:center;gap:10px;padding-bottom:16px;margin-bottom:18px;border-bottom:1px solid var(--line)}
+.uy-card-head h4{font-size:15px;display:inline-flex;align-items:center;gap:9px}
+.uy-card-head h4 i{color:var(--tomato);font-size:13px}
+.uy-card-head .muted{margin-left:auto;font-size:12px;color:var(--muted);font-weight:500}
+.uy-field{margin-bottom:16px}
+.uy-field label{display:block;font-size:13px;font-weight:700;color:var(--slate);margin-bottom:7px}
+.uy-input{width:100%;font-family:inherit;font-size:14px;color:var(--slate);background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-md);padding:12px 14px;transition:.2s var(--ease)}
+.uy-input:focus{outline:none;border-color:var(--tomato);box-shadow:0 0 0 3px rgba(225,72,39,.12)}
+.uy-row2{display:grid;grid-template-columns:1fr 220px;gap:16px;align-items:end}
+.uy-suffix{position:relative}
+.uy-suffix .uy-input{padding-right:62px}
+.uy-suffix>span{position:absolute;right:14px;top:50%;transform:translateY(-50%);font-size:12px;font-weight:700;color:var(--muted);pointer-events:none}
+.uy-feat-edit{list-style:none;margin:0 0 14px;display:flex;flex-direction:column;gap:10px}
+.uy-feat-edit li{display:flex;align-items:center;gap:10px}
+.uy-feat-edit .uy-input{flex:1}
+.uy-del{flex:none;width:42px;height:42px;border:1px solid var(--line);border-radius:var(--radius-md);background:var(--paper);color:var(--muted);cursor:pointer;transition:.2s var(--ease)}
+.uy-del:hover{border-color:var(--tomato);color:var(--tomato);background:var(--tomato-tint)}
+.uy-add{display:inline-flex;align-items:center;gap:8px;font-family:inherit;font-size:13px;font-weight:700;color:var(--tomato);background:var(--tomato-tint);border:1px dashed rgba(225,72,39,.4);border-radius:var(--radius-md);padding:10px 16px;cursor:pointer;transition:.2s var(--ease)}
+.uy-add:hover{background:var(--paper);border-style:solid}
+.uy-toggle-row{display:flex;align-items:center;gap:12px;margin-top:18px;padding-top:16px;border-top:1px solid var(--line)}
+.uy-tgl{position:relative;display:inline-flex;align-items:center;cursor:pointer;flex:none}
+.uy-tgl input{position:absolute;opacity:0;pointer-events:none}
+.uy-tgl .tk{width:44px;height:25px;border-radius:var(--radius-pill);background:#dcd8d0;transition:.2s var(--ease);position:relative}
+.uy-tgl .tk::after{content:"";position:absolute;top:3px;left:3px;width:19px;height:19px;border-radius:var(--radius-circle);background:#fff;box-shadow:0 1px 4px rgba(33,30,22,.25);transition:transform .2s var(--ease)}
+.uy-tgl input:checked+.tk{background:var(--tomato)}
+.uy-tgl input:checked+.tk::after{transform:translateX(19px)}
+.uy-table{width:100%;border-collapse:collapse;font-size:13.5px}
+.uy-table th{text-align:left;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);padding:0 0 12px;border-bottom:1px solid var(--line)}
+.uy-table td{padding:13px 0;border-bottom:1px solid var(--line);vertical-align:middle}
+.uy-table tr:last-child td{border-bottom:none}
+.uy-sub-user{display:flex;align-items:center;gap:11px}
+.uy-sub-user .av{width:34px;height:34px;border-radius:var(--radius-circle);background-size:cover;background-position:center;flex:none}
+.uy-sub-user b{font-size:13.5px;color:var(--slate);font-weight:700}
+.uy-sub-user small{display:block;font-size:11.5px;color:var(--muted);font-weight:500}
+.uy-stat{display:inline-flex;align-items:center;gap:6px;font-size:11.5px;font-weight:700;padding:5px 11px;border-radius:var(--radius-pill)}
+.uy-stat::before{content:"";width:6px;height:6px;border-radius:var(--radius-circle);background:currentColor}
+.uy-stat.ok{background:var(--tomato-tint);color:var(--tomato)}
+.uy-stat.off{background:var(--bg);color:var(--muted)}
+.uy-cancel{font-family:inherit;font-size:12.5px;font-weight:600;color:var(--muted);background:none;border:none;cursor:pointer;transition:color .2s var(--ease)}
+.uy-cancel:hover{color:var(--tomato)}
+@media(max-width:860px){
+  .uy-grid{grid-template-columns:1fr}
+  .uy-kpis{grid-template-columns:1fr}
+  .uy-row2{grid-template-columns:1fr}
+  .uy-excl-grid{grid-template-columns:1fr}
+}
+@media(max-width:560px){
+  .uy-table thead{display:none}
+  .uy-table td{display:block;padding:5px 0;border:none}
+  .uy-table tr{display:block;padding:14px 0;border-bottom:1px solid var(--line)}
+  .uy-table tr:last-child{border-bottom:none}
+}
+
 /* tbadge — TD rozet dili (kopya) */
 .tbadge{display:inline-flex;align-items:center;gap:7px;font-size:11.5px;font-weight:700;letter-spacing:.02em;padding:7px 13px;border-radius:var(--radius-sm)}
 .tbadge i{font-size:11.5px}
@@ -1683,6 +1789,8 @@ body.pf-public .md-cover-edit,body.pf-public #mdRename,body.pf-public .mc-action
         <a class="pf-edit-btn pf-act-own" href="hesabim-v1.html?tab=profil"><i class="fa-solid fa-pen"></i> Profili Düzenle</a>
         <!-- public: başka kullanıcı → takip -->
         <button class="pf-follow pf-act-public" id="pfFollow" type="button"><i class="fa-solid fa-user-plus"></i> Takip Et</button>
+        <!-- madde 30: ücretli üyelik (ücretsiz "Takip Et"ten ayrı) — public; üye iken "Üyelisin" -->
+        <button class="pf-member pf-act-public" id="pfMember" type="button"><i class="fa-solid fa-star"></i> Üye Ol</button>
         <button class="icon-btn" type="button" aria-label="Profili paylaş"><i class="fa-solid fa-share-nodes"></i></button>
       </div>
     </div>
@@ -1706,6 +1814,7 @@ body.pf-public .md-cover-edit,body.pf-public #mdRename,body.pf-public .mc-action
       <div class="pf-tabs" role="tablist" aria-label="Mutfak defteri bölümleri">
         <button class="dt active" type="button" data-tab="tarifler"><i class="fa-solid fa-utensils"></i> Tarifleri <span class="cnt">128</span></button>
         <button class="dt" type="button" data-tab="puf"><i class="fa-solid fa-lightbulb"></i> Püf Noktaları <span class="cnt">36</span></button>
+        <button class="dt" type="button" data-tab="uyelik"><i class="fa-solid fa-star"></i> Üyelik</button>
         <button class="dt pf-fgate" type="button" data-tab="kaydedilenler"><i class="fa-solid fa-bookmark"></i> Kaydedilenler <span class="cnt">86</span><i class="fa-solid fa-lock pf-tlock"></i></button>
         <button class="dt pf-priv" type="button" data-tab="denedikleri"><i class="fa-solid fa-circle-check"></i> Denedikleri <span class="cnt">24</span></button>
         <button class="dt pf-priv" type="button" data-tab="favoriler"><i class="fa-solid fa-heart"></i> Favorileri <span class="cnt">57</span></button>
@@ -1931,6 +2040,180 @@ body.pf-public .md-cover-edit,body.pf-public #mdRename,body.pf-public .mc-action
         <p>Elif mutfak sırlarını henüz paylaşmamış. İlk püf noktasını paylaşan sen ol.</p>
         <a class="btn btn-primary" href="puf-noktasi-ekle-v1.html"><i class="fa-solid fa-circle-plus"></i> Püf Noktası Ekle</a>
       </div>
+    </div>
+
+    <!-- ---- SEKME: Üyelik (madde 30 — üyeden üyeye ücretli abonelik) ---- -->
+    <div class="pf-pane" data-pane="uyelik" hidden>
+
+      <!-- ===== PUBLIC GÖRÜM: katılma teklifi (ziyaretçi) ===== -->
+      <div class="pf-mpublic">
+        <div class="uy-grid">
+
+          <!-- plan kartı (public görüm = checkout = own editör aynı kontrat) -->
+          <article class="uy-plan">
+            <span class="uy-tag">Aylık Üyelik</span>
+            <span class="uy-ico"><i class="fa-solid fa-star"></i></span>
+            <h3>Elif&rsquo;in Mutfağı Üyeliği</h3>
+            <p>Elif&rsquo;in üyelere özel tariflerine, erken erişime ve aylık canlı soru-cevaba katıl. İstediğin an iptal et.</p>
+            <div class="uy-price"><b>₺49</b><span>/ ay</span></div>
+            <ul class="uy-feats">
+              <li><i class="fa-solid fa-check"></i> Haftalık üyelere özel tarif</li>
+              <li><i class="fa-solid fa-check"></i> Yeni tariflere 1 hafta erken erişim</li>
+              <li><i class="fa-solid fa-check"></i> Üyelere özel mevsim menüleri</li>
+              <li><i class="fa-solid fa-check"></i> Aylık canlı soru-cevap yayını</li>
+              <li><i class="fa-solid fa-check"></i> Profilinde üyelik rozeti</li>
+            </ul>
+            <button class="uy-join" type="button" data-member-cta><i class="fa-solid fa-star"></i> Üye Ol</button>
+            <p class="uy-note"><i class="fa-solid fa-shield-halved"></i> Güvenli ödeme · istediğin an iptal · temsilî fiyat</p>
+          </article>
+
+          <!-- üyelere özel içerik — member-gate (üye değilse kilit, üyeyse açık) -->
+          <div class="pf-mgate">
+            <!-- kilit boş-durum (public + üye değil) -->
+            <div class="pf-lock">
+              <span class="pl-ico"><i class="fa-solid fa-star"></i></span>
+              <h3>Üyelere Özel İçerik</h3>
+              <p><b>Elif Şahin</b>&rsquo;in üyelere özel tarif, püf ve menülerini görmek için üye olman gerekiyor. Üye olduğunda bu içerik anında açılır.</p>
+              <button class="pl-cta" type="button" data-member-cta><i class="fa-solid fa-star"></i> Üye Ol, Hemen Aç</button>
+              <span class="pl-hint"><i class="fa-solid fa-lock"></i> 14 üyelere özel içerik · üye olduğunda açılır</span>
+            </div>
+            <!-- gerçek içerik (üye) -->
+            <div class="pf-full">
+              <div class="uy-excl-head">
+                <h3><i class="fa-solid fa-star"></i> Üyelere Özel</h3>
+                <span class="uy-pill">Sadece üyeler</span>
+              </div>
+              <div class="uy-excl-grid">
+                <article class="r-card">
+                  <div class="r-media-wrap"><div class="r-media" style="background-image:url('https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=600&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')">
+                    <span class="uy-excl-tag"><i class="fa-solid fa-star"></i> Üyelere Özel</span>
+                    <button class="r-save" aria-label="Kaydet"><i class="fa-regular fa-heart"></i></button></div></div>
+                  <div class="r-body">
+                    <h4><a href="tarif-detay-v1.html">Ege Usulü Zeytinyağlı Deniz Börülcesi</a></h4>
+                    <div class="r-facts">
+                      <span><i class="fa-solid fa-clock"></i> 35 dk</span>
+                      <span><i class="fa-solid fa-gauge-simple"></i> Kolay</span>
+                    </div>
+                    <div class="r-stats"><span class="r-rate"><i class="fa-solid fa-star"></i> 5.0</span><span class="r-views"><i class="fa-solid fa-lock"></i> Üyelere özel</span></div>
+                  </div>
+                </article>
+                <article class="r-card">
+                  <div class="r-media-wrap"><div class="r-media" style="background-image:url('https://images.unsplash.com/photo-1455619452474-d2be8b1e70cd?w=600&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')">
+                    <span class="uy-excl-tag"><i class="fa-solid fa-star"></i> Üyelere Özel</span>
+                    <button class="r-save" aria-label="Kaydet"><i class="fa-regular fa-heart"></i></button></div></div>
+                  <div class="r-body">
+                    <h4><a href="tarif-detay-v1.html">Annemin El Yazısı Defterinden: İncir Reçeli</a></h4>
+                    <div class="r-facts">
+                      <span><i class="fa-solid fa-clock"></i> 1 sa 10 dk</span>
+                      <span><i class="fa-solid fa-gauge-simple"></i> Orta</span>
+                    </div>
+                    <div class="r-stats"><span class="r-rate"><i class="fa-solid fa-star"></i> 4.9</span><span class="r-views"><i class="fa-solid fa-lock"></i> Üyelere özel</span></div>
+                  </div>
+                </article>
+                <article class="r-card">
+                  <div class="r-media-wrap"><div class="r-media" style="background-image:url('https://images.unsplash.com/photo-1476718406336-bb5a9690ee2a?w=600&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')">
+                    <span class="uy-excl-tag"><i class="fa-solid fa-star"></i> Üyelere Özel</span>
+                    <button class="r-save" aria-label="Kaydet"><i class="fa-regular fa-heart"></i></button></div></div>
+                  <div class="r-body">
+                    <h4><a href="tarif-detay-v1.html">Üyelere Özel Mevsim Menüsü: Sonbahar Sofrası</a></h4>
+                    <div class="r-facts">
+                      <span><i class="fa-solid fa-list-check"></i> 6 tarif</span>
+                      <span><i class="fa-solid fa-leaf"></i> Mevsimlik</span>
+                    </div>
+                    <div class="r-stats"><span class="r-rate"><i class="fa-solid fa-star"></i> 5.0</span><span class="r-views"><i class="fa-solid fa-lock"></i> Üyelere özel</span></div>
+                  </div>
+                </article>
+                <article class="r-card">
+                  <div class="r-media-wrap"><div class="r-media" style="background-image:url('https://images.unsplash.com/photo-1551218808-94e220e084d2?w=600&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')">
+                    <span class="uy-excl-tag"><i class="fa-solid fa-star"></i> Üyelere Özel</span>
+                    <button class="r-save" aria-label="Kaydet"><i class="fa-regular fa-heart"></i></button></div></div>
+                  <div class="r-body">
+                    <h4><a href="tarif-detay-v1.html">Fırın Püf Noktaları: Hamur İşinde Kusursuz Sonuç</a></h4>
+                    <div class="r-facts">
+                      <span><i class="fa-solid fa-lightbulb"></i> 8 püf</span>
+                      <span><i class="fa-solid fa-gauge-simple"></i> Tüm seviyeler</span>
+                    </div>
+                    <div class="r-stats"><span class="r-rate"><i class="fa-solid fa-star"></i> 4.8</span><span class="r-views"><i class="fa-solid fa-lock"></i> Üyelere özel</span></div>
+                  </div>
+                </article>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- ===== OWN GÖRÜM: hafif yönetim (kendi defterin) ===== -->
+      <div class="pf-mown">
+        <div class="uy-mtop">
+          <h3>Üyeliğini Yönet</h3>
+          <p>Takipçilerine sunduğun aylık üyelik planını düzenle, üyelerini gör. Ücretsiz takipten ayrıdır.</p>
+        </div>
+
+        <!-- KPI özet -->
+        <div class="uy-kpis">
+          <div class="uy-kpi"><span class="uy-kico"><i class="fa-solid fa-user-group"></i></span><b>184</b><span>Aktif üye</span></div>
+          <div class="uy-kpi"><span class="uy-kico"><i class="fa-solid fa-wallet"></i></span><b>₺9.016</b><span>Aylık gelir (tahmini)</span></div>
+          <div class="uy-kpi"><span class="uy-kico"><i class="fa-solid fa-arrow-trend-up"></i></span><b>+23</b><span>Bu ay yeni üye</span></div>
+        </div>
+
+        <!-- tek-plan editörü (markup çoklu-kademeye hazır; faz-1 tek plan) -->
+        <div class="uy-card">
+          <div class="uy-card-head"><h4><i class="fa-solid fa-star"></i> Üyelik Planı</h4><span class="muted">Public profilinin &ldquo;Üyelik&rdquo; sekmesinde görünür</span></div>
+          <div class="uy-field"><label>Plan başlığı</label><input class="uy-input" type="text" value="Elif&rsquo;in Mutfağı Üyeliği" /></div>
+          <div class="uy-row2">
+            <div class="uy-field" style="margin-bottom:0"><label>Kısa açıklama</label><input class="uy-input" type="text" value="Üyelere özel tarifler, erken erişim ve aylık soru-cevap." /></div>
+            <div class="uy-field" style="margin-bottom:0"><label>Aylık ücret</label><div class="uy-suffix"><input class="uy-input" type="number" value="49" /><span>₺ / ay</span></div></div>
+          </div>
+          <div class="uy-field" style="margin-top:16px"><label>Üyelik avantajları</label>
+            <ul class="uy-feat-edit" id="uyFeatList">
+              <li><input class="uy-input" type="text" value="Haftalık üyelere özel tarif" /><button class="uy-del" type="button" aria-label="Avantajı sil"><i class="fa-regular fa-trash-can"></i></button></li>
+              <li><input class="uy-input" type="text" value="Yeni tariflere 1 hafta erken erişim" /><button class="uy-del" type="button" aria-label="Avantajı sil"><i class="fa-regular fa-trash-can"></i></button></li>
+              <li><input class="uy-input" type="text" value="Aylık canlı soru-cevap yayını" /><button class="uy-del" type="button" aria-label="Avantajı sil"><i class="fa-regular fa-trash-can"></i></button></li>
+            </ul>
+            <button class="uy-add" type="button" id="uyAddFeat"><i class="fa-solid fa-plus"></i> Avantaj Ekle</button>
+          </div>
+          <div class="uy-toggle-row">
+            <label class="uy-tgl"><input type="checkbox" checked aria-label="Üyelik aktif" /><span class="tk"></span></label>
+            <span style="font-size:13.5px;font-weight:600;color:var(--slate)">Üyelik aktif — yeni üyeler kabul ediliyor</span>
+          </div>
+        </div>
+
+        <!-- abone listesi -->
+        <div class="uy-card">
+          <div class="uy-card-head"><h4><i class="fa-solid fa-user-group"></i> Üyelerin</h4><span class="muted">184 aktif üye</span></div>
+          <table class="uy-table">
+            <thead><tr><th>Üye</th><th>Başlangıç</th><th>Durum</th><th></th></tr></thead>
+            <tbody>
+              <tr>
+                <td><div class="uy-sub-user"><span class="av" style="background-image:url('https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=120&q=80&auto=format&fit=crop')"></span><div><b>Merve Aydın</b><small>@merveaydin</small></div></div></td>
+                <td>12 Mar 2026</td>
+                <td><span class="uy-stat ok">Aktif</span></td>
+                <td style="text-align:right"><button class="uy-cancel" type="button">Mesaj</button></td>
+              </tr>
+              <tr>
+                <td><div class="uy-sub-user"><span class="av" style="background-image:url('https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=120&q=80&auto=format&fit=crop')"></span><div><b>Caner Yıldız</b><small>@caneryildiz</small></div></div></td>
+                <td>3 Şub 2026</td>
+                <td><span class="uy-stat ok">Aktif</span></td>
+                <td style="text-align:right"><button class="uy-cancel" type="button">Mesaj</button></td>
+              </tr>
+              <tr>
+                <td><div class="uy-sub-user"><span class="av" style="background-image:url('https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=120&q=80&auto=format&fit=crop')"></span><div><b>Zeynep Kaya</b><small>@zeynepk</small></div></div></td>
+                <td>28 Oca 2026</td>
+                <td><span class="uy-stat ok">Aktif</span></td>
+                <td style="text-align:right"><button class="uy-cancel" type="button">Mesaj</button></td>
+              </tr>
+              <tr>
+                <td><div class="uy-sub-user"><span class="av" style="background-image:url('https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=120&q=80&auto=format&fit=crop')"></span><div><b>Burak Demir</b><small>@burakdemir</small></div></div></td>
+                <td>15 Oca 2026</td>
+                <td><span class="uy-stat off">İptal etti</span></td>
+                <td style="text-align:right"><button class="uy-cancel" type="button">Mesaj</button></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
     </div>
 
     <!-- ---- SEKME: Kaydedilenler ---- -->
@@ -2825,8 +3108,8 @@ document.addEventListener('click',function(e){
   // public'te sekme seti: Kaydedilenler+Menüler takip geçidiyle görünür (faz5);
   // Denedikleri/Favorileri yalnız own (tam gizli). own: tüm sekmeler.
   var valid=isPublic
-    ? ['tarifler','puf','kaydedilenler','menuler']
-    : ['tarifler','puf','kaydedilenler','denedikleri','favoriler','menuler'];
+    ? ['tarifler','puf','uyelik','kaydedilenler','menuler']
+    : ['tarifler','puf','uyelik','kaydedilenler','denedikleri','favoriler','menuler'];
   var start=params.get('tab'); if(valid.indexOf(start)<0)start='tarifler';
   var emptyTab=params.get('empty')==='1'?start:null;
   var tabs=document.querySelectorAll('.pf-tabs .dt');
@@ -2868,6 +3151,43 @@ document.addEventListener('click',function(e){
   document.querySelectorAll('[data-follow-cta]').forEach(function(b){
     b.addEventListener('click',toggleFollow);
   });
+
+  // ---- ÜYE DURUMU (member-gate, madde 30) — renderFollow kardeşi ----
+  // public modda "Üyelere Özel" içerik ücretli üyelik arkasında (body.is-member).
+  // ?uye=1 → üye (gate açık) başlar (checkout başarı dönüşünü simüle eder).
+  // "Üye Ol" CTA'ları checkout sayfasına gider (Faz B); ücretsiz takipten ayrıdır.
+  var mem=document.getElementById('pfMember');
+  function renderMember(on){
+    document.body.classList.toggle('is-member',on);
+    if(mem){
+      mem.classList.toggle('is-on',on);
+      mem.innerHTML=on
+        ?'<i class="fa-solid fa-circle-check"></i> Üyelisin'
+        :'<i class="fa-solid fa-star"></i> Üye Ol';
+    }
+  }
+  renderMember(params.get('uye')==='1');
+  function goCheckout(){ location.href='uye-abonelik-odeme-v1.html?creator=elifsahin&plan=uyelik'; }
+  if(mem)mem.addEventListener('click',function(){ if(document.body.classList.contains('is-member'))return; goCheckout(); });
+  document.querySelectorAll('[data-member-cta]').forEach(function(b){
+    b.addEventListener('click',goCheckout);
+  });
+
+  // own yönetim — avantaj repeater (ekle/sil) + tek-plan editörü
+  var featList=document.getElementById('uyFeatList');
+  var addFeat=document.getElementById('uyAddFeat');
+  if(addFeat&&featList){
+    addFeat.addEventListener('click',function(){
+      var li=document.createElement('li');
+      li.innerHTML='<input class="uy-input" type="text" placeholder="Yeni avantaj" /><button class="uy-del" type="button" aria-label="Avantajı sil"><i class="fa-regular fa-trash-can"></i></button>';
+      featList.appendChild(li);
+      var inp=li.querySelector('.uy-input'); if(inp)inp.focus();
+    });
+    featList.addEventListener('click',function(e){
+      var del=e.target.closest('.uy-del'); if(!del)return;
+      var li=del.closest('li'); if(li)li.remove();
+    });
+  }
 
   // modal mini takip butonları
   document.querySelectorAll('.flw-fol').forEach(function(b){

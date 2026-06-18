@@ -43,7 +43,7 @@
 | 27a | İşletme paneli menü modülü (public + panel) | ✅ |
 | 21 | Mekan şubeler listesi ("diğer şubelerimiz") | ✅ |
 | 26 | Yol güzergahı + harita rota mekan önerisi (en ağır) | 🔮 |
-| 30 | Üyeden üyeye ücretli abonelik akışı | 🔮 |
+| 30 | Üyeden üyeye ücretli abonelik akışı | ✅ |
 
 ---
 Kural: A/B/C/D'den her biri bittikçe Dalga 0 tablosunda o satırı 🔄→✅ yap. Dosyayı commit etme,
