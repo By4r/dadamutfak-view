@@ -1,6 +1,18 @@
 # Madde 26 — Yol Güzergahım (Şehirlerarası Yol Üstü Mekan) · Uygulama Planı
 
-> Durum: PLAN (implement YOK). **Vizyon revize edildi (v2).**
+> ## ✅ DURUM: TAMAMLANDI (madde 26 KAPANDI — paket 30/30)
+> Tüm fazlar uygulandı + doğrulandı + commit'li:
+> - ✅ **Faz 1–5** (sayfa iskeleti, Uber giriş, ROAD_POOL koridor, repeater + çift yönlü senkron, polish)
+> - ✅ **A Revize** (Sürüş Kabini: örtme/çakışma/akış/mobil)
+> - ✅ **Faz A** (Kaydet → localStorage + "Kayıtlı Güzergahlarım" slider + "Haritada Aç" replay + Sil)
+> - ✅ **3 giriş noktası** (kesfet-v1 bandı · anasayfa-portal-v3a beyaz kart şerit · mekan-detay-v1 CTA)
+> - ✅ **Faz B** (checkpoint route-scoped + rozetler-v1 "Yol Üstü Gurme" + mutfak-defteri Ziyaret sayacı)
+> - ✅ **Bug-fix** (BUG1 route-scoped visited izolasyonu + migrasyon · BUG2 unique-count cross-page senk ·
+>   BUG3 teşhis: gerçek bug değil, sayım tutarlı 4)
+> - ✅ **Uç-marker görsel ayrıştırması** (terminal vs numaralı istasyon — liste + harita; frontend-design,
+>   palet-içi; sayım/koridor mantığı dokunulmadı)
+>
+> Durum (orijinal): PLAN (implement YOK). **Vizyon revize edildi (v2).**
 > Madde 26 artık Mekan Bul'a entegre DEĞİL → **ayrı yeni mockup sayfası: `yol-guzergahim-v1.html`**.
 > Uber/Yandex modeli: "Nereden / Nereye" yaz → güzergah haritada çizilir → yol üstü mekanlar
 > **harita üstünde baloncuk (pin)** olarak belirir → tıkla-ekle → Güzergahım durak listesi ↔ harita

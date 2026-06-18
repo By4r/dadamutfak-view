@@ -63,6 +63,20 @@ hedef sade, fonksiyonel, modern bir arayüze taşımak.
    yürüt; kopuk halka var mı raporla.
 Etki alanı: dokunulan sayfa + ona bağlı bilinen akışlar (tüm siteyi taramaya gerek yok).
 
+## Dersler (cross-page state & rota görseli)
+
+- **localStorage `visited` ROUTE-SCOPED olmalı.** Ziyaret/checkpoint durumunu global mekan-adı anahtarıyla
+  tutma (`visited{ad:true}`) — aynı mekan farklı güzergahta otomatik "ziyaret edildi" görünür (yanlış sızma).
+  Doğru şema: `visited{routeId:{ad:true}}`; her güzergah kendi setini tutar, yeni güzergah 0 ziyaretle başlar.
+  Rozet/defter gibi türev sayaçlar **unique** birleşimden beslensin (tüm route setlerinin birleşimi = FARKLI
+  mekan sayısı). Cross-page güncellik: sayfa açılışında oku + `storage` event dinle. Format değişirse eski
+  veriyi migrasyonla normalize et (reset+write-back).
+- **Rota görselinde uç-marker (Kalkış/Varış) ara duraklardan GÖRSEL ayrılmalı.** Aynı pin/satır stilini
+  kullanırsan kullanıcı uçları "durak" sanır (ör. 4 mekan + 2 uç → "6 durak" algısı). Çözüm: uçlar = sessiz
+  *terminal* (uppercase rol etiketi + hollow nokta, numarasız; haritada küçük yuvarlak), ara duraklar =
+  numaralı *istasyon* (1-N tomato rozet; haritada büyük teardrop) + "N mekan" sayaç. Palet-içi, sayım/veri
+  mantığına dokunmadan, salt görsel hiyerarşi.
+
 ## Soru Sorma Kuralı
 
 - Bana açık soru sorduğunda (ask_user_input widget ya da plan içi açık soru),

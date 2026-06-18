@@ -1443,6 +1443,14 @@ html,body{overflow-x:hidden}
         <div class="badge-card locked" tabindex="0" data-rank="ustad"><i class="fa-solid fa-lock badge-lock"></i><span class="badge-ico"><i class="fa-solid fa-gem"></i></span><div><b>Efsane Tarif</b><span>nadir · yolda</span></div><span class="b-note locked"><span class="b-left">3.600 / 10.000 beğeni</span><span class="b-prog"><span style="width:36%"></span></span></span><div class="badge-tip"><b>Efsane Tarif · nadir</b><p>Tek bir tarifin 10.000 beğeniye ulaştığında açılır.</p><div class="tip-how"><i class="fa-solid fa-lock"></i> 6.400 beğeni daha</div><span class="tip-rank"><i class="fa-solid fa-crown"></i> Dada Üstadı kademesi</span></div></div>
       </div>
     </div>
+
+    <!-- Keşif & Mekan — Yol Üstü Gurme (Faz B: localStorage dada_yg.visited sayısından beslenir) -->
+    <div class="badge-cat" data-cat="kesif">
+      <div class="badge-head"><h3><i class="fa-solid fa-route"></i> Keşif &amp; Mekan</h3><span class="bh-cnt" id="kesifCnt">0 / 1</span></div>
+      <div class="badge-grid">
+        <div class="badge-card locked" id="ygGurmeCard" tabindex="0" data-rank="komi"><i class="fa-solid fa-lock badge-lock"></i><span class="badge-ico"><i class="fa-solid fa-utensils"></i></span><div><b>Yol Üstü Gurme</b><span id="ygGurmeSub">Yolda</span></div><span class="b-note locked"><span class="b-left" id="ygGurmeLeft">10 mekan daha kaldı</span><span class="b-prog"><span id="ygGurmeBar" style="width:0%"></span></span></span><div class="badge-tip"><b>Yol Üstü Gurme</b><p>Güzergahların boyunca yol üstü mekanları ziyaret ettikçe açılır.</p><div class="tip-how"><i class="fa-solid fa-lock"></i> 10 yol üstü mekan ziyaret et</div><span class="tip-rank"><i class="fa-solid fa-utensils"></i> Komi kademesi</span></div></div>
+      </div>
+    </div>
   </div>
 </section>
 
@@ -1922,6 +1930,54 @@ document.addEventListener('click',function(e){
   document.addEventListener("keydown",function(e){
     if(e.key==="Escape"){if(active)clearFilter();cards.forEach(function(x){x.classList.remove("tip-open");});}
   });
+})();
+</script>
+
+<script>
+/* ===== Faz B — "Yol Üstü Gurme" rozeti: localStorage dada_yg.visited sayısını yansıt (additive) =====
+   yol-guzergahim-v1 checkpoint'i visited'a yazar; bu blok okuyup ilerleme barı + metin + galeri
+   pill'ini doldurur. Rozet filtre/tooltip JS'ine DOKUNMAZ — ayrı IIFE. */
+(function(){
+  var GOAL=10;
+  var card=document.getElementById('ygGurmeCard');
+  if(!card)return;
+  var bar=document.getElementById('ygGurmeBar'),
+      left=document.getElementById('ygGurmeLeft'),
+      sub=document.getElementById('ygGurmeSub'),
+      cnt=document.getElementById('kesifCnt'),
+      note=card.querySelector('.b-note');
+  // BUG2: route-scoped visited'tan UNIQUE mekan seti türet (kaç FARKLI yol üstü mekan ziyaret edildi).
+  // Eski global flat {ad:true} formatını yok say (yol-guzergahim migrasyonu sıfırlar → tutarlı 0).
+  function countUnique(v){
+    if(!v||typeof v!=='object')return 0;
+    var set={};
+    Object.keys(v).forEach(function(rid){var m=v[rid];if(m&&typeof m==='object'){Object.keys(m).forEach(function(name){if(m[name])set[name]=1;});}});
+    return Object.keys(set).length;
+  }
+  function read(){var st;try{st=JSON.parse(localStorage.getItem('dada_yg'))||{};}catch(e){st={};}return countUnique(st.visited);}
+  function apply(){                                   // idempotent + iki yönlü (storage event ile çağrılabilir)
+    var n=read(), earned=n>=GOAL, pct=Math.min(100,Math.round(n/GOAL*100));
+    if(cnt)cnt.textContent=(earned?1:0)+' / 1';
+    if(bar)bar.style.width=pct+'%';
+    var lock=card.querySelector('.badge-lock');
+    if(earned){
+      card.classList.remove('locked'); if(lock)lock.style.display='none';
+      if(sub)sub.textContent=n+' mekan ziyaret edildi';
+      if(left){left.textContent='Kazanıldı · '+n+' mekan'; left.style.color='var(--green-deep)';}
+      if(note){note.classList.remove('locked'); note.classList.add('earned');}
+    }else{
+      card.classList.add('locked'); if(lock)lock.style.display='';
+      if(sub)sub.textContent=n?(n+' / '+GOAL+' mekan'):'Yolda';
+      if(left){left.textContent=n?((GOAL-n)+' mekan daha · '+n+'/'+GOAL):'10 mekan daha kaldı'; left.style.color='';}
+      if(note){note.classList.add('locked'); note.classList.remove('earned');}
+    }
+  }
+  apply();
+  // Galeri özeti (.bgal-stat): yeni rozeti bir KEZ (load) toplama kat — storage event'te tekrar sayma yok
+  (function(){var n=read(),earned=n>=GOAL,pills=document.querySelectorAll('.bgal-stat .bgal-pill b');
+    if(pills.length>=2){var t=pills[earned?0:1];t.textContent=String((parseInt(t.textContent,10)||0)+1);}})();
+  // BUG2 cross-page senk: başka sekmede checkpoint değişince rozet anında güncellensin
+  window.addEventListener('storage',function(e){if(e.key==='dada_yg')apply();});
 })();
 </script>
 

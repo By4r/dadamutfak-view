@@ -1278,17 +1278,28 @@ html,body{overflow-x:hidden}
 .yg-stops-wrap{margin-top:16px;border-top:1px solid var(--line);padding-top:14px}
 .yg-stops-wrap h3{font-size:13px;text-transform:uppercase;letter-spacing:.05em;color:var(--slate);display:flex;align-items:center;gap:7px;margin-bottom:11px}
 .rt-stops{list-style:none;display:flex;flex-direction:column;gap:6px;position:relative}
-.rt-stops li{list-style:none}
-.rt-stop{display:flex;align-items:center;gap:9px;padding:8px 10px;background:rgba(255,255,255,.62);border:1px solid var(--line);border-radius:var(--radius-md);transition:background .3s var(--ease)}
+/* TRANSIT HATTI — rozet/dot merkezlerinden geçen ince omurga (yol hissi; istasyonlar üstte oturur) */
+.rt-stops::before{content:"";position:absolute;left:21px;top:16px;bottom:16px;width:2px;background:var(--line);border-radius:2px;z-index:0}
+.rt-stops li{list-style:none;position:relative;z-index:1}
+.rt-stop{display:flex;align-items:center;gap:9px;padding:8px 10px;background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-md);transition:background .3s var(--ease)}
 .rt-stop.flash{background:var(--tomato-tint)}
-.rt-stop.end{background:transparent;border-style:dashed}
-.rs-n{flex:0 0 22px;width:22px;height:22px;display:grid;place-items:center;background:var(--tomato);color:#fff;border-radius:var(--radius-circle);font-size:11px;font-weight:700}
-.rt-stop.end .rs-n{background:var(--slate)} .rt-stop.end.d .rs-n{background:var(--tomato-deep)}
+/* TERMİNAL (Kalkış/Varış) — durak DEĞİL: sessiz zemin, uppercase rol etiketi, hollow nokta, numarasız */
+.rt-stop.end{background:transparent;border:1px dashed var(--line)}
+.rs-term{flex:0 0 22px;width:22px;height:22px;display:grid;place-items:center}
+.rs-term::before{content:"";width:11px;height:11px;border-radius:var(--radius-circle);background:var(--paper);border:2px solid var(--slate)}
+.rt-stop.end.d .rs-term::before{border-color:var(--tomato-deep)}
+.rs-kicker{font-size:9.5px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--slate);line-height:1.3}
+.rt-stop.end.d .rs-kicker{color:var(--tomato-deep)}
+/* İSTASYON (yol üstü mekan) — numaralı, içerik vurgulu; paper halka hattı deler */
+.rs-n{flex:0 0 22px;width:22px;height:22px;display:grid;place-items:center;background:var(--tomato);color:#fff;border-radius:var(--radius-circle);font-size:11px;font-weight:700;box-shadow:0 0 0 3px var(--paper)}
 .rs-txt{flex:1;display:flex;flex-direction:column;min-width:0}
 .rs-txt b{font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .rs-txt small{color:var(--muted);font-size:11.5px}
 .rs-x{flex:0 0 auto;border:0;background:transparent;color:var(--muted);cursor:pointer;font-size:14px;padding:4px}
 .rs-x:hover{color:var(--tomato)}
+/* başlık sayaç çipi — "N mekan" net okunsun (yalnız ara duraklar sayılır) */
+.rt-count{display:inline-flex;align-items:center;gap:5px;margin-left:7px;font-size:11px;font-weight:700;color:var(--tomato);background:var(--tomato-tint);padding:2px 9px;border-radius:var(--radius-pill);letter-spacing:0;text-transform:none;vertical-align:middle}
+.rt-count i{font-size:9.5px}
 /* ALT RAİL — yol üstü öneriler; sağ panel sütununu YATAYDA girmez (right:352 = 320 plan + 16 gap + 16) → çakışma yok */
 .yg-rail{position:absolute;left:16px;right:352px;bottom:16px;z-index:5;border-radius:var(--radius-lg);padding:12px 14px 13px}
 .yg-rail-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:10px;padding:0 2px}
@@ -1336,6 +1347,9 @@ html,body{overflow-x:hidden}
 .leaflet-bar a:hover{background:var(--cream-2);color:var(--tomato)}
 .yg-pin-b{display:grid;place-items:center;width:34px;height:34px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);background:var(--tomato);color:#fff;box-shadow:var(--sh-md);border:2px solid #fff}
 .yg-pin-b i{transform:rotate(45deg);font-size:13px}
+/* TERMİNAL pin (Kalkış/Varış) — durak teardrop'undan küçük & yuvarlak: başlangıç/bitiş işareti, mekan değil */
+.yg-pin.origin .yg-pin-b,.yg-pin.dest .yg-pin-b{width:26px;height:26px;border-radius:var(--radius-circle);transform:none}
+.yg-pin.origin .yg-pin-b i,.yg-pin.dest .yg-pin-b i{transform:none;font-size:11px}
 .yg-pin.origin .yg-pin-b{background:var(--slate)} .yg-pin.dest .yg-pin-b{background:var(--tomato-deep)}
 .yg-pin.added .yg-pin-b{background:var(--green-deep)}
 /* AKIŞ CTA + ÖZET KARTI (#ygResult) — A'nın cam dilinde, plan footprint'inde (in-flow özet) */
@@ -1354,8 +1368,14 @@ html,body{overflow-x:hidden}
 .yg-saved-head{display:flex;align-items:center;gap:10px;margin-bottom:16px}
 .yg-saved-head h2{font-size:clamp(19px,2vw,23px)}
 .ysh-ico{width:34px;height:34px;flex:0 0 34px;display:grid;place-items:center;border-radius:var(--radius-circle);background:var(--tomato-tint);color:var(--tomato);font-size:14px}
-.yg-saved-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(264px,1fr));gap:14px}
-.yg-saved-card{background:var(--paper);border:1px solid var(--line);border-left:3px solid var(--tomato);border-radius:var(--radius-md);padding:15px 16px;box-shadow:var(--sh-sm)}
+/* SLIDER — tek satır yatay kaydırma; satıra sığmayan kart alta düşmez, yana kayar (satır sınırı yok) */
+.yg-saved-grid{display:flex;gap:14px;overflow-x:auto;align-items:flex-start;padding:2px 2px 12px;scroll-snap-type:x proximity;-webkit-overflow-scrolling:touch;scrollbar-width:thin;scrollbar-color:var(--tomato) var(--cream-2)}
+.yg-saved-grid::-webkit-scrollbar{height:8px}
+.yg-saved-grid::-webkit-scrollbar-track{background:var(--cream-2);border-radius:var(--radius-pill)}
+.yg-saved-grid::-webkit-scrollbar-thumb{background:var(--line);border-radius:var(--radius-pill)}
+.yg-saved-grid:hover::-webkit-scrollbar-thumb{background:var(--tomato)}
+.yg-saved-card{flex:0 0 304px;scroll-snap-align:start;background:var(--paper);border:1px solid var(--line);border-left:3px solid var(--tomato);border-radius:var(--radius-md);padding:15px 16px;box-shadow:var(--sh-sm)}
+@media(max-width:560px){.yg-saved-card{flex-basis:min(86%,320px)}}
 .ysc-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:10px}
 .ysc-route{font-size:15px;display:flex;align-items:center;gap:7px;flex-wrap:wrap}
 .ysc-route i{color:var(--tomato);font-size:12px}
@@ -1364,7 +1384,26 @@ html,body{overflow-x:hidden}
 .ysc-meta{display:flex;flex-wrap:wrap;gap:14px;color:var(--muted);font-size:12.5px;margin-bottom:13px}
 .ysc-meta span{display:inline-flex;align-items:center;gap:6px}
 .ysc-acts{display:flex;gap:8px}
-.ysc-acts .btn{flex:1;justify-content:center;gap:6px;padding:9px 10px;font-size:12.5px;border-radius:var(--radius-sm)}
+.ysc-acts .btn{flex:1;justify-content:center;gap:6px;padding:9px 10px;font-size:12.5px;border-radius:var(--radius-md)}
+.ysc-acts .btn.on{background:var(--tomato-tint);border-color:var(--tomato);color:var(--tomato)}
+/* CHECKPOINT — kayıtlı güzergah detayı: sayfa-içi açılır blok (in-flow, örtmesiz — Faz B) */
+.ysc-cp{margin-top:13px;padding-top:14px;border-top:1px solid var(--line)}
+.ysc-cp-prog{margin-bottom:12px}
+.ysc-cp-ptxt{font-size:12.5px;color:var(--slate-2);margin-bottom:7px}
+.ysc-cp-ptxt b{color:var(--ink)} .ysc-cp-ptxt .cp-n{color:var(--tomato);font-weight:800}
+.cp-bar{height:6px;border-radius:var(--radius-pill);background:var(--cream-2);overflow:hidden}
+.cp-bar span{display:block;height:100%;background:var(--green-deep);border-radius:var(--radius-pill);transition:width .35s var(--ease)}
+.ysc-cp-list{list-style:none;display:flex;flex-direction:column;gap:7px}
+.ysc-cp-list li{list-style:none}
+.cp-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:9px 11px;background:var(--cream-2);border:1px solid var(--line);border-radius:var(--radius-md);transition:background .25s var(--ease),border-color .25s var(--ease)}
+.cp-row.on{background:rgba(0,157,79,.07);border-color:rgba(0,157,79,.32)}
+.cp-info{display:flex;flex-direction:column;min-width:0}
+.cp-info b{font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cp-info small{color:var(--muted);font-size:11.5px}
+.cp-toggle{flex:0 0 auto;display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:var(--paper);color:var(--slate);cursor:pointer;font:inherit;font-size:11.5px;font-weight:600;padding:7px 11px;border-radius:var(--radius-md);transition:.18s var(--ease)}
+.cp-toggle:hover{border-color:var(--tomato);color:var(--tomato)}
+.cp-row.on .cp-toggle,.cp-row.on .cp-toggle:hover{background:var(--green-deep);border-color:var(--green-deep);color:#fff}
+.ysc-cp-empty{font-size:12.5px;color:var(--muted);margin:0}
 /* MOBİL: harita kullanılır kalsın (~50vh); cam paneller alt-sheet'e iner, haritayı yutmaz */
 @media(max-width:900px){
   .wrap-wide{padding:0 16px}
@@ -1792,7 +1831,7 @@ html,body{overflow-x:hidden}
         </div>
         <!-- GÜZERGAHIM (eklenen duraklar — Kalkış→duraklar→Varış) + akış CTA -->
         <div class="yg-stops-wrap" id="ygStopsWrap" hidden>
-          <h3><i class="fa-solid fa-list-check"></i> Güzergahım</h3>
+          <h3><i class="fa-solid fa-list-check"></i> Güzergahım <span class="rt-count" id="ygStopCount" hidden></span></h3>
           <ol class="rt-stops" id="ygStops"></ol>
           <button class="btn btn-primary yg-save" id="ygSave" type="button"><i class="fa-solid fa-flag-checkered"></i> Güzergahımı Kaydet</button>
         </div>
@@ -2277,10 +2316,10 @@ document.addEventListener('click',function(e){
     {ad:'Gerede Yolu Kebapçısı',    lat:40.4500,lng:31.9000,cat:'Kebap & Ocakbaşı', puan:4.5,konum:'Gerede / Bolu',       fiyat:'Orta',    durum:'open',   medya:13,img:'photo-1555992336-fb0d29498b13',desc:'Ankara istikametinde Adana-Urfa; közde acılı ezme.'}
   ];
 
-  function endIcon(kind){
+  function endIcon(kind){       // terminal = yuvarlak (26px), şehir noktasına merkezden oturur
     return L.divIcon({className:'yg-pin '+kind,
       html:'<span class="yg-pin-b"><i class="fa-solid '+(kind==='dest'?'fa-flag-checkered':'fa-location-dot')+'"></i></span>',
-      iconSize:[34,34],iconAnchor:[17,34],popupAnchor:[0,-30]});
+      iconSize:[26,26],iconAnchor:[13,13],popupAnchor:[0,-12]});
   }
   function placeEndMarker(which,c){
     var kind=(which==='to')?'dest':'origin';
@@ -2441,10 +2480,10 @@ document.addEventListener('click',function(e){
 
   // ---- Güzergahım repeater (Kalkış sabit baş / Varış sabit son) ----
   function isStop(m){return route.stops.some(function(s){return s.ad===m.ad;});}
-  function endRow(kind,c,lbl){
+  function endRow(kind,c,lbl){   // terminal satırı: uppercase rol etiketi (kicker) + şehir; numara YOK
     var li=document.createElement('li'); li.className='rt-stop end '+kind;
-    li.innerHTML='<span class="rs-n"><i class="fa-solid fa-flag'+(kind==='d'?'-checkered':'')+'"></i></span>'+
-      '<span class="rs-txt"><b>'+lbl+'</b><small>'+(c?c.ad:'—')+'</small></span>';
+    li.innerHTML='<span class="rs-term"></span>'+
+      '<span class="rs-txt"><span class="rs-kicker">'+lbl+'</span><b>'+(c?c.ad:'—')+'</b></span>';
     return li;
   }
   function renderStops(){
@@ -2462,6 +2501,8 @@ document.addEventListener('click',function(e){
       stopsEl.appendChild(li);
     });
     stopsEl.appendChild(endRow('d',trip.to,'Varış'));
+    var cntEl=document.getElementById('ygStopCount');   // başlık "N mekan" çipi (yalnız ara duraklar)
+    if(cntEl){ if(route.stops.length){ cntEl.hidden=false; cntEl.innerHTML='<i class="fa-solid fa-location-dot"></i> '+route.stops.length+' mekan'; } else cntEl.hidden=true; }
   }
 
   // ---- çift yönlü senkron (toggleStop tek kapı) ----
@@ -2542,7 +2583,15 @@ document.addEventListener('click',function(e){
 
   // ---- FAZ A: Kayıtlı Güzergahlarım — localStorage 'dada_yg' (cross-page kalıcı; motoru çağırır, değiştirmez) ----
   var LS='dada_yg';
-  function lsGet(){try{return JSON.parse(localStorage.getItem(LS))||{routes:[],visited:{}};}catch(e){return {routes:[],visited:{}};}}
+  function lsGet(){
+    var o; try{o=JSON.parse(localStorage.getItem(LS))||{routes:[],visited:{}};}catch(e){o={routes:[],visited:{}};}
+    o.routes=o.routes||[]; o.visited=o.visited||{};
+    // BUG1 migrasyon: eski GLOBAL flat {ad:true} → ROUTE-SCOPED {routeId:{ad:true}}. Flat tespit edilirse temiz başla
+    // (isim->route eşlemesi kurtarılamaz; mock'ta temiz başlangıç kabul). Yeni güzergah 0 ziyaretle başlar.
+    var ks=Object.keys(o.visited);
+    for(var i=0;i<ks.length;i++){ if(o.visited[ks[i]]===true){ o.visited={}; break; } }
+    return o;
+  }
   function lsSet(o){try{localStorage.setItem(LS,JSON.stringify(o));}catch(e){}}
   var savedSec=document.getElementById('ygSavedSec'), savedGrid=document.getElementById('ygSavedGrid');
   function renderSavedRoutes(){
@@ -2554,12 +2603,48 @@ document.addEventListener('click',function(e){
         '<button class="ysc-del" type="button" aria-label="Güzergahı sil"><i class="fa-solid fa-trash-can"></i></button></div>'+
         '<div class="ysc-meta"><span><i class="fa-solid fa-location-dot"></i> '+r.stops.length+' durak</span>'+
         '<span><i class="fa-regular fa-calendar"></i> '+r.dateStr+'</span></div>'+
-        '<div class="ysc-acts"><button class="btn btn-line ysc-open" type="button"><i class="fa-solid fa-map-location-dot"></i> Haritada Aç</button></div>';
+        '<div class="ysc-acts"><button class="btn btn-line ysc-open" type="button"><i class="fa-solid fa-map-location-dot"></i> Haritada Aç</button>'+
+        '<button class="btn btn-line ysc-cp-btn" type="button" aria-expanded="false"><i class="fa-solid fa-circle-check"></i> Detay / Checkpoint</button></div>'+
+        '<div class="ysc-cp" hidden></div>';
       a.querySelector('.ysc-open').addEventListener('click',function(){openSavedRoute(r);});
       a.querySelector('.ysc-del').addEventListener('click',function(){
         var s=lsGet(); s.routes=s.routes.filter(function(x){return x.id!==r.id;}); lsSet(s); renderSavedRoutes();
       });
+      var cpBtn=a.querySelector('.ysc-cp-btn'), cpBox=a.querySelector('.ysc-cp');
+      cpBtn.addEventListener('click',function(){
+        if(cpBox.hidden){ renderCheckpoint(r,cpBox); cpBox.hidden=false; cpBtn.classList.add('on'); cpBtn.setAttribute('aria-expanded','true'); }
+        else { cpBox.hidden=true; cpBtn.classList.remove('on'); cpBtn.setAttribute('aria-expanded','false'); }
+      });
       savedGrid.appendChild(a);
+    });
+  }
+  // Checkpoint: kayıtlı güzergahın duraklarını "ziyaret ettim" toggle'lı listele + ilerleme (N/M).
+  // BUG1 fix: visited ROUTE-SCOPED (visited[r.id][ad]) → her güzergah kendi ziyaretini ayrı tutar; aynı mekan
+  // başka güzergahta otomatik işaretli gelmez. Motor route.stops'a DOKUNMAZ.
+  function renderCheckpoint(r,cpEl){
+    var vis=(lsGet().visited||{})[r.id]||{};
+    if(!r.stops.length){
+      cpEl.innerHTML='<p class="ysc-cp-empty">Bu güzergahta ara durak yok — yalnız kalkış ve varış. Haritadan durak ekleyip yeniden kaydederek checkpoint açabilirsin.</p>';
+      return;
+    }
+    var done=r.stops.filter(function(m){return vis[m.ad];}).length;
+    var pct=Math.round(done/r.stops.length*100);
+    var html='<div class="ysc-cp-prog"><div class="ysc-cp-ptxt"><b><span class="cp-n">'+done+'</span> / '+r.stops.length+'</b> durak ziyaret edildi</div>'+
+      '<div class="cp-bar"><span style="width:'+pct+'%"></span></div></div><ul class="ysc-cp-list">';
+    r.stops.forEach(function(m){
+      var on=!!vis[m.ad];
+      html+='<li class="cp-row'+(on?' on':'')+'"><span class="cp-info"><b>'+m.ad+'</b><small>'+(m.konum||m.cat||'')+'</small></span>'+
+        '<button class="cp-toggle" type="button" aria-pressed="'+on+'"><i class="fa-solid '+(on?'fa-circle-check':'fa-circle')+'"></i> '+(on?'Ziyaret edildi':'Ziyaret ettim')+'</button></li>';
+    });
+    html+='</ul>';
+    cpEl.innerHTML=html;
+    cpEl.querySelectorAll('.cp-toggle').forEach(function(btn,idx){
+      btn.addEventListener('click',function(){
+        var m=r.stops[idx], st=lsGet(); st.visited=st.visited||{};
+        st.visited[r.id]=st.visited[r.id]||{};                          // bu güzergahın kendi ziyaret seti
+        if(st.visited[r.id][m.ad]) delete st.visited[r.id][m.ad]; else st.visited[r.id][m.ad]=true;
+        lsSet(st); renderCheckpoint(r,cpEl);   // ilerleme + bar + satır durumu yeniden çiz
+      });
     });
   }
   function openSavedRoute(r){
@@ -2571,6 +2656,10 @@ document.addEventListener('click',function(e){
     if(resultEl)resultEl.hidden=true; if(planEl)planEl.hidden=false; if(suggestWrap)suggestWrap.hidden=false;
     var stage=document.querySelector('.yg-stage'); if(stage)stage.scrollIntoView({behavior:'smooth',block:'start'});
   }
+  // BUG1: eski global-flat visited tespit edilirse normalize edilmiş (route-scoped) yapıyı localStorage'a
+  // geri yaz — kullanıcı hiç toggle yapmasa bile cross-page (rozet/defter) tutarlı 0 görsün.
+  (function(){var raw;try{raw=JSON.parse(localStorage.getItem(LS));}catch(e){raw=null;}
+    if(raw&&raw.visited){var ks=Object.keys(raw.visited);for(var i=0;i<ks.length;i++){if(raw.visited[ks[i]]===true){lsSet(lsGet());break;}}}})();
   renderSavedRoutes();
 })();
 </script>

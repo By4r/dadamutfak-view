@@ -1799,6 +1799,7 @@ body.pf-public .md-cover-edit,body.pf-public #mdRename,body.pf-public .mc-action
     <div class="pf-stats">
       <div class="pfs"><i class="fa-solid fa-utensils"></i><div><span>Tarif</span><b>128</b></div></div>
       <div class="pfs"><i class="fa-solid fa-lightbulb"></i><div><span>Püf Noktası</span><b>36</b></div></div>
+      <div class="pfs"><i class="fa-solid fa-route"></i><div><span>Ziyaret</span><b id="dfZiyaret">0</b></div></div>
       <button class="pfs is-link" type="button" data-open-flw="takipci"><i class="fa-solid fa-user-group"></i><div><span>Takipçi</span><b>12,4B</b></div></button>
       <button class="pfs is-link" type="button" data-open-flw="takip"><i class="fa-solid fa-user-check"></i><div><span>Takip</span><b>318</b></div></button>
       <!-- liderlik sayfası mock link (F-liderlik, stack fazında gerçek route) -->
@@ -2610,9 +2611,35 @@ body.pf-public .md-cover-edit,body.pf-public #mdRename,body.pf-public .mc-action
       <div class="badge-card locked"><i class="fa-solid fa-lock badge-lock"></i><span class="badge-ico"><i class="fa-solid fa-bowl-food"></i></span><div><b>Çorba Ustası</b><span>8 çorba kaldı</span></div></div>
       <div class="badge-card locked"><i class="fa-solid fa-lock badge-lock"></i><span class="badge-ico"><i class="fa-solid fa-ice-cream"></i></span><div><b>Tatlı Şefi</b><span>4 tatlı kaldı</span></div></div>
       <div class="badge-card locked"><i class="fa-solid fa-lock badge-lock"></i><span class="badge-ico"><i class="fa-solid fa-fire"></i></span><div><b>Maraton Aşçı</b><span>30 gün seri</span></div></div>
+      <div class="badge-card locked" id="dfYgGurme"><i class="fa-solid fa-lock badge-lock"></i><span class="badge-ico"><i class="fa-solid fa-route"></i></span><div><b>Yol Üstü Gurme</b><span id="dfYgSub">10 mekan kaldı</span></div></div>
     </div>
   </div>
 </section>
+<script>
+/* Faz B — defter: localStorage dada_yg.visited → "Ziyaret" sayacı + "Yol Üstü Gurme" teaser (additive, light) */
+(function(){
+  var GOAL=10;
+  // BUG2: route-scoped visited'tan UNIQUE mekan sayısı (eski flat formatı yok say → tutarlı 0)
+  function countUnique(v){
+    if(!v||typeof v!=='object')return 0;
+    var set={};
+    Object.keys(v).forEach(function(rid){var m=v[rid];if(m&&typeof m==='object'){Object.keys(m).forEach(function(name){if(m[name])set[name]=1;});}});
+    return Object.keys(set).length;
+  }
+  function apply(){
+    var st;try{st=JSON.parse(localStorage.getItem('dada_yg'))||{};}catch(e){st={};}
+    var n=countUnique(st.visited);
+    var z=document.getElementById('dfZiyaret'); if(z)z.textContent=n;
+    var card=document.getElementById('dfYgGurme'), sub=document.getElementById('dfYgSub'), lock=card&&card.querySelector('.badge-lock');
+    if(card){
+      if(n>=GOAL){if(lock)lock.style.display='none'; card.classList.remove('locked'); if(sub)sub.textContent=n+' mekan';}
+      else{if(lock)lock.style.display=''; card.classList.add('locked'); if(sub)sub.textContent=(GOAL-n)+' mekan kaldı';}
+    }
+  }
+  apply();
+  window.addEventListener('storage',function(e){if(e.key==='dada_yg')apply();});  // cross-page senk
+})();
+</script>
 
 <!-- ===== TAKİPÇİ / TAKİP MODALI (shell .fb-panel kabuğu referans) ===== -->
 <div class="flw-overlay" id="flwOverlay"></div>
