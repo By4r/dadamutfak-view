@@ -1,0 +1,2492 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Yol Güzergahım — Yol Üstü Mekanlar — DadaMutfak</title>
+<link rel="shortcut icon" type="image/x-icon"
+      href="assets/img/favicon.ico" />
+<!-- FontAwesome 6.5.2 (kilitli ikon seti) -->
+<link rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+      integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A=="
+      crossorigin="anonymous" referrerpolicy="no-referrer" />
+<!-- Leaflet 1.9.4 (madde 26 — yol üstü harita, key'siz OSM) -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+      integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+<style>
+/* =====================================================================
+   _SHELL.HTML — KANONİK İSKELET (anasayfa-portal-v3a.html'den BİREBİR)
+   Token + tipografi + utilities + topbar + header + mega menü (KİLİTLİ)
+   + footer + drawer/bottom-nav + çerez/görüş modal + ortak JS.
+   Yeni sayfa = bu dosyanın kopyası; SAYFA İÇERİĞİ bloğu doldurulur,
+   sayfa-spesifik CSS "SAYFA CSS" işaretinin altına eklenir.
+   Header varsayılan KATI; hero'lu sayfa ?hdr=hero benzeri davranış için
+   JS'teki heroMode bayrağını açar.
+   ===================================================================== */
+
+/* ============ GERÇEK SİTE FONTU: Gilroy-Medium — TEK YÜZ (eski site DNA'sı) ============
+   Eski site (main.css): @font-face myBrandFont = Gilroy-Medium.ttf, universal reset ile
+   başlık/gövde/buton dahil HER eleman bu tek yüzle render olur; 600/700 bold'lar
+   tarayıcının sentetik bold'udur. Light/ExtraBold dosyaları klasörde var ama
+   eski site CSS'i hiç yüklemez — bu yüzden burada da yalnız Medium yüklenir. */
+@font-face{
+  font-family:"Gilroy";
+  src:url("assets/fonts/Gilroy-Medium.ttf") format("truetype");
+  font-weight:500; font-style:normal; font-display:swap;
+}
+
+/* ============ KİMLİK TOKEN'LARI (brand-tokens.md) ============ */
+:root{
+  --tomato:#E14827;          /* tek baskın marka rengi */
+  --tomato-dark:#C43D20;     /* hover türevi */
+  --tomato-deep:#A8331A;     /* gradient ucu */
+  --tomato-tint:#FBE9E3;     /* domates fısıltısı zemin */
+  --slate:#211E16;           /* Pantone Process Black C — başlık/koyu metin/panel */
+  --slate-2:#56514a;           /* sıcak muted koyu */
+  --green:#3BB77E;           /* yalnız sağlık bloğu */
+  --green-deep:#2c9963;
+  --yellow:#FAC045;          /* yalnız puan */
+  --muted:#7E7E7E;           /* ikincil metin */
+  --line:#ECECEC;            /* hairline ayraç */
+  --cream:#EFE5D3;           /* sıcak nötr */
+  --cream-2:#F7F1E6;
+  /* kurumsal alternatif renkler (kılavuz) */
+  --c-purple:#b14fc5; --c-mint:#6cca98; --c-green:#009d4f; --c-petrol:#006072;
+  --paper:#ffffff;
+  --bg:#f9f9f9;              /* eski site grisi — sayfa zemini (Revize T3 M12) */
+  --ink:#211E16;
+  /* section zemin ritmi — açık bölüm alternasyonu (gri ↔ beyaz, eski site ekseni) */
+  --bg-white:#ffffff;        /* saf beyaz */
+  --bg-cream:#f9f9f9;        /* eski site section grisi (own.css'teki en yaygın zemin) */
+
+  --radius-sm:8px; --radius-md:12px; --radius-lg:16px; --radius-xl:24px; --radius-pill:999px; --radius-circle:50%;
+  /* legacy alias → yeni ölçek */
+  --r:var(--radius-lg); --r-sm:var(--radius-sm); --r-lg:var(--radius-xl);
+  --sh-sm:0 1px 2px rgba(33,30,22,.04), 0 2px 6px rgba(33,30,22,.05);
+  --sh-md:0 6px 22px rgba(33,30,22,.09);
+  --sh-lg:0 18px 50px rgba(33,30,22,.16);
+  --ease:cubic-bezier(.22,.61,.36,1);
+  --wrap:1240px;
+}
+
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  font-family:"Gilroy",system-ui,sans-serif;
+  font-weight:500;
+  color:var(--ink);
+  background:var(--bg);
+  line-height:1.55;
+  -webkit-font-smoothing:antialiased;
+}
+h1,h2,h3,h4{font-weight:700;color:var(--slate);line-height:1.12;letter-spacing:-.02em}
+a{color:inherit;text-decoration:none}
+img{display:block;max-width:100%}
+.wrap{max-width:var(--wrap);margin:0 auto;padding:0 32px}
+.muted{color:var(--muted);font-weight:500}
+
+/* eyebrow */
+.eyebrow{
+  display:inline-flex;align-items:center;gap:8px;
+  font-size:12px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--tomato);
+}
+.eyebrow::before{content:"";width:26px;height:2px;background:currentColor;border-radius:var(--radius-sm)}
+.eyebrow i{font-size:13px}
+
+/* section head */
+.sec{padding:74px 0}
+/* fixed header offseti — sayfanın İLK section'ına bu class verilir
+   (topbar 40 + header 72 = 112px · mobil 62px) */
+.below-header{padding-top:112px}
+/* ortak section header grid'i — aksiyon grubu (Tamamını Gör + oklar/tablar) h2 ile
+   aynı satırda, açıklama altta tek başına: [eyebrow] / [h2 | tools] / [lead] (Revize T4 M1).
+   Sol blok display:contents ile grid'e açılır — DOM aynı, ≤640 pattern'ı ile uyumlu */
+.sec-head,.cat-head,.guide-head{
+  display:grid;grid-template-columns:minmax(0,1fr) auto;column-gap:24px;
+  align-items:center;margin-bottom:34px;
+}
+.sec-head>div:first-child,.cat-head>div:first-child,.guide-head>div:first-child{display:contents}
+.sec-head .eyebrow,.cat-head .eyebrow,.guide-head .eyebrow{grid-row:1;grid-column:1/-1;justify-self:start;margin-bottom:14px}
+.sec-head h2,.cat-head h2,.guide-head h2{grid-row:2;grid-column:1}
+.sec-head .sec-tools,.sec-head .disc-tools,.cat-head .sec-tools,.guide-head .sec-tools{grid-row:2;grid-column:2;align-self:center}
+.sec-head .lead,.cat-head .lead,.guide-head .lead{grid-row:3;grid-column:1/-1;margin-top:10px;color:var(--muted);font-weight:500;font-size:15.5px;max-width:520px}
+.sec-head h2{font-size:34px}
+.see-all{
+  flex:none;display:inline-flex;align-items:center;gap:9px;font-weight:700;font-size:13.5px;
+  color:var(--slate);padding:11px 18px;border:1px solid var(--line);border-radius:var(--radius-md);
+  background:var(--paper);transition:.25s var(--ease);white-space:nowrap;
+}
+.see-all i{font-size:13px;transition:.25s var(--ease)}
+.see-all:hover{border-color:var(--tomato);color:var(--tomato)}
+.see-all:hover i{transform:translateX(3px)}
+
+/* buttons */
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:10px;
+  font-family:inherit;font-weight:700;font-size:14.5px;cursor:pointer;border:none;
+  padding:14px 26px;border-radius:var(--radius-md);transition:.25s var(--ease);
+}
+.btn-primary{background:var(--tomato);color:#fff}
+.btn-primary:hover{background:var(--tomato-dark);transform:translateY(-2px)}
+.btn-ghost{background:var(--paper);color:var(--slate);border:1px solid var(--line)}
+.btn-ghost:hover{border-color:var(--slate);transform:translateY(-2px)}
+
+/* chips */
+.chips{display:flex;flex-wrap:wrap;gap:9px;align-items:center}
+.chips .lbl{font-size:13px;color:var(--muted);font-weight:500;margin-right:2px}
+.chip{
+  font-size:13px;font-weight:500;color:var(--slate);background:var(--paper);border:1px solid var(--line);
+  padding:8px 15px;border-radius:var(--radius-sm);cursor:pointer;transition:.2s var(--ease);
+}
+.chip:hover{border-color:var(--tomato);color:var(--tomato);background:var(--tomato-tint)}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+
+/* ============ TOP UTILITY BAR ============ */
+.topbar{position:fixed;top:0;left:0;right:0;z-index:70;background:var(--ink);color:#e9e2d6;font-size:12.5px;font-weight:500}
+.topbar .wrap{display:flex;align-items:center;justify-content:space-between;height:40px}
+.topbar a{display:inline-flex;align-items:center;gap:7px;color:#e9e2d6;transition:.2s}
+.topbar a:hover{color:#fff}
+.topbar .tb-left{display:flex;align-items:center;gap:16px}
+.topbar .tb-left b{font-weight:600;color:#fff}
+.tb-div{width:1px;height:14px;background:rgba(233,226,214,.22);flex:none}
+.topbar .tb-right{display:flex;gap:18px;align-items:center}
+.topbar .tb-soc{display:flex;gap:14px}
+.topbar .tb-soc a:hover{color:var(--yellow)}
+/* dil seçici — üst bant (ince, açık zemin yazı) */
+.tb-lang{position:relative;display:flex;align-items:center}
+.tb-lang::before{content:"";width:1px;height:14px;background:rgba(233,226,214,.22);margin-right:4px}
+.tb-lang-btn{display:inline-flex;align-items:center;gap:7px;background:transparent;border:none;cursor:pointer;color:#e9e2d6;font-family:inherit;font-size:12.5px;font-weight:500;padding:0;transition:color .2s}
+.tb-lang-btn:hover{color:#fff}
+.tb-lang-btn>span{font-weight:600;letter-spacing:.03em}
+.tb-lang-caret{font-size:9px;transition:transform .2s var(--ease)}
+.tb-lang.open .tb-lang-caret{transform:rotate(180deg)}
+.tb-lang-menu{position:absolute;top:calc(100% + 9px);right:0;min-width:148px;background:#fff;border:1px solid var(--line);border-radius:var(--radius-md);box-shadow:var(--sh-md);padding:6px;opacity:0;visibility:hidden;transform:translateY(-6px);transition:opacity .2s var(--ease),transform .2s var(--ease),visibility .2s;z-index:80}
+.tb-lang.open .tb-lang-menu{opacity:1;visibility:visible;transform:translateY(0)}
+.tb-lang-menu a{display:flex;align-items:center;gap:9px;color:var(--ink);font-size:13px;font-weight:600;padding:9px 11px;border-radius:var(--radius-sm);transition:.18s var(--ease)}
+.tb-lang-menu a span{color:var(--muted);font-weight:500;font-size:12.5px}
+.tb-lang-menu a:hover{background:var(--tomato-tint);color:var(--tomato)}
+.tb-lang-menu a.active,.tb-lang-menu a.active span{color:var(--tomato)}
+
+/* ---- üst bant dünya kapıları: DadaStore + DadaAkademi markalı geçiş (CİLA-2 Faz 5) ---- */
+.topbar .tb-util{color:#cfc7ba}
+.topbar .tb-util:hover{color:#fff}
+.tb-worlds{display:flex;align-items:center;gap:9px}
+.tb-world{display:inline-flex;align-items:center;gap:8px;height:27px;padding:0 12px;border-radius:var(--radius-sm);font-size:12px;font-weight:700;letter-spacing:.01em;border:1px solid transparent;transition:background .2s var(--ease),border-color .2s var(--ease),color .2s var(--ease)}
+.tb-world i{font-size:12.5px;transition:color .2s var(--ease)}
+.tb-world .tw-name{line-height:1}
+.tb-world .tw-arr{font-size:9px;opacity:0;max-width:0;margin-left:-8px;overflow:hidden;transform:translateX(-5px);transition:opacity .2s var(--ease),transform .2s var(--ease),max-width .2s var(--ease),margin-left .2s var(--ease)}
+.tb-world:hover .tw-arr{opacity:.92;max-width:16px;margin-left:0;transform:translateX(0)}
+.tb-world .tw-soon{font-size:9.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;padding:2px 6px;border-radius:var(--radius-sm);background:rgba(233,226,214,.18);color:#e9e2d6;line-height:1}
+/* DadaStore — domates dünyası (sıcak, e-ticaret) */
+.tb-world-store{background:rgba(225,72,39,.18);border-color:rgba(225,72,39,.46);color:#fff}
+.tb-world-store i{color:#ff7d5e}
+.tb-world-store:hover{background:var(--tomato);border-color:var(--tomato);color:#fff}
+.tb-world-store:hover i,.tb-world-store:hover .tw-arr{color:#fff}
+/* DadaAkademi — petrol dünyası (serin, öğrenme) */
+.tb-world-akademi{background:rgba(0,96,114,.30);border-color:rgba(95,203,216,.40);color:#fff}
+.tb-world-akademi i{color:#5fcbd8}
+.tb-world-akademi:hover{background:var(--c-petrol);border-color:var(--c-petrol);color:#fff}
+.tb-world-akademi:hover i{color:#fff}
+
+/* ============ HEADER — TEK KAT (marka · ortalanmış nav · aksiyonlar) — Revize T3 M2 ============ */
+.header{
+  position:fixed;top:0;left:0;right:0;z-index:60;
+  top:40px;background:rgba(255,255,255,.94);backdrop-filter:saturate(150%) blur(10px);
+  border-bottom:1px solid var(--line);box-shadow:0 4px 20px rgba(33,30,22,.05);
+  transition:background .3s var(--ease),border-color .3s var(--ease),box-shadow .3s var(--ease);
+}
+/* hero üstünde: şeffaf + beyaz — yalnız heroMode açık sayfalarda kullanılır (JS) */
+.header.at-top{background:transparent;backdrop-filter:none;border-color:rgba(255,255,255,.14);box-shadow:none}
+.h-top>.wrap{display:flex;align-items:center;gap:22px;height:72px}
+.brand{display:flex;align-items:center;flex:none}
+.brand img{height:40px;width:auto;display:block}
+.brand .logo-white{display:none}
+.header.at-top .brand .logo-color{display:none}
+.header.at-top .brand .logo-white{display:block}
+/* nav, logo ile aksiyonlar arasında ortalanır */
+.nav{display:flex;gap:2px;flex-wrap:nowrap;flex:1;justify-content:center;min-width:0}
+.nav a{
+  position:relative;font-weight:700;font-size:15px;color:var(--slate);white-space:nowrap;
+  padding:9px 12px;border-radius:var(--radius-md);transition:color .2s var(--ease),background .2s var(--ease);
+}
+.nav a .fa-chevron-down{font-size:9px;margin-left:5px;opacity:.5}
+.nav a:hover{color:var(--tomato);background:var(--tomato-tint)}
+.nav a.active{color:var(--tomato)}
+.nav a.active::after{
+  content:"";position:absolute;left:12px;right:12px;bottom:2px;height:2px;
+  background:var(--tomato);border-radius:var(--radius-sm);
+}
+/* at-top nav beyaz */
+.header.at-top .nav>.nav-item>a{color:#fff}
+.header.at-top .nav>.nav-item>a:hover{background:rgba(255,255,255,.14);color:#fff}
+.header.at-top .nav>.nav-item>a.active{color:#fff}
+.header.at-top .nav>.nav-item>a.active::after{background:#fff}
+.head-actions{margin-left:auto;display:flex;align-items:center;gap:9px;flex:none}
+.icon-btn{
+  width:43px;height:43px;border-radius:var(--radius-md);border:1px solid var(--line);background:var(--paper);
+  display:grid;place-items:center;color:var(--slate);font-size:16px;cursor:pointer;transition:.2s var(--ease);position:relative;
+}
+.icon-btn:hover{border-color:var(--tomato);color:var(--tomato)}
+.header.at-top .icon-btn{background:rgba(255,255,255,.10);border-color:rgba(255,255,255,.30);color:#fff}
+.header.at-top .icon-btn:hover{background:rgba(255,255,255,.20);border-color:#fff;color:#fff}
+/* minimal giriş butonu — kompakt boy, marka rengi (Beyar: eski renk kalsın), flat */
+.btn-login{
+  display:inline-flex;align-items:center;gap:8px;font-family:inherit;font-weight:700;font-size:14px;
+  color:#fff;background:var(--tomato);border:1px solid var(--tomato);border-radius:var(--radius-md);
+  height:43px;padding:0 18px;margin-left:3px;cursor:pointer;white-space:nowrap;transition:.2s var(--ease);
+}
+.btn-login i{font-size:14px}
+.btn-login:hover{background:var(--tomato-dark);border-color:var(--tomato-dark)}
+
+/* ===== LOGIN-STATE (cila-2 faz 2) — header logged-in chrome ===== */
+/* varsayılan logged-out: ekle/zil/avatar gizli. body.is-auth → açılır, btn-login gizlenir */
+.head-add,.head-bell,.acct-wrap{display:none}
+body.is-auth .btn-login{display:none}
+body.is-auth .head-add,body.is-auth .acct-wrap{display:flex}
+body.is-auth .head-bell{display:grid}
+/* ekle + hesap menüsü ortak konteyner (header sağ blok dropdown'ı)
+   NOT: display BASE'te VERİLMEZ — gizle/göster yalnız .head-add/.acct-wrap kurallarınca
+   yönetilir (aksi halde display:flex, üstteki display:none'ı kaynak sırasıyla yener → logged-out sızıntı) */
+.acct-item{position:relative;align-items:center;height:72px}
+.acct-btn{display:inline-flex;align-items:center;gap:7px;height:43px;padding:0 9px 0 5px;background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-md);cursor:pointer;font-family:inherit;transition:.2s var(--ease)}
+.acct-btn:hover{border-color:var(--tomato)}
+.acct-ava{width:33px;height:33px;border-radius:var(--radius-circle);background-size:cover;background-position:center;flex:none}
+.acct-caret{font-size:9px;color:var(--muted);transition:transform .2s var(--ease)}
+.acct-item.open .acct-caret{transform:rotate(180deg)}
+/* bildirim zili + sayaç */
+.head-bell{position:relative}
+.hb-badge{position:absolute;top:-4px;right:-4px;min-width:17px;height:17px;padding:0 4px;border-radius:var(--radius-circle);background:var(--tomato);color:#fff;font-size:10px;font-weight:700;display:grid;place-items:center;border:2px solid #fff}
+/* dropdown panel (header sağa hizalı; nav dropdown diliyle aynı) */
+.acct-menu{position:absolute;top:calc(100% + 12px);right:0;min-width:236px;background:#fff;border:1px solid var(--line);border-radius:var(--radius-lg);box-shadow:var(--sh-lg);padding:10px;opacity:0;visibility:hidden;transform:translateY(8px);transition:.22s var(--ease);z-index:80}
+.acct-item:hover .acct-menu,.acct-item.open .acct-menu{opacity:1;visibility:visible;transform:translateY(0)}
+.acct-menu::before{content:"";position:absolute;top:-7px;right:24px;width:13px;height:13px;background:#fff;border-left:1px solid var(--line);border-top:1px solid var(--line);transform:rotate(45deg)}
+.acct-menu>a{display:flex;align-items:flex-start;gap:12px;padding:11px 13px;border-radius:var(--radius-md);font-size:14px;font-weight:500;color:var(--slate);transition:.16s var(--ease)}
+.acct-menu>a i{width:18px;text-align:center;color:var(--tomato);font-size:14px;margin-top:2px}
+.acct-menu>a span{display:block}
+.acct-menu>a small{display:block;font-size:11.5px;color:var(--muted);font-weight:500;margin-top:1px}
+.acct-menu>a:hover{background:var(--tomato-tint);color:var(--tomato);padding-left:16px}
+.acct-menu .acct-logout,.acct-menu .acct-logout i{color:var(--tomato)}
+/* hesap menüsü kimlik başlığı */
+.acct-id{display:flex;align-items:center;gap:11px;padding:8px 11px 12px}
+.acct-id .acct-ava{width:42px;height:42px}
+.acct-id-txt{min-width:0}
+.acct-id-txt b{display:block;font-size:14.5px;color:var(--slate);font-weight:700}
+.acct-id-txt small{display:block;font-size:12px;color:var(--muted);font-weight:500}
+.acct-div{height:1px;background:var(--line);margin:6px 4px}
+/* drawer logged-in kimlik satırı (mobil) */
+.drawer-acct{display:none;align-items:center;gap:12px;padding:2px 2px 12px}
+body.is-auth .drawer-acct{display:flex}
+body.is-auth .drawer-login{display:none}
+.drawer-acct .da-ava{width:46px;height:46px;border-radius:var(--radius-circle);background-size:cover;background-position:center;flex:none}
+.drawer-acct .da-info{min-width:0}
+.drawer-acct .da-info b{display:block;font-size:15px;color:var(--slate);font-weight:700}
+.da-links{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:3px}
+.da-links a{font-size:12.5px;font-weight:700;color:var(--tomato)}
+.da-links a:not(:last-child)::after{content:"·";margin-left:8px;color:var(--muted);font-weight:500}
+/* ===== /LOGIN-STATE ===== */
+
+/* ===== LG-GATE (cila-2 faz 2) — logged-out mikro-aksiyon giriş kapısı ===== */
+.lg-overlay{position:fixed;inset:0;background:rgba(20,18,12,.5);z-index:97;opacity:0;visibility:hidden;transition:opacity .25s var(--ease),visibility .25s}
+.lg-overlay.show{opacity:1;visibility:visible}
+.lg-gate{position:fixed;inset:0;z-index:98;display:grid;place-items:center;padding:20px;opacity:0;visibility:hidden;pointer-events:none;transition:opacity .25s var(--ease),visibility .25s}
+.lg-gate.show{opacity:1;visibility:visible;pointer-events:auto}
+.lg-panel{position:relative;width:min(382px,100%);background:#fff;border-radius:var(--radius-lg);box-shadow:var(--sh-lg);padding:32px 26px 26px;text-align:center;transform:translateY(14px);transition:transform .3s var(--ease)}
+.lg-gate.show .lg-panel{transform:translateY(0)}
+.lg-close{position:absolute;top:13px;right:13px;width:36px;height:36px;border-radius:var(--radius-md);border:1px solid var(--line);background:var(--paper);color:var(--slate);font-size:15px;cursor:pointer;display:grid;place-items:center;transition:.2s var(--ease)}
+.lg-close:hover{border-color:var(--tomato);color:var(--tomato)}
+.lg-ico{width:62px;height:62px;border-radius:var(--radius-circle);background:var(--tomato-tint);color:var(--tomato);display:grid;place-items:center;font-size:25px;margin:0 auto 16px}
+.lg-gate h4{font-size:19px;margin-bottom:8px}
+.lg-gate p{font-size:13.5px;color:var(--muted);font-weight:500;max-width:300px;margin:0 auto 22px;line-height:1.55}
+.lg-acts{display:flex;gap:10px}
+.lg-acts .btn{flex:1}
+/* ===== /LG-GATE ===== */
+
+/* ---- NAV DROPDOWNS ---- */
+.nav .nav-item{position:relative}
+/* nav item tek katın tam yüksekliğini doldursun → hover sürekliliği (mega'ya geçişte kopmaz) */
+.h-top .nav-item{display:flex;align-items:center;height:72px}
+.nav .nav-item>a{display:inline-flex;align-items:center}
+.soon{margin-left:7px;font-size:9.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;
+  color:#fff;background:var(--green);padding:3px 7px;border-radius:var(--radius-sm);vertical-align:middle}
+.dropdown{
+  position:absolute;top:calc(100% + 12px);left:50%;transform:translateX(-50%) translateY(8px);
+  min-width:230px;background:#fff;border:1px solid var(--line);border-radius:var(--radius-lg);box-shadow:var(--sh-lg);
+  padding:10px;opacity:0;visibility:hidden;transition:.22s var(--ease);z-index:80;
+}
+.nav-item:hover .dropdown,.nav-item.open .dropdown{opacity:1;visibility:visible;transform:translateX(-50%) translateY(0)}
+.dropdown::before{content:"";position:absolute;top:-7px;left:50%;transform:translateX(-50%) rotate(45deg);
+  width:13px;height:13px;background:#fff;border-left:1px solid var(--line);border-top:1px solid var(--line)}
+.dropdown a{
+  display:flex;align-items:flex-start;gap:12px;padding:11px 13px;border-radius:var(--radius-md);font-size:14px;font-weight:500;
+  color:var(--slate);transition:.16s var(--ease);
+}
+.dropdown a i{width:18px;text-align:center;color:var(--tomato);font-size:14px;margin-top:2px}
+.dropdown a small{display:block;font-size:11.5px;color:var(--muted);font-weight:500;margin-top:1px}
+.dropdown a:hover{background:var(--tomato-tint);color:var(--tomato);padding-left:16px}
+.dd-head{padding:8px 13px 4px;font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.dd-col{display:flex;flex-direction:column}
+
+/* ---- MEGA MENÜ (Tarifler) — header'a bağlı tam genişlik panel — KİLİTLİ ---- */
+.nav-item.has-mega{position:static}            /* containing block = .header (fixed) */
+.mega{
+  position:absolute;left:0;right:0;top:100%;
+  background:#fff;border-top:1px solid var(--line);
+  box-shadow:var(--sh-lg);padding:28px 0 26px;
+  opacity:0;visibility:hidden;transform:translateY(8px);
+  transition:.22s var(--ease);z-index:80;
+}
+.nav-item:hover .mega,.nav-item.open .mega{opacity:1;visibility:visible;transform:translateY(0)}
+.mega-grid{display:grid;grid-template-columns:2.2fr 1fr;gap:22px;align-items:start}
+.mega-cats{display:grid;grid-template-columns:repeat(3,1fr);gap:2px 16px;align-content:start}
+.mega-cats a{
+  display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:var(--radius-md);
+  font-size:14.5px;font-weight:500;color:var(--slate);transition:.16s var(--ease);line-height:1.25;
+}
+.mega-cats a i{width:20px;text-align:center;color:var(--tomato);font-size:15px;flex:none}
+.mega-cats a small{display:block;font-size:11.5px;color:var(--muted);font-weight:500;margin-top:1px}
+.mega-cats a:hover{background:var(--tomato-tint);color:var(--tomato)}
+.mega-feat{min-width:0;border-left:1px solid var(--line);padding-left:22px}
+.mf-fig{
+  position:relative;aspect-ratio:16/10;border-radius:var(--radius-md);overflow:hidden;
+  background-size:cover;background-position:center;display:flex;align-items:flex-end;cursor:pointer;
+}
+.mf-fig::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(33,30,22,0) 35%,rgba(15,13,9,.78))}
+.mf-fig .r-chip{position:absolute;top:12px;left:12px;background:var(--tomato);color:#fff;z-index:2}
+.mf-fig h4{position:relative;z-index:2;color:#fff;font-size:17px;padding:16px;line-height:1.25}
+/* "Tüm Tarifler" — kategori grid'inin 13. hücresi, buton dilinde (Revize T3 M1) */
+.mega-cats .mega-cat-all{
+  font-weight:700;color:var(--tomato);
+  background:var(--tomato-tint);border:1px solid rgba(225,72,39,.22);
+}
+.mega-cats .mega-cat-all small{color:var(--tomato);opacity:.75}
+.mega-cats .mega-cat-all .mca-arrow{margin-left:auto;width:auto;font-size:13px;transition:transform .2s var(--ease)}
+.mega-cats .mega-cat-all:hover{background:var(--tomato);color:#fff;border-color:var(--tomato)}
+.mega-cats .mega-cat-all:hover i,.mega-cats .mega-cat-all:hover small{color:#fff;opacity:1}
+.mega-cats .mega-cat-all:hover .mca-arrow{transform:translateX(3px)}
+/* Tarif Bulucu CTA — mega-feat kolonunda (Faz3 #22; finder giriş noktası) */
+.mega-find{display:flex;align-items:center;gap:12px;margin-top:14px;padding:13px 14px;border-radius:var(--radius-md);background:var(--tomato-tint);border:1px solid rgba(225,72,39,.22);transition:.18s var(--ease)}
+.mega-find .mf-ico{flex:none;width:38px;height:38px;border-radius:var(--radius-sm);background:#fff;color:var(--tomato);display:grid;place-items:center;font-size:16px}
+.mega-find .mf-body{flex:1;min-width:0}
+.mega-find .mf-body b{display:block;font-size:14px;font-weight:700;color:var(--tomato);line-height:1.2}
+.mega-find .mf-body small{display:block;font-size:11.5px;color:var(--tomato);opacity:.78;font-weight:500;margin-top:2px}
+.mega-find .mf-arr{flex:none;color:var(--tomato);font-size:13px;transition:transform .2s var(--ease)}
+.mega-find:hover{background:var(--tomato);border-color:var(--tomato)}
+.mega-find:hover .mf-body b,.mega-find:hover .mf-body small,.mega-find:hover .mf-arr{color:#fff;opacity:1}
+.mega-find:hover .mf-arr{transform:translateX(3px)}
+/* mega içindeki r-chip (mf-fig rozeti) için minimal taban */
+.r-chip{background:rgba(255,255,255,.94);color:var(--slate);font-size:11.5px;font-weight:700;padding:6px 12px;border-radius:var(--radius-sm);letter-spacing:.02em}
+
+/* ---- "TÜMÜNÜ GÖR" SLIDER ALTYAPISI (oklar + snap track) ---- */
+.sec-tools{flex:none;display:flex;align-items:center;gap:12px}
+.row-nav{display:flex;gap:8px}
+.row-nav button{width:42px;height:42px;font-size:13px;border-radius:var(--radius-md);border:1px solid var(--line);background:var(--paper);color:var(--slate);cursor:pointer;transition:.2s var(--ease)}
+.row-nav button:hover{background:var(--tomato);border-color:var(--tomato);color:#fff}
+.row-track{
+  display:flex;gap:26px;overflow-x:auto;scroll-snap-type:x mandatory;
+  scrollbar-width:none;padding:6px 2px 10px;
+}
+.row-track::-webkit-scrollbar{display:none}
+.row-track>*{flex:none;width:274px;scroll-snap-align:start}
+
+/* ---- FOOTER REVEAL (gaviaworks perde efekti) — yalnız desktop/tablet ----
+   Footer sayfanın arkasında sabit bekler (z düşük); opak içerik wrapper'ı
+   üstünde durur ve sonuna JS ile footer yüksekliği kadar boşluk açılır —
+   scroll sonunda içerik kalkar, footer alttan ortaya çıkar. Mobil: statik. */
+@media (min-width:641px){
+  .footer.orange{position:fixed;left:0;right:0;bottom:0;z-index:1}
+  .page-main{position:relative;z-index:2;background:var(--bg)}
+}
+
+/* ============ FOOTER ============ */
+.footer{background:var(--slate);color:#aebcc6;padding:70px 0 0}
+/* kolon ritmi: logo bloğu geniş, 4 link kolonu eşit dağılır → sağ kenara kadar dengeli */
+.foot-grid{display:grid;grid-template-columns:1.5fr 1fr 1fr 1fr 1.05fr;gap:44px 28px;padding-bottom:50px;border-bottom:1px solid rgba(255,255,255,.1)}
+.foot-col a{white-space:nowrap}
+.foot-brand img{height:42px;width:auto;margin-bottom:22px}
+.foot-soc{display:flex;gap:11px}
+.foot-soc a{width:42px;height:42px;border-radius:var(--radius-md);background:rgba(255,255,255,.07);display:grid;place-items:center;color:#cdd8e0;font-size:16px;transition:.2s var(--ease)}
+.foot-soc a:hover{background:var(--tomato);color:#fff;transform:translateY(-3px)}
+.foot-col h5{color:#fff;font-size:15px;font-weight:700;margin-bottom:18px}
+.foot-col a{display:block;font-size:14px;font-weight:500;color:#9fb0bc;padding:7px 0;transition:.2s}
+.foot-col a:hover{color:var(--tomato);padding-left:5px}
+/* legal bar — 9 link, ince dikey ayraçlı, wrap'li */
+.foot-legal{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:8px 10px;padding:24px 0 0;font-size:12px;font-weight:500}
+.foot-legal a{white-space:nowrap;transition:.2s}
+.foot-legal .sep{width:1px;height:11px;background:rgba(255,255,255,.28);flex:none}
+.foot-bottom{display:flex;align-items:center;justify-content:space-between;padding:16px 0 26px;font-size:13px;font-weight:500;color:#7e8e9a}
+.foot-bottom a:hover{color:#cdd8e0}
+
+/* ---- ORANGE FOOTER (gaviaworks yapısı) ---- */
+.footer.orange{background:var(--tomato);color:#ffe7df}
+.footer.orange .foot-grid{border-bottom-color:rgba(255,255,255,.18)}
+.footer.orange .foot-soc a{background:rgba(255,255,255,.14);color:#fff}
+.footer.orange .foot-soc a:hover{background:#fff;color:var(--tomato);transform:translateY(-3px)}
+.footer.orange .foot-col h5{color:#fff}
+.footer.orange .foot-col a{color:#ffdccf}
+.footer.orange .foot-col a:hover{color:#fff;padding-left:5px}
+.footer.orange .foot-legal a{color:#ffd0c2}
+.footer.orange .foot-legal a:hover{color:#fff}
+.footer.orange .foot-bottom{color:#ffd0c2}
+.footer.orange .foot-bottom a{color:#ffd0c2}
+.footer.orange .foot-bottom a:hover{color:#fff}
+
+/* =========================================================
+   RESPONSIVE TABAN  ·  desktop ≥1025px DEĞİŞMEZ
+   tablet 641–1024px · mobil ≤640px
+   ========================================================= */
+
+/* yatay taşmayı global engelle */
+html,body{overflow-x:hidden}
+
+/* sürükle-kaydır (mouse) imleci — yatay slider'lar */
+.drag-scroll.dragging{cursor:grabbing;user-select:none;scroll-behavior:auto}
+.drag-scroll.dragging *{pointer-events:none}
+
+/* ---- MOBİL KOMPONENTLER (desktop'ta gizli) ---- */
+.hamburger{display:none}
+.drawer,.drawer-overlay,.bottom-nav{display:none}
+
+/* drawer */
+.drawer-overlay{position:fixed;inset:0;background:rgba(20,18,12,.5);z-index:95;opacity:0;pointer-events:none;transition:opacity .3s var(--ease)}
+.drawer-overlay.open{opacity:1;pointer-events:auto}
+.drawer{
+  position:fixed;top:0;right:0;height:100%;width:min(360px,86vw);background:#fff;z-index:96;
+  transform:translateX(100%);transition:transform .32s var(--ease);
+  flex-direction:column;box-shadow:-12px 0 44px rgba(20,18,12,.22);
+}
+.drawer.open{transform:translateX(0)}
+.drawer-head{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--line);flex:none}
+.drawer-logo{height:34px;width:auto;display:block}
+.drawer-close{width:42px;height:42px;border-radius:var(--radius-md);border:1px solid var(--line);background:var(--paper);color:var(--slate);font-size:18px;cursor:pointer;display:grid;place-items:center}
+.drawer-close:hover{border-color:var(--tomato);color:var(--tomato)}
+.drawer-nav{flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch}
+.d-item{border-bottom:1px solid var(--line)}
+.d-link{
+  display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%;
+  font-family:inherit;font-weight:700;font-size:16px;color:var(--slate);
+  background:none;border:none;text-align:left;padding:16px 22px;cursor:pointer;
+}
+.d-link .fa-chevron-down{font-size:12px;color:var(--muted);transition:transform .25s var(--ease),color .25s var(--ease)}
+.d-item.open>.d-link .fa-chevron-down{transform:rotate(180deg);color:var(--tomato)}
+.d-link .soon{font-size:9.5px}
+.d-sub{max-height:0;overflow:hidden;transition:max-height .3s var(--ease);background:var(--bg)}
+.d-item.open>.d-sub{max-height:760px}
+.d-sub a{display:flex;align-items:center;gap:11px;padding:13px 22px 13px 36px;font-size:14.5px;font-weight:500;color:var(--slate-2)}
+.d-sub a i{width:18px;text-align:center;color:var(--tomato);font-size:13px}
+.d-sub a:hover{color:var(--tomato);background:var(--tomato-tint)}
+.drawer-foot{padding:18px 20px;border-top:1px solid var(--line);display:flex;flex-direction:column;gap:11px;flex:none}
+.drawer-add{display:flex;align-items:center;justify-content:center;gap:9px;font-weight:700;font-size:14.5px;color:var(--slate);padding:13px;border:1px solid var(--line);border-radius:var(--radius-md);transition:.2s var(--ease)}
+.drawer-add:hover{border-color:var(--tomato);color:var(--tomato)}
+/* drawer dünya kapıları (mobilde üst bant gizli — DadaStore/DadaAkademi buradan) — tb-world kimliği */
+.drawer-worlds{display:grid;grid-template-columns:1fr;gap:9px;margin-top:7px}
+.drawer-world{display:flex;align-items:center;gap:9px;min-height:48px;padding:0 15px;border-radius:var(--radius-md);font-size:14px;font-weight:700;letter-spacing:.01em;border:1px solid transparent;transition:background .2s var(--ease),border-color .2s var(--ease),color .2s var(--ease)}
+.drawer-world i{font-size:13px}
+.drawer-world .dw-name{line-height:1.1}
+.drawer-world .dw-arr{font-size:9px;margin-left:auto;opacity:.7}
+.drawer-world .dw-soon{font-size:9px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;padding:2px 6px;border-radius:var(--radius-sm);margin-left:auto;line-height:1}
+.dw-store{background:rgba(225,72,39,.10);border-color:rgba(225,72,39,.40);color:var(--tomato)}
+.dw-store i{color:var(--tomato)}
+.dw-store:hover{background:var(--tomato);border-color:var(--tomato);color:#fff}
+.dw-store:hover i,.dw-store:hover .dw-arr{color:#fff}
+.dw-akademi{background:rgba(0,96,114,.10);border-color:rgba(0,96,114,.34);color:var(--c-petrol)}
+.dw-akademi i{color:var(--c-petrol)}
+.dw-akademi .dw-soon{background:rgba(0,96,114,.14);color:var(--c-petrol)}
+.dw-akademi:hover{background:var(--c-petrol);border-color:var(--c-petrol);color:#fff}
+.dw-akademi:hover i{color:#fff}
+.dw-akademi:hover .dw-soon{background:rgba(255,255,255,.20);color:#fff}
+/* drawer dil seçici (mobilde üst bant yok) — aç/kapa liste: N dile ölçeklenir */
+.drawer-lang{display:flex;flex-direction:column;margin-top:3px}
+.drawer-lang-toggle{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;background:none;border:none;font-family:inherit;padding:4px 0;cursor:pointer}
+.drawer-lang-label{display:inline-flex;align-items:center;gap:8px;font-size:13px;font-weight:600;color:var(--muted)}
+.drawer-lang-cur{display:inline-flex;align-items:center;gap:8px;font-size:13px;font-weight:700;letter-spacing:.03em;color:var(--slate)}
+.drawer-lang-cur i{font-size:10px;color:var(--muted);transition:transform .25s var(--ease)}
+.drawer-lang.open .drawer-lang-cur i{transform:rotate(180deg)}
+.drawer-lang-list{display:none;flex-direction:column;gap:5px;margin-top:10px;max-height:212px;overflow-y:auto;-webkit-overflow-scrolling:touch}
+.drawer-lang.open .drawer-lang-list{display:flex}
+.drawer-lang-list button{display:flex;align-items:center;gap:10px;width:100%;text-align:left;font-family:inherit;font-size:13.5px;font-weight:500;color:var(--slate);background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-sm);padding:10px 13px;cursor:pointer;transition:.18s var(--ease)}
+.drawer-lang-list button b{font-weight:700;letter-spacing:.03em;width:26px;flex:none}
+.drawer-lang-list button:hover{border-color:var(--tomato);color:var(--tomato)}
+.drawer-lang-list button.active{border-color:rgba(225,72,39,.4);background:var(--tomato-tint);color:var(--tomato)}
+.drawer-lang-list button.active::after{content:"\f00c";font-family:"Font Awesome 6 Free";font-weight:900;margin-left:auto;font-size:12px}
+
+/* mobil alt navigasyon — Instagram tarzı floating frosted pill */
+.bottom-nav{
+  position:fixed;left:16px;right:16px;z-index:90;
+  bottom:calc(14px + env(safe-area-inset-bottom,0px));
+  justify-content:space-around;align-items:center;gap:4px;
+  padding:6px 8px;border-radius:var(--radius-lg);
+  background:rgba(255,255,255,.55);
+  -webkit-backdrop-filter:blur(30px) saturate(190%);backdrop-filter:blur(30px) saturate(190%);
+  border:none;
+  box-shadow:0 10px 30px rgba(33,30,22,.16),0 2px 8px rgba(33,30,22,.07),inset 0 1px 0 rgba(255,255,255,.6);
+  transition:transform .26s var(--ease);
+}
+.bottom-nav.bn-hidden{transform:translateY(calc(100% + 30px));pointer-events:none}
+.bn-item{
+  flex:none;position:relative;display:grid;place-items:center;
+  width:40px;height:40px;border-radius:var(--radius-lg);
+  color:var(--slate-2);font-size:19px;transition:background .2s var(--ease),color .2s var(--ease),transform .12s var(--ease);
+}
+/* etiketler görsel gizli (icon-only, IG tarzı) — erişilebilirlik için DOM'da kalır */
+.bn-item>span:last-child{position:absolute;width:1px;height:1px;padding:0;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+/* aktif: yarı saydam domates (primary) — glass korunur, radius-lg pill ile uyumlu */
+.bn-item.active{color:var(--tomato);background:rgba(225,72,39,.15)}
+.bn-item:active{transform:scale(.9)}
+/* orta FAB: bar'dan çıkık (raised) — düz domates, token radius, halka yok */
+.bn-center{width:auto;height:auto;background:none;transform:translateY(-14px)}
+.bn-center:active{transform:translateY(-14px) scale(.92)}
+.bn-fab{
+  width:52px;height:52px;border-radius:var(--radius-lg);border:none;color:#fff;
+  background:var(--tomato);
+  display:grid;place-items:center;font-size:19px;
+  box-shadow:0 8px 20px rgba(225,72,39,.5);
+}
+
+/* ===================== GÖRÜŞ BİLDİR (eski site "Öneri ve Şikayet" mirası) =====================
+   Eski sitedeki sunum: sağ kenarda 90° döndürülmüş sabit turuncu buton (open-feedback-modal).
+   Aynı desen, yeni dile çevrildi. */
+.feedback-tab{
+  position:fixed;top:50%;right:0;z-index:55;
+  transform-origin:100% 0;transform:rotate(90deg) translateX(50%);
+  display:inline-flex;align-items:center;gap:8px;
+  background:var(--tomato);color:#fff;font-size:12.5px;font-weight:700;letter-spacing:.04em;
+  padding:10px 18px 12px;border-radius:0 0 var(--radius-md) var(--radius-md);
+  white-space:nowrap;
+  transition:background .2s var(--ease),transform .25s var(--ease);
+}
+.feedback-tab i{font-size:13px}
+.feedback-tab:hover{background:var(--tomato-dark);transform:rotate(90deg) translateX(50%) translateY(3px)}
+
+/* görüş bildir modal'ı — eski site akışı (konu seç → form → teşekkür) tek panelde */
+.fb-overlay{position:fixed;inset:0;background:rgba(20,18,12,.5);z-index:97;opacity:0;visibility:hidden;transition:opacity .25s var(--ease),visibility .25s}
+.fb-overlay.show{opacity:1;visibility:visible}
+.fb-modal{position:fixed;inset:0;z-index:98;display:grid;place-items:center;padding:20px;opacity:0;visibility:hidden;pointer-events:none;transition:opacity .25s var(--ease),visibility .25s}
+.fb-modal.show{opacity:1;visibility:visible;pointer-events:auto}
+.fb-panel{width:min(520px,100%);max-height:calc(100vh - 40px);overflow-y:auto;background:#fff;border-radius:var(--radius-lg);box-shadow:var(--sh-lg);transform:translateY(14px);transition:transform .3s var(--ease)}
+.fb-modal.show .fb-panel{transform:translateY(0)}
+.fb-head{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:20px 24px;border-bottom:1px solid var(--line)}
+.fb-head h3{font-size:19px}
+.fb-head p{font-size:12.5px;color:var(--muted);font-weight:500;margin-top:2px}
+.fb-close{flex:none;width:40px;height:40px;border-radius:var(--radius-md);border:1px solid var(--line);background:var(--paper);color:var(--slate);font-size:16px;cursor:pointer;display:grid;place-items:center;transition:.2s var(--ease)}
+.fb-close:hover{border-color:var(--tomato);color:var(--tomato)}
+.fb-body{padding:22px 24px 24px}
+.fb-topics{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:16px}
+.fb-topic{display:flex;align-items:center;gap:10px;font-family:inherit;font-size:13.5px;font-weight:500;color:var(--slate);background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-md);padding:12px 14px;cursor:pointer;transition:.18s var(--ease);text-align:left}
+.fb-topic i{width:18px;text-align:center;color:var(--tomato);font-size:14px;flex:none}
+.fb-topic:hover{border-color:var(--tomato);color:var(--tomato)}
+.fb-topic.active{border-color:rgba(225,72,39,.4);background:var(--tomato-tint);color:var(--tomato);font-weight:700}
+.fb-topic[data-topic="puan"]{grid-column:1/-1;justify-content:center} /* 5. tip (Puan ver — Yasin Bey'e öneri) tam satır */
+.fb-field{margin-bottom:11px}
+.fb-field input,.fb-field textarea{width:100%;font-family:inherit;font-size:14px;font-weight:500;color:var(--slate);background:var(--bg);border:1px solid var(--line);border-radius:var(--radius-md);padding:13px 15px;outline:none;transition:border-color .2s var(--ease)}
+.fb-field input::placeholder,.fb-field textarea::placeholder{color:#a7a7a7}
+.fb-field input:focus,.fb-field textarea:focus{border-color:var(--tomato)}
+.fb-field textarea{min-height:108px;resize:vertical}
+/* M17 — tipe göre alan setleri */
+.fb-fields{display:none}
+.fb-fields.active{display:block;animation:fadeUp .3s var(--ease)}
+.fb-q{font-size:13.5px;font-weight:700;color:var(--slate);margin-bottom:10px}
+.fb-select{
+  appearance:none;-webkit-appearance:none;width:100%;font-family:inherit;font-size:14px;font-weight:500;color:var(--slate);
+  background:var(--bg) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%237E7E7E' stroke-width='1.6' fill='none' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat right 15px center;
+  border:1px solid var(--line);border-radius:var(--radius-md);padding:13px 40px 13px 15px;outline:none;cursor:pointer;transition:border-color .2s var(--ease);
+}
+.fb-select:focus{border-color:var(--tomato)}
+.fb-select:invalid{color:#a7a7a7}
+.fb-chiprow{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:13px}
+.fb-chiprow .chip.active{border-color:var(--tomato);color:var(--tomato);background:var(--tomato-tint);font-weight:700}
+.fb-emoji{display:flex;gap:8px;margin-bottom:13px}
+.fb-emoji button{
+  flex:1;font-size:25px;line-height:1;padding:13px 0;background:var(--bg);border:1px solid var(--line);
+  border-radius:var(--radius-md);cursor:pointer;filter:grayscale(1);opacity:.65;transition:.18s var(--ease);
+}
+.fb-emoji button:hover{filter:none;opacity:1;border-color:var(--tomato)}
+.fb-emoji button.active{filter:none;opacity:1;border-color:rgba(225,72,39,.4);background:var(--tomato-tint);transform:scale(1.06)}
+.fb-shot{
+  display:flex;align-items:center;justify-content:center;gap:9px;width:100%;font-family:inherit;font-size:13px;font-weight:700;
+  color:var(--muted);background:transparent;border:1.5px dashed #d9d9d9;border-radius:var(--radius-md);padding:13px;margin-bottom:11px;
+  cursor:pointer;transition:.18s var(--ease);
+}
+.fb-shot small{font-weight:500}
+.fb-shot:hover{border-color:var(--tomato);color:var(--tomato)}
+.fb-kvkk{display:flex;align-items:flex-start;gap:9px;font-size:12.5px;font-weight:500;color:var(--muted);line-height:1.5;margin:14px 0 16px;cursor:pointer}
+.fb-kvkk input{margin-top:3px;accent-color:var(--tomato);flex:none}
+.fb-kvkk a{color:var(--tomato);font-weight:700;text-decoration:underline;text-underline-offset:2px}
+.fb-send{width:100%}
+.fb-success{text-align:center;padding:18px 0 10px}
+.fb-success .ok{width:62px;height:62px;border-radius:var(--radius-circle);background:#EAF7F0;color:var(--green);display:grid;place-items:center;font-size:26px;margin:0 auto 16px}
+.fb-success h4{font-size:18px;margin-bottom:7px}
+.fb-success p{font-size:13.5px;color:var(--muted);font-weight:500;max-width:340px;margin:0 auto}
+
+/* ===================== ÇEREZ ONAY BANNER ===================== */
+.cookie-banner{
+  position:fixed;left:0;right:0;bottom:24px;z-index:95;
+  width:min(1180px,calc(100% - 48px));margin:0 auto;
+  background:#fff;border:1px solid var(--line);border-radius:var(--radius-lg);
+  box-shadow:var(--sh-lg);padding:16px 20px;
+  transform:translateY(140%);opacity:0;visibility:hidden;
+  transition:transform .42s var(--ease),opacity .35s var(--ease),visibility .42s;
+}
+.cookie-banner.show{transform:translateY(0);opacity:1;visibility:visible}
+.cookie-inner{display:flex;align-items:center;justify-content:space-between;gap:24px}
+.cookie-text{display:flex;align-items:center;gap:14px}
+.cookie-ico{flex:none;width:44px;height:44px;border-radius:var(--radius-md);background:var(--tomato-tint);color:var(--tomato);display:grid;place-items:center;font-size:19px}
+.cookie-text p{font-size:13.5px;font-weight:500;color:var(--slate-2);line-height:1.5;max-width:700px}
+.cookie-text a{color:var(--tomato);font-weight:700;text-decoration:underline;text-underline-offset:2px;white-space:nowrap}
+.cookie-text a:hover{color:var(--tomato-dark)}
+.cookie-actions{flex:none;display:flex;align-items:center;gap:10px}
+.btn-cookie-reject,.btn-cookie-accept{font-family:inherit;font-size:13.5px;font-weight:700;border-radius:var(--radius-md);padding:11px 22px;cursor:pointer;transition:.2s var(--ease);white-space:nowrap}
+.btn-cookie-reject{color:var(--slate);background:transparent;border:1px solid var(--line)}
+.btn-cookie-reject:hover{border-color:var(--slate);color:var(--ink)}
+.btn-cookie-accept{color:#fff;background:var(--tomato);border:1px solid var(--tomato)}
+.btn-cookie-accept:hover{background:var(--tomato-dark);border-color:var(--tomato-dark);transform:translateY(-1px)}
+
+/* ===================== TABLET (≤1024px) — chrome katmanı ===================== */
+@media (max-width:1024px){
+  .wrap{padding:0 24px}
+
+  /* yatay menü → hamburger + drawer */
+  .h-top .nav{display:none}
+  .hamburger{display:grid}
+  .drawer{display:flex}
+  .drawer-overlay{display:block}
+
+  /* üst bant sadeleşir — yatay taşma engeli */
+  .topbar .tb-soc,.topbar .tb-div{display:none}
+
+  .foot-grid{grid-template-columns:1fr 1fr;gap:36px 28px}
+  .foot-brand{grid-column:1/-1}
+  .sec-head h2{font-size:30px}
+}
+
+/* ===================== MOBİL (≤640px) — chrome katmanı ===================== */
+@media (max-width:640px){
+  .wrap{padding:0 16px}
+
+  /* üst bant gizli, header en üste (tek kat 62px) */
+  .topbar{display:none}
+  .header{top:0}
+  .h-top>.wrap{height:62px;gap:10px}
+  .brand img{height:32px}
+  .head-actions{gap:6px}
+  .btn-login{display:none}                                   /* giriş → drawer + bottom-nav */
+  /* logged-in header öğeleri mobilde drawer + bottom-nav'a devreder (kaynak sıra ile is-auth'u yener) */
+  body.is-auth .head-add,body.is-auth .head-bell,body.is-auth .acct-wrap{display:none}
+  .icon-btn{width:40px;height:40px;font-size:15px}
+
+  /* fixed header offseti mobilde tek kat */
+  .below-header{padding-top:62px}
+
+  /* bölüm ritmi */
+  .sec{padding:44px 0}
+
+  /* section başlık araçları: oklar h2 satırında, "Tamamını Gör" kompakt metin-link.
+     DOM aynı — sol blok + sec-tools display:contents ile grid'e açılır:
+     [eyebrow] / [h2 | oklar] / [lead] / [see-all] */
+  .sec-head,.cat-head,.guide-head{
+    display:grid;grid-template-columns:minmax(0,1fr) auto;
+    column-gap:14px;align-items:center;margin-bottom:24px;
+  }
+  .sec-head>div:first-child,.cat-head>div:first-child,.guide-head>div:first-child,
+  .sec-head .sec-tools,.cat-head .sec-tools,.guide-head .sec-tools{display:contents}
+  .sec-head .eyebrow,.cat-head .eyebrow,.guide-head .eyebrow{grid-row:1;grid-column:1/-1}
+  .sec-head h2,.cat-head h2,.guide-head h2{grid-row:2;grid-column:1;font-size:24px}
+  .row-nav,.cat-nav{grid-row:2;grid-column:2;align-self:center}
+  .row-nav button,.cat-nav button{width:38px;height:38px;font-size:12px}
+  .sec-head .lead,.cat-head .lead,.guide-head .lead{grid-row:3;grid-column:1/-1;font-size:14.5px}
+  /* kompakt see-all: buton kabuğu kalkar, metin-link kalır */
+  .see-all{padding:0;border:none;background:transparent;font-size:13.5px;color:var(--tomato)}
+  .sec-tools>.see-all{grid-row:4;grid-column:1/-1;justify-self:start;margin-top:14px}
+
+  .chip{font-size:12px;padding:7px 12px;white-space:nowrap}
+
+  /* görüş bildir etiketi mobilde gizli — bottom-nav + FAB yeterli */
+  .feedback-tab{display:none}
+
+  /* footer — floating pill nav'ı örtmesin */
+  .footer.orange{padding-bottom:calc(86px + env(safe-area-inset-bottom,0px))}
+  .foot-grid{grid-template-columns:1fr;gap:30px}
+  .foot-legal{justify-content:center;text-align:center}
+  .foot-bottom{flex-direction:column;gap:14px;text-align:center}
+
+  /* mobil alt bar aç */
+  .bottom-nav{display:flex}
+
+  /* çerez banner: floating bottom-nav'ın ÜSTÜNDE, alt alta */
+  .cookie-banner{
+    width:calc(100% - 24px);padding:15px 16px;
+    bottom:calc(80px + env(safe-area-inset-bottom,0px));
+  }
+  .cookie-inner{flex-direction:column;align-items:stretch;gap:13px}
+  .cookie-text{align-items:flex-start}
+  .cookie-actions{gap:9px}
+  .cookie-actions button{flex:1;padding:12px 8px;font-size:12.5px}
+}
+
+/* =====================================================================
+   SAYFA CSS — sayfa-spesifik stiller BU İŞARETİN ALTINA eklenir.
+   Yukarıdaki chrome katmanına DOKUNMA (mega menü KİLİTLİ).
+   ===================================================================== */
+
+/* ============ MEKAN BUL SİHİRBAZI (Dalga 2 · madde 23+24) ============
+   bugun-ne-pisirsem-v1 "Tarif Ara" sihirbaz motoru kesfet'e port edildi
+   (stepper/pick/wstep/wiz-foot/res-*). Sonuç kartları kesfet'in kendi
+   .disc-card dilini kullanır (r-card değil). Mesafe slider = madde 24,
+   liste-seviyesi canlı filtre (hem #paneMekan hem sihirbaz sonucu). */
+.mb-sec{padding:30px 0 64px}
+.mb-intro{text-align:center;max-width:640px;margin:0 auto 30px}
+.mb-intro .eyebrow{justify-content:center}
+.mb-intro h1{font-size:30px;margin:8px 0 10px}
+.mb-intro p{font-size:15px;color:var(--muted);font-weight:500;line-height:1.6}
+.wiz-solo{max-width:980px;margin:0 auto}
+/* --- stepper (tarif-ekle MİRAS) --- */
+.stepper{display:flex;align-items:center;gap:14px;background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-lg) var(--radius-lg) 0 0;border-bottom:none;box-shadow:var(--sh-sm);padding:18px 22px;position:relative;z-index:2}
+.stp{display:flex;align-items:center;gap:12px;background:none;border:none;font-family:inherit;text-align:left;cursor:default;padding:0}
+.stp-num{position:relative;flex:none;width:40px;height:40px;border-radius:var(--radius-circle);border:2px solid var(--line);background:var(--paper);display:grid;place-items:center;font-size:14px;font-weight:700;color:var(--muted);transition:.25s var(--ease)}
+.stp-num i{display:none;font-size:13px}
+.stp-lbl{min-width:0}
+.stp-lbl b{display:block;font-size:13.5px;font-weight:700;color:var(--muted);line-height:1.2;white-space:nowrap;transition:color .2s}
+.stp-lbl small{display:block;font-size:11px;color:var(--muted);font-weight:500;margin-top:2px;white-space:nowrap}
+.stp.active .stp-num{background:var(--tomato);border-color:var(--tomato);color:#fff;box-shadow:0 6px 14px rgba(225,72,39,.32)}
+.stp.active .stp-lbl b{color:var(--slate)}
+.stp.done{cursor:pointer}
+.stp.done .stp-num{background:var(--tomato-tint);border-color:rgba(225,72,39,.35);color:var(--tomato)}
+.stp.done .stp-num span{display:none}
+.stp.done .stp-num i{display:block}
+.stp.done .stp-lbl b{color:var(--slate-2)}
+.stp.done:hover .stp-num{background:var(--tomato);border-color:var(--tomato);color:#fff}
+.stp.done:hover .stp-lbl b{color:var(--tomato)}
+.stp-line{flex:1;height:2px;border-radius:var(--radius-sm);background:var(--line);min-width:16px;transition:background .25s}
+.stp-line.done{background:rgba(225,72,39,.38)}
+/* --- adım kartı + seçim tile'ları --- */
+.wstep{display:none}
+.wstep.active{display:block;animation:fadeUp .35s var(--ease)}
+.form-card{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-lg);box-shadow:var(--sh-sm);padding:28px}
+.form-card.attach{border-radius:0 0 var(--radius-lg) var(--radius-lg)}
+.fc-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:24px;padding-bottom:18px;border-bottom:1px solid var(--line)}
+.fc-head h2{font-size:20px;display:flex;align-items:center;gap:11px}
+.fc-head h2 i{flex:none;width:38px;height:38px;border-radius:var(--radius-md);background:var(--tomato-tint);color:var(--tomato);display:grid;place-items:center;font-size:15px}
+.fc-step{flex:none;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);background:var(--bg);border:1px solid var(--line);padding:6px 11px;border-radius:var(--radius-sm);white-space:nowrap}
+.pick-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.pick-grid.c2{grid-template-columns:repeat(2,1fr)}
+.pick{position:relative;display:flex;flex-direction:column;align-items:center;text-align:center;gap:11px;background:var(--paper);border:1.5px solid var(--line);border-radius:var(--radius-lg);padding:20px 14px;cursor:pointer;font-family:inherit;transition:transform .15s var(--ease),border-color .18s var(--ease),background .18s var(--ease),box-shadow .18s var(--ease)}
+.pick .pk-ico{width:52px;height:52px;border-radius:var(--radius-circle);background:var(--tomato-tint);color:var(--tomato);display:grid;place-items:center;font-size:22px;transition:transform .18s var(--ease),background .18s var(--ease),color .18s var(--ease)}
+.pick .pk-txt b{display:block;font-size:14.5px;color:var(--slate);font-weight:700;line-height:1.25}
+.pick .pk-txt small{display:block;font-size:11.5px;color:var(--muted);font-weight:500;margin-top:3px}
+.pick .pk-check{position:absolute;top:11px;right:11px;width:22px;height:22px;border-radius:var(--radius-circle);border:1.5px solid #d8d8d8;background:var(--paper);display:grid;place-items:center;color:#fff;font-size:10px;transform:scale(.8);opacity:0;transition:.18s var(--ease)}
+.pick:hover{border-color:rgba(225,72,39,.4);transform:translateY(-4px);box-shadow:var(--sh-md)}
+.pick:hover .pk-ico{transform:scale(1.06)}
+.pick.sel{border-color:var(--tomato);background:var(--tomato-tint)}
+.pick.sel .pk-ico{background:var(--tomato);color:#fff}
+.pick.sel .pk-check{background:var(--tomato);border-color:var(--tomato);opacity:1;transform:scale(1)}
+.pick-note{display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--muted);font-weight:500;margin-top:18px}
+.pick-note i{color:var(--tomato);font-size:12px}
+.wiz-foot{display:flex;align-items:center;gap:14px;margin-top:24px}
+.wf-note{display:inline-flex;align-items:center;gap:8px;font-size:12.5px;color:var(--muted);font-weight:500}
+.wf-note i{color:var(--green);font-size:13px}
+.wiz-foot .btn{padding:14px 24px}
+.wiz-foot .wf-actions{display:flex;gap:10px;margin-left:auto}
+/* --- sonuç ekranı --- */
+.res-summary{display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-lg);box-shadow:var(--sh-sm);padding:16px 18px;margin-bottom:18px}
+.res-summary .rs-lbl{font-size:12.5px;font-weight:700;color:var(--slate);display:inline-flex;align-items:center;gap:8px}
+.res-summary .rs-lbl i{color:var(--tomato)}
+.res-chip{display:inline-flex;align-items:center;gap:7px;font-size:13px;font-weight:700;color:var(--tomato);background:var(--tomato-tint);border:1px solid rgba(225,72,39,.25);padding:7px 12px;border-radius:var(--radius-sm)}
+.res-chip i{font-size:11px;opacity:.8}
+.res-edit{margin-left:auto;background:none;border:none;font-family:inherit;font-size:12.5px;font-weight:700;color:var(--muted);cursor:pointer;text-decoration:underline;text-underline-offset:3px;transition:.18s}
+.res-edit:hover{color:var(--tomato)}
+.res-bar{display:flex;align-items:baseline;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:18px}
+.res-bar h2{font-size:24px}
+.res-bar h2 .q{color:var(--tomato)}
+.res-bar p{font-size:13.5px;color:var(--muted);font-weight:500}
+.res-empty{display:none;text-align:center;background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-lg);padding:70px 30px}
+.res-empty.show{display:block;animation:fadeUp .35s var(--ease)}
+.re-ico{width:76px;height:76px;border-radius:var(--radius-lg);background:var(--tomato-tint);color:var(--tomato);display:grid;place-items:center;font-size:30px;margin:0 auto 20px}
+.res-empty h3{font-size:23px;margin-bottom:9px}
+.res-empty p{font-size:14.5px;color:var(--muted);font-weight:500;max-width:420px;margin:0 auto 24px;line-height:1.6}
+/* --- mesafe slider (madde 24) — tek değer, tarif-bulucu .kr-track thumb mirası --- */
+.dist-bar{display:flex;align-items:center;gap:18px;flex-wrap:wrap;background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-md);box-shadow:var(--sh-sm);padding:13px 18px;margin-bottom:18px}
+.dist-bar .db-lbl{display:inline-flex;align-items:center;gap:9px;font-size:13px;font-weight:700;color:var(--slate);white-space:nowrap}
+.dist-bar .db-lbl i{color:var(--tomato);font-size:14px}
+.dist-bar .db-lbl b{color:var(--tomato);font-size:15px;min-width:46px;text-align:right}
+.dist-wrap{position:relative;flex:1;min-width:170px;height:22px;display:flex;align-items:center}
+.dist-track{position:relative;width:100%;height:6px;background:var(--line);border-radius:var(--radius-pill)}
+.dist-fill{position:absolute;top:0;left:0;height:100%;background:var(--tomato);border-radius:var(--radius-pill);transition:width .07s linear}
+.dist-wrap input[type=range]{position:absolute;left:0;top:0;width:100%;height:22px;margin:0;-webkit-appearance:none;appearance:none;background:transparent;cursor:pointer}
+.dist-wrap input[type=range]:focus{outline:none}
+.dist-wrap input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:20px;height:20px;border-radius:var(--radius-circle);background:#fff;border:2px solid var(--tomato);box-shadow:0 2px 6px rgba(33,30,22,.2);cursor:grab;transition:transform .12s var(--ease)}
+.dist-wrap input[type=range]:active::-webkit-slider-thumb{cursor:grabbing;transform:scale(1.1)}
+.dist-wrap input[type=range]::-moz-range-thumb{width:20px;height:20px;border-radius:50%;background:#fff;border:2px solid var(--tomato);box-shadow:0 2px 6px rgba(33,30,22,.2);cursor:grab}
+.dist-ends{font-size:11px;color:var(--muted);font-weight:600;white-space:nowrap}
+/* --- sonuç mekan kartı eklentileri (disc-card miras) --- */
+.disc-fig .disc-match{position:absolute;top:10px;left:10px;display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:800;color:#fff;background:linear-gradient(135deg,var(--tomato),var(--tomato-deep));padding:6px 11px;border-radius:var(--radius-pill);box-shadow:0 4px 12px rgba(225,72,39,.38);z-index:3}
+.disc-fig .disc-match i{font-size:11px}
+.disc-fig .disc-status.tr{left:auto;right:10px}
+.disc-meta .disc-dist{display:inline-flex;align-items:center;gap:5px;font-size:12.5px;font-weight:700;color:var(--tomato);white-space:nowrap;flex:none}
+.disc-meta .disc-dist i{font-size:11px}
+@media(max-width:760px){
+  .mb-intro h1{font-size:24px}
+  .stepper{overflow-x:auto;scrollbar-width:none;gap:8px;padding:14px}
+  .stepper::-webkit-scrollbar{display:none}
+  .stp-lbl{display:none}
+  .stp-line{min-width:10px}
+  .form-card{padding:20px 16px}
+  .pick-grid,.pick-grid.c2{grid-template-columns:1fr 1fr;gap:10px}
+  .pick{padding:14px}
+  .pick .pk-ico{width:40px;height:40px;font-size:17px}
+  .res-bar h2{font-size:20px}
+  .res-empty{padding:54px 20px}
+  .res-empty h3{font-size:19px}
+  .wiz-foot{flex-wrap:wrap}
+  .wf-note{order:2;width:100%}
+  .wiz-foot .wf-actions{order:1;width:100%}
+  .wiz-foot .wf-actions .btn{flex:1}
+}
+
+/* ============ KEŞFET (F4 / ara iş 3) — EDİTORYAL KEŞİF + UZUN-FORM DETAY ============
+   Tek dosya, JS toggle (?detay=1). Miras: anasayfa-portal-v3a .disc-card /
+   .disc-grid / .disc-tabs (editoryal görsel kart) · rd-crumb · shell .chip /
+   eyebrow. Yeni: .art-* uzun-form makale dili (Kinfolk/Food52 ref). */
+
+/* breadcrumb — VERBATIM */
+.rd-crumb{display:flex;align-items:center;flex-wrap:wrap;gap:9px;padding:18px 0 14px;font-size:13px;font-weight:500;color:var(--muted)}
+.rd-crumb a{color:var(--muted);transition:.18s}
+.rd-crumb a:hover{color:var(--tomato)}
+.rd-crumb i{font-size:9px;color:#c7c7c7}
+.rd-crumb b{color:var(--slate);font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:360px}
+
+/* ===== GRID GÖRÜNÜMÜ ===== */
+/* hero — SİTE KANONU (lst-top/kategori/mekan-detay deseni): koyu overlay + görsel banner */
+.ke-top{
+  position:relative;padding-top:128px;
+  background-image:linear-gradient(90deg,rgba(28,25,18,.93),rgba(33,30,22,.72)),
+    url('https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=1600&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5');
+  background-size:cover;background-position:center;
+}
+.ke-top .wrap{position:relative}
+.ke-top .rd-crumb{color:#c9c3b8}
+.ke-top .rd-crumb a{color:#c9c3b8}
+.ke-top .rd-crumb a:hover{color:#ff8763}
+.ke-top .rd-crumb i{color:rgba(255,255,255,.4)}
+.ke-top .rd-crumb b{color:#fff}
+/* hero gövde: solda başlık + sağda tab'a göre değişen istatistik (site kanonu lst-hero/lst-stats) */
+.ke-hero{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:44px;align-items:end;padding:6px 0 40px}
+.ke-head{min-width:0}
+.ke-stats{display:flex;flex-direction:column;gap:16px;padding-left:38px;border-left:1px solid rgba(255,255,255,.18)}
+.ke-stats[hidden]{display:none}
+.ke-stats .st b{display:block;font-size:29px;font-weight:700;color:#fff;letter-spacing:-.02em;line-height:1.1}
+.ke-stats .st span{font-size:12.5px;color:#aebcc6;font-weight:500}
+.ke-head .eyebrow{margin-bottom:13px;color:#ffd9cf}
+.ke-head .eyebrow::before{background:var(--tomato)}
+.ke-head h1{font-size:44px;letter-spacing:-.03em;color:#fff;text-shadow:0 2px 24px rgba(0,0,0,.25)}
+.ke-head h1 .accent{color:#ff7a5c}
+.ke-head .lead{font-size:15.5px;color:#e7edf1;font-weight:500;margin-top:10px;max-width:600px;text-shadow:0 1px 14px rgba(0,0,0,.3)}
+/* kategori sekme rayı — disc-tabs dili genişletilmiş */
+.ke-filter{display:flex;align-items:center;gap:9px;flex-wrap:wrap;padding-bottom:6px}
+.ke-filter .chip{white-space:nowrap}
+.ke-filter .chip i{font-size:11px;margin-right:5px;color:var(--tomato)}
+.ke-filter .chip.active{border-color:var(--tomato);background:var(--tomato-tint);color:var(--tomato);font-weight:700}
+/* keşif kartı meta — mekân konumu / etkinlik tarihi vurgusu (disc-meta dili korunur) */
+.disc-meta .disc-author i{color:var(--tomato)}
+.disc-meta .disc-where{color:var(--slate);font-weight:600}
+.disc-meta .disc-where i{color:var(--tomato)}
+.disc-meta .disc-when i{color:var(--tomato)}
+
+.ke-sec{padding:34px 0 74px;background:var(--bg-cream)}
+
+/* disc-card / disc-grid — anasayfa-portal-v3a VERBATIM */
+.disc-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:26px;align-items:start}
+.disc-card{cursor:pointer}
+.disc-fig{position:relative;aspect-ratio:16/10;border-radius:var(--radius-lg);overflow:hidden;box-shadow:var(--sh-sm)}
+.disc-fig .bg{width:100%;height:100%;background-size:cover;background-position:center;transition:.5s var(--ease)}
+.disc-card:hover .disc-fig .bg{transform:scale(1.05)}
+.disc-badges{position:absolute;bottom:13px;left:13px;display:flex;gap:6px;z-index:2}
+.disc-fig .m-types{z-index:2}
+.m-types{position:absolute;bottom:13px;right:13px;display:flex;gap:6px}
+.mt{display:inline-flex;align-items:center;gap:5px;background:rgba(20,18,12,.72);color:#fff;font-size:11px;font-weight:700;padding:6px 10px;border-radius:var(--radius-sm);backdrop-filter:blur(4px)}
+.disc-cat{display:inline-block;margin:16px 0 7px;font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--tomato)}
+.disc-card h3{font-size:18px;line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;margin-bottom:8px;transition:color .2s var(--ease)}
+.disc-card:hover h3{color:var(--tomato)}
+.disc-card p{font-size:13.5px;color:var(--muted);font-weight:500;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.disc-meta{display:flex;align-items:center;gap:16px;font-size:12.5px;color:var(--muted);font-weight:500;margin-top:13px;padding-top:12px;border-top:1px solid var(--line)}
+.disc-meta span{display:inline-flex;align-items:center;gap:6px}
+.disc-meta i{font-size:12px}
+.disc-meta .disc-stats{margin-left:auto;display:inline-flex;align-items:center;gap:12px;flex:none}
+.disc-meta .disc-rate i{color:var(--yellow)}
+.disc-meta .disc-author{color:var(--slate);font-weight:500}
+/* görsel üstü editör rozeti (tomato) */
+.disc-badge{background:var(--tomato);color:#fff;font-size:11px;font-weight:700;padding:6px 11px;border-radius:var(--radius-sm);letter-spacing:.02em;display:inline-flex;align-items:center;gap:6px}
+.disc-badge.soft{background:rgba(255,255,255,.94);color:var(--slate)}
+
+/* ÖNE ÇIKAN büyük kart — dergi-kapak overlay (ilk sıra, 2 kolon span).
+   KOMPOZİSYON: üst köşeler = utility etiketleri (sol: öne-çıkan bayrağı, sağ: okuma süresi);
+   alt = masthead bloğu (kicker + başlık + dek + künye). İki bölge ayrı → çakışma yok. */
+.disc-feature{grid-column:span 2}
+.disc-feature .disc-fig{aspect-ratio:16/9}
+/* badge'ler ALT'tan ÜST köşelere (yalnız feature; global kurallar korunur) */
+.disc-feature .disc-badges{top:14px;left:14px;bottom:auto}
+.disc-feature .m-types{top:14px;right:14px;bottom:auto}
+/* alt masthead caption: yukarı uzanan güçlü scrim + güvenli text-shadow → açık görselde bile net */
+.disc-feature .feat-cap{position:absolute;left:0;right:0;bottom:0;z-index:2;padding:72px 30px 24px;background:linear-gradient(to top,rgba(33,30,22,.95) 0%,rgba(33,30,22,.90) 40%,rgba(33,30,22,.76) 64%,rgba(33,30,22,.46) 82%,rgba(33,30,22,0) 100%);text-shadow:0 1px 14px rgba(33,30,22,.65)}
+.disc-feature .feat-cap .disc-cat{display:inline-block;margin:0 0 8px;font-size:11.5px}
+.disc-feature .feat-cap h3{color:#fff;font-size:26px;line-height:1.22;-webkit-line-clamp:3;margin-bottom:9px}
+.disc-feature .feat-cap p{color:rgba(255,255,255,.85);font-size:14.5px;-webkit-line-clamp:2;margin:0}
+.disc-feature .feat-cap .disc-meta{margin-top:13px;padding-top:0;border-top:none;color:rgba(255,255,255,.85)}
+.disc-feature .feat-cap .disc-meta i{color:rgba(255,255,255,.75)}
+.disc-feature .feat-cap .disc-where,.disc-feature .feat-cap .disc-when{color:rgba(255,255,255,.85)}
+
+/* ===== UZUN-FORM DETAY GÖRÜNÜMÜ ===== */
+.ke-grid-view[hidden],.ke-detail-view[hidden]{display:none}
+.art-wrap{background:var(--bg-white)}
+/* makale hero */
+.art-hero{position:relative;height:clamp(380px,52vh,560px);display:flex;align-items:flex-end;background-size:cover;background-position:center}
+.art-hero::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(20,18,12,.12) 0%,rgba(20,18,12,.34) 48%,rgba(15,13,9,.82) 100%)}
+.art-hero .wrap{position:relative;z-index:2;padding-bottom:42px}
+.art-hero .art-cat{display:inline-flex;align-items:center;gap:8px;font-size:11.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#ffd9cf;margin-bottom:16px}
+.art-hero .art-cat::before{content:"";width:26px;height:2px;background:var(--tomato);border-radius:var(--radius-sm)}
+.art-hero h1{color:#fff;font-size:clamp(30px,4vw,50px);line-height:1.08;letter-spacing:-.03em;max-width:880px;text-shadow:0 2px 28px rgba(0,0,0,.32)}
+.art-hmeta{display:flex;align-items:center;gap:16px;margin-top:22px;flex-wrap:wrap}
+.art-hauthor{display:flex;align-items:center;gap:11px}
+.art-hauthor .av{width:42px;height:42px;border-radius:var(--radius-circle);background-size:cover;background-position:center;border:2px solid rgba(255,255,255,.5)}
+.art-hauthor b{display:block;color:#fff;font-size:14.5px;font-weight:700}
+.art-hauthor span{display:block;color:#d7cfc4;font-size:12.5px;font-weight:500}
+.art-hsep{width:1px;height:30px;background:rgba(255,255,255,.28)}
+.art-hstat{display:inline-flex;align-items:center;gap:7px;color:#e9e2d6;font-size:13px;font-weight:600}
+.art-hstat i{color:#ffb9a6;font-size:12px}
+
+/* makale gövde */
+.art-body{padding:50px 0 30px}
+.art-col{max-width:760px;margin:0 auto}
+.art-lead{font-size:20px;line-height:1.7;color:var(--slate);font-weight:700;letter-spacing:-.01em;margin-bottom:30px}
+.art-col p{font-size:17px;line-height:1.85;color:var(--slate-2);font-weight:500;margin-bottom:24px}
+.art-col h2{font-size:27px;letter-spacing:-.02em;margin:42px 0 16px}
+.art-col h3{font-size:20px;margin:32px 0 12px}
+.art-col p a,.art-col a.inline{color:var(--tomato);font-weight:700;text-decoration:underline;text-underline-offset:3px}
+.art-col strong{color:var(--slate);font-weight:700}
+/* gövde görseli — gutter taşan editoryal genişlik */
+.art-fig{margin:36px 0}
+.art-fig .bg{width:100%;aspect-ratio:16/9;border-radius:var(--radius-lg);background-size:cover;background-position:center;box-shadow:var(--sh-sm)}
+.art-fig figcaption{font-size:12.5px;color:var(--muted);font-weight:500;margin-top:12px;text-align:center;display:flex;align-items:center;justify-content:center;gap:8px}
+.art-fig figcaption i{color:var(--tomato);font-size:11px}
+.art-wide{max-width:1000px}
+/* alıntı (pull-quote) */
+.art-quote{margin:38px 0;padding:8px 0 8px 28px;border-left:3px solid var(--tomato)}
+.art-quote p{font-size:23px;line-height:1.5;color:var(--slate);font-weight:700;letter-spacing:-.01em;margin:0}
+.art-quote cite{display:block;margin-top:14px;font-size:13.5px;color:var(--muted);font-weight:600;font-style:normal}
+/* ipucu kutusu (TD remind-box akrabası, domates tonu) */
+.art-tip{display:flex;gap:16px;background:var(--tomato-tint);border:1px solid rgba(225,72,39,.22);border-radius:var(--radius-lg);padding:22px 24px;margin:36px 0}
+.art-tip .at-ico{flex:none;width:44px;height:44px;border-radius:var(--radius-md);background:var(--paper);color:var(--tomato);display:grid;place-items:center;font-size:18px}
+.art-tip h4{font-size:16px;margin-bottom:6px}
+.art-tip p{font-size:14px;line-height:1.65;color:var(--slate-2);font-weight:500;margin:0}
+/* etiketler */
+.art-tags{display:flex;flex-wrap:wrap;align-items:center;gap:9px;margin:38px 0 0;padding-top:28px;border-top:1px solid var(--line)}
+.art-tags .tg-lbl{font-size:13px;font-weight:700;color:var(--slate);margin-right:3px}
+/* paylaşım rayı */
+.art-share{display:flex;align-items:center;gap:10px;margin-top:24px}
+.art-share span{font-size:13px;font-weight:700;color:var(--slate)}
+.art-share a{width:40px;height:40px;border-radius:var(--radius-md);border:1px solid var(--line);background:var(--paper);display:grid;place-items:center;color:var(--slate);font-size:15px;transition:.2s var(--ease)}
+.art-share a:hover{border-color:var(--tomato);color:var(--tomato);transform:translateY(-2px)}
+
+/* yazar kartı (mutfak-defteri .author-card akrabası) */
+.art-author{display:flex;gap:18px;align-items:center;background:var(--bg-cream);border:1px solid var(--line);border-radius:var(--radius-lg);padding:24px;margin:42px auto 0;max-width:760px}
+.art-author .av{flex:none;width:74px;height:74px;border-radius:var(--radius-circle);background-size:cover;background-position:center}
+.art-author .aa-cat{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--tomato);margin-bottom:5px}
+.art-author h4{font-size:19px;margin-bottom:6px}
+.art-author p{font-size:13.5px;color:var(--muted);font-weight:500;line-height:1.6}
+.art-author .btn{flex:none;align-self:center}
+
+/* ilgili keşifler */
+.art-related{background:var(--bg-cream);padding:60px 0}
+
+/* geri dön barı (detay üstü) */
+.art-back{display:inline-flex;align-items:center;gap:9px;font-family:inherit;font-size:13.5px;font-weight:700;color:var(--slate);background:none;border:none;cursor:pointer;padding:16px 0;transition:.18s}
+.art-back:hover{color:var(--tomato)}
+.art-back i{font-size:12px;transition:transform .2s var(--ease)}
+.art-back:hover i{transform:translateX(-3px)}
+
+/* ---- R6 (Beyar onaylı): breadcrumb HERO GÖRSELİ ÜZERİNE overlay (ayrı beyaz crumb bar kaldırıldı; puf-noktasi-detay R6 pattern'i birebir) ---- */
+.art-hero{flex-direction:column;justify-content:flex-start;min-height:clamp(440px,58vh,600px);height:auto;padding-top:112px}
+.art-hero .wrap{display:flex;flex-direction:column;flex:1;padding-top:16px;padding-bottom:42px}
+.art-hero-top{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.art-hero-crumb{display:flex;align-items:center;flex-wrap:wrap;gap:9px;font-size:13px;font-weight:500;color:#e3d9cd;padding:0;text-shadow:0 1px 8px rgba(0,0,0,.4)}
+.art-hero-crumb a{color:#e3d9cd;transition:.18s}
+.art-hero-crumb a:hover{color:#fff}
+.art-hero-crumb i{font-size:9px;color:rgba(255,255,255,.55)}
+.art-hero-crumb b{color:#fff;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:280px}
+.art-hero .art-back{color:#fff;padding:8px 14px;border:1px solid rgba(255,255,255,.4);border-radius:var(--radius-md);background:rgba(20,18,12,.32);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);text-shadow:0 1px 8px rgba(0,0,0,.4)}
+.art-hero .art-back:hover{background:var(--tomato);border-color:var(--tomato);color:#fff}
+.art-hero-main{margin-top:auto}
+
+/* ===================== TABLET (≤1024px) ===================== */
+@media (max-width:1024px){
+  .ke-head h1{font-size:33px}
+  .ke-hero{grid-template-columns:1fr;align-items:start;gap:22px;padding-bottom:32px}
+  .ke-stats{flex-direction:row;gap:34px;padding-left:0;border-left:none;padding-top:18px;border-top:1px solid rgba(255,255,255,.18)}
+  .disc-grid{grid-template-columns:1fr 1fr;gap:22px}
+  .disc-feature{grid-column:span 2}
+  .disc-feature .feat-cap h3{font-size:23px}
+}
+/* ===================== MOBİL (≤640px) ===================== */
+@media (max-width:640px){
+  .ke-top{padding-top:74px}
+  .rd-crumb{padding:14px 0 10px;font-size:12px}
+  .ke-head h1{font-size:27px}
+  .ke-stats{gap:24px}
+  .ke-stats .st b{font-size:23px}
+  .ke-filter{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;padding-bottom:4px}
+  .ke-filter::-webkit-scrollbar{display:none}
+  .ke-filter .chip{flex:none}
+  .ke-sec{padding:24px 0 50px}
+  .disc-grid{grid-template-columns:1fr;gap:20px}
+  .disc-feature{grid-column:auto}
+  .disc-feature .disc-fig{aspect-ratio:16/10}
+  .disc-feature .feat-cap{padding:18px 18px 16px}
+  .disc-feature .feat-cap h3{font-size:20px}
+  /* makale */
+  .art-hero{height:auto;min-height:clamp(360px,60vh,460px);padding-top:62px}
+  .art-hero .wrap{padding-top:12px;padding-bottom:28px}
+  .art-hero-top{gap:10px}
+  .art-hmeta .art-hsep{display:none}
+  .art-body{padding:34px 0 20px}
+  .art-lead{font-size:17px}
+  .art-col p{font-size:16px;line-height:1.8}
+  .art-col h2{font-size:23px}
+  .art-quote p{font-size:19px}
+  .art-author{flex-direction:column;text-align:center;gap:14px}
+  .art-related{padding:44px 0}
+}
+
+/* saglik-dropdown: scoped health chrome */
+/* diğer dropdown/mega aktif-item (turuncu kanon, underline gizli) */
+.dropdown:not(.dropdown-health) a.active{background:var(--tomato-tint)}
+.dropdown a.active::after,.mega-cats a.active::after{display:none}
+.mega-cats a.active{background:var(--tomato-tint)}
+.d-sub-health a i{color:var(--green)}
+.d-sub-health a:hover{color:var(--green);background:rgba(59,183,126,.10)}
+.nav a[href="saglik-hub-v1.html"]:hover{color:var(--green);background:rgba(59,183,126,.10)}
+.header.at-top .nav>.nav-item>a[href="saglik-hub-v1.html"]:hover{color:#fff;background:rgba(255,255,255,.14)}
+.dropdown-health a i{color:var(--green)}
+.dropdown-health a:hover{background:rgba(59,183,126,.12);color:var(--green)}
+.dropdown-health a.active{background:rgba(59,183,126,.12);color:var(--green)}
+.dropdown-health a.active i{color:var(--green)}
+.dropdown-health a.active::after{display:none}
+
+/* ============ KEŞFET HUB — TAB BARI + MEKANLAR PANE (mekan-liste facet kiti göçü) ============ */
+.ke-tabbar{background:var(--bg-white);border-bottom:1px solid var(--line);padding:16px 0;display:flex;justify-content:center}
+.ke-tabbar .wrap{display:flex;justify-content:center}
+.ke-tabbar .disc-tabs{display:inline-flex;gap:4px;background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-md);padding:4px}
+.dt{font-family:inherit;font-weight:700;font-size:13.5px;color:var(--muted);background:transparent;border:none;border-radius:var(--radius-sm);padding:10px 18px;cursor:pointer;display:inline-flex;align-items:center;gap:8px;transition:.2s var(--ease)}
+.dt i{font-size:12px}
+.dt:hover{color:var(--tomato)}
+.dt.active{background:var(--tomato);color:#fff}
+.disc-pane[hidden]{display:none}
+.ke-filter-wrap{background:var(--bg-white);padding:22px 0 4px}
+/* kompakt intro şerit (stats + popüler) — hub hero'yu TEKRARLAMAZ */
+.mkl-intro{display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap;margin-bottom:24px}
+.mkl-stats{display:flex;align-items:center;gap:26px;flex:none}
+.mkl-stats span{font-size:13px;color:var(--muted);font-weight:500}
+.mkl-stats b{font-size:19px;color:var(--slate);font-weight:700;margin-right:6px;letter-spacing:-.02em}
+.mkl-pop{min-width:0}
+.mkl-pop .lbl{font-size:13px;color:var(--muted);font-weight:500;margin-right:2px}
+/* --- facet / sonuç / sheet (mekan-liste VERBATIM, dup kanon hariç) --- */
+.lst-sec{padding:30px 0 74px;background:var(--bg-cream)}
+.lst-layout{display:grid;grid-template-columns:272px minmax(0,1fr);gap:30px;align-items:start}
+.lst-side{position:sticky;top:130px;background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-lg);padding:6px 20px 14px;max-height:calc(100vh - 154px);overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin}
+.fil-top{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:16px 0 12px;border-bottom:1px solid var(--line)}
+.fil-top h3{font-size:17px;display:inline-flex;align-items:center;gap:9px}
+.fil-top h3 i{color:var(--tomato);font-size:15px}
+.fil-clear{background:none;border:none;font-family:inherit;font-size:12.5px;font-weight:700;color:var(--muted);cursor:pointer;transition:.18s}
+.fil-clear:hover{color:var(--tomato)}
+.fct{border-bottom:1px solid var(--line)}
+.fct:last-child{border-bottom:none}
+.fct-head{display:flex;align-items:center;gap:9px;width:100%;background:none;border:none;font-family:inherit;font-size:14.5px;font-weight:700;color:var(--slate);padding:15px 0;cursor:pointer;text-align:left}
+.fct-head .fct-dot{display:none;flex:none;min-width:19px;height:19px;padding:0 5px;border-radius:var(--radius-circle);background:var(--tomato);color:#fff;font-size:10.5px;font-weight:700;align-items:center;justify-content:center}
+.fct.has-active .fct-dot{display:inline-flex}
+.fct-head .fct-car{margin-left:auto;font-size:11px;color:var(--muted);transition:transform .25s var(--ease)}
+.fct.open .fct-head .fct-car{transform:rotate(180deg)}
+.fct-body{display:none;padding:0 0 15px}
+.fct.open .fct-body{display:block;animation:fadeUp .25s var(--ease)}
+.fct-row{position:relative;display:flex;align-items:center;gap:10px;padding:6px 0;cursor:pointer;font-size:14px;font-weight:500;color:var(--slate-2);transition:color .15s}
+.fct-row input{position:absolute;opacity:0;pointer-events:none}
+.cbx{flex:none;width:20px;height:20px;border-radius:var(--radius-sm);border:1.5px solid #d8d8d8;background:var(--paper);display:grid;place-items:center;transition:.18s var(--ease)}
+.cbx::after{content:"\f00c";font-family:"Font Awesome 6 Free";font-weight:900;font-size:10px;color:#fff;transform:scale(0);transition:transform .15s var(--ease)}
+.fct-row input:checked ~ .cbx{background:var(--tomato);border-color:var(--tomato)}
+.fct-row input:checked ~ .cbx::after{transform:scale(1)}
+.fct-row:hover{color:var(--tomato)}
+.fct-row:hover .cbx{border-color:var(--tomato)}
+.fct-row input:checked ~ .ft{color:var(--slate);font-weight:700}
+.fct-row .ft{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.fct-row .fcnt{margin-left:auto;flex:none;font-size:12px;color:var(--muted);font-weight:500}
+.fct-row input:checked ~ .fcnt{color:var(--tomato);font-weight:700}
+.fct-row .ft .fst{color:var(--yellow);font-size:12px;margin-right:2px}
+.fct-more{background:none;border:none;font-family:inherit;font-size:12.5px;font-weight:700;color:var(--tomato);cursor:pointer;padding:7px 0 0 30px;display:inline-flex;align-items:center;gap:7px}
+.fct-more i{font-size:10px;transition:transform .25s var(--ease)}
+.fct.more-open .fct-more i{transform:rotate(180deg)}
+.fct-row.xtra{display:none}
+.fct.more-open .fct-row.xtra{display:flex}
+.sheet-head,.sheet-foot{display:none}
+.lst-bar{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.lst-sum{font-size:15px;color:var(--muted);font-weight:500;min-width:0}
+.lst-sum b{color:var(--slate);font-weight:700;font-size:17px}
+.lst-sum .q{color:var(--tomato);font-weight:700}
+.lst-tools{display:flex;align-items:center;gap:10px;flex:none}
+.sort-dd{position:relative}
+.sort-btn{display:inline-flex;align-items:center;gap:9px;font-family:inherit;font-weight:700;font-size:13.5px;color:var(--slate);padding:11px 16px;border:1px solid var(--line);border-radius:var(--radius-md);background:var(--paper);cursor:pointer;transition:.2s var(--ease);white-space:nowrap}
+.sort-btn i.fa-arrow-down-wide-short{color:var(--tomato);font-size:13px}
+.sort-btn .sb-car{font-size:10px;color:var(--muted);transition:transform .2s var(--ease)}
+.sort-btn:hover{border-color:var(--tomato);color:var(--tomato)}
+.sort-dd.open .sort-btn .sb-car{transform:rotate(180deg)}
+.sort-menu{position:absolute;top:calc(100% + 8px);right:0;min-width:206px;background:#fff;border:1px solid var(--line);border-radius:var(--radius-md);box-shadow:var(--sh-md);padding:6px;opacity:0;visibility:hidden;transform:translateY(-6px);transition:.2s var(--ease);z-index:40}
+.sort-dd.open .sort-menu{opacity:1;visibility:visible;transform:translateY(0)}
+.sort-menu button{display:flex;align-items:center;gap:10px;width:100%;text-align:left;background:none;border:none;font-family:inherit;color:var(--ink);font-size:13.5px;font-weight:500;padding:10px 11px;border-radius:var(--radius-sm);cursor:pointer;transition:.16s var(--ease)}
+.sort-menu button i{width:16px;text-align:center;color:var(--tomato);font-size:13px}
+.sort-menu button:hover{background:var(--tomato-tint);color:var(--tomato)}
+.sort-menu button.active{color:var(--tomato);font-weight:700}
+.sort-menu button.active::after{content:"\f00c";font-family:"Font Awesome 6 Free";font-weight:900;margin-left:auto;font-size:11px}
+.btn-filter{display:none;align-items:center;gap:9px;font-family:inherit;font-weight:700;font-size:13.5px;color:#fff;background:var(--tomato);border:1px solid var(--tomato);border-radius:var(--radius-md);padding:11px 16px;cursor:pointer;transition:.2s var(--ease);white-space:nowrap}
+.btn-filter:hover{background:var(--tomato-dark)}
+.btn-filter .fb-count{min-width:19px;height:19px;padding:0 5px;border-radius:var(--radius-circle);background:#fff;color:var(--tomato);font-size:11px;font-weight:700;display:grid;place-items:center}
+.btn-filter .fb-count[hidden]{display:none}
+.fchips{display:flex;flex-wrap:wrap;align-items:center;gap:9px;margin-top:16px}
+.fchips[hidden]{display:none}
+.fchip{display:inline-flex;align-items:center;gap:8px;font-size:13px;font-weight:700;color:var(--tomato);background:var(--tomato-tint);border:1px solid rgba(225,72,39,.25);padding:8px 12px;border-radius:var(--radius-sm);cursor:pointer;transition:.18s var(--ease)}
+.fchip i.fa-magnifying-glass{font-size:11px;opacity:.75}
+.fchip .x{display:grid;place-items:center;width:16px;height:16px;border-radius:var(--radius-circle);font-size:10px;transition:.15s}
+.fchip:hover{background:var(--tomato);color:#fff;border-color:var(--tomato)}
+.fchips-clear{background:none;border:none;font-family:inherit;font-size:12.5px;font-weight:700;color:var(--muted);cursor:pointer;padding:8px 4px;transition:.18s;text-decoration:underline;text-underline-offset:3px}
+.fchips-clear:hover{color:var(--tomato)}
+.mkl-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:24px;margin-top:24px}
+.disc-price-pill{letter-spacing:.06em;font-size:11.5px}
+.disc-price-pill b{color:#fff;font-weight:700}
+.disc-price-pill span{color:rgba(255,255,255,.42)}
+.disc-status{position:absolute;top:13px;left:13px;z-index:2;display:flex}
+.disc-status .st-open i{color:var(--green);font-size:10.5px}
+.disc-status .st-closing i{color:var(--yellow)}
+.disc-status .st-closed{background:rgba(116,28,18,.74);color:#ffd7cf}
+.disc-status .st-closed i{color:#ff9d88;font-size:10.5px}
+.disc-card.is-closed .disc-fig .bg{filter:grayscale(.45) brightness(.94)}
+.disc-meta .disc-loc{color:var(--slate);font-weight:500;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.disc-meta .disc-loc i{color:var(--tomato)}
+.r-rate{color:var(--slate);font-weight:700}
+.r-rate i{color:var(--yellow)}
+.r-views{display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--muted);font-weight:500}
+.r-views i{font-size:12px;color:var(--muted)}
+.lst-empty{display:none;text-align:center;background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-lg);padding:78px 30px;margin-top:24px}
+.lst-empty.show{display:block;animation:fadeUp .35s var(--ease)}
+.le-ico{width:76px;height:76px;border-radius:var(--radius-lg);background:var(--tomato-tint);color:var(--tomato);display:grid;place-items:center;font-size:30px;margin:0 auto 20px}
+.lst-empty h3{font-size:23px;margin-bottom:9px}
+.lst-empty p{font-size:14.5px;color:var(--muted);font-weight:500;max-width:420px;margin:0 auto 24px;line-height:1.6}
+.pagi{display:flex;align-items:center;justify-content:center;gap:8px;margin-top:40px;flex-wrap:wrap}
+.pg{min-width:44px;height:44px;padding:0 13px;display:inline-flex;align-items:center;justify-content:center;font-family:inherit;font-size:14px;font-weight:700;color:var(--slate);background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-md);cursor:pointer;transition:.2s var(--ease)}
+.pg:hover{border-color:var(--tomato);color:var(--tomato)}
+.pg.active{background:var(--tomato);border-color:var(--tomato);color:#fff;cursor:default}
+.pg.arrow i{font-size:12px}
+.pg[disabled]{opacity:.4;pointer-events:none}
+.pg-dots{color:var(--muted);font-weight:700;padding:0 2px;font-size:14px}
+.pagi-note{width:100%;text-align:center;font-size:12.5px;color:var(--muted);font-weight:500;margin-top:6px}
+.sheet-overlay{position:fixed;inset:0;background:rgba(20,18,12,.5);z-index:93;opacity:0;pointer-events:none;transition:opacity .3s var(--ease)}
+.sheet-overlay.open{opacity:1;pointer-events:auto}
+@media (max-width:1024px){
+  .lst-layout{display:block}
+  .btn-filter{display:inline-flex}
+  .lst-side{position:fixed;left:0;right:0;bottom:0;top:auto;z-index:94;max-height:82vh;border-radius:var(--radius-xl) var(--radius-xl) 0 0;border:none;box-shadow:0 -18px 50px rgba(33,30,22,.2);padding:0 20px;transform:translateY(105%);transition:transform .34s var(--ease);display:flex;flex-direction:column;overflow:hidden}
+  .lst-side.open{transform:translateY(0)}
+  .fil-top{display:none}
+  .sheet-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:18px 0 14px;border-bottom:1px solid var(--line);flex:none}
+  .sheet-head h3{font-size:18px;display:inline-flex;align-items:center;gap:10px}
+  .sheet-head h3 i{color:var(--tomato);font-size:15px}
+  .sheet-head .sh-right{display:flex;align-items:center;gap:8px}
+  .sheet-head .fil-clear{font-size:12.5px;padding:8px 10px}
+  .sheet-close{width:40px;height:40px;border-radius:var(--radius-md);border:1px solid var(--line);background:var(--paper);color:var(--slate);font-size:16px;cursor:pointer;display:grid;place-items:center;transition:.2s var(--ease)}
+  .sheet-close:hover{border-color:var(--tomato);color:var(--tomato)}
+  .sheet-body{flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;padding-bottom:10px}
+  .sheet-foot{display:block;flex:none;padding:14px 0 calc(16px + env(safe-area-inset-bottom,0px));border-top:1px solid var(--line);background:var(--paper)}
+  .sheet-foot .btn{width:100%}
+  .mkl-grid{grid-template-columns:1fr 1fr;gap:20px}
+}
+@media (max-width:640px){
+  .ke-tabbar{padding:12px 0}
+  .dt{padding:9px 14px;font-size:12.5px}
+  .ke-filter-wrap{padding:16px 0 2px}
+  .mkl-intro{flex-direction:column;align-items:flex-start;gap:14px;margin-bottom:18px}
+  .mkl-stats{gap:18px}
+  .mkl-stats b{font-size:17px}
+  .mkl-pop{width:100%;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;padding-bottom:4px}
+  .mkl-pop::-webkit-scrollbar{display:none}
+  .mkl-pop .chip{flex:none;white-space:nowrap}
+  .lst-sec{padding:22px 0 50px}
+  .lst-bar{align-items:flex-start}
+  .lst-sum{font-size:13.5px}
+  .lst-sum b{font-size:15px}
+  .sort-btn{padding:10px 12px;font-size:12.5px}
+  .sort-btn .sb-lbl{display:none}
+  .btn-filter{padding:10px 13px;font-size:12.5px}
+  .fchips{margin-top:13px;gap:7px}
+  .fchip{font-size:12px;padding:7px 10px}
+  .mkl-grid{grid-template-columns:1fr;gap:20px;margin-top:18px}
+  .pagi{gap:6px;margin-top:30px}
+  .pg{min-width:40px;height:40px;font-size:13px}
+  .lst-empty{padding:54px 20px}
+  .lst-empty h3{font-size:19px}
+}
+</style>
+<style>
+/* w3-nav-sweep */
+.dropdown .dd-group{margin:6px 0 2px;padding:9px 13px 4px;border-top:1px solid var(--line);font-size:10.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
+.d-sub .d-sub-group{margin-top:6px;padding:10px 22px 4px 36px;border-top:1px solid var(--line);font-size:10px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
+.acct-menu .acct-pro i{color:#d99812}
+.acct-menu .acct-pro:hover{background:linear-gradient(180deg,rgba(251,230,180,.55),rgba(243,209,120,.32))}
+.acct-menu .acct-pro:hover,.acct-menu .acct-pro:hover i{color:#8a6410}
+.vid-pro{display:inline-flex;align-items:center;gap:5px;font-size:10px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:#8a6410;background:linear-gradient(180deg,#fbe6b4,#f3d178);border:1px solid #e0bc63;padding:2px 8px;border-radius:999px;vertical-align:middle;margin-left:9px}
+.vid-pro i{font-size:9px}
+
+/* ===== MADDE 26 — Yol Güzergahım (Varyasyon A: Sürüş Kabini — harita tuval + cam paneller) ===== */
+.yg-hero{padding-bottom:14px}
+.yg-hero h1{font-size:clamp(26px,3.4vw,38px);line-height:1.08;margin:9px 0 7px}
+.yg-hero p{color:var(--muted);max-width:620px}
+.yg-stage-sec{padding:4px 0 64px}
+.wrap-wide{max-width:1380px;margin:0 auto;padding:0 20px}
+/* SAHNE: harita tuval, paneller üstünde mutlak */
+.yg-stage{position:relative}
+#routeMap{height:78vh;min-height:560px;width:100%;background:var(--cream-2);border-radius:var(--radius-xl);box-shadow:var(--sh-md);isolation:isolate}  /* isolate → leaflet iç z-index'leri sahnede kalır, cam paneller üstte */
+/* cam ortak */
+.yg-glass{background:rgba(255,255,255,.84);-webkit-backdrop-filter:saturate(150%) blur(15px);backdrop-filter:saturate(150%) blur(15px);border:1px solid rgba(255,255,255,.65);box-shadow:var(--sh-lg)}
+/* GÜZERGAHIM cam panel — sağ-üst (zoom kontrol sol-üstte, örtmez) */
+.yg-plan{position:absolute;top:16px;right:16px;width:344px;max-width:calc(100% - 32px);max-height:calc(78vh - 32px);overflow-y:auto;z-index:5;border-radius:var(--radius-lg);padding:16px}
+.yg-plan-eyebrow{font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--tomato);margin-bottom:12px;display:flex;align-items:center;gap:7px}
+/* Uber giriş (panel içi, dikey) */
+.yg-trip{display:flex;gap:12px;align-items:flex-start;position:relative}
+.rt-dot{width:10px;height:10px;border-radius:var(--radius-circle);margin-top:32px;flex:0 0 10px}
+.rt-dot.o{background:var(--slate)} .rt-dot.d{background:var(--tomato)}
+.rt-line{flex:0 0 2px;align-self:stretch;background:var(--line);margin:38px 0}
+.rt-fields{flex:1;display:grid;grid-template-columns:1fr;gap:10px}
+.rt-field{position:relative;display:flex;flex-direction:column;gap:5px}
+.rt-field label{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
+.rt-field input{padding:11px 13px;border:1px solid var(--line);border-radius:var(--radius-md);font:inherit;background:rgba(255,255,255,.7);color:var(--ink)}
+.rt-field input:focus{outline:0;border-color:var(--tomato);background:#fff}
+.yg-ac{position:absolute;top:100%;left:0;right:0;z-index:40;margin-top:6px;background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-md);box-shadow:var(--sh-md);overflow:hidden}
+.yg-ac button{display:flex;align-items:center;gap:9px;width:100%;padding:10px 13px;border:0;background:transparent;font:inherit;text-align:left;cursor:pointer;color:var(--ink)}
+.yg-ac button:hover{background:var(--cream-2);color:var(--tomato)}
+.yg-hint{margin:13px 0 0;color:var(--slate-2);font-size:12.5px;line-height:1.4;display:flex;gap:7px;align-items:flex-start}
+.yg-hint i{margin-top:2px}
+.yg-empty{text-align:center;padding:24px 8px 8px}
+.yg-empty .re-ico{width:46px;height:46px;margin:0 auto 12px;display:grid;place-items:center;border-radius:var(--radius-circle);background:var(--cream-2);color:var(--tomato);font-size:17px}
+.yg-empty h3{font-size:15px;margin-bottom:5px}
+.yg-empty p{color:var(--muted);font-size:12.5px;max-width:240px;margin:0 auto}
+/* GÜZERGAHIM durak listesi (itinerary — haritadaki rotanın dikey ikizi) */
+.yg-stops-wrap{margin-top:16px;border-top:1px solid var(--line);padding-top:14px}
+.yg-stops-wrap h3{font-size:13px;text-transform:uppercase;letter-spacing:.05em;color:var(--slate);display:flex;align-items:center;gap:7px;margin-bottom:11px}
+.rt-stops{list-style:none;display:flex;flex-direction:column;gap:6px;position:relative}
+.rt-stops li{list-style:none}
+.rt-stop{display:flex;align-items:center;gap:9px;padding:8px 10px;background:rgba(255,255,255,.62);border:1px solid var(--line);border-radius:var(--radius-md);transition:background .3s var(--ease)}
+.rt-stop.flash{background:var(--tomato-tint)}
+.rt-stop.end{background:transparent;border-style:dashed}
+.rs-n{flex:0 0 22px;width:22px;height:22px;display:grid;place-items:center;background:var(--tomato);color:#fff;border-radius:var(--radius-circle);font-size:11px;font-weight:700}
+.rt-stop.end .rs-n{background:var(--slate)} .rt-stop.end.d .rs-n{background:var(--tomato-deep)}
+.rs-txt{flex:1;display:flex;flex-direction:column;min-width:0}
+.rs-txt b{font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rs-txt small{color:var(--muted);font-size:11.5px}
+.rs-x{flex:0 0 auto;border:0;background:transparent;color:var(--muted);cursor:pointer;font-size:14px;padding:4px}
+.rs-x:hover{color:var(--tomato)}
+/* ALT RAİL — yol üstü öneriler, yatay kaydırma */
+.yg-rail{position:absolute;left:16px;right:16px;bottom:16px;z-index:5;border-radius:var(--radius-lg);padding:12px 14px 13px}
+.yg-rail-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:10px;padding:0 2px}
+.yg-rail-head h2{font-size:14.5px;display:flex;align-items:center;gap:8px}
+.yg-rail-head .q{color:var(--tomato);font-weight:800}
+.yg-rail-hint{display:inline-flex;align-items:center;gap:6px;font-size:11.5px;font-weight:600;color:var(--muted);white-space:nowrap}
+.yg-rail-toggle{display:inline-flex;align-items:center;gap:11px;border:0;background:transparent;cursor:pointer;font:inherit;padding:3px;border-radius:var(--radius-sm)}
+.yg-rail-toggle:hover .yg-rail-chev{color:var(--tomato)}
+.yg-rail-chev{font-size:12px;color:var(--slate);transition:transform .2s var(--ease)}
+.yg-rail.collapsed .yg-rail-chev{transform:rotate(-90deg)}
+.yg-rail.collapsed .yg-rail-scroll{display:none}
+.yg-rail.collapsed .yg-rail-hint{display:none}
+.yg-rail.collapsed::after{display:none}
+.yg-rail-scroll{position:relative;overflow-x:auto;overflow-y:hidden;scrollbar-width:thin;-webkit-overflow-scrolling:touch}
+.yg-rail-scroll::-webkit-scrollbar{height:7px} .yg-rail-scroll::-webkit-scrollbar-thumb{background:var(--line);border-radius:99px}
+.yg-grid{display:flex;gap:11px;width:max-content;padding:0 2px 4px}
+.yg-rail::after{content:"";position:absolute;top:42px;right:0;width:44px;bottom:18px;border-radius:0 var(--radius-lg) var(--radius-lg) 0;background:linear-gradient(90deg,rgba(255,255,255,0),rgba(255,255,255,.85));pointer-events:none}
+/* KOMPAKT KART (dikey mini) */
+.yg-card{flex:0 0 186px;width:186px;background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-md);overflow:hidden;transition:.18s var(--ease)}
+.yg-card:hover{box-shadow:var(--sh-sm);transform:translateY(-2px)}
+.yg-card.flash{outline:2px solid var(--tomato);outline-offset:1px}
+.yc-fig{position:relative;height:100px;cursor:pointer}
+.yc-fig .bg{position:absolute;inset:0;background-size:cover;background-position:center}
+.yc-km{position:absolute;left:7px;bottom:7px;display:inline-flex;align-items:center;gap:5px;font-size:10.5px;font-weight:700;color:#fff;background:rgba(33,30,22,.74);padding:4px 8px;border-radius:var(--radius-pill)}
+.yc-body{padding:9px 10px 10px}
+.yc-body h4{font-size:13px;line-height:1.24;margin-bottom:6px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;min-height:32px}
+.yc-meta{display:flex;align-items:center;gap:7px;margin-bottom:9px;font-size:11px;color:var(--muted);min-width:0}
+.yc-rate{display:inline-flex;align-items:center;gap:4px;color:var(--slate);font-weight:700;flex:0 0 auto}
+.yc-rate i{color:var(--yellow)}
+.yc-cat{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.yg-card .yg-add{width:100%;justify-content:center;gap:6px;padding:9px 10px;font-size:12px;border-radius:var(--radius-sm)}
+.yg-card .yg-add.on{background:var(--green-deep)}
+.yg-card .yg-add.on:hover{background:var(--green)}
+/* harita popup mini-kart */
+.yg-pop{display:flex;flex-direction:column;gap:2px;min-width:168px}
+.yg-pop b{font-size:14px} .yg-pop small{color:var(--muted);font-size:12px;margin-bottom:8px}
+.yg-pop-add{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:8px 12px;border:0;border-radius:var(--radius-md);background:var(--tomato);color:#fff;font:inherit;font-weight:600;cursor:pointer}
+.yg-pop-add:hover{background:var(--tomato-dark)} .yg-pop-add.on{background:var(--green-deep)}
+.leaflet-popup-content{margin:12px 14px}
+.leaflet-bar a{color:var(--slate);border-color:var(--line)}
+.leaflet-bar a:hover{background:var(--cream-2);color:var(--tomato)}
+.yg-pin-b{display:grid;place-items:center;width:34px;height:34px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);background:var(--tomato);color:#fff;box-shadow:var(--sh-md);border:2px solid #fff}
+.yg-pin-b i{transform:rotate(45deg);font-size:13px}
+.yg-pin.origin .yg-pin-b{background:var(--slate)} .yg-pin.dest .yg-pin-b{background:var(--tomato-deep)}
+.yg-pin.added .yg-pin-b{background:var(--green-deep)}
+/* MOBİL: harita kullanılır kalsın (~50vh); cam paneller alt-sheet'e iner, haritayı yutmaz */
+@media(max-width:900px){
+  .wrap-wide{padding:0 16px}
+  .yg-stage{display:flex;flex-direction:column}
+  #routeMap{height:50vh;min-height:340px;border-radius:var(--radius-lg)}
+  .yg-plan,.yg-rail{position:static;width:auto;max-width:none;max-height:none;left:auto;right:auto;top:auto;bottom:auto;margin-top:12px;background:var(--paper);-webkit-backdrop-filter:none;backdrop-filter:none;border:1px solid var(--line)}
+  .yg-rail::after{display:none}
+}
+</style>
+</head>
+<body>
+
+<!-- ===== TOP UTILITY BAR ===== -->
+<div class="topbar">
+  <div class="wrap">
+    <div class="tb-left">
+      <a href="tarif-liste-v1.html"><i class="fa-solid fa-utensils"></i> 48.200+ denenmiş tarif</a>
+      <span class="tb-div"></span>
+      <div class="tb-soc">
+        <a href="#"><i class="fa-brands fa-instagram"></i></a>
+        <a href="#"><i class="fa-brands fa-youtube"></i></a>
+        <a href="#"><i class="fa-brands fa-pinterest"></i></a>
+      </div>
+    </div>
+    <div class="tb-right">
+      <a class="tb-util" href="diyetisyen-dizin-v1.html"><i class="fa-solid fa-stethoscope"></i> Diyetisyen Ara</a>
+      <span class="tb-div tb-div-worlds"></span>
+      <div class="tb-worlds">
+        <a class="tb-world tb-world-store" href="dada-shop-v1.html"><i class="fa-solid fa-bag-shopping"></i><span class="tw-name">DadaStore</span><i class="fa-solid fa-arrow-right tw-arr"></i></a>
+        <a class="tb-world tb-world-akademi" href="akademi-v1.html"><i class="fa-solid fa-graduation-cap"></i><span class="tw-name">DadaAkademi</span><span class="tw-soon">Yakında</span></a>
+      </div>
+      
+      <div class="tb-lang" id="tbLang">
+        <button class="tb-lang-btn" id="tbLangBtn" type="button" aria-haspopup="true" aria-expanded="false">
+          <i class="fa-solid fa-globe"></i><span>EN</span><i class="fa-solid fa-chevron-down tb-lang-caret"></i>
+        </button>
+        <div class="tb-lang-menu" id="tbLangMenu" role="menu">
+          <a href="#" role="menuitem" data-lang="tr">TR <span>Türkçe</span></a>
+          <a href="#" role="menuitem" class="active" data-lang="en">EN <span>English</span></a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== HEADER ===== -->
+<header class="header">
+  <!-- TEK KAT: marka + ortalanmış nav + aksiyonlar (Revize T3 M2) -->
+  <div class="h-top">
+    <div class="wrap">
+      <a class="brand" href="anasayfa-portal-v3a.html">
+        <img class="logo-color" src="assets/img/logo-official.png" alt="DadaMutfak" />
+        <img class="logo-white" src="assets/img/logo-official-white.png" alt="DadaMutfak" />
+      </a>
+      <nav class="nav">
+        <div class="nav-item has-mega">
+          <a href="tarif-liste-v1.html">Tarifler <i class="fa-solid fa-chevron-down"></i></a>
+          <div class="mega">
+            <div class="wrap">
+              <div class="mega-grid">
+                <div class="mega-cats">
+                  <a href="tarif-liste-v1.html?kategori=corba-tarifleri" data-slug="/corba-tarifleri" title="Çorba Tarifleri | Dada Mutfak"><i class="fa-solid fa-bowl-food"></i> <span>Çorba<small>1.240 tarif</small></span></a>
+                  <a href="tarif-liste-v1.html?kategori=kirmizi-et-tarifleri" data-slug="/kirmizi-et-tarifleri" title="Kırmızı Et Tarifleri | Dada Mutfak"><i class="fa-solid fa-bacon"></i> <span>Kırmızı Et<small>1.480 tarif</small></span></a>
+                  <a href="tarif-liste-v1.html?kategori=beyaz-et-tarifleri" data-slug="/beyaz-et-tarifleri" title="Beyaz Et Tarifleri | Dada Mutfak"><i class="fa-solid fa-drumstick-bite"></i> <span>Beyaz Et<small>1.180 tarif</small></span></a>
+                  <a href="tarif-liste-v1.html?kategori=tatli-tarifleri" data-slug="/tatli-tarifleri" title="Tatlı Tarifleri | Dada Mutfak"><i class="fa-solid fa-ice-cream"></i> <span>Tatlı<small>2.105 tarif</small></span></a>
+                  <a href="tarif-liste-v1.html?kategori=hamur-isi-tarifleri" data-slug="/hamur-isi-tarifleri" title="Hamur İşi Tarifleri | Dada Mutfak"><i class="fa-solid fa-bread-slice"></i> <span>Hamur İşi<small>1.560 tarif</small></span></a>
+                  <a href="tarif-liste-v1.html?kategori=kek-tarifleri" data-slug="/kek-tarifleri" title="Kek Tarifleri | Dada Mutfak"><i class="fa-solid fa-stroopwafel"></i> <span>Kek<small>740 tarif</small></span></a>
+                  <a href="tarif-liste-v1.html?kategori=salata-tarifleri" data-slug="/salata-tarifleri" title="Salata Tarifleri | Dada Mutfak"><i class="fa-solid fa-leaf"></i> <span>Salata<small>980 tarif</small></span></a>
+                  <a href="tarif-liste-v1.html?kategori=kahvaltilik-tarifler" data-slug="/kahvaltilik-tarifler" title="Kahvaltılık Tarifler | Dada Mutfak"><i class="fa-solid fa-egg"></i> <span>Kahvaltılık<small>860 tarif</small></span></a>
+                  <a href="tarif-liste-v1.html?kategori=zeytinyagli-tarifler" data-slug="/zeytinyagli-tarifler" title="Zeytinyağlı Tarifler | Dada Mutfak"><i class="fa-solid fa-bottle-droplet"></i> <span>Zeytinyağlı<small>520 tarif</small></span></a>
+                  <a href="tarif-liste-v1.html?kategori=icecek-tarifleri" data-slug="/icecek-tarifleri" title="İçecek Tarifleri | Dada Mutfak"><i class="fa-solid fa-mug-hot"></i> <span>İçecek<small>430 tarif</small></span></a>
+                  <a href="tarif-liste-v1.html?kategori=vegan-ve-vejetaryen-tarifler" data-slug="/vegan-ve-vejetaryen-tarifler" title="Vegan ve Vejetaryen Tarifler | Dada Mutfak"><i class="fa-solid fa-seedling"></i> <span>Vegan ve Vejetaryen<small>1.120 tarif</small></span></a>
+                  <a href="tarif-liste-v1.html?kategori=makarna-tarifleri" data-slug="/makarna-tarifleri" title="Makarna Tarifleri | Dada Mutfak"><i class="fa-solid fa-plate-wheat"></i> <span>Makarna<small>670 tarif</small></span></a>
+                  <a href="tarif-liste-v1.html?kategori=pilav-tarifleri" data-slug="/pilav-tarifleri" title="Pilav Tarifleri | Dada Mutfak"><i class="fa-solid fa-bowl-rice"></i> <span>Pilav<small>410 tarif</small></span></a>
+                  <a href="tarif-liste-v1.html?kategori=meze-aperatif" data-slug="/meze-aperatif" title="Meze &amp; Aperatif | Dada Mutfak"><i class="fa-solid fa-shrimp"></i> <span>Meze &amp; Aperatif<small>540 tarif</small></span></a>
+                  <a class="mega-cat-all" href="tarif-liste-v1.html"><i class="fa-solid fa-book-open"></i> <span>Tüm Tarifler<small>14.975 tarif</small></span><i class="fa-solid fa-arrow-right mca-arrow"></i></a>
+                </div>
+                <div class="mega-feat">
+                  <div class="mf-fig" style="background-image:url('https://images.unsplash.com/photo-1565958011703-44f9829ba187?w=600&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')">
+                    <span class="r-chip"><i class="fa-solid fa-star"></i> Haftanın Tarifi</span>
+                    <h4>Mevsim Meyveli Cheesecake</h4>
+                  </div>
+                  <a class="mega-find" href="tarif-bulucu-v1.html">
+                    <span class="mf-ico"><i class="fa-solid fa-basket-shopping"></i></span>
+                    <span class="mf-body"><b>Dolapta Ne Var?</b><small>Dolabındakilerle ne pişersin?</small></span>
+                    <i class="fa-solid fa-arrow-right mf-arr"></i>
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+<div class="nav-item"><a href="bugun-ne-pisirsem-v1.html">Ne Pişirsem?</a></div>
+        <div class="nav-item"><a href="tarif-bulucu-v1.html">Dolapta Ne Var?</a></div>
+        <div class="nav-item"><a href="kesfet-v1.html" class="active">Keşfet</a></div>
+        <div class="nav-item">
+          <a href="mutfak-sirlari-v1.html">Mutfak Sırları <i class="fa-solid fa-chevron-down"></i></a>
+          <div class="dropdown">
+            <a href="mutfaga-giris-v1.html"><i class="fa-solid fa-graduation-cap"></i> <span>Mutfağa Giriş<small>Sıfırdan temel teknikler</small></span></a>
+            <a href="puf-noktalari-v1.html"><i class="fa-solid fa-lightbulb"></i> <span>Püf Noktaları<small>Şeflerden küçük sırlar</small></span></a>
+            <a href="ansiklopedi-v1.html"><i class="fa-solid fa-seedling"></i> <span>Mutfak Ansiklopedisi<small>Malzemeleri tanı: faydası, kullanımı</small></span></a>
+            <a href="sozluk-v1.html"><i class="fa-solid fa-book-open"></i> <span>Sözlük<small>Mutfak terimleri</small></span></a>
+            <a href="olcu-birimleri-v1.html"><i class="fa-solid fa-scale-balanced"></i> <span>Ölçü Birimleri<small>Bardak, kaşık, gram</small></span></a>
+            <a href="sofra-duzeni-v1.html"><i class="fa-solid fa-utensils"></i> <span>Sofra Düzeni<small>Günlük & davet sofra kurulumu</small></span></a>
+          </div>
+        </div>
+        <div class="nav-item">
+          <a href="saglik-hub-v1.html">Sağlıklı Yaşam <i class="fa-solid fa-chevron-down"></i></a>
+          <div class="dropdown dropdown-health">
+            <a href="hesaplayici-v1.html"><i class="fa-solid fa-calculator"></i> <span>Hesaplayıcılar<small>Kalori, BMI, metabolizma</small></span></a>
+            <a href="saglik-testler-v1.html"><i class="fa-solid fa-clipboard-question"></i> <span>Testler<small>Kendini keşfet, eğlenceli testler</small></span></a>
+            <a href="diyetisyen-dizin-v1.html"><i class="fa-solid fa-stethoscope"></i> <span>Diyetisyen Ara<small>Uzmanla randevu al</small></span></a>
+            <a href="besin-degerleri-v1.html"><i class="fa-solid fa-table-list"></i> <span>Besin Değerleri<small>Kalori, protein, karbonhidrat, yağ</small></span></a>
+          </div>
+        </div>
+      </nav>
+      <div class="head-actions">
+        <button class="icon-btn" aria-label="Ara" onclick="location.href='arama-v1.html'"><i class="fa-solid fa-magnifying-glass"></i></button>
+        <button class="btn-login" onclick="location.href='giris-v1.html'"><i class="fa-regular fa-user"></i> Giriş Yap</button>
+        <!-- LOGIN-STATE: Ekle ▾ (logged-in) -->
+        <div class="acct-item head-add">
+          <button class="icon-btn" aria-label="Ekle" aria-haspopup="true"><i class="fa-solid fa-plus"></i></button>
+          <div class="acct-menu">
+            <a href="tarif-ekle-v1.html"><i class="fa-solid fa-utensils"></i> <span>Tarif Ekle<small>Yeni bir tarif paylaş</small></span></a>
+            <a href="puf-noktasi-ekle-v1.html"><i class="fa-solid fa-lightbulb"></i> <span>Püf Noktası Ekle<small>Küçük bir mutfak sırrı</small></span></a>
+          </div>
+        </div>
+        <!-- LOGIN-STATE: bildirim zili (logged-in) -->
+        <a class="icon-btn head-bell" href="bildirimler-v1.html" aria-label="Bildirimler"><i class="fa-solid fa-bell"></i><span class="hb-badge">3</span></a>
+        <!-- LOGIN-STATE: hesap avatarı ▾ (logged-in) — persona Elif Şahin -->
+        <div class="acct-item acct-wrap">
+          <button class="acct-btn" aria-label="Hesabım" aria-haspopup="true">
+            <span class="acct-ava" style="background-image:url('https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')"></span>
+            <i class="fa-solid fa-chevron-down acct-caret"></i>
+          </button>
+          <div class="acct-menu">
+            <div class="acct-id">
+              <span class="acct-ava" style="background-image:url('https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')"></span>
+              <span class="acct-id-txt"><b>Elif Şahin</b><small>@elifsahin</small></span>
+            </div>
+            <div class="acct-div"></div>
+            <a href="mutfak-defteri-v1.html"><i class="fa-solid fa-book-bookmark"></i> <span>Mutfak Defterim</span></a>
+            <a href="rozetler-v1.html"><i class="fa-solid fa-medal"></i> <span>Rozetlerim</span></a>
+            <a href="mutfak-defteri-v1.html?tab=tarifler"><i class="fa-solid fa-utensils"></i> <span>Tariflerim</span></a>
+            <a href="mutfak-defteri-v1.html?tab=kaydedilenler"><i class="fa-solid fa-bookmark"></i> <span>Kaydedilenler</span></a>
+            <a href="mutfak-defteri-v1.html?tab=menuler"><i class="fa-solid fa-layer-group"></i> <span>Menülerim</span></a>
+            <a href="alisveris-listesi-v1.html"><i class="fa-solid fa-basket-shopping"></i> <span>Alışveriş Listem</span></a>
+            <a href="rezervasyonlarim-v1.html"><i class="fa-solid fa-calendar-check"></i> <span>Rezervasyonlarım</span></a>
+            <a href="bildirimler-v1.html"><i class="fa-solid fa-bell"></i> <span>Bildirimler</span></a>
+            <a href="pro-v1.html" class="acct-pro"><i class="fa-solid fa-crown"></i> <span>Pro'ya Yükselt</span></a>
+            <a href="hesabim-v1.html"><i class="fa-solid fa-gear"></i> <span>Ayarlar / Hesabım</span></a>
+            <div class="acct-div"></div>
+            <a href="anasayfa-portal-v3a.html?auth=0" class="acct-logout"><i class="fa-solid fa-right-from-bracket"></i> <span>Çıkış</span></a>
+          </div>
+        </div>
+        <button class="icon-btn hamburger" id="hamburger" aria-label="Menü"><i class="fa-solid fa-bars"></i></button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ===== MOBİL DRAWER (≤1024px) ===== -->
+<div class="drawer-overlay" id="drawerOverlay"></div>
+<aside class="drawer" id="drawer" aria-label="Mobil menü">
+  <div class="drawer-head">
+    <img class="drawer-logo" src="assets/img/logo-official.png" alt="DadaMutfak" />
+    <button class="drawer-close" id="drawerClose" aria-label="Menüyü kapat"><i class="fa-solid fa-xmark"></i></button>
+  </div>
+  <nav class="drawer-nav">
+    <div class="d-item d-has-sub">
+      <button class="d-link">Tarifler <i class="fa-solid fa-chevron-down"></i></button>
+      <div class="d-sub">
+        <a href="tarif-liste-v1.html?kategori=corba-tarifleri" data-slug="/corba-tarifleri" title="Çorba Tarifleri | Dada Mutfak"><i class="fa-solid fa-bowl-food"></i> Çorba</a>
+        <a href="tarif-liste-v1.html?kategori=kirmizi-et-tarifleri" data-slug="/kirmizi-et-tarifleri" title="Kırmızı Et Tarifleri | Dada Mutfak"><i class="fa-solid fa-bacon"></i> Kırmızı Et</a>
+        <a href="tarif-liste-v1.html?kategori=beyaz-et-tarifleri" data-slug="/beyaz-et-tarifleri" title="Beyaz Et Tarifleri | Dada Mutfak"><i class="fa-solid fa-drumstick-bite"></i> Beyaz Et</a>
+        <a href="tarif-liste-v1.html?kategori=tatli-tarifleri" data-slug="/tatli-tarifleri" title="Tatlı Tarifleri | Dada Mutfak"><i class="fa-solid fa-ice-cream"></i> Tatlı</a>
+        <a href="tarif-liste-v1.html?kategori=hamur-isi-tarifleri" data-slug="/hamur-isi-tarifleri" title="Hamur İşi Tarifleri | Dada Mutfak"><i class="fa-solid fa-bread-slice"></i> Hamur İşi</a>
+        <a href="tarif-liste-v1.html?kategori=kek-tarifleri" data-slug="/kek-tarifleri" title="Kek Tarifleri | Dada Mutfak"><i class="fa-solid fa-stroopwafel"></i> Kek</a>
+        <a href="tarif-liste-v1.html?kategori=salata-tarifleri" data-slug="/salata-tarifleri" title="Salata Tarifleri | Dada Mutfak"><i class="fa-solid fa-leaf"></i> Salata</a>
+        <a href="tarif-liste-v1.html?kategori=kahvaltilik-tarifler" data-slug="/kahvaltilik-tarifler" title="Kahvaltılık Tarifler | Dada Mutfak"><i class="fa-solid fa-egg"></i> Kahvaltılık</a>
+        <a href="tarif-liste-v1.html?kategori=zeytinyagli-tarifler" data-slug="/zeytinyagli-tarifler" title="Zeytinyağlı Tarifler | Dada Mutfak"><i class="fa-solid fa-bottle-droplet"></i> Zeytinyağlı</a>
+        <a href="tarif-liste-v1.html?kategori=icecek-tarifleri" data-slug="/icecek-tarifleri" title="İçecek Tarifleri | Dada Mutfak"><i class="fa-solid fa-mug-hot"></i> İçecek</a>
+        <a href="tarif-liste-v1.html?kategori=vegan-ve-vejetaryen-tarifler" data-slug="/vegan-ve-vejetaryen-tarifler" title="Vegan ve Vejetaryen Tarifler | Dada Mutfak"><i class="fa-solid fa-seedling"></i> Vegan ve Vejetaryen</a>
+        <a href="tarif-liste-v1.html"><i class="fa-solid fa-book-open"></i> Tüm Tarifler</a>
+      </div>
+    </div>
+<div class="d-item"><a class="d-link" href="bugun-ne-pisirsem-v1.html">Ne Pişirsem?</a></div>
+    <div class="d-item"><a class="d-link" href="tarif-bulucu-v1.html">Dolapta Ne Var?</a></div>
+    <div class="d-item"><a class="d-link" href="kesfet-v1.html">Keşfet</a></div>
+    <div class="d-item d-has-sub">
+      <button class="d-link">Mutfak Sırları <i class="fa-solid fa-chevron-down"></i></button>
+      <div class="d-sub">
+        <a href="mutfaga-giris-v1.html"><i class="fa-solid fa-graduation-cap"></i> Mutfağa Giriş</a>
+        <a href="puf-noktalari-v1.html"><i class="fa-solid fa-lightbulb"></i> Püf Noktaları</a>
+        <a href="ansiklopedi-v1.html"><i class="fa-solid fa-seedling"></i> Mutfak Ansiklopedisi</a>
+        <a href="sozluk-v1.html"><i class="fa-solid fa-book-open"></i> Sözlük</a>
+        <a href="olcu-birimleri-v1.html"><i class="fa-solid fa-scale-balanced"></i> Ölçü Birimleri</a>
+        <a href="sofra-duzeni-v1.html"><i class="fa-solid fa-utensils"></i> Sofra Düzeni</a>
+      </div>
+    </div>
+    <div class="d-item d-has-sub">
+      <button class="d-link">Sağlıklı Yaşam <i class="fa-solid fa-chevron-down"></i></button>
+      <div class="d-sub d-sub-health">
+        <a href="hesaplayici-v1.html"><i class="fa-solid fa-calculator"></i> Hesaplayıcılar</a>
+        <a href="saglik-testler-v1.html"><i class="fa-solid fa-clipboard-question"></i> Testler</a>
+        <a href="diyetisyen-dizin-v1.html"><i class="fa-solid fa-stethoscope"></i> Diyetisyen Ara</a>
+        <a href="besin-degerleri-v1.html"><i class="fa-solid fa-table-list"></i> Besin Değerleri</a>
+      </div>
+    </div>
+  </nav>
+  <div class="drawer-foot">
+    <!-- LOGIN-STATE: logged-out giriş butonu -->
+    <button class="btn btn-primary drawer-login" style="width:100%" onclick="location.href='giris-v1.html'"><i class="fa-regular fa-user"></i> Giriş Yap</button>
+    <!-- LOGIN-STATE: logged-in kimlik satırı (persona Elif Şahin) -->
+    <div class="drawer-acct">
+      <span class="da-ava" style="background-image:url('https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')"></span>
+      <div class="da-info">
+        <b>Elif Şahin</b>
+        <div class="da-links">
+          <a href="mutfak-defteri-v1.html">Defterim</a>
+          <a href="bildirimler-v1.html">Bildirimler</a>
+          <a href="hesabim-v1.html">Ayarlar</a>
+          <a href="anasayfa-portal-v3a.html?auth=0">Çıkış</a>
+        </div>
+      </div>
+    </div>
+    <a href="tarif-ekle-v1.html" class="drawer-add"><i class="fa-solid fa-circle-plus"></i> Tarif Ekle</a>
+    <a href="puf-noktasi-ekle-v1.html" class="drawer-add"><i class="fa-solid fa-lightbulb"></i> Püf Noktası Ekle</a>
+    <!-- DÜNYA KAPILARI: mobilde topbar gizli (≤640 display:none) → kapılar buradan erişilir -->
+    <div class="drawer-worlds">
+      <a class="drawer-world dw-store" href="dada-shop-v1.html"><i class="fa-solid fa-bag-shopping"></i><span class="dw-name">DadaStore</span><i class="fa-solid fa-arrow-right dw-arr"></i></a>
+      <a class="drawer-world dw-akademi" href="akademi-v1.html"><i class="fa-solid fa-graduation-cap"></i><span class="dw-name">DadaAkademi</span><span class="dw-soon">Yakında</span></a>
+    </div>
+    <div class="drawer-lang" id="drawerLang">
+      <button class="drawer-lang-toggle" type="button" aria-haspopup="true" aria-expanded="false">
+        <span class="drawer-lang-label"><i class="fa-solid fa-globe"></i> Dil</span>
+        <span class="drawer-lang-cur"><span id="drawerLangCur">EN — English</span> <i class="fa-solid fa-chevron-down"></i></span>
+      </button>
+      <div class="drawer-lang-list" role="menu">
+        <button type="button" data-lang="tr" data-name="Türkçe"><b>TR</b> Türkçe</button>
+        <button type="button" class="active" data-lang="en" data-name="English"><b>EN</b> English</button>
+      </div>
+    </div>
+  </div>
+</aside>
+
+<!-- ===== MOBİL BOTTOM NAV (≤640px) ===== -->
+<nav class="bottom-nav" aria-label="Mobil alt navigasyon">
+  <a href="anasayfa-portal-v3a.html" class="bn-item"><i class="fa-solid fa-house"></i><span>Ana Sayfa</span></a>
+  <a href="tarif-liste-v1.html" class="bn-item"><i class="fa-solid fa-bowl-food"></i><span>Tarifler</span></a>
+  <a href="bugun-ne-pisirsem-v1.html" class="bn-item bn-center"><span class="bn-fab"><i class="fa-solid fa-wand-magic-sparkles"></i></span><span>Ne Pişirsem?</span></a>
+  <a href="saglik-hub-v1.html" class="bn-item"><i class="fa-solid fa-heart-pulse"></i><span>Sağlıklı Yaşam</span></a>
+  <a href="giris-v1.html" id="bnAccount" class="bn-item"><i class="fa-solid fa-user"></i><span>Hesap</span></a>
+</nav>
+
+<!-- ===== GÖRÜŞ BİLDİR (sağ kenar sabit etiket) ===== -->
+<a class="feedback-tab" href="#" id="fbTab" aria-label="Görüş Bildir — öneri ve şikayet">
+  <i class="fa-solid fa-comment-dots"></i> Görüş Bildir
+</a>
+
+<!-- ===== GÖRÜŞ BİLDİR MODAL ===== -->
+<div class="fb-overlay" id="fbOverlay"></div>
+<div class="fb-modal" id="fbModal" role="dialog" aria-modal="true" aria-label="Görüş Bildir">
+  <div class="fb-panel">
+    <div class="fb-head">
+      <div>
+        <h3>Görüş Bildir</h3>
+        <p>Önerin, şikayetin veya sorun — hepsine kulak veriyoruz.</p>
+      </div>
+      <button class="fb-close" id="fbClose" type="button" aria-label="Kapat"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="fb-body">
+      <form id="fbForm">
+        <!-- M17: konu tipine göre alan seti değişir (Onedio referansı, mevcut dil korunarak) -->
+        <div class="fb-topics" role="group" aria-label="Konu seç">
+          <button class="fb-topic active" type="button" data-topic="oneri"><i class="fa-solid fa-lightbulb"></i> Önerim var</button>
+          <button class="fb-topic" type="button" data-topic="soru"><i class="fa-solid fa-circle-question"></i> Bir sorum var</button>
+          <button class="fb-topic" type="button" data-topic="sorun"><i class="fa-solid fa-bug"></i> Teknik sorun</button>
+          <button class="fb-topic" type="button" data-topic="ihlal"><i class="fa-solid fa-shield-halved"></i> İhlal bildirimi</button>
+          <button class="fb-topic" type="button" data-topic="puan"><i class="fa-solid fa-face-smile"></i> Puan ver</button>
+        </div>
+
+        <div class="fb-fields active" data-for="oneri">
+          <div class="fb-chiprow" role="group" aria-label="İlgili alan">
+            <button class="chip active" type="button">Tarifler</button>
+            <button class="chip" type="button">Keşfet</button>
+            <button class="chip" type="button">DadaStore</button>
+            <button class="chip" type="button">Uygulama</button>
+            <button class="chip" type="button">Diğer</button>
+          </div>
+          <div class="fb-field"><textarea required placeholder="Önerini anlat *"></textarea></div>
+          <div class="fb-field"><input type="email" placeholder="E-posta adresin (opsiyonel)" /></div>
+        </div>
+
+        <div class="fb-fields" data-for="soru">
+          <div class="fb-field">
+            <select class="fb-select" required>
+              <option value="" selected disabled>Sorunun konusu *</option>
+              <option>Üyelik & Hesap</option>
+              <option>Tarif ekleme</option>
+              <option>Diyetisyen randevusu</option>
+              <option>Sipariş & DadaStore</option>
+              <option>Diğer</option>
+            </select>
+          </div>
+          <div class="fb-field"><textarea required placeholder="Sorunu yaz *"></textarea></div>
+          <div class="fb-field"><input type="email" required placeholder="E-posta adresin (cevap için) *" /></div>
+        </div>
+
+        <div class="fb-fields" data-for="sorun">
+          <div class="fb-field">
+            <select class="fb-select" required>
+              <option value="" selected disabled>Sorunu nerede yaşadın? *</option>
+              <option>Anasayfa</option>
+              <option>Tarif sayfası</option>
+              <option>Arama / Dolapta Ne Var?</option>
+              <option>Üyelik & Giriş</option>
+              <option>DadaStore</option>
+              <option>Mobil uygulama</option>
+            </select>
+          </div>
+          <div class="fb-field"><textarea required placeholder="Sorunu kısaca anlat — ne yaptın, ne oldu? *"></textarea></div>
+          <button class="fb-shot" type="button"><i class="fa-solid fa-image"></i> Ekran görüntüsü ekle <small>(opsiyonel)</small></button>
+          <div class="fb-field"><input type="email" placeholder="E-posta adresin (opsiyonel)" /></div>
+        </div>
+
+        <div class="fb-fields" data-for="ihlal">
+          <div class="fb-field"><input type="url" required placeholder="İhlal içeren sayfanın linki *" /></div>
+          <div class="fb-field">
+            <select class="fb-select" required>
+              <option value="" selected disabled>İhlal türü *</option>
+              <option>Telif hakkı</option>
+              <option>Uygunsuz içerik</option>
+              <option>Spam / yanıltıcı içerik</option>
+              <option>Diğer</option>
+            </select>
+          </div>
+          <div class="fb-field"><textarea required placeholder="Açıklama *"></textarea></div>
+          <div class="fb-field"><input type="email" required placeholder="E-posta adresin *" /></div>
+        </div>
+
+        <div class="fb-fields" data-for="puan">
+          <p class="fb-q">DadaMutfak deneyimini nasıl puanlarsın?</p>
+          <div class="fb-emoji" role="group" aria-label="Puan">
+            <button type="button" data-val="1" aria-label="Çok kötü">😡</button>
+            <button type="button" data-val="2" aria-label="Kötü">🙁</button>
+            <button type="button" data-val="3" aria-label="İdare eder">😐</button>
+            <button type="button" data-val="4" aria-label="İyi">🙂</button>
+            <button type="button" data-val="5" aria-label="Harika">😍</button>
+          </div>
+          <div class="fb-field"><textarea placeholder="Eklemek istediğin bir şey var mı? (opsiyonel)"></textarea></div>
+          <div class="fb-field"><input type="email" placeholder="E-posta adresin (opsiyonel)" /></div>
+        </div>
+
+        <label class="fb-kvkk">
+          <input type="checkbox" required />
+          <span><a href="yasal-v1.html?metin=aydinlatma">Aydınlatma Metni</a>'ni ve <a href="yasal-v1.html?metin=kvkk">KVKK Metni</a>'ni okudum, onaylıyorum.</span>
+        </label>
+        <button class="btn btn-primary fb-send" type="submit"><i class="fa-solid fa-paper-plane"></i> Gönder</button>
+      </form>
+      <div class="fb-success" id="fbSuccess" hidden>
+        <span class="ok"><i class="fa-solid fa-check"></i></span>
+        <h4>Görüşün bize ulaştı</h4>
+        <p>Teşekkürler! Ekibimiz en kısa sürede inceleyip gerekirse e-posta ile dönüş yapacak.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== ÇEREZ ONAY BANNER ===== -->
+<div class="cookie-banner" id="cookieBanner" role="dialog" aria-label="Çerez onayı" aria-live="polite">
+  <div class="cookie-inner">
+    <div class="cookie-text">
+      <span class="cookie-ico"><i class="fa-solid fa-cookie-bite"></i></span>
+      <p>Sana daha iyi bir deneyim sunmak için çerezler kullanıyoruz. Siteyi kullanmaya devam ederek çerez kullanımını kabul etmiş olursun. <a href="yasal-v1.html?metin=cerez">Çerez Politikası</a> · <a href="yasal-v1.html?metin=aydinlatma">KVKK Aydınlatma Metni</a></p>
+    </div>
+    <div class="cookie-actions">
+      <button type="button" class="btn-cookie-reject" id="cookieReject">Reddet</button>
+      <button type="button" class="btn-cookie-accept" id="cookieAccept">Tümünü Kabul Et</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== ANA İÇERİK (footer reveal perdesi) ===== -->
+<main class="page-main" id="pageMain">
+  <section class="yg-hero below-header">
+    <div class="wrap">
+      <span class="eyebrow">Yol Güzergahım</span>
+      <h1>Yola çık, yol üstünü keşfet</h1>
+      <p>Nereden nereye gittiğini yaz — güzergahın boyunca uğrayabileceğin mekanları haritada görelim, beğendiklerini durak listene ekle.</p>
+    </div>
+  </section>
+
+  <section class="yg-stage-sec"><div class="wrap-wide">
+    <!-- SAHNE: harita = tuval; Güzergahım + öneri rail'i üstünde cam panel -->
+    <div class="yg-stage">
+      <!-- HARİTA (zoom kontrolleri sol-üstte) -->
+      <div id="routeMap"></div>
+
+      <!-- GÜZERGAHIM CAM PANELİ (sağ-üst) — giriş + itinerary -->
+      <div class="yg-glass yg-plan">
+        <div class="yg-plan-eyebrow"><i class="fa-solid fa-route"></i> Güzergahını kur</div>
+        <!-- UBER GİRİŞ: Nereden / Nereye (yazınca şehir önerisi · harita-tıkla yok) -->
+        <div class="yg-trip">
+          <span class="rt-dot o"></span><span class="rt-line"></span><span class="rt-dot d"></span>
+          <div class="rt-fields">
+            <div class="rt-field">
+              <label>Nereden</label>
+              <input type="text" id="ygFrom" autocomplete="off" placeholder="Şehir / yer yaz…">
+              <div class="yg-ac" id="ygFromAc" hidden></div>
+            </div>
+            <div class="rt-field">
+              <label>Nereye</label>
+              <input type="text" id="ygTo" autocomplete="off" placeholder="Şehir / yer yaz…">
+              <div class="yg-ac" id="ygToAc" hidden></div>
+            </div>
+          </div>
+        </div>
+        <p class="yg-hint" id="ygHint"><i class="fa-solid fa-circle-info"></i> İki ucu da yaz — güzergahı çizip yol üstü mekanları gösterelim.</p>
+        <!-- boş-durum (rota çizilince kalkar) -->
+        <div class="yg-empty" id="ygPanelEmpty">
+          <div class="re-ico"><i class="fa-solid fa-map-location-dot"></i></div>
+          <h3>Güzergah bekleniyor</h3>
+          <p>Uçları seç — yol üstü mekanlar haritada baloncuk olarak belirsin.</p>
+        </div>
+        <!-- GÜZERGAHIM (eklenen duraklar — Kalkış→duraklar→Varış) -->
+        <div class="yg-stops-wrap" id="ygStopsWrap" hidden>
+          <h3><i class="fa-solid fa-list-check"></i> Güzergahım</h3>
+          <ol class="rt-stops" id="ygStops"></ol>
+        </div>
+      </div>
+
+      <!-- ALT RAİL CAM — yol üstü öneriler (yatay kaydırma) -->
+      <div class="yg-glass yg-rail" id="ygSuggestWrap" hidden>
+        <div class="yg-rail-head">
+          <h2><span class="q" id="ygCount">0</span> mekan yol üstünde</h2>
+          <button class="yg-rail-toggle" id="ygRailToggle" type="button" aria-expanded="true" aria-label="Öneri listesini gizle ya da göster">
+            <span class="yg-rail-hint"><i class="fa-solid fa-arrows-left-right"></i> kaydır</span>
+            <i class="fa-solid fa-chevron-down yg-rail-chev"></i>
+          </button>
+        </div>
+        <div class="yg-rail-scroll"><div class="yg-grid" id="ygGrid"></div></div>
+      </div>
+    </div>
+  </div></section>
+</main>
+
+<!-- ===== LG-GATE (giriş kapısı) — logged-out mikro-aksiyon (yorum/kaydet/takip) =====
+     Markup </main> SONRASINA (lessons: fixed overlay page-main stacking context'ine girmez).
+     body.is-auth iken hiç açılmaz; data-lg-gate taşıyan öğeler tetikler. SS: ?lg=1 -->
+<div class="lg-overlay" id="lgOverlay"></div>
+<div class="lg-gate" id="lgGate" role="dialog" aria-modal="true" aria-label="Giriş gerekli">
+  <div class="lg-panel">
+    <button class="lg-close" id="lgClose" type="button" aria-label="Kapat"><i class="fa-solid fa-xmark"></i></button>
+    <span class="lg-ico"><i class="fa-solid fa-lock"></i></span>
+    <h4 id="lgTitle">Bu işlem için giriş yap</h4>
+    <p id="lgDesc">Kaydetmek, yorum yapmak ve takip etmek için DadaMutfak hesabına giriş yapman gerekiyor.</p>
+    <div class="lg-acts">
+      <a class="btn btn-primary" href="giris-v1.html"><i class="fa-regular fa-user"></i> Giriş Yap</a>
+      <a class="btn btn-ghost" href="giris-v1.html?tab=kayit">Üye Ol</a>
+    </div>
+  </div>
+</div>
+
+
+
+<!-- ===== FOOTER ===== -->
+<footer class="footer orange">
+  <div class="wrap">
+    <div class="foot-grid">
+      <div class="foot-brand">
+        <img src="assets/img/logo-official-white.png" alt="DadaMutfak" />
+        <div class="foot-soc">
+          <a href="#" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+          <a href="#" aria-label="YouTube"><i class="fa-brands fa-youtube"></i></a>
+          <a href="#" aria-label="X"><i class="fa-brands fa-x-twitter"></i></a>
+          <a href="#" aria-label="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
+          <a href="#" aria-label="LinkedIn"><i class="fa-brands fa-linkedin-in"></i></a>
+        </div>
+      </div>
+      <div class="foot-col">
+        <h5>Kurumsal</h5>
+        <a href="sef-ol-v1.html">Şef Ol</a>
+        <a href="sefler-v1.html">Şefler</a>
+        <a href="olcu-birimleri-v1.html">Ölçü Birimleri</a>
+      </div>
+      <div class="foot-col">
+        <h5>Hızlı Erişim</h5>
+        <a href="hakkimizda-v1.html">Hakkımızda</a>
+        <a href="hakkimizda-v1.html#kunye">Künye</a>
+        <a href="sss-v1.html">S.S.S.</a>
+      </div>
+      <div class="foot-col">
+        <h5>İletişim</h5>
+        <a href="iletisim-v1.html">Bize Ulaşın</a>
+        <a href="#" onclick="document.getElementById('fbTab').click();return false;">Öneri ve Şikayet</a>
+      </div>
+      <div class="foot-col">
+        <h5>İş Birliği</h5>
+        <a href="reklam-ver-v1.html">Reklam Vermek İçin</a>
+        <a href="reklam-ver-v1.html">Sponsorlar ve Partnerler</a>
+      </div>
+    </div>
+    <!-- M15: etiketler tek satır için kısaltıldı — tam adlar hedef sayfa başlıklarında (Yasin Bey onayına sunulacak) -->
+    <div class="foot-legal">
+      <a href="yasal-v1.html?metin=iade">İptal, İade ve Değişim</a><span class="sep"></span>
+      <a href="yasal-v1.html?metin=teslimat">Ödeme ve Teslimat</a><span class="sep"></span>
+      <a href="yasal-v1.html?metin=mesafeli">Mesafeli Satış</a><span class="sep"></span>
+      <a href="yasal-v1.html?metin=cerez">Gizlilik ve Çerez</a><span class="sep"></span>
+      <a href="yasal-v1.html?metin=uyelik">Üyelik Sözleşmesi</a><span class="sep"></span>
+      <a href="yasal-v1.html?metin=kullanim">Kullanım Koşulları</a><span class="sep"></span>
+      <a href="yasal-v1.html?metin=aydinlatma">Aydınlatma Metni</a><span class="sep"></span>
+      <a href="yasal-v1.html?metin=kvkk">KVKK</a><span class="sep"></span>
+      <a href="yasal-v1.html?metin=bilgilendirme#b4">İhlal Bildir</a>
+    </div>
+    <div class="foot-bottom">
+      <span>© 2026 DadaMutfak. Tüm hakları saklıdır.</span>
+      <a href="https://gaviaworks.com" target="_blank" rel="noopener">#GaviaWorks</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+/* ===== ORTAK CHROME JS (v3a'dan, sayfa-bağımsız hale getirildi) =====
+   SS paramları: ?dd=1 (mega+dil açık) · ?drawer=1 · ?cc=1 (çerez) · ?fb=1 (görüş modal)
+   Header VARSAYILAN KATI. Hero'lu sayfa şeffaf başlangıç isterse aşağıdaki
+   heroMode bayrağını kendi kopyasında true yapar (v3a davranışı). */
+
+// SS paramları
+// ===== Login-state simülasyonu (mockup) — İA §2.3 sözleşmesi =====
+// ?auth=1 → localStorage dm_auth='1' + body.is-auth ; ?auth=0 → temizle (logout)
+// param yoksa localStorage'a bakılır. Çıkış linkleri ?auth=0'a yönlendirir (M7).
+(function(){
+  var qs = location.search;
+  if(qs.indexOf('auth=1')>-1){ try{localStorage.setItem('dm_auth','1');}catch(e){} }
+  else if(qs.indexOf('auth=0')>-1){ try{localStorage.removeItem('dm_auth');}catch(e){} }
+  var authed = false;
+  try{ authed = localStorage.getItem('dm_auth')==='1'; }catch(e){}
+  if(authed){ document.body.classList.add('is-auth'); }
+  // M6 — bottom-nav "Hesap" hedefi: logged-in → Defter, logged-out → giriş
+  var bnAcc = document.getElementById('bnAccount');
+  if(bnAcc){ bnAcc.setAttribute('href', authed ? 'mutfak-defteri-v1.html' : 'giris-v1.html'); }
+})();
+
+if(location.search.indexOf('dd=1')>-1){document.querySelector('.nav-item').classList.add('open');var _l=document.getElementById('tbLang');if(_l)_l.classList.add('open');}
+if(location.search.indexOf('drawer=1')>-1){window.addEventListener('DOMContentLoaded',function(){document.getElementById('drawer').classList.add('open');document.getElementById('drawerOverlay').classList.add('open');var _s=document.querySelector('.d-has-sub');if(_s)_s.classList.add('open');});}
+
+// header: VARSAYILAN katı (içerik sayfası). heroMode=true → hero üstünde şeffaf,
+// ~60px scroll sonrası katı (v3a davranışı; ?hdr=solid ile yine zorla katı)
+(function(){
+  var header=document.querySelector('.header');
+  var heroMode=false;                                  // hero'lu sayfada true yap
+  var forceSolid=location.search.indexOf('hdr=solid')>-1;
+  if(!heroMode||forceSolid)return;                     // katı kal — at-top hiç eklenmez
+  function onScroll(){ if(window.scrollY<60){header.classList.add('at-top');} else {header.classList.remove('at-top');} }
+  onScroll(); window.addEventListener('scroll',onScroll,{passive:true});
+})();
+
+// save / favorite toggle (recipes + products) — sayfada varsa çalışır
+document.querySelectorAll('.r-save, .p-fav, .feat-save').forEach(function(btn){
+  btn.addEventListener('click',function(e){
+    e.stopPropagation();
+    btn.classList.toggle('saved');
+    var i=btn.querySelector('i');
+    if(btn.classList.contains('saved')){i.classList.remove('fa-regular');i.classList.add('fa-solid');}
+    else{i.classList.remove('fa-solid');i.classList.add('fa-regular');}
+  });
+});
+
+// "tümünü gör" slider okları — data-track / data-dir ile genel
+document.querySelectorAll('.row-nav button').forEach(function(b){
+  b.addEventListener('click',function(){
+    var t=document.getElementById(b.getAttribute('data-track'));
+    if(t){t.scrollBy({left:b.getAttribute('data-dir')==='prev'?-620:620,behavior:'smooth'});if(t._pauseAuto)t._pauseAuto();}
+  });
+});
+
+// nav dropdown click toggle (hover also works via CSS)
+document.querySelectorAll('.nav-item').forEach(function(it){
+  var trigger=it.querySelector(':scope > a');
+  if(!it.querySelector('.dropdown,.mega'))return;
+  trigger.addEventListener('click',function(e){
+    e.preventDefault();
+    var wasOpen=it.classList.contains('open');
+    document.querySelectorAll('.nav-item.open').forEach(function(o){o.classList.remove('open')});
+    if(!wasOpen)it.classList.add('open');
+  });
+});
+document.addEventListener('click',function(e){
+  if(!e.target.closest('.nav-item'))document.querySelectorAll('.nav-item.open').forEach(function(o){o.classList.remove('open')});
+});
+
+// ---- HESAP / EKLE dropdown (header sağ blok, login-state) tıkla-aç ----
+document.querySelectorAll('.acct-item').forEach(function(it){
+  var trigger=it.querySelector('.icon-btn,.acct-btn');
+  if(!trigger||!it.querySelector('.acct-menu'))return;
+  trigger.addEventListener('click',function(e){
+    e.preventDefault();
+    var wasOpen=it.classList.contains('open');
+    document.querySelectorAll('.acct-item.open').forEach(function(o){o.classList.remove('open')});
+    if(!wasOpen)it.classList.add('open');
+  });
+});
+document.addEventListener('click',function(e){
+  if(!e.target.closest('.acct-item'))document.querySelectorAll('.acct-item.open').forEach(function(o){o.classList.remove('open')});
+});
+
+// ---- LG-GATE (giriş kapısı) — logged-out mikro-aksiyon kapısı ----
+(function(){
+  var gate=document.getElementById('lgGate');
+  var overlay=document.getElementById('lgOverlay');
+  if(!gate)return;
+  function open(title,desc){
+    if(document.body.classList.contains('is-auth'))return false;   // logged-in: kapı yok
+    if(title)document.getElementById('lgTitle').textContent=title;
+    if(desc)document.getElementById('lgDesc').textContent=desc;
+    gate.classList.add('show');overlay.classList.add('show');document.body.style.overflow='hidden';
+    return true;
+  }
+  function close(){gate.classList.remove('show');overlay.classList.remove('show');document.body.style.overflow='';}
+  window.__lgGate=open;window.__lgGateClose=close;
+  document.getElementById('lgClose').addEventListener('click',close);
+  overlay.addEventListener('click',close);
+  document.addEventListener('keydown',function(e){if(e.key==='Escape'&&gate.classList.contains('show'))close();});
+  // data-lg-gate taşıyan öğeler logged-out'ta kapıyı açar (capture: sayfa toggle'ından önce keser)
+  document.addEventListener('click',function(e){
+    var t=e.target.closest('[data-lg-gate]');
+    if(!t)return;
+    if(document.body.classList.contains('is-auth'))return;          // logged-in: normal davranış
+    e.preventDefault();e.stopPropagation();
+    open(t.getAttribute('data-lg-title'),t.getAttribute('data-lg-desc'));
+  },true);
+  if(location.search.indexOf('lg=1')>-1){open();}                    // SS paramı
+})();
+
+// ---- DİL SEÇİCİ (üst bant dropdown) ----
+(function(){
+  var lang=document.getElementById('tbLang');
+  if(!lang)return;
+  var btn=document.getElementById('tbLangBtn');
+  btn.addEventListener('click',function(e){
+    e.preventDefault();e.stopPropagation();
+    var open=lang.classList.toggle('open');
+    btn.setAttribute('aria-expanded',open?'true':'false');
+  });
+  lang.querySelectorAll('.tb-lang-menu a').forEach(function(a){
+    a.addEventListener('click',function(e){
+      e.preventDefault();
+      lang.querySelectorAll('.tb-lang-menu a').forEach(function(x){x.classList.remove('active')});
+      a.classList.add('active');
+      btn.querySelector('span').textContent=a.getAttribute('data-lang').toUpperCase();
+      lang.classList.remove('open');btn.setAttribute('aria-expanded','false');
+    });
+  });
+  document.addEventListener('click',function(e){
+    if(!e.target.closest('#tbLang')){lang.classList.remove('open');btn.setAttribute('aria-expanded','false');}
+  });
+})();
+
+// ---- MOBİL DRAWER aç/kapa ----
+(function(){
+  var drawer=document.getElementById('drawer');
+  var overlay=document.getElementById('drawerOverlay');
+  var burger=document.getElementById('hamburger');
+  var closeBtn=document.getElementById('drawerClose');
+  function open(){drawer.classList.add('open');overlay.classList.add('open');document.body.style.overflow='hidden';}
+  function close(){drawer.classList.remove('open');overlay.classList.remove('open');document.body.style.overflow='';}
+  burger.addEventListener('click',open);
+  closeBtn.addEventListener('click',close);
+  overlay.addEventListener('click',close);
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')close();});
+  // accordion: alt menülü öğeler tıkla-aç
+  drawer.querySelectorAll('.d-has-sub > .d-link').forEach(function(lnk){
+    lnk.addEventListener('click',function(){
+      var item=lnk.parentElement;
+      var wasOpen=item.classList.contains('open');
+      drawer.querySelectorAll('.d-item.open').forEach(function(o){o.classList.remove('open')});
+      if(!wasOpen)item.classList.add('open');
+    });
+  });
+  // alt link veya direkt linke tıklayınca drawer kapansın
+  drawer.querySelectorAll('.d-sub a, .d-item > a.d-link, .drawer-foot a, .drawer-foot > button').forEach(function(a){
+    a.addEventListener('click',close);
+  });
+  // drawer dil seçici — aç/kapa liste + seçim (drawer kapanmaz, N dile ölçeklenir)
+  var dl=document.getElementById('drawerLang');
+  if(dl){
+    var dlToggle=dl.querySelector('.drawer-lang-toggle');
+    dlToggle.addEventListener('click',function(){
+      var open=dl.classList.toggle('open');
+      dlToggle.setAttribute('aria-expanded',open?'true':'false');
+    });
+    dl.querySelectorAll('.drawer-lang-list button').forEach(function(b){
+      b.addEventListener('click',function(){
+        dl.querySelectorAll('.drawer-lang-list button').forEach(function(x){x.classList.remove('active')});
+        b.classList.add('active');
+        document.getElementById('drawerLangCur').textContent=b.getAttribute('data-lang').toUpperCase()+' — '+b.getAttribute('data-name');
+        dl.classList.remove('open');dlToggle.setAttribute('aria-expanded','false');
+      });
+    });
+  }
+})();
+
+// ---- SÜRÜKLE-KAYDIR (mouse ile yatay slider'lar) ----
+// Sayfa kendi track selector'larını alttaki listeye ekler (.row-track hazır gelir)
+(function(){
+  function enableDrag(el){
+    el.classList.add('drag-scroll');
+    var down=false,startX=0,startScroll=0,moved=false;
+    el.addEventListener('pointerdown',function(e){
+      if(e.pointerType==='touch')return;           // touch zaten native kayar
+      down=true;moved=false;startX=e.clientX;startScroll=el.scrollLeft;
+    });
+    el.addEventListener('pointermove',function(e){
+      if(!down)return;
+      var dx=e.clientX-startX;
+      if(Math.abs(dx)>4){moved=true;el.classList.add('dragging');}
+      el.scrollLeft=startScroll-dx;
+    });
+    function up(){down=false;setTimeout(function(){el.classList.remove('dragging');},0);}
+    el.addEventListener('pointerup',up);
+    el.addEventListener('pointercancel',up);
+    el.addEventListener('pointerleave',up);
+    // sürükleme sonrası yanlışlıkla tıklamayı engelle
+    el.addEventListener('click',function(e){if(moved){e.preventDefault();e.stopPropagation();moved=false;}},true);
+    // dikey wheel'i yatay scroll'a çevir (trackpad/mouse)
+    el.addEventListener('wheel',function(e){
+      if(el.scrollWidth<=el.clientWidth)return;
+      if(Math.abs(e.deltaX)>Math.abs(e.deltaY))return;
+      e.preventDefault();el.scrollLeft+=e.deltaY;
+    },{passive:false});
+  }
+  ['.row-track','.cat-track','.grid-4','.vid-grid','.chips','.chef-row','.disc-grid'].forEach(function(sel){
+    document.querySelectorAll(sel).forEach(enableDrag);
+  });
+})();
+
+// ---- FOOTER REVEAL — footer yüksekliğini ölç, içerik sonuna boşluk aç ----
+(function(){
+  var main=document.getElementById('pageMain');
+  var foot=document.querySelector('.footer');
+  if(!main||!foot)return;
+  function fit(){
+    if(window.matchMedia('(min-width:641px)').matches){
+      main.style.marginBottom=foot.offsetHeight+'px';
+    }else{
+      main.style.marginBottom='';
+    }
+  }
+  fit();
+  window.addEventListener('resize',fit);
+  window.addEventListener('load',fit);          // logo/font yüklenince yükseklik oturur
+  if(document.fonts&&document.fonts.ready)document.fonts.ready.then(fit);
+})();
+
+// ---- GÖRÜŞ BİLDİR (kenar etiketi → modal) ----
+(function(){
+  var tab=document.getElementById('fbTab');
+  var modal=document.getElementById('fbModal');
+  var overlay=document.getElementById('fbOverlay');
+  if(!tab||!modal)return;
+  var form=document.getElementById('fbForm');
+  var success=document.getElementById('fbSuccess');
+  function open(){modal.classList.add('show');overlay.classList.add('show');document.body.style.overflow='hidden';}
+  function close(){
+    modal.classList.remove('show');overlay.classList.remove('show');document.body.style.overflow='';
+    setTimeout(function(){form.hidden=false;success.hidden=true;form.reset();},300);
+  }
+  tab.addEventListener('click',function(e){e.preventDefault();open();});
+  document.getElementById('fbClose').addEventListener('click',close);
+  overlay.addEventListener('click',close);
+  modal.addEventListener('click',function(e){if(e.target===modal)close();});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')close();});
+  // M17 — konu tipine göre alan seti: aktif pane görünür, pasif pane'lerin
+  // input'ları disable edilir (gizli required alanlar submit'i bloklamasın)
+  function syncPanes(){
+    var cur=modal.querySelector('.fb-topic.active').getAttribute('data-topic');
+    modal.querySelectorAll('.fb-fields').forEach(function(p){
+      var on=p.getAttribute('data-for')===cur;
+      p.classList.toggle('active',on);
+      p.querySelectorAll('input,textarea,select,button').forEach(function(el){el.disabled=!on});
+    });
+  }
+  modal.querySelectorAll('.fb-topic').forEach(function(t){
+    t.addEventListener('click',function(){
+      modal.querySelectorAll('.fb-topic').forEach(function(x){x.classList.remove('active')});
+      t.classList.add('active');
+      syncPanes();
+    });
+  });
+  syncPanes();
+  // emoji + chip seçimleri (tek seçim)
+  modal.querySelectorAll('.fb-emoji button').forEach(function(b){
+    b.addEventListener('click',function(){
+      modal.querySelectorAll('.fb-emoji button').forEach(function(x){x.classList.remove('active')});
+      b.classList.add('active');
+    });
+  });
+  modal.querySelectorAll('.fb-chiprow .chip').forEach(function(c){
+    c.addEventListener('click',function(){
+      modal.querySelectorAll('.fb-chiprow .chip').forEach(function(x){x.classList.remove('active')});
+      c.classList.add('active');
+    });
+  });
+  form.addEventListener('submit',function(e){
+    e.preventDefault();
+    form.hidden=true;success.hidden=false;
+  });
+  if(location.search.indexOf('fb=1')>-1){open();}
+})();
+
+// ---- ÇEREZ ONAY BANNER ----
+(function(){
+  var banner=document.getElementById('cookieBanner');
+  if(!banner)return;
+  var KEY='dm-cookie-consent';
+  var force=location.search.indexOf('cc=1')>-1;   // SS/test için zorla göster
+  function stored(){try{return localStorage.getItem(KEY);}catch(e){return null;}}
+  function dismiss(val){
+    try{localStorage.setItem(KEY,val);}catch(e){}
+    banner.classList.remove('show');if(window.__bnUpdate)window.__bnUpdate();
+  }
+  if(force || !stored()){
+    setTimeout(function(){banner.classList.add('show');if(window.__bnUpdate)window.__bnUpdate();},700);
+  }
+  document.getElementById('cookieAccept').addEventListener('click',function(){dismiss('accepted');});
+  document.getElementById('cookieReject').addEventListener('click',function(){dismiss('rejected');});
+})();
+</script>
+<!-- Leaflet 1.9.4 JS (madde 26 — global L; sayfa IIFE'sinden önce) -->
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+<script>
+/* ===== MADDE 26 — YOL GÜZERGAHIM (Faz 1+2: iskele + harita + Uber giriş + dummy rota) =====
+   Şehirlerarası ölçek. ROAD_POOL / koridor / baloncuk Faz 3'te. */
+(function(){
+  if(typeof L==='undefined')return;
+  if(!document.getElementById('routeMap'))return;
+
+  // ---- Harita: Türkiye merkez (Marmara–İç Anadolu) ----
+  var map=L.map('routeMap',{zoomControl:true,scrollWheelZoom:false}).setView([40.10,31.00],7);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:18,attribution:'© OpenStreetMap'}).addTo(map);
+  setTimeout(function(){map.invalidateSize();},60);
+  window.addEventListener('resize',function(){map.invalidateSize();},{passive:true});
+
+  // ---- CITY: uç seçimi için sabit koordinatlı şehir/yer ----
+  var CITY=[
+    {ad:'İstanbul',lat:41.0082,lng:28.9784},
+    {ad:'Gebze',lat:40.8028,lng:29.4307},
+    {ad:'Kocaeli (İzmit)',lat:40.7654,lng:29.9408},
+    {ad:'Sakarya (Adapazarı)',lat:40.7569,lng:30.3783},
+    {ad:'Düzce',lat:40.8438,lng:31.1565},
+    {ad:'Bolu',lat:40.7392,lng:31.6089},
+    {ad:'Bilecik',lat:40.1426,lng:29.9793},
+    {ad:'Bozüyük',lat:39.9070,lng:30.0360},
+    {ad:'Eskişehir',lat:39.7767,lng:30.5206},
+    {ad:'Bursa',lat:40.1885,lng:29.0610},
+    {ad:'Ankara',lat:39.9334,lng:32.8597},
+    {ad:'İzmir',lat:38.4237,lng:27.1428}
+  ];
+
+  var trip={from:null,to:null};
+  var route={poly:null,stops:[]};
+  var endMarkers={from:null,to:null};
+  var routeLine=null;
+  var stopLine=null;
+  var balloons={};      // ad -> {marker, off, data}
+  var hint=document.getElementById('ygHint');
+  var panelEmpty=document.getElementById('ygPanelEmpty'),
+      stopsWrap=document.getElementById('ygStopsWrap'), stopsEl=document.getElementById('ygStops'),
+      suggestWrap=document.getElementById('ygSuggestWrap'), gridEl=document.getElementById('ygGrid'),
+      countEl=document.getElementById('ygCount'),
+      planEl=document.querySelector('.yg-plan'),
+      railToggle=document.getElementById('ygRailToggle');
+  var IMG='?w=700&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5';
+
+  // ---- ROAD_POOL: şehirlerarası yol üstü mekanlar (POOL'dan bağımsız; lat/lng bazlı) ----
+  var ROAD_POOL=[
+    {ad:'Gebze Köfte Durağı',       lat:40.7990,lng:29.4350,cat:'Köfte & Izgara',   puan:4.5,konum:'Gebze / Kocaeli',     fiyat:'Ekonomik',durum:'open',   medya:9, img:'photo-1565958011703-44f9829ba187',desc:'Otoyol çıkışında ızgara köfte ve piyaz; hızlı mola.'},
+    {ad:'İzmit Pişmaniye Evi',      lat:40.7700,lng:29.9200,cat:'Tatlı & Kafe',     puan:4.6,konum:'İzmit / Kocaeli',     fiyat:'Ekonomik',durum:'open',   medya:12,img:'photo-1525351484163-7529414344d8',desc:'Asırlık pişmaniye ve sıcak salep; yol üstü ikram.'},
+    {ad:'Sapanca Göl Kahvaltı',     lat:40.6920,lng:30.2640,cat:'Kahvaltı & Serpme',puan:4.8,konum:'Sapanca / Sakarya',   fiyat:'Orta',    durum:'open',   medya:18,img:'photo-1509440159596-0249088772ff',desc:'Göl kıyısında serpme kahvaltı; sınırsız çay, temiz hava.'},
+    {ad:'Adapazarı Islama Köfte',   lat:40.7800,lng:30.4000,cat:'Köfte & Izgara',   puan:4.7,konum:'Adapazarı / Sakarya', fiyat:'Orta',    durum:'open',   medya:11,img:'photo-1529692236671-f1f6cf9683ba',desc:'Yöreye özgü ıslama köfte; közde ekmek, soğan salata.'},
+    {ad:'Bolu Dağı Et Mangal',      lat:40.7300,lng:31.5500,cat:'Kebap & Ocakbaşı', puan:4.6,konum:'Bolu Dağı / Bolu',    fiyat:'Orta',    durum:'closing',medya:14,img:'photo-1504674900247-0877df9cc836',desc:'Dağ yolunda mangal başı; orman manzaralı geniş teras.'},
+    {ad:'Bilecik Köy Sofrası',      lat:40.0600,lng:30.0100,cat:'Esnaf Lokantası',  puan:4.4,konum:'Bilecik',             fiyat:'Ekonomik',durum:'open',   medya:8, img:'photo-1517248135467-4c7edcad34c4',desc:'Ev usulü tencere yemekleri; gözleme ve ayran.'},
+    {ad:'Bozüyük Dinlenme Lokantası',lat:39.9070,lng:30.0360,cat:'Esnaf Lokantası', puan:4.3,konum:'Bozüyük / Bilecik',   fiyat:'Ekonomik',durum:'open',   medya:7, img:'photo-1466978913421-dad2ebd01d17',desc:'Otoyol dinlenme tesisi; sıcak yemek 7/24.'},
+    {ad:'Eskişehir Çibörek Evi',    lat:39.7800,lng:30.5100,cat:'Dünya Mutfağı',    puan:4.7,konum:'Odunpazarı / Eskişehir',fiyat:'Ekonomik',durum:'open', medya:16,img:'photo-1596040033229-a9821ebd058d',desc:'Tatar çiböreği ve kaşıklı; tarihi Odunpazarı dokusunda.'},
+    {ad:'Gemlik Su Böreği',         lat:40.2300,lng:29.1600,cat:'Kahvaltı & Serpme',puan:4.5,konum:'Gemlik / Bursa',      fiyat:'Ekonomik',durum:'open',   medya:10,img:'photo-1565299507177-b0ac66763828',desc:'Su böreği ve menemen; Bursa kolu sapağında.'},
+    {ad:'Gerede Yolu Kebapçısı',    lat:40.4500,lng:31.9000,cat:'Kebap & Ocakbaşı', puan:4.5,konum:'Gerede / Bolu',       fiyat:'Orta',    durum:'open',   medya:13,img:'photo-1555992336-fb0d29498b13',desc:'Ankara istikametinde Adana-Urfa; közde acılı ezme.'}
+  ];
+
+  function endIcon(kind){
+    return L.divIcon({className:'yg-pin '+kind,
+      html:'<span class="yg-pin-b"><i class="fa-solid '+(kind==='dest'?'fa-flag-checkered':'fa-location-dot')+'"></i></span>',
+      iconSize:[34,34],iconAnchor:[17,34],popupAnchor:[0,-30]});
+  }
+  function placeEndMarker(which,c){
+    var kind=(which==='to')?'dest':'origin';
+    if(endMarkers[which])map.removeLayer(endMarkers[which]);
+    endMarkers[which]=L.marker([c.lat,c.lng],{icon:endIcon(kind)}).addTo(map)
+      .bindPopup('<b>'+(which==='to'?'Varış':'Kalkış')+'</b><br>'+c.ad);
+  }
+
+  // ---- Uber autocomplete (yazınca CITY substring önerisi) ----
+  function bindAc(input,acBox,which){
+    input.addEventListener('input',function(){
+      var q=input.value.trim().toLocaleLowerCase('tr');
+      if(!q){acBox.hidden=true;return;}
+      var hits=CITY.filter(function(c){return c.ad.toLocaleLowerCase('tr').indexOf(q)>=0;}).slice(0,6);
+      acBox.innerHTML=hits.map(function(c){
+        return '<button type="button" data-ad="'+c.ad+'"><i class="fa-solid fa-location-dot"></i> '+c.ad+'</button>';
+      }).join('');
+      acBox.hidden=!hits.length;
+    });
+    acBox.addEventListener('click',function(e){
+      var b=e.target.closest('button'); if(!b)return;
+      var c=CITY.filter(function(x){return x.ad===b.getAttribute('data-ad');})[0];
+      input.value=c.ad; acBox.hidden=true; setEndpoint(which,c);
+    });
+    document.addEventListener('click',function(e){ if(!input.parentNode.contains(e.target))acBox.hidden=true; });
+  }
+  function setEndpoint(which,c){
+    trip[which]=c; placeEndMarker(which,c);
+    if(trip.from&&trip.to)buildRoute(); else map.panTo([c.lat,c.lng]);
+  }
+
+  // ---- Dummy rota: tek yönlü yumuşak yay (i%2 yok → testere yok) ----
+  function dummyRoute(o,d){
+    var pts=[[o.lat,o.lng]], N=8, dLat=d.lat-o.lat, dLng=d.lng-o.lng;
+    for(var i=1;i<N;i++){
+      var t=i/N, lat=o.lat+dLat*t, lng=o.lng+dLng*t;
+      var amp=Math.sin(t*Math.PI)*0.04;     // amp=0.04 başlangıç; tek yön (alternatif sapma YOK)
+      lat+=-dLng*amp; lng+= dLat*amp;
+      pts.push([lat,lng]);
+    }
+    pts.push([d.lat,d.lng]); return pts;
+  }
+  // Yol üstü kasabalar = O→D doğrusu ile band içinde, aradaki (t∈0.06..0.94) ROAD_POOL noktaları,
+  // O→D yönüne göre sıralı. Rota bunlardan geçer → gerçekçi kıvrımlı koridor (kestirme düz çizgi değil).
+  function projT(o,d,p){
+    var dLat=d.lat-o.lat,dLng=d.lng-o.lng,L2=dLat*dLat+dLng*dLng||1e-9;
+    return ((p.lat-o.lat)*dLat+(p.lng-o.lng)*dLng)/L2;
+  }
+  function routeWaypoints(o,d){
+    var BAND=70, dLat=d.lat-o.lat, dLng=d.lng-o.lng;   // O-D doğrusuna dik ~km bandı
+    var arr=ROAD_POOL.map(function(m){
+        var s=dLng*(m.lat-o.lat)-dLat*(m.lng-o.lng);   // işaretli yan (cross product) → kuzey/güney
+        return {m:m,t:projT(o,d,m),off:distToSeg(m,[o.lat,o.lng],[d.lat,d.lng]),side:s>0?1:-1};
+      })
+      .filter(function(x){return x.t>0.06&&x.t<0.94&&x.off<=BAND;})
+      .sort(function(a,b){return a.t-b.t;});
+    // yalnız-kalan ters-taraf uzak outlier'ı at (çapraz koldan giren kasaba → zigzag detour önlenir)
+    arr=arr.filter(function(x,i){
+      var p=arr[i-1],n=arr[i+1];
+      return !(p&&n&&x.side!==p.side&&x.side!==n.side&&x.off>25);
+    });
+    return arr.map(function(x){return x.m;});
+  }
+  function buildRoute(){
+    if(!trip.from||!trip.to)return;
+    var o=trip.from,d=trip.to, wps=routeWaypoints(o,d);
+    route.poly = wps.length
+      ? [[o.lat,o.lng]].concat(wps.map(function(m){return [m.lat,m.lng];})).concat([[d.lat,d.lng]])
+      : dummyRoute(o,d);                            // aradaki kasaba yoksa yumuşak yay
+    if(routeLine)map.removeLayer(routeLine);
+    routeLine=L.polyline(route.poly,{color:'#211E16',weight:4,opacity:.55,dashArray:'2 8'}).addTo(map);
+    if(panelEmpty)panelEmpty.hidden=true;          // "Güzergah bekleniyor" kalkar
+    spawnBalloons();                                // yol üstü mekanlar baloncuk + kart
+    renderStops();                                  // Güzergahım (varsa eklenenler) çizilir
+    fitRoute();                                     // rota+baloncuklar panellerin ÖRTMEDİĞİ alana sığsın
+  }
+  /* Rota'yı cam panellerin örtmediği görünür alana sığdır — padding panel/rail GERÇEK ölçüsünden
+     (offsetWidth/offsetHeight). Mobilde paneller harita dışında (static) → alt/sağ padding ~0. */
+  function fitRoute(){
+    var pad={paddingTopLeft:[20,20],paddingBottomRight:[20,20]};
+    if(planEl&&getComputedStyle(planEl).position==='absolute'){    // desktop: paneller harita ÜSTÜNDE
+      var pw=planEl.offsetWidth, rh=(suggestWrap&&!suggestWrap.hidden)?suggestWrap.offsetHeight:0;
+      pad.paddingTopLeft=[24,24];                                   // sol-üst zoom kontrolü için küçük
+      pad.paddingBottomRight=[pw+32, rh+28];                        // sağ panel genişliği + alt rail yüksekliği
+    }
+    map.fitBounds(routeLine.getBounds().pad(0.05), pad);
+  }
+
+  // ---- Koridor filtresi: haversine + nokta-segment (km) ----
+  function hav(aLat,aLng,bLat,bLng){
+    var R=6371,dLat=(bLat-aLat)*Math.PI/180,dLng=(bLng-aLng)*Math.PI/180,
+        la=aLat*Math.PI/180,lb=bLat*Math.PI/180;
+    var h=Math.sin(dLat/2)*Math.sin(dLat/2)+Math.cos(la)*Math.cos(lb)*Math.sin(dLng/2)*Math.sin(dLng/2);
+    return 2*R*Math.asin(Math.min(1,Math.sqrt(h)));
+  }
+  function distToSeg(p,a,b){
+    var kx=111.32*Math.cos(p.lat*Math.PI/180), ky=110.57;
+    var ax=a[1]*kx,ay=a[0]*ky,bx=b[1]*kx,by=b[0]*ky,px=p.lng*kx,py=p.lat*ky;
+    var dx=bx-ax,dy=by-ay,L2=dx*dx+dy*dy;
+    var t=L2?Math.max(0,Math.min(1,((px-ax)*dx+(py-ay)*dy)/L2)):0;
+    return Math.hypot(px-(ax+t*dx),py-(ay+t*dy));
+  }
+  function distToRoute(m){var min=Infinity,r=route.poly;for(var i=0;i<r.length-1;i++)min=Math.min(min,distToSeg({lat:m.lat,lng:m.lng},r[i],r[i+1]));return min;}
+  var CORRIDOR_KM=20;
+
+  // ---- yol üstü baloncuklar + öneri kartları ----
+  function venueIcon(extra){return L.divIcon({className:'yg-pin '+extra,
+    html:'<span class="yg-pin-b"><i class="fa-solid fa-utensils"></i></span>',
+    iconSize:[34,34],iconAnchor:[17,34],popupAnchor:[0,-30]});}
+  function spawnBalloons(){
+    Object.keys(balloons).forEach(function(k){map.removeLayer(balloons[k].marker);});
+    balloons={};
+    var hits=ROAD_POOL.map(function(m){return {m:m,off:distToRoute(m)};})
+                      .filter(function(x){return x.off<=CORRIDOR_KM;})
+                      .sort(function(a,b){return a.off-b.off;});
+    suggestWrap.hidden=false; countEl.textContent=hits.length; gridEl.innerHTML='';
+    hits.forEach(function(x){
+      var mk=L.marker([x.m.lat,x.m.lng],{icon:venueIcon('')}).addTo(map);
+      mk.bindPopup(popupHtml(x.m,x.off));
+      mk.on('popupopen',function(){bindPopupAdd(x.m);});
+      mk.on('click',function(){highlightCard(x.m);});
+      balloons[x.m.ad]={marker:mk,off:x.off,data:x.m};
+      gridEl.appendChild(cardEl(x.m,x.off));
+    });
+    syncStates();
+  }
+  function pill(f){return f==='Ekonomik'?'<b>₺</b><span>₺₺</span>':f==='Orta'?'<b>₺₺</b><span>₺</span>':'<b>₺₺₺</b>';}
+  function statusEl(d){return d==='closing'
+    ?'<div class="disc-status tr"><span class="mt st-closing"><i class="fa-solid fa-clock"></i> Az sonra kapanıyor</span></div>'
+    :'<div class="disc-status tr"><span class="mt st-open"><i class="fa-solid fa-circle-check"></i> Açık</span></div>';}
+  // KOMPAKT kart (dikey mini): thumb + km rozeti + ad + ★puan·tür + Ekle. Class hook'ları korunur.
+  function cardEl(m,offKm){
+    var a=document.createElement('article'); a.className='yg-card'; a.setAttribute('data-id',m.ad);
+    a.innerHTML=
+      '<div class="yc-fig"><div class="bg" style="background-image:url(\'https://images.unsplash.com/'+m.img+IMG+'\')"></div>'+
+        '<span class="yc-km"><i class="fa-solid fa-route"></i> '+offKm.toFixed(1).replace('.',',')+' km</span></div>'+
+      '<div class="yc-body">'+
+        '<h4>'+m.ad+'</h4>'+
+        '<div class="yc-meta"><span class="yc-rate"><i class="fa-solid fa-star"></i> '+m.puan+'</span>'+
+          '<span class="yc-cat">'+m.cat+'</span></div>'+
+        '<button class="btn btn-primary yg-add" type="button"><i class="fa-solid fa-plus"></i> Ekle</button>'+
+      '</div>';
+    a.querySelector('.yc-fig').addEventListener('click',function(){location.href='mekan-detay-v1.html';});
+    a.querySelector('.yg-add').addEventListener('click',function(e){e.stopPropagation();toggleStop(m);});
+    return a;
+  }
+  function popupHtml(m,off){
+    return '<div class="yg-pop"><b>'+m.ad+'</b><small>'+m.konum+' · '+off.toFixed(0)+' km yol üstü</small>'+
+           '<button class="yg-pop-add" type="button"><i class="fa-solid fa-plus"></i> Ekle</button></div>';
+  }
+  function bindPopupAdd(m){
+    var btn=document.querySelector('.leaflet-popup .yg-pop-add'); if(!btn)return;
+    var on=isStop(m);
+    btn.classList.toggle('on',on);
+    btn.innerHTML=on?'<i class="fa-solid fa-check"></i> Çıkar':'<i class="fa-solid fa-plus"></i> Ekle';
+    btn.onclick=function(){toggleStop(m);};
+  }
+
+  // ---- Güzergahım repeater (Kalkış sabit baş / Varış sabit son) ----
+  function isStop(m){return route.stops.some(function(s){return s.ad===m.ad;});}
+  function endRow(kind,c,lbl){
+    var li=document.createElement('li'); li.className='rt-stop end '+kind;
+    li.innerHTML='<span class="rs-n"><i class="fa-solid fa-flag'+(kind==='d'?'-checkered':'')+'"></i></span>'+
+      '<span class="rs-txt"><b>'+lbl+'</b><small>'+(c?c.ad:'—')+'</small></span>';
+    return li;
+  }
+  function renderStops(){
+    if(!trip.from||!trip.to)return;
+    stopsWrap.hidden=false;
+    stopsEl.innerHTML='';
+    stopsEl.appendChild(endRow('o',trip.from,'Kalkış'));
+    route.stops.forEach(function(m,i){
+      var li=document.createElement('li'); li.className='rt-stop'; li.setAttribute('data-id',m.ad);
+      li.innerHTML='<span class="rs-n">'+(i+1)+'</span>'+
+        '<span class="rs-txt"><b>'+m.ad+'</b><small>'+m.konum+'</small></span>'+
+        '<button class="rs-x" type="button" aria-label="Çıkar"><i class="fa-solid fa-xmark"></i></button>';
+      li.querySelector('.rs-x').addEventListener('click',function(){toggleStop(m);});
+      li.addEventListener('mouseenter',function(){flyTo(m);});
+      stopsEl.appendChild(li);
+    });
+    stopsEl.appendChild(endRow('d',trip.to,'Varış'));
+  }
+
+  // ---- çift yönlü senkron (toggleStop tek kapı) ----
+  function toggleStop(m){
+    var i=-1; for(var k=0;k<route.stops.length;k++){if(route.stops[k].ad===m.ad){i=k;break;}}
+    if(i>=0)route.stops.splice(i,1); else route.stops.push(m);
+    renderStops(); drawStopLine(); syncStates();
+    if(balloons[m.ad])balloons[m.ad].marker.closePopup();
+  }
+  function drawStopLine(){
+    if(stopLine){map.removeLayer(stopLine);stopLine=null;}
+    if(!trip.from||!trip.to||!route.stops.length)return;
+    var pts=[[trip.from.lat,trip.from.lng]]
+      .concat(route.stops.map(function(m){return [m.lat,m.lng];}))
+      .concat([[trip.to.lat,trip.to.lng]]);
+    stopLine=L.polyline(pts,{color:'#E14827',weight:3,opacity:.9}).addTo(map);
+  }
+  function syncStates(){
+    Object.keys(balloons).forEach(function(ad){
+      var on=route.stops.some(function(s){return s.ad===ad;});
+      var el=balloons[ad].marker.getElement(); if(el)el.classList.toggle('added',on);
+    });
+    var stopCount=route.stops.length;
+    document.querySelectorAll('.yg-card').forEach(function(c){
+      var on=route.stops.some(function(s){return s.ad===c.getAttribute('data-id');});
+      var b=c.querySelector('.yg-add');
+      b.classList.toggle('on',on);
+      b.innerHTML=on?'<i class="fa-solid fa-check"></i> Eklendi':'<i class="fa-solid fa-plus"></i> Ekle';
+    });
+    if(hint)hint.innerHTML=stopCount
+      ?'<i class="fa-solid fa-circle-check"></i> Güzergahında <b>'+stopCount+'</b> durak var — listeden ya da haritadan düzenleyebilirsin.'
+      :'<i class="fa-solid fa-circle-check"></i> Güzergah çizildi — baloncuklara ya da kartlara tıklayıp durak ekle.';
+  }
+  function flyTo(m){if(balloons[m.ad]){map.panTo([m.lat,m.lng]);balloons[m.ad].marker.openPopup();}}
+  function highlightCard(m){
+    var c=document.querySelector('.yg-card[data-id="'+(m.ad)+'"]'); if(!c)return;
+    c.classList.add('flash'); c.scrollIntoView({behavior:'smooth',block:'center'});
+    setTimeout(function(){c.classList.remove('flash');},1200);
+  }
+
+  bindAc(document.getElementById('ygFrom'),document.getElementById('ygFromAc'),'from');
+  bindAc(document.getElementById('ygTo'),document.getElementById('ygToAc'),'to');
+
+  // ALT RAİL topla/aç — SALT GÖRSEL: harita re-fit YOK (kullanıcı rotayı gördü, ziplama olmaz).
+  // İlk güzergahta açık (collapsed sınıfı yok); aria-expanded güncellenir.
+  if(railToggle&&suggestWrap){
+    railToggle.addEventListener('click',function(){
+      var collapsed=suggestWrap.classList.toggle('collapsed');
+      railToggle.setAttribute('aria-expanded',String(!collapsed));
+    });
+  }
+})();
+</script>
+<script>
+/* ===== MOBİL ALT KATMAN YÖNETİCİSİ (revize2/mobil1 — kanonik) =====
+   Kural: ekranda en fazla 1 sabit alt şerit. Çerez onayı (geçici, öncelikli)
+   ya da sayfanın kendi aksiyon şeridi (window.__bottomStrips) açıkken global
+   bottom-nav gizlenir; şerit olan sayfalarda nav ayrıca aşağı kaydırınca gizlenir. */
+window.__bottomStrips=window.__bottomStrips||[];
+(function(){
+  var nav=document.querySelector('.bottom-nav');
+  if(!nav)return;
+  var cookie=document.getElementById('cookieBanner');
+  var strips=window.__bottomStrips.map(function(s){return document.querySelector(s);}).filter(Boolean);
+  var lastY=window.scrollY||0;
+  function stripShown(){for(var i=0;i<strips.length;i++){if(strips[i]&&strips[i].classList.contains('show'))return true;}return false;}
+  function update(){
+    var y=window.scrollY||0;
+    if((cookie&&cookie.classList.contains('show'))||stripShown()){nav.classList.add('bn-hidden');lastY=y;return;}
+    if(strips.length===0||y<80){nav.classList.remove('bn-hidden');lastY=y;return;}
+    if(y-lastY>12){nav.classList.add('bn-hidden');lastY=y;}
+    else if(lastY-y>12){nav.classList.remove('bn-hidden');lastY=y;}
+  }
+  window.addEventListener('scroll',update,{passive:true});
+  window.addEventListener('resize',update,{passive:true});
+  document.addEventListener('click',function(){setTimeout(update,60);},true);
+  window.__bnUpdate=update;update();
+})();
+</script>
+</body>
+</html>
