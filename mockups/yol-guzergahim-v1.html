@@ -1251,9 +1251,9 @@ html,body{overflow-x:hidden}
 .yg-stage{position:relative}
 #routeMap{height:78vh;min-height:560px;width:100%;background:var(--cream-2);border-radius:var(--radius-xl);box-shadow:var(--sh-md);isolation:isolate}  /* isolate → leaflet iç z-index'leri sahnede kalır, cam paneller üstte */
 /* cam ortak */
-.yg-glass{background:rgba(255,255,255,.84);-webkit-backdrop-filter:saturate(150%) blur(15px);backdrop-filter:saturate(150%) blur(15px);border:1px solid rgba(255,255,255,.65);box-shadow:var(--sh-lg)}
+.yg-glass{background:rgba(255,255,255,.80);-webkit-backdrop-filter:saturate(150%) blur(16px);backdrop-filter:saturate(150%) blur(16px);border:1px solid rgba(255,255,255,.65);box-shadow:var(--sh-lg)}
 /* GÜZERGAHIM cam panel — sağ-üst (zoom kontrol sol-üstte, örtmez) */
-.yg-plan{position:absolute;top:16px;right:16px;width:344px;max-width:calc(100% - 32px);max-height:calc(78vh - 32px);overflow-y:auto;z-index:5;border-radius:var(--radius-lg);padding:16px}
+.yg-plan{position:absolute;top:16px;right:16px;width:320px;max-width:calc(100% - 32px);max-height:calc(78vh - 32px);overflow-y:auto;z-index:6;border-radius:var(--radius-lg);padding:16px}
 .yg-plan-eyebrow{font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--tomato);margin-bottom:12px;display:flex;align-items:center;gap:7px}
 /* Uber giriş (panel içi, dikey) */
 .yg-trip{display:flex;gap:12px;align-items:flex-start;position:relative}
@@ -1289,18 +1289,22 @@ html,body{overflow-x:hidden}
 .rs-txt small{color:var(--muted);font-size:11.5px}
 .rs-x{flex:0 0 auto;border:0;background:transparent;color:var(--muted);cursor:pointer;font-size:14px;padding:4px}
 .rs-x:hover{color:var(--tomato)}
-/* ALT RAİL — yol üstü öneriler, yatay kaydırma */
-.yg-rail{position:absolute;left:16px;right:16px;bottom:16px;z-index:5;border-radius:var(--radius-lg);padding:12px 14px 13px}
+/* ALT RAİL — yol üstü öneriler; sağ panel sütununu YATAYDA girmez (right:352 = 320 plan + 16 gap + 16) → çakışma yok */
+.yg-rail{position:absolute;left:16px;right:352px;bottom:16px;z-index:5;border-radius:var(--radius-lg);padding:12px 14px 13px}
 .yg-rail-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:10px;padding:0 2px}
 .yg-rail-head h2{font-size:14.5px;display:flex;align-items:center;gap:8px}
 .yg-rail-head .q{color:var(--tomato);font-weight:800}
-.yg-rail-hint{display:inline-flex;align-items:center;gap:6px;font-size:11.5px;font-weight:600;color:var(--muted);white-space:nowrap}
-.yg-rail-toggle{display:inline-flex;align-items:center;gap:11px;border:0;background:transparent;cursor:pointer;font:inherit;padding:3px;border-radius:var(--radius-sm)}
+/* TOGGLE — net pill (aç/gizle belirgin); collapsed iken rail kompakt pill (sol-alt), sağ panele binmez */
+.yg-rail-toggle{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);background:var(--paper);cursor:pointer;font:inherit;font-weight:700;font-size:12px;color:var(--slate);padding:7px 13px;border-radius:var(--radius-pill);transition:.18s var(--ease)}
+.yg-rail-toggle:hover{border-color:var(--tomato);color:var(--tomato)}
+.yg-rail-chev{font-size:11px;color:var(--slate);transition:transform .2s var(--ease)}
 .yg-rail-toggle:hover .yg-rail-chev{color:var(--tomato)}
-.yg-rail-chev{font-size:12px;color:var(--slate);transition:transform .2s var(--ease)}
-.yg-rail.collapsed .yg-rail-chev{transform:rotate(-90deg)}
+.rt-lbl-closed{display:none}
+.yg-rail.collapsed .yg-rail-chev{transform:rotate(180deg)}
+.yg-rail.collapsed .rt-lbl-open{display:none}
+.yg-rail.collapsed .rt-lbl-closed{display:inline}
 .yg-rail.collapsed .yg-rail-scroll{display:none}
-.yg-rail.collapsed .yg-rail-hint{display:none}
+.yg-rail.collapsed{right:auto;width:auto;max-width:calc(100% - 32px)}
 .yg-rail.collapsed::after{display:none}
 .yg-rail-scroll{position:relative;overflow-x:auto;overflow-y:hidden;scrollbar-width:thin;-webkit-overflow-scrolling:touch}
 .yg-rail-scroll::-webkit-scrollbar{height:7px} .yg-rail-scroll::-webkit-scrollbar-thumb{background:var(--line);border-radius:99px}
@@ -1334,12 +1338,39 @@ html,body{overflow-x:hidden}
 .yg-pin-b i{transform:rotate(45deg);font-size:13px}
 .yg-pin.origin .yg-pin-b{background:var(--slate)} .yg-pin.dest .yg-pin-b{background:var(--tomato-deep)}
 .yg-pin.added .yg-pin-b{background:var(--green-deep)}
+/* AKIŞ CTA + ÖZET KARTI (#ygResult) — A'nın cam dilinde, plan footprint'inde (in-flow özet) */
+.yg-save{width:100%;justify-content:center;margin-top:14px;gap:7px}
+.yg-result{position:absolute;top:16px;right:16px;width:320px;max-width:calc(100% - 32px);max-height:calc(78vh - 32px);overflow-y:auto;z-index:7;border-radius:var(--radius-lg);padding:18px;text-align:center}
+.yr-ico{width:54px;height:54px;margin:0 auto 12px;display:grid;place-items:center;border-radius:var(--radius-circle);background:rgba(0,157,79,.14);color:var(--green-deep);font-size:24px}
+.yr-route{font-weight:700;color:var(--ink);margin:2px 0 12px}
+.yr-stat{font-size:13px;color:var(--slate-2);margin-bottom:10px}
+.yr-stat .yr-num{color:var(--tomato);font-weight:800;font-size:16px}
+.yr-list{list-style:none;text-align:left;display:flex;flex-direction:column;gap:6px;margin:0 0 14px}
+.yr-list li{list-style:none;display:flex;align-items:center;gap:8px;font-size:13px;padding:8px 11px;background:rgba(255,255,255,.62);border:1px solid var(--line);border-radius:var(--radius-md)}
+.yr-list li i{color:var(--tomato)} .yr-list li.muted{color:var(--muted);font-size:12px}
+.yr-note{font-size:11.5px;color:var(--muted);margin-bottom:14px}
+/* KAYITLI GÜZERGAHLARIM — sayfa-içi göz önünde liste (Faz A) */
+.yg-saved-sec{padding:0 0 64px}
+.yg-saved-head{display:flex;align-items:center;gap:10px;margin-bottom:16px}
+.yg-saved-head h2{font-size:clamp(19px,2vw,23px)}
+.ysh-ico{width:34px;height:34px;flex:0 0 34px;display:grid;place-items:center;border-radius:var(--radius-circle);background:var(--tomato-tint);color:var(--tomato);font-size:14px}
+.yg-saved-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(264px,1fr));gap:14px}
+.yg-saved-card{background:var(--paper);border:1px solid var(--line);border-left:3px solid var(--tomato);border-radius:var(--radius-md);padding:15px 16px;box-shadow:var(--sh-sm)}
+.ysc-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:10px}
+.ysc-route{font-size:15px;display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+.ysc-route i{color:var(--tomato);font-size:12px}
+.ysc-del{flex:0 0 auto;border:0;background:transparent;color:var(--muted);cursor:pointer;font-size:14px;padding:3px}
+.ysc-del:hover{color:var(--tomato)}
+.ysc-meta{display:flex;flex-wrap:wrap;gap:14px;color:var(--muted);font-size:12.5px;margin-bottom:13px}
+.ysc-meta span{display:inline-flex;align-items:center;gap:6px}
+.ysc-acts{display:flex;gap:8px}
+.ysc-acts .btn{flex:1;justify-content:center;gap:6px;padding:9px 10px;font-size:12.5px;border-radius:var(--radius-sm)}
 /* MOBİL: harita kullanılır kalsın (~50vh); cam paneller alt-sheet'e iner, haritayı yutmaz */
 @media(max-width:900px){
   .wrap-wide{padding:0 16px}
   .yg-stage{display:flex;flex-direction:column}
   #routeMap{height:50vh;min-height:340px;border-radius:var(--radius-lg)}
-  .yg-plan,.yg-rail{position:static;width:auto;max-width:none;max-height:none;left:auto;right:auto;top:auto;bottom:auto;margin-top:12px;background:var(--paper);-webkit-backdrop-filter:none;backdrop-filter:none;border:1px solid var(--line)}
+  .yg-plan,.yg-rail,.yg-result{position:static;width:auto;max-width:none;max-height:none;left:auto;right:auto;top:auto;bottom:auto;margin-top:12px;background:var(--paper);-webkit-backdrop-filter:none;backdrop-filter:none;border:1px solid var(--line)}
   .yg-rail::after{display:none}
 }
 </style>
@@ -1759,25 +1790,47 @@ html,body{overflow-x:hidden}
           <h3>Güzergah bekleniyor</h3>
           <p>Uçları seç — yol üstü mekanlar haritada baloncuk olarak belirsin.</p>
         </div>
-        <!-- GÜZERGAHIM (eklenen duraklar — Kalkış→duraklar→Varış) -->
+        <!-- GÜZERGAHIM (eklenen duraklar — Kalkış→duraklar→Varış) + akış CTA -->
         <div class="yg-stops-wrap" id="ygStopsWrap" hidden>
           <h3><i class="fa-solid fa-list-check"></i> Güzergahım</h3>
           <ol class="rt-stops" id="ygStops"></ol>
+          <button class="btn btn-primary yg-save" id="ygSave" type="button"><i class="fa-solid fa-flag-checkered"></i> Güzergahımı Kaydet</button>
         </div>
       </div>
 
-      <!-- ALT RAİL CAM — yol üstü öneriler (yatay kaydırma) -->
-      <div class="yg-glass yg-rail" id="ygSuggestWrap" hidden>
+      <!-- ALT RAİL CAM — yol üstü öneriler (collapsed pill başlar; açılınca yatay kaydırma) -->
+      <div class="yg-glass yg-rail collapsed" id="ygSuggestWrap" hidden>
         <div class="yg-rail-head">
           <h2><span class="q" id="ygCount">0</span> mekan yol üstünde</h2>
-          <button class="yg-rail-toggle" id="ygRailToggle" type="button" aria-expanded="true" aria-label="Öneri listesini gizle ya da göster">
-            <span class="yg-rail-hint"><i class="fa-solid fa-arrows-left-right"></i> kaydır</span>
-            <i class="fa-solid fa-chevron-down yg-rail-chev"></i>
+          <button class="yg-rail-toggle" id="ygRailToggle" type="button" aria-expanded="false" aria-label="Öneri listesini aç ya da gizle">
+            <i class="fa-solid fa-chevron-up yg-rail-chev"></i>
+            <span class="rt-lbl rt-lbl-open">Listeyi gizle</span>
+            <span class="rt-lbl rt-lbl-closed">Listeyi aç</span>
           </button>
         </div>
         <div class="yg-rail-scroll"><div class="yg-grid" id="ygGrid"></div></div>
       </div>
+
+      <!-- AKIŞ KAPANIŞI: cam özet paneli (Kaydet sonrası; plan footprint'inde, yeni örtme yok) -->
+      <div class="yg-glass yg-result" id="ygResult" hidden>
+        <div class="yr-ico"><i class="fa-solid fa-circle-check"></i></div>
+        <h3>Güzergahın hazır!</h3>
+        <p class="yr-route" data-yg-route>—</p>
+        <div class="yr-stat"><span class="yr-num" data-yg-count>0</span> durak yol üstünde</div>
+        <ul class="yr-list" data-yg-stops></ul>
+        <p class="yr-note">Bu bir demo özetidir — gerçek kayıt yapılmadı.</p>
+        <button class="btn btn-line" data-yg-back type="button"><i class="fa-solid fa-arrow-left"></i> Güzergahı düzenle</button>
+      </div>
     </div>
+  </div></section>
+
+  <!-- KAYITLI GÜZERGAHLARIM — sayfa-içi göz önünde liste (Faz A; localStorage'dan dolar) -->
+  <section class="yg-saved-sec" id="ygSavedSec" hidden><div class="wrap-wide">
+    <div class="yg-saved-head">
+      <span class="ysh-ico"><i class="fa-solid fa-bookmark"></i></span>
+      <h2>Kayıtlı Güzergahlarım</h2>
+    </div>
+    <div class="yg-saved-grid" id="ygSavedGrid"></div>
   </div></section>
 </main>
 
@@ -2453,13 +2506,72 @@ document.addEventListener('click',function(e){
   bindAc(document.getElementById('ygTo'),document.getElementById('ygToAc'),'to');
 
   // ALT RAİL topla/aç — SALT GÖRSEL: harita re-fit YOK (kullanıcı rotayı gördü, ziplama olmaz).
-  // İlk güzergahta açık (collapsed sınıfı yok); aria-expanded güncellenir.
+  // İlk güzergahta COLLAPSED başlar (markup'ta collapsed sınıfı); aria-expanded güncellenir.
   if(railToggle&&suggestWrap){
     railToggle.addEventListener('click',function(){
       var collapsed=suggestWrap.classList.toggle('collapsed');
       railToggle.setAttribute('aria-expanded',String(!collapsed));
     });
   }
+
+  // ---- AKIŞ KAPANIŞI: Kaydet → cam özet paneli (salt okuma; motoru ellemez) ----
+  var saveBtn=document.getElementById('ygSave'), resultEl=document.getElementById('ygResult');
+  if(saveBtn&&resultEl){
+    saveBtn.addEventListener('click',function(){
+      if(!trip.from||!trip.to)return;
+      resultEl.querySelector('[data-yg-route]').textContent=trip.from.ad+' → '+trip.to.ad;
+      resultEl.querySelector('[data-yg-count]').textContent=route.stops.length;
+      var ul=resultEl.querySelector('[data-yg-stops]');
+      ul.innerHTML=route.stops.length
+        ? route.stops.map(function(m){return '<li><i class="fa-solid fa-location-dot"></i> '+m.ad+'</li>';}).join('')
+        : '<li class="muted">Ara durak eklemeden doğrudan yol — dilersen haritadan ekleyebilirsin.</li>';
+      if(planEl)planEl.hidden=true; if(suggestWrap)suggestWrap.hidden=true; resultEl.hidden=false;
+      // FAZ A: localStorage'a kaydet + sayfa-içi listeyi güncelle (additive; motor değil)
+      var st=lsGet();
+      st.routes.unshift({id:'r_'+st.routes.length+'_'+(''+Math.random()).slice(2,7),
+        from:{ad:trip.from.ad,lat:trip.from.lat,lng:trip.from.lng},
+        to:{ad:trip.to.ad,lat:trip.to.lat,lng:trip.to.lng},
+        stops:route.stops.map(function(m){return {ad:m.ad,lat:m.lat,lng:m.lng,konum:m.konum,cat:m.cat,puan:m.puan,img:m.img};}),
+        dateStr:(new Date()).toLocaleDateString('tr-TR')});
+      lsSet(st); renderSavedRoutes();
+    });
+    resultEl.querySelector('[data-yg-back]').addEventListener('click',function(){
+      resultEl.hidden=true; if(planEl)planEl.hidden=false; if(suggestWrap)suggestWrap.hidden=false;
+    });
+  }
+
+  // ---- FAZ A: Kayıtlı Güzergahlarım — localStorage 'dada_yg' (cross-page kalıcı; motoru çağırır, değiştirmez) ----
+  var LS='dada_yg';
+  function lsGet(){try{return JSON.parse(localStorage.getItem(LS))||{routes:[],visited:{}};}catch(e){return {routes:[],visited:{}};}}
+  function lsSet(o){try{localStorage.setItem(LS,JSON.stringify(o));}catch(e){}}
+  var savedSec=document.getElementById('ygSavedSec'), savedGrid=document.getElementById('ygSavedGrid');
+  function renderSavedRoutes(){
+    if(!savedSec||!savedGrid)return;
+    var rs=lsGet().routes; savedSec.hidden=!rs.length; savedGrid.innerHTML='';
+    rs.forEach(function(r){
+      var a=document.createElement('article'); a.className='yg-saved-card'; a.setAttribute('data-id',r.id);
+      a.innerHTML='<div class="ysc-head"><span class="ysc-route"><b>'+r.from.ad+'</b> <i class="fa-solid fa-arrow-right-long"></i> <b>'+r.to.ad+'</b></span>'+
+        '<button class="ysc-del" type="button" aria-label="Güzergahı sil"><i class="fa-solid fa-trash-can"></i></button></div>'+
+        '<div class="ysc-meta"><span><i class="fa-solid fa-location-dot"></i> '+r.stops.length+' durak</span>'+
+        '<span><i class="fa-regular fa-calendar"></i> '+r.dateStr+'</span></div>'+
+        '<div class="ysc-acts"><button class="btn btn-line ysc-open" type="button"><i class="fa-solid fa-map-location-dot"></i> Haritada Aç</button></div>';
+      a.querySelector('.ysc-open').addEventListener('click',function(){openSavedRoute(r);});
+      a.querySelector('.ysc-del').addEventListener('click',function(){
+        var s=lsGet(); s.routes=s.routes.filter(function(x){return x.id!==r.id;}); lsSet(s); renderSavedRoutes();
+      });
+      savedGrid.appendChild(a);
+    });
+  }
+  function openSavedRoute(r){
+    route.stops.slice().forEach(function(m){toggleStop(m);});            // mevcut durakları temizle (toggleStop kapısı)
+    var fi=document.getElementById('ygFrom'), ti=document.getElementById('ygTo');
+    if(fi)fi.value=r.from.ad; setEndpoint('from',r.from);
+    if(ti)ti.value=r.to.ad;   setEndpoint('to',r.to);                    // ikisi set → buildRoute() motorda çalışır
+    r.stops.forEach(function(m){ if(!isStop(m)) toggleStop(m); });       // kayıtlı durakları geri yükle
+    if(resultEl)resultEl.hidden=true; if(planEl)planEl.hidden=false; if(suggestWrap)suggestWrap.hidden=false;
+    var stage=document.querySelector('.yg-stage'); if(stage)stage.scrollIntoView({behavior:'smooth',block:'start'});
+  }
+  renderSavedRoutes();
 })();
 </script>
 <script>

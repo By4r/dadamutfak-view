@@ -1,32 +1,34 @@
 # DadaMutfak — Handoff
 
-## Madde 26 — Yol Güzergahım (DURUM: işlev tamam, UI revize edilecek, AKIŞ eksik)
-- Ayrı sayfa: mockups/yol-guzergahim-v1.html. İşlev (Faz 1-4) ÇALIŞIYOR: Leaflet, Uber Nereden/Nereye
-  autocomplete (CITY), şehirlerarası dummy rota (waypoint-poly), koridor filtresi (ROAD_POOL 10 mekan,
-  CORRIDOR_KM=20), balon→tıkla→ekle, Güzergahım repeater, çift yönlü senkron — regresyon geçti.
-- UI: Varyasyon A (Sürüş Kabini, harita full-bleed + cam paneller) uygulandı ama SORUNLU.
+## Madde 26 — Yol Güzergahım (DURUM: A Revize + Faz A + Navigation BİTTİ/commit'li, Faz B kalan)
 
-## AÇIK SORUNLAR (çözülecek)
-1. AKIŞ EKSİĞİ (öncelik): güzergah oluşunca kapanış yok — "Güzergahımı Kaydet/Tamamla" CTA + özet/sonuç
-   eklenmeli. Şu an dead-end.
-2. ÖRTME: A cam panelleri + popup haritayı/güzergahı örtüyor (fitBounds padding'e rağmen) — A'nın yapısal sorunu.
-3. Rail expand/toggle UX zayıf.
-4. Genel: A oturmadı, Beyar memnun değil.
+### TAMAMLANAN (bu commit)
+- A Revize (Sürüş Kabini korundu): örtme %60→%19, çakışma 0px, akış CTA (Kaydet→özet→Düzenle), toggle pill,
+  mobil. Motor JS (2172-2456) 0 dokunuş.
+- Faz A (kurgu erişim): Kaydet→localStorage dada_yg + sayfa-içi "Kayıtlı Güzergahlarım" (göz önünde) +
+  "Haritada Aç" replay (setEndpoint/toggleStop çağrısı) + Sil.
+- Navigation (3 giriş, cream/tomato): kesfet-v1 Mekan Bul sekmesine giriş bandı (tab motoru korundu) +
+  anasayfa-portal-v3a ayrı cream blok (Günün Tarifi çakışma 0) + mekan-detay-v1 CTA. dizin.html'e eklendi.
 
-## LAYOUT KARARI (Beyar onayı bekliyor)
-- Claude.ai önerisi: B'ye dön (Split Cockpit: üst komut çubuğu + sol dominant harita + sağ ayrı panel
-  zonu). A'nın örtme+toggle dertleri B'de yapısal biter, akış CTA'ya yer açılır.
-- Alternatif: A'da kalıp elden geçir (kırılgan). İki layout da Claude.ai'de mockup olarak sunuldu.
+### KALAN — FAZ B (checkpoint + rozet yansıma)
+Plan: tasks/madde26-plan.md "Kurgu Tamamlama Planı (Faz B)".
+- CHECKPOINT: aktif güzergahta durakları "ziyaret ettim" işaretle → görsel tik + ilerleme (N/M). Sayfa-içi
+  açılır blok (örtmesiz) — kayıtlı kart "Detay/Checkpoint" açar.
+- ROZET YANSIMA: PRIMARY rozetler-v1 ("Keşif & Mekan" + "Yol Üstü Gurme" ilerlemeli kart), SECONDARY
+  mutfak-defteri "Ziyaret" sayacı. localStorage dada_yg.visited'tan beslenir.
 
-## SONRAKİ ADIMLAR
-1. Layout kararı (B öneriliyor) + akış CTA implement.
-2. Faz 5: boş durumlar + NAVIGATION (Keşfet'ten giriş) + Bağlantı Denetimi.
-3. dizin.html'e yol-guzergahim-v1 ekle (şu an YOK).
-4. COMMIT: CLAUDE.md "Bağlantı & Akış Denetimi" kuralı + yol-guzergahim + plan + dizin → madde 26 = 30/30.
+### KISITLAR (Faz B'de de geçerli)
+- Motor JS (2172-2456) DOKUNMA. Additive. Header inline shell DOKUNMA. kesfet-v1 tab motoru/facet/sihirbaz
+  DOKUNMA (sadece additive eklendi). Palet tomato #E14827 + mevcut, yeni renk yok. div+bg cover.
 
-## NOTLAR
-- vanilla HTML/CSS/JS, header inline shell, palet tomato #E14827, div+bg cover, kesfet'e dokunma.
-- plan: tasks/madde26-plan.md (v2). CLAUDE.md kuralı working-tree'de (madde 26 final commit'iyle gidecek).
+### SONRAKİ ADIM
+Faz B implement → B-8 doğrulama → onay → commit → madde 26 KAPANIR = paket 30/30.
+
+### NOTLAR
+- vanilla HTML/CSS/JS, header inline shell her sayfada kopya. A "Sürüş Kabini" immersive cam kokpit (Beyar
+  seçti, B jenerik geri alındı). localStorage gerçek tarayıcıda çalışır (artifact değil). Üç giriş cream/tomato.
+- Dizin: yol-guzergahim-v1 "Restoran & İşletme" grubunda (mekan/venue ekosistemi — kardeşi mekan-detay &
+  rezervasyonlarim orada; dizindeki "Keşfet" grubu insan/içerik keşfi olduğundan oraya konmadı).
 
 ## Sonraki paket (madde 26 sonrası)
 - Dalga 3 — birleşik hesap & abonelik merkezi: tek hesap/SSO (DadaMutfak+Store+Fit+Akademi, Store'a ayrı

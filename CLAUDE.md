@@ -52,6 +52,17 @@ hedef sade, fonksiyonel, modern bir arayüze taşımak.
 - Çıktı: kısa **YAZILI** rapor (ne değişti + kontrol sonucu). Tek öğe için
   dakikalarca crop'la uğraşma.
 
+## Bağlantı & Akış Bütünlüğü Denetimi (her değişiklikte zorunlu)
+
+"Kendi eklediğim çalışıyor mu"nun ötesinde, her iş sonunda:
+1. Dokunulan sayfanın TÜM giden bağlantı/CTA hedeflerini Playwright ile tıkla-doğrula: dead link
+   (404), yanlış hedef, boş onclick / href="#" var mı?
+2. Yeni bir CTA henüz var olmayan bir sayfaya/adıma gidiyorsa (faz bölme vb.), raporda AÇIKÇA yaz:
+   "X CTA → Y, Y henüz yok, faz Z'de bağlanacak". Sessizce 404 bırakma.
+3. Değişiklik mevcut bir akışı etkiliyorsa (ör. Üye Ol→checkout→dönüş), akışı uçtan uca Playwright ile
+   yürüt; kopuk halka var mı raporla.
+Etki alanı: dokunulan sayfa + ona bağlı bilinen akışlar (tüm siteyi taramaya gerek yok).
+
 ## Soru Sorma Kuralı
 
 - Bana açık soru sorduğunda (ask_user_input widget ya da plan içi açık soru),

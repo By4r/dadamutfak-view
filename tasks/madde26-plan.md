@@ -499,3 +499,641 @@ Boş durumlar (rota yokken öneri/Güzergahım gizli; koridorda 0 mekan mesajı)
   kümeleme (marker cluster) gerekebilir, mock'ta gerekmez.
 - `cardEl/pill/statusEl` `kesfet-v1.html`'den **kopya-uyarlama** (yeni sayfa, paylaşım yok) — kabul.
 ```
+
+---
+
+# B Revizyon Planı — Varyasyon A → Split Cockpit (❌ İPTAL — uygulandı, geri alındı)
+
+> ❌ **İPTAL (Beyar kararı):** B (Split Cockpit) implement edilip doğrulandı ama **jenerik** bulundu.
+> Hedef baştan beri "A'yı KOMPLE değiştir" değil "A'yı REVİZE et"ti. B working-tree'den
+> `git checkout` ile atıldı; sayfa son commit'teki **A (Sürüş Kabini)** haline döndü.
+> Geçerli plan: aşağıdaki **"A Revize Planı"**. B aşağıda yalnız tarihsel/teknik referans için duruyor
+> (B-6'daki salt-okuma akış CTA mantığı A'ya uyarlanacak).
+
+> Durum: işlev (Faz 1–4) çalışıyor; sorun UI Varyasyon A (Sürüş Kabini). Cam paneller
+> haritayı/güzergahı örtüyor, rail toggle zayıf, **akış dead-end** (kapanış/CTA yok).
+> Yön (İPTAL): A → B (Split Cockpit). Örtme yapısal biter, akış CTA'ya yer açılır.
+
+## B-0. Anahtar teknik tespit (motora dokunmadan B'ye geçişin sırrı)
+
+İki "akıllı guard" sayesinde **işlev JS'ine hiç dokunmadan** layout B'ye geçilebilir:
+
+1. **`fitRoute()` kendiliğinden sönüyor.** Şu an (satır 2309–2317) örtmeyi telafi için
+   `if(planEl && getComputedStyle(planEl).position==='absolute')` ile sağ panel genişliği +
+   alt rail yüksekliği kadar padding ekliyor. B'de panel artık `absolute` DEĞİL (grid item) →
+   bu dal **false** → otomatik simetrik `paddingTopLeft/BottomRight=[20,20]`'ye düşer. Tam da
+   örtmesiz layout'un istediği. **fitRoute'a dokunma.**
+2. **`#ygRailToggle` kalkıyor.** Son bloktaki (2457–2462) `if(railToggle&&suggestWrap)` guard'ı,
+   element silindiğinde `railToggle=null` olduğu için sessizce atlar. Markup'tan rail-toggle'ı
+   kaldırmak JS kırmaz.
+3. `planEl`/`railToggle` var atamaları (2209–2210) `null` döner — zararsız, **kalır**.
+
+**Sonuç:** motor fonksiyonlarının (`buildRoute`, `routeWaypoints`, `spawnBalloons`, `distToRoute`,
+`toggleStop`, `drawStopLine`, `syncStates`, `flyTo`, `highlightCard`, `renderStops`, `cardEl`,
+`popupHtml`, `bindAc`, `setEndpoint`) **tek satırı bile değişmez.** Değişen: CSS bloğu + `<section>`
+HTML + son JS bloğunda **tek additive ekleme** (akış CTA + isteğe bağlı "Güzergah Oluştur" tetik).
+
+## B-1. Korunan selektörler (hepsi B markup'ında birebir kalır)
+
+`#routeMap` · `#ygFrom` · `#ygTo` · `#ygFromAc` · `#ygToAc` · `#ygHint` · `#ygStopsWrap` ·
+`#ygStops` · `#ygSuggestWrap` · `#ygGrid` · `#ygCount` · `#ygPanelEmpty` · `.yg-card` · `.yg-add` ·
+`.yg-pin`. **Kaldırılan:** `#ygRailToggle` (+ `.yg-rail*`, `.yg-glass`). **Yeniden adlandırılan:**
+`.yg-plan`→`.yg-side` (planEl=null olur, B-0/1 guard yutar).
+
+## B-2. Layout iskeleti (3 zon: komut çubuğu / sol harita / sağ panel)
+
+```
+<main>
+  <section class="yg-hero"> … </section>            ← AYNEN KALIR (slim intro)
+  <section class="yg-stage-sec"><div class="wrap-wide">
+    ┌─ KOMUT ÇUBUĞU (.yg-cmd) — sayfa akışında, overlay DEĞİL ───────────────┐
+    │  Nereden [input]   →   Nereye [input]   [ Güzergah Oluştur ]            │
+    │  .yg-hint (ipucu satırı)                                               │
+    └────────────────────────────────────────────────────────────────────────┘
+    ┌─ SPLIT (.yg-split: grid 1fr / 360px) ────────────────────────────────────┐
+    │  SOL .yg-map-wrap (sticky)        │  SAĞ .yg-side (akış kolonu)           │
+    │  ┌────────────────────────────┐   │  • #ygPanelEmpty (boş durum)          │
+    │  │  #routeMap  78vh dominant  │   │  • #ygStopsWrap → Güzergahım + [Kaydet]│
+    │  │  (panel ÜSTÜNE BİNMEZ)     │   │  • #ygSuggestWrap → dikey öneri listesi│
+    │  └────────────────────────────┘   │  • #ygResult (özet kartı, hidden)     │
+    └───────────────────────────────────┴───────────────────────────────────────┘
+  </div></section>
+</main>
+```
+
+## B-3. Değişecek bloklar (kesin satır aralıkları)
+
+| Blok | Satır | İşlem |
+|------|-------|-------|
+| CSS — Varyasyon A bloğu | **1244–1344** | **REPLACE** (B-4'teki CSS ile) |
+| HTML — `.yg-stage-sec` section | **1730–1781** | **REPLACE** (B-5'teki markup ile) |
+| HTML — `.yg-hero` | 1722–1728 | DOKUNMA |
+| JS — railToggle handler | **2457–2462** | **REPLACE** → akış CTA + ygGo tetik bloğu (B-6) |
+| JS — motor (her şey) | 2172–2456 | **DOKUNMA** |
+
+## B-4. CSS (1244–1344 yerine — palet-içi, yeni renk yok)
+
+Silinen: `.yg-glass`, `.yg-plan` (absolute), `.yg-rail*`, `.yg-rail-toggle/chev/scroll/::after`,
+`.yg-grid{flex;width:max-content}`. Eklenen/değişen iskelet:
+
+```css
+.yg-hero{padding-bottom:14px}                       /* aynen */
+.yg-stage-sec{padding:4px 0 64px}
+.wrap-wide{max-width:1380px;margin:0 auto;padding:0 20px}
+/* — KOMUT ÇUBUĞU (akışta, cam değil) — */
+.yg-cmd{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-lg);
+  box-shadow:var(--sh-sm);padding:16px 18px}
+.yg-trip{display:flex;gap:14px;align-items:flex-end}        /* yatay; dot/line dekoru DÜŞTÜ */
+.rt-field{position:relative;flex:1;display:flex;flex-direction:column;gap:5px}
+.rt-field label{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
+.rt-field input{padding:11px 13px;border:1px solid var(--line);border-radius:var(--radius-md);font:inherit;background:var(--cream-2);color:var(--ink)}
+.rt-field input:focus{outline:0;border-color:var(--tomato);background:#fff}
+.yg-arrow{flex:0 0 auto;color:var(--muted);padding-bottom:12px}   /* dekoratif → ok ikonu */
+.yg-go{flex:0 0 auto;align-self:flex-end;white-space:nowrap}      /* .btn .btn-primary reuse */
+.yg-ac{position:absolute;top:100%;left:0;right:0;z-index:40;margin-top:6px;background:var(--paper);
+  border:1px solid var(--line);border-radius:var(--radius-md);box-shadow:var(--sh-md);overflow:hidden}
+.yg-ac button{display:flex;align-items:center;gap:9px;width:100%;padding:10px 13px;border:0;background:transparent;font:inherit;text-align:left;cursor:pointer;color:var(--ink)}
+.yg-ac button:hover{background:var(--cream-2);color:var(--tomato)}
+.yg-hint{margin:12px 0 0;color:var(--slate-2);font-size:12.5px;line-height:1.4;display:flex;gap:7px;align-items:flex-start}
+.yg-hint i{margin-top:2px}
+/* — SPLIT: sol dominant harita + sağ panel (örtüşme YOK) — */
+.yg-split{display:grid;grid-template-columns:1fr 360px;gap:22px;margin-top:18px;align-items:start}
+.yg-map-wrap{position:sticky;top:90px;border:1px solid var(--line);border-radius:var(--radius-xl);
+  overflow:hidden;box-shadow:var(--sh-md)}
+#routeMap{height:78vh;min-height:560px;width:100%;background:var(--cream-2)}  /* radius/shadow → wrap'e taşındı */
+.yg-side{display:flex;flex-direction:column;gap:16px;min-width:0}
+/* boş durum (rota öncesi) */
+.yg-empty{text-align:center;padding:28px 14px;border:1px dashed var(--line);border-radius:var(--radius-lg);background:var(--cream-2)}
+.yg-empty .re-ico{width:46px;height:46px;margin:0 auto 12px;display:grid;place-items:center;border-radius:var(--radius-circle);background:var(--paper);color:var(--tomato);font-size:17px}
+.yg-empty h3{font-size:15px;margin-bottom:5px} .yg-empty p{color:var(--muted);font-size:12.5px;max-width:240px;margin:0 auto}
+/* GÜZERGAHIM durak listesi (panel-içi kart) */
+.yg-stops-wrap{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-lg);box-shadow:var(--sh-sm);padding:15px 16px}
+.yg-stops-wrap h3{font-size:13px;text-transform:uppercase;letter-spacing:.05em;color:var(--slate);display:flex;align-items:center;gap:7px;margin-bottom:12px}
+.rt-stops{list-style:none;display:flex;flex-direction:column;gap:6px}
+.rt-stops li{list-style:none}
+.rt-stop{display:flex;align-items:center;gap:9px;padding:8px 10px;background:var(--cream-2);border:1px solid var(--line);border-radius:var(--radius-md);transition:background .3s var(--ease)}
+.rt-stop.flash{background:var(--tomato-tint)}
+.rt-stop.end{background:transparent;border-style:dashed}
+.rs-n{flex:0 0 22px;width:22px;height:22px;display:grid;place-items:center;background:var(--tomato);color:#fff;border-radius:var(--radius-circle);font-size:11px;font-weight:700}
+.rt-stop.end .rs-n{background:var(--slate)} .rt-stop.end.d .rs-n{background:var(--tomato-deep)}
+.rs-txt{flex:1;display:flex;flex-direction:column;min-width:0}
+.rs-txt b{font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rs-txt small{color:var(--muted);font-size:11.5px}
+.rs-x{flex:0 0 auto;border:0;background:transparent;color:var(--muted);cursor:pointer;font-size:14px;padding:4px}
+.rs-x:hover{color:var(--tomato)}
+/* AKIŞ CTA — durak listesi altında */
+.yg-save{width:100%;justify-content:center;margin-top:13px;gap:7px}      /* .btn .btn-primary reuse */
+/* ÖNERİ LİSTESİ — artık DİKEY (rail değil) */
+.yg-suggest{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-lg);box-shadow:var(--sh-sm);padding:15px 16px}
+.yg-sug-head h2{font-size:14.5px;display:flex;align-items:center;gap:8px;margin-bottom:12px}
+.yg-sug-head .q{color:var(--tomato);font-weight:800}
+.yg-grid{display:flex;flex-direction:column;gap:10px}                    /* DİKEY stack */
+/* KOMPAKT YATAY SATIR KART (cardEl markup'ı AYNEN; sadece CSS yatay) */
+.yg-card{display:flex;gap:11px;background:var(--cream-2);border:1px solid var(--line);border-radius:var(--radius-md);overflow:hidden;transition:.18s var(--ease)}
+.yg-card:hover{box-shadow:var(--sh-sm)}
+.yg-card.flash{outline:2px solid var(--tomato);outline-offset:1px}
+.yc-fig{position:relative;flex:0 0 84px;width:84px;align-self:stretch;cursor:pointer}  /* dik thumb → sol */
+.yc-fig .bg{position:absolute;inset:0;background-size:cover;background-position:center}
+.yc-km{position:absolute;left:5px;bottom:5px;display:inline-flex;align-items:center;gap:4px;font-size:9.5px;font-weight:700;color:#fff;background:rgba(33,30,22,.74);padding:3px 6px;border-radius:var(--radius-pill)}
+.yc-body{flex:1;min-width:0;display:flex;flex-direction:column;gap:6px;padding:9px 11px 9px 0}
+.yc-body h4{font-size:13px;line-height:1.25;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}  /* tek satır */
+.yc-meta{display:flex;align-items:center;gap:7px;font-size:11px;color:var(--muted);min-width:0}
+.yc-rate{display:inline-flex;align-items:center;gap:4px;color:var(--slate);font-weight:700;flex:0 0 auto}
+.yc-rate i{color:var(--yellow)} .yc-cat{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.yg-card .yg-add{margin-top:auto;align-self:flex-start;gap:6px;padding:7px 11px;font-size:11.5px;border-radius:var(--radius-sm)}
+.yg-card .yg-add.on{background:var(--green-deep)} .yg-card .yg-add.on:hover{background:var(--green)}
+/* popup mini-kart + pin (AYNEN korunur) */
+.yg-pop{display:flex;flex-direction:column;gap:2px;min-width:168px}
+.yg-pop b{font-size:14px} .yg-pop small{color:var(--muted);font-size:12px;margin-bottom:8px}
+.yg-pop-add{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:8px 12px;border:0;border-radius:var(--radius-md);background:var(--tomato);color:#fff;font:inherit;font-weight:600;cursor:pointer}
+.yg-pop-add:hover{background:var(--tomato-dark)} .yg-pop-add.on{background:var(--green-deep)}
+.leaflet-popup-content{margin:12px 14px}
+.leaflet-bar a{color:var(--slate);border-color:var(--line)} .leaflet-bar a:hover{background:var(--cream-2);color:var(--tomato)}
+.yg-pin-b{display:grid;place-items:center;width:34px;height:34px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);background:var(--tomato);color:#fff;box-shadow:var(--sh-md);border:2px solid #fff}
+.yg-pin-b i{transform:rotate(45deg);font-size:13px}
+.yg-pin.origin .yg-pin-b{background:var(--slate)} .yg-pin.dest .yg-pin-b{background:var(--tomato-deep)} .yg-pin.added .yg-pin-b{background:var(--green-deep)}
+/* AKIŞ ÖZET KARTI (#ygResult) — in-flow, overlay DEĞİL */
+.yg-result{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-lg);box-shadow:var(--sh-md);padding:22px 18px;text-align:center}
+.yr-ico{width:54px;height:54px;margin:0 auto 12px;display:grid;place-items:center;border-radius:var(--radius-circle);background:var(--green-tint,rgba(0,157,79,.12));color:var(--green-deep);font-size:24px}
+.yr-route{font-weight:700;color:var(--ink);margin:2px 0 12px}
+.yr-stat{font-size:13px;color:var(--muted);margin-bottom:10px}
+.yr-stat .yr-num{color:var(--tomato);font-weight:800;font-size:16px}
+.yr-list{list-style:none;text-align:left;display:flex;flex-direction:column;gap:6px;margin:0 0 14px}
+.yr-list li{display:flex;align-items:center;gap:8px;font-size:13px;padding:8px 11px;background:var(--cream-2);border:1px solid var(--line);border-radius:var(--radius-md)}
+.yr-list li i{color:var(--tomato)} .yr-list li.muted{color:var(--muted);font-size:12px}
+.yr-note{font-size:11.5px;color:var(--muted);margin-bottom:14px}
+/* MOBİL ≤900: harita üstte ~50vh + panel zonu dikey stack (örtme zaten yok) */
+@media(max-width:900px){
+  .wrap-wide{padding:0 16px}
+  .yg-split{grid-template-columns:1fr;gap:16px}
+  .yg-map-wrap{position:static}                       /* sticky kapat */
+  #routeMap{height:50vh;min-height:340px}
+}
+@media(max-width:560px){
+  .yg-trip{flex-wrap:wrap} .rt-field{flex:1 1 100%}
+  .yg-arrow{display:none} .yg-go{width:100%}
+}
+```
+
+> **Sticky harita:** `.yg-map-wrap{position:sticky;top:90px}` + `align-items:start` → öneri listesi
+> uzasa bile sol harita sabit kalır, sağ panel altından kayar. Mobilde sticky kapatılır.
+> **`--green-tint`** değişkeni yoksa CSS fallback `rgba(0,157,79,.12)` devrede (yeni renk değil,
+> kurumsal yeşil `#009d4f`'in düşük-alfa'sı).
+
+## B-5. HTML (1730–1781 yerine)
+
+```html
+<section class="yg-stage-sec"><div class="wrap-wide">
+  <!-- KOMUT ÇUBUĞU (akışta) -->
+  <div class="yg-cmd">
+    <div class="yg-trip">
+      <div class="rt-field">
+        <label>Nereden</label>
+        <input type="text" id="ygFrom" autocomplete="off" placeholder="Şehir / yer yaz…">
+        <div class="yg-ac" id="ygFromAc" hidden></div>
+      </div>
+      <span class="yg-arrow"><i class="fa-solid fa-arrow-right-long"></i></span>
+      <div class="rt-field">
+        <label>Nereye</label>
+        <input type="text" id="ygTo" autocomplete="off" placeholder="Şehir / yer yaz…">
+        <div class="yg-ac" id="ygToAc" hidden></div>
+      </div>
+      <button class="btn btn-primary yg-go" id="ygGo" type="button"><i class="fa-solid fa-route"></i> Güzergah Oluştur</button>
+    </div>
+    <p class="yg-hint" id="ygHint"><i class="fa-solid fa-circle-info"></i> İki ucu da yaz — güzergahı çizip yol üstü mekanları gösterelim.</p>
+  </div>
+
+  <div class="yg-split">
+    <!-- SOL: dominant harita -->
+    <div class="yg-map-wrap"><div id="routeMap"></div></div>
+
+    <!-- SAĞ: ayrı panel zonu (overlay değil) -->
+    <aside class="yg-side">
+      <div class="yg-empty" id="ygPanelEmpty">
+        <div class="re-ico"><i class="fa-solid fa-map-location-dot"></i></div>
+        <h3>Güzergah bekleniyor</h3>
+        <p>Uçları seç — yol üstü mekanlar haritada baloncuk olarak belirsin.</p>
+      </div>
+      <!-- Güzergahım (üstte) -->
+      <div class="yg-stops-wrap" id="ygStopsWrap" hidden>
+        <h3><i class="fa-solid fa-list-check"></i> Güzergahım</h3>
+        <ol class="rt-stops" id="ygStops"></ol>
+        <button class="btn btn-primary yg-save" id="ygSave" type="button"><i class="fa-solid fa-flag-checkered"></i> Güzergahımı Kaydet</button>
+      </div>
+      <!-- Öneriler (altta, dikey) -->
+      <div class="yg-suggest" id="ygSuggestWrap" hidden>
+        <div class="yg-sug-head"><h2><span class="q" id="ygCount">0</span> mekan yol üstünde</h2></div>
+        <div class="yg-grid" id="ygGrid"></div>
+      </div>
+      <!-- AKIŞ KAPANIŞI: özet kartı (kayıt sonrası) -->
+      <div class="yg-result" id="ygResult" hidden>
+        <div class="yr-ico"><i class="fa-solid fa-circle-check"></i></div>
+        <h3>Güzergahın hazır!</h3>
+        <p class="yr-route" data-yg-route>—</p>
+        <div class="yr-stat"><span class="yr-num" data-yg-count>0</span> durak yol üstünde</div>
+        <ul class="yr-list" data-yg-stops></ul>
+        <p class="yr-note">Bu bir demo özetidir — gerçek kayıt yapılmadı.</p>
+        <button class="btn btn-line" data-yg-back type="button"><i class="fa-solid fa-arrow-left"></i> Güzergahı düzenle</button>
+      </div>
+    </aside>
+  </div>
+</div></section>
+```
+
+> Not: `cardEl` ürettiği `.yg-card` markup'ı (`.yc-fig`/`.yc-km`/`.yc-body`/`.yc-rate`/`.yc-cat`/
+> `.yg-add`) **AYNEN** kalır; yatay-satır görünümü tamamen CSS ile (B-4). JS'e kart için dokunma yok.
+
+## B-6. Akış CTA + tetik (JS — 2457–2462 yerine, TEK additive blok)
+
+Motor fonksiyonları değişmez; yalnız **okuma** yapan yeni listener'lar. `trip`, `route`,
+`stopsWrap`, `suggestWrap`, `panelEmpty`, `buildRoute` zaten IIFE scope'unda (2198–2306).
+
+```js
+// ---- "Güzergah Oluştur" açık tetik (auto-build setEndpoint'te zaten var; bu idempotent ek) ----
+var goBtn=document.getElementById('ygGo');
+if(goBtn)goBtn.addEventListener('click',function(){buildRoute();});  // buildRoute kendi guard'lı
+
+// ---- AKIŞ KAPANIŞI: Kaydet → özet kartı (salt okuma; motoru ellemez) ----
+var saveBtn=document.getElementById('ygSave'),
+    resultEl=document.getElementById('ygResult');
+if(saveBtn&&resultEl){
+  saveBtn.addEventListener('click',function(){
+    if(!trip.from||!trip.to)return;
+    resultEl.querySelector('[data-yg-route]').textContent=trip.from.ad+' → '+trip.to.ad;
+    resultEl.querySelector('[data-yg-count]').textContent=route.stops.length;
+    var ul=resultEl.querySelector('[data-yg-stops]');
+    ul.innerHTML=route.stops.length
+      ? route.stops.map(function(m){return '<li><i class="fa-solid fa-location-dot"></i> '+m.ad+'</li>';}).join('')
+      : '<li class="muted">Ara durak eklemeden doğrudan yol — dilersen haritadan ekleyebilirsin.</li>';
+    if(panelEmpty)panelEmpty.hidden=true; stopsWrap.hidden=true; suggestWrap.hidden=true;
+    resultEl.hidden=false;
+  });
+  resultEl.querySelector('[data-yg-back]').addEventListener('click',function(){
+    resultEl.hidden=true; stopsWrap.hidden=false; suggestWrap.hidden=false;
+  });
+}
+```
+
+> **Akış halkası:** yaz→seç→(auto/Güzergah Oluştur)→rota+baloncuk→ekle/çıkar→**Güzergahımı Kaydet**
+> →özet kartı (kalkış→varış + N durak listesi + demo notu)→**Güzergahı düzenle** geri döner.
+> Dead-end kapandı. Özet **in-flow** (sağ panelde) → haritayı örtmez.
+
+## B-7. Mobil (≤900px)
+
+`.yg-split` tek sütun → DOM sırası: **komut çubuğu → harita (~50vh) → sağ panel zonu (boş durum /
+Güzergahım+Kaydet / öneriler / özet) dikey stack.** Harita sticky kapatılır (`position:static`).
+≤560px: komut çubuğu inputları tam-genişlik dikey, ok ikonu gizli, "Güzergah Oluştur" tam-genişlik.
+`resize`→`invalidateSize` zaten bağlı (2180).
+
+## B-8. Doğrulama (implement sonrası — şimdi DEĞİL)
+
+- **3-viewport TAM SAYFA SS** (1440 / 768 / 390), CROP yok. Self-verify yazılı rapor.
+- **Örtme bitti mi:** rota/baloncuk/zoom kontrolü hiçbir panelce örtülmüyor (B'nin tüm amacı).
+- **Akış uçtan uca (Playwright):** İstanbul→Eskişehir yaz/seç → rota+10 baloncuk → 2-3 ekle →
+  Kaydet → özet doğru (kalkış→varış, durak sayısı/isimleri) → Düzenle geri.
+- **Bağlantı Denetimi:** header menü, footer, bottom-nav hedefleri 200; kart `.yc-fig`→
+  `mekan-detay-v1.html` (var); `yg-add`/`yg-save`/`yg-back` boş onclick değil; `href="#"` yok.
+- **Konsol temiz** + motor regresyonu (toggleStop/sync/flyTo/highlightCard) hâlâ çalışıyor.
+- **Dizine ekleme AYRI adım:** `yol-guzergahim-v1.html` `dizin.html`'e henüz bağlı değil — raporda
+  açıkça yaz (Faz 5/sonraki paket).
+
+---
+
+# A Revize Planı — Varyasyon A (Sürüş Kabini) İÇİNDE 3 sorunu çöz (PLAN, implement YOK)
+
+> ✅ **GEÇERLİ PLAN.** A'nın karakteri = full-bleed harita tuval + üstünde yüzen **cam kokpit
+> panelleri** (immersive/cesur). Bu karakter KORUNUR. B'deki gibi paneli haritanın yanına taşıyıp
+> grid'e dökme YOK. Üç sorun (akış / örtme / toggle) **A'nın cam-overlay dili içinde** çözülür.
+
+## A-0. Mevcut A — ölçülü durum (1440, İstanbul→Eskişehir + 2 durak)
+
+| Panel | Konum | Ölçü | Harita örtme |
+|-------|-------|------|--------------|
+| `.yg-plan` | sağ-üst (abs top/right:16) | 344×561 | %21 — kabul edilebilir (üst-sağ köşe; rota diagonali burayı az kullanır) |
+| `.yg-rail` | alt **tam genişlik** (abs left/right:16, bottom:16) | **1308×283** | **%39 — ASIL SUÇLU**; haritanın alt 1/3'ünü + güney rota kolunu örter, üstelik **açık başlar** |
+| toggle | rail-head sağında "↔ kaydır" + küçük chevron | — | collapse edilebildiği **belli değil** |
+
+**Teşhis:** Örtmenin büyük kısmı rail'in (a) tam-genişlik ve (b) açık-başlaması. Bunu çözmek
+hem (b) örtmeyi hem (c) toggle'ı aynı anda iyileştirir. Plan paneli ikincil sorun (köşede, tolere edilir).
+
+## A-1. Sınırlar (B ile aynı)
+
+- Motor JS **2172–2456 DOKUNULMAZ** (rota/waypoint/koridor/spawn/toggleStop/sync/fitRoute/buildRoute).
+- Korunan selektörler birebir: `#routeMap` `#ygFrom` `#ygTo` `#ygFromAc` `#ygToAc` `#ygHint`
+  `#ygStopsWrap` `#ygStops` `#ygSuggestWrap` `#ygGrid` `#ygCount` `.yg-card` `.yg-add` `.yg-pin`
+  `#ygRailToggle` (A'da kalıyor!) `.yg-plan` `.yg-rail`.
+- Palet tomato `#E14827`, yeni renk yok. Header inline shell + `kesfet-v1.html` dokunulmaz.
+- **fitRoute'a kod dokunmadan** kazanım: rail collapsed başlayınca `suggestWrap.offsetHeight` küçülür
+  (sadece header ~50px) → fitRoute'un alt padding'i (satır 2314 `rh+28`) otomatik küçülür → rota daha
+  geniş açık alana sığar. **Bedava örtme kazanımı, JS değişmeden.**
+
+---
+
+## A-2 · (a) AKIŞ — "Güzergahımı Kaydet" → in-flow özet (A'nın cam diline uyarlı)
+
+**Fikir:** B-6'daki salt-okuma listener'ı A'ya taşı. Özet, A'nın karakterine uygun olarak **ayrı bir
+cam panel** (`#ygResult`, `.yg-plan`'ın TAM footprint'inde top-right) — yeni overlap eklemez, plan
+panelinin yerini alır. Kaydet'te `planEl` + `suggestWrap` gizlenir, result açılır; Düzenle'de geri.
+
+**HTML — `#ygStopsWrap` içine CTA (mevcut `<ol id="ygStops">` SONRASINA, ~satır 1765):**
+```html
+  <ol class="rt-stops" id="ygStops"></ol>
+  <button class="btn btn-primary yg-save" id="ygSave" type="button"><i class="fa-solid fa-flag-checkered"></i> Güzergahımı Kaydet</button>
+```
+(stopsWrap rota çizilince `renderStops`'ta un-hidden → CTA otomatik görünür; 0 durakta da geçerli.)
+
+**HTML — yeni cam özet paneli, `.yg-rail` markup'ından SONRA, `.yg-stage` içinde (~satır 1779):**
+```html
+<div class="yg-glass yg-result" id="ygResult" hidden>
+  <div class="yr-ico"><i class="fa-solid fa-circle-check"></i></div>
+  <h3>Güzergahın hazır!</h3>
+  <p class="yr-route" data-yg-route>—</p>
+  <div class="yr-stat"><span class="yr-num" data-yg-count>0</span> durak yol üstünde</div>
+  <ul class="yr-list" data-yg-stops></ul>
+  <p class="yr-note">Bu bir demo özetidir — gerçek kayıt yapılmadı.</p>
+  <button class="btn btn-line" data-yg-back type="button"><i class="fa-solid fa-arrow-left"></i> Güzergahı düzenle</button>
+</div>
+```
+
+**CSS (A CSS bloğuna ekle, 1244–1344 içi) — özet paneli plan footprint'inde:**
+```css
+.yg-result{position:absolute;top:16px;right:16px;width:324px;max-width:calc(100% - 32px);
+  max-height:calc(78vh - 32px);overflow-y:auto;z-index:6;border-radius:var(--radius-lg);padding:18px;text-align:center}
+.yr-ico{width:54px;height:54px;margin:0 auto 12px;display:grid;place-items:center;border-radius:var(--radius-circle);background:rgba(0,157,79,.14);color:var(--green-deep);font-size:24px}
+.yr-route{font-weight:700;color:var(--ink);margin:2px 0 12px}
+.yr-stat{font-size:13px;color:var(--slate-2);margin-bottom:10px}
+.yr-stat .yr-num{color:var(--tomato);font-weight:800;font-size:16px}
+.yr-list{list-style:none;text-align:left;display:flex;flex-direction:column;gap:6px;margin:0 0 14px}
+.yr-list li{display:flex;align-items:center;gap:8px;font-size:13px;padding:8px 11px;background:rgba(255,255,255,.62);border:1px solid var(--line);border-radius:var(--radius-md)}
+.yr-list li i{color:var(--tomato)} .yr-list li.muted{color:var(--muted);font-size:12px}
+.yr-note{font-size:11.5px;color:var(--muted);margin-bottom:14px}
+.yg-save{width:100%;justify-content:center;margin-top:14px;gap:7px}   /* .btn .btn-primary reuse */
+```
+> `.yr-list li` arka planı `.rt-stop`'la aynı yarı-saydam beyaz → cam panel içinde tutarlı (A dili).
+> `rgba(0,157,79,.14)` = kurumsal yeşil `#009d4f` düşük-alfa (yeni renk DEĞİL); tik onay aksanı.
+
+**JS — additive listener (2457–2462 railToggle bloğuyla AYNI yere, motor DIŞI):** `planEl`, `suggestWrap`,
+`trip`, `route` zaten scope'ta (2198–2209).
+```js
+var saveBtn=document.getElementById('ygSave'), resultEl=document.getElementById('ygResult');
+if(saveBtn&&resultEl){
+  saveBtn.addEventListener('click',function(){
+    if(!trip.from||!trip.to)return;
+    resultEl.querySelector('[data-yg-route]').textContent=trip.from.ad+' → '+trip.to.ad;
+    resultEl.querySelector('[data-yg-count]').textContent=route.stops.length;
+    var ul=resultEl.querySelector('[data-yg-stops]');
+    ul.innerHTML=route.stops.length
+      ? route.stops.map(function(m){return '<li><i class="fa-solid fa-location-dot"></i> '+m.ad+'</li>';}).join('')
+      : '<li class="muted">Ara durak eklemeden doğrudan yol — dilersen haritadan ekleyebilirsin.</li>';
+    if(planEl)planEl.hidden=true; if(suggestWrap)suggestWrap.hidden=true; resultEl.hidden=false;
+  });
+  resultEl.querySelector('[data-yg-back]').addEventListener('click',function(){
+    resultEl.hidden=true; if(planEl)planEl.hidden=false; if(suggestWrap)suggestWrap.hidden=false;
+  });
+}
+```
+> Salt okuma; `buildRoute/toggleStop/syncStates` çağrılmaz, değiştirilmez. Dead-end kapanır;
+> özet A'nın cam panelinde, haritayı plan paneliyle aynı footprint'te örter (yeni örtme yok).
+
+---
+
+## A-3 · (b) ÖRTME minimize — rail'i ehlileştir + planı incelt
+
+**Asıl hamle: rail collapsed-DEFAULT + collapsed'da kompakt pill** (tam genişlikten çık).
+
+1. **Markup:** `#ygSuggestWrap`'a başlangıç `collapsed` sınıfı + `aria-expanded="false"` (~satır 1770/1773):
+   ```html
+   <div class="yg-glass yg-rail collapsed" id="ygSuggestWrap" hidden>
+     ...
+     <button class="yg-rail-toggle" id="ygRailToggle" type="button" aria-expanded="false" ...>
+   ```
+2. **CSS:** collapsed iken rail tam-genişlikten **sola yanaşık kompakt çubuğa** insin (örtme min):
+   ```css
+   .yg-rail.collapsed{right:auto;width:auto;max-width:calc(100% - 32px)}  /* full-width → pill */
+   ```
+   (Mevcut `.yg-rail.collapsed .yg-rail-scroll{display:none}` zaten kartları gizliyor → collapsed
+   yükseklik ~50px, sadece başlık+toggle. Harita alt 1/3'ü açılır.)
+3. **Plan paneli incelt:** `.yg-plan{width:344px}` → **`320px`** (satır 1256); üst-sağ örtme %21→~%19.
+   **Şeffaflık (Beyar ONAYLADI):** `.yg-glass` `rgba(255,255,255,.84)`→**`.80`** + blur `15px`→**`16px`**
+   (okunabilirlik korunur, harita biraz daha sızar). SS'te beğenilmezse `.84`'e geri dönülür.
+4. **fitRoute (DOKUNMA):** collapsed rail offsetHeight küçük → alt padding otomatik düşer → rota/baloncuk
+   daha geniş açık alanda. Kullanıcı rail'i açarsa alt geçici örtülür (kullanıcının bilinçli "kartlara
+   bak" eylemi) — A'nın cam doğası gereği bu kabul edilebilir denge.
+
+> Net etki: **dinlenme (rest) halinde** harita neredeyse tam açık (sadece sağ-üst 320px plan + sol-altta
+> küçük "mekan listesi" pill'i). Cesur/immersive karakter korunur, örtme ciddi azalır.
+
+---
+
+## A-4 · (c) TOGGLE'ı netleştir — belirgin aç/gizle butonu
+
+Mevcut zayıf "↔ kaydır + chevron" yerine **net etiketli pill toggle** (CSS-only dual label; JS toggle
+mantığı 2457 bloğunda AYNEN — sadece label'lar CSS ile durum-bazlı görünür):
+
+**HTML — toggle butonu içi (mevcut 1773–1776 yerine):**
+```html
+<button class="yg-rail-toggle" id="ygRailToggle" type="button" aria-expanded="false" aria-label="Öneri listesini aç ya da gizle">
+  <i class="fa-solid fa-chevron-up yg-rail-chev"></i>
+  <span class="rt-lbl rt-lbl-open">Listeyi gizle</span>
+  <span class="rt-lbl rt-lbl-closed">Listeyi aç</span>
+</button>
+```
+**CSS — pill görünüm + dual label + chevron yön:**
+```css
+.yg-rail-toggle{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);
+  background:var(--paper);cursor:pointer;font:inherit;font-weight:700;font-size:12px;color:var(--slate);
+  padding:7px 13px;border-radius:var(--radius-pill);transition:.18s var(--ease)}
+.yg-rail-toggle:hover{border-color:var(--tomato);color:var(--tomato)}
+.yg-rail-chev{font-size:11px;transition:transform .2s var(--ease)}
+.yg-rail.collapsed .yg-rail-chev{transform:rotate(180deg)}      /* açık=yukarı ok, kapalı=aşağı */
+.rt-lbl-closed{display:none}
+.yg-rail.collapsed .rt-lbl-open{display:none}
+.yg-rail.collapsed .rt-lbl-closed{display:inline}
+```
+> Eski `.yg-rail-hint` ("↔ kaydır") ve eski chevron-only kalkar. JS handler (2457–2462) `collapsed`
+> sınıfını + `aria-expanded`'ı toggle etmeye DEVAM eder — sadece görünen etiket CSS ile değişir,
+> **JS'e mantık eklemeye gerek yok.** ("kaydır" ipucu istenirse expanded başlıkta küçük tutulabilir.)
+
+---
+
+## A-5 · Değişecek bloklar (kesin)
+
+| Blok | Satır | İşlem |
+|------|-------|-------|
+| CSS — `.yg-plan` genişlik | 1256 | `344px`→`320px` |
+| CSS — `.yg-glass` şeffaflık | 1254 | **opsiyonel** `.84`→`.80`, blur `15`→`16` (Beyar SS kararı) |
+| CSS — `.yg-rail-toggle` + chevron + dual label | 1298–1304 civarı | pill stil + `.rt-lbl-*` + `.collapsed` chevron 180° |
+| CSS — `.yg-rail.collapsed` kompakt pill | (yeni) | `right:auto;width:auto` ekle |
+| CSS — `.yg-result`/`.yr-*`/`.yg-save` | (yeni, blok sonu) | A-2/A-3 stilleri |
+| CSS — mobil static kuralı | 1342 | `.yg-plan,.yg-rail`→ **`.yg-plan,.yg-rail,.yg-result`** (result da static insin) |
+| HTML — Kaydet CTA | ~1765 | `#ygStops` sonrası `#ygSave` |
+| HTML — rail collapsed-default + toggle label | 1770–1776 | `collapsed` sınıf + `aria-expanded="false"` + dual-label buton |
+| HTML — `#ygResult` cam paneli | ~1779 | `.yg-rail` sonrası ekle |
+| JS — save/back listener | 2457–2462 bloğu | railToggle handler KORUNUR; yanına additive save/back (motor DIŞI) |
+| JS — motor | 2172–2456 | **DOKUNMA** |
+
+## A-6 · Mobil (≤900px)
+
+`.yg-plan,.yg-rail,.yg-result` → static stack (mevcut kural + result eklenir). Sıra: harita (~50vh) →
+plan (giriş+Güzergahım+Kaydet) → rail (collapsed pill, dokun-aç) → kaydet sonrası result. Rail
+collapsed-default mobilde de geçerli (dikey yer kazandırır). `.yg-rail.collapsed{right:auto;width:auto}`
+static'te zararsız. Kaydet'te plan+rail gizlenir, result görünür.
+
+## A-7 · Doğrulama (implement sonrası — şimdi DEĞİL; B-8 ile aynı disiplin)
+
+- 3-viewport TAM SAYFA + viewport SS (1440/768/390), crop yok, self-verify yazılı rapor.
+- **ÖRTME:** rest-halinde rail collapsed pill + plan 320px → harita alt 1/3 açık; rota/baloncuk görünür.
+  Önce/sonra örtme % ölç (A-0 metrik scriptiyle).
+- **AKIŞ:** yaz→seç→rota+baloncuk→2-3 ekle→**Güzergahımı Kaydet**→özet (kalkış→varış + N durak/isim +
+  demo notu)→**Düzenle** geri. Dead-end kapandı mı.
+- **TOGGLE:** rail aç/gizle net mi (pill + etiket + chevron yön), aria-expanded doğru mu.
+- **MOTOR REGRESYON:** toggleStop/çift-yön senkron/pin-added/highlightCard/flyTo çalışıyor; konsol temiz.
+- **BAĞLANTI:** kart→`mekan-detay-v1.html`, `yg-add/yg-save/yg-back` boş değil, `href="#"` yeni yok.
+- Dizine ekleme hâlâ AYRI adım — raporda yaz.
+
+---
+
+# Kurgu Tamamlama Planı (Faz A + Faz B) — sonu sonuca bağlanan döngü (PLAN, implement YOK)
+
+> ✅ A revize onaylandı (çakışma/örtme/akış/mobil). Şimdi kurgunun sonu sonuca bağlanıyor.
+> Beyar kararları: (1) kayıtlı güzergah **göz önünde** (derin menü yok), (2) checkpoint
+> ("ziyaret ettim" → rozet) **bu pakete dahil**, (3) navigation **hem** mekan-liste CTA **hem**
+> portal kartı. Motor JS (2172–2456) DOKUNMA; tüm yeni kurgu **additive** (ayrı state/listener).
+
+## K-0. Hedef döngü + state mekanizması
+
+```
+Giriş(portal kartı / mekan CTA) → yol-guzergahim → planla(MOTOR) → Kaydet(additive)
+   → "Kayıtlı Güzergahlarım" (SAYFADA göz önünde) → kart aç → Haritada Aç (replay) │ Checkpoint detay
+   → durakları "ziyaret ettim" işaretle (additive) → ziyaret sayısı rozet sistemine yansır
+   → rozetler-v1 "Yol Üstü Gurme" ilerleme + defter "Ziyaret" sayacı
+```
+
+**Cross-page dummy state = `localStorage`** (backend yok ama döngü gerçekten kapanır):
+```js
+// anahtar: 'dada_yg'  (tek JSON)
+{
+  routes: [ {id, from:{ad,lat,lng}, to:{ad,lat,lng}, stops:[{ad,lat,lng,konum,cat,puan,img,...}], dateStr} ],
+  visited: { "Sapanca Göl Kahvaltı": true, ... }     // ziyaret edilen mekan adları (set)
+}
+// türev: visitedCount = Object.keys(visited).length
+```
+Yazan: yol-guzergahim (Kaydet, checkpoint). Okuyan: yol-guzergahim (Kayıtlı liste), rozetler-v1,
+mutfak-defteri. `new Date().toLocaleDateString('tr-TR')` (gerçek tarayıcı; sandbox değil) → kart tarihi.
+
+> **Motor garanti (her iki faz):** `setEndpoint/buildRoute/toggleStop/renderStops/spawnBalloons/
+> syncStates/fitRoute` fonksiyonları **çağrılır ama DEĞİŞTİRİLMEZ**. Yeni kod yalnız `trip`/`route`
+> okur, localStorage yazar/okur, bu fonksiyonları çağırır. "Haritada Aç" = mevcut `setEndpoint`'i
+> replay etmek (yeni mantık değil, var olanı tetiklemek).
+
+## K-1. "Kayıtlı Güzergahlarım" yansıma yeri — KARAR + gerekçe
+
+| Yer | Rol | Gerekçe |
+|-----|-----|---------|
+| **yol-guzergahim-v1 (sayfa-içi)** | Kayıtlı Güzergahlarım listesi — **göz önünde** | Beyar "derin menü yok, sayfada görünür" dedi. `<main>`'de `yg-stage-sec` SONRASI (satır 1809–1810 arası) yeni `section`. Faz A ana teslimi. |
+| **rozetler-v1 (PRIMARY rozet yansıması)** | "Yol Üstü Gurme" rozeti + ilerleme | Kanonik rozet evi ("rozet sistemine yansısın" = literal). Kilitli-kart `.b-prog`+`.b-left "X/Y mekan · N kaldı"` deseni sayım-eşiğine birebir; `.bgal-stat` pill sayacı. Göz önünde galeri. |
+| **mutfak-defteri-v1 (SECONDARY, light)** | hero `.pf-stats`'a "Ziyaret" sayacı + teaser bandında rozet | Defter = profil merkezi, sayaç şeridi + rozet teaser zaten var → düşük maliyetli göz-önünde yansıma. |
+| ~~hesabim-v1~~ | — | Ayar merkezi (profil/şifre/gizlilik/üyelik); başarı/keşif için daha az göz-önünde → ATLA. |
+
+---
+
+## FAZ A — Kaydet → göz önünde Kayıtlı Güzergahlarım + kart→tekrar aç + navigation
+
+### A-i. Dokunulacak dosyalar
+| Dosya | İşlem |
+|-------|-------|
+| `mockups/yol-guzergahim-v1.html` | Kayıtlı Güzergahlarım sayfa-içi bölüm (HTML+CSS) + Kaydet handler'ı localStorage'a genişlet + renderSavedRoutes + "Haritada Aç" replay (hepsi additive, IIFE içi) |
+| `mockups/anasayfa-portal-v3a.html` | "Keşfet" discover section'ına (satır 2273) "Yol Güzergahım" tanıtım kartı (additive HTML) |
+| `mockups/mekan-detay-v1.html` | (mekan-liste yerine — bkz. ⚠️) yol üstü CTA şeridi (additive HTML) |
+
+### A-ii. Eklenecek UI/state (yol-guzergahim)
+- **HTML:** `<main>` içinde `yg-stage-sec` sonrası yeni `<section class="yg-saved-sec" id="ygSavedSec" hidden>`:
+  başlık "Kayıtlı Güzergahlarım" + `<div id="ygSavedGrid" class="yg-saved-grid">` (kart grid). Boş durumda gizli.
+- **Kart deseni** (`div+bg cover` yok; metin kart — tomato aksan): `İstanbul → Bolu` · `N durak` · `tarih`
+  + iki aksiyon: `Haritada Aç` (.btn-line) · `Detay / Checkpoint` (.btn-line; Faz B'de aktifleşir).
+- **CSS (palet-içi):** `.yg-saved-sec{padding:0 0 64px}`, `.yg-saved-grid{display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px}`, `.yg-saved-card{...border/
+  radius/sh-sm; sol kenarda tomato şerit}`, mobilde tek sütun.
+- **JS (additive, mevcut save/back bloğunun İÇİNE/yanına — motor değil):**
+  ```js
+  var LS='dada_yg';
+  function lsGet(){try{return JSON.parse(localStorage.getItem(LS))||{routes:[],visited:{}};}catch(e){return {routes:[],visited:{}};}}
+  function lsSet(o){localStorage.setItem(LS,JSON.stringify(o));}
+  // Kaydet handler'ına EK (mevcut salt-okuma özet kodundan SONRA):
+  //   var st=lsGet(); st.routes.unshift({id:'r'+st.routes.length+'_'+(''+Math.random()).slice(2,7),
+  //     from:trip.from,to:trip.to,stops:route.stops.slice(),dateStr:new Date().toLocaleDateString('tr-TR')});
+  //   lsSet(st); renderSavedRoutes();
+  function renderSavedRoutes(){ /* lsGet().routes → ygSavedGrid kartları; boşsa ygSavedSec.hidden=true */ }
+  function openSavedRoute(r){ // "Haritada Aç" = MOTOR'u replay (çağrı, değişiklik değil)
+    document.getElementById('ygFrom').value=r.from.ad; setEndpoint('from',r.from);
+    document.getElementById('ygTo').value=r.to.ad;     setEndpoint('to',r.to);   // both set → buildRoute() motorda
+    r.stops.forEach(function(m){ if(!isStop(m)) toggleStop(m); });               // kayıtlı durakları geri ekle
+    document.querySelector('.yg-stage').scrollIntoView({behavior:'smooth',block:'start'});
+  }
+  renderSavedRoutes(); // sayfa açılışında localStorage'dan doldur (kalıcı liste)
+  ```
+- **State:** localStorage `routes`. Kaydet'te unshift + render. Sayfa açılışında render (kalıcı).
+
+### A-iii. Navigation (additive, shell DOKUNMA)
+- **Portal kartı** — `anasayfa-portal-v3a.html` "Keşfet" discover section (2273): `paneMekan` grid'ine ya da
+  section başına bir **tanıtım kartı/şerit** (`.disc-card` dilinde ya da ince banner) → `yol-guzergahim-v1.html`.
+  Eyebrow "Yeni · Yol Üstü", başlık "Yola çık, yol üstünü keşfet", CTA "Güzergah Planla". Additive, tek `<article>`.
+- ⚠️ **mekan-liste CTA — ENGEL (açık rapor, sessiz 404 yok):** `mekan-liste-v1.html` artık **redirect stub**
+  (`<meta refresh>` + `location.replace` → `kesfet-v1.html?tab=mekan`). Oraya CTA koymak işe yaramaz (anında
+  redirect). Gerçek mekan dizini `kesfet-v1.html` içinde — **kısıtlı (dokunma)**. → **Öneri:** "mekan
+  ekosistemi CTA"sını dokunulabilir + semantik tek aday **`mekan-detay-v1.html`** gövdesine koy ("Bu mekan yol
+  üstünde mi? Güzergahını planla → Yol Güzergahım"). **Beyar onayı gerek:** mekan-detay ikamesi OK mi, yoksa
+  portal kartıyla mı yetinelim? (kesfet-v1 kilitli olduğu için Keşfet Mekanlar sekmesine konamaz.)
+
+### A-iv. Doğrulama (B-8 disiplini)
+3-viewport SS; Kaydet→kart eklendi (İstanbul→Bolu·N durak·tarih); reload→liste kalıcı (localStorage);
+"Haritada Aç"→rota+baloncuk+duraklar geri yüklendi (motor replay); portal kartı/mekan-detay CTA→
+yol-guzergahim (200); motor regresyon; konsol temiz.
+
+---
+
+## FAZ B — Checkpoint ("ziyaret ettim" + ilerleme) + profile/rozet yansıma
+
+### B-i. Dokunulacak dosyalar
+| Dosya | İşlem |
+|-------|-------|
+| `mockups/yol-guzergahim-v1.html` | Kayıtlı güzergah **detay/checkpoint** görünümü (additive markup+JS): durak listesi + "ziyaret ettim" toggle + ilerleme (3/5); localStorage `visited` yaz |
+| `mockups/rozetler-v1.html` | Yeni rozet kategorisi "Keşif & Mekan" + "Yol Üstü Gurme" kilitli kart; küçük JS localStorage `visited` okuyup `.b-prog`/`.b-left` + `.bgal-pill` sayacını doldurur |
+| `mockups/mutfak-defteri-v1.html` | hero `.pf-stats`'a "Ziyaret" `.pfs` sayacı (localStorage okur); teaser bandına yeni rozet |
+
+### B-ii. Checkpoint (yol-guzergahim, additive — canlı #ygStops'a DOKUNMAZ)
+> `#ygStops` satırlarını `renderStops` (MOTOR) üretir → oraya buton ekleyemem. Checkpoint, **kayıtlı-güzergah
+> detayında** (benim markup'ım) yaşar. "Detay / Checkpoint" aksiyonu → detay paneli/görünümü açar.
+- **UI:** seçilen kayıtlı güzergahın durakları listelenir; her durakta `☐ Ziyaret ettim` toggle (işaretli=
+  yeşil-koyu tik `var(--green-deep)`, palet-içi) + üstte ilerleme `3 / 5 durak ziyaret edildi` + `.b-prog`
+  benzeri ince bar. Görünüm **sayfa-içi açılır blok** (in-flow, cam/overlay DEĞİL — Beyar onayı; örtme yok).
+- **State JS (additive):** toggle → `var st=lsGet(); st.visited[ad]=!st.visited[ad]||delete; lsSet(st);`
+  → ilerleme + bar güncelle. Sayım = `Object.keys(st.visited).length`.
+- **Motor garanti:** hiçbir motor fonksiyonu değişmez; checkpoint kendi durak kopyasını (kayıtlı `stops`)
+  render eder, `route.stops`'a dokunmaz.
+
+### B-iii. Rozet yansıma (rozetler-v1, PRIMARY)
+- **HTML (additive):** `.badge-cat` desenine yeni kategori `data-cat="kesif"` ("Keşif & Mekan", `.bh-cnt`) →
+  `.badge-grid` → "Yol Üstü Gurme" **kilitli kart** (`.badge-card.locked` + `.b-note.locked` içinde `.b-left`
+  "X / 10 mekan · N kaldı" + `.b-prog` bar) + `.badge-tip` (tip-how "10 yol üstü mekan ziyaret et", tip-rank).
+  Eşikler (dummy): 3 / 10 / 25. İkon `fa-route` ya da `fa-utensils`.
+- **JS (additive, küçük blok):** `var st=JSON.parse(localStorage.getItem('dada_yg')||'{}'); var n=st.visited?
+  Object.keys(st.visited).length:0;` → kartın `.b-prog span` width'i + `.b-left` metni + galeri `.bgal-stat`
+  pill'i n'e göre. Eşik dolduysa `.locked` kalkar, `.b-note.earned` "Kazanıldı" olur (dummy). rozetler-v1'in
+  kendi filtre JS'ine dokunmadan, ayrı `DOMContentLoaded` bloğu.
+- **Kademe (`.rank-now`) DOKUNMA** — sadece yeni kategori + kart eklenir.
+
+### B-iv. Defter yansıma (mutfak-defteri, SECONDARY light)
+- hero `.pf-stats` şeridine bir `.pfs`: `<i fa-route> Ziyaret <b id="dfZiyaret">0</b>` → küçük JS localStorage
+  okur. Teaser bandı (`.badge-band`) zaten rozet kartı dilinde → "Yol Üstü Gurme" kartı eklenir (static ya da
+  JS ile ilerleme). Additive; defterin sekme/JS motoruna dokunmaz.
+
+### B-v. Doğrulama (B-8)
+Checkpoint: durak işaretle→tik+ilerleme 3/5, reload kalıcı; rozetler-v1 aç→"Yol Üstü Gurme" ilerleme
+localStorage sayısını yansıtıyor (eşik dolunca Kazanıldı); defter "Ziyaret" sayacı doğru; 3-viewport SS;
+rozetler/defter kendi akışları (filtre/sekme) bozulmadı; konsol temiz; tüm CTA/link 200.
+
+## K-2. Kararlar (Beyar ONAYLADI)
+1. **mekan CTA ikamesi:** ✅ `mekan-detay-v1.html` gövdesine CTA + portal kartı ("hem-hem"). mekan-liste-v1
+   stub'a / kilitli kesfet-v1'e DOKUNULMAZ.
+2. **Checkpoint açılışı:** ✅ **sayfa-içi açılır blok** (in-flow, cam/overlay DEĞİL — örtme yok, A diliyle uyumlu).
