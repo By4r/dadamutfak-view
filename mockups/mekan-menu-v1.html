@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Menü Yönetimi — DadaMutfak Mekân Paneli</title>
+<link rel="shortcut icon" type="image/x-icon" href="assets/img/favicon.ico" />
+<link rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+      integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A=="
+      crossorigin="anonymous" referrerpolicy="no-referrer" />
+<style>
+/* =====================================================================
+   MEKAN-MENU-V1 (Dalga2 M1) — panel-shell.html yeşil kardeşi.
+   İşletme sahibinin menü editörü: kategori (Kahvaltı/Öğle/Akşam) → ürün satırları
+   (görsel + ad + fiyat + rozet + açıklama). Public karşılığı: mekan-detay ?tab=menu.
+   Token/sidebar/topbar/pro-gate panel-shell ile BİREBİR. Repeater idiom: tarif-ekle
+   Pattern A (makeRow + delegated delete). Yeni renk YOK.
+   ===================================================================== */
+@font-face{font-family:"Gilroy";src:url("assets/fonts/Gilroy-Medium.ttf") format("truetype");font-weight:500;font-style:normal;font-display:swap}
+:root{
+  --tomato:#E14827;--tomato-dark:#C43D20;--tomato-deep:#A8331A;--tomato-tint:#FBE9E3;
+  --slate:#211E16;--slate-2:#56514a;--green:#3BB77E;--green-deep:#2c9963;--green-tint:#E7F6EF;
+  --yellow:#FAC045;--muted:#7E7E7E;--line:#ECECEC;--cream:#EFE5D3;--cream-2:#F7F1E6;
+  --paper:#ffffff;--bg:#f9f9f9;--ink:#211E16;--bg-white:#ffffff;--bg-cream:#f9f9f9;
+  --radius-sm:8px;--radius-md:12px;--radius-lg:16px;--radius-xl:24px;--radius-pill:999px;--radius-circle:50%;
+  --sh-sm:0 1px 2px rgba(33,30,22,.04), 0 2px 6px rgba(33,30,22,.05);
+  --sh-md:0 6px 22px rgba(33,30,22,.09);--sh-lg:0 18px 50px rgba(33,30,22,.16);
+  --ease:cubic-bezier(.22,.61,.36,1);--pnl-side-w:248px;--pnl-top-h:64px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:"Gilroy",system-ui,sans-serif;font-weight:500;color:var(--ink);background:var(--bg);line-height:1.55;-webkit-font-smoothing:antialiased}
+h1,h2,h3,h4{font-weight:700;color:var(--slate);line-height:1.12;letter-spacing:-.02em}
+a{color:inherit;text-decoration:none}
+img{display:block;max-width:100%}
+.muted{color:var(--muted);font-weight:500}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;font-family:inherit;font-weight:700;font-size:14.5px;cursor:pointer;border:none;padding:14px 26px;border-radius:var(--radius-md);transition:.25s var(--ease)}
+.btn-primary{background:var(--tomato);color:#fff}
+.btn-primary:hover{background:var(--tomato-dark);transform:translateY(-2px)}
+.btn-ghost{background:var(--paper);color:var(--slate);border:1px solid var(--line)}
+.btn-ghost:hover{border-color:var(--slate);transform:translateY(-2px)}
+.btn-green{background:var(--green);color:#fff}
+.btn-green:hover{background:var(--green-deep);transform:translateY(-2px)}
+.btn-sm{padding:10px 16px;font-size:13px;border-radius:var(--radius-sm)}
+.chip{font-size:13px;font-weight:500;color:var(--slate);background:var(--paper);border:1px solid var(--line);padding:8px 15px;border-radius:var(--radius-sm);cursor:pointer;transition:.2s var(--ease)}
+.chip:hover{border-color:var(--green);color:var(--green-deep);background:var(--green-tint)}
+.chip.is-on{border-color:var(--green);color:var(--green-deep);background:var(--green-tint);font-weight:700}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+
+/* PANEL DÜZENİ (panel-shell BİREBİR) */
+.pnl-app{min-height:100vh}
+.pnl-side{position:fixed;top:0;left:0;bottom:0;width:var(--pnl-side-w);z-index:80;background:var(--slate);color:#e9e2d6;display:flex;flex-direction:column;background-image:radial-gradient(420px 260px at -20% -10%, rgba(59,183,126,.16), transparent 60%)}
+.pnl-logo{display:flex;align-items:center;gap:10px;padding:22px 22px 18px;border-bottom:1px solid rgba(233,226,214,.1)}
+.pnl-logo img{height:30px;width:auto}
+.pnl-logo .pl-tag{font-size:10.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--green);background:rgba(59,183,126,.14);padding:3px 8px;border-radius:var(--radius-sm)}
+.pnl-nav{flex:1;overflow-y:auto;padding:18px 14px;display:flex;flex-direction:column;gap:3px}
+.pnl-sec-lbl{font-size:10.5px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:rgba(233,226,214,.42);padding:14px 12px 7px}
+.pnl-link{position:relative;display:flex;align-items:center;gap:12px;padding:11px 12px;border-radius:var(--radius-md);font-size:14px;font-weight:500;color:rgba(233,226,214,.78);transition:.2s var(--ease)}
+.pnl-link i{width:20px;text-align:center;font-size:15px;color:rgba(233,226,214,.55);transition:.2s var(--ease)}
+.pnl-link:hover{background:rgba(255,255,255,.06);color:#fff}
+.pnl-link:hover i{color:var(--green)}
+.pnl-link.is-active{background:rgba(59,183,126,.14);color:#fff;font-weight:700}
+.pnl-link.is-active i{color:var(--green)}
+.pnl-link.is-active::before{content:"";position:absolute;left:-14px;top:9px;bottom:9px;width:3px;background:var(--green);border-radius:0 var(--radius-sm) var(--radius-sm) 0}
+.pnl-link .pl-cnt{margin-left:auto;font-size:11.5px;font-weight:700;background:var(--green);color:#fff;min-width:20px;height:20px;display:inline-flex;align-items:center;justify-content:center;padding:0 6px;border-radius:var(--radius-sm)}
+.pnl-side-foot{padding:14px;border-top:1px solid rgba(233,226,214,.1);display:flex;flex-direction:column;gap:3px}
+.pnl-side-foot .pnl-link{font-size:13px}
+.pnl-top{position:fixed;top:0;left:var(--pnl-side-w);right:0;z-index:70;height:var(--pnl-top-h);background:var(--paper);border-bottom:1px solid var(--line);display:flex;align-items:center;gap:16px;padding:0 28px}
+.pnl-burger{display:none;width:40px;height:40px;border:1px solid var(--line);border-radius:var(--radius-md);background:var(--paper);cursor:pointer;font-size:16px;color:var(--slate);align-items:center;justify-content:center;flex:none}
+.pnl-search{flex:1;max-width:420px;position:relative}
+.pnl-search i{position:absolute;left:14px;top:50%;transform:translateY(-50%);font-size:13.5px;color:var(--muted);pointer-events:none}
+.pnl-search input{width:100%;height:40px;padding:0 14px 0 38px;font-family:inherit;font-size:13.5px;font-weight:500;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:var(--radius-md);outline:none;transition:.2s var(--ease)}
+.pnl-search input::placeholder{color:var(--muted)}
+.pnl-search input:focus{border-color:var(--green);background:var(--paper);box-shadow:0 0 0 3px rgba(59,183,126,.12)}
+.pnl-top-tools{margin-left:auto;display:flex;align-items:center;gap:10px}
+.pnl-bell{position:relative;width:40px;height:40px;border:1px solid var(--line);border-radius:var(--radius-md);background:var(--paper);cursor:pointer;font-size:15px;color:var(--slate);display:inline-flex;align-items:center;justify-content:center;transition:.2s var(--ease)}
+.pnl-bell:hover{border-color:var(--green);color:var(--green-deep)}
+.pnl-bell .pb-dot{position:absolute;top:9px;right:10px;width:8px;height:8px;background:var(--tomato);border:2px solid var(--paper);border-radius:var(--radius-circle)}
+.pnl-me{display:flex;align-items:center;gap:11px;cursor:pointer;padding:6px 8px 6px 6px;border-radius:var(--radius-md);transition:.2s var(--ease)}
+.pnl-me:hover{background:var(--bg)}
+.pnl-me .pm-ava{width:36px;height:36px;border-radius:var(--radius-circle);flex:none;background-size:cover;background-position:center;box-shadow:0 0 0 2px var(--paper), 0 0 0 4px var(--green)}
+.pnl-me .pm-id{line-height:1.25}
+.pnl-me .pm-name{font-size:13.5px;font-weight:700;color:var(--slate)}
+.pnl-me .pm-role{font-size:11.5px;color:var(--muted)}
+.pnl-me>i{font-size:11px;color:var(--muted)}
+.pnl-main{margin-left:var(--pnl-side-w);padding:calc(var(--pnl-top-h) + 28px) 28px 48px;min-height:100vh}
+.pnl-page-head{display:flex;align-items:flex-end;justify-content:space-between;gap:18px;margin-bottom:24px;flex-wrap:wrap}
+.pnl-page-head h1{font-size:24px}
+.pnl-page-head .ph-sub{margin-top:5px;font-size:13.5px;color:var(--muted)}
+.pnl-page-head .ph-actions{display:flex;gap:10px;flex:none}
+.pnl-card{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-lg);box-shadow:var(--sh-sm)}
+.pc-head{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:18px 22px;border-bottom:1px solid var(--line)}
+.pc-title{font-size:16px;font-weight:700;color:var(--slate);display:flex;align-items:center;gap:10px}
+.pc-title i{color:var(--green);font-size:15px}
+.pc-link{font-size:13px;font-weight:700;color:var(--green-deep);display:inline-flex;align-items:center;gap:7px;transition:.2s}
+.pc-body{padding:22px}
+.pc-foot{padding:14px 22px;border-top:1px solid var(--line)}
+.pstat{display:inline-flex;align-items:center;gap:6px;font-size:11.5px;font-weight:700;padding:4px 10px;border-radius:var(--radius-sm);white-space:nowrap}
+.pstat::before{content:"";width:6px;height:6px;border-radius:var(--radius-circle);background:currentColor}
+.pstat.ok{background:var(--green-tint);color:var(--green-deep)}
+.pnl-overlay{position:fixed;inset:0;background:rgba(33,30,22,.5);z-index:79;opacity:0;pointer-events:none;transition:.25s}
+
+/* ============ SAYFA CSS ============ */
+/* üst ipucu bandı */
+.menu-intro{display:flex;align-items:flex-start;gap:12px;background:var(--green-tint);border:1px solid #cdeadd;border-radius:var(--radius-md);padding:13px 16px;margin-bottom:20px;font-size:13px;font-weight:500;color:var(--slate-2);line-height:1.5}
+.menu-intro i{color:var(--green-deep);font-size:15px;margin-top:2px;flex:none}
+.menu-intro a{color:var(--green-deep);font-weight:700}
+
+/* kategori kartı */
+.menu-card+.menu-card{margin-top:18px}
+.menu-card .pc-body{padding:0}
+.menu-cat-title{font-family:inherit;font-weight:700;font-size:16px;color:var(--slate);background:transparent;border:none;border-bottom:1.5px dashed transparent;padding:2px 2px 3px;outline:none;min-width:120px;max-width:280px;transition:.2s var(--ease)}
+.menu-cat-title:hover{border-bottom-color:#d8d8d8}
+.menu-cat-title:focus{border-bottom-color:var(--green)}
+.mc-tools{display:flex;align-items:center;gap:13px;flex:none}
+.mc-tools .mc-count{font-size:12px;color:var(--muted);font-weight:500;white-space:nowrap}
+.cat-del{width:32px;height:32px;border:1px solid var(--line);border-radius:var(--radius-sm);background:var(--paper);color:var(--muted);cursor:pointer;display:grid;place-items:center;font-size:12px;transition:.18s var(--ease);flex:none}
+.cat-del:hover{border-color:var(--tomato);color:var(--tomato);background:var(--tomato-tint)}
+
+/* ürün satırı (tarif-ekle .ie-row türevi) */
+.menu-rows{display:flex;flex-direction:column}
+.menu-row{display:grid;grid-template-columns:74px minmax(0,1.25fr) 104px 134px minmax(0,1.5fr) 36px;grid-template-areas:"thumb name price rozet desc del";gap:12px;align-items:center;padding:13px 22px;border-top:1px solid var(--line)}
+.menu-row:first-child{border-top:none}
+.mr-thumb{grid-area:thumb;position:relative;aspect-ratio:4/3;border-radius:var(--radius-sm);background-size:cover;background-position:center;background-color:var(--bg);cursor:pointer;border:1px solid var(--line);overflow:hidden}
+.mr-thumb .mr-cam{position:absolute;inset:0;display:grid;place-items:center;background:rgba(33,30,22,.34);color:#fff;font-size:14px;opacity:0;transition:.2s var(--ease)}
+.mr-thumb:hover .mr-cam{opacity:1}
+.mr-name{grid-area:name}
+.mr-price{grid-area:price;position:relative}
+.mr-price .fk-input{padding-left:23px}
+.mr-price::before{content:"₺";position:absolute;left:11px;top:50%;transform:translateY(-50%);font-size:13px;font-weight:700;color:var(--muted);pointer-events:none;z-index:1}
+.mr-rozet{grid-area:rozet}
+.mr-desc{grid-area:desc}
+.menu-row .fk-input,.menu-row .fk-select{padding:9px 12px;font-size:13px}
+.mr-del{grid-area:del;width:34px;height:34px;border:1px solid var(--line);border-radius:var(--radius-sm);background:var(--paper);color:var(--muted);cursor:pointer;display:grid;place-items:center;font-size:13px;transition:.18s var(--ease);justify-self:center}
+.mr-del:hover{border-color:var(--tomato);color:var(--tomato);background:var(--tomato-tint)}
+
+/* "+ ekle" butonları (tarif-ekle .add-row türevi, panel yeşili) */
+.mc-add{padding:13px 22px;border-top:1px solid var(--line)}
+.add-row{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;font-family:inherit;font-weight:700;font-size:13px;color:var(--muted);background:transparent;border:1.5px dashed #d8d8d8;border-radius:var(--radius-sm);padding:11px;cursor:pointer;transition:.2s var(--ease)}
+.add-row:hover{border-color:var(--green);color:var(--green-deep);background:var(--green-tint)}
+.add-cat{margin-top:18px}
+.add-cat .add-row{padding:15px;font-size:14px}
+
+/* form alanları (diyetisyen .fk-* panel türevi) */
+.fk-input,.fk-select{width:100%;font-family:inherit;font-size:14px;font-weight:500;color:var(--slate);background:var(--bg);border:1px solid var(--line);border-radius:var(--radius-md);padding:12px 14px;outline:none;transition:border-color .2s var(--ease)}
+.fk-input:focus,.fk-select:focus{border-color:var(--green);background:var(--paper)}
+.fk-input::placeholder{color:#a7a7a7}
+
+/* kaydet bandı */
+.save-bar{display:flex;align-items:center;justify-content:space-between;gap:14px}
+.save-bar .sn{font-size:12.5px;color:var(--muted);display:inline-flex;align-items:center;gap:8px}
+.save-bar .sn i{color:var(--green-deep)}
+
+@media(max-width:980px){
+  .pnl-side{transform:translateX(-100%);transition:transform .28s var(--ease)}
+  body.nav-open .pnl-side{transform:translateX(0)}
+  body.nav-open .pnl-overlay{opacity:1;pointer-events:auto}
+  .pnl-top{left:0}
+  .pnl-burger{display:inline-flex}
+  .pnl-main{margin-left:0;padding:calc(var(--pnl-top-h) + 20px) 16px 40px}
+  .pnl-me .pm-id,.pnl-me>i{display:none}
+  /* ürün satırı 2 kolona: sol thumb tüm yüksekliği, sağ alanlar 2'li */
+  .menu-row{grid-template-columns:74px minmax(0,1fr) minmax(0,1fr) 36px;grid-template-areas:"thumb name name del" "thumb price rozet del" "thumb desc desc del";gap:9px}
+  .mr-thumb{aspect-ratio:1;align-self:start}
+}
+@media(max-width:640px){
+  .pnl-search{max-width:none}
+  .pc-head,.menu-row,.mc-add{padding-left:16px;padding-right:16px}
+  .pnl-page-head h1{font-size:20px}
+  .menu-row{grid-template-columns:60px minmax(0,1fr) 34px;grid-template-areas:"thumb name del" "thumb price del" "thumb rozet del" "thumb desc del";gap:8px}
+}
+</style>
+</head>
+<body>
+
+<div class="pnl-app">
+
+  <!-- ============ SOL SIDEBAR ============ -->
+  <aside class="pnl-side" id="pnlSide">
+    <a class="pnl-logo" href="anasayfa-portal-v3a.html">
+      <img src="assets/img/logo-official-white.png" alt="DadaMutfak" />
+      <span class="pl-tag">Mekân</span>
+    </a>
+    <nav class="pnl-nav">
+      <a class="pnl-link" href="mekan-panel-v1.html" data-nav="panel"><i class="fa-solid fa-gauge-high"></i> Panel</a>
+      <a class="pnl-link" href="mekan-rezervasyonlar-v1.html" data-nav="rezervasyonlar"><i class="fa-regular fa-calendar-check"></i> Rezervasyonlar <span class="pl-cnt">7</span></a>
+      <a class="pnl-link" href="mekan-ayarlar-v1.html" data-nav="musaitlik"><i class="fa-solid fa-clock-rotate-left"></i> Müsaitlik &amp; Ayarlar</a>
+      <a class="pnl-link" href="mekan-ayarlar-v1.html?tab=profil" data-nav="isletme"><i class="fa-solid fa-store"></i> İşletme Profili</a>
+      <a class="pnl-link is-active" href="mekan-menu-v1.html" data-nav="menu"><i class="fa-solid fa-utensils"></i> Menü</a>
+      <div class="pnl-sec-lbl">Hesap</div>
+      <a class="pnl-link" href="mekan-ayarlar-v1.html?tab=bildirim" data-nav="bildirim"><i class="fa-regular fa-bell"></i> Bildirim Ayarları</a>
+    </nav>
+    <div class="pnl-side-foot">
+      <a class="pnl-link" href="mekan-detay-v1.html"><i class="fa-regular fa-eye"></i> Public Sayfam</a>
+      <a class="pnl-link" href="anasayfa-portal-v3a.html"><i class="fa-solid fa-arrow-left"></i> Siteye Dön</a>
+    </div>
+  </aside>
+  <div class="pnl-overlay" id="pnlOverlay"></div>
+
+  <!-- ============ ÜST İNCE BAR ============ -->
+  <header class="pnl-top">
+    <button class="pnl-burger" id="pnlBurger" aria-label="Menü"><i class="fa-solid fa-bars"></i></button>
+    <div class="pnl-search">
+      <i class="fa-solid fa-magnifying-glass"></i>
+      <input type="text" placeholder="Ürün veya kategori ara…" />
+    </div>
+    <div class="pnl-top-tools">
+      <button class="pnl-bell" aria-label="Bildirimler"><i class="fa-regular fa-bell"></i><span class="pb-dot"></span></button>
+      <div class="pnl-me">
+        <div class="pm-ava" style="background-image:url('https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=240&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')"></div>
+        <div class="pm-id">
+          <div class="pm-name">Nalia Karadeniz</div>
+          <div class="pm-role">Mekân · Doğrulanmış</div>
+        </div>
+        <i class="fa-solid fa-chevron-down"></i>
+      </div>
+    </div>
+  </header>
+
+  <!-- ============ İÇERİK ALANI ============ -->
+  <main class="pnl-main">
+
+    <div class="pnl-page-head">
+      <div>
+        <h1>Menü Yönetimi</h1>
+        <div class="ph-sub">Kahvaltı, öğle ve akşam menülerini düzenle — her ürün adı, fiyatı, görseli ve açıklamasıyla public sayfanda görünür.</div>
+      </div>
+      <div class="ph-actions">
+        <a class="btn btn-ghost btn-sm" href="mekan-detay-v1.html?tab=menu"><i class="fa-regular fa-eye"></i> Public Menüyü Gör</a>
+        <button class="btn btn-green btn-sm" type="button" id="saveAll"><i class="fa-solid fa-check"></i> Tümünü Kaydet</button>
+      </div>
+    </div>
+
+    <div class="menu-intro">
+      <i class="fa-solid fa-circle-info"></i>
+      <span>Menü kategorileri ve ürünleri, public mekân sayfandaki <a href="mekan-detay-v1.html?tab=menu">Menü sekmesinde</a> aynı sırayla görünür. Görsele tıklayarak fotoğraf değiştir, satırları sürükleyip sıralayabilirsin.</span>
+    </div>
+
+    <!-- =================== MENÜ KURUCU =================== -->
+    <div id="menuBuilder">
+
+      <!-- Kategori: Kahvaltı -->
+      <section class="pnl-card menu-card">
+        <div class="pc-head">
+          <div class="pc-title"><i class="fa-solid fa-mug-saucer"></i><input class="menu-cat-title" type="text" value="Kahvaltı" aria-label="Kategori adı" /></div>
+          <div class="mc-tools"><span class="mc-count"><b class="cat-count">3</b> ürün</span><button class="cat-del" type="button" aria-label="Kategoriyi sil"><i class="fa-solid fa-trash-can"></i></button></div>
+        </div>
+        <div class="pc-body">
+          <div class="menu-rows">
+            <div class="menu-row">
+              <div class="mr-thumb" style="background-image:url('https://images.unsplash.com/photo-1525351484163-7529414344d8?w=200&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')" title="Görseli değiştir"><span class="mr-cam"><i class="fa-solid fa-camera"></i></span></div>
+              <input class="fk-input mr-name" type="text" value="Serpme Karadeniz Kahvaltısı" placeholder="Ürün adı" />
+              <div class="mr-price"><input class="fk-input" type="text" value="520" placeholder="0" inputmode="numeric" /></div>
+              <select class="fk-select mr-rozet"><option>—</option><option selected>İmza</option><option>Yeni</option><option>Vejetaryen</option><option>Acı</option><option>Mevsimlik</option></select>
+              <input class="fk-input mr-desc" type="text" value="Köy tereyağı, bal-kaymak, mıhlama, sıcak pişi ve günlük peynirler." placeholder="Kısa açıklama" />
+              <button class="mr-del" type="button" aria-label="Ürünü sil"><i class="fa-solid fa-trash-can"></i></button>
+            </div>
+            <div class="menu-row">
+              <div class="mr-thumb" style="background-image:url('https://images.unsplash.com/photo-1547592180-85f173990554?w=200&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')" title="Görseli değiştir"><span class="mr-cam"><i class="fa-solid fa-camera"></i></span></div>
+              <input class="fk-input mr-name" type="text" value="Kuymak (Muhlama)" placeholder="Ürün adı" />
+              <div class="mr-price"><input class="fk-input" type="text" value="160" placeholder="0" inputmode="numeric" /></div>
+              <select class="fk-select mr-rozet"><option selected>—</option><option>İmza</option><option>Yeni</option><option>Vejetaryen</option><option>Acı</option><option>Mevsimlik</option></select>
+              <input class="fk-input mr-desc" type="text" value="Tereyağında çekilmiş mısır unu ve telli peynir; bakır sahanda." placeholder="Kısa açıklama" />
+              <button class="mr-del" type="button" aria-label="Ürünü sil"><i class="fa-solid fa-trash-can"></i></button>
+            </div>
+            <div class="menu-row">
+              <div class="mr-thumb" style="background-image:url('https://images.unsplash.com/photo-1556909212-d5b604d0c90d?w=200&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')" title="Görseli değiştir"><span class="mr-cam"><i class="fa-solid fa-camera"></i></span></div>
+              <input class="fk-input mr-name" type="text" value="Pişi &amp; Köy Peyniri" placeholder="Ürün adı" />
+              <div class="mr-price"><input class="fk-input" type="text" value="90" placeholder="0" inputmode="numeric" /></div>
+              <select class="fk-select mr-rozet"><option selected>—</option><option>İmza</option><option>Yeni</option><option>Vejetaryen</option><option>Acı</option><option>Mevsimlik</option></select>
+              <input class="fk-input mr-desc" type="text" value="Mayalı hamurdan günlük kızartılır, yanında tuzlu tereyağı ve reçel." placeholder="Kısa açıklama" />
+              <button class="mr-del" type="button" aria-label="Ürünü sil"><i class="fa-solid fa-trash-can"></i></button>
+            </div>
+          </div>
+          <div class="mc-add"><button class="add-row" type="button"><i class="fa-solid fa-plus"></i> Ürün Ekle</button></div>
+        </div>
+      </section>
+
+      <!-- Kategori: Öğle -->
+      <section class="pnl-card menu-card">
+        <div class="pc-head">
+          <div class="pc-title"><i class="fa-solid fa-utensils"></i><input class="menu-cat-title" type="text" value="Öğle" aria-label="Kategori adı" /></div>
+          <div class="mc-tools"><span class="mc-count"><b class="cat-count">3</b> ürün</span><button class="cat-del" type="button" aria-label="Kategoriyi sil"><i class="fa-solid fa-trash-can"></i></button></div>
+        </div>
+        <div class="pc-body">
+          <div class="menu-rows">
+            <div class="menu-row">
+              <div class="mr-thumb" style="background-image:url('https://images.unsplash.com/photo-1547592166-23ac45744acd?w=200&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')" title="Görseli değiştir"><span class="mr-cam"><i class="fa-solid fa-camera"></i></span></div>
+              <input class="fk-input mr-name" type="text" value="Karalahana Çorbası" placeholder="Ürün adı" />
+              <div class="mr-price"><input class="fk-input" type="text" value="140" placeholder="0" inputmode="numeric" /></div>
+              <select class="fk-select mr-rozet"><option selected>—</option><option>İmza</option><option>Yeni</option><option>Vejetaryen</option><option>Acı</option><option>Mevsimlik</option></select>
+              <input class="fk-input mr-desc" type="text" value="Barbunya ve mısır taneli, közlenmiş tereyağıyla servis edilir." placeholder="Kısa açıklama" />
+              <button class="mr-del" type="button" aria-label="Ürünü sil"><i class="fa-solid fa-trash-can"></i></button>
+            </div>
+            <div class="menu-row">
+              <div class="mr-thumb" style="background-image:url('https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=200&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')" title="Görseli değiştir"><span class="mr-cam"><i class="fa-solid fa-camera"></i></span></div>
+              <input class="fk-input mr-name" type="text" value="Hamsili Pilav" placeholder="Ürün adı" />
+              <div class="mr-price"><input class="fk-input" type="text" value="240" placeholder="0" inputmode="numeric" /></div>
+              <select class="fk-select mr-rozet"><option selected>—</option><option>İmza</option><option>Yeni</option><option>Vejetaryen</option><option>Acı</option><option>Mevsimlik</option></select>
+              <input class="fk-input mr-desc" type="text" value="Fırında, taze hamsi yatağında pişen tereyağlı baharatlı pilav." placeholder="Kısa açıklama" />
+              <button class="mr-del" type="button" aria-label="Ürünü sil"><i class="fa-solid fa-trash-can"></i></button>
+            </div>
+            <div class="menu-row">
+              <div class="mr-thumb" style="background-image:url('https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=200&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')" title="Görseli değiştir"><span class="mr-cam"><i class="fa-solid fa-camera"></i></span></div>
+              <input class="fk-input mr-name" type="text" value="Akçaabat Köftesi" placeholder="Ürün adı" />
+              <div class="mr-price"><input class="fk-input" type="text" value="280" placeholder="0" inputmode="numeric" /></div>
+              <select class="fk-select mr-rozet"><option selected>—</option><option>İmza</option><option>Yeni</option><option>Vejetaryen</option><option>Acı</option><option>Mevsimlik</option></select>
+              <input class="fk-input mr-desc" type="text" value="El yoğurması dana köfte, közde; piyaz ve közlenmiş biberle." placeholder="Kısa açıklama" />
+              <button class="mr-del" type="button" aria-label="Ürünü sil"><i class="fa-solid fa-trash-can"></i></button>
+            </div>
+          </div>
+          <div class="mc-add"><button class="add-row" type="button"><i class="fa-solid fa-plus"></i> Ürün Ekle</button></div>
+        </div>
+      </section>
+
+      <!-- Kategori: Akşam -->
+      <section class="pnl-card menu-card">
+        <div class="pc-head">
+          <div class="pc-title"><i class="fa-solid fa-moon"></i><input class="menu-cat-title" type="text" value="Akşam" aria-label="Kategori adı" /></div>
+          <div class="mc-tools"><span class="mc-count"><b class="cat-count">3</b> ürün</span><button class="cat-del" type="button" aria-label="Kategoriyi sil"><i class="fa-solid fa-trash-can"></i></button></div>
+        </div>
+        <div class="pc-body">
+          <div class="menu-rows">
+            <div class="menu-row">
+              <div class="mr-thumb" style="background-image:url('https://images.unsplash.com/photo-1547592180-85f173990554?w=200&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')" title="Görseli değiştir"><span class="mr-cam"><i class="fa-solid fa-camera"></i></span></div>
+              <input class="fk-input mr-name" type="text" value="Bakır Tavada Mıhlama" placeholder="Ürün adı" />
+              <div class="mr-price"><input class="fk-input" type="text" value="240" placeholder="0" inputmode="numeric" /></div>
+              <select class="fk-select mr-rozet"><option>—</option><option selected>İmza</option><option>Yeni</option><option>Vejetaryen</option><option>Acı</option><option>Mevsimlik</option></select>
+              <input class="fk-input mr-desc" type="text" value="Mısır unu, tereyağı ve telli peynir; tava masaya gelene dek çekilir." placeholder="Kısa açıklama" />
+              <button class="mr-del" type="button" aria-label="Ürünü sil"><i class="fa-solid fa-trash-can"></i></button>
+            </div>
+            <div class="menu-row">
+              <div class="mr-thumb" style="background-image:url('https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=200&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')" title="Görseli değiştir"><span class="mr-cam"><i class="fa-solid fa-camera"></i></span></div>
+              <input class="fk-input mr-name" type="text" value="Hamsi Tava" placeholder="Ürün adı" />
+              <div class="mr-price"><input class="fk-input" type="text" value="320" placeholder="0" inputmode="numeric" /></div>
+              <select class="fk-select mr-rozet"><option>—</option><option>İmza</option><option>Yeni</option><option>Vejetaryen</option><option>Acı</option><option selected>Mevsimlik</option></select>
+              <input class="fk-input mr-desc" type="text" value="Mısır ununa bulanır, tepside ters çevrilir — yalnız mevsiminde." placeholder="Kısa açıklama" />
+              <button class="mr-del" type="button" aria-label="Ürünü sil"><i class="fa-solid fa-trash-can"></i></button>
+            </div>
+            <div class="menu-row">
+              <div class="mr-thumb" style="background-image:url('https://images.unsplash.com/photo-1565958011703-44f9829ba187?w=200&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')" title="Görseli değiştir"><span class="mr-cam"><i class="fa-solid fa-camera"></i></span></div>
+              <input class="fk-input mr-name" type="text" value="Laz Böreği" placeholder="Ürün adı" />
+              <div class="mr-price"><input class="fk-input" type="text" value="180" placeholder="0" inputmode="numeric" /></div>
+              <select class="fk-select mr-rozet"><option selected>—</option><option>İmza</option><option>Yeni</option><option>Vejetaryen</option><option>Acı</option><option>Mevsimlik</option></select>
+              <input class="fk-input mr-desc" type="text" value="Muhallebili, üzeri pudra şekerli; günlük sınırlı sayıda açılır." placeholder="Kısa açıklama" />
+              <button class="mr-del" type="button" aria-label="Ürünü sil"><i class="fa-solid fa-trash-can"></i></button>
+            </div>
+          </div>
+          <div class="mc-add"><button class="add-row" type="button"><i class="fa-solid fa-plus"></i> Ürün Ekle</button></div>
+        </div>
+      </section>
+
+    </div><!-- /#menuBuilder -->
+
+    <!-- yeni kategori ekle -->
+    <div class="add-cat"><button class="add-row" type="button" id="addCat"><i class="fa-solid fa-layer-group"></i> Kategori Ekle</button></div>
+
+    <!-- alt kaydet bandı -->
+    <div class="pnl-card" style="margin-top:18px">
+      <div class="pc-foot" style="border-top:none">
+        <div class="save-bar">
+          <span class="sn"><i class="fa-solid fa-circle-check"></i> Değişiklikler kaydedilince public menüne yansır.</span>
+          <button class="btn btn-green btn-sm" type="button" id="saveAll2"><i class="fa-solid fa-check"></i> Menüyü Kaydet</button>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- ===== PRO-GATE (Foundation F1) — canonical (panel-shell BİREBİR kopya) ===== -->
+<div class="pg-overlay" id="pgOverlay"></div>
+<div class="pro-gate" id="proGate" role="dialog" aria-modal="true" aria-label="Pro içerik kilidi">
+  <div class="pg-panel">
+    <button class="pg-close" id="pgClose" type="button" aria-label="Kapat"><i class="fa-solid fa-xmark"></i></button>
+    <span class="pg-ico"><i class="fa-solid fa-crown"></i></span>
+    <span class="pg-tag"><i class="fa-solid fa-crown"></i> Pro</span>
+    <h4 id="pgTitle">Bu özellik Pro üyelere özel</h4>
+    <p id="pgDesc">Sınırsız menü kategorisi, dijital menü vitrini ve genişletilmiş görseller için DadaMutfak Pro'ya yükselt.</p>
+    <ul class="pg-feats">
+      <li><i class="fa-solid fa-check"></i> Sınırsız kategori ve ürün</li>
+      <li><i class="fa-solid fa-check"></i> Dijital menü vitrini</li>
+      <li><i class="fa-solid fa-check"></i> Keşfet'te öne çıkan liste</li>
+    </ul>
+    <div class="pg-acts">
+      <a class="btn btn-primary" href="pro-v1.html"><i class="fa-solid fa-crown"></i> Pro'ya Yükselt</a>
+      <button class="btn btn-ghost" id="pgLater" type="button">Belki sonra</button>
+    </div>
+  </div>
+</div>
+<style>
+/* PRO-GATE CSS (canonical — panel-shell BİREBİR) */
+.pg-overlay{position:fixed;inset:0;background:rgba(20,18,12,.5);z-index:97;opacity:0;visibility:hidden;transition:opacity .25s var(--ease),visibility .25s}
+.pg-overlay.show{opacity:1;visibility:visible}
+.pro-gate{position:fixed;inset:0;z-index:98;display:grid;place-items:center;padding:20px;opacity:0;visibility:hidden;pointer-events:none;transition:opacity .25s var(--ease),visibility .25s}
+.pro-gate.show{opacity:1;visibility:visible;pointer-events:auto}
+.pg-panel{position:relative;width:min(420px,100%);background:#fff;border-radius:var(--radius-lg);box-shadow:var(--sh-lg);padding:32px 26px 26px;text-align:center;transform:translateY(14px);transition:transform .3s var(--ease)}
+.pro-gate.show .pg-panel{transform:translateY(0)}
+.pg-close{position:absolute;top:13px;right:13px;width:36px;height:36px;border-radius:var(--radius-md);border:1px solid var(--line);background:var(--paper);color:var(--slate);font-size:15px;cursor:pointer;display:grid;place-items:center;transition:.2s var(--ease)}
+.pg-close:hover{border-color:var(--tomato);color:var(--tomato)}
+.pg-ico{width:62px;height:62px;border-radius:var(--radius-circle);background:var(--tomato-tint);color:var(--tomato);display:grid;place-items:center;font-size:25px;margin:0 auto 14px}
+.pg-tag{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--tomato);background:var(--tomato-tint);padding:4px 11px;border-radius:999px;margin-bottom:10px}
+.pro-gate h4{font-size:19px;margin-bottom:8px}
+.pro-gate p{font-size:13.5px;color:var(--muted);font-weight:500;max-width:320px;margin:0 auto 16px;line-height:1.55}
+.pg-feats{list-style:none;max-width:300px;margin:0 auto 20px;text-align:left;display:flex;flex-direction:column;gap:9px}
+.pg-feats li{display:flex;gap:9px;font-size:13px;font-weight:600;color:var(--slate-2)}
+.pg-feats li i{color:var(--green-deep);font-size:12px;margin-top:3px;flex:none}
+.pg-acts{display:flex;gap:10px}
+.pg-acts .btn{flex:1}
+</style>
+
+<script>
+/* ============ PANEL ORTAK JS — panel-shell BİREBİR kopya ============ */
+(function(){
+  var burger=document.getElementById('pnlBurger'),overlay=document.getElementById('pnlOverlay');
+  if(burger) burger.addEventListener('click',function(){document.body.classList.toggle('nav-open')});
+  if(overlay) overlay.addEventListener('click',function(){document.body.classList.remove('nav-open')});
+  var q=new URLSearchParams(location.search);
+  if(q.get('nav')==='1') document.body.classList.add('nav-open');
+})();
+
+/* ============ SAYFA JS — menü kurucu (tarif-ekle Pattern A: makeRow + delegated delete) ============ */
+(function(){
+  var builder=document.getElementById('menuBuilder');
+  if(!builder) return;
+  var ROZ=['—','İmza','Yeni','Vejetaryen','Acı','Mevsimlik'];
+  function rozOpts(){return ROZ.map(function(r){return '<option>'+r+'</option>';}).join('');}
+  function rowHTML(){
+    return '<div class="mr-thumb" title="Görseli değiştir"><span class="mr-cam"><i class="fa-solid fa-camera"></i></span></div>'+
+      '<input class="fk-input mr-name" type="text" value="" placeholder="Ürün adı" />'+
+      '<div class="mr-price"><input class="fk-input" type="text" value="" placeholder="0" inputmode="numeric" /></div>'+
+      '<select class="fk-select mr-rozet">'+rozOpts()+'</select>'+
+      '<input class="fk-input mr-desc" type="text" value="" placeholder="Kısa açıklama" />'+
+      '<button class="mr-del" type="button" aria-label="Ürünü sil"><i class="fa-solid fa-trash-can"></i></button>';
+  }
+  function makeRow(){var r=document.createElement('div');r.className='menu-row';r.innerHTML=rowHTML();return r;}
+  function refreshCount(card){
+    var n=card.querySelectorAll('.menu-row').length;
+    var c=card.querySelector('.cat-count'); if(c) c.textContent=n;
+  }
+  function catCardHTML(){
+    return '<div class="pc-head">'+
+      '<div class="pc-title"><i class="fa-solid fa-utensils"></i><input class="menu-cat-title" type="text" value="Yeni Kategori" aria-label="Kategori adı" /></div>'+
+      '<div class="mc-tools"><span class="mc-count"><b class="cat-count">1</b> ürün</span><button class="cat-del" type="button" aria-label="Kategoriyi sil"><i class="fa-solid fa-trash-can"></i></button></div>'+
+      '</div>'+
+      '<div class="pc-body"><div class="menu-rows"></div>'+
+      '<div class="mc-add"><button class="add-row" type="button"><i class="fa-solid fa-plus"></i> Ürün Ekle</button></div></div>';
+  }
+  /* delegated: ürün ekle / ürün sil / kategori sil */
+  builder.addEventListener('click',function(e){
+    var addP=e.target.closest('.add-row');
+    if(addP){
+      var card=addP.closest('.menu-card'); var rows=card.querySelector('.menu-rows');
+      var r=makeRow(); rows.appendChild(r); refreshCount(card);
+      var nm=r.querySelector('.mr-name'); if(nm) nm.focus();
+      return;
+    }
+    var del=e.target.closest('.mr-del');
+    if(del){
+      var c1=del.closest('.menu-card'); var row=del.closest('.menu-row');
+      if(row) row.remove(); if(c1) refreshCount(c1);
+      return;
+    }
+    var cdel=e.target.closest('.cat-del');
+    if(cdel){
+      var c2=cdel.closest('.menu-card'); if(c2) c2.remove();
+      return;
+    }
+  });
+  /* yeni kategori ekle */
+  var addCat=document.getElementById('addCat');
+  if(addCat) addCat.addEventListener('click',function(){
+    var card=document.createElement('section');
+    card.className='pnl-card menu-card';
+    card.innerHTML=catCardHTML();
+    builder.appendChild(card);
+    card.querySelector('.menu-rows').appendChild(makeRow());
+    var t=card.querySelector('.menu-cat-title'); if(t){t.focus();t.select();}
+    card.scrollIntoView({behavior:'smooth',block:'nearest'});
+  });
+  /* kaydet (mock) — küçük geri bildirim */
+  ['saveAll','saveAll2'].forEach(function(id){
+    var b=document.getElementById(id); if(!b) return;
+    b.addEventListener('click',function(){
+      var t=b.innerHTML; b.innerHTML='<i class="fa-solid fa-check"></i> Kaydedildi';
+      setTimeout(function(){b.innerHTML=t;},1600);
+    });
+  });
+})();
+
+// ---- PRO-GATE (Foundation F1) — canonical JS (panel-shell BİREBİR kopya) ----
+(function(){
+  var gate=document.getElementById('proGate'); if(!gate)return;
+  var overlay=document.getElementById('pgOverlay'),closeBtn=document.getElementById('pgClose'),
+      later=document.getElementById('pgLater'),title=document.getElementById('pgTitle'),desc=document.getElementById('pgDesc');
+  function open(t,d){ if(t)title.textContent=t; if(d)desc.textContent=d; overlay.classList.add('show'); gate.classList.add('show'); }
+  function close(){ overlay.classList.remove('show'); gate.classList.remove('show'); }
+  closeBtn.addEventListener('click',close);
+  if(later)later.addEventListener('click',close);
+  overlay.addEventListener('click',close);
+  document.addEventListener('keydown',function(e){if(e.key==='Escape'&&gate.classList.contains('show'))close();});
+  document.addEventListener('click',function(e){
+    var t=e.target.closest('[data-pro-gate]'); if(!t)return;
+    e.preventDefault();e.stopPropagation();
+    open(t.getAttribute('data-pro-title'),t.getAttribute('data-pro-desc'));
+  },true);
+  if(location.search.indexOf('pro=1')>-1){open();}
+})();
+</script>
+
+</body>
+</html>

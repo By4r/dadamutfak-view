@@ -40,8 +40,8 @@
 |-------|-----|-------|
 | 23 | Mekan Bul sihirbazı (keşfet tab'li) | ✅ |
 | 24 | kesfet mesafe slider (23'ün parçası) | ✅ |
-| 27a | İşletme paneli menü modülü (public + panel) | 🔮 |
-| 21 | Mekan şubeler listesi ("diğer şubelerimiz") | 🔮 |
+| 27a | İşletme paneli menü modülü (public + panel) | ✅ |
+| 21 | Mekan şubeler listesi ("diğer şubelerimiz") | ✅ |
 | 26 | Yol güzergahı + harita rota mekan önerisi (en ağır) | 🔮 |
 | 30 | Üyeden üyeye ücretli abonelik akışı | 🔮 |
 
