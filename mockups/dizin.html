@@ -151,8 +151,14 @@ img{display:block;max-width:100%}
 .card:hover{transform:translateY(-2px);border-color:var(--tomato);box-shadow:var(--sh-md)}
 .card:focus-visible{outline:2px solid var(--tomato);outline-offset:2px}
 .c-body{min-width:0;flex:1}
+.c-name-row{display:flex;align-items:center;gap:8px}
 .c-name{font-weight:800;font-size:14.5px;letter-spacing:-.01em;color:var(--slate);
-  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+.c-new{
+  flex:none;font-size:9.5px;font-weight:800;letter-spacing:.08em;
+  text-transform:uppercase;color:#fff;background:var(--tomato);
+  padding:2px 6px;border-radius:6px;line-height:1.4;
+}
 .c-desc{font-size:12.5px;color:var(--muted);font-weight:500;margin-top:2px;
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .c-go{
@@ -354,16 +360,16 @@ const GROUPS = [
     ["alisveris-listesi-v1","Alışveriş Listesi","Market listesi"],
     ["mutfak-defteri-v1","Mutfak Defteri","Kayıtlı tarifler"],
     /* Faz 3 Adım 1 — hesabim-v1 tab deep-link'leri (data-tab değerleri doğrulandı) */
-    ["hesabim-v1","Hesabım · Adreslerim","Hesap tab → adreslerim","hesabim-v1.html?tab=adreslerim"],
-    ["hesabim-v1","Hesabım · Kartlarım","Hesap tab → kartlarim","hesabim-v1.html?tab=kartlarim"],
-    ["hesabim-v1","Hesabım · İşletmem","Hesap tab → isletmem","hesabim-v1.html?tab=isletmem"],
-    ["hesabim-v1","Hesabım · Aboneliğim","Hesap tab → abonelik","hesabim-v1.html?tab=abonelik"],
+    ["hesabim-v1","Hesabım · Adreslerim","Hesap tab → adreslerim","hesabim-v1.html?tab=adreslerim",true],
+    ["hesabim-v1","Hesabım · Kartlarım","Hesap tab → kartlarim","hesabim-v1.html?tab=kartlarim",true],
+    ["hesabim-v1","Hesabım · İşletmem","Hesap tab → isletmem","hesabim-v1.html?tab=isletmem",true],
+    ["hesabim-v1","Hesabım · Aboneliğim","Hesap tab → abonelik","hesabim-v1.html?tab=abonelik",true],
   ]],
   ["Admin","fa-gear",[
     ["admin-rozet-v1","Rozet Yönetimi","Admin paneli"],
     /* Faz 3 Adım 1 — admin-rozet-v1 hash-nav ekranları */
-    ["admin-rozet-v1","Admin · İşletmeler","Admin panel → İşletmeler ekranı","admin-rozet-v1.html#isletmeler"],
-    ["admin-rozet-v1","Admin · Abonelikler","Admin panel → Abonelikler ekranı","admin-rozet-v1.html#abonelikler"],
+    ["admin-rozet-v1","Admin · İşletmeler","Admin panel → İşletmeler ekranı","admin-rozet-v1.html#isletmeler",true],
+    ["admin-rozet-v1","Admin · Abonelikler","Admin panel → Abonelikler ekranı","admin-rozet-v1.html#abonelikler",true],
   ]],
   ["Diğer","fa-ellipsis",[
     ["arama-v1","Arama","Arama sonuçları"],
@@ -410,13 +416,16 @@ GROUPS.forEach((g,gi)=>{
   const grid = document.createElement("div");
   grid.className = "grid";
   pages.forEach(p=>{
-    const [file,label,desc,href] = p;
+    const [file,label,desc,href,isNew] = p;
     const a = document.createElement("a");
     a.className = "card"; a.href = href || (file+".html"); a.target = "_blank"; a.rel="noopener";
     a.dataset.search = slug(label+" "+desc+" "+file);
     a.innerHTML =
       `<div class="c-body">
-         <div class="c-name">${label}</div>
+         <div class="c-name-row">
+           <span class="c-name">${label}</span>
+           ${isNew ? `<span class="c-new">YENİ</span>` : ``}
+         </div>
          <div class="c-desc">${desc}</div>
        </div>
        <span class="c-go"><i class="fa-solid fa-arrow-right"></i></span>`;
