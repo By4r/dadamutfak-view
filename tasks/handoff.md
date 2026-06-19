@@ -17,9 +17,15 @@ lead kod denetiminden geçti, commit'lendi. Header/global shell'e DOKUNULMADI. Y
 - **M2** `haftalik-menu-v1` — "Sponsorlu Tarif" bandı (board↔alışveriş listesi arası).
 - **M3** `challenge-v1` — 2. tab "Su İçme Takibi" (tab switcher + su UI, JS temiz, fit yeşili palet-içi).
 
-### KALAN İŞLER (bu dalga DIŞI)
-- **Madde 4** — header dropdown bildirim kaldırma. TÜM sayfalarda inline shell kopyası → tek author, tek
-  pass (paralelleştirilemez). Bu dalgada bilinçli ertelendi.
+### Madde 4 (DURUM: ✅ KAPANDI — tek-author, 86 sayfa senkron)
+Profil avatar dropdown'undan (`.acct-menu`) redundant "Bildirimler" satırı kaldırıldı — 86 sayfada
+byte-identik, her biri saf tek-satır silme (0 ekleme). **Bilinçli KORUNAN** 2 erişim:
+- Header zili (`head-bell`) — birincil bildirim erişimi.
+- Mobil drawer linki (`.da-links` "Bildirimler") — `@media ≤640px`'da zil + avatar dropdown gizlenir,
+  drawer mobilin TEK bildirim erişimi olduğu için kaldırılmadı.
+Başka shell değişikliği yok; dropdown toggle JS'ine dokunulmadı (silinen `<a>`'nın JS bağı yoktu).
+
+### KALAN İŞLER
 - **Faz 3 kurgu** — madde 5, 6, 12, 13, 15: hesap / abonelik / işletme girişi / marka arama mimarisi.
   Plan gerektiriyor (implement öncesi onay).
 
