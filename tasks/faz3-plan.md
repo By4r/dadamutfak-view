@@ -1,0 +1,63 @@
+# Faz 3 — Hesap & Abonelik & İşletme & Marka Mimarisi · PLAN
+
+> Karar dökümanı. Envanter/teşhis: `tasks/faz3-envanter.md`. UI yerleşim gerekçeleri için
+> bkz. Faz 3 yerleşim önerisi (oturum geçmişi). **Kod yok** — bu belge implement girdisidir.
+
+## Kök Teşhis
+
+**Kimlik (kim) ile hak (entitlement) tek hesap omurgasında birleşmiyor; markalar köprüsüz
+adacıklar.** Platform "tek hesap / tek Pro / tek arama" diyor ama auth, e-ticaret kimliği,
+işletme erişimi, abonelik ve arama marka-başına ayrı ve köprüsüz. (Detay: `tasks/faz3-envanter.md`.)
+
+## Kararlar (best practice — onaylandı)
+
+- **Store girişi:** Ayrı modal **KALIR** ama **tek DadaMutfak hesabına** bağlanır — tek kayıt
+  sözleşmesi, `giris-v1` ile aynı kimlik. İki ayrı kayıt formu kalkar.
+- **İşletme girişi:** Ayrı işletme hesabı **YOK**; tek hesap + **"işletme sahibi" rolü**. Ekleme iki
+  yoldan:
+  - (a) Kullanıcı başvurusu: hesabım **"İşletmem"** tab → "İşletmeni Ekle" → `isletme-ekle` formu.
+  - (b) Admin panelden ekleme/onay.
+  - **SAHİPLEN (claim) YOK** (mekan-detay claim şeridi bu turda yapılmıyor).
+- **Context switch:**
+  - Kişisel → İşletme: hesabım **"İşletmem"** tab içindeki **"Panele Git"**. *(Account dropdown'a
+    EKLEME YOK — 86 sayfa shell senkron maliyeti alınmadı.)*
+  - İşletme → Kişisel: panel topbar'ın **boş `.pnl-top-tools`** alanına **account chip** (tek dosya).
+  - Her iki link **rol-koşullu**: `body.has-business` state (`is-auth` kardeşi).
+- **Fiyat:** Tek kaynak (single source of truth) — plan sayfası ve checkout aynı fiyatı göstersin.
+  **RAKAM Yasin Bey'e teyit ettirilecek** (`pro-v1` ₺0/99/199 vs `pro-odeme` ₺49/99/199 çelişkisi var).
+  Implementte rakam yerine **"Yasin Bey onayı bekliyor"** notu düşülecek.
+- **Pro vs creator membership:** **AYRI kalır**; isim/dil net ayrışır. "Üyeliklerim" ikisini **ayrı
+  bölüm** gösterir.
+- **Arama:** Bu tur **sadece brand-context + scope** — `body[data-brand]` + `arama-v1` scope + header
+  arama brand taşıma. **Index genişletme** (mekan/akademi/fit entity) AYRI iş, bu turda **yok**.
+
+## Implement Sırası
+
+### Adım 0 — Paylaşılan omurga (TEK-AUTHOR, önce yap, sonra FREEZE)
+- `body[data-brand="mutfak|store|akademi|fit"]` her shell'e → **brand-context primitifi**.
+- `body.has-business` rol state'i (`is-auth` kardeşi) → işletme linkleri için.
+- Shell-level senkron pass (madde-4 gibi tek-author). **Bittiğinde freeze; sonra paralel başlar.**
+
+### Adım 1 — Bağımsız parçalar (PARALEL agent team, domain ayrık)
+- **hesap:** `hesabım-v1` → **Adreslerim + Kartlarım + İşletmem + Aboneliğim** tab'leri + checkout
+  adres bağlama.
+- **admin:** admin panel → **İşletmeler** ekranı (başvuru onay + ekle) + **Abonelikler** gözetimi +
+  ölü sidebar düğümlerini canlandır.
+- **store+arama:** Store login modalını **tek-hesaba** bağla + `arama-v1` **brand-scope** + header
+  arama **brand taşıma**.
+- **abonelik:** `pro-v1`/`pro-odeme` **fiyat tek-kaynak** + Pro/membership **dil ayrışması**.
+
+> Domain çakışması yok — her parça ayrı dosya seti.
+
+### E-ticaret hub notu
+Hesabım'a **Adreslerim + Kayıtlı Kartlar** eklenince checkout'un "kayıtlı adresinden seç" vaadi
+gerçek olur.
+
+## Bağımlılık & Disiplin
+
+- Adım 0 → Adım 1 sıralaması **zorunlu**: brand-context ve `has-business` primitifleri shell'de
+  oturmadan paralel parçalar onlara dayanamaz. Adım 0 freeze edilmeden Adım 1 başlamaz.
+- Stack: saf vanilla HTML/CSS/JS, header her sayfada inline kopya. Full-file write yok → targeted edit.
+  Yeni renk yok; görsel div+bg cover/center. Mevcut bileşen dili (`acct-menu`, `pf-tabs`, panel shell)
+  korunur.
+- Her iş: 3-viewport (1440/768/390) render + bağlantı/akış denetimi + Beyar gözle onay.

@@ -25,9 +25,18 @@ byte-identik, her biri saf tek-satır silme (0 ekleme). **Bilinçli KORUNAN** 2 
   drawer mobilin TEK bildirim erişimi olduğu için kaldırılmadı.
 Başka shell değişikliği yok; dropdown toggle JS'ine dokunulmadı (silinen `<a>`'nın JS bağı yoktu).
 
-### KALAN İŞLER
-- **Faz 3 kurgu** — madde 5, 6, 12, 13, 15: hesap / abonelik / işletme girişi / marka arama mimarisi.
-  Plan gerektiriyor (implement öncesi onay).
+### Faz 3 (DURUM: 🟡 KARARLAR ALINDI, PLAN HAZIR — implement başlamadı)
+19 Haziran revize: **10/15 madde commit'li** (1,2,3,4,7,8,9,10,11,14). Kalan **5,6,12,13,15 = Faz 3**,
+plana bağlandı.
+- **Envanter + teşhis:** `tasks/faz3-envanter.md` (3 paralel Explore taraması; kök teşhis = kimlik+hak tek
+  hesap omurgasında birleşmiyor).
+- **Kararlar + implement planı:** `tasks/faz3-plan.md`. Özet kararlar: tek DadaMutfak hesabı (Store modalı
+  bağlanır), işletme = rol (claim YOK), context switch hesabım "İşletmem" tab + panel topbar account chip
+  (dropdown'a 86-sayfa ekleme yapılmadı), fiyat tek-kaynak (**rakam Yasin Bey onayı bekliyor**), Pro vs
+  creator membership ayrı kalır, arama bu tur sadece brand-context+scope (index genişletme ayrı iş).
+- **SIRADA: Adım 0 — paylaşılan omurga (TEK-AUTHOR).** `body[data-brand]` + `body.has-business` her shell'e
+  (madde-4 gibi senkron pass), bitince FREEZE → sonra Adım 1 paralel agent team (hesap / admin / store+arama /
+  abonelik, domain ayrık). Yeni oturum `tasks/faz3-plan.md` ile Adım 0'dan başlar.
 
 ---
 
