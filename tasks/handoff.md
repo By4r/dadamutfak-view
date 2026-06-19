@@ -34,9 +34,18 @@ plana bağlandı.
   bağlanır), işletme = rol (claim YOK), context switch hesabım "İşletmem" tab + panel topbar account chip
   (dropdown'a 86-sayfa ekleme yapılmadı), fiyat tek-kaynak (**rakam Yasin Bey onayı bekliyor**), Pro vs
   creator membership ayrı kalır, arama bu tur sadece brand-context+scope (index genişletme ayrı iş).
-- **SIRADA: Adım 0 — paylaşılan omurga (TEK-AUTHOR).** `body[data-brand]` + `body.has-business` her shell'e
-  (madde-4 gibi senkron pass), bitince FREEZE → sonra Adım 1 paralel agent team (hesap / admin / store+arama /
-  abonelik, domain ayrık). Yeni oturum `tasks/faz3-plan.md` ile Adım 0'dan başlar.
+- **Adım 0 — paylaşılan omurga (DURUM: ✅ TAMAM + FREEZE, tek-author).** `body[data-brand="mutfak|store|
+  akademi|fit"]` (109 sayfa, değer = görünen shell markası) + `body.has-business` rol state'i (`is-auth`
+  kardeşi; `?business=1/0` toggle + `localStorage.dm_business`, `</body>` öncesi standalone IIFE). Sweep:
+  `mockups/_sweep-faz3-brand.js` — **idempotent + yeniden kullanılabilir** (yeni sayfa eklenince brand
+  primitifi de ekler). Hariç: dev/ref dosyaları (`_overflow_probe`, `dizin`, `ref-*`). Görsel değişiklik YOK
+  (görünmez attribute + henüz CSS'i olmayan class). Bu commit = **freeze noktası**.
+- **SIRADA: Adım 1 — paralel agent team (domain ayrık), Adım 0 omurgası üstüne.** 4 parça:
+  **hesap** (`hesabım-v1` → Adreslerim/Kartlarım/İşletmem/Aboneliğim tab + checkout adres bağlama) ·
+  **admin** (admin panel İşletmeler + Abonelikler ekranları, ölü sidebar düğümleri) ·
+  **store+arama** (Store login modalını tek-hesaba bağla + `arama-v1` brand-scope + header arama brand
+  taşıma, `data-brand` okur) · **abonelik** (`pro-v1`/`pro-odeme` fiyat tek-kaynak + Pro/membership dil
+  ayrışması; **rakam Yasin Bey onayı bekliyor**).
 - **EN SON — Adım 2: GLOBAL SHELL SENKRON TARAMASI.** Tüm revizeler bittikten SONRA. Shell parçaları (header,
   üst bant, nav, account dropdown, footer) her sayfada ayrı inline kopya → divergence (ör. "Diyetisyen Ara"
   bazı sayfalarda hâlâ var; madde-14 Store "Mağaza" sadece `dada-shop-v1`'de kaldırıldı, diğer Store
