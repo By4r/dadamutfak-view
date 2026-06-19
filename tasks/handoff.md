@@ -37,6 +37,12 @@ plana bağlandı.
 - **SIRADA: Adım 0 — paylaşılan omurga (TEK-AUTHOR).** `body[data-brand]` + `body.has-business` her shell'e
   (madde-4 gibi senkron pass), bitince FREEZE → sonra Adım 1 paralel agent team (hesap / admin / store+arama /
   abonelik, domain ayrık). Yeni oturum `tasks/faz3-plan.md` ile Adım 0'dan başlar.
+- **EN SON — Adım 2: GLOBAL SHELL SENKRON TARAMASI.** Tüm revizeler bittikten SONRA. Shell parçaları (header,
+  üst bant, nav, account dropdown, footer) her sayfada ayrı inline kopya → divergence (ör. "Diyetisyen Ara"
+  bazı sayfalarda hâlâ var; madde-14 Store "Mağaza" sadece `dada-shop-v1`'de kaldırıldı, diğer Store
+  sayfalarında duruyor; madde-4 shell tipleri arası tutarlılık doğrulanmadı). İş: her shell tipi için kanonik
+  versiyonu belirle, divergence taşıyan tüm sayfaları senkronla (marka bazında ayrı kanonik). Detay:
+  `tasks/faz3-plan.md` Adım 2.
 
 ---
 

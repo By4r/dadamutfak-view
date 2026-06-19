@@ -61,3 +61,20 @@ gerçek olur.
   Yeni renk yok; görsel div+bg cover/center. Mevcut bileşen dili (`acct-menu`, `pf-tabs`, panel shell)
   korunur.
 - Her iş: 3-viewport (1440/768/390) render + bağlantı/akış denetimi + Beyar gözle onay.
+
+## Adım 2 — GLOBAL SHELL SENKRON TARAMASI (EN SON — tüm revizeler bittikten sonra)
+
+**Sorun:** Marka shell'leri (header, en üst bant, ana nav, account dropdown, footer) her sayfada **AYRI
+INLINE kopya**, senkron değil. Yapılan shell değişiklikleri tüm sayfalara yayılmamış → **divergence**.
+Bilinen örnekler:
+- Ana sayfa üst bandından "Diyetisyen Ara" kaldırıldı ama diğer sayfalarda/tab'lerde hâlâ görünüyor.
+- Madde 14 Store "Mağaza" butonu sadece `dada-shop-v1`'de kaldırıldı; diğer Store sayfalarında
+  (`urun-liste`, `urun-detay`, `sepet`, `odeme`) duruyor.
+- Madde 4 account dropdown bildirim 86 sayfada yapıldı ama **shell tipleri arası tutarlılık doğrulanmadı**.
+
+**İş:** Tüm mockup sayfalarındaki shell parçalarını tara; her shell tipi için **KANONİK** (en güncel/doğru)
+versiyonu belirle; divergence taşıyan tüm sayfaları kanonik hale **senkronla**. Marka bazında ayrı kanonik
+olabilir (**Mutfak / Store / Akademi / Fit** kendi shell'i). Targeted senkron, **full-file write YOK**.
+
+**Neden EN SON:** Revizeler devam ederken shell değişiyor; tarama en sonda yapılmalı ki güncel kanonik
+yakalansın.
