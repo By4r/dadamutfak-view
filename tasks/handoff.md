@@ -4,6 +4,40 @@
 > Eski `mockups/` URL 404. Tüm üretim artık `v5/` altında. Gelecek güncelleme: `v5` → `v6`
 > (`git mv`, relative linkler korunur — HTML/CSS düzenlemesi gerekmez).
 
+## 19 Haziran kapanış — dizin badge + Adreslerim fix + v5 versiyonlama (DURUM: ✅ KAPANDI)
+
+Tek-author, docs+targeted Edit, header/omurga DOKUNULMADI, yeni renk yok. Net son durum:
+
+- **Faz 3 Adım 2 — global shell senkron + 3 geri bildirim + korupsiyon kurtarma (commit `110498a`, canlıda).**
+  4 marka nav dropdown senkronu + (1) DadaFit üst-bant kapısı 78/78 parity, (2) "Diyetisyen Ara" Sağlıklı
+  Yaşam dropdown'unda EN ÜST 78/78, (3) her-öğe-arası divider (Tarifler mega-menü hariç, Beyar onayı).
+  Divider/reorder script'i 18 "plain-pattern" sayfayı bozdu (-174 satır/dosya) → `--numstat` deletion-heavy
+  taramasıyla yakalandı, `git checkout HEAD` + pilot-first re-apply + line-delta backstop ile kurtarıldı.
+  Ders: `lessons.md` "Toplu shell düzenlemede geniş regex KORUPSIYON yapar".
+- **dizin.html "YENİ" rozetleri (commit `a5b24d1` + `ea3c0d0`).** Patron 17 Haziran'dan beri eklenen yeni
+  sayfaları sitemap'te işaretli görsün diye. `--diff-filter=A --since="2026-06-17"` ile yeni-OLUŞTURULAN
+  sayfalar (besin-degerleri, uye-abonelik-odeme, yol-guzergahim, mekan-menu) + Faz 3 yeni ekranları
+  (4 hesabım tab + 2 admin) → **10 rozetli kart**. Mekanizma: tuple `isNew` bayrağı (5. eleman; href'siz
+  kartlarda `,null,true`) → koşullu tomato `.c-new` pill (yeni renk/CSS yok, mevcut `--tomato`).
+  `mekan-menu-v1` dizinde kartı yoktu (18 Haziran yeni sayfa, sitemap eksik kalmış) → "Restoran & İşletme"
+  grubuna kart eklendi + rozetlendi.
+- **Adreslerim "Varsayılan" badge fix (commit `2f1df23`, `hesabim-v1.html`).** Badge absolute sağ-üstten
+  (Düzenle/Sil ile çakışıyordu) **başlık ("Ev") yanına** taşındı (`.addr-meta b` flex row) + radius
+  `--radius-pill`(999px) → **`--radius-sm`(8px)** (sayfa pill/buton skalasıyla uyumlu) + obsolet mobil
+  absolute-reset override kaldırıldı. Mevcut yeşil korundu.
+- **VERSİYONLAMA: `mockups/` → `v5/` (commit `728be06`).** Keşif: tüm iç link + asset RELATIVE → tek
+  `git mv` yeter (local server 200 teyit). Patron paylaşım linki: **`by4r.github.io/dadamutfak-view/v5/dizin.html`**
+  + **`.../v5/anasayfa-portal-v3a.html`**. Eski `mockups/` URL 404. Gelecek: `v5 → v6` (git mv, relative korunur).
+  Path referansları güncellendi (commit `9f5b4d0`): 76 `.md` docs + `.gitignore` (v5 scratch ignore) +
+  root `index.html` redirect **v2→v3a düzeltildi** (eski v2 arsiv'deydi, redirect zaten 404'tü; v3a canonical home).
+
+### Bu turun AÇIK UÇLARI
+- **₺49 tier-1 fiyat** — `pro-odeme` t1=₺49 vs `pro-v1` kart yok → **Yasin Bey fiyat onayı bekliyor**.
+- **dizin admin hash-on-load** (minor) — `admin-rozet-v1.html#isletmeler/#abonelikler` linkleri doğru sayfayı
+  açar ama admin JS load'da `location.hash` okumaz (sidebar'dan geçilir). İleride iyileştirilir.
+- **2 stale probe KOD dosyası** — `outputs/mobil-qa/measure.cjs` + `outputs/sweep_megafind.py` içinde eski
+  `mockups/` path'leri var; "KOD YOK" gereği dokunulmadı (arşiv probe script'leri, gelecek session çalıştırmaz).
+
 ## 19 Haziran revize dalgası 1 (DURUM: ✅ KAPANDI — paralel agent team, 9 madde)
 
 Paralel agent team (lead + 3 teammate, Sonnet 4.6; domain-ayrık dosya sahipliği) ile 9 madde tamamlandı,
