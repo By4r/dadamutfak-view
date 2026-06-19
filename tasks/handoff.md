@@ -66,8 +66,12 @@ plana bağlandı.
   üst bant, nav, account dropdown, footer) her sayfada ayrı inline kopya → divergence (ör. "Diyetisyen Ara"
   bazı sayfalarda hâlâ var; madde-14 Store "Mağaza" sadece `dada-shop-v1`'de kaldırıldı, diğer Store
   sayfalarında duruyor; madde-4 shell tipleri arası tutarlılık doğrulanmadı). İş: her shell tipi için kanonik
-  versiyonu belirle, divergence taşıyan tüm sayfaları senkronla (marka bazında ayrı kanonik). Detay:
-  `tasks/faz3-plan.md` Adım 2.
+  versiyonu belirle, divergence taşıyan tüm sayfaları senkronla (marka bazında ayrı kanonik). Ayrıca Adım 2
+  kapsamında: "Diyetisyen Ara" Sağlıklı Yaşam dropdown'unda en üste · menü dropdown/tab arası ince soft
+  divider · header arama brand-taşıma + `#srBrandLabel` · **DİZİN GÜNCELLE: `dizin.html` (dev sitemap) Faz 3
+  yeni ekranlarıyla güncellensin** — admin İşletmeler + Abonelikler, hesabım yeni tab deep-link'leri
+  (Adreslerim/Kartlarım/İşletmem/Aboneliğim), varsa diğer yeni sayfalar (Adım 2 ile birlikte ya da ayrı küçük
+  iş). Detay: `tasks/faz3-plan.md` Adım 2.
 
 ---
 

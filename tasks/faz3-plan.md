@@ -84,6 +84,9 @@ olabilir (**Mutfak / Store / Akademi / Fit** kendi shell'i). Targeted senkron, *
   (`arama-v1.html?brand=<marka>` + yazılan q). Adım 1'de `arama-v1` `?brand=` okumayı destekliyor; taşıma
   ucu burada bağlanacak.
 - **`#srBrandLabel`:** arama-v1 (ve gerekirse pro/checkout) başlığında aktif marka etiketi gösterimi.
+- **DİZİN GÜNCELLE:** `dizin.html` (dev sitemap) Faz 3'te eklenen yeni sayfa/ekranlarla güncellensin — admin
+  İşletmeler + Abonelikler ekranları, hesabım yeni tab deep-link'leri (Adreslerim/Kartlarım/İşletmem/
+  Aboneliğim), varsa diğer yeni sayfalar. Adım 2 ile birlikte ya da ayrı küçük iş.
 
 **Neden EN SON:** Revizeler devam ederken shell değişiyor; tarama en sonda yapılmalı ki güncel kanonik
 yakalansın.
