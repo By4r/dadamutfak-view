@@ -520,3 +520,30 @@ bulguda `fullPage` SS'e GÜVENME → viewport-only SS al. (2) "Taşıyor mu" sor
 birden bak: `documentElement.scrollWidth` (gerçek yatay taşma) VE elemanın görsel sarması
 (`overflow:hidden` klipliyorsa docSW temiz çıkar ama görsel bozuk olabilir). (3) Şüpheli
 bulguyu DOM computed-style (`position/zIndex/transform/children`) ile kanıtla, sonra raporla.
+
+## Toplu shell düzenlemede geniş regex KORUPSIYON yapar — pilot-first + line-delta backstop (2026-06-19, faz3-adim2)
+
+**Kural:** İnline-shell sayfalara toplu düzenleme yaparken geniş/greedy multi-line regex veya
+script TEHLİKELİDİR. "Plain-pattern" sayfalarda (beklenen class/yapı YOK, düz `<div class="dropdown">`
+gibi) regex yanlış sınırda eşleşip GÖVDEYİ SİLER. GÜVENLİ yöntem: targeted Edit (en küçük unique
+anchor) + **pilot-first** (1 sayfa uygula → bağımsız doğrula → onay → yay) + her dosyada
+**line-delta backstop** (`git diff --numstat`: net silme / >10 silinen satır = korupsiyon imzası,
+commit ÖNCESİ yakalar).
+
+**Why:** Faz 3 Adım 2'de bir teammate'in Sağlıklı Yaşam dropdown reorder/divider script'i, dropdown'u
+`dropdown-health` class'lı bekliyordu; ama ~18 sayfa "plain-pattern" (class'sız düz dropdown). Greedy
+eşleşme Sağlıklı Yaşam bloğundan başlayıp gövdeye taştı → dropdown'a YANLIŞ içerik (Mutfak Sırları
+öğeleri) enjekte etti + her dosyadan **−174 satır** sildi (gövde feedback-form'a karıştı). 18 dosya
+birebir aynı `+21/−174` imzası taşıyordu. Teammate "tamam" raporladı; lead `--numstat` deletion-heavy
+taraması yapınca yakalandı. Kurtarma: `git checkout HEAD -- <18 dosya>` (temiz baz; commit'siz olduğu
+için HEAD = pre-iş hali) → pilot besin-degerleri tam re-apply → lead bağımsız doğrula (numstat +
+dropdown'ın `</nav>`'a temiz kapanması + fb-field'a taşmama) → kalan 17'ye replikasyon. Hepsi uniform
+`+22/−4`, mass deletion yok.
+
+**How to apply:** (1) Toplu inline-shell edit'te ÖNCE yapı varyantlarını tara (class'lı mı plain mi);
+tek pattern varsayma. (2) Geniş regex YERİNE targeted Edit + en küçük unique anchor; değiştirilen
+bloğun KAPANIŞINDAN sonrasına dokunma. (3) Pilot-first: 1 sayfa → lead doğrula → yay. (4) Backstop:
+`git diff --numstat -- 'glob'` ile `del-ins>5 || del>20` taraması — anormal silme = korupsiyon,
+commit'ten önce çalıştır. (5) Doğrulama hand-rolled parser'a güvenme (CSS selector/title false-match
+verir); gerçek nav HTML'i div-depth ile çıkar, nav-div == öğe−1 say. (6) Kurtarmada iş commit'siz ise
+`git checkout HEAD -- <dosya>` = temiz, tam-recoverable baz.

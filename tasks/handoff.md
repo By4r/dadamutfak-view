@@ -62,16 +62,29 @@ plana bağlandı.
   - (b) **Header arama brand-taşıma + `#srBrandLabel`** — diğer sayfalardan arama-v1'e brand iletimi +
     brand etiket gösterimi → **Adım 2 kapsamına alındı** (bu turda arama-v1 sadece kendi `data-brand`/`?brand`
     okur, çalışıyor).
-- **EN SON — Adım 2: GLOBAL SHELL SENKRON TARAMASI.** Tüm revizeler bittikten SONRA. Shell parçaları (header,
-  üst bant, nav, account dropdown, footer) her sayfada ayrı inline kopya → divergence (ör. "Diyetisyen Ara"
-  bazı sayfalarda hâlâ var; madde-14 Store "Mağaza" sadece `dada-shop-v1`'de kaldırıldı, diğer Store
-  sayfalarında duruyor; madde-4 shell tipleri arası tutarlılık doğrulanmadı). İş: her shell tipi için kanonik
-  versiyonu belirle, divergence taşıyan tüm sayfaları senkronla (marka bazında ayrı kanonik). Ayrıca Adım 2
-  kapsamında: "Diyetisyen Ara" Sağlıklı Yaşam dropdown'unda en üste · menü dropdown/tab arası ince soft
-  divider · header arama brand-taşıma + `#srBrandLabel` · **DİZİN GÜNCELLE: `dizin.html` (dev sitemap) Faz 3
-  yeni ekranlarıyla güncellensin** — admin İşletmeler + Abonelikler, hesabım yeni tab deep-link'leri
-  (Adreslerim/Kartlarım/İşletmem/Aboneliğim), varsa diğer yeni sayfalar (Adım 2 ile birlikte ya da ayrı küçük
-  iş). Detay: `tasks/faz3-plan.md` Adım 2.
+- **Adım 2 — GLOBAL SHELL SENKRON + Beyar geri bildirim + KORUPSIYON KURTARMA (DURUM: ✅ TAMAM, commit
+  `110498a`, canlıda).** Paralel 4 marka-teammate (Sonnet, domain-ayrık) + lead-verified. 96 dosya, +1859/−342.
+  - **Adım 2 senkron (4 marka):** her marka nav dropdown'una soft divider · "Diyetisyen Ara" mutfak üst-bandından
+    kaldırma senkronu + fit dropdown'unda en üste · Store "Mağaza" nav-item 4 sayfadan silindi (drawer/bottom-nav
+    korundu) · header arama brand-taşıma (`arama-v1.html?brand=<marka>`) · `#srBrandLabel` arama-v1'e eklendi
+    (BRAND_NAME 4 marka) · `dizin.html` Faz 3 yeni ekranlarıyla güncellendi (admin İşletmeler/Abonelikler +
+    hesabım `?tab=` deep-link'leri).
+  - **Beyar 3 geri bildirim (görsel review):** (1) **DadaFit üst-bant kapısı** 77 mutfak sayfasında eksikti
+    (HTML+CSS) → eklendi, desktop+drawer **78/78 parity**. (2) **Diyetisyen Ara** Sağlıklı Yaşam dropdown'unda
+    EN ÜST (78/78). (3) **Her-öğe-arası divider** tüm normal nav dropdown'larda (mutfak nav-div, store dd-divider,
+    fit `a+a` border-top, akademi dd-sep; Tarifler mega-menü HARİÇ — Beyar onayı).
+  - **KORUPSIYON + KURTARMA:** divider/reorder script'i **18 "plain-pattern" sayfayı bozdu** (dosya başına −174
+    satır; Sağlıklı Yaşam'a yanlış içerik + gövde silinmesi). Lead `--numstat` deletion-heavy taramasıyla yakaladı.
+    `git checkout HEAD` → pilot-first re-apply → line-delta backstop ile kurtarıldı (hepsi uniform +22/−4).
+    Detay ders: `tasks/lessons.md` "Toplu shell düzenlemede geniş regex KORUPSIYON yapar".
+- **Adım 2 / Faz 3 AÇIK UÇLAR (sonraki tura):**
+  - (a) **mutfak-defteri + seo-landing** — Mutfak Sırları dropdown'ları 5-öğeli farklı içerik ("Temel Teknikler",
+    Ansiklopedi yok); divider doğru eklendi ama 6-öğe kanona **normalize EDİLMEDİ** (içeriğe dokunulmadı) → ayrı karar.
+  - (b) **tarif-detay-v1-headA** — eski `href="#"` dev prototip, tek kalan plain-pattern istisna; bilinçli bırakıldı.
+  - (c) **Tarifler mega-menü** — divider'sız (Beyar onayı); ileride istenirse ayrı iş.
+  - (d) **₺49 t1 fiyat çelişkisi** — `pro-odeme` t1=₺49 vs `pro-v1` kart yok → **Yasin Bey fiyat onayı bekliyor**.
+  - (e) **dizin admin hash-on-load** — `admin-rozet-v1.html#isletmeler` linkleri doğru sayfayı açar ama admin JS
+    `location.hash`'i load'da okumaz (sidebar'dan geçilir); minor iyileştirme sonraya.
 
 ---
 
