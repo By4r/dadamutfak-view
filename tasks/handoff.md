@@ -40,12 +40,28 @@ plana bağlandı.
   `mockups/_sweep-faz3-brand.js` — **idempotent + yeniden kullanılabilir** (yeni sayfa eklenince brand
   primitifi de ekler). Hariç: dev/ref dosyaları (`_overflow_probe`, `dizin`, `ref-*`). Görsel değişiklik YOK
   (görünmez attribute + henüz CSS'i olmayan class). Bu commit = **freeze noktası**.
-- **SIRADA: Adım 1 — paralel agent team (domain ayrık), Adım 0 omurgası üstüne.** 4 parça:
-  **hesap** (`hesabım-v1` → Adreslerim/Kartlarım/İşletmem/Aboneliğim tab + checkout adres bağlama) ·
-  **admin** (admin panel İşletmeler + Abonelikler ekranları, ölü sidebar düğümleri) ·
-  **store+arama** (Store login modalını tek-hesaba bağla + `arama-v1` brand-scope + header arama brand
-  taşıma, `data-brand` okur) · **abonelik** (`pro-v1`/`pro-odeme` fiyat tek-kaynak + Pro/membership dil
-  ayrışması; **rakam Yasin Bey onayı bekliyor**).
+- **Adım 1 — paralel agent team (DURUM: ✅ TAMAM, 4 kol, Sonnet 4.6, domain-ayrık, lead-verified).**
+  Omurga FREEZE korundu (16 dosyada `data-brand`/`dm_business` intact), ortak shell'e dokunulmadı.
+  - **hesap** (`hesabim-v1`, `isletme-ekle-v1`): pf-tabs motoruna 4 tab — Adreslerim (adres kartları+form) ·
+    Kartlarım (kayıtlı kart) · İşletmem (rol-koşullu `has-business`: YOK→"İşletmeni Ekle"→isletme-ekle,
+    VAR→işletme kartı+"Panele Git"→mekan-panel) · Aboneliğim (Pro tier+iptal/değiştir+fatura→pro-v1).
+    `isletme-ekle .ol-success` → `hesabim?tab=isletmem`.
+  - **store** (`dada-shop`,`urun-liste`,`urun-detay`,`sepet`,`odeme`): `#loginModal` tek DadaMutfak hesabına
+    hizalandı — Apple→Facebook (giris-v1 sözleşmesi: Google+Facebook), telefon+3 onay satırı, "DadaMutfak
+    hesabı oluştur" dili. Modal görsel KALDI; gövde 5 sayfada byte-identik.
+  - **panel-admin** (`mekan-panel/ayarlar/menu/rezervasyonlar`, `admin-rozet`): panel topbar `.pnl-top-tools`
+    account chip (→hesabim · Çıkış; "Siteye Dön" korundu, 5 dosyada tutarlı) + admin İşletmeler & Abonelikler
+    ekranları (`.ptable`+stub "Laravel fazına not", hash-nav `data-adm-nav`, ölü sidebar düğümleri canlandı).
+  - **abonelik-arama** (`pro-v1`,`pro-odeme`,`uye-abonelik-odeme`,`arama-v1`): fiyat tek-kaynak placeholder
+    ("Fiyat onay bekliyor — Yasin Bey", iki dosyada aynı string) · dil ayrışması (uye-abonelik="Üretici
+    Üyeliği" + "platform Pro'dan ayrıdır" notu) · `arama-v1` brand-scope (`data-brand`+`?brand=` okur:
+    store→Ürünler, fit→Videolar default; explicit `?tab=` override eder — DOM-doğrulandı).
+- **Adım 1 AÇIK UÇLAR (Adım 2'ye/sonraki tura taşındı):**
+  - (a) **₺49 t1 fiyat çelişkisi** — `pro-odeme` JS'inde t1=₺49 var ama `pro-v1`'de kart yok. Rakam
+    çözülmedi (spec gereği), flag'lendi → **Yasin Bey fiyat onayı bekliyor**.
+  - (b) **Header arama brand-taşıma + `#srBrandLabel`** — diğer sayfalardan arama-v1'e brand iletimi +
+    brand etiket gösterimi → **Adım 2 kapsamına alındı** (bu turda arama-v1 sadece kendi `data-brand`/`?brand`
+    okur, çalışıyor).
 - **EN SON — Adım 2: GLOBAL SHELL SENKRON TARAMASI.** Tüm revizeler bittikten SONRA. Shell parçaları (header,
   üst bant, nav, account dropdown, footer) her sayfada ayrı inline kopya → divergence (ör. "Diyetisyen Ara"
   bazı sayfalarda hâlâ var; madde-14 Store "Mağaza" sadece `dada-shop-v1`'de kaldırıldı, diğer Store

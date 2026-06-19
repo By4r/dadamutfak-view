@@ -205,6 +205,15 @@ img{display:block;max-width:100%}
 .pnl-me .pm-name{font-size:13.5px;font-weight:700;color:var(--slate)}
 .pnl-me .pm-role{font-size:11.5px;color:var(--muted)}
 .pnl-me>i{font-size:11px;color:var(--muted)}
+/* account chip dropdown */
+.pnl-chip{position:relative}
+.pnl-chip.open .pnl-me{background:var(--bg)}
+.pm-menu{position:absolute;top:calc(100% + 8px);right:0;min-width:190px;background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-md);box-shadow:var(--sh-md);padding:6px;z-index:200;display:none;animation:fadeUp .18s var(--ease) both}
+.pnl-chip.open .pm-menu{display:block}
+.pm-menu a,.pm-menu button{display:flex;align-items:center;gap:10px;width:100%;padding:9px 12px;border-radius:var(--radius-sm);font-family:inherit;font-size:13.5px;font-weight:600;color:var(--slate);background:none;border:none;cursor:pointer;text-align:left;transition:background .15s}
+.pm-menu a:hover,.pm-menu button:hover{background:var(--bg);color:var(--ink)}
+.pm-menu i{width:16px;text-align:center;font-size:13px;color:var(--muted)}
+.pm-menu .pm-divider{height:1px;background:var(--line);margin:5px 0}
 
 /* ============ İÇERİK ALANI ============ */
 .pnl-main{
@@ -467,13 +476,20 @@ body.detay-open .apt-drawer{transform:translateX(0)}
     </div>
     <div class="pnl-top-tools">
       <button class="pnl-bell" aria-label="Bildirimler"><i class="fa-regular fa-bell"></i><span class="pb-dot"></span></button>
-      <div class="pnl-me">
-        <div class="pm-ava" style="background-image:url('https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=240&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')"></div>
-        <div class="pm-id">
-          <div class="pm-name">Nalia Karadeniz</div>
-          <div class="pm-role">Mekân · Doğrulanmış</div>
+      <div class="pnl-chip" id="pnlChip">
+        <div class="pnl-me" id="pnlChipToggle" role="button" aria-haspopup="true" aria-expanded="false">
+          <div class="pm-ava" style="background-image:url('https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=240&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')"></div>
+          <div class="pm-id">
+            <div class="pm-name">Nalia Karadeniz</div>
+            <div class="pm-role">Mekân · Doğrulanmış</div>
+          </div>
+          <i class="fa-solid fa-chevron-down"></i>
         </div>
-        <i class="fa-solid fa-chevron-down"></i>
+        <div class="pm-menu" id="pnlChipMenu" role="menu">
+          <a href="hesabim-v1.html" role="menuitem"><i class="fa-regular fa-user"></i> Kişisel Hesabım</a>
+          <div class="pm-divider"></div>
+          <a href="giris-v1.html?auth=0" role="menuitem"><i class="fa-solid fa-right-from-bracket"></i> Çıkış</a>
+        </div>
       </div>
     </div>
   </header>
@@ -906,6 +922,20 @@ body.detay-open .apt-drawer{transform:translateX(0)}
   else if(qs.indexOf('business=0')>-1){ try{localStorage.removeItem('dm_business');}catch(e){} }
   try{ biz=localStorage.getItem('dm_business')==='1'; }catch(e){}
   if(biz){ document.body.classList.add('has-business'); }
+})();
+</script>
+
+<script>
+/* ===== account chip toggle — panel topbar ===== */
+(function(){
+  var chip=document.getElementById('pnlChip'),
+      toggle=document.getElementById('pnlChipToggle');
+  if(!chip||!toggle)return;
+  function open(){ chip.classList.add('open'); toggle.setAttribute('aria-expanded','true'); }
+  function close(){ chip.classList.remove('open'); toggle.setAttribute('aria-expanded','false'); }
+  toggle.addEventListener('click',function(e){ e.stopPropagation(); chip.classList.contains('open')?close():open(); });
+  document.addEventListener('click',function(){ close(); });
+  document.addEventListener('keydown',function(e){ if(e.key==='Escape') close(); });
 })();
 </script>
 </body>

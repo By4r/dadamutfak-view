@@ -2211,12 +2211,47 @@ document.addEventListener('click',function(e){
 
 /* ===== SAYFA JS — sayfa-spesifik script BU İŞARETİN ALTINA eklenir ===== */
 
+/* ---- BRAND-SCOPE: body[data-brand] + ?brand= URL paramı → sekme sırası/default ----
+   INDEX GENİŞLETME YOK — sadece mevcut 6 sekmenin aktif olanı değişir.
+   Mantık: brand=store → "Ürünler" öne; brand=fit → "Videolar" öne;
+            brand=mutfak veya belirtilmemiş → mevcut davranış (default tumu/tab param).
+   Opsiyonel brand etiketi (#srBrandLabel) varsa gösterilir. */
+(function(){
+  var bodyBrand = document.body.getAttribute('data-brand') || 'mutfak';
+  var urlBrand  = new URLSearchParams(location.search).get('brand') || '';
+  var brand = urlBrand || bodyBrand;   // URL param, body data-brand'i geçersiz kılar
+
+  var BRAND_TAB = { store: 'urunler', fit: 'videolar' };
+  var forcedTab = BRAND_TAB[brand] || null;
+
+  // brand etiket elementi varsa göster (opsiyonel — mevcut markup yok; yerleştirilirse çalışır)
+  var labelEl = document.getElementById('srBrandLabel');
+  var BRAND_NAME = { store: 'DadaStore', fit: 'DadaFit', mutfak: 'DadaMutfak' };
+  if(labelEl && brand !== 'mutfak'){
+    labelEl.textContent = (BRAND_NAME[brand] || brand) + "'te ara";
+    labelEl.hidden = false;
+  }
+
+  // Sekmeyi override et: yalnızca brand=store/fit durumunda VE ?tab= param yoksa
+  if(forcedTab){
+    var p = new URLSearchParams(location.search);
+    var tabParam = p.get('tab');
+    // ?tab= açıkça belirtilmişse kullanıcı zaten seçim yapmış — dokunma
+    if(!tabParam){
+      // activate() fonksiyonu bu IIFE'nin dışında tanımlı; aynı scope'ta erişilebilir
+      window.__brandDefaultTab = forcedTab;
+    }
+  }
+})();
+
 /* ---- F13 ARAMA: ?q= / ?tab= / ?empty=1 durum makinesi ---- */
 (function(){
   var p=new URLSearchParams(location.search);
   var q=p.get('q');
   var empty=p.get('empty')==='1';
   var tab=p.get('tab')||'tumu';
+  // brand-scope: ?tab= açıkça belirtilmemişse, window.__brandDefaultTab override eder
+  if(!p.get('tab') && window.__brandDefaultTab){ tab=window.__brandDefaultTab; }
   if(empty&&!q)q='menemn';                       // boş durum örneği: yazım hatalı sorgu
 
   var input=document.getElementById('srchInput');

@@ -76,5 +76,14 @@ Bilinen örnekler:
 versiyonu belirle; divergence taşıyan tüm sayfaları kanonik hale **senkronla**. Marka bazında ayrı kanonik
 olabilir (**Mutfak / Store / Akademi / Fit** kendi shell'i). Targeted senkron, **full-file write YOK**.
 
+**Adım 2 kapsamına eklenen revizeler (Adım 1 sonrası):**
+- **Sağlıklı Yaşam header dropdown:** "Diyetisyen Ara" en ÜST sıraya alınsın (tüm sayfalarda tutarlı).
+- **Menü dropdown'ları & tab'leri arası divider:** ince, modern, soft bir ayraç eklensin (tüm shell'lerde
+  tutarlı; palet-içi, mevcut bileşen dili).
+- **Header arama brand-taşıma:** her shell'in header arama ikonu `data-brand`'i `arama-v1`'e taşısın
+  (`arama-v1.html?brand=<marka>` + yazılan q). Adım 1'de `arama-v1` `?brand=` okumayı destekliyor; taşıma
+  ucu burada bağlanacak.
+- **`#srBrandLabel`:** arama-v1 (ve gerekirse pro/checkout) başlığında aktif marka etiketi gösterimi.
+
 **Neden EN SON:** Revizeler devam ederken shell değişiyor; tarama en sonda yapılmalı ki güncel kanonik
 yakalansın.

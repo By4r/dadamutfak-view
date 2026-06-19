@@ -92,6 +92,18 @@ img{display:block;max-width:100%}
 .pnl-me .pm-name{font-size:13.5px;font-weight:700;color:var(--slate)}
 .pnl-me .pm-role{font-size:11.5px;color:var(--muted)}
 .pnl-me>i{font-size:11px;color:var(--muted)}
+/* account chip dropdown (admin — tomato accent) */
+.pnl-chip{position:relative}
+.pnl-chip.open .pnl-me{background:var(--bg)}
+.pm-menu{position:absolute;top:calc(100% + 8px);right:0;min-width:190px;background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-md);box-shadow:var(--sh-md);padding:6px;z-index:200;display:none;animation:fadeUp .18s var(--ease) both}
+.pnl-chip.open .pm-menu{display:block}
+.pm-menu a,.pm-menu button{display:flex;align-items:center;gap:10px;width:100%;padding:9px 12px;border-radius:var(--radius-sm);font-family:inherit;font-size:13.5px;font-weight:600;color:var(--slate);background:none;border:none;cursor:pointer;text-align:left;transition:background .15s}
+.pm-menu a:hover,.pm-menu button:hover{background:var(--bg);color:var(--ink)}
+.pm-menu i{width:16px;text-align:center;font-size:13px;color:var(--muted)}
+.pm-menu .pm-divider{height:1px;background:var(--line);margin:5px 0}
+/* admin section toggle (tek sayfa sekme mantığı) */
+.adm-section{display:none}
+.adm-section.active{display:block;animation:fadeUp .22s var(--ease)}
 
 .pnl-main{margin-left:var(--pnl-side-w);padding:calc(var(--pnl-top-h) + 28px) 28px 48px;min-height:100vh}
 .pnl-page-head{display:flex;align-items:flex-end;justify-content:space-between;gap:18px;margin-bottom:24px;flex-wrap:wrap}
@@ -125,6 +137,8 @@ img{display:block;max-width:100%}
 .pstat.ok{background:var(--green-tint);color:var(--green-deep)}
 .pstat.rare{background:#FCF3DD;color:#B8860B}
 .pstat.off{background:var(--bg);color:var(--muted);border:1px solid var(--line)}
+.pstat.wait{background:#FCF3DD;color:#B8860B}
+.pstat.warm{background:var(--tomato-tint);color:var(--tomato)}
 
 /* tablo */
 .ptable{width:100%;border-collapse:collapse;font-size:13.5px}
@@ -198,8 +212,11 @@ img{display:block;max-width:100%}
       <a class="pnl-link" href="#" data-nav="tarifler"><i class="fa-solid fa-utensils"></i> Tarifler</a>
       <a class="pnl-link" href="#" data-nav="kullanicilar"><i class="fa-solid fa-user-group"></i> Kullanıcılar</a>
       <a class="pnl-link" href="#" data-nav="sefler"><i class="fa-solid fa-id-badge"></i> Şefler</a>
+      <div class="pnl-sec-lbl">İşletme &amp; Abonelik</div>
+      <a class="pnl-link" href="#isletmeler" data-adm-nav="isletmeler"><i class="fa-solid fa-store"></i> İşletmeler</a>
+      <a class="pnl-link" href="#abonelikler" data-adm-nav="abonelikler"><i class="fa-solid fa-id-card"></i> Abonelikler</a>
       <div class="pnl-sec-lbl">Oyunlaştırma</div>
-      <a class="pnl-link is-active" href="admin-rozet-v1.html" data-nav="rozet"><i class="fa-solid fa-award"></i> Rozetler <span class="pl-cnt">22</span></a>
+      <a class="pnl-link is-active" href="#rozet" data-adm-nav="rozet"><i class="fa-solid fa-award"></i> Rozetler <span class="pl-cnt">22</span></a>
       <a class="pnl-link" href="#" data-nav="kademe"><i class="fa-solid fa-ranking-star"></i> Kademeler</a>
     </nav>
     <div class="pnl-side-foot">
@@ -217,16 +234,213 @@ img{display:block;max-width:100%}
       <input type="text" placeholder="Rozet ara…" />
     </div>
     <div class="pnl-top-tools">
-      <div class="pnl-me">
-        <span class="pm-ava" style="background-image:url('https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=120&q=80&auto=format&fit=crop')"></span>
-        <span class="pm-id"><span class="pm-name">Admin</span><span class="pm-role">Yönetici</span></span>
-        <i class="fa-solid fa-chevron-down"></i>
+      <div class="pnl-chip" id="pnlChip">
+        <div class="pnl-me" id="pnlChipToggle" role="button" aria-haspopup="true" aria-expanded="false">
+          <span class="pm-ava" style="background-image:url('https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=120&q=80&auto=format&fit=crop')"></span>
+          <span class="pm-id"><span class="pm-name">Admin</span><span class="pm-role">Yönetici</span></span>
+          <i class="fa-solid fa-chevron-down"></i>
+        </div>
+        <div class="pm-menu" id="pnlChipMenu" role="menu">
+          <a href="hesabim-v1.html" role="menuitem"><i class="fa-regular fa-user"></i> Kişisel Hesabım</a>
+          <div class="pm-divider"></div>
+          <a href="giris-v1.html?auth=0" role="menuitem"><i class="fa-solid fa-right-from-bracket"></i> Çıkış</a>
+        </div>
       </div>
     </div>
   </header>
 
   <!-- ===== İÇERİK ===== -->
   <main class="pnl-main">
+
+    <!-- ===== BÖLÜM: İŞLETMELER ===== -->
+    <div class="adm-section" data-section="isletmeler" id="sec-isletmeler">
+      <div class="pnl-page-head">
+        <div>
+          <h1>İşletmeler</h1>
+          <p class="ph-sub">Mekân başvuruları ve onaylı işletmeler — CRUD stub (Laravel fazına not).</p>
+        </div>
+        <div class="ph-actions">
+          <button class="btn btn-ghost btn-sm" disabled><i class="fa-solid fa-download"></i> Dışa Aktar</button>
+          <button class="btn btn-primary btn-sm" disabled><i class="fa-solid fa-plus"></i> İşletme Ekle</button>
+        </div>
+      </div>
+      <div class="stub-note">
+        <i class="fa-solid fa-screwdriver-wrench"></i>
+        <div>
+          <b>Önizleme (stub) — CRUD pasif</b>
+          <span>Onaylama/reddetme ve işletme ekleme mantığı <b>Laravel fazında</b> bağlanacak. Tüm aksiyon butonları şimdilik pasiftir.</span>
+        </div>
+      </div>
+      <div class="kpi-grid">
+        <div class="kpi-card"><span class="kpi-ico"><i class="fa-solid fa-store"></i></span><div><div class="kpi-num">18</div><div class="kpi-lbl">Toplam işletme</div></div></div>
+        <div class="kpi-card cool"><span class="kpi-ico"><i class="fa-solid fa-circle-check"></i></span><div><div class="kpi-num">14</div><div class="kpi-lbl">Onaylı</div></div></div>
+        <div class="kpi-card gold"><span class="kpi-ico"><i class="fa-solid fa-hourglass-half"></i></span><div><div class="kpi-num">4</div><div class="kpi-lbl">Bekleyen başvuru</div></div></div>
+        <div class="kpi-card"><span class="kpi-ico"><i class="fa-solid fa-xmark"></i></span><div><div class="kpi-num">2</div><div class="kpi-lbl">Reddedilen</div></div></div>
+      </div>
+      <div class="pnl-card">
+        <div class="pc-head">
+          <span class="pc-title"><i class="fa-solid fa-store"></i> Başvuru Listesi</span>
+        </div>
+        <div class="pc-body flush">
+          <table class="ptable">
+            <thead>
+              <tr>
+                <th>İşletme</th>
+                <th class="col-cat">Sahip</th>
+                <th>Başvuru Tarihi</th>
+                <th class="col-date">Durum</th>
+                <th class="act"></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><div class="bz-name"><span class="bz-ico"><i class="fa-solid fa-store"></i></span><div><b>Nalia Karadeniz Mutfağı</b><span>İstanbul, Karaköy</span></div></div></td>
+                <td class="col-cat">Nalia Karadeniz</td>
+                <td>12 Haz 2026</td>
+                <td class="col-date"><span class="pstat ok">Onaylı</span></td>
+                <td class="act">
+                  <button class="bz-edit" disabled><i class="fa-solid fa-pen"></i>Düzenle</button>
+                </td>
+              </tr>
+              <tr>
+                <td><div class="bz-name"><span class="bz-ico"><i class="fa-solid fa-store"></i></span><div><b>Bosphorus Lokantası</b><span>İstanbul, Beşiktaş</span></div></div></td>
+                <td class="col-cat">Emre Şahin</td>
+                <td>15 Haz 2026</td>
+                <td class="col-date"><span class="pstat wait">Bekliyor</span></td>
+                <td class="act" style="display:flex;gap:6px;justify-content:flex-end">
+                  <button class="btn btn-ghost btn-sm" disabled><i class="fa-solid fa-xmark"></i> Reddet</button>
+                  <button class="btn btn-primary btn-sm" disabled><i class="fa-solid fa-check"></i> Onayla</button>
+                </td>
+              </tr>
+              <tr>
+                <td><div class="bz-name"><span class="bz-ico"><i class="fa-solid fa-store"></i></span><div><b>Ege Sofrası</b><span>İzmir, Alsancak</span></div></div></td>
+                <td class="col-cat">Selin Yıldız</td>
+                <td>17 Haz 2026</td>
+                <td class="col-date"><span class="pstat wait">Bekliyor</span></td>
+                <td class="act" style="display:flex;gap:6px;justify-content:flex-end">
+                  <button class="btn btn-ghost btn-sm" disabled><i class="fa-solid fa-xmark"></i> Reddet</button>
+                  <button class="btn btn-primary btn-sm" disabled><i class="fa-solid fa-check"></i> Onayla</button>
+                </td>
+              </tr>
+              <tr>
+                <td><div class="bz-name"><span class="bz-ico"><i class="fa-solid fa-store"></i></span><div><b>Anadolu Ocakbaşı</b><span>Ankara, Kızılay</span></div></div></td>
+                <td class="col-cat">Murat Doğan</td>
+                <td>18 Haz 2026</td>
+                <td class="col-date"><span class="pstat wait">Bekliyor</span></td>
+                <td class="act" style="display:flex;gap:6px;justify-content:flex-end">
+                  <button class="btn btn-ghost btn-sm" disabled><i class="fa-solid fa-xmark"></i> Reddet</button>
+                  <button class="btn btn-primary btn-sm" disabled><i class="fa-solid fa-check"></i> Onayla</button>
+                </td>
+              </tr>
+              <tr>
+                <td><div class="bz-name"><span class="bz-ico"><i class="fa-solid fa-store"></i></span><div><b>Tarihi Köfteci</b><span>Bursa, Osmangazi</span></div></div></td>
+                <td class="col-cat">Ayşe Kaya</td>
+                <td>1 Haz 2026</td>
+                <td class="col-date"><span class="pstat off">Reddedildi</span></td>
+                <td class="act">
+                  <button class="bz-edit" disabled><i class="fa-solid fa-pen"></i>İncele</button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== BÖLÜM: ABONELİKLER ===== -->
+    <div class="adm-section" data-section="abonelikler" id="sec-abonelikler">
+      <div class="pnl-page-head">
+        <div>
+          <h1>Abonelikler</h1>
+          <p class="ph-sub">Üye abonelik gözetim tablosu — plan/tier, durum, aksiyon (stub).</p>
+        </div>
+        <div class="ph-actions">
+          <button class="btn btn-ghost btn-sm" disabled><i class="fa-solid fa-download"></i> Dışa Aktar</button>
+        </div>
+      </div>
+      <div class="stub-note">
+        <i class="fa-solid fa-screwdriver-wrench"></i>
+        <div>
+          <b>Önizleme (stub) — CRUD pasif</b>
+          <span>Askıya alma, iade ve plan değişikliği mantığı <b>Laravel fazında</b> bağlanacak. Tüm aksiyon butonları şimdilik pasiftir.</span>
+        </div>
+      </div>
+      <div class="kpi-grid">
+        <div class="kpi-card"><span class="kpi-ico"><i class="fa-solid fa-users"></i></span><div><div class="kpi-num">342</div><div class="kpi-lbl">Toplam aktif üye</div></div></div>
+        <div class="kpi-card cool"><span class="kpi-ico"><i class="fa-solid fa-crown"></i></span><div><div class="kpi-num">87</div><div class="kpi-lbl">Pro aboneler</div></div></div>
+        <div class="kpi-card gold"><span class="kpi-ico"><i class="fa-solid fa-circle-pause"></i></span><div><div class="kpi-num">12</div><div class="kpi-lbl">Askıda</div></div></div>
+        <div class="kpi-card"><span class="kpi-ico"><i class="fa-solid fa-rotate-left"></i></span><div><div class="kpi-num">3</div><div class="kpi-lbl">İade bekliyor</div></div></div>
+      </div>
+      <div class="pnl-card">
+        <div class="pc-head">
+          <span class="pc-title"><i class="fa-solid fa-id-card"></i> Abonelik Gözetimi</span>
+        </div>
+        <div class="pc-body flush">
+          <table class="ptable">
+            <thead>
+              <tr>
+                <th>Üye</th>
+                <th class="col-cat">Plan / Tier</th>
+                <th>Durum</th>
+                <th class="col-date">Bitiş Tarihi</th>
+                <th class="act"></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><div class="bz-name"><span class="bz-ico" style="background:var(--green-tint);color:var(--green-deep)"><i class="fa-solid fa-user"></i></span><div><b>Elif Arslan</b><span>elif@mail.com</span></div></div></td>
+                <td class="col-cat"><span class="bz-cat">Pro 1</span></td>
+                <td><span class="pstat ok">Aktif</span></td>
+                <td class="col-date">30 Haz 2026</td>
+                <td class="act">
+                  <button class="bz-edit" disabled><i class="fa-solid fa-circle-pause"></i>Askıya Al</button>
+                </td>
+              </tr>
+              <tr>
+                <td><div class="bz-name"><span class="bz-ico" style="background:var(--green-tint);color:var(--green-deep)"><i class="fa-solid fa-user"></i></span><div><b>Caner Tunç</b><span>caner@mail.com</span></div></div></td>
+                <td class="col-cat"><span class="bz-cat">Pro 2</span></td>
+                <td><span class="pstat ok">Aktif</span></td>
+                <td class="col-date">15 Tem 2026</td>
+                <td class="act">
+                  <button class="bz-edit" disabled><i class="fa-solid fa-circle-pause"></i>Askıya Al</button>
+                </td>
+              </tr>
+              <tr>
+                <td><div class="bz-name"><span class="bz-ico" style="background:var(--green-tint);color:var(--green-deep)"><i class="fa-solid fa-user"></i></span><div><b>Zeynep Demir</b><span>zeynep@mail.com</span></div></div></td>
+                <td class="col-cat"><span class="bz-cat">Pro 1</span></td>
+                <td><span class="pstat rare">Askıda</span></td>
+                <td class="col-date">1 Haz 2026</td>
+                <td class="act" style="display:flex;gap:6px;justify-content:flex-end">
+                  <button class="btn btn-ghost btn-sm" disabled><i class="fa-solid fa-rotate-left"></i> İade</button>
+                  <button class="btn btn-primary btn-sm" disabled><i class="fa-solid fa-play"></i> Aktifleştir</button>
+                </td>
+              </tr>
+              <tr>
+                <td><div class="bz-name"><span class="bz-ico" style="background:var(--green-tint);color:var(--green-deep)"><i class="fa-solid fa-user"></i></span><div><b>Mert Kaya</b><span>mert@mail.com</span></div></div></td>
+                <td class="col-cat"><span class="bz-cat">Pro 3</span></td>
+                <td><span class="pstat warm">İade Bekliyor</span></td>
+                <td class="col-date">10 Haz 2026</td>
+                <td class="act">
+                  <button class="btn btn-primary btn-sm" disabled><i class="fa-solid fa-rotate-left"></i> İade Et</button>
+                </td>
+              </tr>
+              <tr>
+                <td><div class="bz-name"><span class="bz-ico" style="background:var(--green-tint);color:var(--green-deep)"><i class="fa-solid fa-user"></i></span><div><b>Selin Yıldız</b><span>selin@mail.com</span></div></div></td>
+                <td class="col-cat"><span class="bz-cat">Pro 2</span></td>
+                <td><span class="pstat ok">Aktif</span></td>
+                <td class="col-date">20 Ağu 2026</td>
+                <td class="act">
+                  <button class="bz-edit" disabled><i class="fa-solid fa-circle-pause"></i>Askıya Al</button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== BÖLÜM: ROZETLER ===== -->
+    <div class="adm-section active" data-section="rozet" id="sec-rozet">
     <div class="pnl-page-head">
       <div>
         <h1>Rozet Yönetimi</h1>
@@ -380,6 +594,8 @@ img{display:block;max-width:100%}
         </div>
       </div>
     </div>
+    </div><!-- /sec-rozet -->
+
   </main>
 </div>
 
@@ -406,6 +622,42 @@ img{display:block;max-width:100%}
   else if(qs.indexOf('business=0')>-1){ try{localStorage.removeItem('dm_business');}catch(e){} }
   try{ biz=localStorage.getItem('dm_business')==='1'; }catch(e){}
   if(biz){ document.body.classList.add('has-business'); }
+})();
+</script>
+
+<script>
+/* ===== account chip toggle — panel topbar ===== */
+(function(){
+  var chip=document.getElementById('pnlChip'),
+      toggle=document.getElementById('pnlChipToggle');
+  if(!chip||!toggle)return;
+  function open(){ chip.classList.add('open'); toggle.setAttribute('aria-expanded','true'); }
+  function close(){ chip.classList.remove('open'); toggle.setAttribute('aria-expanded','false'); }
+  toggle.addEventListener('click',function(e){ e.stopPropagation(); chip.classList.contains('open')?close():open(); });
+  document.addEventListener('click',function(){ close(); });
+  document.addEventListener('keydown',function(e){ if(e.key==='Escape') close(); });
+})();
+</script>
+
+<script>
+/* ===== admin section toggle — sidebar nav (İşletmeler / Abonelikler / Rozetler) ===== */
+(function(){
+  var links=document.querySelectorAll('[data-adm-nav]');
+  var sections=document.querySelectorAll('.adm-section');
+  if(!links.length||!sections.length)return;
+  function activate(name){
+    sections.forEach(function(s){ s.classList.toggle('active',s.dataset.section===name); });
+    links.forEach(function(l){ l.classList.toggle('is-active',l.dataset.admNav===name); });
+  }
+  links.forEach(function(l){
+    l.addEventListener('click',function(e){
+      e.preventDefault();
+      activate(l.getAttribute('data-adm-nav'));
+    });
+  });
+  /* hash-based deep link support */
+  var hash=location.hash.replace('#','');
+  if(hash&&document.getElementById('sec-'+hash)) activate(hash);
 })();
 </script>
 </body>
