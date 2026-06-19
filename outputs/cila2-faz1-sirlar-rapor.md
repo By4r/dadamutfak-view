@@ -1,7 +1,7 @@
 # CİLA-2 Faz 1 — SIRLAR Raporu (teammate: sirlar)
 
 > Görev #2. Mutfak Sırları ailesi: Mutfağa Giriş, Püf Noktaları, Ölçü Birimleri,
-> yeni "Mutfak Ansiklopedisi" modülü + dropdown. Tüm üretim `mockups/` altında.
+> yeni "Mutfak Ansiklopedisi" modülü + dropdown. Tüm üretim `v5/` altında.
 
 ## Özet — 8 iş tamam
 
@@ -17,17 +17,17 @@
 | 8 | Ölçü Birimleri one-page (smooth-scroll tab) + markalı inline-SVG preview | ✓ |
 
 ## Değişen dosyalar
-- `mockups/_shell.html` — Mutfak Sırları dropdown (header + drawer) güncellendi
-- `mockups/mutfaga-giris-v1.html` — dropdown + IA yeniden kurulumu (rota + kütüphane)
-- `mockups/puf-noktalari-v1.html` — dropdown + **salt LİSTE'ye indirgendi** (detay görünümü + ?detay toggle JS kaldırıldı, kartlar yeni detaya bağlandı)
-- `mockups/olcu-birimleri-v1.html` — dropdown + one-page tab nav + Standart Ölçüler SVG bölümü
-- `mockups/mutfak-sirlari-v1.html` — dropdown (header + drawer)
+- `v5/_shell.html` — Mutfak Sırları dropdown (header + drawer) güncellendi
+- `v5/mutfaga-giris-v1.html` — dropdown + IA yeniden kurulumu (rota + kütüphane)
+- `v5/puf-noktalari-v1.html` — dropdown + **salt LİSTE'ye indirgendi** (detay görünümü + ?detay toggle JS kaldırıldı, kartlar yeni detaya bağlandı)
+- `v5/olcu-birimleri-v1.html` — dropdown + one-page tab nav + Standart Ölçüler SVG bölümü
+- `v5/mutfak-sirlari-v1.html` — dropdown (header + drawer)
 
 ## Yeni dosyalar (4)
-- `mockups/mutfaga-giris-detay-v1.html` — ders detayı (TD masthead: rd-top/rd-crumb/rd-gallery tek-sahne/kunye-col + iki kolon ders gövdesi: art-prose + sticky "Ders İçeriği" + eğitmen kartı + rev-* yorumlar + ilgili tarifler + sıradaki ders; lightbox + video-modal + actbar)
-- `mockups/puf-noktasi-detay-v1.html` — düz blog detay (art-hero uzun-form + **etiket-paylaş rayı** + rev-* yorumlar + ilgili tarifler + ilgili püfler; actbar + lightbox)
-- `mockups/ansiklopedi-v1.html` — Ansiklopedi LİSTE (lst-top koyu hero + arama + A-Z bar + kategori chip + disc-card madde gridi + sayfalama)
-- `mockups/ansiklopedi-detay-v1.html` — Ansiklopedi DETAY "Barbunya" (TD masthead + yeşil künye + seo-prose iki kolon: Nedir/Ne işe yarar/Faydaları/Saklama + besin değeri kutusu + ilgili tarifler + ilgili maddeler)
+- `v5/mutfaga-giris-detay-v1.html` — ders detayı (TD masthead: rd-top/rd-crumb/rd-gallery tek-sahne/kunye-col + iki kolon ders gövdesi: art-prose + sticky "Ders İçeriği" + eğitmen kartı + rev-* yorumlar + ilgili tarifler + sıradaki ders; lightbox + video-modal + actbar)
+- `v5/puf-noktasi-detay-v1.html` — düz blog detay (art-hero uzun-form + **etiket-paylaş rayı** + rev-* yorumlar + ilgili tarifler + ilgili püfler; actbar + lightbox)
+- `v5/ansiklopedi-v1.html` — Ansiklopedi LİSTE (lst-top koyu hero + arama + A-Z bar + kategori chip + disc-card madde gridi + sayfalama)
+- `v5/ansiklopedi-detay-v1.html` — Ansiklopedi DETAY "Barbunya" (TD masthead + yeşil künye + seo-prose iki kolon: Nedir/Ne işe yarar/Faydaları/Saklama + besin değeri kutusu + ilgili tarifler + ilgili maddeler)
 
 ## Tasarım kararları (miras-önce)
 - **Dropdown yeni sıra:** Mutfağa Giriş (graduation-cap) · Püf Noktaları · **Mutfak Ansiklopedisi (seedling)** · Sözlük · Ölçü Birimleri.
@@ -37,7 +37,7 @@
 - **Paylaş popover (iş 4):** etiketler `fa-tag` ikonlu chip slider (`.row-nav`/`.row-track` + ok), paylaş satırın **sağ ucunda** tek buton; hover/tık → kurumsal domates renk + popover (X · WhatsApp · e-posta · mesaj · kopyala), her kanal kendi marka renginde hover. actbar paylaş pattern mirası.
 - **Ölçü one-page (iş 8):** hero'da 4 tab (Dönüştürücü/Tablolar/Standart Ölçüler/Fırın) → JS `scrollIntoView` smooth + scroll-spy aktiflik; `scroll-margin-top:120px` ile fixed header hizası. **Standart Ölçüler** bölümü 6 markalı **inline SVG illüstrasyon** (su/çay bardağı, kahve fincanı, 3 kaşık — üzerinde "dadamutfak" wordmark); kart hover/tık → büyük markalı ürün önizleme paneli. Harici servis YOK, SVG'ler elde üretildi.
 
-## Kanıt SS yolları (mockups/.ss-scratch/cila2/sirlar/)
+## Kanıt SS yolları (v5/.ss-scratch/cila2/sirlar/)
 - `giris-1440.png` — Mutfağa Giriş liste (rota + kütüphane bölümleri)
 - `giris-detay-1440.png` · `giris-detay-500.png` — ders detayı masaüstü + mobil
 - `puf-detay-1440.png` — püf blog detay
@@ -69,7 +69,7 @@ DESK_SOZ='            <a href="sozluk-v1.html"><i class="fa-solid fa-book-open">
 DESK_INS='            <a href="ansiklopedi-v1.html"><i class="fa-solid fa-seedling"></i> <span>Mutfak Ansiklopedisi<small>Malzemeleri tanı: faydası, kullanımı</small></span></a>\n'+DESK_SOZ
 DRW_SOZ='        <a href="sozluk-v1.html"><i class="fa-solid fa-book-open"></i> Sözlük</a>'
 DRW_INS='        <a href="ansiklopedi-v1.html"><i class="fa-solid fa-seedling"></i> Mutfak Ansiklopedisi</a>\n'+DRW_SOZ
-for f in glob.glob('mockups/*.html'):
+for f in glob.glob('v5/*.html'):
     s=open(f,encoding='utf-8').read(); o=s
     if DESK_OLD in s: s=s.replace(DESK_OLD,DESK_NEW)
     if DRW_OLD in s and DRW_NEW not in s: s=s.replace(DRW_OLD,DRW_NEW)

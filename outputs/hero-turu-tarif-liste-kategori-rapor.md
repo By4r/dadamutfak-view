@@ -21,7 +21,7 @@ Sağ sticky malzeme panelinin altındaki liste-durum satırında (`#listState`)
 tıklanabiliyordu; satırın geri kalanına ("Listende N malzeme" yazısı, sepet
 ikonu) tıklamak hedefe gitmiyordu.
 
-### Çözüm (mockups/tarif-detay-v1.html)
+### Çözüm (v5/tarif-detay-v1.html)
 **1. HTML — satır tek `<a>` hedefine çevrildi (satır ~2771):**
 ```html
 <a class="list-state" id="listState" href="alisveris-listesi-v1.html" aria-label="Alışveriş listesini gör" hidden>
@@ -77,12 +77,12 @@ Bir `.ing-add` tıklandı → `#listState` göründü, sonra satır incelendi:
 > (yalnız `.subcat-*` yeni sınıflar + `.lst-main` içine yeni HTML + bağımsız JS IIFE).
 
 ### Kanon kaynak
-`mockups/kategori-v1.html` → `.subcat-sec` (CSS satır 774-789, markup satır 1402-1421):
+`v5/kategori-v1.html` → `.subcat-sec` (CSS satır 774-789, markup satır 1402-1421):
 `.subcat-track#subcatTrack` içinde her `<a class="subcat">` = `.sc-ico` (40×40 bg-image
 görsel) + `<span><b>AD</b><span>X tarif</span></span>` + `.active` state. Körlemesine
 icat YOK — bu desen birebir alındı.
 
-### Uygulama (mockups/tarif-liste-v1.html)
+### Uygulama (v5/tarif-liste-v1.html)
 **1. HTML** (`.lst-main` ↔ `.lst-bar` arası): `.subcat-strip` → `.subcat-head`
 (başlık "Tema & pişirme tipi" + not) + `.subcat-wrap#subcatWrap` (fade taşıyıcı) +
 `.subcat-track#subcatTrack` + **14 görselli kart** (her biri 40×40 `.sc-ico` görsel +
@@ -145,7 +145,7 @@ dolgu + beyaz metin + sc-ico ring). Ek: `.subcat-track.drag-scroll/.dragging` im
 
 ## EK-5 (#11) — tarif-liste subcat şeridi + liste görseli 4 düzeltme
 
-Dosya: `mockups/tarif-liste-v1.html`. §2f hero + kart/meta + facet mantığı (Çorba 248→22) korundu.
+Dosya: `v5/tarif-liste-v1.html`. §2f hero + kart/meta + facet mantığı (Çorba 248→22) korundu.
 
 ### 1) Mouse drag-scroll ÇALIŞMIYORDU → düzeldi
 **Teşhis:** `.subcat` öğeleri `<a href="#">` → mouse ile sürüklendiğinde tarayıcı

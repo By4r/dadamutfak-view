@@ -40,8 +40,8 @@ sistemleri VERBATIM korundu; yeni CSS yalnız mod-toggle kuralları.
 - Handle tutarlılığı: `@aysemutfakta` → `@aysedemir` (hesabim canonical ile eşitlendi).
 
 **İnceleme URL'leri:**
-- own: `/mockups/mutfak-defteri-v1.html` (Profili Düzenle + 6 sekme + durum filtresi + düzenle ikonları)
-- public: `/mockups/mutfak-defteri-v1.html?view=public` (Takip Et + 3 sekme, read-only)
+- own: `/v5/mutfak-defteri-v1.html` (Profili Düzenle + 6 sekme + durum filtresi + düzenle ikonları)
+- public: `/v5/mutfak-defteri-v1.html?view=public` (Takip Et + 3 sekme, read-only)
 - `?tab=puf` (püf durum filtresi) · `?tab=menuler` · `?flw=1` (takipçi modalı) · `&empty=1`
 
 ### 2. `hesabim-v1.html` — ayar rolü + bekleyen borç
@@ -51,7 +51,7 @@ sistemleri VERBATIM korundu; yeni CSS yalnız mod-toggle kuralları.
 - **"Defterime Git" köprüsü** netleştirildi (kitap ikonu + ok) → `mutfak-defteri-v1.html`.
 - Sosyal giriş yöntemi **Apple → Facebook** (giris Google+FB ile içsel tutarlılık).
 - İçerik/koleksiyon YOK (yalnız profil·şifre·gizlilik·bildirim·danger) — İA §3.1 sınırı korundu.
-- İnceleme: `/mockups/hesabim-v1.html?tab=profil|sifre|gizlilik|bildirim`
+- İnceleme: `/v5/hesabim-v1.html?tab=profil|sifre|gizlilik|bildirim`
 
 ### 3. `giris-v1.html` — akış + sosyal cila
 **Miras:** `au-*` split-auth + `fk-pass/fk-eye` (mevcut).

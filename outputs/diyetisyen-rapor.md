@@ -1,8 +1,8 @@
 # DadaMutfak — Diyetisyen Public (F12a) Raporu
 
 > Teammate: `diyetisyen` · Takım: dalga2 · Tarih: 2026-06-11
-> Sayfalar: `mockups/diyetisyen-dizin-v1.html`, `mockups/diyetisyen-profil-v1.html`,
-> `mockups/diyetisyen-ol-v1.html` — hepsi `_shell.html` kopyasından, kılavuz dili MİRAS.
+> Sayfalar: `v5/diyetisyen-dizin-v1.html`, `v5/diyetisyen-profil-v1.html`,
+> `v5/diyetisyen-ol-v1.html` — hepsi `_shell.html` kopyasından, kılavuz dili MİRAS.
 > KAPSAM DIŞI: Diyetisyen paneli (Tier 4 babysit).
 
 ## Revizyon — R1 (2026-06-11, Beyar talimatı: ol yerleşimi)
@@ -124,7 +124,7 @@ kırptığı için görünmez ama 390'ı aşan içerik. Fix: `.lst-hero>div{min-
 5. **Diploma doğrulama** — başvuruda diploma no + belge alınıyor; doğrulama backend
    süreci (manuel mi, e-Devlet/DDB entegrasyonu mu) stack kararı.
 
-## Ekran Görüntüleri (`mockups/.ss-scratch/`)
+## Ekran Görüntüleri (`v5/.ss-scratch/`)
 - Masaüstü 1440: `dizin-1440.png`, `profil-1440.png`, `profil-randevu.png`,
   `dyt-ol-1440.png`, `dyt-profil-hizmetler.png`, `dyt-profil-menuler.png`,
   `dyt-profil-yorumlar.png`, `dyt-ol-sent.png`

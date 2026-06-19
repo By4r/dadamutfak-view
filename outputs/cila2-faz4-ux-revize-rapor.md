@@ -241,7 +241,7 @@ satır) · **390 element-rect taşma=0, scrollWidth=390**.
 
 ---
 
-## 📸 KABUL EKRAN GÖRÜNTÜLERİ (mockups/.ss-scratch/cila/)
+## 📸 KABUL EKRAN GÖRÜNTÜLERİ (v5/.ss-scratch/cila/)
 - `f4-tarif-bulucu.png` (1440 — Tezgah Paneli: dolap + canlı sonuç yan yana)
 - `f4-tarif-bulucu-390.png` (mobil — raf taşması yok, mobil özet bar)
 - `f4-iletisim.png` (gerçek OSM harita + adres kartı, swiftshader WebGL)

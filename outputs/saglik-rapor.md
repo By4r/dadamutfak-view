@@ -1,22 +1,22 @@
 # DadaMutfak — Dalga 2 · Sağlık (F10) Raporu
 
 > Teammate: `saglik` · 5 sayfa + ara işler (diyet listeleri, besin kütüphanesi)
-> Tarih: 2026-06-11 · Tüm sayfalar `mockups/_shell.html` kopyasından türetildi
+> Tarih: 2026-06-11 · Tüm sayfalar `v5/_shell.html` kopyasından türetildi
 > (chrome + mega menü KİLİTLİ; token seti AYNI; yeşil = sağlık aksanı,
 > domates CTA'larda, sarı yalnız puan).
 
 ## Üretilen sayfalar
-1. `mockups/saglik-hub-v1.html` — Sağlık hub'ı
-2. `mockups/hesaplayici-v1.html` — Tek hesaplayıcı **ŞABLONU** (BKİ örneği)
-3. `mockups/saglik-testler-v1.html` — Quiz akışı (`?sonuc=1` sonuç hâli)
-4. `mockups/diyet-listeleri-v1.html` — Program kartlı diyet listeleri (research m6)
-5. `mockups/besin-kutuphanesi-v1.html` — Arama + besin satırı + detay (`?besin=1`)
+1. `v5/saglik-hub-v1.html` — Sağlık hub'ı
+2. `v5/hesaplayici-v1.html` — Tek hesaplayıcı **ŞABLONU** (BKİ örneği)
+3. `v5/saglik-testler-v1.html` — Quiz akışı (`?sonuc=1` sonuç hâli)
+4. `v5/diyet-listeleri-v1.html` — Program kartlı diyet listeleri (research m6)
+5. `v5/besin-kutuphanesi-v1.html` — Arama + besin satırı + detay (`?besin=1`)
 
 ## Doğrulama özeti
 - **390px yatay taşma: 5/5 SIFIR** (JS probe — kılavuz §4; hub'da bulunan
   `.sh-main` grid-item shrink bug'ı `min-width:0` + `minmax(0,1fr)` ile çözüldü).
 - **Konsol: 5/5 temiz** (headless `--enable-logging` taraması).
-- SS'ler `mockups/.ss-scratch/` altında (aşağıda yollar).
+- SS'ler `v5/.ss-scratch/` altında (aşağıda yollar).
 
 ---
 
@@ -110,7 +110,7 @@ En yakın akrabalar: `hesaplamalar.html` (sağlık landing iskeleti) + Dalga 1
 5. **Diyetisyen paneli linkleri:** Hub'daki diyetisyen kartları F12a (diyetisyen
    public) sayfasına bağlanacak — o sayfa hazır olunca link güncellenir.
 
-## Ekran görüntüleri (`mockups/.ss-scratch/`)
+## Ekran görüntüleri (`v5/.ss-scratch/`)
 | Sayfa | 1440px | Mobil 500px | Varyant |
 |---|---|---|---|
 | Hub | `hub-1440.png` | `hub-500.png` | — |
@@ -123,7 +123,7 @@ En yakın akrabalar: `hesaplamalar.html` (sağlık landing iskeleti) + Dalga 1
 ## SS / önizleme komutları
 ```
 cd /Users/dadaistanbul/Developer/Projects/dadamutfak && python3 -m http.server 8765 &
-open "http://localhost:8765/mockups/saglik-hub-v1.html"
+open "http://localhost:8765/v5/saglik-hub-v1.html"
 # paramlar: testler ?sonuc=1 · besin ?besin=1 · shell ?dd=1/?drawer=1/?cc=1/?fb=1
 # headless SS: "Google Chrome" --headless=new --window-size=1440,3200 --screenshot=...
 ```

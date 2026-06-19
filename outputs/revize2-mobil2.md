@@ -106,7 +106,7 @@ Brief'teki özel kural (sayfanın kendi sabit aksiyon şeridi VARSA global botto
 
 ## Değişen Dosya Listesi
 
-**Hiçbiri.** Düzeltme gerektiren bulgu çıkmadı. (Sadece denetim altyapısı yazıldı: `mockups/.ss-scratch/revize2/mobil2/diag.js`, `diagc.js`, `diags.js` — bunlar mockup dosyası değil, scratch'te kalıyor.)
+**Hiçbiri.** Düzeltme gerektiren bulgu çıkmadı. (Sadece denetim altyapısı yazıldı: `v5/.ss-scratch/revize2/mobil2/diag.js`, `diagc.js`, `diags.js` — bunlar mockup dosyası değil, scratch'te kalıyor.)
 
 ---
 
@@ -123,7 +123,7 @@ Brief'teki özel kural (sayfanın kendi sabit aksiyon şeridi VARSA global botto
 
 ## Ekran Görüntüsü Yolları
 
-Tümü `mockups/.ss-scratch/revize2/mobil2/` altında:
+Tümü `v5/.ss-scratch/revize2/mobil2/` altında:
 - `saglik-hub-390-clean.jpeg` — public template temsilci (tam sayfa, 390)
 - `_calib-panel-shell.jpeg` — panel + ?nav=1 drawer (tam sayfa, 390)
 - `_calib-recete-builder.jpeg` — en karmaşık sayfa, haftalık grid (tam sayfa, 390)
@@ -138,8 +138,8 @@ Kalan 36 sayfa için kanıt: per-sayfa diagnostik JSON çıktıları (bu raporda
 Herhangi bir sayfayı doğrulamak için (sunucu ayakta, http://localhost:8765):
 ```js
 // browser_resize 390×844, sayfayı aç, sonra:
-async () => { eval(await (await fetch('/mockups/.ss-scratch/revize2/mobil2/diag.js')).text());
-              eval(await (await fetch('/mockups/.ss-scratch/revize2/mobil2/diags.js')).text());
+async () => { eval(await (await fetch('/v5/.ss-scratch/revize2/mobil2/diag.js')).text());
+              eval(await (await fetch('/v5/.ss-scratch/revize2/mobil2/diags.js')).text());
               return await window.__diags(); }
 ```
 Beklenen: `maxBl ≤ 1`, `bottomOverlap: []`, `hOverflow: false`, `maxScrollW ≤ vw`.

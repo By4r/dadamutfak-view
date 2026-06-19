@@ -106,7 +106,7 @@
 
 ---
 
-## 4. SS YOLLARI (`mockups/.ss-scratch/`)
+## 4. SS YOLLARI (`v5/.ss-scratch/`)
 
 - **shop2:** `sepet-1440/500/empty-1440` · `odeme-1440/500/step3/step4-1440` · `siparislerim-1440/500/detay-1440` · `alisveris-1440/500` · `dada-shop-crumbfix-1440`
 - **rehber:** `rehber-{sirlari,puf,giris,sozluk,olcu,akademi}-{1440,500}` + `rehber-puf-detay-*` + `rehber-akademi-sent-*` (16 SS)

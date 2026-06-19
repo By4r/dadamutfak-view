@@ -1,7 +1,7 @@
 # CİLA-2 Faz 1 — SAĞLIK modülü raporu (teammate: saglik, task #3)
 
-Çalışma dizini: `mockups/` · Sunucu: http://localhost:8765/
-SS'ler: `mockups/.ss-scratch/cila2/saglik/` · Probe: `inj/probe.py`
+Çalışma dizini: `v5/` · Sunucu: http://localhost:8765/
+SS'ler: `v5/.ss-scratch/cila2/saglik/` · Probe: `inj/probe.py`
 
 Tüm "Dada Denedi" grep'i = **0** (zaten yoktu; setimde bir tane bile geçmiyor).
 390px yatay taşma = **0** (tüm sayfalar sw=375, iframe probe). Konsol hatası = **0**.
@@ -105,12 +105,12 @@ bnp-hazir-load     step5active=true menuTitle="Pazar Kahvaltısı menüsü"
 ```
 
 ## Değişen / yeni dosyalar
-- `mockups/saglik-testler-v1.html` — gövde: tab'lı test liste (hero korundu)
-- `mockups/test-detay-v1.html` — TESTS'e `beslenme` testi eklendi
-- `mockups/saglik-hub-v1.html` — Beslenme kartı linki → test-detay?test=beslenme
-- `mockups/diyetisyen-dizin-v1.html` — dz-card yoğunluk azaltma (CSS)
-- `mockups/diyetisyen-profil-v1.html` — yeni "Tarifleri" sekmesi + pane (8 r-card)
-- `mockups/bugun-ne-pisirsem-v1.html` — menü çıktısı + hazır menüler + JS motor
+- `v5/saglik-testler-v1.html` — gövde: tab'lı test liste (hero korundu)
+- `v5/test-detay-v1.html` — TESTS'e `beslenme` testi eklendi
+- `v5/saglik-hub-v1.html` — Beslenme kartı linki → test-detay?test=beslenme
+- `v5/diyetisyen-dizin-v1.html` — dz-card yoğunluk azaltma (CSS)
+- `v5/diyetisyen-profil-v1.html` — yeni "Tarifleri" sekmesi + pane (8 r-card)
+- `v5/bugun-ne-pisirsem-v1.html` — menü çıktısı + hazır menüler + JS motor
 - Yeni test LİSTE dosyası açılmadı (öneriye uyup mevcut dosyanın gövdesi dönüştürüldü).
 
 ## Beyar incelemesi bekleyenler / tereddütler

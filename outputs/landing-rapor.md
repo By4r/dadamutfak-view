@@ -9,12 +9,12 @@
 
 | Sayfa | Dosya | 1440 SS | mobil SS | Konsol | 390 taşma |
 |---|---|---|---|---|---|
-| Kategori (Ana Yemekler) | `mockups/kategori-v1.html` | ✅ | ✅ | 0 hata | PASS (sw=390) |
-| Koleksiyon (15 Dk Akşam) | `mockups/koleksiyon-v1.html` | ✅ | ✅ | 0 hata | PASS (sw=390) |
-| SEO landing (Airfryer) | `mockups/seo-landing-v1.html` | ✅ | ✅ | 0 hata | PASS (sw=390) |
-| Günün Menüsü (m11) | `mockups/gunun-menusu-v1.html` | ✅ | ✅ | 0 hata | PASS (sw=390) |
+| Kategori (Ana Yemekler) | `v5/kategori-v1.html` | ✅ | ✅ | 0 hata | PASS (sw=390) |
+| Koleksiyon (15 Dk Akşam) | `v5/koleksiyon-v1.html` | ✅ | ✅ | 0 hata | PASS (sw=390) |
+| SEO landing (Airfryer) | `v5/seo-landing-v1.html` | ✅ | ✅ | 0 hata | PASS (sw=390) |
+| Günün Menüsü (m11) | `v5/gunun-menusu-v1.html` | ✅ | ✅ | 0 hata | PASS (sw=390) |
 
-SS yolları (`mockups/.ss-scratch/`):
+SS yolları (`v5/.ss-scratch/`):
 `kategori-1440.png` · `kategori-500.png` · `koleksiyon-1440.png` · `koleksiyon-500.png` ·
 `seo-1440.png` · `seo-500.png` · `gunun-1440.png` · `gunun-500.png` · `probe-final.png` (390 taşma probu, 4/4 PASS).
 

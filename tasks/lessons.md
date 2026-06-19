@@ -344,7 +344,7 @@ artefaktları için channel:chrome (gerçek paint) tercih; bunlar canlıda yok,
 ## Sweep KABUL'ünde negatif grep SET-RÖLATİF değil GLOBAL koşulur (2026-06-13, faz5-revize)
 
 **Kural:** Bir çok-dosyalı sweep'in "artık kalmadı" kabulü, script'in İŞLEDİĞİ
-SET üzerinde değil, TÜM ENVANTER (`grep -rl ... mockups/*.html`) üzerinde
+SET üzerinde değil, TÜM ENVANTER (`grep -rl ... v5/*.html`) üzerinde
 koşulur. Set-rölatif negatif grep (yalnız dokunulan N dosyada artık ara)
 yapısal olarak FALSE-CLEAN üretir: bir sayfa anchor uyuşmazlığı yüzünden hedef
 listesine HİÇ girmediyse, aynı pattern'le koşan negatif grep onu da hiç görmez.

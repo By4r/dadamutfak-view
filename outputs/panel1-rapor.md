@@ -1,8 +1,8 @@
 # Panel-1 Raporu — Dalga 4, Diyetisyen Paneli Ailesi (randevular · danışanlar · mesajlar)
 
-Tarih: 2026-06-11 · Üretilen dosyalar: `mockups/dyt-randevular-v1.html`,
-`mockups/dyt-danisanlar-v1.html`, `mockups/dyt-mesajlar-v1.html`
-Baz: `mockups/panel-shell.html` (token/sidebar/topbar BİREBİR; içerik alanı +
+Tarih: 2026-06-11 · Üretilen dosyalar: `v5/dyt-randevular-v1.html`,
+`v5/dyt-danisanlar-v1.html`, `v5/dyt-mesajlar-v1.html`
+Baz: `v5/panel-shell.html` (token/sidebar/topbar BİREBİR; içerik alanı +
 "SAYFA CSS" işareti altı dolduruldu).
 
 ---
@@ -131,7 +131,7 @@ sayfanın birebir eski karşılığı yok; gereksinim docx'i esas alındı.
   mesajlar, mesajlar?bos=1).
 - **390 taşmazlık:** `_host390.html` iframe probe → 8 varyantta `sw:390`
   (danışanlar listesi fix sonrası; fix öncesi sw:618 idi).
-- **SS'ler** (`mockups/.ss-scratch/`):
+- **SS'ler** (`v5/.ss-scratch/`):
   - `dyt-randevular-v1-1440.png` · `-gun-1440.png` · `-detay-1440.png` ·
     `-500.png` · `-gun-500.png`
   - `dyt-danisanlar-v1-1440.png` · `-detay-1440.png` · `-kart-1440.png` ·

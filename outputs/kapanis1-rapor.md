@@ -81,7 +81,7 @@
 | Header-altı nefes | 5 sayfada `.below-header` VAR, pt:112px; ilk içerik satırı iç nefesi: 4 sayfada rd-crumb 18px, hata'da err-wrap 46px (≥16 ✓) |
 | SS 1440 + 500 + param durumları | aşağıda |
 
-## 4. SS Yolları (mockups/.ss-scratch/)
+## 4. SS Yolları (v5/.ss-scratch/)
 
 - hakkimizda-v1-1440.png · hakkimizda-v1-500.png
 - iletisim-v1-1440.png · iletisim-v1-500.png · iletisim-v1-ok-1440.png · iletisim-v1-ok-500.png (?ok=1)
@@ -89,7 +89,7 @@
 - yasal-v1-1440.png · yasal-v1-500.png · yasal-v1-mesafeli-{1440,500}.png · yasal-v1-cerez-{1440,500}.png
 - hata-v1-1440.png · hata-v1-500.png (404) · hata-v1-500-{1440,500}.png (?kod=500)
 
-Üretici scriptler (yeniden üretim için): `mockups/.ss-scratch/gen/` (shared.py + p1..p5).
+Üretici scriptler (yeniden üretim için): `v5/.ss-scratch/gen/` (shared.py + p1..p5).
 
 ## 5. AÇIK SORULAR (iş durmadı, karar verildi — Beyar onayına)
 

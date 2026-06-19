@@ -1,6 +1,6 @@
 # DadaFit FAZ 2 — Sayfa Spec'leri (shared task list)
 
-> **READ-ONLY shared reference.** Hub (`mockups/dadafit-hub-v1.html`) FAZ 2'nin görsel
+> **READ-ONLY shared reference.** Hub (`v5/dadafit-hub-v1.html`) FAZ 2'nin görsel
 > referansı: **replicate not reinvent**. Header bloğu: `tasks/dadafit-header-blok.md`.
 > Her teammate YALNIZ kendi dosyasına yazar. Hub / header bloğu / gunluk-kalori / recete-builder = READ-ONLY.
 
@@ -23,7 +23,7 @@
 
 ---
 
-## 1 · Egzersiz Kütüphane — `mockups/egzersiz-kutuphane-v1.html`  (teammate: egzersiz-kutuphane)
+## 1 · Egzersiz Kütüphane — `v5/egzersiz-kutuphane-v1.html`  (teammate: egzersiz-kutuphane)
 
 Hub'daki **Egzersiz Kütüphanesi teaser'ını** (`#kutuphane`, `df-filterbar`+`df-fcards`) tam sayfaya açar.
 Aktif nav: **Egzersizler**.
@@ -42,7 +42,7 @@ Aktif nav: **Egzersizler**.
 
 ---
 
-## 2 · Egzersiz Detay — `mockups/egzersiz-detay-v1.html`  (teammate: egzersiz-detay)  ⚠️ EN AĞIR
+## 2 · Egzersiz Detay — `v5/egzersiz-detay-v1.html`  (teammate: egzersiz-detay)  ⚠️ EN AĞIR
 
 Tek hareket detay sayfası. **R3 ağır iş:** set × tekrar × ağırlık **inline-input set-takip katmanı**.
 Aktif nav: **Egzersizler**.
@@ -65,7 +65,7 @@ Aktif nav: **Egzersizler**.
 
 ---
 
-## 3 · Program Detay — `mockups/program-detay-v1.html`  (teammate: program-detay)
+## 3 · Program Detay — `v5/program-detay-v1.html`  (teammate: program-detay)
 
 Hub program kartına tıklayınca açılan program sayfası. Aktif nav: **Programlar**.
 
@@ -84,7 +84,7 @@ Hub program kartına tıklayınca açılan program sayfası. Aktif nav: **Progra
 
 ---
 
-## 4 · TDEE / Beslenme↔Hareket Köprü — `mockups/dadafit-kopru-v1.html`  (teammate: tdee-kopru)
+## 4 · TDEE / Beslenme↔Hareket Köprü — `v5/dadafit-kopru-v1.html`  (teammate: tdee-kopru)
 
 Köprü deneyimi tam sayfa: **antrenman ekle → yakım hesapla → günlük bütçe büyür → protein-ağırlıklı
 tarif önerisi (DadaMutfak'a bağlanır).** Aktif nav: **Hareket Merkezi** (veya promo `Köprü`).
@@ -111,9 +111,9 @@ REFERANS al — **onu BOZMA**, ayrı DadaFit köprü sayfası kur. Hub'daki **En
 ## Domain separation
 | teammate | yazar (TEK) | read-only referans |
 |---|---|---|
-| egzersiz-kutuphane | `mockups/egzersiz-kutuphane-v1.html` | hub, header-blok |
-| egzersiz-detay | `mockups/egzersiz-detay-v1.html` | hub, header-blok, dyt-recete-builder |
-| program-detay | `mockups/program-detay-v1.html` | hub, header-blok |
-| tdee-kopru | `mockups/dadafit-kopru-v1.html` | hub, header-blok, gunluk-kalori |
+| egzersiz-kutuphane | `v5/egzersiz-kutuphane-v1.html` | hub, header-blok |
+| egzersiz-detay | `v5/egzersiz-detay-v1.html` | hub, header-blok, dyt-recete-builder |
+| program-detay | `v5/program-detay-v1.html` | hub, header-blok |
+| tdee-kopru | `v5/dadafit-kopru-v1.html` | hub, header-blok, gunluk-kalori |
 </content>
 </invoke>

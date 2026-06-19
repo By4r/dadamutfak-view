@@ -89,17 +89,17 @@ SEO meta alanları dolu → Laravel seed + meta borcunun kaynağı.
 
 | Ne | Link |
 |---|---|
-| Saglik-testler yeni hero (patron şikayeti çözümü) | localhost:8765/mockups/saglik-testler-v1.html |
-| Reklam-ver nefes + Yerleşimler | localhost:8765/mockups/reklam-ver-v1.html#yerlesimler |
-| Hakkımızda yasal grid | localhost:8765/mockups/hakkimizda-v1.html |
-| Anasayfa (Günün Tarifi taşındı + Store dropdown) | localhost:8765/mockups/anasayfa-portal-v3a.html?dd=1 |
-| 🆕 Şefler dizini | localhost:8765/mockups/sefler-v1.html |
-| BNP mod rayı (yeni seçili durum) | localhost:8765/mockups/bugun-ne-pisirsem-v1.html |
-| Ansiklopedi iki katman + gerçek kategoriler | localhost:8765/mockups/ansiklopedi-v1.html (?harf=B dene) |
+| Saglik-testler yeni hero (patron şikayeti çözümü) | localhost:8765/v5/saglik-testler-v1.html |
+| Reklam-ver nefes + Yerleşimler | localhost:8765/v5/reklam-ver-v1.html#yerlesimler |
+| Hakkımızda yasal grid | localhost:8765/v5/hakkimizda-v1.html |
+| Anasayfa (Günün Tarifi taşındı + Store dropdown) | localhost:8765/v5/anasayfa-portal-v3a.html?dd=1 |
+| 🆕 Şefler dizini | localhost:8765/v5/sefler-v1.html |
+| BNP mod rayı (yeni seçili durum) | localhost:8765/v5/bugun-ne-pisirsem-v1.html |
+| Ansiklopedi iki katman + gerçek kategoriler | localhost:8765/v5/ansiklopedi-v1.html (?harf=B dene) |
 | Tarif-bulucu mega CTA | herhangi bir sayfada Tarifler menüsü ?dd=1 |
-| dz-card sade link | localhost:8765/mockups/diyetisyen-dizin-v1.html |
-| 🌙 Ramazan modu CANLI DEMO | localhost:8765/mockups/tarif-liste-v1.html?ramazan=1&demo=1 |
-| lg-gate örneği | localhost:8765/mockups/mekan-detay-v1.html?auth=0 |
+| dz-card sade link | localhost:8765/v5/diyetisyen-dizin-v1.html |
+| 🌙 Ramazan modu CANLI DEMO | localhost:8765/v5/tarif-liste-v1.html?ramazan=1&demo=1 |
+| lg-gate örneği | localhost:8765/v5/mekan-detay-v1.html?auth=0 |
 
 Teammate raporları: `outputs/cila2-faz3-{kanon,uygula-b,qa,ramazan}-rapor.md`
 + lead denetimi `cila2-faz3-lead-denetim.md`.

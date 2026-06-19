@@ -73,7 +73,7 @@ channel:chrome) + lead tasarım-gözü inceleme tamamlandı. **1 marka kararı B
 
 ## 2. Konsolide chrome sweep (faz-sonu, 58 sayfa)
 
-Script: `mockups/outputs/cila2-faz5-header-sweep.py` (idempotent, span-guard, CSS-INSERT
+Script: `v5/outputs/cila2-faz5-header-sweep.py` (idempotent, span-guard, CSS-INSERT
 [region-swap değil], TR utf-8 [perl -CSD yok], TOPBAR_EXCLUDE shop/akademi/headA + recipe-world
 imza guard). 3 işi birden yaydı: topbar markup + .tb-world CSS-INSERT + 22 kategori href +
 53 "Alışveriş Listem" link.
@@ -94,11 +94,11 @@ imza guard). 3 işi birden yaydı: topbar markup + .tb-world CSS-INSERT + 22 kat
 > Çalışan, gerçek render. `cd dadamutfak && python3 -m http.server 8765`
 
 - **Swept topbar (dünya kapıları):** her sayfada üst şeritte DadaStore+DadaAkademi
-  `http://localhost:8765/mockups/anasayfa-portal-v3a.html`
+  `http://localhost:8765/v5/anasayfa-portal-v3a.html`
 - **Profil dropdown "Alışveriş Listem":** `...?auth=1` → avatar (Menülerim altında sepet ikonu)
 - **Tarifler dropdown standardı:** mega kategori → `tarif-liste-v1.html?kategori=corba` (facet ön-aktif)
-- **DadaAkademi kabuk:** `http://localhost:8765/mockups/akademi-v1.html` (ayrı dünya, ana-nav yok)
-- **DadaStore cila:** `http://localhost:8765/mockups/dada-shop-v1.html` (hero nefes + bambu seam)
+- **DadaAkademi kabuk:** `http://localhost:8765/v5/akademi-v1.html` (ayrı dünya, ana-nav yok)
+- **DadaStore cila:** `http://localhost:8765/v5/dada-shop-v1.html` (hero nefes + bambu seam)
 - **BNP 2-tab + pişir:** `bugun-ne-pisirsem-v1.html` · `?tab=ara` · menü kur → "Menüyü Pişir" → `?cook=1`
 - **Üyelik telefon/diyetisyen:** `giris-v1.html?tab=kayit` (telefon+dyt callout) · `?tab=giris` (segment)
 - **Sosyal profil + püf:** `diyetisyen-profil-v1.html?tab=pufler` · `&takip=1` (Takip Et)

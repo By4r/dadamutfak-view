@@ -7,15 +7,15 @@
 
 | # | Dosya | Durum |
 |---|-------|-------|
-| 1 | `mockups/beden-kutle-endeksi-v1.html` | YENİ — eski hesaplayici-v1 içeriğinin tam sayfa hâli; switch barı 6 gerçek linke bağlandı + tıbbi uyarı notu eklendi |
-| 2 | `mockups/bazal-metabolizma-v1.html` | YENİ — Mifflin-St Jeor, canlı hesap; sayısal res-num varyantı (gauge yok), Günlük Kalori'ye çapraz köprü |
-| 3 | `mockups/gunluk-kalori-v1.html` | YENİ — BMH × aktivite (qz-opt radyo listesi, saglik-testler mirası); koru/ver/al bandları (`.kcal-bands .kb`) |
-| 4 | `mockups/vucut-tipi-v1.html` | YENİ — boy/bilek oranı; cinsiyete göre eşik + gauge skalası JS ile yeniden kurulur; tip kartı + beslenme önerisi |
-| 5 | `mockups/gunluk-su-v1.html` | YENİ — kg×33 ml + egzersiz saati × (350/500 ml); litre + bardak ikon dizisi (`.cup-row`) |
-| 6 | `mockups/ideal-kilo-v1.html` | YENİ — Devine + BKİ 18.5–24.9 kg aralığı (alt/ideal/üst kartları, kb dili); BKİ'ye çapraz köprü |
-| 7 | `mockups/hesaplayici-v1.html` | DÜZENLEME (istisna) — içerik tamamen ALIAS oldu: meta refresh (2s) + JS redirect (1.2s) → beden-kutle-endeksi-v1 + 6 hesaplayıcı fallback köprüsü. Eski içerik kalmadı |
-| 8 | `mockups/diyet-program-detay-v1.html` | YENİ — dl-hero koyu band (rozetler+stats+aksiyonlar) · 7g×3 öğün wk-board (statik döküm) · r-card grid · note-duo diyetisyen uyarısı |
-| 9 | `mockups/tarif-bulucu-v1.html` | ARA İŞ (istisna) — "İstemediklerim / Alerjen" rafı panel içine eklendi (detay §4) |
+| 1 | `v5/beden-kutle-endeksi-v1.html` | YENİ — eski hesaplayici-v1 içeriğinin tam sayfa hâli; switch barı 6 gerçek linke bağlandı + tıbbi uyarı notu eklendi |
+| 2 | `v5/bazal-metabolizma-v1.html` | YENİ — Mifflin-St Jeor, canlı hesap; sayısal res-num varyantı (gauge yok), Günlük Kalori'ye çapraz köprü |
+| 3 | `v5/gunluk-kalori-v1.html` | YENİ — BMH × aktivite (qz-opt radyo listesi, saglik-testler mirası); koru/ver/al bandları (`.kcal-bands .kb`) |
+| 4 | `v5/vucut-tipi-v1.html` | YENİ — boy/bilek oranı; cinsiyete göre eşik + gauge skalası JS ile yeniden kurulur; tip kartı + beslenme önerisi |
+| 5 | `v5/gunluk-su-v1.html` | YENİ — kg×33 ml + egzersiz saati × (350/500 ml); litre + bardak ikon dizisi (`.cup-row`) |
+| 6 | `v5/ideal-kilo-v1.html` | YENİ — Devine + BKİ 18.5–24.9 kg aralığı (alt/ideal/üst kartları, kb dili); BKİ'ye çapraz köprü |
+| 7 | `v5/hesaplayici-v1.html` | DÜZENLEME (istisna) — içerik tamamen ALIAS oldu: meta refresh (2s) + JS redirect (1.2s) → beden-kutle-endeksi-v1 + 6 hesaplayıcı fallback köprüsü. Eski içerik kalmadı |
+| 8 | `v5/diyet-program-detay-v1.html` | YENİ — dl-hero koyu band (rozetler+stats+aksiyonlar) · 7g×3 öğün wk-board (statik döküm) · r-card grid · note-duo diyetisyen uyarısı |
+| 9 | `v5/tarif-bulucu-v1.html` | ARA İŞ (istisna) — "İstemediklerim / Alerjen" rafı panel içine eklendi (detay §4) |
 
 Tümü hesaplayici-v1 şablonundan (shell tabanlı) türetildi; chrome/mega menü birebir,
 `.below-header` + ilk satır nefesi korunmuş (şablonun kendisinden miras).
@@ -117,7 +117,7 @@ Kaynak: `drive-download-20260608T070112Z-3-001/dada-mutfak-icerik/`
 - `haftalik-menu-v1.html`'e "programdan aktarıldı" durumu (program detaydaki "Menüme Aktar"
   CTA'sının karşı ucu) Dalga 3 keşif/menü teammate'inin alanı.
 
-## 8. SS kanıtları (`mockups/.ss-scratch/`)
+## 8. SS kanıtları (`v5/.ss-scratch/`)
 
 - `beden-kutle-endeksi-v1-1440.png` / `-500.png` / `-sonuc-1440.png` (175/70 → 22.9 durumu)
 - `bazal-metabolizma-v1-1440.png` / `-500.png`

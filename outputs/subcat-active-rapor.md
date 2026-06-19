@@ -1,6 +1,6 @@
 # Task #5 — tarif-liste subcat aktif-state modernize (RAPOR)
 
-**Dosya (tek):** `mockups/tarif-liste-v1.html` · `git diff --numstat` = `11 4`. COMMIT YOK.
+**Dosya (tek):** `v5/tarif-liste-v1.html` · `git diff --numstat` = `11 4`. COMMIT YOK.
 **Kapsam:** SADECE `.subcat.active` grubu (satır ~862–868) + `sc-ico` active. Normal/:hover, facet (248→22), mouse-drag, §2f hero, kart/meta DOKUNULMADI.
 
 ## Kök neden (önce)

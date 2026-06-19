@@ -92,7 +92,7 @@ banner. Eski sitede ayrı bir "shop vitrini" sayfası yok; ana sayfanın içine 
 
 ## 3. Doğrulama
 
-- **SS** (`mockups/.ss-scratch/`):
+- **SS** (`v5/.ss-scratch/`):
   - `dada-shop-1440.png`, `dada-shop-500.png`
   - `urun-liste-1440.png`, `urun-liste-500.png`
   - `urun-detay-1440.png`, `urun-detay-500.png`

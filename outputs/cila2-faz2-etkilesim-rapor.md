@@ -14,7 +14,7 @@ sözleşmesi (§2.3 birebir) kuruldu. **68-sayfa sweep HENÜZ KOŞULMADI** — l
 dosyaları kapandıktan sonra ayrı adım.
 
 **Statik kanıt (tamamı geçti):**
-- 6/6 dosya HTTP 200 (lokal `http://localhost:8765/mockups/`)
+- 6/6 dosya HTTP 200 (lokal `http://localhost:8765/v5/`)
 - CSS yorum `*/` tuzağı (lessons): **0** (negatif grep temiz)
 - Inline `<script>` syntax doğrulaması (node vm): **6/6 dosya OK**
 
@@ -46,9 +46,9 @@ koordinasyon kararı lead'de (aşağıda §7-T1).
 | Çıkış davranışı | `anasayfa-portal-v3a.html?auth=0` (param + anasayfa, ara ekran yok) | M7 |
 
 **İnceleme URL'leri:**
-- Logged-in: `http://localhost:8765/mockups/_shell.html?auth=1`
-- Logged-out: `http://localhost:8765/mockups/_shell.html?auth=0`
-- lg-gate SS: `http://localhost:8765/mockups/_shell.html?lg=1` (logged-out'ta açılır)
+- Logged-in: `http://localhost:8765/v5/_shell.html?auth=1`
+- Logged-out: `http://localhost:8765/v5/_shell.html?auth=0`
+- lg-gate SS: `http://localhost:8765/v5/_shell.html?lg=1` (logged-out'ta açılır)
 - Mega+dil SS: `?dd=1` · drawer SS: `?drawer=1` (mobil)
 
 ---
@@ -247,7 +247,7 @@ inline'a eklendi). Diğer 51'de chrome dm_auth tek kopya.
 - `tarif-detay?auth=1` → `<body class="is-auth">` ✅ + **actbar+lightbox KORUNDU** ✅
   (R6 insert overlay'leri silmedi) + lgGate markup ✅ + `window.__lgGate=open` def ✅
 
-**Sweep tooling (audit, mockups/):** `_sweep-loginstate.js` (idempotent, re-runnable) +
+**Sweep tooling (audit, v5/):** `_sweep-loginstate.js` (idempotent, re-runnable) +
 `_sweep-verify.js`. Geçici dry-test/patch helper'ları temizlendi.
 
 **Kozmetik (opsiyonel, lead notu — revize sayılmaz):** puf-noktasi-ekle'de kullanılmayan

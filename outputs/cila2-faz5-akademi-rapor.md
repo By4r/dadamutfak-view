@@ -1,7 +1,7 @@
 # CİLA-2 Faz 5 — DadaAkademi Ayrı Kabuk Raporu (task #2)
 
-> Sahiplik: `mockups/akademi-v1.html` (YENİ kabuk). `_shell.html`'e dokunulmadı.
-> Kardeş referans: `mockups/dada-shop-v1.html` (kabuk-sapma deseni birebir paralellendi).
+> Sahiplik: `v5/akademi-v1.html` (YENİ kabuk). `_shell.html`'e dokunulmadı.
+> Kardeş referans: `v5/dada-shop-v1.html` (kabuk-sapma deseni birebir paralellendi).
 
 ## Özet
 

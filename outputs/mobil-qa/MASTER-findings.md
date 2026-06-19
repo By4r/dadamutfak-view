@@ -1,6 +1,6 @@
 # DadaMutfak — MOBİL QA MASTER BULGULAR
 > Üretim: 2026-06-14 · 5 tester paralel (T1–T5) + lead adversarial doğrulama.
-> Kapsam: **74 üretim sayfası** (`mockups/*.html` − 7 `ref-*` − `_overflow_probe`),
+> Kapsam: **74 üretim sayfası** (`v5/*.html` − 7 `ref-*` − `_overflow_probe`),
 > her biri **390 / 768 / drawer** = 219 full-page SS (`outputs/mobil-qa/ss/`).
 > Ölçüm = `measure.cjs` (clip-aware: kasıtlı scroll-container taşması hariç tutulur);
 > taşma = `docSW > viewport+1` **veya** `unclipped > 0` (göz değil, ölçüm).

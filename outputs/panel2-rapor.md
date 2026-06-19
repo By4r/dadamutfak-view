@@ -1,7 +1,7 @@
 # Panel2 Raporu — Dalga 4: Diyetisyen Paneli Ailesi (Reçeteler · Builder · Profil & Ayarlar)
 
-Sahip olunan dosyalar: `mockups/dyt-receteler-v1.html` · `mockups/dyt-recete-builder-v1.html`
-· `mockups/dyt-profil-ayar-v1.html`. Baz: `panel-shell.html` kopyası (İÇERİK ALANI dolduruldu,
+Sahip olunan dosyalar: `v5/dyt-receteler-v1.html` · `v5/dyt-recete-builder-v1.html`
+· `v5/dyt-profil-ayar-v1.html`. Baz: `panel-shell.html` kopyası (İÇERİK ALANI dolduruldu,
 sayfa CSS'i "SAYFA CSS" işaretinin altına; sidebar/topbar/token'lara dokunulmadı).
 
 ---
@@ -99,7 +99,7 @@ eski panel yalnız *tablo/form dili* için kıyas verdi.
 
 ## 3. Kabul kriterleri kanıtları
 
-1. **SS'ler** (`mockups/.ss-scratch/`):
+1. **SS'ler** (`v5/.ss-scratch/`):
    - `dyt-receteler-v1-1440.png` · `dyt-receteler-v1-500.png`
    - `dyt-recete-builder-v1-1440.png` · `dyt-recete-builder-v1-500.png`
    - `dyt-recete-builder-v1-arama-1440.png` (popover açık, "tavuk" sorgusu — arama-ekleme kanıtı)

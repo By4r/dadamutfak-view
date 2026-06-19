@@ -1,5 +1,9 @@
 # DadaMutfak — Handoff
 
+> **📁 ÖNİZLEME KLASÖRÜ: `mockups/` → `v5/` taşındı** (commit `728be06`), versiyonlu paylaşım linki.
+> Eski `mockups/` URL 404. Tüm üretim artık `v5/` altında. Gelecek güncelleme: `v5` → `v6`
+> (`git mv`, relative linkler korunur — HTML/CSS düzenlemesi gerekmez).
+
 ## 19 Haziran revize dalgası 1 (DURUM: ✅ KAPANDI — paralel agent team, 9 madde)
 
 Paralel agent team (lead + 3 teammate, Sonnet 4.6; domain-ayrık dosya sahipliği) ile 9 madde tamamlandı,
@@ -37,7 +41,7 @@ plana bağlandı.
 - **Adım 0 — paylaşılan omurga (DURUM: ✅ TAMAM + FREEZE, tek-author).** `body[data-brand="mutfak|store|
   akademi|fit"]` (109 sayfa, değer = görünen shell markası) + `body.has-business` rol state'i (`is-auth`
   kardeşi; `?business=1/0` toggle + `localStorage.dm_business`, `</body>` öncesi standalone IIFE). Sweep:
-  `mockups/_sweep-faz3-brand.js` — **idempotent + yeniden kullanılabilir** (yeni sayfa eklenince brand
+  `v5/_sweep-faz3-brand.js` — **idempotent + yeniden kullanılabilir** (yeni sayfa eklenince brand
   primitifi de ekler). Hariç: dev/ref dosyaları (`_overflow_probe`, `dizin`, `ref-*`). Görsel değişiklik YOK
   (görünmez attribute + henüz CSS'i olmayan class). Bu commit = **freeze noktası**.
 - **Adım 1 — paralel agent team (DURUM: ✅ TAMAM, 4 kol, Sonnet 4.6, domain-ayrık, lead-verified).**

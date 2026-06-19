@@ -1,6 +1,6 @@
 # Task #6 — alisveris-listesi hero butonları (TEŞHİS + FIX RAPORU)
 
-**Dosyalar:** `mockups/alisveris-listesi-v1.html` (+ `siparislerim-v1.html`, `giris-v1.html` aynı guard).
+**Dosyalar:** `v5/alisveris-listesi-v1.html` (+ `siparislerim-v1.html`, `giris-v1.html` aynı guard).
 `git diff --numstat`: alisveris `8 1` · siparislerim `3 1` · giris `3 1`. COMMIT YOK.
 **Kapsam:** sadece buton katman/etkileşim (z-index/pointer-events). §2f hero görseli/overlay GÖRÜNÜMÜ değişmedi (SS `02-hero-buttons-render.png` teyit).
 

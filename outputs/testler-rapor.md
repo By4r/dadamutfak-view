@@ -1,6 +1,6 @@
 # Testler — test-detay-v1.html Raporu (FİNAL CİLA)
 
-> Üretilen: `mockups/test-detay-v1.html` (tek şablon, `?test=slug` ile 4 test).
+> Üretilen: `v5/test-detay-v1.html` (tek şablon, `?test=slug` ile 4 test).
 > Ara yön değişikliği uygulandı: ilk kurgu (radio satırlı bilgi sınavı) REDDEDİLDİ →
 > **Onedio tarzı** kurguya çevrildi (görselli seçim kartları, otomatik geçiş, kişilik sonuç kartı).
 > İkinci ek: 4. slug `?test=hangi-yemek` (saf eğlence/kişilik testi).
@@ -71,7 +71,7 @@
 
 Yeni doğan (token diliyle, pill yok, radius token): `.tcv-*` (test kapağı kartı), `.qz-stage/.qz-qimg/.qz-hint`, `.qz-res-card.persona/.qz-res-media/.qz-res-kicker`, `.shr-pop`.
 
-## 4. SS Yolları (mockups/.ss-scratch/)
+## 4. SS Yolları (v5/.ss-scratch/)
 
 - `test-detay-metabolizma-kapak-1440.png` · `test-detay-metabolizma-kapak-500.png`
 - `test-detay-su-hidrasyon-kapak-1440.png` · `test-detay-su-hidrasyon-kapak-500.png`

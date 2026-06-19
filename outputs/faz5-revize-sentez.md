@@ -77,7 +77,7 @@ diğer sticky sayfaları da etkiliyor** (`.lst-side` facet paneli vb. de yapış
 fix'ini shell'e mi (site-geneli) yoksa sticky-talep eden sayfalara tek tek mi yaymalı?
 Faz 6 adayı.
 
-## 6. Lokal inceleme link listesi (server: `http://localhost:8765/mockups/`)
+## 6. Lokal inceleme link listesi (server: `http://localhost:8765/v5/`)
 
 > ⚠️ Tüm sayfalarda duplicate menü temizliği AKTİF (58 sayfa). akademi-v1 + dada-shop ayrı kabuk.
 
@@ -96,7 +96,7 @@ Faz 6 adayı.
 - `tasks/corporate-identity-guideline.pdf` + `tasks/kurumsal-renk.md` (YENİ)
 - `outputs/faz5-revize-{header-fix,kabuk-renk,form-akis,bnp-defter-pdf}-rapor.md`
 - `outputs/ss-faz5-revize-bnp/` (cook/haftalik/PDF SS + gerçek PDF)
-- `mockups/.ss-scratch/{hf,fa-*}` (render probe SS'leri)
+- `v5/.ss-scratch/{hf,fa-*}` (render probe SS'leri)
 
 ## 8. COMMIT ÖNERİSİ (Beyar onayı — atılMADI)
 

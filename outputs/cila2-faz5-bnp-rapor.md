@@ -1,6 +1,6 @@
 # CİLA-2 FAZ 5 — BNP Akış Raporu (task #5: bnp-akis)
 
-**Dosya:** `mockups/bugun-ne-pisirsem-v1.html` (TEK dosya; _shell.html'e DOKUNULMADI)
+**Dosya:** `v5/bugun-ne-pisirsem-v1.html` (TEK dosya; _shell.html'e DOKUNULMADI)
 **Diff:** `+711 / -26` satır (git numstat) — kabuk/header/mega menü değişmedi.
 **Sahiplik:** yalnız bu dosya; teammate'lerin dosyalarına (giris, tarif-liste, diyetisyen-profil, _shell) dokunulmadı.
 

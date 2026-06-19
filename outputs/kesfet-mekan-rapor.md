@@ -121,7 +121,7 @@ taşındı — probe ile doğrulandı.
 | §3b tek sabit alt katman (çerez ?cc=1 → nav `bn-hidden`; kabul → nav geri; probe ≥1.4s) | ✅ |
 | Mobil tab geçişi (390) | ✅ |
 
-**SS** (`mockups/.ss-scratch/mekan/`): `v3-detay-1440-hero.png` ·
+**SS** (`v5/.ss-scratch/mekan/`): `v3-detay-1440-hero.png` ·
 `v3-detay-1440-full.png` · `v3-detay-390.png` · `v3-detay-390-full.png`
 (liste SS'leri Tur 1'den: `mekan-liste-1440.png` · `mekan-liste-390.png`)
 

@@ -50,7 +50,7 @@ TAMAMEN BOŞTU → "sağ alanı aktif kullan" sorununun gerçek kaynağı buydu.
 | 390 grid kolonu | tek kolon (stack) | tek kolon (stack) |
 
 - **SS (izole channel:chrome, user-data-dir=/tmp/fa-chrome, server :8853, device_scale 1):**
-  `mockups/.ss-scratch/fa-{diyetisyen-ol,sef-ol}-rev1-{1440,390,mid}.png`
+  `v5/.ss-scratch/fa-{diyetisyen-ol,sef-ol}-rev1-{1440,390,mid}.png`
   - Masaüstü full: form belirgin kompakt, Kart 3 c2 upload temiz.
   - **mid-scroll (1700px):** sticky "Başvuru Süreci"+"Neden DadaMutfak" paneli artık Kart 3-4'ün
     YANINDA takip ediyor — önceden boş olan sağ alan dolu. (Lead tasarım-gözü için kilit kare.)

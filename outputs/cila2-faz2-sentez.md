@@ -104,7 +104,7 @@ Tam akış (önerilen sıra):
 - lg-gate'in diğer detay sayfalarına genişletilmesi (mutfaga-giris, kesfet,
   urun, diyetisyen) — Faz 3 adayı.
 - Ölü CSS temizliği (puf-ekle stepper + BNP wizard) — isteğe bağlı mini iş.
-- Sweep tooling'i (`mockups/_sweep-loginstate.js` + `_sweep-verify.js` +
+- Sweep tooling'i (`v5/_sweep-loginstate.js` + `_sweep-verify.js` +
   `_patch-anasayfa.js`) — audit izi olarak commit'e dahil önerisi.
 
 ## 6 · COMMIT ÖNERİSİ (ATILMADI — Beyar onayı bekliyor)

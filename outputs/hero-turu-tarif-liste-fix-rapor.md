@@ -1,6 +1,6 @@
 # tarif-liste-fix — Kart başlık taşması + meta hizalama raporu
 
-**Teammate:** tarif-liste-fix · **Task:** #3 · **Dosya:** `mockups/tarif-liste-v1.html`
+**Teammate:** tarif-liste-fix · **Task:** #3 · **Dosya:** `v5/tarif-liste-v1.html`
 **Kapsam:** SADECE kart/meta CSS katmanı (`.r-body h4`, `.r-facts`). Hero/filtre/grid/üst-bant'a dokunulmadı.
 **Commit:** YOK (kural gereği).
 
@@ -88,7 +88,7 @@ Kanıt yöntemi: `python3 -m http.server 8765` + Playwright MCP (cache-buster'l�
    değişikliği değil, yalnız stres testi.
 
 ## Değişen satırlar
-`mockups/tarif-liste-v1.html` — yalnız `.r-body h4` + `.r-facts` blokları (satır ~947–958).
+`v5/tarif-liste-v1.html` — yalnız `.r-body h4` + `.r-facts` blokları (satır ~947–958).
 Başka hiçbir kurala dokunulmadı.
 
 ---
@@ -96,7 +96,7 @@ Başka hiçbir kurala dokunulmadı.
 
 # EK-1 — mutfaga-giris-v1 scroll-spy son sekme aktif olmuyor (Task #5)
 
-**Dosya:** `mockups/mutfaga-giris-v1.html` · **Kapsam:** SADECE scroll-spy JS (body, one-page çapa
+**Dosya:** `v5/mutfaga-giris-v1.html` · **Kapsam:** SADECE scroll-spy JS (body, one-page çapa
 çubuğu). Hero / diğer body'ye dokunulmadı. **Commit:** YOK.
 
 ## KÖK NEDEN (kanıtlı)
@@ -131,7 +131,7 @@ Her section'a scroll + `dispatchEvent('scroll')` + aktif tab class kontrolü:
 
 - Desktop 1280: 6/6 geçti (önce: BOTTOM'da "kutuphane" → ŞİMDİ "sonraki")
 - Mobil 390: 4/4 + BOTTOM geçti (`allOk: true`)
-- SS: `mockups/.ss-scratch/ek1-bottom.png` — sayfa dibinde "Sıradaki Adım" sekmesi domates dolgulu (aktif)
+- SS: `v5/.ss-scratch/ek1-bottom.png` — sayfa dibinde "Sıradaki Adım" sekmesi domates dolgulu (aktif)
 
 ## Bilinen Sınırlamalar (EK-1)
 1. Son sekme, kullanıcı **belge dibine değdiğinde** aktif olur (35px açık tam o anda kapanıyor).
@@ -143,7 +143,7 @@ Her section'a scroll + `dispatchEvent('scroll')` + aktif tab class kontrolü:
    smooth-scroll animasyonu test için `scrollBehavior=auto`'ya alındı (kalıcı değişiklik değil).
 
 ## Değişen satırlar (EK-1)
-`mockups/mutfaga-giris-v1.html` — `setActive()` içine 1 koşul satırı + yorum (one-page çapa çubuğu
+`v5/mutfaga-giris-v1.html` — `setActive()` içine 1 koşul satırı + yorum (one-page çapa çubuğu
 IIFE'si, ~satır 2633). Başka hiçbir yere dokunulmadı.
 
 ---
@@ -151,7 +151,7 @@ IIFE'si, ~satır 2633). Başka hiçbir yere dokunulmadı.
 
 # EK-3 — BNP "Tarif Ara" wizard sonucu çoklu tarif (Task #7)
 
-**Dosya:** `mockups/bugun-ne-pisirsem-v1.html` · **Kapsam:** SADECE wizard sonuç mantığı
+**Dosya:** `v5/bugun-ne-pisirsem-v1.html` · **Kapsam:** SADECE wizard sonuç mantığı
 (`computeMatches()` JS). §2f hero + _shell + diğer body'ye DOKUNULMADI. **Commit:** YOK.
 
 ## KÖK NEDEN (kanıtlı)
@@ -215,7 +215,7 @@ POOL kap başına tarif: baslangic 6 · ana 6 · yan 5 · tatli 5 · kahvalti 5 
 kapta çoklu sonuç için yeterli havuz.
 
 ## Statik SS (standalone headless Chrome — yeni kural)
-`mockups/.ss-scratch/ek3-wizard-static.png` (1280×1500) — `?tab=ara` wizard başlangıç ekranı:
+`v5/.ss-scratch/ek3-wizard-static.png` (1280×1500) — `?tab=ara` wizard başlangıç ekranı:
 stepper (Öğün→Süre→Zorluk→Damak) + Adım 1'in 6 kap tile'ı + "Devam". Render sağlam.
 (Standalone Chrome `--headless=new --screenshot`; MCP kullanılmadı — kural gereği.)
 
@@ -238,7 +238,7 @@ stepper (Öğün→Süre→Zorluk→Damak) + Adım 1'in 6 kap tile'ı + "Devam".
    gerekli). Süre gibi softlaştırılırsa boş durum neredeyse hiç görünmez.
 
 ## Değişen satırlar (EK-3)
-`mockups/bugun-ne-pisirsem-v1.html` — yalnız `computeMatches()` fonksiyonu (Tarif Ara wizard
+`v5/bugun-ne-pisirsem-v1.html` — yalnız `computeMatches()` fonksiyonu (Tarif Ara wizard
 IIFE'si, ~satır 3091–3127) yeniden yazıldı + açıklayıcı yorum. Markup/CSS/render döngüsü dahil
 başka hiçbir yere dokunulmadı.
 
@@ -295,7 +295,7 @@ gövdeye + _shell'e DOKUNULMADI. Eyebrow/tab yok (bu 2 sayfada).
 
 # EK-4 — puf-noktalari-v1 chip satırı tek-satır kaydırılır şerit (Task #9)
 
-**Dosya:** `mockups/puf-noktalari-v1.html` (LİSTE sayfası — puf-noktasi-ekle DEĞİL). **Kapsam:**
+**Dosya:** `v5/puf-noktalari-v1.html` (LİSTE sayfası — puf-noktasi-ekle DEĞİL). **Kapsam:**
 SADECE gövdedeki `.ke-filter` chip satırı. §2f hero + _shell DOKUNULMADI. **Commit:** YOK.
 
 ## KÖK NEDEN
@@ -323,9 +323,9 @@ numstat: 18/3.
 > NOT: `flex-wrap:nowrap` + `overflow-x:auto` "tek satır" için KESİN kanıt — sarma CSS'çe imkânsız.
 
 **Statik render SS (standalone headless Chrome — yeni kural):**
-- `mockups/.ss-scratch/ek4-desktop.png` (1280×1500): chip satırı TEK SIRA (Tümü→Mevsimi Ne Zaman
+- `v5/.ss-scratch/ek4-desktop.png` (1280×1500): chip satırı TEK SIRA (Tümü→Mevsimi Ne Zaman
   görünür), sağ-kenar fade var, kalan 2 chip fade ardında; disc-tabs sağda ayrı. (önce: 2 satır)
-- `mockups/.ss-scratch/ek4-mobile.png` (390): chip satırı tek-sıra+fade; disc-tabs tam-genişlik alt satır.
+- `v5/.ss-scratch/ek4-mobile.png` (390): chip satırı tek-sıra+fade; disc-tabs tam-genişlik alt satır.
 
 ## Bilinen Sınırlamalar (EK-4)
 1. **Etkileşim probe (scrollLeft/drag/wheel) → lead faz-sonu MCP turu.** Standalone Chrome
@@ -339,6 +339,6 @@ numstat: 18/3.
    mobil breakpoint'ten önce yok — mobilde disc-tabs zaten alta düşer.
 
 ## Değişen satırlar (EK-4)
-`mockups/puf-noktalari-v1.html` — `.ke-filter` CSS bloğu (~775) + enableDrag selector listesine
+`v5/puf-noktalari-v1.html` — `.ke-filter` CSS bloğu (~775) + enableDrag selector listesine
 `#pufFilter` (~1792) + kf-more fade-toggle IIFE. Markup'a DOKUNULMADI (chip'ler zaten tek
 konteynerde). Gövde geri kalanı + _shell + hero el değmedi.

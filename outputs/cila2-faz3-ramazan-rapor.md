@@ -113,11 +113,11 @@ Mod-bar + banner + JS **yalnız hedef sayfalara elle gömülür** (sweep YOK —
 ## AŞAMA 3 — UYGULAMA (✅ TAMAM — lead gate onaylı, 5 dosya elle gömüldü)
 
 Uygulanan (her birine 3 INSERT: CSS `</style>` öncesi · markup `<main>` öncesi · JS `</body>` öncesi — silme YOK):
-1. `mockups/anasayfa-portal-v3a.html` — DIVERGENT, elle (immersive hero; bump inert, bar hero üstüne yüzer)
-2. `mockups/tarif-liste-v1.html` — H1 lst-top; `.below-header` bump
-3. `mockups/tarif-detay-v1.html` — DIVERGENT, elle; H2b `.rd-top` bump (özel kural)
-4. `mockups/bugun-ne-pisirsem-v1.html` — H3 bnp-top; `.below-header` bump
-5. `mockups/sezon-v1.html` — köprü (mod-bar + "Ramazan Mutfağı" link; szn-strip KORUNDU)
+1. `v5/anasayfa-portal-v3a.html` — DIVERGENT, elle (immersive hero; bump inert, bar hero üstüne yüzer)
+2. `v5/tarif-liste-v1.html` — H1 lst-top; `.below-header` bump
+3. `v5/tarif-detay-v1.html` — DIVERGENT, elle; H2b `.rd-top` bump (özel kural)
+4. `v5/bugun-ne-pisirsem-v1.html` — H3 bnp-top; `.below-header` bump
+5. `v5/sezon-v1.html` — köprü (mod-bar + "Ramazan Mutfağı" link; szn-strip KORUNDU)
 
 **Uygulama notları:**
 - Mod-bar `position:fixed; top:112px` (mobil 62px), z-index:55 (header 60'ın altında — spatial olarak header'ın altında oturur). Davet bannerı + canlı sayaç aynı `.rmz-bar` slotunun iki durumu (`.rmz-live` / `.rmz-invite`).

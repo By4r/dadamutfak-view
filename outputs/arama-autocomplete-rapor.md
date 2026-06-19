@@ -1,7 +1,7 @@
 # Arama Autocomplete — Rapor (task #3, teammate: arama-autocomplete)
 
-**Dosya (tek):** `mockups/arama-v1.html` · `git diff --numstat` = `300 1` (yalnız bu dosya).
-**Önizleme:** http://localhost:8765/mockups/arama-v1.html · DEMO: `?demo=1` (dropdown açık), `?demo=1&q=me&ai=2` (yazılı + aktif öğe).
+**Dosya (tek):** `v5/arama-v1.html` · `git diff --numstat` = `300 1` (yalnız bu dosya).
+**Önizleme:** http://localhost:8765/v5/arama-v1.html · DEMO: `?demo=1` (dropdown açık), `?demo=1&q=me&ai=2` (yazılı + aktif öğe).
 **COMMIT YOK.**
 
 ## Eklenenler

@@ -1,6 +1,6 @@
 # FAZ 6 — T1 Hero Tutarlılık Raporu
 
-> Sahip: `hero-tutarlilik` · Kapsam: tüm üretim sayfaları (`mockups/*-v1.html` + `anasayfa-portal-v3a`)
+> Sahip: `hero-tutarlilik` · Kapsam: tüm üretim sayfaları (`v5/*-v1.html` + `anasayfa-portal-v3a`)
 > Referans: `tasks/bilesen-kilavuzu.md §2f` (HERO+BREADCRUMB KANONU), §3, §3b · COMMIT YOK.
 
 ## Özet kararı
@@ -24,8 +24,8 @@ hak-ediş disiplini" gereği yapılan red. (Detay aşağıda §"Bilinçli H1'e �
 
 | Dosya | Değişiklik |
 |---|---|
-| `mockups/mutfak-sirlari-v1.html` | `hub-top` beyaz-kompakt head → **H1 koyu-overlay görselli hero** (lst-top dili): bağlam görseli (pişirme/baharat flatlay, v3a suffix) + beyaz crumb override + cam-chip rayı + **sağda metrik şeridi** (5 / 240+ / 60+). CSS bloğu + tablet + mobil + markup (lh-main sarmalayıcı + hub-stats). Kimlik korundu (REHBER eyebrow, hızlı-geç chip hedefleri aynı). |
-| `mockups/_overflow_probe.html` | (YENİ, `_`-prefix QA aracı — üretim sayfası değil) 390px element-rect taşma probe harness'i. |
+| `v5/mutfak-sirlari-v1.html` | `hub-top` beyaz-kompakt head → **H1 koyu-overlay görselli hero** (lst-top dili): bağlam görseli (pişirme/baharat flatlay, v3a suffix) + beyaz crumb override + cam-chip rayı + **sağda metrik şeridi** (5 / 240+ / 60+). CSS bloğu + tablet + mobil + markup (lh-main sarmalayıcı + hub-stats). Kimlik korundu (REHBER eyebrow, hızlı-geç chip hedefleri aynı). |
+| `v5/_overflow_probe.html` | (YENİ, `_`-prefix QA aracı — üretim sayfası değil) 390px element-rect taşma probe harness'i. |
 
 > Paylaşımlı 5 dosyaya (ansiklopedi-v1, ansiklopedi-detay-v1, sozluk-v1 [T4];
 > mutfaga-giris-v1, olcu-birimleri-v1 [T5]) **DOKUNULMADI** — hepsi zaten kanon-doğru

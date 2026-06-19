@@ -1,6 +1,6 @@
 # Mobil QA — Sayfa Partition (tam-partition, boşluk/çakışma YOK)
 
-Envanter: `mockups/*.html` = 82 dosya. Hariç: `ref-*` (7 referans klon, bizim değil)
+Envanter: `v5/*.html` = 82 dosya. Hariç: `ref-*` (7 referans klon, bizim değil)
 + `_overflow_probe.html` (probe). **Test edilen = 74 üretim sayfası.**
 
 Self-verify: 14 + 12 + 14 + 13 + 21 = **74** ✓ (her sayfa tam 1 tester, çakışma yok).

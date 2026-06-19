@@ -3,7 +3,7 @@
 > Kapsam: 61 üretim sayfası (59 × `*-v1.html` + `anasayfa-portal-v3a.html` +
 > `panel-shell.html`). `test-detay-v1.html` mevcut değil (başka teammate üretiyor,
 > kapsam dışı). Probe: headless Chrome + same-origin iframe harness
-> (`mockups/.ss-scratch/gorsel-harness.html` + `gorsel-runner.py`).
+> (`v5/.ss-scratch/gorsel-harness.html` + `gorsel-runner.py`).
 
 ## 1. Probe yöntemi
 
@@ -66,7 +66,7 @@ Tüm dolgu görselleri yayın öncesi indirilip gözle doğrulandı (bağlam uyg
 **Hemen Al** (`buton-harness.html?m=buy`, headless tıklama):
 ```
 qty-set: 3 → badge-before: hidden=true txt=0 → badge-after: hidden=false txt=3
-→ buy-label: "Ödemeye Gidiliyor" → navigated-to: /mockups/odeme-v1.html   errors=[]
+→ buy-label: "Ödemeye Gidiliyor" → navigated-to: /v5/odeme-v1.html   errors=[]
 ```
 dmCart badge 0→3 (seçili adet) + odeme-v1.html'e yönlendi. ✔
 
@@ -93,7 +93,7 @@ urun-liste → hepsinde `scrollWidth ≤ 390`. ✔
 - Dokunulmayan 56 sayfa ilk turda zaten gerçek-vaka-sıfırdı (yalnız §2'deki
   FP'ler). Sonuç: **61 sayfada 0 boş/kırık görsel.**
 
-## 6. SS kanıtları (1440, `mockups/.ss-scratch/`)
+## 6. SS kanıtları (1440, `v5/.ss-scratch/`)
 
 - `gorsel-urun-detay-galeri.png` — galeri: 4 thumb da dolu (2. kare turuncu döküm tencere)
 - `gorsel-urun-detay-simrail.png` — Benzer ürünler: Granit Tava kartı görselli
@@ -101,4 +101,4 @@ urun-liste → hepsinde `scrollWidth ≤ 390`. ✔
 - `gorsel-dada-shop-granit.png` — Yeni gelenler rayında Granit Tava görselli
 - `gorsel-urun-liste-keten.png` — liste grid'i dolu
 
-Ham tarama çıktısı: `mockups/.ss-scratch/gorsel-scan.json` + `gorsel-scan.log`.
+Ham tarama çıktısı: `v5/.ss-scratch/gorsel-scan.json` + `gorsel-scan.log`.

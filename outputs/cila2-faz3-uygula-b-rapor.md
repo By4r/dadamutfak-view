@@ -2,7 +2,7 @@
 
 > Teammate: uygula-b · Lead: team-lead · Tarih: 2026-06-12
 > Kapsam: Görevler #7, #5, #8, #6, #4. Her iş kanıtlı (grep/numstat/SS/probe).
-> SS'ler: `mockups/.ss-scratch/`. Probe HTML'leri aynı klasörde.
+> SS'ler: `v5/.ss-scratch/`. Probe HTML'leri aynı klasörde.
 
 ---
 

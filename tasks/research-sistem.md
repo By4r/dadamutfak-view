@@ -91,7 +91,7 @@ diyetisyen profili → randevu → danışan paneli (kalıcı abonelik ilişkisi
 > Ⓡ = rakip karşılığı olan yeni öneri, Ⓓ = diyetisyen dokümanı.
 
 ### 2.1 Ana sayfa
-- **Ana sayfa** ✓ — ONAYLI (`mockups/anasayfa-portal-v3a.html`). Tüm token,
+- **Ana sayfa** ✓ — ONAYLI (`v5/anasayfa-portal-v3a.html`). Tüm token,
   header/footer, mega menü (KİLİTLİ), section pattern'ları buradan türetilir.
 
 ### 2.2 Tarif çekirdeği
@@ -441,7 +441,7 @@ ayarlar · **yapay-zeka** (tarif öneri motoru, içerik sınıflandırma, spam t
 
 ## 5. RENK / TİPOGRAFİ / TUTARLILIK NOTU (bağlayıcı)
 
-- **Kanonik baz: `mockups/anasayfa-portal-v3a.html`.** Her yeni sayfa token
+- **Kanonik baz: `v5/anasayfa-portal-v3a.html`.** Her yeni sayfa token
   bloğunu, header'ı, footer'ı ve mega menüyü oradan **birebir** alır; lokal
   değişiklik yasak. **Mega menü kilitli, ana sayfa onaylı — veridir.**
 - Token'lar: `--tomato #E14827` (+dark/deep/tint) · `--slate #211E16` ·

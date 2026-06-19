@@ -1,7 +1,7 @@
 # CİLA-2 FAZ 3 — QA + Reklam Senaryosu Raporu
 
 > Teammate: **qa** (team cila2-faz3). Lead: team-lead.
-> Server: http://localhost:8765 · SS'ler: `mockups/.ss-scratch/qa/`
+> Server: http://localhost:8765 · SS'ler: `v5/.ss-scratch/qa/`
 > Güncelleme: 2026-06-12
 
 ---
@@ -232,7 +232,7 @@ genişletti). Analiz (read-only) tamam:
 - **Yeni sefler-v1:** yükleniyor (200, başlık "Şefler", footer mevcut), konsol 0
   — "Şefler" linklerinin hedefi geçerli.
 
-> numstat not: `git diff mockups/*.html` net +785/-454 gösteriyor ama bu **tüm
+> numstat not: `git diff v5/*.html` net +785/-454 gösteriyor ama bu **tüm
 > takımın commit'siz işini** kapsıyor (benim #9 Yerleşimler +300, kanon hero/crumb/
 > redesign vb.) — sweep'imin katkısı pure-sweep dosya diff'iyle **href-only**
 > kanıtlandı + script footer-DIŞI byte-aynı assertion'ı geçti.

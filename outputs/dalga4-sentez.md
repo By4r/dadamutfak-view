@@ -101,7 +101,7 @@ turda kabul (0 revize). "Beyar incelemesi bekliyor" listesi BOŞ.
 
 ---
 
-## 4. SS YOLLARI (mockups/.ss-scratch/)
+## 4. SS YOLLARI (v5/.ss-scratch/)
 
 - **panel-shell:** `panel-shell-{1440,500,500-nav}.png`
 - **panel1:** `dyt-randevular-v1-{1440,500,gun-1440,gun-500,detay-1440}.png` ·
@@ -114,7 +114,7 @@ turda kabul (0 revize). "Beyar incelemesi bekliyor" listesi BOŞ.
 - **kapanis2:** `arama-v1-{1440,500,tab-tarifler-1440,empty-1440,empty-500,sorgusuz-1440,full-1440}.png` ·
   `sezon-v1-{1440,500,full-1440}.png` · `sss-v1-{1440,500,kat-shop-1440,full-1440}.png`
 - **lead nav:** `diyetisyen-profil-panelbtn-1440.png`
-- Footer denetim dökümü: `mockups/.ss-scratch/build4/footer-audit.json`
+- Footer denetim dökümü: `v5/.ss-scratch/build4/footer-audit.json`
 
 ---
 

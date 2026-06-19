@@ -1,6 +1,6 @@
 # Revize-2 · Keşfet konsept sapması — fark tablosu + yeniden kurgu
 
-> Sahibi: `kesfet` teammate · Task #3 · Tek dosya: `mockups/kesfet-v1.html`
+> Sahibi: `kesfet` teammate · Task #3 · Tek dosya: `v5/kesfet-v1.html`
 > Kanonik baz: `anasayfa-portal-v3a.html` + `_shell.html` · Kılavuz: `tasks/bilesen-kilavuzu.md`
 
 ## ① Araştırma — Keşfet NE olmalı?
@@ -24,7 +24,7 @@
      eski foursquare filtre/harita/mesafe UI'ı DEĞİL → **editöryal disc-card + uzun-form makale.**
      Konu = yer/lezzet/etkinlik; dil = dergi/keşif kartı.
 
-3. **Mevcut** — `mockups/kesfet-v1.html`
+3. **Mevcut** — `v5/kesfet-v1.html`
    - Doğru **format** (disc-card grid + uzun-form detay; v3a mirası, kılavuza uygun).
    - Yanlış **konu/taksonomi:** "Mutfak Yayını / mutfağın hikâyesi" — soyut bir yemek-kültürü
      dergisi. Kategoriler: Şehir Mutfağı · Sokak Lezzetleri · Mevsim Sofrası · Söyleşi ·
@@ -125,7 +125,7 @@ Chrome rotası kullanıldı (`.ss-scratch/revize2/kesfet/probe.py`). Sonuçlar:
 | 390 yatay taşma | ✅ `sw390=375` (≤390, overflow yok) |
 | Pillar dağılımı (disc-cat) | Mekânlar 3 · Gurme Lezzetler 3 · Etkinlikler 3 · Lezzet Rotası 1 |
 
-**SS yolları** (`mockups/.ss-scratch/revize2/kesfet/`):
+**SS yolları** (`v5/.ss-scratch/revize2/kesfet/`):
 - `kesfet-1440-once.png` (1440, ÖNCE — `_kesfet-before.html` yedeğinden)
 - `kesfet-1440-sonra.png` (1440, SONRA)
 - `kesfet-390-sonra.png` (390, SONRA)
@@ -140,7 +140,7 @@ konum/tarih meta. ÖNCE'de "Mutfak Yayını / mutfağın hikâyesi" + soyut derg
 **Mobil (390) gözle:** tek kolon kart yığını, kategori chip yatay kaydırma, alt köşede tek
 yüzen bottom-nav pill — kuralla uyumlu (1 sabit alt katman).
 
-**Temizlik:** `mockups/_kesfet-before.html` (geçici, SS için kök) SİLİNDİ → üretim envanteri
+**Temizlik:** `v5/_kesfet-before.html` (geçici, SS için kök) SİLİNDİ → üretim envanteri
 62 sayfada sabit. Yedek `.ss-scratch/revize2/kesfet/_kesfet-before.html` altında durur.
 
 **Tereddütler:** (1) "Söyleşi" pillar olarak ayrı kart yapılmadı — usta söyleşisi öğesi feature

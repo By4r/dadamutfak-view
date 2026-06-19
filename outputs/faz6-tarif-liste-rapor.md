@@ -1,6 +1,6 @@
 # FAZ 6 — T3 Tarif Liste Cila Raporu (tarif-liste-v1)
 
-> Sahip: tarif-liste teammate · Dosya: `mockups/tarif-liste-v1.html`
+> Sahip: tarif-liste teammate · Dosya: `v5/tarif-liste-v1.html`
 > frontend-design skill aktif · r-card/facet dili miras alındı (kılavuz §1/§2b)
 > COMMIT/PUSH yapılmadı · MCP playwright kullanılmadı (lead rezerve) — probe'lar
 > bağımsız headless Google Chrome instance'ı ile (Python playwright, CDP viewport).

@@ -1,6 +1,6 @@
 # Mutfak Defteri v1 — Rapor (F7, public kullanıcı profili · patron m8 ⭐)
 
-**Durum: TAMAM** · Dosya: `mockups/mutfak-defteri-v1.html` · Konsol: 0 hata (1440 + mobil) · Yatay taşma: YOK (probe ile doğrulandı: `body.scrollWidth == clientWidth`)
+**Durum: TAMAM** · Dosya: `v5/mutfak-defteri-v1.html` · Konsol: 0 hata (1440 + mobil) · Yatay taşma: YOK (probe ile doğrulandı: `body.scrollWidth == clientWidth`)
 
 Persona: **Ayşe Demir — @aysemutfakta**, "Ayşe'nin Mutfak Defteri", Usta Aşçı derecesi, İzmir, Mart 2021'den beri üye, 8.450 topluluk puanı.
 
@@ -46,7 +46,7 @@ Kaynaklar: `kullanici-profili.html` (2511 satır), `menulerim.html`, `sefler.htm
 6. **Eski 3'lü sayaç 5'liye çıktı** (Takip + Puan eklendi) — m8 "puan toplar" gereksinimi; sarı yalnız puan ikonuna.
 7. **Mobil fix:** `.pf-head` column+center hizada `.pf-id` shrink-to-fit kalıp meta satırı sarmıyordu → `.pf-id{width:100%}` eklendi.
 
-## SS Yolları (`mockups/.ss-scratch/`)
+## SS Yolları (`v5/.ss-scratch/`)
 
 | SS | Dosya |
 |---|---|

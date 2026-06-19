@@ -88,7 +88,7 @@ YENİ (112px):  topbar[← DadaMutfak'a dön + worlds(opsiyon) + dil]
 ---
 
 ## 3. Dosya etkisi
-- **Değişen:** yalnız `mockups/dadafit-hub-v1.html` (tek DadaFit sayfası).
+- **Değişen:** yalnız `v5/dadafit-hub-v1.html` (tek DadaFit sayfası).
   - header bloğu (satır ~1226+) → DadaFit header'ıyla değiştirilir.
   - `.df-subnav` bandı (HTML 1576-1587 + CSS 1026-1036) **kaldırılır** (header'a eridi).
   - `--tomato` (veya scoped `.df-header`) `#009d4f`'e set; drawer/bottom-nav DadaFit'e.

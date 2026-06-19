@@ -1,6 +1,6 @@
 # DadaFit Header Bloğu — Yeniden Kullanım Kılavuzu
 
-> DadaFit alt-marka header'ı `mockups/dadafit-hub-v1.html`'de kuruldu (Store/Akademi
+> DadaFit alt-marka header'ı `v5/dadafit-hub-v1.html`'de kuruldu (Store/Akademi
 > pattern'i). Bu doküman, ileride **diğer DadaFit sayfalarına** (Egzersizler, Program-detay,
 > Challenge…) aynı header'ı **kopyalamak** için referanstır. Bileşen sistemi yok → her
 > sayfa chrome'u inline taşır (Store/Akademi de böyle).

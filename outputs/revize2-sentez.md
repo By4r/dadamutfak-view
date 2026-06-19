@@ -2,7 +2,7 @@
 
 > Tarih: 2026-06-12 · Takım: lead + mobil1 + mobil2 + kesfet (FULL AUTO)
 > Detay raporlar: `outputs/revize2-mobil1.md` · `outputs/revize2-mobil2.md` ·
-> `outputs/revize2-kesfet.md` · Ham probe: `mockups/.ss-scratch/revize2/`
+> `outputs/revize2-kesfet.md` · Ham probe: `v5/.ss-scratch/revize2/`
 > (gitignored — SS/araçlar lokalde)
 
 ## SORUN 1 — MOBİL KAYMA (62 sayfa gerçek-mobil denetim)
@@ -84,16 +84,16 @@ tanımı), 33 sayfa yeniden doğrulandı. Kural kılavuz §3b'ye probe tuzağı 
 
 ## SS YOLLARI (lokal, gitignored)
 
-- `mockups/.ss-scratch/revize2/mobil1/` — 51 png (tarif-detay önce/sonra,
+- `v5/.ss-scratch/revize2/mobil1/` — 51 png (tarif-detay önce/sonra,
   first-visit örneklemleri, 1440 regresyon)
-- `mockups/.ss-scratch/revize2/mobil2/` — kalibrasyon + money-shot
+- `v5/.ss-scratch/revize2/mobil2/` — kalibrasyon + money-shot
   (`_firstvisit-diyet-listeleri-390.jpeg`) + `tool/out/probe-results.json`
-- `mockups/.ss-scratch/revize2/kesfet/` — kesfet 1440 önce/sonra + 390 sonra
-- `mockups/.ss-scratch/revize2/lead/` — lead bağımsız probe enjeksiyonları
+- `v5/.ss-scratch/revize2/kesfet/` — kesfet 1440 önce/sonra + 390 sonra
+- `v5/.ss-scratch/revize2/lead/` — lead bağımsız probe enjeksiyonları
 
 ## DEĞİŞEN DOSYALAR (git)
 
-- 55 × `mockups/*.html` (54 sayfa + _shell) — bn-hidden kanonik pattern
-- `mockups/kesfet-v1.html` — ayrıca konsept geri çekme (yeniden kurgu)
+- 55 × `v5/*.html` (54 sayfa + _shell) — bn-hidden kanonik pattern
+- `v5/kesfet-v1.html` — ayrıca konsept geri çekme (yeniden kurgu)
 - `tasks/bilesen-kilavuzu.md` — §3b mobil sabit-alt-katman kuralı
 - `outputs/revize2-{mobil1,mobil2,kesfet,sentez}.md` — yeni raporlar

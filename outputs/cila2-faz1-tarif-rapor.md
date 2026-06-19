@@ -1,8 +1,8 @@
 # CİLA-2 Faz 1 — TARİF modülü raporu
 
 > Teammate: tarif · Takım: cila2-faz1 · Görev #1
-> Sahiplik: `mockups/kategori-v1.html`, `mockups/tarif-liste-v1.html`,
-> `mockups/tarif-detay-v1.html` (headA senkron gerekmedi — değişiklikler
+> Sahiplik: `v5/kategori-v1.html`, `v5/tarif-liste-v1.html`,
+> `v5/tarif-detay-v1.html` (headA senkron gerekmedi — değişiklikler
 > ortak hero/galeri yapısına dokunmadı)
 
 ## Yapılanlar (madde madde)
@@ -53,7 +53,7 @@
 - Kendi setimdeki **"Dada Denedi" → "Şefin Tercihi"** (kategori + liste r-tried rozeti). Grep = 0.
 
 ## Kanıt (SS + probe yolları)
-SS dizini: `mockups/.ss-scratch/cila2/tarif/`
+SS dizini: `v5/.ss-scratch/cila2/tarif/`
 - Desktop: `kategori-v1-desktop.png`, `tarif-liste-v1-desktop.png`, `tarif-detay-v1-desktop.png`
 - Liste görünümü: `liste-listview.png` (+ `liste-listview-crop.png`)
 - Mobil (500px): `kategori-mobile.png`, `liste-mobile.png` (+ `liste-mobile-cards.png`),
@@ -107,16 +107,16 @@ SS dizini: `mockups/.ss-scratch/cila2/tarif/`
   Dünya Mutfağı bayrak pattern'ı korundu.
 
 ### ARŞİV — legacy anasayfa varyantları
-- `git mv` ile mockups/arsiv/ altına taşındı (15 dosya): tüm `anasayfa-*` (v3a HARİÇ) +
+- `git mv` ile v5/arsiv/ altına taşındı (15 dosya): tüm `anasayfa-*` (v3a HARİÇ) +
   anasayfa.html + `.anasayfa-cookpad-deneme.bak.html`.
   (athleats/cookpad/kinfolk/obys-deneme, masa, modern, myrecipes, premium, uzman, portal, portal-v2/v3b/v3c)
-- KANIT: `mockups/` root'ta tek anasayfa* = `anasayfa-portal-v3a.html` (266 inbound ref, canonical home intact).
+- KANIT: `v5/` root'ta tek anasayfa* = `anasayfa-portal-v3a.html` (266 inbound ref, canonical home intact).
   Hiçbir root sayfası arşivlenen dosyaya link vermiyor (href/src + onclick/JS + düz "anasayfa.html" tarandı → NONE).
 
 ### Revize kanıt (probe6, iframe deterministik)
 `vbtn_txt=04:32 | mtypes_on_stage=false | vm0/1/2=false/true/false | stageH=584 kunyeH=584 dif=0 |
 kat_cnthumb=8 | lst_cnthumb=10 | ovf k=OK l=OK d=OK` · CSS */ trap CLEAN · fct-ico=0.
-SS: mockups/.ss-scratch/cila2/tarif/{detay-r1r2-crop, liste-r3-facet, detay-r1check}.png
+SS: v5/.ss-scratch/cila2/tarif/{detay-r1r2-crop, liste-r3-facet, detay-r1check}.png
 
 ---
 
@@ -154,4 +154,4 @@ Dolap (malzeme seçimi) + filtreler 316px dar sol sticky panele sıkışmıştı
 `desk_ovf=OK | mob_ovf=OK | dolapW=1176 = gridW=1176 (artık tam genişlik, eski 316px) |
 dolap_above_results=true | raf_sel=true count 4→5 (seçim+sayaç çalışıyor) | tbgrid_cols=3 |
 mob_sheet_open=true (mobil sheet açılıyor)` · CSS */ trap CLEAN.
-SS: mockups/.ss-scratch/cila2/tarif/{bulucu-desk, bulucu-mob}.png (1440 + 500)
+SS: v5/.ss-scratch/cila2/tarif/{bulucu-desk, bulucu-mob}.png (1440 + 500)

@@ -153,13 +153,13 @@ SS: `f4-mutfaga-tumunu-gor.png`.
 ## ETKİLENEN DOSYALAR
 
 ```
-mockups/olcu-birimleri-v1.html        (a463329'a karşı +141 / -49 — disc-tabs/nut-table dili korunarak 10 üst/65 alt veri; CSS-kural diff = 1 [.ut-tabs])
-mockups/mutfaga-giris-v1.html         (a463329'a karşı +549 / -117 — onaylı disc-card kabuğu + 36 alt veri; CSS/JS diff 0)
-mockups/mutfaga-giris-detay-v1.html   (+2  / -0)
-mockups/puf-noktalari-v1.html         (+59 / -57)
-mockups/puf-noktasi-detay-v1.html     (+5  / -5)
-mockups/puf-noktasi-ekle-v1.html      (+11 / -10)
-mockups/ansiklopedi-v1.html           (değişiklik yok — sadece doğrulama)
+v5/olcu-birimleri-v1.html        (a463329'a karşı +141 / -49 — disc-tabs/nut-table dili korunarak 10 üst/65 alt veri; CSS-kural diff = 1 [.ut-tabs])
+v5/mutfaga-giris-v1.html         (a463329'a karşı +549 / -117 — onaylı disc-card kabuğu + 36 alt veri; CSS/JS diff 0)
+v5/mutfaga-giris-detay-v1.html   (+2  / -0)
+v5/puf-noktalari-v1.html         (+59 / -57)
+v5/puf-noktasi-detay-v1.html     (+5  / -5)
+v5/puf-noktasi-ekle-v1.html      (+11 / -10)
+v5/ansiklopedi-v1.html           (değişiklik yok — sadece doğrulama)
 ```
 
 Git commit/push YAPILMADI (kural gereği).

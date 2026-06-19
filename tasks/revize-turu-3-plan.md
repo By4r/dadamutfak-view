@@ -1,7 +1,7 @@
 # Revize Turu 3 — anasayfa-portal-v3a.html Planı
 
 > Onay sonrası bu plan `tasks/revize-turu-3-plan.md` dosyasına da yazılacak (Adım 0).
-> Çalışma dosyası: `mockups/anasayfa-portal-v3a.html` (2.451 satır, tek dosya). v2/v3b/v3c arşiv — dokunulmayacak.
+> Çalışma dosyası: `v5/anasayfa-portal-v3a.html` (2.451 satır, tek dosya). v2/v3b/v3c arşiv — dokunulmayacak.
 > Eski site referansı: `drive-download-20260608T070112Z-3-001/dada-mutfak-icerik/` (index.html, kesfet.html, assets/css/own.css).
 
 ## Context

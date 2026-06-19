@@ -1,4 +1,4 @@
-# F2 — Tarif Liste / Arama Raporu (`mockups/tarif-liste-v1.html`)
+# F2 — Tarif Liste / Arama Raporu (`v5/tarif-liste-v1.html`)
 
 > TIER 1 dalga · "liste" teammate · 2026-06-11 · Durum: **TAMAM**
 
@@ -95,7 +95,7 @@ sonuç-boş durumu, arama özeti satırı, mobil filtre sheet'i.
 
 ## Bilinen SS Notu (kılavuz §4 + yeni bulgu)
 
-390 SS'leri **iframe-host tekniğiyle** alındı (`mockups/.ss-scratch/_host390.html`):
+390 SS'leri **iframe-host tekniğiyle** alındı (`v5/.ss-scratch/_host390.html`):
 headless Chrome `--window-size` genişliğini min ~500px'e kısıtlıyor — sayfa 500px
 layout'la render edilip 390'a kırpılıyor. Kılavuz §4'teki "390'da header ikonları
 paint olmuyor" artifact'inin kök nedeni büyük olasılıkla bu (ikonlar 500px
@@ -117,7 +117,7 @@ taşma SIFIR doğrulandı.
 5. Sayfa başına kart sayısı mock'ta 9 (3×3); gerçek sayfa boyu (12/24) stack
    kararıyla netleşecek.
 
-## SS Dosyaları (`mockups/.ss-scratch/`)
+## SS Dosyaları (`v5/.ss-scratch/`)
 
 | Dosya | İçerik |
 |---|---|

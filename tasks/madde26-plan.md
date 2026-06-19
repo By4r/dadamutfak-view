@@ -36,8 +36,8 @@ sabit son). Liste ↔ harita pin **çift yönlü senkron** (`toggleStop` tek kap
 
 | Dosya | İşlem | Neden |
 |-------|-------|-------|
-| `mockups/yol-guzergahim-v1.html` | **CREATE** | Madde 26'nın yeni evi. Inline shell (header/footer/nav/cookie + ortak CSS/JS) `kesfet-v1.html`'den birebir türetilir; içerik = yol planlayıcı. |
-| `mockups/kesfet-v1.html` | **DOKUNMA** | Artık alakasız (v1 entegrasyonu iptal). |
+| `v5/yol-guzergahim-v1.html` | **CREATE** | Madde 26'nın yeni evi. Inline shell (header/footer/nav/cookie + ortak CSS/JS) `kesfet-v1.html`'den birebir türetilir; içerik = yol planlayıcı. |
+| `v5/kesfet-v1.html` | **DOKUNMA** | Artık alakasız (v1 entegrasyonu iptal). |
 | Dizin/index sayfası | sonra | Yeni sayfa dizine ekleme **ayrı adım** (vizyonda "dizine ekleme sonra"). |
 
 **Inline shell kaynağı (`kesfet-v1.html` satır referansları — KOPYALA, page-spesifik kısmı ALMA):**
@@ -1054,9 +1054,9 @@ mutfak-defteri. `new Date().toLocaleDateString('tr-TR')` (gerçek tarayıcı; sa
 ### A-i. Dokunulacak dosyalar
 | Dosya | İşlem |
 |-------|-------|
-| `mockups/yol-guzergahim-v1.html` | Kayıtlı Güzergahlarım sayfa-içi bölüm (HTML+CSS) + Kaydet handler'ı localStorage'a genişlet + renderSavedRoutes + "Haritada Aç" replay (hepsi additive, IIFE içi) |
-| `mockups/anasayfa-portal-v3a.html` | "Keşfet" discover section'ına (satır 2273) "Yol Güzergahım" tanıtım kartı (additive HTML) |
-| `mockups/mekan-detay-v1.html` | (mekan-liste yerine — bkz. ⚠️) yol üstü CTA şeridi (additive HTML) |
+| `v5/yol-guzergahim-v1.html` | Kayıtlı Güzergahlarım sayfa-içi bölüm (HTML+CSS) + Kaydet handler'ı localStorage'a genişlet + renderSavedRoutes + "Haritada Aç" replay (hepsi additive, IIFE içi) |
+| `v5/anasayfa-portal-v3a.html` | "Keşfet" discover section'ına (satır 2273) "Yol Güzergahım" tanıtım kartı (additive HTML) |
+| `v5/mekan-detay-v1.html` | (mekan-liste yerine — bkz. ⚠️) yol üstü CTA şeridi (additive HTML) |
 
 ### A-ii. Eklenecek UI/state (yol-guzergahim)
 - **HTML:** `<main>` içinde `yg-stage-sec` sonrası yeni `<section class="yg-saved-sec" id="ygSavedSec" hidden>`:
@@ -1109,9 +1109,9 @@ yol-guzergahim (200); motor regresyon; konsol temiz.
 ### B-i. Dokunulacak dosyalar
 | Dosya | İşlem |
 |-------|-------|
-| `mockups/yol-guzergahim-v1.html` | Kayıtlı güzergah **detay/checkpoint** görünümü (additive markup+JS): durak listesi + "ziyaret ettim" toggle + ilerleme (3/5); localStorage `visited` yaz |
-| `mockups/rozetler-v1.html` | Yeni rozet kategorisi "Keşif & Mekan" + "Yol Üstü Gurme" kilitli kart; küçük JS localStorage `visited` okuyup `.b-prog`/`.b-left` + `.bgal-pill` sayacını doldurur |
-| `mockups/mutfak-defteri-v1.html` | hero `.pf-stats`'a "Ziyaret" `.pfs` sayacı (localStorage okur); teaser bandına yeni rozet |
+| `v5/yol-guzergahim-v1.html` | Kayıtlı güzergah **detay/checkpoint** görünümü (additive markup+JS): durak listesi + "ziyaret ettim" toggle + ilerleme (3/5); localStorage `visited` yaz |
+| `v5/rozetler-v1.html` | Yeni rozet kategorisi "Keşif & Mekan" + "Yol Üstü Gurme" kilitli kart; küçük JS localStorage `visited` okuyup `.b-prog`/`.b-left` + `.bgal-pill` sayacını doldurur |
+| `v5/mutfak-defteri-v1.html` | hero `.pf-stats`'a "Ziyaret" `.pfs` sayacı (localStorage okur); teaser bandına yeni rozet |
 
 ### B-ii. Checkpoint (yol-guzergahim, additive — canlı #ygStops'a DOKUNMAZ)
 > `#ygStops` satırlarını `renderStops` (MOTOR) üretir → oraya buton ekleyemem. Checkpoint, **kayıtlı-güzergah

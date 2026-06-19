@@ -40,7 +40,7 @@ Excel'den gelen **27 gerçek tarif kategorisi** ve **14 gerçek tarif tipi** moc
 
 ## Kanıt (söze güven yok)
 
-- **Eski mock kategori = 0** (chrome+facet): `grep` tüm `mockups/*.html` → eski mega/drawer/cat-track mock setleri (Ana Yemekler, Et Yemekleri, Hamur Tatlısı, Salatalar & Mezeler, Çorbalar, Zeytinyağlılar, İçecekler, Vejetaryen & Vegan, Aperatifler, Tatlılar, Pilavlar, Izgara & Mangal, Dünya Mutfakları) → **kalıntı yok**.
+- **Eski mock kategori = 0** (chrome+facet): `grep` tüm `v5/*.html` → eski mega/drawer/cat-track mock setleri (Ana Yemekler, Et Yemekleri, Hamur Tatlısı, Salatalar & Mezeler, Çorbalar, Zeytinyağlılar, İçecekler, Vejetaryen & Vegan, Aperatifler, Tatlılar, Pilavlar, Izgara & Mangal, Dünya Mutfakları) → **kalıntı yok**.
 - **Yeni veri + data-slug VAR:** 59 dosyada `data-slug="/..."`; _shell.html'de 11 uniq küratör slug; her mega-li sayfada ≥11 uniq slug; v3a'da 38 data-slug (11 mega + 11 drawer + 16 cat-track).
 - **Yapısal bütünlük:** tüm mega-li sayfalarda `mega-cat-all`=1 SAĞLAM (sweep hiçbir şey yutmadı); net-negatif numstat'lı `mutfaga-giris` dahil mega/drawer intact (net-negatif T2'nin içerik düzenlemesinden, benden değil).
 - **Mojibake = 0:** `grep` byte-tarama (Ã/Ä/Å) temiz; TR toplu replace'lerde `perl -CSD` KULLANILMADI — saf UTF-8 Python codec + assertion'lı replace.

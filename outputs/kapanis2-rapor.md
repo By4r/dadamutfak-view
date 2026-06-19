@@ -1,7 +1,7 @@
 # Dalga 4 — Kapanış 2 Raporu (arama · sezon · sss + footer link denetimi)
 
-Tarih: 2026-06-11 · Sayfalar: `mockups/arama-v1.html` · `mockups/sezon-v1.html` ·
-`mockups/sss-v1.html` · Denetim: 53 dosyada footer href bağlama
+Tarih: 2026-06-11 · Sayfalar: `v5/arama-v1.html` · `v5/sezon-v1.html` ·
+`v5/sss-v1.html` · Denetim: 53 dosyada footer href bağlama
 
 ---
 
@@ -117,7 +117,7 @@ Tarih: 2026-06-11 · Sayfalar: `mockups/arama-v1.html` · `mockups/sezon-v1.html
 ## 3. Footer link denetimi (④)
 
 Kapsam: `anasayfa-portal-v3a.html` + tüm `*-v1.html` (footer'ı olan 53 dosya).
-Yöntem: Python script (`mockups/.ss-scratch/build4/` içinden çalıştırıldı; detay
+Yöntem: Python script (`v5/.ss-scratch/build4/` içinden çalıştırıldı; detay
 döküm `footer-audit.json`) — yalnız `<footer>` içi `href="#"` linklerde tek
 attribute değişikliği; class/metin/yapıya dokunulmadı. Sonrası yapı doğrulaması:
 her dosyada tam 1 `<footer>` korunmuş, örnek sayfalar headless'ta hatasız.
@@ -192,7 +192,7 @@ video-mutfagi, vucut-tipi, yasal (hepsi -v1.html) + anasayfa-portal-v3a.html.
 - **Header-altı nefes:** 3 sayfada `.below-header` + ≥16px iç nefes, inline override yok.
 - **Footer yapı koruması:** 53 dosyada `<footer>` sayısı denetim sonrası aynı (1).
 
-## 6. SS yolları (mockups/.ss-scratch/)
+## 6. SS yolları (v5/.ss-scratch/)
 
 | Durum | Dosya |
 |---|---|
@@ -207,5 +207,5 @@ video-mutfagi, vucut-tipi, yasal (hepsi -v1.html) + anasayfa-portal-v3a.html.
 | SSS ?kat=shop | sss-v1-kat-shop-1440.png |
 | SSS tam akış | sss-v1-full-1440.png |
 
-Üretim parçaları + splice + footer script/dökümü: `mockups/.ss-scratch/build4/`
+Üretim parçaları + splice + footer script/dökümü: `v5/.ss-scratch/build4/`
 (arama|sezon|sss × css/body/js, splice.py, footer-audit.json).

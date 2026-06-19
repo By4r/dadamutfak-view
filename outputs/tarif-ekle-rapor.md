@@ -1,6 +1,6 @@
 # Tarif Ekle (F5) — Rapor
 
-**Dosya:** `mockups/tarif-ekle-v1.html` · **Durum: TAMAM**
+**Dosya:** `v5/tarif-ekle-v1.html` · **Durum: TAMAM**
 Konsol: 4 adımda da 0 hata · 390'da gerçek yatay taşma YOK (iframe ölçümü: DOCW 375 = viewport; tek "offender" off-canvas drawer — chrome katmanı, onaylı sayfalarda da aynı).
 
 ## 1. L1 Kıyas Tablosu (eski tarif-ekle/duzenle/onay → yeni)
@@ -73,7 +73,7 @@ Konsol: 4 adımda da 0 hata · 390'da gerçek yatay taşma YOK (iframe ölçüm�
 4. ONAYDA (`review`) durumunda form alanları gerçekten kilitlensin mi? Şu an yalnız bantta "inceleme sürerken tarif düzenlenemez" notu var.
 5. "Taslaklarım (3)" hedef sayfası Hesabım altında mı yaşayacak — hesabım teammate'ine bağlanacak link.
 
-## 5. SS yolları (mockups/.ss-scratch/)
+## 5. SS yolları (v5/.ss-scratch/)
 
 | Görünüm | 1440 | 390 |
 |---|---|---|
@@ -88,7 +88,7 @@ Konsol: 4 adımda da 0 hata · 390'da gerçek yatay taşma YOK (iframe ölçüm�
 | Durum: ONAYDA | `form-state-review-1440.png` | — |
 | Durum: REDDEDİLDİ | `form-state-rejected-1440.png` | `form-state-rejected-390.png` |
 
-**Bilinen artifact (kılavuz §4):** 390 headless SS'lerde layout viewport olduğundan geniş render olur (metinler görüntünün sağ kenarında kesik görünür) ve header aksiyon ikonları paint olmayabilir — onaylı `tarif-detay-v1` aynı komutla aynı görüntüyü veriyor; gerçek tarayıcıda sorun yok. Gerçek taşma iframe ölçümüyle doğrulandı: `mockups/.ss-scratch/check390.html` → 4 adımda da DOCW=375 (taşma sıfır).
+**Bilinen artifact (kılavuz §4):** 390 headless SS'lerde layout viewport olduğundan geniş render olur (metinler görüntünün sağ kenarında kesik görünür) ve header aksiyon ikonları paint olmayabilir — onaylı `tarif-detay-v1` aynı komutla aynı görüntüyü veriyor; gerçek tarayıcıda sorun yok. Gerçek taşma iframe ölçümüyle doğrulandı: `v5/.ss-scratch/check390.html` → 4 adımda da DOCW=375 (taşma sıfır).
 
 ## EK — Beyar SS Turu Kararları (2026-06-11)
 

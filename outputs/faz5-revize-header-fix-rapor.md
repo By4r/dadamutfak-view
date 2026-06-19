@@ -124,7 +124,7 @@ kaydırılamıyor → sağdaki kategorilere erişim yok.
 - fade init (overflow başında `sh-more`): true · fade sona gelince kalktı: true
 - Render SS: `tb-1440.png` (panel geniş, 9 sekme sığıyor, fade YOK=doğru) ·
   `tb-768.png` (tek kolon) · `tb-390.png` (şerit taşıyor, sağ-kenar fade görünür) ·
-  `scroll-probe.png` (6/6 yeşil). SS dizini: `mockups/.ss-scratch/hf/`.
+  `scroll-probe.png` (6/6 yeşil). SS dizini: `v5/.ss-scratch/hf/`.
 - Kapsam: sadece `tarif-bulucu-v1.html` (`.shelf-tabs` başka sayfada YOK → flag gereksiz).
 - **Commit YOK** (lead talimatı).
 
@@ -191,7 +191,7 @@ teammate marka-token koordinasyonu): store=domates, akademi=petrol — topbar il
 - Topbar `tb-world` HTML anchor = **2** (korundu).
 - `drawer-nav` içinde `dada-shop`/`akademi` düz `d-link` = **0**.
 - `drawer-foot` markalı `drawer-world dw-*` anchor = **2** (taşındı).
-- `--c-petrol` token tanımlı (@52). Faz 1 değişen dosya = **sadece `mockups/_shell.html`**
+- `--c-petrol` token tanımlı (@52). Faz 1 değişen dosya = **sadece `v5/_shell.html`**
   (22+/6−); diğer git-diff dosyaları T2/T3/T4 teammate'lerinin paralel işi.
 
 **Render (izole channel:chrome — system Chrome 149, `/tmp/hf-chrome*` ayrı
@@ -201,7 +201,7 @@ user-data-dir, kendi server portu `:8851`; MCP Playwright KULLANILMADI):**
 - `drawer-full.png` (600, mobil layout): drawer-foot'ta DadaStore (domates, ok →) +
   DadaAkademi (petrol, YAKINDA rozeti) tam render; içerik navında kapı yok; X butonu
   yerinde. ✅
-- SS dizini: `mockups/.ss-scratch/hf/` (gitignored).
+- SS dizini: `v5/.ss-scratch/hf/` (gitignored).
 
 **Tasarım gözü (lead protokolü):** Drawer-foot hiyerarşisi doğru — önce hesap/ekleme
 aksiyonları (Giriş Yap / Tarif Ekle / Püf Ekle), sonra renkle ayrışan dünya kapıları,
@@ -240,7 +240,7 @@ sonra Dil. Kapılar içerik navından görsel olarak ayrışıyor (renkli kabuk 
 Lessons gereği paralel takımda ortak-chrome sweep faz SONUNA, tüm teammate'ler
 dosyalarını kapattıktan sonra TEK seferde koşulur (çakışma önlemi).
 
-**Script:** `mockups/.ss-scratch/hf/sweep.py` (DRY-RUN default; `--apply` yazar;
+**Script:** `v5/.ss-scratch/hf/sweep.py` (DRY-RUN default; `--apply` yazar;
 `--include-divergent` v3a+tarif-detay'ı da işler).
 
 ### Operasyonlar (HEPSİ literal-exact match/replace — region-SWAP DEĞİL)
@@ -270,7 +270,7 @@ dosyalarını kapattıktan sonra TEK seferde koşulur (çakışma önlemi).
     AYRI doğrulanmış pass'te işlenir (bellek-testi: temiz, idempotent, sentinel sağ).
 
 ### Faz 2 yürütme (go gelince)
-1. `python3 mockups/.ss-scratch/hf/sweep.py --apply` → 53 standart-shell.
+1. `python3 v5/.ss-scratch/hf/sweep.py --apply` → 53 standart-shell.
 2. `python3 …/sweep.py --apply --include-divergent` → +v3a +tarif-detay
    (headA otomatik abort/skip; 53 idempotent no-op).
 3. Render probe (izole channel:chrome) 4+ aileden.
@@ -292,6 +292,6 @@ dosyalarını kapattıktan sonra TEK seferde koşulur (çakışma önlemi).
 ---
 
 ## Çıktılar
-- `mockups/_shell.html` (Faz 1 fix)
-- `mockups/.ss-scratch/hf/{desktop-nav,drawer-full,mobile-drawer*}.png` (SS, gitignored)
+- `v5/_shell.html` (Faz 1 fix)
+- `v5/.ss-scratch/hf/{desktop-nav,drawer-full,mobile-drawer*}.png` (SS, gitignored)
 - Bu rapor: `outputs/faz5-revize-header-fix-rapor.md`

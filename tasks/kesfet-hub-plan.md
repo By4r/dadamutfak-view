@@ -189,10 +189,10 @@ function setTab(paneId){
 
 | Dosya | İşlem |
 |---|---|
-| `mockups/kesfet-v1.html` | **MAJOR**: hub hero koru + tab barı ekle + paneMekan göçü (facet/sort/sheet markup+CSS+JS) + paneGurme sarma + keDetail toggle'ı `#keBrowse`'a çevir + `?tab` derin link + SUBMAP sf-go→tab-switch |
-| `mockups/anasayfa-portal-v3a.html` | discSeeAll href + JS href swap + paneGurme 3 kart onclick |
-| `mockups/mekan-detay-v1.html` | 2 link (crumb + see-all) → `?tab=mekan` |
-| `mockups/mekan-liste-v1.html` | **redirect stub**'a dönüştür (öneri A) |
+| `v5/kesfet-v1.html` | **MAJOR**: hub hero koru + tab barı ekle + paneMekan göçü (facet/sort/sheet markup+CSS+JS) + paneGurme sarma + keDetail toggle'ı `#keBrowse`'a çevir + `?tab` derin link + SUBMAP sf-go→tab-switch |
+| `v5/anasayfa-portal-v3a.html` | discSeeAll href + JS href swap + paneGurme 3 kart onclick |
+| `v5/mekan-detay-v1.html` | 2 link (crumb + see-all) → `?tab=mekan` |
+| `v5/mekan-liste-v1.html` | **redirect stub**'a dönüştür (öneri A) |
 | Yeni dosya | **YOK** (hub = kesfet-v1 yeniden amaçlandı) |
 | Silinen | **YOK** (mekan-liste stub kalır) |
 

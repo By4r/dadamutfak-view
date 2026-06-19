@@ -8,7 +8,7 @@
 
 ## Yöntem
 
-Her sayfa `git diff a463329 -- mockups/<sayfa>.html` ile incelendi. Değişen
+Her sayfa `git diff a463329 -- v5/<sayfa>.html` ile incelendi. Değişen
 satırlar üç sınıfa ayrıldı: **CSS-kural** (yeni/silinen stil kuralı = kurgu),
 **yapısal** (yeni/silinen section/grid/layout container = kurgu), **veri/metin**
 (li, href, data-slug, chip etiketi, başlık metni = veri). Çekirdek layout

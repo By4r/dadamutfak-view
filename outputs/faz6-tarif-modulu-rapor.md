@@ -1,6 +1,6 @@
 # FAZ 6 — Tarif Modülü Zenginleştirme Raporu (tarif-ekle-v1)
 
-> Sahip: **tarif-modulu** · Görev #2 · Dosya: `mockups/tarif-ekle-v1.html`
+> Sahip: **tarif-modulu** · Görev #2 · Dosya: `v5/tarif-ekle-v1.html`
 > Yaklaşım: mevcut 164KB form SIFIRDAN ÜRETİLMEDİ — fk-*/ie-*/st-*/chip
 > kiti MİRAS ALINARAK zenginleştirildi. frontend-design skill ile yeni 3
 > etkileşim, DadaMutfak dilinden (domates aksan, radius token, pill yok)

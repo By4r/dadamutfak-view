@@ -76,8 +76,8 @@ Sağlık hesaplayıcı ikonları dahil tüm ikonlar FA (custom SVG kullanımı k
 
 | Varyant | Dosya | Kullanım |
 |---|---|---|
-| **Yatay (lockup)** renkli | `brand/logo.pdf` s.1 → `mockups/assets/img/logo-official.png` (2975×694) | Açık zemin / katı (scroll'lu) header |
-| **Yatay** mono-beyaz | `mockups/assets/img/logo-official-white.png` | Koyu/şeffaf header + turuncu footer |
+| **Yatay (lockup)** renkli | `brand/logo.pdf` s.1 → `v5/assets/img/logo-official.png` (2975×694) | Açık zemin / katı (scroll'lu) header |
+| **Yatay** mono-beyaz | `v5/assets/img/logo-official-white.png` | Koyu/şeffaf header + turuncu footer |
 | **Dikey (stacked)** | `brand/logo.pdf` s.2 → `brand/logo-official-stacked.png` | Kare/dar alanlar |
 
 Mark: aşçı şapkası + çatal/kaşık (domates line-art) + "**Dada**" (kalın) "Mutfak"

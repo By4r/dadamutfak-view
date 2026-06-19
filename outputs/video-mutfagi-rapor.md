@@ -1,6 +1,6 @@
 # F3 — Video Mutfağı (m13 ⭐) Raporu
 
-**Dosya:** `mockups/video-mutfagi-v1.html` · **Durum: TAMAM**
+**Dosya:** `v5/video-mutfagi-v1.html` · **Durum: TAMAM**
 Üç görünüm tek dosyada: A) Video hub · B) Seri detayı (JS toggle, `?seri=1`) ·
 C) Dikey 9:16 kısa görünüm "Dada Akış" (`?short=1`).
 
@@ -47,7 +47,7 @@ akrabalar ve taşınan işlevler:
 
 ## 5. SS doğrulaması
 
-Hepsi `mockups/.ss-scratch/` altında:
+Hepsi `v5/.ss-scratch/` altında:
 
 | SS | İçerik |
 |---|---|

@@ -1,7 +1,7 @@
 # Faz 5-Sonrası Revize — kabuk-renk Raporu
 
 > Teammate: **kabuk-renk** · Takım: faz5-revize · Tarih: 2026-06-13
-> Sahiplik: `mockups/akademi-v1.html` + `mockups/dada-shop-v1.html` (SADECE)
+> Sahiplik: `v5/akademi-v1.html` + `v5/dada-shop-v1.html` (SADECE)
 > Onaylı baz commit: `3c63926` · SS altyapısı: izole channel:chrome
 > (`/tmp/kr-chrome` + port 8852), MCP Playwright KULLANILMADI.
 

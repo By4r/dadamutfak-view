@@ -90,7 +90,7 @@ toggle ✓, parent konsept aktivasyonu ✓.
 - **Fonksiyonel:** BNP havuz ekle/değiştir akışı, mod seç → açıklama paneli,
   kesfet alt-chip → parent map, mekan Konsept facet → fchip — hepsi tıklama probe'da çalıştı.
 - SS: `bnp-havuz.png`, `bnp-mod-desc.png`, `kesfet-sub.png`, `mekan-konsept.png`
-  (`mockups/.ss-scratch/cila/`).
+  (`v5/.ss-scratch/cila/`).
 
 ## Bilinen Sınırlamalar
 

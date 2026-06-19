@@ -75,7 +75,7 @@ Paylaşımlı Playwright kilitliydi → aynı-origin iframe probe (headless Chro
 - `[PASS]` odeme fatura tipi Kurumsal (vergi alanları açıldı)
 - `[PASS]` 390 taşma YOK — 5 sayfa (scrollW==clientW; "OVER" notları off-canvas drawer + SVG className quirk, gerçek taşma değil)
 
-## Kanıt — SS yolları (`mockups/.ss-scratch/cila2/shop/`)
+## Kanıt — SS yolları (`v5/.ss-scratch/cila2/shop/`)
 - `01-header-top.png`, `02-logo-zoom.png` — shop kabuğu + DadaStore logo
 - `03-hero.png`, `03-cards.png` — vitrin hero + kompakt kartlar (fav düzeldi)
 - `04-odeme-crop.png` — fatura formu açık (Bireysel/Kurumsal)

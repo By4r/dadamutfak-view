@@ -2,7 +2,7 @@
 
 > Teammate: rehber · 6 sayfa · COMMIT YOK
 > Üretim: `_shell.html` kopyası + kılavuz §2b/§2c mirası; frontend-design skill ile.
-> Lokal: `python3 -m http.server 8772` (proje kökü) · SS: `mockups/.ss-scratch/rehber-*.png`
+> Lokal: `python3 -m http.server 8772` (proje kökü) · SS: `v5/.ss-scratch/rehber-*.png`
 
 ---
 
@@ -10,12 +10,12 @@
 
 | Sayfa | Durum | SS (1440 / 500) | Ek SS |
 |---|---|---|---|
-| `mockups/mutfak-sirlari-v1.html` (HUB) | ✅ | `rehber-sirlari-1440.png` / `rehber-sirlari-500.png` | — |
-| `mockups/puf-noktalari-v1.html` | ✅ | `rehber-puf-1440.png` / `rehber-puf-500.png` | `rehber-puf-detay-1440.png`, `rehber-puf-detay-500.png` (?detay=1) |
-| `mockups/mutfaga-giris-v1.html` | ✅ | `rehber-giris-1440.png` / `rehber-giris-500.png` | — |
-| `mockups/sozluk-v1.html` | ✅ | `rehber-sozluk-1440.png` / `rehber-sozluk-500.png` | derin link: `?harf=B`, `?terim=julyen` |
-| `mockups/olcu-birimleri-v1.html` | ✅ | `rehber-olcu-1440.png` / `rehber-olcu-500.png` | — |
-| `mockups/akademi-v1.html` | ✅ | `rehber-akademi-1440.png` / `rehber-akademi-500.png` | `rehber-akademi-sent-1440.png`, `rehber-akademi-sent-500.png` (?sent=1) |
+| `v5/mutfak-sirlari-v1.html` (HUB) | ✅ | `rehber-sirlari-1440.png` / `rehber-sirlari-500.png` | — |
+| `v5/puf-noktalari-v1.html` | ✅ | `rehber-puf-1440.png` / `rehber-puf-500.png` | `rehber-puf-detay-1440.png`, `rehber-puf-detay-500.png` (?detay=1) |
+| `v5/mutfaga-giris-v1.html` | ✅ | `rehber-giris-1440.png` / `rehber-giris-500.png` | — |
+| `v5/sozluk-v1.html` | ✅ | `rehber-sozluk-1440.png` / `rehber-sozluk-500.png` | derin link: `?harf=B`, `?terim=julyen` |
+| `v5/olcu-birimleri-v1.html` | ✅ | `rehber-olcu-1440.png` / `rehber-olcu-500.png` | — |
+| `v5/akademi-v1.html` | ✅ | `rehber-akademi-1440.png` / `rehber-akademi-500.png` | `rehber-akademi-sent-1440.png`, `rehber-akademi-sent-500.png` (?sent=1) |
 
 - **Konsol:** 8 görünüm (6 sayfa + puf ?detay=1 + akademi ?sent=1) headless dump — **0 sayfa JS hatası** (yalnız Chrome iç process gürültüsü).
 - **390 taşmazlık:** `_host390.html` iframe probe ile 7 görünümde `scrollWidth=390` → **taşma SIFIR**.

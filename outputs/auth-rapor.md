@@ -133,13 +133,13 @@ Sekme geçişlerinde `giris-v1` `document.title`'ı da güncelliyor (Giriş/Kay�
 - Konsol: **4 sayfada 0 hata** (probe enjeksiyonu + `--dump-dom` title okuma;
   `window.addEventListener('error', …, true)` resource hatalarını da yakaladı).
 - 390 taşmazlık: iframe probe — 4 sayfada `scrollWidth = 390` (taşma SIFIR).
-- SS'ler (`mockups/.ss-scratch/`):
+- SS'ler (`v5/.ss-scratch/`):
   - `giris-1440.png` · `giris-500.png` · `giris-kayit-1440.png` (?tab=kayit)
   - `onboarding-1440.png` · `onboarding-500.png` · `onboarding-step2-1440.png` (?step=2)
   - `hesabim-1440.png` · `hesabim-500.png` · `hesabim-bildirim-1440.png` (?tab=bildirim)
   - `bildirimler-1440.png` · `bildirimler-500.png` · `bildirimler-empty-1440.png` (?empty=1)
-- Montaj aracı: `mockups/.ss-scratch/build/assemble.py` (shell + fragment;
-  yeniden üretilebilir). Probe kopyaları: `mockups/.ss-scratch/probe/`.
+- Montaj aracı: `v5/.ss-scratch/build/assemble.py` (shell + fragment;
+  yeniden üretilebilir). Probe kopyaları: `v5/.ss-scratch/probe/`.
 
 ---
 

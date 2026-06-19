@@ -2,8 +2,8 @@
 
 > Tarih: 2026-06-12 · Takım: cila2-faz1 (lead + 4 teammate, FULL AUTO)
 > Modül raporları: `cila2-faz1-{tarif,sirlar,saglik,shop}-rapor.md`
-> Faz sonu probe: `mockups/.ss-scratch/cila2/faz-sonu-probe/OZET.md`
-> Kabul SS'leri: `mockups/.ss-scratch/cila2/{tarif,sirlar,saglik,shop}/`
+> Faz sonu probe: `v5/.ss-scratch/cila2/faz-sonu-probe/OZET.md`
+> Kabul SS'leri: `v5/.ss-scratch/cila2/{tarif,sirlar,saglik,shop}/`
 
 ## SONUÇ ÖZETİ
 
@@ -81,7 +81,7 @@ Kapsam: 70 değişen + 4 yeni html, 5 rapor, handoff+lessons. İstenirse modül 
 ## Kapanan kararlar
 - Rozet adı **"Premium"** (₺₺₺) — uygulandı, "Yüksek Bütçe" grep=0
 - **"Mutfak Ansiklopedisi"** modül adı onaylı
-- Legacy anasayfa varyantları **mockups/arsiv/** altına taşındı (15 dosya,
+- Legacy anasayfa varyantları **v5/arsiv/** altına taşındı (15 dosya,
   git mv; kanonik v3a kaldı; üretimden arşive ölü link 0) — envanter dışı
 - BEKLEMEDE (dokunulmadı): DadaStore marka dili · mekan-detay 5px artefakt
 

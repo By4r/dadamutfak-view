@@ -37,7 +37,7 @@ Tümünde: _shell kopyası, mega menü kilitli, kılavuz §2b mirası, konsol 0 
 
 - 26 dosyada ~47'şer chrome linki bağlandı (header nav, mega menü 12 kategori →
   kategori-v1, topbar Tarif Ekle → tarif-ekle-v1 / Diyetisyen Ara → diyetisyen-dizin-v1,
-  drawer, bottom-nav, footer, logo → anasayfa). Araç: `mockups/.ss-scratch/navbind.py`.
+  drawer, bottom-nav, footer, logo → anasayfa). Araç: `v5/.ss-scratch/navbind.py`.
 - v3a: 6 see-all + 57 kart bağlandı (r/feat→tarif-detay, vid→video-mutfagi,
   p→urun-detay, chef→mutfak-defteri, disc→kesfet, calc→hesaplayici, cat→kategori-v1).
 - 6 tıklama yolculuğu doğrulandı (ana→liste→detay · ana→video · ana→diyetisyen
@@ -85,7 +85,7 @@ stack notu (mockup'ta slot seçici yeterli) · diploma doğrulama süreç notu r
 **Landing:** üç karar da ✅ ONAYLI — SSS grid altında, Günün Menüsü nav aktifi
 "Bugün Ne Pişirsem", koleksiyon dizini hero altı
 
-## 5. SS yolları (`mockups/.ss-scratch/`)
+## 5. SS yolları (`v5/.ss-scratch/`)
 
 - kesif: `bnp-1440-step1/step3/sonuc` (R2 sonrası), `bnp-500-step1/step2`,
   `bulucu-1440-dolap`, `bulucu-500-dolap`, `bulucu-500-sheet`,
@@ -97,7 +97,7 @@ stack notu (mockup'ta slot seçici yeterli) · diploma doğrulama süreç notu r
 - landing: `{kategori,koleksiyon,seo,gunun}-{1440,500}`, `probe-final`
 
 Önizleme: `python3 -m http.server 8765` →
-`http://localhost:8765/mockups/anasayfa-portal-v3a.html` (artık gerçek gibi gezilebilir).
+`http://localhost:8765/v5/anasayfa-portal-v3a.html` (artık gerçek gibi gezilebilir).
 
 ## 6. Sonraki adım (ritüel)
 
