@@ -1,6 +1,6 @@
-# DadaMutfak — Handoff (Faz 2 Gözetim + Chip Sayaç TAMAMEN BİTTİ · PUSH'LANDI)
+# DadaMutfak — Handoff (Faz 2 Gözetim + Chip Sayaç + 390px Responsive BİTTİ · PUSH'LANDI)
 
-> Tarih: 2026-06-21. Süper-admin gözetim paneli (`v5/sa-*`) Faz 2 tüm dalgaları + antrenör paneli + wiring + **filtre chip sayaçları (big-number-ready kompakt format)** bitti, commit'li ve **`origin/main`'e PUSH EDİLDİ** (GitHub Pages canlı).
+> Tarih: 2026-06-21. Süper-admin gözetim paneli (`v5/sa-*`) Faz 2 tüm dalgaları + antrenör paneli + wiring + **filtre chip sayaçları (big-number-ready kompakt format)** + **390px liste-tablosu responsive fix** bitti, commit'li ve **`origin/main`'e PUSH EDİLDİ** (GitHub Pages canlı).
 
 ## DURUM — ne bitti (hepsi push'lı)
 - **1. dalga gözetim** (Sağlık 4 + İşletme 4 + DadaFit 3 = 11 modül / 24 ekran) + wiring → `cc0b2a5`.
@@ -9,11 +9,10 @@
 - **Docs** (Tarifler tipi CRUD+moderasyon hibrit) → `5ad8b1f`. · **Chore** (outputs SS untrack) → `df92a68`.
 - **Antrenör operatör paneli** (8 ekran + builder + giriş kilidi) → `ed410c3`/`f0a7493` (+ qa `6d557c4`/`2208456`, docs `ba79698`).
 - **Filtre chip sayaçları + kompakt format** (feat) — **24/24 liste sayfası sayaçlı + tutarlı 8px**. 10 sayaçsız sayfaya `.ch-cnt` (DOM-doğrulanmış gerçek sayılar) eklendi; 14 mevcut korundu. **Big-number-ready:** tek formatlayıcı `v5/assets/js/sa-chcnt.js` (24 sayfaya `<script>`; sa-shell/sa-ui'ye DOKUNULMADI) — `<1000` tam, `≥1000` tr-TR compact (`1,2 B` · `12 B` · `500 B` · `1,2 Mn`; 1.250.000→`1,3 Mn` kanonik Intl), tam değer `title`'da, `.ch-cnt` taşma-dayanıklı (`white-space:nowrap` + esnek min-width). tarifler "Tümü" sayfanın kendi toplamına (1.248→`1,2 B`) set. QA: `chcnt-format-qa.mjs` ALL PASS (24 + stres testi).
+- **390px liste-tablosu responsive fix** (feat) — **YENİ `v5/assets/css/sa-list.css`** (kabuğa DOKUNULMADI): `.pc-body{overflow-x:auto;-webkit-overflow-scrolling:touch}` → geniş tablo kart İÇİNDE yatay kayar, sayfayı taşırmaz, kolonlar/veri korunur. **30 liste-tablosu sayfasına** `<link>` (glob; detay/form hariç). 5 anlamlı @390 taşma çözüldü (isletme 789→390 · saglik-diyetisyenler 847→390 · kullanicilar 562→390 · admin 438→390 · store tabloları). 1440 regresyon yok. QA: `sa-list-qa.mjs` PASS. **Kalan opsiyonel minör (acele yok):** `sa-saglik` 3px sub-pixel (tablo değil) + `sa-store-urunler-detay` 12px (detay sayfası — fix kapsamı dışı).
 
-## ⏭️ BUGÜN SIRADAKİ İŞ — 390px tablo taşması
-- **(a) 390px ref fix:** `sa-isletme-isletmeler` @390 yatay tablo taşması (~789px ptable). Eski bekleyen: saglik-diyetisyenler @390. store-urunler responsif kanonu ile targeted yama. (1. dalga'dan kalan, pre-existing; chip işiyle alakasız.)
-
-## SONRAKİ FAZLAR
+## ⏭️ SIRADAKİ İŞ
+- **(a) BUGÜN:** `dizin.html` "Admin Panel" sekmesi — gözetim paneline giriş bağlantısı.
 - **(b) Faz 3 "Panelini Aç" köprüsü:** gözetim → operatör impersonation. İlk iş = **operatör panel envanteri**: antrenör paneli VAR (`antrenor-*-v1`); **diyetisyen (`dyt-*`) + mekan (`mekan-*`) panelleri mevcut mu teyit et** (envantere göre dyt 6 + mekan 4 dolu olmalı). Gözetim "Panelini Aç → X" aynı operatör dosyalarını besler, ikinci kez yazılmaz.
 
 ## DEĞİŞMEZ KURALLAR (gözetim paneli)
