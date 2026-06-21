@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Program Builder — DadaMutfak Antrenör Paneli</title>
+<link rel="shortcut icon" type="image/x-icon" href="assets/img/favicon.ico" />
+<!-- FontAwesome 6.5.2 (kilitli ikon seti) -->
+<link rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+      integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A=="
+      crossorigin="anonymous" referrerpolicy="no-referrer" />
+<link rel="stylesheet" href="assets/css/sa-ui.css" />
+<style>
+/* =====================================================================
+   ANTRENOR-PROGRAM-BUILDER-V1 — DADAFİT ANTRENÖR OPERATÖR PANELİ (Faz 2 / Dalga E · YILDIZ)
+   dyt-recete-builder-v1'in kompoze board UI'ı KOPYALA-UYARLA — antrenör semantiği:
+   reçete→program · öğün→antrenman bloğu · tarif→egzersiz · kcal/makro→set·tekrar·dinlenme/hacim.
+   7 gün × 5 blok (Isınma/Ana/Yardımcı/Kardiyo/Soğuma) board + hücreye egzersiz ekle + canlı
+   haftalık set/süre/kas-grubu özeti. AKSAN: DadaFit KURUMSAL YEŞİL #009d4f (nane #3BB77E DEĞİL).
+   --green-rgb token'ı MERKEZİ — mint kaçağı 0. dyt-*/mekan-* ORİJİNALLERİNE DOKUNULMADI.
+   ===================================================================== */
+
+@font-face{
+  font-family:"Gilroy";
+  src:url("assets/fonts/Gilroy-Medium.ttf") format("truetype");
+  font-weight:500; font-style:normal; font-display:swap;
+}
+
+:root{
+  --tomato:#E14827;
+  --tomato-dark:#C43D20;
+  --tomato-deep:#A8331A;
+  --tomato-tint:#FBE9E3;
+  --slate:#211E16;
+  --slate-2:#56514a;
+
+  /* DadaFit kurumsal yeşil — tek aksan kaynağı; --green-rgb tüm rgba() literallerini besler */
+  --green:#009d4f;
+  --green-deep:#007d3e;
+  --green-tint:#E5F4EC;
+  --green-rgb:0,157,79;
+
+  --yellow:#FAC045;
+  --muted:#7E7E7E;
+  --line:#ECECEC;
+  --cream:#EFE5D3;
+  --cream-2:#F7F1E6;
+  --paper:#ffffff;
+  --bg:#f9f9f9;
+  --ink:#211E16;
+
+  --radius-sm:8px; --radius-md:12px; --radius-lg:16px; --radius-xl:24px; --radius-pill:999px; --radius-circle:50%;
+  --sh-sm:0 1px 2px rgba(33,30,22,.04), 0 2px 6px rgba(33,30,22,.05);
+  --sh-md:0 6px 22px rgba(33,30,22,.09);
+  --sh-lg:0 18px 50px rgba(33,30,22,.16);
+  --ease:cubic-bezier(.22,.61,.36,1);
+
+  --pnl-side-w:248px;
+  --pnl-top-h:64px;
+}
+
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:"Gilroy",system-ui,sans-serif;font-weight:500;color:var(--ink);background:var(--bg);line-height:1.55;-webkit-font-smoothing:antialiased}
+h1,h2,h3,h4{font-weight:700;color:var(--slate);line-height:1.12;letter-spacing:-.02em}
+a{color:inherit;text-decoration:none}
+img{display:block;max-width:100%}
+.muted{color:var(--muted);font-weight:500}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;font-family:inherit;font-weight:700;font-size:14.5px;cursor:pointer;border:none;padding:14px 26px;border-radius:var(--radius-md);transition:.25s var(--ease)}
+.btn-primary{background:var(--tomato);color:#fff}
+.btn-primary:hover{background:var(--tomato-dark);transform:translateY(-2px)}
+.btn-ghost{background:var(--paper);color:var(--slate);border:1px solid var(--line)}
+.btn-ghost:hover{border-color:var(--slate);transform:translateY(-2px)}
+.btn-green{background:var(--green);color:#fff}
+.btn-green:hover{background:var(--green-deep);transform:translateY(-2px)}
+.btn-sm{padding:10px 16px;font-size:13px;border-radius:var(--radius-sm)}
+
+.chips{display:flex;flex-wrap:wrap;gap:9px;align-items:center}
+.chip{font-size:13px;font-weight:500;color:var(--slate);background:var(--paper);border:1px solid var(--line);padding:8px 15px;border-radius:var(--radius-sm);cursor:pointer;transition:.2s var(--ease)}
+.chip:hover{border-color:var(--green);color:var(--green-deep);background:var(--green-tint)}
+.chip.is-on{border-color:var(--green);color:var(--green-deep);background:var(--green-tint);font-weight:700}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+
+/* =====================================================================
+   PANEL DÜZENİ
+   ===================================================================== */
+.pnl-app{min-height:100vh}
+.pnl-side{position:fixed;top:0;left:0;bottom:0;width:var(--pnl-side-w);z-index:80;background:var(--slate);color:#e9e2d6;display:flex;flex-direction:column;background-image:radial-gradient(420px 260px at -20% -10%, rgba(var(--green-rgb),.16), transparent 60%)}
+.pnl-logo{display:flex;align-items:center;gap:10px;padding:22px 22px 18px;border-bottom:1px solid rgba(233,226,214,.1)}
+.pnl-logo img{height:30px;width:auto;flex:none}
+.pnl-logo .pl-tag{flex:none;white-space:nowrap;font-size:10.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--green);background:rgba(var(--green-rgb),.16);padding:3px 6px;border-radius:var(--radius-sm)}
+.pnl-nav{flex:1;overflow-y:auto;padding:18px 14px;display:flex;flex-direction:column;gap:3px}
+.pnl-sec-lbl{font-size:10.5px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:rgba(233,226,214,.42);padding:14px 12px 7px}
+.pnl-link{position:relative;display:flex;align-items:center;gap:12px;padding:11px 12px;border-radius:var(--radius-md);font-size:14px;font-weight:500;color:rgba(233,226,214,.78);transition:.2s var(--ease)}
+.pnl-link i{width:20px;text-align:center;font-size:15px;color:rgba(233,226,214,.55);transition:.2s var(--ease)}
+.pnl-link:hover{background:rgba(255,255,255,.06);color:#fff}
+.pnl-link:hover i{color:var(--green)}
+.pnl-link.is-active{background:rgba(var(--green-rgb),.16);color:#fff;font-weight:700}
+.pnl-link.is-active i{color:var(--green)}
+.pnl-link.is-active::before{content:"";position:absolute;left:-14px;top:9px;bottom:9px;width:3px;background:var(--green);border-radius:0 var(--radius-sm) var(--radius-sm) 0}
+.pnl-link .pl-cnt{margin-left:auto;font-size:11.5px;font-weight:700;background:var(--green);color:#fff;min-width:20px;height:20px;display:inline-flex;align-items:center;justify-content:center;padding:0 6px;border-radius:var(--radius-sm)}
+.pnl-link.is-soon{opacity:.42;pointer-events:none;cursor:default}
+.pnl-link .pl-soon{margin-left:auto;font-size:9px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:rgba(233,226,214,.55);background:rgba(255,255,255,.07);padding:3px 7px;border-radius:var(--radius-sm)}
+/* alt-ekran rozeti — builder, Programlar'ın çocuğu (nav'da Programlar aktif kalır) */
+.pnl-link .pl-sub{margin-left:auto;font-size:9px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--green);background:rgba(var(--green-rgb),.18);padding:3px 7px;border-radius:var(--radius-sm)}
+.pnl-side-foot{padding:14px;border-top:1px solid rgba(233,226,214,.1);display:flex;flex-direction:column;gap:3px}
+.pnl-side-foot .pnl-link{font-size:13px}
+.pnl-side-foot .sa-sig{display:flex;align-items:center;justify-content:center;margin-top:8px;opacity:.75;transition:.2s var(--ease)}
+.pnl-side-foot .sa-sig:hover{opacity:1}
+.pnl-side-foot .sa-sig img{height:20px;width:auto}
+
+.pnl-top{position:fixed;top:0;left:var(--pnl-side-w);right:0;z-index:70;height:var(--pnl-top-h);background:var(--paper);border-bottom:1px solid var(--line);display:flex;align-items:center;gap:16px;padding:0 28px}
+.pnl-burger{display:none;width:40px;height:40px;border:1px solid var(--line);border-radius:var(--radius-md);background:var(--paper);cursor:pointer;font-size:16px;color:var(--slate);align-items:center;justify-content:center;flex:none}
+.pnl-search{flex:1;max-width:420px;position:relative}
+.pnl-search i{position:absolute;left:14px;top:50%;transform:translateY(-50%);font-size:13.5px;color:var(--muted);pointer-events:none}
+.pnl-search input{width:100%;height:40px;padding:0 14px 0 38px;font-family:inherit;font-size:13.5px;font-weight:500;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:var(--radius-md);outline:none;transition:.2s var(--ease)}
+.pnl-search input::placeholder{color:var(--muted)}
+.pnl-search input:focus{border-color:var(--green);background:var(--paper);box-shadow:0 0 0 3px rgba(var(--green-rgb),.12)}
+.pnl-top-tools{margin-left:auto;display:flex;align-items:center;gap:10px}
+.pnl-bell{position:relative;width:40px;height:40px;border:1px solid var(--line);border-radius:var(--radius-md);background:var(--paper);cursor:pointer;font-size:15px;color:var(--slate);display:inline-flex;align-items:center;justify-content:center;transition:.2s var(--ease)}
+.pnl-bell:hover{border-color:var(--green);color:var(--green-deep)}
+.pnl-bell .pb-dot{position:absolute;top:9px;right:10px;width:8px;height:8px;background:var(--tomato);border:2px solid var(--paper);border-radius:var(--radius-circle)}
+.pnl-me{display:flex;align-items:center;gap:11px;cursor:pointer;padding:6px 8px 6px 6px;border-radius:var(--radius-md);transition:.2s var(--ease)}
+.pnl-me:hover{background:var(--bg)}
+.pnl-me .pm-ava{width:36px;height:36px;border-radius:var(--radius-circle);flex:none;background-size:cover;background-position:center;box-shadow:0 0 0 2px var(--paper), 0 0 0 4px var(--green)}
+.pnl-me .pm-id{line-height:1.25}
+.pnl-me .pm-name{font-size:13.5px;font-weight:700;color:var(--slate)}
+.pnl-me .pm-role{font-size:11.5px;color:var(--muted)}
+.pnl-me>i{font-size:11px;color:var(--muted)}
+
+.pnl-main{margin-left:var(--pnl-side-w);padding:calc(var(--pnl-top-h) + 28px) 28px 48px;min-height:100vh}
+.pnl-page-head{display:flex;align-items:flex-end;justify-content:space-between;gap:18px;margin-bottom:24px;flex-wrap:wrap}
+.pnl-page-head h1{font-size:24px}
+.pnl-page-head .ph-sub{margin-top:5px;font-size:13.5px;color:var(--muted)}
+.pnl-page-head .ph-actions{display:flex;gap:10px;flex:none;align-items:center;flex-wrap:wrap;justify-content:flex-end}
+
+.pnl-card{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-lg);box-shadow:var(--sh-sm)}
+.pc-head{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:18px 22px;border-bottom:1px solid var(--line)}
+.pc-title{font-size:16px;font-weight:700;color:var(--slate);display:flex;align-items:center;gap:10px}
+.pc-title i{color:var(--green);font-size:15px}
+.pc-body{padding:22px}
+.pc-body.flush{padding:0}
+.pc-foot{padding:14px 22px;border-top:1px solid var(--line)}
+
+.pstat{display:inline-flex;align-items:center;gap:6px;font-size:11.5px;font-weight:700;padding:4px 10px;border-radius:var(--radius-sm);white-space:nowrap}
+.pstat::before{content:"";width:6px;height:6px;border-radius:var(--radius-circle);background:currentColor}
+.pstat.ok{background:var(--green-tint);color:var(--green-deep)}
+.pstat.wait{background:#FCF3DD;color:#B8860B}
+.pstat.off{background:var(--bg);color:var(--muted);border:1px solid var(--line)}
+.pstat.warm{background:var(--tomato-tint);color:var(--tomato)}
+
+.cl-bar{height:6px;background:var(--bg);border-radius:var(--radius-sm);overflow:hidden}
+.cl-bar i{display:block;height:100%;background:linear-gradient(90deg,var(--green),var(--green-deep));border-radius:var(--radius-sm)}
+
+.pnl-overlay{position:fixed;inset:0;background:rgba(33,30,22,.5);z-index:79;opacity:0;pointer-events:none;transition:.25s}
+@media(max-width:980px){
+  .pnl-side{transform:translateX(-100%);transition:transform .28s var(--ease)}
+  body.nav-open .pnl-side{transform:translateX(0)}
+  body.nav-open .pnl-overlay{opacity:1;pointer-events:auto}
+  .pnl-top{left:0}
+  .pnl-burger{display:inline-flex}
+  .pnl-main{margin-left:0;padding:calc(var(--pnl-top-h) + 20px) 16px 40px}
+  .pnl-me .pm-id,.pnl-me>i{display:none}
+}
+@media(max-width:640px){
+  .pnl-search{max-width:none}
+  .pnl-page-head h1{font-size:20px}
+}
+
+/* =====================================================================
+   SAYFA CSS — PROGRAM BUILDER (dyt-recete-builder board dilinin antrenör türevi)
+   öğün satırı→antrenman bloğu · tarif hücresi→egzersiz · kcal toplam→set/süre.
+   ===================================================================== */
+/* ---- düzen: board + sağ rail ---- */
+.bld-layout{display:grid;grid-template-columns:minmax(0,1fr) 324px;gap:16px;align-items:start}
+.bld-side{position:sticky;top:calc(var(--pnl-top-h) + 20px);display:flex;flex-direction:column;gap:16px}
+
+/* ---- board (wk-board panel türevi) ---- */
+.bld-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:thin}
+.bld-grid{display:grid;grid-template-columns:104px repeat(7,minmax(0,1fr));min-width:980px}
+.bd-corner{border-bottom:1px solid var(--line);background:var(--bg)}
+.bd-day{padding:11px 8px;text-align:center;border-bottom:1px solid var(--line);border-left:1px solid var(--line)}
+.bd-day b{display:block;font-size:13px;font-weight:700;color:var(--slate);line-height:1.1}
+.bd-day span{display:block;font-size:11px;color:var(--muted);font-weight:500;margin-top:2px}
+.bd-blockcol{display:flex;flex-direction:column;justify-content:center;gap:4px;padding:12px 10px;border-bottom:1px solid var(--line);background:var(--bg)}
+.bd-blockcol i{width:28px;height:28px;border-radius:var(--radius-md);background:var(--paper);border:1px solid var(--line);color:var(--green-deep);display:grid;place-items:center;font-size:12px}
+.bd-blockcol b{font-size:12.5px;font-weight:700;color:var(--slate);line-height:1.15}
+.bd-blockcol small{font-size:10.5px;color:var(--muted);font-weight:500}
+/* hücre — çoklu egzersiz satırı + öğün toplamı + ekle */
+.bcell{display:flex;flex-direction:column;gap:6px;padding:8px;border-bottom:1px solid var(--line);border-left:1px solid var(--line);min-height:92px}
+.bc-item{position:relative;display:flex;align-items:center;gap:8px;padding:5px 6px;background:var(--bg);border:1px solid var(--line);border-radius:var(--radius-sm);cursor:default;transition:.18s var(--ease)}
+.bc-item:hover{border-color:var(--green)}
+.ex-ico{flex:none;width:30px;height:30px;border-radius:var(--radius-sm);background:var(--green-tint);color:var(--green-deep);display:grid;place-items:center;font-size:12px}
+.bc-info{min-width:0;line-height:1.25;flex:1}
+.bc-info b{display:block;font-size:11px;font-weight:700;color:var(--slate);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.bc-info span{display:block;font-size:10px;color:var(--muted);font-weight:500;margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bc-x{position:absolute;top:-7px;right:-7px;width:20px;height:20px;border:none;border-radius:var(--radius-circle);background:var(--slate);color:#fff;font-size:9px;cursor:pointer;display:grid;place-items:center;opacity:0;transition:.18s var(--ease);z-index:2}
+.bc-item:hover .bc-x{opacity:1}
+.bc-x:hover{background:var(--tomato)}
+.bc-sum{display:flex;align-items:center;gap:6px;font-size:10.5px;font-weight:700;color:var(--green-deep);padding:0 2px}
+.bc-sum i{font-size:9.5px}
+.bc-add{margin-top:auto;display:flex;align-items:center;justify-content:center;gap:6px;padding:7px 6px;border:1.5px dashed #dcdcdc;border-radius:var(--radius-sm);background:transparent;color:var(--muted);font-family:inherit;font-size:10.5px;font-weight:700;cursor:pointer;transition:.18s var(--ease)}
+.bc-add i{font-size:11px}
+.bc-add:hover{border-color:var(--green);color:var(--green-deep);background:var(--green-tint)}
+/* gün toplam satırı */
+.bd-totcol{display:flex;flex-direction:column;justify-content:center;gap:2px;padding:12px 10px;background:var(--bg)}
+.bd-totcol b{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.bd-tot{padding:10px 10px 12px;border-left:1px solid var(--line);background:var(--bg)}
+.bd-tot .bt-kcal{font-size:15px;font-weight:700;color:var(--slate);letter-spacing:-.02em;line-height:1.1;font-variant-numeric:tabular-nums}
+.bd-tot .bt-kcal small{font-size:10px;font-weight:500;color:var(--muted);margin-left:3px}
+.bd-bar{height:5px;border-radius:var(--radius-sm);background:var(--line);overflow:hidden;margin:7px 0 6px}
+.bd-bar i{display:block;height:100%;border-radius:var(--radius-sm);transition:width .3s var(--ease)}
+.bd-tot.ok .bd-bar i{background:linear-gradient(90deg,var(--green),var(--green-deep))}
+.bd-tot.idle .bd-bar i{background:#d8d8d8}
+.bd-mac{font-size:9.5px;color:var(--muted);font-weight:500;white-space:nowrap}
+.bd-dev{font-size:10px;font-weight:700;margin-top:3px}
+.bd-tot.ok .bd-dev{color:var(--green-deep)}
+.bd-tot.idle .bd-dev{color:var(--muted)}
+/* board lejantı */
+.bld-legend{display:flex;align-items:center;gap:13px;font-size:11.5px;color:var(--muted);font-weight:500;flex-wrap:wrap}
+.bld-legend span{display:inline-flex;align-items:center;gap:6px}
+.bld-legend span::before{content:"";width:8px;height:8px;border-radius:var(--radius-circle)}
+.bld-legend .lg-ok::before{background:var(--green)}
+.bld-legend .lg-idle::before{background:#d8d8d8}
+
+/* ---- EGZERSİZ ARAMA POPOVER (.ie-sugg fixed dilinin builder türevi) ---- */
+.tsr{position:fixed;z-index:120;width:300px;background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-md);box-shadow:var(--sh-lg);display:none;flex-direction:column;overflow:hidden;animation:fadeUp .18s var(--ease)}
+.tsr.show{display:flex}
+.tsr-head{position:relative;border-bottom:1px solid var(--line);flex:none}
+.tsr-head i{position:absolute;left:13px;top:50%;transform:translateY(-50%);font-size:12.5px;color:var(--muted);pointer-events:none}
+.tsr-head input{width:100%;height:42px;padding:0 13px 0 36px;border:none;outline:none;font-family:inherit;font-size:13px;font-weight:500;color:var(--ink);background:var(--paper)}
+.tsr-head input::placeholder{color:var(--muted)}
+.tsr-list{max-height:280px;overflow-y:auto;padding:6px}
+.tsr-row{display:flex;align-items:center;gap:10px;width:100%;text-align:left;font-family:inherit;background:none;border:none;border-radius:var(--radius-sm);padding:7px 8px;cursor:pointer;transition:.16s var(--ease)}
+.tsr-row:hover{background:var(--green-tint)}
+.tsr-info{flex:1;min-width:0;line-height:1.3}
+.tsr-info b{display:block;font-size:12.5px;font-weight:700;color:var(--slate);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tsr-info span{display:block;font-size:10.5px;color:var(--muted);font-weight:500;margin-top:1px}
+.tsr-row>i{flex:none;font-size:11px;color:var(--green-deep);opacity:0;transition:.16s}
+.tsr-row:hover>i{opacity:1}
+.tsr-none{padding:18px 12px;text-align:center;font-size:12.5px;color:var(--muted)}
+
+/* ---- FK FORM KİTİ (tarif-ekle kiti — panel yeşil focus override) ---- */
+.fk-field{margin-bottom:22px}
+.fk-field:last-child{margin-bottom:0}
+.fk-label{display:flex;align-items:baseline;gap:7px;font-size:14px;font-weight:700;color:var(--slate);margin-bottom:9px}
+.fk-label .req{color:var(--tomato);font-weight:700}
+.fk-label .opt{font-size:11.5px;color:var(--muted);font-weight:500}
+.fk-input,.fk-select,.fk-textarea{width:100%;font-family:inherit;font-size:14px;font-weight:500;color:var(--slate);background:var(--bg);border:1px solid var(--line);border-radius:var(--radius-md);padding:13px 15px;outline:none;transition:border-color .2s var(--ease),box-shadow .2s var(--ease)}
+.fk-input::placeholder,.fk-textarea::placeholder{color:#a7a7a7}
+.fk-textarea{min-height:150px;resize:vertical;line-height:1.6}
+.fk-select{appearance:none;-webkit-appearance:none;cursor:pointer;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%237E7E7E' stroke-width='1.6' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 15px center;padding-right:40px}
+.fk-grid{display:grid;gap:16px 18px}
+.fk-grid .fk-field{margin-bottom:0}
+.fk-grid.c2{grid-template-columns:1fr 1fr}
+.fk-grid+.fk-grid{margin-top:18px}
+.fk-grid+.fk-field,.fk-field+.fk-grid{margin-top:22px}
+.fk-suffix{position:relative}
+.fk-suffix .fk-input{padding-right:64px}
+.fk-suffix>span{position:absolute;right:15px;top:50%;transform:translateY(-50%);font-size:12px;font-weight:700;color:var(--muted);pointer-events:none}
+/* panel ekseni: form focus yeşil */
+.pnl-main .fk-input:focus,.pnl-main .fk-select:focus,.pnl-main .fk-textarea:focus{border-color:var(--green);box-shadow:0 0 0 3px rgba(var(--green-rgb),.12)}
+.bld-side .fk-textarea{min-height:96px}
+.bld-side .fk-field{margin-bottom:16px}
+.bld-side .fk-label{font-size:13px;margin-bottom:7px}
+.bld-side .fk-input,.bld-side .fk-select,.bld-side .fk-textarea{padding:11px 13px;font-size:13.5px}
+
+/* ---- haftalık özet kartı ---- */
+.bsum-row{display:flex;align-items:baseline;justify-content:space-between;gap:10px;padding:9px 0;border-bottom:1px solid var(--line);font-size:13px}
+.bsum-row:last-of-type{border-bottom:none}
+.bsum-row span{color:var(--muted);font-weight:500}
+.bsum-row b{font-size:15px;color:var(--slate);font-variant-numeric:tabular-nums}
+.bsum-row b small{font-size:11px;font-weight:500;color:var(--muted);margin-left:2px}
+.bsum-row .pstat{font-size:11px}
+.bmac{margin-top:13px;display:flex;flex-direction:column;gap:9px}
+.bmac-row{line-height:1.3}
+.bmac-row .bm-top{display:flex;justify-content:space-between;font-size:11.5px;margin-bottom:5px}
+.bmac-row .bm-top span{color:var(--muted);font-weight:500}
+.bmac-row .bm-top b{color:var(--slate);font-variant-numeric:tabular-nums}
+.bmac-row .cl-bar i{transition:width .3s var(--ease)}
+.bld-foot{display:flex;gap:9px}
+.bld-foot .btn{flex:1}
+
+/* ===================== TABLET / MOBİL ===================== */
+@media(max-width:1240px){
+  .bld-layout{grid-template-columns:minmax(0,1fr)}
+  .bld-side{position:static;order:-1}
+}
+@media(max-width:640px){
+  /* board içeride kayar, blok kolonu sticky (wk-board ≤640 deseni) */
+  .bld-grid{min-width:920px}
+  .bd-blockcol,.bd-totcol{position:sticky;left:0;z-index:2;box-shadow:2px 0 0 var(--line)}
+  .bd-corner{position:sticky;left:0;z-index:2}
+  .bld-scroll::-webkit-scrollbar{height:6px}
+  .bld-scroll::-webkit-scrollbar-thumb{background:#d8d8d8;border-radius:var(--radius-sm)}
+  .bld-foot{flex-direction:column}
+  .fk-grid.c2{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body data-brand="mutfak">
+
+<div class="pnl-app">
+
+  <!-- ============ SOL SIDEBAR — antrenör (Programlar AKTİF — builder alt-ekran) ============ -->
+  <aside class="pnl-side" id="pnlSide">
+    <a class="pnl-logo" href="anasayfa-portal-v3a.html">
+      <img src="assets/img/logo-official-white.png" alt="DadaMutfak" />
+      <span class="pl-tag">Antrenör</span>
+    </a>
+    <nav class="pnl-nav">
+      <a class="pnl-link" href="antrenor-panel-v1.html" data-nav="panel"><i class="fa-solid fa-gauge-high"></i> Panel</a>
+      <a class="pnl-link" href="antrenor-uyeler-v1.html" data-nav="uyeler"><i class="fa-solid fa-user-group"></i> Üyelerim <span class="pl-cnt">28</span></a>
+      <a class="pnl-link is-active" href="antrenor-programlar-v1.html" data-nav="programlar"><i class="fa-solid fa-list-check"></i> Programlar <span class="pl-sub">Builder</span></a>
+      <a class="pnl-link" href="antrenor-mesajlar-v1.html" data-nav="mesajlar"><i class="fa-regular fa-comment-dots"></i> Mesajlar <span class="pl-cnt">3</span></a>
+      <div class="pnl-sec-lbl">Hesap</div>
+      <a class="pnl-link" href="antrenor-profil-ayar-v1.html" data-nav="profil"><i class="fa-regular fa-id-badge"></i> Profil &amp; Ayarlar</a>
+    </nav>
+    <div class="pnl-side-foot">
+      <a class="pnl-link" href="antrenor-detay-v1.html"><i class="fa-regular fa-eye"></i> Public Profilim</a>
+      <a class="sa-sig" href="https://gaviaworks.com" target="_blank" rel="noopener" data-tip="Gaviaworks" aria-label="Gaviaworks — gaviaworks.com"><img src="assets/img/gavia-mark.png" alt="Gaviaworks" /></a>
+    </div>
+  </aside>
+  <div class="pnl-overlay" id="pnlOverlay"></div>
+
+  <!-- ============ ÜST İNCE BAR ============ -->
+  <header class="pnl-top">
+    <button class="pnl-burger" id="pnlBurger" aria-label="Menü"><i class="fa-solid fa-bars"></i></button>
+    <div class="pnl-search">
+      <i class="fa-solid fa-magnifying-glass"></i>
+      <input type="text" placeholder="Üye, program veya seans ara…" />
+    </div>
+    <div class="pnl-top-tools">
+      <a class="pnl-bell pnl-site" href="anasayfa-portal-v3a.html" data-tip="Siteyi Görüntüle" aria-label="Siteyi Görüntüle"><i class="fa-solid fa-globe"></i></a>
+      <button class="pnl-bell" aria-label="Bildirimler" data-tip="Bildirimler"><i class="fa-regular fa-bell"></i><span class="pb-dot"></span></button>
+      <div class="pnl-me">
+        <div class="pm-ava" style="background-image:url('https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?w=240&h=240&q=80&auto=format&fit=facearea&facepad=3&sat=-22')"></div>
+        <div class="pm-id">
+          <div class="pm-name" id="pmName">Antr. Kerem Aydın</div>
+          <div class="pm-role" id="pmRole">Antrenör · Doğrulanmış</div>
+        </div>
+        <i class="fa-solid fa-chevron-down"></i>
+      </div>
+    </div>
+  </header>
+
+  <!-- ============ İÇERİK ALANI — Program Builder ============ -->
+  <main class="pnl-main">
+
+    <div class="pnl-page-head">
+      <div>
+        <h1>Program Builder</h1>
+        <div class="ph-sub">7 gün × 5 blok antrenman planını kur — hücreye egzersiz ekle, set·tekrar·dinlenme ve haftalık hacim canlı hesaplanır.</div>
+      </div>
+      <div class="ph-actions">
+        <span class="pstat ok" id="bldStat">Aktif</span>
+        <a class="btn btn-ghost btn-sm" href="antrenor-programlar-v1.html"><i class="fa-solid fa-arrow-left"></i> Programlar</a>
+      </div>
+    </div>
+
+    <div class="bld-layout">
+
+      <!-- BOARD -->
+      <div class="pnl-card">
+        <div class="pc-head">
+          <div class="pc-title"><i class="fa-solid fa-calendar-week"></i> Haftalık Plan</div>
+          <div class="bld-legend">
+            <span class="lg-ok">Antrenman günü</span>
+            <span class="lg-idle">Dinlenme</span>
+          </div>
+        </div>
+        <div class="pc-body flush">
+          <div class="bld-scroll">
+            <div class="bld-grid" id="bldGrid" aria-label="Haftalık antrenman planı"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SAĞ RAIL -->
+      <aside class="bld-side">
+        <div class="pnl-card">
+          <div class="pc-head"><div class="pc-title"><i class="fa-solid fa-clipboard-list"></i> Program Bilgileri</div></div>
+          <div class="pc-body">
+            <div class="fk-field">
+              <label class="fk-label" for="fldName">Program adı <span class="req">*</span></label>
+              <input class="fk-input" id="fldName" type="text" value="Üst Vücut Güç — 8 Hafta" />
+            </div>
+            <div class="fk-grid c2">
+              <div class="fk-field">
+                <label class="fk-label" for="fldMember">Atanan üye</label>
+                <select class="fk-select" id="fldMember">
+                  <option value="">Atanmadı</option>
+                  <option selected>Deniz Yılmaz</option>
+                  <option>Burak Şen</option>
+                  <option>Elif Korkmaz</option>
+                  <option>Caner Tunç</option>
+                  <option>Derya Koç</option>
+                </select>
+              </div>
+              <div class="fk-field">
+                <label class="fk-label" for="fldType">Program tipi</label>
+                <select class="fk-select" id="fldType">
+                  <option selected>Güç</option>
+                  <option>Hipertrofi</option>
+                  <option>Kondisyon</option>
+                  <option>Kilo verme</option>
+                  <option>Genel form</option>
+                  <option>Dayanıklılık</option>
+                </select>
+              </div>
+            </div>
+            <div class="fk-grid c2">
+              <div class="fk-field">
+                <label class="fk-label" for="fldWeeks">Süre</label>
+                <div class="fk-suffix">
+                  <input class="fk-input" id="fldWeeks" type="number" value="8" min="1" max="52" step="1" />
+                  <span>hafta</span>
+                </div>
+              </div>
+              <div class="fk-field">
+                <label class="fk-label" for="fldDays">Hafta hedefi</label>
+                <div class="fk-suffix">
+                  <input class="fk-input" id="fldDays" type="number" value="4" min="1" max="7" step="1" />
+                  <span>gün</span>
+                </div>
+              </div>
+            </div>
+            <div class="fk-field">
+              <label class="fk-label" for="fldNote">Antrenör notu <span class="opt">(üye görür)</span></label>
+              <textarea class="fk-textarea" id="fldNote" placeholder="örn. Ana hareketlerde form önceliklidir, ağırlığı kademeli artır…">Ana hareketlerde formu bozmadan ağırlığı haftada %2,5 artır. Dinlenme sürelerine uy — toparlanma performansı belirler.</textarea>
+            </div>
+          </div>
+          <div class="pc-foot bld-foot">
+            <button class="btn btn-ghost btn-sm" type="button" id="btnPdf"><i class="fa-regular fa-file-pdf"></i> PDF / Paylaş</button>
+            <button class="btn btn-green btn-sm" type="button" id="btnSave"><i class="fa-solid fa-check"></i> Kaydet</button>
+          </div>
+        </div>
+
+        <div class="pnl-card">
+          <div class="pc-head"><div class="pc-title"><i class="fa-solid fa-chart-simple"></i> Haftalık Özet</div></div>
+          <div class="pc-body">
+            <div class="bsum-row"><span>Antrenman günü</span><b id="sumDays">0<small>/ 7</small></b></div>
+            <div class="bsum-row"><span>Haftalık toplam set</span><b id="sumSet">0<small>set</small></b></div>
+            <div class="bsum-row"><span>Antr. günü ort. süre</span><b id="sumDur">0<small>dk</small></b></div>
+            <div class="bsum-row"><span>Plan durumu</span><span class="pstat wait" id="sumStat">Dolduruluyor</span></div>
+            <div class="bmac">
+              <div class="bmac-row"><div class="bm-top"><span>Üst vücut</span><b id="setUst">0 set</b></div><div class="cl-bar"><i id="barUst" style="width:0%"></i></div></div>
+              <div class="bmac-row"><div class="bm-top"><span>Alt vücut</span><b id="setAlt">0 set</b></div><div class="cl-bar"><i id="barAlt" style="width:0%"></i></div></div>
+              <div class="bmac-row"><div class="bm-top"><span>Kardiyo &amp; kondisyon</span><b id="setKar">0 set</b></div><div class="cl-bar"><i id="barKar" style="width:0%"></i></div></div>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+    </div>
+
+  </main>
+</div>
+
+<script>
+/* ============ PANEL ORTAK JS — panel-shell BİREBİR kopya (mobil drawer) ============ */
+(function(){
+  var burger=document.getElementById('pnlBurger'),
+      overlay=document.getElementById('pnlOverlay');
+  if(burger) burger.addEventListener('click',function(){document.body.classList.toggle('nav-open')});
+  if(overlay) overlay.addEventListener('click',function(){document.body.classList.remove('nav-open')});
+  var q=new URLSearchParams(location.search);
+  if(q.get('nav')==='1') document.body.classList.add('nav-open');
+})();
+</script>
+
+<!-- ===== EGZERSİZ ARAMA POPOVER (ie-sugg fixed dilinin builder türevi) ===== -->
+<div class="tsr" id="tsr" role="dialog" aria-label="Egzersiz ara ve ekle">
+  <div class="tsr-head">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <input type="text" id="tsrInput" placeholder="Egzersiz kütüphanesinde ara… örn. squat" autocomplete="off" />
+  </div>
+  <div class="tsr-list" id="tsrList"></div>
+</div>
+
+<script>
+/* ===== SAYFA JS — PROGRAM BUILDER: board render + egzersiz arama-ekleme + canlı hacim ===== */
+(function(){
+  /* egzersiz kütüphanesi (mock) — grup + set·tekrar·dinlenme + tahmini süre(dk) + toplam set */
+  var GICO={isinma:'fa-solid fa-person-walking',ust:'fa-solid fa-dumbbell',alt:'fa-solid fa-person-running',kardiyo:'fa-solid fa-heart-pulse',full:'fa-solid fa-child-reaching',soguma:'fa-solid fa-spa'};
+  var GLBL={isinma:'Isınma',ust:'Üst vücut',alt:'Alt vücut',kardiyo:'Kardiyo',full:'Tüm vücut',soguma:'Soğuma'};
+  var POOL=[
+    {n:'Dinamik Isınma',g:'isinma',m:'5 dk · mobilite',set:0,dur:5},
+    {n:'İp Atlama',g:'kardiyo',m:'5×60 sn',set:5,dur:8},
+    {n:'Bench Press',g:'ust',m:'4×8 · 90sn',set:4,dur:10},
+    {n:'Dumbbell Omuz Press',g:'ust',m:'3×10 · 75sn',set:3,dur:8},
+    {n:'Lat Pulldown',g:'ust',m:'3×12 · 75sn',set:3,dur:8},
+    {n:'Barbell Row',g:'ust',m:'4×10 · 90sn',set:4,dur:10},
+    {n:'Biceps Curl',g:'ust',m:'3×12 · 60sn',set:3,dur:6},
+    {n:'Triceps Pushdown',g:'ust',m:'3×12 · 60sn',set:3,dur:6},
+    {n:'Şınav',g:'ust',m:'3×15 · 60sn',set:3,dur:6},
+    {n:'Squat',g:'alt',m:'4×8 · 120sn',set:4,dur:12},
+    {n:'Deadlift',g:'alt',m:'4×6 · 150sn',set:4,dur:12},
+    {n:'Leg Press',g:'alt',m:'4×10 · 90sn',set:4,dur:10},
+    {n:'Lunge',g:'alt',m:'3×12 · 75sn',set:3,dur:8},
+    {n:'Leg Curl',g:'alt',m:'3×12 · 60sn',set:3,dur:6},
+    {n:'Calf Raise',g:'alt',m:'4×15 · 45sn',set:4,dur:6},
+    {n:'Plank',g:'full',m:'3×45 sn',set:3,dur:5},
+    {n:'Mountain Climber',g:'kardiyo',m:'4×30 sn',set:4,dur:6},
+    {n:'Burpee',g:'kardiyo',m:'3×15 · 60sn',set:3,dur:6},
+    {n:'Koşu Bandı (Tempo)',g:'kardiyo',m:'20 dk',set:0,dur:20},
+    {n:'Bisiklet (HIIT)',g:'kardiyo',m:'15 dk',set:0,dur:15},
+    {n:'Esneme &amp; Mobilite',g:'soguma',m:'8 dk',set:0,dur:8},
+    {n:'Foam Roller',g:'soguma',m:'6 dk',set:0,dur:6}
+  ];
+  var BLOCKS=[
+    {lbl:'Isınma',ico:'fa-solid fa-person-walking',hint:'5-10 dk'},
+    {lbl:'Ana Hareketler',ico:'fa-solid fa-dumbbell',hint:'Bileşik'},
+    {lbl:'Yardımcı',ico:'fa-solid fa-hand-fist',hint:'İzolasyon'},
+    {lbl:'Kardiyo',ico:'fa-solid fa-heart-pulse',hint:'Kondisyon'},
+    {lbl:'Soğuma',ico:'fa-solid fa-spa',hint:'Esneme'}
+  ];
+  var DAYS=['Pzt','Sal','Çar','Per','Cum','Cmt','Paz'];
+  /* dolu örnek durum: S[blok][gün] = egzersiz index dizisi — 4 tam gün + 1 kardiyo + 2 dinlenme */
+  var S=[
+    [[0],[0],[],[0],[0],[0],[]],          /* Isınma */
+    [[2,3],[9,10],[],[5,4],[11,12],[],[]],/* Ana Hareketler */
+    [[7],[14,13],[],[6],[8],[],[]],       /* Yardımcı */
+    [[],[],[],[],[1],[18],[]],            /* Kardiyo */
+    [[20],[20],[],[20],[20],[21],[]]      /* Soğuma */
+  ];
+
+  var grid=document.getElementById('bldGrid'),
+      tsr=document.getElementById('tsr'),
+      tsrInput=document.getElementById('tsrInput'),
+      tsrList=document.getElementById('tsrList'),
+      fldDays=document.getElementById('fldDays'),
+      act=null; /* aktif hücre [blok,gün] */
+
+  function fmt(n){return n.toLocaleString('tr-TR')}
+  function bucket(g){return (g==='ust'||g==='full')?'ust':(g==='alt'?'alt':(g==='kardiyo'?'kardiyo':null))}
+  function dayAgg(d){
+    var o={set:0,dur:0,cnt:0};
+    S.forEach(function(row){(row[d]||[]).forEach(function(id){var e=POOL[id];o.set+=e.set;o.dur+=e.dur;o.cnt++})});
+    return o;
+  }
+
+  function render(){
+    var h='';
+    /* başlık satırı */
+    h+='<div class="bd-corner"></div>';
+    DAYS.forEach(function(dn,i){h+='<div class="bd-day"><b>'+dn+'</b><span>'+(i+1)+'. Gün</span></div>'});
+    /* blok satırları */
+    BLOCKS.forEach(function(bk,bi){
+      h+='<div class="bd-blockcol"><i class="'+bk.ico+'"></i><b>'+bk.lbl+'</b><small>'+bk.hint+'</small></div>';
+      for(var d=0;d<7;d++){
+        var items=S[bi][d],setSum=0,inner='';
+        items.forEach(function(id,pos){
+          var e=POOL[id];setSum+=e.set;
+          inner+='<div class="bc-item" data-id="'+id+'">'
+               +'<div class="ex-ico"><i class="'+(GICO[e.g]||'fa-solid fa-dumbbell')+'"></i></div>'
+               +'<div class="bc-info"><b>'+e.n+'</b><span>'+e.m+'</span></div>'
+               +'<button class="bc-x" type="button" data-m="'+bi+'" data-d="'+d+'" data-pos="'+pos+'" aria-label="Egzersizi kaldır"><i class="fa-solid fa-xmark"></i></button>'
+               +'</div>';
+        });
+        if(setSum>0&&items.length>1)inner+='<div class="bc-sum"><i class="fa-solid fa-layer-group"></i> Blok: '+setSum+' set</div>';
+        inner+='<button class="bc-add" type="button" data-m="'+bi+'" data-d="'+d+'"><i class="fa-solid fa-plus"></i> Egzersiz Ekle</button>';
+        h+='<div class="bcell" data-cell="b'+bi+'d'+d+'">'+inner+'</div>';
+      }
+    });
+    /* gün toplam satırı */
+    h+='<div class="bd-totcol"><b>Gün Toplamı</b></div>';
+    var aggs=[],maxSet=0;
+    for(var d=0;d<7;d++){var a=dayAgg(d);aggs.push(a);if(a.set>maxSet)maxSet=a.set}
+    aggs.forEach(function(a){
+      if(a.cnt===0){
+        h+='<div class="bd-tot idle"><div class="bt-kcal">—</div><div class="bd-bar"><i style="width:0%"></i></div><div class="bd-mac">Dinlenme günü</div><div class="bd-dev">Dinlenme</div></div>';
+      }else{
+        var w=maxSet?Math.round(a.set/maxSet*100):0;
+        h+='<div class="bd-tot ok"><div class="bt-kcal">'+a.set+'<small>set</small></div>'
+          +'<div class="bd-bar"><i style="width:'+w+'%"></i></div>'
+          +'<div class="bd-mac">~'+a.dur+' dk · '+a.cnt+' hareket</div>'
+          +'<div class="bd-dev">Antrenman</div></div>';
+      }
+    });
+    grid.innerHTML=h;
+
+    /* haftalık özet */
+    var totSet=0,totDur=0,trainDays=0,bUst=0,bAlt=0,bKar=0;
+    aggs.forEach(function(a){if(a.cnt>0){trainDays++;totDur+=a.dur}totSet+=a.set});
+    S.forEach(function(row){row.forEach(function(cell){(cell||[]).forEach(function(id){
+      var e=POOL[id],bk=bucket(e.g);
+      if(bk==='ust')bUst+=e.set;else if(bk==='alt')bAlt+=e.set;else if(bk==='kardiyo')bKar+=e.set;
+    })})});
+    var avgDur=trainDays?Math.round(totDur/trainDays):0;
+    document.getElementById('sumDays').innerHTML=trainDays+'<small>/ 7</small>';
+    document.getElementById('sumSet').innerHTML=fmt(totSet)+'<small>set</small>';
+    document.getElementById('sumDur').innerHTML=avgDur+'<small>dk</small>';
+    var target=parseInt(fldDays.value,10)||4;
+    var ss=document.getElementById('sumStat');
+    if(trainDays>=target){ss.className='pstat ok';ss.textContent='Hazır'}
+    else if(trainDays>=target-1){ss.className='pstat wait';ss.textContent='Dengelenmeli'}
+    else{ss.className='pstat warm';ss.textContent='Eksik plan'}
+    var maxB=Math.max(bUst,bAlt,bKar,1);
+    document.getElementById('setUst').textContent=bUst+' set';
+    document.getElementById('setAlt').textContent=bAlt+' set';
+    document.getElementById('setKar').textContent=bKar+' set';
+    document.getElementById('barUst').style.width=Math.round(bUst/maxB*100)+'%';
+    document.getElementById('barAlt').style.width=Math.round(bAlt/maxB*100)+'%';
+    document.getElementById('barKar').style.width=Math.round(bKar/maxB*100)+'%';
+  }
+
+  /* ---- egzersiz arama popover ---- */
+  function plain(s){return s.replace(/&amp;/g,'&')}
+  function renderResults(q){
+    q=(q||'').toLocaleLowerCase('tr');
+    var hits=POOL.map(function(r,i){return{r:r,i:i}})
+      .filter(function(o){return !q||plain(o.r.n).toLocaleLowerCase('tr').indexOf(q)>-1})
+      .slice(0,9);
+    if(!hits.length){tsrList.innerHTML='<div class="tsr-none">“'+q+'” için sonuç yok</div>';return}
+    tsrList.innerHTML=hits.map(function(o){
+      return '<button class="tsr-row" type="button" data-id="'+o.i+'">'
+        +'<div class="ex-ico"><i class="'+(GICO[o.r.g]||'fa-solid fa-dumbbell')+'"></i></div>'
+        +'<div class="tsr-info"><b>'+o.r.n+'</b><span>'+(GLBL[o.r.g]||'')+' · '+o.r.m+'</span></div>'
+        +'<i class="fa-solid fa-plus"></i></button>';
+    }).join('');
+  }
+  function openTsr(btn,m,d){
+    act=[m,d];
+    var rc=btn.getBoundingClientRect(),vw=window.innerWidth,vh=window.innerHeight,
+        w=300,hh=320,
+        left=Math.max(8,Math.min(rc.left,vw-w-8)),
+        top=rc.bottom+8;
+    if(top+hh>vh-8)top=Math.max(8,rc.top-hh-8);
+    tsr.style.left=left+'px';tsr.style.top=top+'px';
+    tsr.classList.add('show');
+    tsrInput.value='';renderResults('');
+    tsrInput.focus();
+  }
+  function closeTsr(){tsr.classList.remove('show');act=null}
+
+  grid.addEventListener('click',function(e){
+    var x=e.target.closest('.bc-x');
+    if(x){
+      var m=+x.getAttribute('data-m'),d=+x.getAttribute('data-d'),pos=+x.getAttribute('data-pos');
+      var id=S[m][d][pos],name=id!=null?plain(POOL[id].n):'Egzersiz';
+      closeTsr();
+      /* yıkıcı: egzersiz kaldır → saConfirm (operatör dili) */
+      if(window.saConfirm){
+        saConfirm({
+          danger:true, icon:'fa-circle-minus', ok:'Kaldır', cancel:'Vazgeç',
+          title:'Egzersiz kaldırılsın mı?',
+          message:'“'+name+'” bu günün planından kaldırılacak.',
+          onConfirm:function(){ S[m][d].splice(pos,1); render(); if(window.saToast) saToast(name+' kaldırıldı',{type:'danger'}); }
+        });
+      }else{ S[m][d].splice(pos,1); render(); }
+      return;
+    }
+    var add=e.target.closest('.bc-add');
+    if(add){e.stopPropagation();openTsr(add,+add.getAttribute('data-m'),+add.getAttribute('data-d'))}
+  });
+  tsrInput.addEventListener('input',function(){renderResults(tsrInput.value)});
+  tsrList.addEventListener('click',function(e){
+    var row=e.target.closest('.tsr-row');if(!row||!act)return;
+    S[act[0]][act[1]].push(+row.getAttribute('data-id'));
+    closeTsr();render();
+  });
+  document.addEventListener('click',function(e){
+    if(tsr.classList.contains('show')&&!e.target.closest('.tsr')&&!e.target.closest('.bc-add'))closeTsr();
+  });
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')closeTsr()});
+  fldDays.addEventListener('input',render);
+
+  /* ---- kaydet / pdf → saToast (operatör dili) ---- */
+  document.getElementById('btnSave').addEventListener('click',function(){
+    if(window.saToast) saToast('“'+document.getElementById('fldName').value+'” programı kaydedildi',{type:'ok'});
+  });
+  document.getElementById('btnPdf').addEventListener('click',function(){
+    if(window.saToast) saToast('Program PDF olarak hazırlanıyor — üyeye gönderebilirsin');
+  });
+
+  /* ---- ?yeni=1 → yeni program (taslak) ; ?uye= ön-atama ---- */
+  var q=new URLSearchParams(location.search);
+  if(q.get('yeni')==='1'){
+    document.getElementById('fldName').value='Yeni Program';
+    document.getElementById('fldMember').value='';
+    var bs=document.getElementById('bldStat');bs.className='pstat wait';bs.textContent='Taslak';
+  }
+  var uye=q.get('uye');
+  if(uye){var sel=document.getElementById('fldMember');for(var i=0;i<sel.options.length;i++){if(sel.options[i].text===uye){sel.selectedIndex=i;break}}}
+
+  render();
+
+  /* probe API (SS doğrulaması için) */
+  window.dmBuilder={pool:POOL,state:S,dayAgg:dayAgg,render:render};
+})();
+</script>
+
+<script src="assets/js/sa-ui.js"></script>
+</body>
+</html>
