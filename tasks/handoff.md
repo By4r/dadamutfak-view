@@ -1,31 +1,19 @@
-# DadaMutfak — Handoff (Faz 2 Gözetim TAMAMEN BİTTİ · PUSH BEKLİYOR)
+# DadaMutfak — Handoff (Faz 2 Gözetim + Chip Sayaç TAMAMEN BİTTİ · PUSH'LANDI)
 
-> Tarih: 2026-06-21. Süper-admin gözetim paneli (`v5/sa-*`) Faz 2 tüm dalgaları + antrenör paneli + wiring **bitti ve commit'li**. **origin'e PUSH EDİLMEDİ** (push = Beyar kararı, GitHub Pages canlı).
+> Tarih: 2026-06-21. Süper-admin gözetim paneli (`v5/sa-*`) Faz 2 tüm dalgaları + antrenör paneli + wiring + **filtre chip sayaçları (big-number-ready kompakt format)** bitti, commit'li ve **`origin/main`'e PUSH EDİLDİ** (GitHub Pages canlı).
 
-## DURUM — ne bitti
+## DURUM — ne bitti (hepsi push'lı)
 - **1. dalga gözetim** (Sağlık 4 + İşletme 4 + DadaFit 3 = 11 modül / 24 ekran) + wiring → `cc0b2a5`.
 - **2. dalga gözetim** (Admin 9 + Store 6 = 15 modül / 28 ekran) + SECTIONS wiring → `1207fd0`.
 - **Chip standardizasyonu** (wave-1 filtre chip radius+padding+weight → flagship 8px) → `7e2afbc`.
-- **Docs** (Tarifler tipi CRUD+moderasyon hibrit) → `5ad8b1f`.
-- **Chore** (birikmiş outputs screenshot'ları untrack, ~744MB) → `df92a68`.
+- **Docs** (Tarifler tipi CRUD+moderasyon hibrit) → `5ad8b1f`. · **Chore** (outputs SS untrack) → `df92a68`.
 - **Antrenör operatör paneli** (8 ekran + builder + giriş kilidi) → `ed410c3`/`f0a7493` (+ qa `6d557c4`/`2208456`, docs `ba79698`).
+- **Filtre chip sayaçları + kompakt format** (feat) — **24/24 liste sayfası sayaçlı + tutarlı 8px**. 10 sayaçsız sayfaya `.ch-cnt` (DOM-doğrulanmış gerçek sayılar) eklendi; 14 mevcut korundu. **Big-number-ready:** tek formatlayıcı `v5/assets/js/sa-chcnt.js` (24 sayfaya `<script>`; sa-shell/sa-ui'ye DOKUNULMADI) — `<1000` tam, `≥1000` tr-TR compact (`1,2 B` · `12 B` · `500 B` · `1,2 Mn`; 1.250.000→`1,3 Mn` kanonik Intl), tam değer `title`'da, `.ch-cnt` taşma-dayanıklı (`white-space:nowrap` + esnek min-width). tarifler "Tümü" sayfanın kendi toplamına (1.248→`1,2 B`) set. QA: `chcnt-format-qa.mjs` ALL PASS (24 + stres testi).
 
-**Birikmiş commit'ler (push bekliyor):** `cc0b2a5 · 1207fd0 · 7e2afbc · 5ad8b1f · df92a68` (+ antrenör dalgası commit'leri). `git log --oneline` ile tam liste.
-
-**UNTRACKED (commit bekliyor):** 10 adet `tasks/*-qa.mjs` (render-QA scriptleri: admin-tarifler, admin-sefler-slider, sa-admin-b2b6, sa-admin-raporlar, store-siparisler, store-wave2, chip-sweep, chip-style, chcnt-radius, wiring-regression). `handoff.md` (bu dosya) commit'siz.
-
-## ⏭️ SIRADAKİ İŞ (clear sonrası İLK) — Liste filtre chip sayaçları
-
-**KARAR (kesin): Liste filtre chip'leri SAYAÇLI KALIR.** Sayaç (`.ch-cnt`, ör. "Bekliyor 2") gözetim paneli için faydalı triage bilgisi — kaldırma denendi, geri alındı. Hedef: **24/24 liste sayfasında tutarlı sayaç.**
-
-- **Zaten sayaçlı 14 sayfaya DOKUNMA:** admin (sefler/slider/tarifler) · dadafit-antrenorler · isletme (5: isletmeler/menuler/onaylar/reklam/rezervasyonlar) · saglik (5: diyetisyenler/hesaplayicilar/randevular/receteler/testler).
-- **Sayaç EKLENECEK 10 sayfa:** admin-kullanicilar · admin-sayfalar · store (urunler/siparisler/musteriler/kategoriler/promosyonlar) · dadafit (challenge/egzersizler/programlar).
-- Kural: her filtre chip'ine `<span class="ch-cnt">N</span>` + `.chip .ch-cnt{...}` CSS (saglik/isletme pattern'i BİREBİR: font 10.5px, `border-radius:var(--radius-sm)` = 8px, min-width:18px, height:17px, acc-rgb tint). `.chip.is-active/.is-on .ch-cnt` koyu varyant.
-- **Sayılar DOM-DOĞRULANMIŞ GERÇEK olacak — UYDURMA YOK.** Her sayfanın tablosunu render edip her durum/kategori filtresine düşen satır sayısını say (Playwright `tbody tr` filtrele), "Tümü" = toplam. Yanlış sayı = Beyar takılır.
-- Sonra: render-QA (24/24 sayaçlı + 8px + akış) → **commit** (sade-chip değil! "feat/style: add filter chip counters to remaining list pages" + qa scriptleri `chore`) → handoff güncelle → **`git push origin main`**.
+## ⏭️ BUGÜN SIRADAKİ İŞ — 390px tablo taşması
+- **(a) 390px ref fix:** `sa-isletme-isletmeler` @390 yatay tablo taşması (~789px ptable). Eski bekleyen: saglik-diyetisyenler @390. store-urunler responsif kanonu ile targeted yama. (1. dalga'dan kalan, pre-existing; chip işiyle alakasız.)
 
 ## SONRAKİ FAZLAR
-- **(a) 390px ref fix:** `sa-isletme-isletmeler` @390 yatay tablo taşması (~789px ptable). Ayrıca eski bekleyen: saglik-diyetisyenler @390. store-urunler responsif kanonu ile targeted yama. (1. dalga'dan kalan; chip işiyle alakasız, pre-existing.)
 - **(b) Faz 3 "Panelini Aç" köprüsü:** gözetim → operatör impersonation. İlk iş = **operatör panel envanteri**: antrenör paneli VAR (`antrenor-*-v1`); **diyetisyen (`dyt-*`) + mekan (`mekan-*`) panelleri mevcut mu teyit et** (envantere göre dyt 6 + mekan 4 dolu olmalı). Gözetim "Panelini Aç → X" aynı operatör dosyalarını besler, ikinci kez yazılmaz.
 
 ## DEĞİŞMEZ KURALLAR (gözetim paneli)
