@@ -144,7 +144,7 @@ Mantık: **yönetilen-varlık (CRUD)** = liste+form+detay · **gözetim (oku+ona
 ### Admin (9)
 | Modül | Ekran | Gerekçe |
 |---|---|---|
-| Tarifler | **liste + detay** (+ ops. form) | Kullanıcı-katkılı içerik moderasyonu → onay/gizle/öne çıkar; `sa-store-urunler` benzeri tablo + içerik detayı |
+| Tarifler | **liste + detay + form** (CRUD + moderasyon hibrit) | Admin DE tarif ekler (editöryel) + kullanıcı gönderimleri moderasyondan geçer. Kaynak rozeti (Admin/Kullanıcı); admin-kaynak→Düzenle(form), kullanıcı-kaynak→onay/red/gizle/öne çıkar. `sa-store-urunler` benzeri tablo + içerik detayı + form |
 | Şefler | **liste + detay + form** | Şef dizini CRUD (profil/rozet/doğrulama) |
 | Kademeler | **liste + form** | Seviye/rank tanımı (eşik+ödül) — config CRUD |
 | Fiyatlandırma | **liste + form** | Abonelik/plan tanımları (Pro 1/Pro 2) — config CRUD |
