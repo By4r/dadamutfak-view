@@ -2,9 +2,11 @@ import { chromium } from 'playwright';
 import fs from 'fs';
 
 const EXPECT = {
-  "Gözetim — Admin":21, "Gözetim — Store":15, "Gözetim — Sağlık":11,
-  "Gözetim — İşletme":11, "Gözetim — DadaFit":12, "Operatör — Antrenör":8, "Giriş / Sistem":2,
+  "Giriş / Sistem":2, "Gözetim — Admin":21, "Gözetim — Store":15, "Gözetim — Sağlık":11,
+  "Gözetim — İşletme":11, "Gözetim — DadaFit":12,
+  "Operatör — Antrenör":8, "Operatör — Diyetisyen":6, "Operatör — Mekan":4,
 };
+const EXPECT_TOTAL = 90, EXPECT_CATS = 9, EXPECT_FIRST = "Giriş / Sistem";
 const browser = await chromium.launch();
 const page = await browser.newPage({ viewport:{width:1440,height:1000} });
 const errs = [];
@@ -51,7 +53,10 @@ const admin = await page.evaluate(()=>{
 out.push(`\nADMIN: tab=${admin.activeTab} cards=${admin.totalCards} groups=${admin.groups.length} total=${admin.total} gtotal=${admin.gtotal}`);
 
 // per-category check
-let catOk = admin.groups.length === 7;
+let catOk = admin.groups.length === EXPECT_CATS;
+const firstOk = admin.groups[0]?.name === EXPECT_FIRST;
+out.push(`   ${firstOk?'OK':'XX'} İlk kategori = "${admin.groups[0]?.name}" (beklenen "${EXPECT_FIRST}")`);
+if(!firstOk) catOk = false;
 for (const g of admin.groups) {
   const exp = EXPECT[g.name];
   const ok = exp === g.n;
@@ -59,8 +64,8 @@ for (const g of admin.groups) {
   out.push(`   ${ok?'OK':'XX'} ${g.name}: ${g.n}${exp!==undefined?` (beklenen ${exp})`:' (BEKLENMEYEN KATEGORİ)'}`);
 }
 const sum = admin.groups.reduce((a,g)=>a+g.n,0);
-out.push(`   Σ = ${sum} (beklenen 80)`);
-if(sum!==80) catOk=false;
+out.push(`   Σ = ${sum} (beklenen ${EXPECT_TOTAL})`);
+if(sum!==EXPECT_TOTAL) catOk=false;
 
 // link integrity: relative, no /v5/, resolves on disk
 let linkOk = true, badLinks = [];
@@ -80,8 +85,8 @@ const adminSearch = await page.evaluate(()=>[...document.querySelectorAll('.card
 await page.fill('#q','');
 await page.waitForTimeout(80);
 const adminAfterClear = await page.evaluate(()=>[...document.querySelectorAll('.card')].filter(c=>!c.classList.contains('hide')).length);
-out.push(`   arama "kullanici" → ${adminSearch} görünür · temizle → ${adminAfterClear} (80 olmalı)`);
-const searchOk = adminSearch>0 && adminSearch<80 && adminAfterClear===80;
+out.push(`   arama "kullanici" → ${adminSearch} görünür · temizle → ${adminAfterClear} (${EXPECT_TOTAL} olmalı)`);
+const searchOk = adminSearch>0 && adminSearch<EXPECT_TOTAL && adminAfterClear===EXPECT_TOTAL;
 
 // --- back to GENEL ---
 await page.click('.tab[data-tab="genel"]');
@@ -93,7 +98,7 @@ const back = await page.evaluate(()=>({
 const backOk = back.cards === genelCards;
 out.push(`\nGERİ GENEL: cards=${back.cards} (ilk ${genelCards}) groups=${back.groups} → public bozulmadı: ${backOk?'OK':'XX'}`);
 
-if(!catOk || !linkOk || !searchOk || !backOk || admin.totalCards!==80 || errs.length) allOk=false;
+if(!catOk || !linkOk || !searchOk || !backOk || admin.totalCards!==EXPECT_TOTAL || errs.length) allOk=false;
 out.push(`\njsErr=${errs.length}${errs.length?' :: '+errs.slice(0,3).join(' | '):''}`);
 
 console.log(out.join('\n'));
