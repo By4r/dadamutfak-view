@@ -1,6 +1,6 @@
-# DadaMutfak — Handoff (Faz 2 Gözetim + Chip Sayaç + 390px Responsive BİTTİ · PUSH'LANDI)
+# DadaMutfak — Handoff (Faz 2 + Chip Sayaç + 390px + v6 Taşıma + Dizin Admin Sekmesi BİTTİ · PUSH'LANDI)
 
-> Tarih: 2026-06-21. Süper-admin gözetim paneli (`v6/sa-*`) Faz 2 tüm dalgaları + antrenör paneli + wiring + **filtre chip sayaçları (big-number-ready kompakt format)** + **390px liste-tablosu responsive fix** bitti, commit'li ve **`origin/main`'e PUSH EDİLDİ** (GitHub Pages canlı).
+> Tarih: 2026-06-21. Süper-admin gözetim paneli (`v6/sa-*`) Faz 2 tüm dalgaları + antrenör paneli + wiring + **filtre chip sayaçları (big-number-ready kompakt format)** + **390px liste-tablosu responsive fix** + **v5→v6 taşıma (v5 erişimi KAPALI)** + **dizin Admin Panel sekmesi** bitti, commit'li ve **`origin/main`'e PUSH EDİLDİ** (GitHub Pages canlı). **Klasör artık `v6/`.**
 
 ## DURUM — ne bitti (hepsi push'lı)
 - **1. dalga gözetim** (Sağlık 4 + İşletme 4 + DadaFit 3 = 11 modül / 24 ekran) + wiring → `cc0b2a5`.
@@ -10,10 +10,12 @@
 - **Antrenör operatör paneli** (8 ekran + builder + giriş kilidi) → `ed410c3`/`f0a7493` (+ qa `6d557c4`/`2208456`, docs `ba79698`).
 - **Filtre chip sayaçları + kompakt format** (feat) — **24/24 liste sayfası sayaçlı + tutarlı 8px**. 10 sayaçsız sayfaya `.ch-cnt` (DOM-doğrulanmış gerçek sayılar) eklendi; 14 mevcut korundu. **Big-number-ready:** tek formatlayıcı `v6/assets/js/sa-chcnt.js` (24 sayfaya `<script>`; sa-shell/sa-ui'ye DOKUNULMADI) — `<1000` tam, `≥1000` tr-TR compact (`1,2 B` · `12 B` · `500 B` · `1,2 Mn`; 1.250.000→`1,3 Mn` kanonik Intl), tam değer `title`'da, `.ch-cnt` taşma-dayanıklı (`white-space:nowrap` + esnek min-width). tarifler "Tümü" sayfanın kendi toplamına (1.248→`1,2 B`) set. QA: `chcnt-format-qa.mjs` ALL PASS (24 + stres testi).
 - **390px liste-tablosu responsive fix** (feat) — **YENİ `v6/assets/css/sa-list.css`** (kabuğa DOKUNULMADI): `.pc-body{overflow-x:auto;-webkit-overflow-scrolling:touch}` → geniş tablo kart İÇİNDE yatay kayar, sayfayı taşırmaz, kolonlar/veri korunur. **30 liste-tablosu sayfasına** `<link>` (glob; detay/form hariç). 5 anlamlı @390 taşma çözüldü (isletme 789→390 · saglik-diyetisyenler 847→390 · kullanicilar 562→390 · admin 438→390 · store tabloları). 1440 regresyon yok. QA: `sa-list-qa.mjs` PASS. **Kalan opsiyonel minör (acele yok):** `sa-saglik` 3px sub-pixel (tablo değil) + `sa-store-urunler-detay` 12px (detay sayfası — fix kapsamı dışı).
+- **v5→v6 taşıma** (refactor `78028f3`) — `git mv v5 v6` (314 rename, tarih korundu). Path fix: `.gitignore` (v6/), 26 `tasks/*.mjs`, 25 `tasks/*.md`, kök `index.html` (giriş yönlendirmesi v6). Site relative-path olduğu için kod içi değişiklik yok. **v5 erişimi KAPALI** (404). QA: dizin/sa-admin-kullanicilar/antrenor-panel render OK. (Tarihsel `outputs/` raporlarındaki v5/ URL'leri kasıtlı dokunulmadı.)
+- **Dizin Admin Panel sekmesi** (feat) — `v6/dizin.html`'e 2'li tab toggle (`Genel` + `Admin Panel`). Public GROUPS'a dokunulmadı; renderer `buildTab(groups)`'a çıkarıldı, iki veri seti (GROUPS + yeni ADMIN_GROUPS). **Admin sekmesi: 80 sayfa / 7 kategori** (Admin 21 · Store 15 · Sağlık 11 · İşletme 11 · DadaFit 12 · Operatör-Antrenör 8 [detay+ol public, hariç] · Giriş-Sistem 2). Tüm linkler relative + v6'da mevcut + `target=_blank`. Her sekmede kendi araması. QA: `dizin-tab-qa.mjs` PASS (sekme geçişi + 80/7 + link bütünlük + public bozulmadı + mojibake 0 + 390 taşma 0).
 
 ## ⏭️ SIRADAKİ İŞ
-- **(a) BUGÜN:** `dizin.html` "Admin Panel" sekmesi — gözetim paneline giriş bağlantısı.
-- **(b) Faz 3 "Panelini Aç" köprüsü:** gözetim → operatör impersonation. İlk iş = **operatör panel envanteri**: antrenör paneli VAR (`antrenor-*-v1`); **diyetisyen (`dyt-*`) + mekan (`mekan-*`) panelleri mevcut mu teyit et** (envantere göre dyt 6 + mekan 4 dolu olmalı). Gözetim "Panelini Aç → X" aynı operatör dosyalarını besler, ikinci kez yazılmaz.
+- **Faz 3 "Panelini Aç" köprüsü:** gözetim → operatör impersonation. İlk iş = **operatör panel envanteri**: antrenör paneli VAR (`antrenor-*-v1`); **diyetisyen (`dyt-*`) + mekan (`mekan-*`) panelleri mevcut mu teyit et** (envantere göre dyt 6 + mekan 4 dolu olmalı). Gözetim "Panelini Aç → X" aynı operatör dosyalarını besler, ikinci kez yazılmaz.
+- **Opsiyonel minör (acele yok):** `sa-saglik` @390 3px sub-pixel · `sa-store-urunler-detay` @390 12px (detay, fix kapsamı dışıydı).
 
 ## DEĞİŞMEZ KURALLAR (gözetim paneli)
 - **Kanonik kabuk tek kaynak:** `assets/css/sa-shell.css` + `assets/js/sa-shell.js` (SECTIONS config) + `assets/css/sa-ui.css` + `assets/js/sa-ui.js` (saConfirm/saToast/dropdown). **DOKUNMA** — sadece `<link>`/`<script>` ile yükle; sa-ui shell.js tarafından auto-inject.
