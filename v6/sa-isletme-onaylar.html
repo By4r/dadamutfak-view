@@ -278,7 +278,7 @@
               <td>
                 <div class="row-actions">
                   <button class="act-btn warn"><i class="fa-solid fa-xmark"></i> Reddet</button>
-                  <button class="act-btn ok"><i class="fa-solid fa-check"></i> Onayla</button>
+                  <button class="act-btn ok" data-confirm="onayla"><i class="fa-solid fa-check"></i> Onayla</button>
                   <a class="act-btn" href="sa-isletme-onaylar-detay.html"><i class="fa-solid fa-eye"></i> Detay</a>
                 </div>
               </td>
@@ -301,7 +301,7 @@
               <td>
                 <div class="row-actions">
                   <button class="act-btn warn"><i class="fa-solid fa-xmark"></i> Reddet</button>
-                  <button class="act-btn ok"><i class="fa-solid fa-check"></i> Onayla</button>
+                  <button class="act-btn ok" data-confirm="onayla"><i class="fa-solid fa-check"></i> Onayla</button>
                   <a class="act-btn" href="sa-isletme-onaylar-detay.html"><i class="fa-solid fa-eye"></i> Detay</a>
                 </div>
               </td>
@@ -324,7 +324,7 @@
               <td>
                 <div class="row-actions">
                   <button class="act-btn warn"><i class="fa-solid fa-xmark"></i> Reddet</button>
-                  <button class="act-btn ok"><i class="fa-solid fa-check"></i> Onayla</button>
+                  <button class="act-btn ok" data-confirm="onayla"><i class="fa-solid fa-check"></i> Onayla</button>
                   <a class="act-btn" href="sa-isletme-onaylar-detay.html"><i class="fa-solid fa-eye"></i> Detay</a>
                 </div>
               </td>
@@ -402,6 +402,21 @@ document.getElementById('onaySearch').addEventListener('input', function(){
   });
   var empty = document.getElementById('onayEmpty');
   if(empty) empty.style.display = (visible === 0) ? '' : 'none';
+});
+
+/* ONAYLA (yıkıcı değil → sa-ui yerleşik DESTR kapsamı dışı) için saConfirm.
+   REDDET zaten sa-ui.js yerleşik destructive-delege ile yakalanıyor (fa-xmark/"Reddet"),
+   ona DOKUNMA — burada ele alınmaz, yoksa çift pop-up olur. */
+document.addEventListener('click', function(e){
+  var btn = e.target.closest('[data-confirm="onayla"]');
+  if(!btn) return;
+  e.preventDefault();
+  var row = btn.closest('tr');
+  var strong = row && row.querySelector('.app-id strong');
+  var name = strong ? strong.textContent.trim() : 'İşletme';
+  saConfirm({icon:'fa-check',title:'Başvuru onaylansın mı?',
+    message:'<b>'+name+'</b> onaylanacak ve platformda yayına alınacak.',
+    ok:'Onayla',onConfirm:function(){saToast(name+' onaylandı')}});
 });
 </script>
 </body>
