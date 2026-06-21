@@ -1,7 +1,7 @@
 import { chromium } from 'playwright';
 const OUT='/Users/gaviaworks/Developer/Projects/dadamutfak/outputs';
-const LIST='http://localhost:8765/v5/sa-store-siparisler.html';
-const DETAY='http://localhost:8765/v5/sa-store-siparisler-detay.html';
+const LIST='http://localhost:8765/v6/sa-store-siparisler.html';
+const DETAY='http://localhost:8765/v6/sa-store-siparisler-detay.html';
 const b=await chromium.launch();
 const errors=[];
 function wire(p){p.on('pageerror',e=>errors.push('PAGEERR:'+e.message));p.on('console',m=>{if(m.type()==='error')errors.push('CONSOLE:'+m.text())});}

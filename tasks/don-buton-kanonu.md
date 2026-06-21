@@ -1,6 +1,6 @@
 # Dön Buton Kanonu (madde 22)
 
-Kaynak: `v5/ansiklopedi-v1.html` → `.ans-back` ("Kategorilere dön").
+Kaynak: `v6/ansiklopedi-v1.html` → `.ans-back` ("Kategorilere dön").
 Tüm "geri/dön" butonları bu stile uyacak (sayfa-özel sınıf adı korunabilir, ama
 görsel/anatomi birebir).
 

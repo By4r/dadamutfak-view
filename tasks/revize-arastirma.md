@@ -77,7 +77,7 @@ Dada Sofra (tarif-uyumlu ürün önerisi) · Dada Besin Rehberi (kalori/makro/al
 
 ---
 
-## 3. V2 SECTION HARİTASI (v5/anasayfa-portal-v2.html, 1713 satır)
+## 3. V2 SECTION HARİTASI (v6/anasayfa-portal-v2.html, 1713 satır)
 
 | # | Section | Class | Satır (yaklaşık) | v3'te durum |
 |---|---|---|---|---|

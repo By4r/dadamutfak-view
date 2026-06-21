@@ -1,5 +1,5 @@
 import { chromium } from 'playwright';
-const B='http://localhost:8765/v5/';
+const B='http://localhost:8765/v6/';
 const b=await chromium.launch();
 
 // her sayfa: JS error, menü render, locked(Yakında) sayısı, aktif item screen'i

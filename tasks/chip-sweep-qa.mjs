@@ -8,7 +8,7 @@ for(const name of PAGES){
   const p=await b.newPage({viewport:{width:1440,height:1000}});
   p.on('pageerror',e=>errors.push('PAGEERR:'+e.message));
   p.on('console',m=>{if(m.type()==='error')errors.push('CONSOLE:'+m.text())});
-  await p.goto(`http://localhost:8765/v5/${name}.html`,{waitUntil:'networkidle'});
+  await p.goto(`http://localhost:8765/v6/${name}.html`,{waitUntil:'networkidle'});
   await p.waitForTimeout(350);
   // chip köşeli mi? ilk .chip'in computed border-radius'u ~8px olmalı (999px değil)
   const chipR=await p.evaluate(()=>{const c=document.querySelector('.chip');return c?getComputedStyle(c).borderRadius:'none';});

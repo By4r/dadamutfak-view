@@ -1,8 +1,8 @@
 import { chromium } from 'playwright';
 const OUT='/Users/gaviaworks/Developer/Projects/dadamutfak/outputs';
-const LIST='http://localhost:8765/v5/sa-admin-tarifler.html';
-const DET ='http://localhost:8765/v5/sa-admin-tarifler-detay.html';
-const FORM='http://localhost:8765/v5/sa-admin-tarifler-form.html';
+const LIST='http://localhost:8765/v6/sa-admin-tarifler.html';
+const DET ='http://localhost:8765/v6/sa-admin-tarifler-detay.html';
+const FORM='http://localhost:8765/v6/sa-admin-tarifler-form.html';
 const b=await chromium.launch();
 const errors=[];
 function wire(p){p.on('pageerror',e=>errors.push('PAGEERR:'+e.message));p.on('console',m=>{if(m.type()==='error')errors.push('CONSOLE:'+m.text())});}

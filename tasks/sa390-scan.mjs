@@ -1,13 +1,13 @@
 import { chromium } from 'playwright';
 import fs from 'fs';
 
-const files = fs.readdirSync('v5').filter(f => /^sa-.*\.html$/.test(f));
+const files = fs.readdirSync('v6').filter(f => /^sa-.*\.html$/.test(f));
 const browser = await chromium.launch();
 const page = await browser.newPage({ viewport:{ width:390, height:780 }, deviceScaleFactor:1 });
 
 const rows = [];
 for (const f of files) {
-  await page.goto('http://localhost:8765/v5/'+f, { waitUntil:'networkidle' });
+  await page.goto('http://localhost:8765/v6/'+f, { waitUntil:'networkidle' });
   await page.waitForTimeout(60);
   const d = await page.evaluate(() => {
     const de = document.documentElement;

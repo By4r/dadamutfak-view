@@ -5,8 +5,8 @@
 
 ## TIER 0 — TAMAMLANDI ✔
 
-- Ana sayfa (`v5/anasayfa-portal-v3a.html`, kanonik baz)
-- Tarif Detay F1 (`v5/tarif-detay-v1.html`, Tur 1 + 1.5 + 2)
+- Ana sayfa (`v6/anasayfa-portal-v3a.html`, kanonik baz)
+- Tarif Detay F1 (`v6/tarif-detay-v1.html`, Tur 1 + 1.5 + 2)
 
 ## TIER 1 — DALGA 1 — TAMAMLANDI ✔ (2026-06-11)
 
@@ -17,7 +17,7 @@
 | `form` | `tarif-ekle-v1.html` (form kiti doğdu) | F5 |
 | `profil` | `mutfak-defteri-v1.html` | F7 |
 
-Ön koşullar: `v5/_shell.html` + `tasks/bilesen-kilavuzu.md`.
+Ön koşullar: `v6/_shell.html` + `tasks/bilesen-kilavuzu.md`.
 
 ## TIER 2 — DALGA 2 — TAMAMLANDI ✔ (Beyar onaylı, 2026-06-11)
 
@@ -29,7 +29,7 @@
 | `diyetisyen` | diyetisyen-dizin, diyetisyen-profil, diyetisyen-ol | F12a |
 | `landing` | kategori, koleksiyon, seo-landing, gunun-menusu | ara iş ① |
 
-+ **Site-içi navigasyon bağlandı** (lead; `v5/.ss-scratch/navbind.py`).
++ **Site-içi navigasyon bağlandı** (lead; `v6/.ss-scratch/navbind.py`).
 + **Kapanış paketi:** hero-üst nefes standardı · tarif-liste taşma fix portu ·
   `.rev-*` kanonik · v3a stopPropagation. Sentez: `outputs/dalga2-sentez.md`.
 
@@ -90,7 +90,7 @@
 
 ## KURALLAR
 
-- Her teammate SADECE kendi `v5/<sayfa>-v1.html` dosyasına yazar;
+- Her teammate SADECE kendi `v6/<sayfa>-v1.html` dosyasına yazar;
   `handoff.md` / `lessons.md` / kanonik baz + önceki dalga dosyaları **READ-ONLY**
   (lead, Beyar onaylı href/fix geçişleri yapabilir).
 - **L1 kuralı her sayfada zorunlu:** eski template blok envanteri üretimden

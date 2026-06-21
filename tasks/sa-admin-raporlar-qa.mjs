@@ -1,5 +1,5 @@
 import { chromium } from 'playwright';
-const BASE='http://localhost:8765/v5/sa-admin-raporlar.html';
+const BASE='http://localhost:8765/v6/sa-admin-raporlar.html';
 const OUT='/Users/gaviaworks/Developer/Projects/dadamutfak/outputs';
 const b=await chromium.launch();
 const errors=[];

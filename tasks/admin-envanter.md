@@ -10,7 +10,7 @@
 ## 0. TL;DR — En kritik 6 bulgu
 
 1. **v5'te birleşik gerçek admin YOK.** Tek somut admin ekranı `admin-rozet-v1.html`; nav linklerinin çoğu `href="#"` placeholder. Geri kalan tüm CMS hâlâ legacy panelde.
-2. **Kanonik panel iskeleti = `v5/panel-shell.html`** (dosyada açıkça "DİYETİSYEN PANELİ KANONİK İSKELETİ" ilan edilmiş; `mekan-panel` ve `admin-rozet` "panel-shell tüketildi" diyor). **Tek sidebar + üst bar; çift sidebar / ikon-bar HENÜZ YOK** — karar setindeki çift-sidebar bu iskelet üzerine kurulacak.
+2. **Kanonik panel iskeleti = `v6/panel-shell.html`** (dosyada açıkça "DİYETİSYEN PANELİ KANONİK İSKELETİ" ilan edilmiş; `mekan-panel` ve `admin-rozet` "panel-shell tüketildi" diyor). **Tek sidebar + üst bar; çift sidebar / ikon-bar HENÜZ YOK** — karar setindeki çift-sidebar bu iskelet üzerine kurulacak.
 3. **v5'te 2 tam rol-paneli hazır:** Diyetisyen (`panel-shell` + 6 `dyt-*`) ve Mekân (`mekan-*` 4 ekran). Bunlar self-servis rol panelleri — süper-admin'in **denetim/onay katmanı** ayrı.
 4. **En büyük boşluk = DadaFit:** challenge, program, egzersiz kütüphanesi, antrenör dizini+fiyat — ne v5 admin'de ne legacy'de var. Sıfırdan.
 5. **Para/fiyat hiçbir yerde merkezi yönetilmiyor:** Pro abonelik kademeleri (kodda "Fiyat onay bekliyor — Yasin Bey" flag'i), antrenör/diyetisyen seans-paket, mekan menü, reklam paketi fiyatları hep hardcoded.
@@ -85,7 +85,7 @@ Metronic/KeenThemes **dark-sidebar** teması; tüm modüller tek iskeleti payla�
 
 ## A.3 — Kanonik shell adayı
 
-**`v5/panel-shell.html`** — 3 gerekçe:
+**`v6/panel-shell.html`** — 3 gerekçe:
 1. Dosya başı: *"PANEL-SHELL.HTML — DİYETİSYEN PANELİ KANONİK İSKELETİ (DALGA 4)… Yeni panel sayfası = bu dosyanın kopyası."* Diğerleri ("panel-shell tüketildi") türevi.
 2. Token/font/radius `_shell.html` ile birebir hizalı ama uygulama düzeni; tek `--pnl-side-w:248px` sidebar + `--pnl-top-h:64px` topbar.
 3. En kapsamlı bileşen seti: KPI grid, `.pnl-card`, `.ptable`, durum rozeti `.pstat`, randevu/mesaj/danışan satırları, boş durum, pro-gate + pro bandı, responsive off-canvas (≤980 burger, ≤640 yoğunluk).

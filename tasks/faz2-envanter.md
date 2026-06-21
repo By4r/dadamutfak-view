@@ -1,6 +1,6 @@
 # Faz 2 — Eksik Modül Envanteri (READ-ONLY)
 
-> Salt tespit + öneri. **Kod/değişiklik/commit YOK.** Kaynak: `v5/assets/js/sa-shell.js`
+> Salt tespit + öneri. **Kod/değişiklik/commit YOK.** Kaynak: `v6/assets/js/sa-shell.js`
 > (`SECTIONS` config) + wave-1 dolu `sa-*` ekranları + operatör panelleri (`dyt-*`/`mekan-*`).
 > Tarih: 2026-06-20. Referans plan: `tasks/sa-entegrasyon-plan.md` §3, §6.
 

@@ -4,7 +4,7 @@
 > Kod/implement yok. Sıradaki adım: bu rapor girdisiyle birlikte mimari + implement planı.
 >
 > Kaynak: 3 paralel read-only Explore taraması (madde 5+12, 6+15, 13). Tüm yollar
-> `v5/` altında. Satır no'ları taramadan; teyit isterse grep ile bakılır.
+> `v6/` altında. Satır no'ları taramadan; teyit isterse grep ile bakılır.
 
 ---
 

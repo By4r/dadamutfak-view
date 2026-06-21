@@ -1,6 +1,6 @@
 import { chromium } from 'playwright';
 const OUT='/Users/gaviaworks/Developer/Projects/dadamutfak/outputs';
-const B='http://localhost:8765/v5/';
+const B='http://localhost:8765/v6/';
 const b=await chromium.launch();
 const errors=[];
 function wire(p,tag){p.on('pageerror',e=>errors.push(tag+' PAGEERR:'+e.message));p.on('console',m=>{if(m.type()==='error')errors.push(tag+' CONSOLE:'+m.text())});}

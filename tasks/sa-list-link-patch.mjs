@@ -1,6 +1,6 @@
 import fs from 'fs';
 
-const DIR = 'v5/';
+const DIR = 'v6/';
 const SHELL = '<link rel="stylesheet" href="assets/css/sa-shell.css" />';
 const LINK  = '<link rel="stylesheet" href="assets/css/sa-list.css" />';
 

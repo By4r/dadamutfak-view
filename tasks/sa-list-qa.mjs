@@ -15,7 +15,7 @@ report.push('=== 390px ===');
 for (const f of KEY) {
   const errs = [];
   m.on('pageerror', e => errs.push(e.message));
-  await m.goto('http://localhost:8765/v5/'+f+'.html', { waitUntil:'networkidle' });
+  await m.goto('http://localhost:8765/v6/'+f+'.html', { waitUntil:'networkidle' });
   await m.waitForTimeout(60);
   const d = await m.evaluate(() => {
     const doc = document.documentElement.scrollWidth;
@@ -37,7 +37,7 @@ await m.close();
 const dk = await browser.newPage({ viewport:{ width:1440, height:900 } });
 report.push('\n=== 1440px (regresyon yok) ===');
 for (const f of ['sa-isletme-isletmeler','sa-admin-kullanicilar','sa-store-urunler']) {
-  await dk.goto('http://localhost:8765/v5/'+f+'.html', { waitUntil:'networkidle' });
+  await dk.goto('http://localhost:8765/v6/'+f+'.html', { waitUntil:'networkidle' });
   const d = await dk.evaluate(() => {
     const doc = document.documentElement.scrollWidth;
     const b = document.querySelector('.pc-body');

@@ -1,5 +1,5 @@
 import { chromium } from 'playwright';
-const BASE='http://localhost:8765/v5/antrenor-challenge-v1.html';
+const BASE='http://localhost:8765/v6/antrenor-challenge-v1.html';
 const OUT='/Users/gaviaworks/Developer/Projects/dadamutfak/outputs';
 const b=await chromium.launch();
 const errors=[];

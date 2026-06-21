@@ -23,7 +23,7 @@ for (const f of PAGES) {
   const errors = [];
   page.on('console', m => { if (m.type()==='error') errors.push(m.text()); });
   page.on('pageerror', e => errors.push('PAGEERR '+e.message));
-  await page.goto('http://localhost:8765/v5/'+f+'.html', { waitUntil:'networkidle' });
+  await page.goto('http://localhost:8765/v6/'+f+'.html', { waitUntil:'networkidle' });
   await page.waitForTimeout(80);
 
   const data = await page.evaluate(() => {
@@ -55,7 +55,7 @@ for (const f of PAGES) {
 
 // ---- STRES TESTİ ----
 report.push('\n=== STRES TESTİ (sa-admin-kullanicilar, ilk chip) ===');
-await page.goto('http://localhost:8765/v5/sa-admin-kullanicilar.html', { waitUntil:'networkidle' });
+await page.goto('http://localhost:8765/v6/sa-admin-kullanicilar.html', { waitUntil:'networkidle' });
 async function inject(val){
   return await page.evaluate(v => {
     const span = document.querySelector('.ch-cnt');

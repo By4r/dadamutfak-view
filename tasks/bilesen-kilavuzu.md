@@ -1,6 +1,6 @@
 # DadaMutfak — Bileşen Kılavuzu (TIER 1)
 
-> Kaynak: `v5/_shell.html` (chrome, hazır gelir) + `anasayfa-portal-v3a.html`
+> Kaynak: `v6/_shell.html` (chrome, hazır gelir) + `anasayfa-portal-v3a.html`
 > (v3a — satır no'lu) + `tarif-detay-v1.html` (TD — sadece class referansı).
 > Kural: ÖNCE buraya bak, yoksa v3a/TD'de ara, O DA yoksa yeni bileşeni token
 > diliyle kur (radius token'ları, pill YASAK; emoji bayrak YASAK → flagcdn img).

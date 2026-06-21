@@ -1,6 +1,6 @@
 import fs from 'fs';
 
-const DIR = 'v5/';
+const DIR = 'v6/';
 const PAGES = [
   // 10 yeni
   'sa-admin-kullanicilar','sa-admin-sayfalar','sa-store-urunler','sa-store-siparisler',

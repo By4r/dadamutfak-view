@@ -6,8 +6,8 @@
 
 ## 0. Girdi durumu (önemli)
 
-- **`tasks/super-admin-spec.md` YOK** (okunamadı). Plan, **`tasks/admin-envanter.md`** + bu görevdeki **KARAR SETİ** + `v5/panel-shell.html` derin okumasına dayandırıldı. Spec dosyası ileride yazılırsa bu planla çelişen yer çıkarsa plan revize edilir. → açık soru #3.
-- **Kanonik iskelet okundu:** `v5/panel-shell.html` (`.pnl-*` dili, token, tek dikey sidebar + üst bar, KPI/card/table/empty/pro-band/pro-gate, responsive ≤980 off-canvas / ≤640 yoğunluk).
+- **`tasks/super-admin-spec.md` YOK** (okunamadı). Plan, **`tasks/admin-envanter.md`** + bu görevdeki **KARAR SETİ** + `v6/panel-shell.html` derin okumasına dayandırıldı. Spec dosyası ileride yazılırsa bu planla çelişen yer çıkarsa plan revize edilir. → açık soru #3.
+- **Kanonik iskelet okundu:** `v6/panel-shell.html` (`.pnl-*` dili, token, tek dikey sidebar + üst bar, KPI/card/table/empty/pro-band/pro-gate, responsive ≤980 off-canvas / ≤640 yoğunluk).
 - **Kritik mimari bulgu:** `panel-shell` ve türevi `mekan-panel` aksanı **token'la değiştirmiyor** — her ikisi de her yerde **hardcoded `var(--green)`** kullanıyor (mekân paneli bile yeşil, petrol değil). Yani mevcut panel dilinde "bölüme göre aksan" diye bir mekanizma YOK. 6 bölümü farklı aksanla göstermek için omurga **yeni `--acc` aksan-token katmanı** kurmak zorunda (panel-shell'i GENİŞLETME; mevcut dosya `--green`'le kalır, dokunulmaz).
 
 ---
@@ -16,8 +16,8 @@
 
 | Dosya | Amaç |
 |---|---|
-| `v5/sa-shell.html` | **Omurga / kanonik çift-sidebar iskelet.** İkon-rail + bölüm menüsü + topbar + global dashboard (super) + her bölüm için placeholder dashboard. Tek dosya, `?role=` ve `?sec=` paramlarıyla config-driven render. "Yeni süper-admin sayfası = bu dosyanın kopyası" (panel-shell'in muadili). |
-| `v5/sa-giris-v1.html` | **Demo rol seçici giriş.** 5 rol kartı; seçilince `sa-shell.html?role=…`'e yönlendirir. `giris-v1.html`'e DOKUNMADAN ayrı dosya (gerekçe §5). |
+| `v6/sa-shell.html` | **Omurga / kanonik çift-sidebar iskelet.** İkon-rail + bölüm menüsü + topbar + global dashboard (super) + her bölüm için placeholder dashboard. Tek dosya, `?role=` ve `?sec=` paramlarıyla config-driven render. "Yeni süper-admin sayfası = bu dosyanın kopyası" (panel-shell'in muadili). |
+| `v6/sa-giris-v1.html` | **Demo rol seçici giriş.** 5 rol kartı; seçilince `sa-shell.html?role=…`'e yönlendirir. `giris-v1.html`'e DOKUNMADAN ayrı dosya (gerekçe §5). |
 
 Toplam **2 yeni dosya**. (Bölüm başına ayrı dosya açılmıyor — §4 gerekçe: tek config-driven shell, çift-sidebar geçişini gerçekten test edilebilir kılar ve DRY kalır.)
 

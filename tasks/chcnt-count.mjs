@@ -17,7 +17,7 @@ const browser = await chromium.launch();
 const page = await browser.newPage();
 
 for (const P of PAGES) {
-  await page.goto('http://localhost:8765/v5/' + P.f + '.html', { waitUntil:'networkidle' });
+  await page.goto('http://localhost:8765/v6/' + P.f + '.html', { waitUntil:'networkidle' });
   const chips = await page.$$(P.chip);
   const out = [];
   for (let i=0;i<chips.length;i++){

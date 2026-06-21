@@ -1,5 +1,5 @@
 import { chromium } from 'playwright';
-const B='http://localhost:8765/v5/';
+const B='http://localhost:8765/v6/';
 const PAGES=[
   ['panel','antrenor-panel-v1.html'],
   ['uyeler','antrenor-uyeler-v1.html'],

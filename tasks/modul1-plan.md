@@ -167,7 +167,7 @@ Disjoint dosyalar → worktree ile 2 teammate paralel mümkün.
 - [ ] Header hiçbir dosyada değişmedi; yeni renk yok; tüm görseller div+bg-image.
 
 **Doğrulama (her çıktı için — "bitti" auto-accept yok):**
-1. **Render SS** `v5/.ss-scratch/qa-shot.js <page> [tag]` → 3 viewport (1440/768/390),
+1. **Render SS** `v6/.ss-scratch/qa-shot.js <page> [tag]` → 3 viewport (1440/768/390),
    `outputs/`'a. Kendi self-verify: kategori başlıkları, ürün kart hizası, şube grid kolon
    reflow (3→2→1), panel form satır grid'i mobilde reflow.
 2. **Playwright davranış testi** (`.ss-scratch` altında kendi script):

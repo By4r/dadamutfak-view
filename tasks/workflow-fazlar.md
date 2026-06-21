@@ -14,7 +14,7 @@
 - **Faz sonu ritüeli:** ① SS doğrulama (header/footer/token v3a ile birebir mi
   dahil) → ② handoff.md güncelleme → ③ commit önerisi (Beyar izniyle) →
   ④ **Beyar/patron onayı**. Onaysız sonraki faza geçilmez.
-- **Kanonik baz:** `v5/anasayfa-portal-v3a.html` — token bloğu + header +
+- **Kanonik baz:** `v6/anasayfa-portal-v3a.html` — token bloğu + header +
   footer + mega menü her mockup'a birebir kopyalanır, lokal değişiklik yasak
   (bileşen drift'i önlemi).
 - Empty state'ler kendi fazında üretilir, statik faza bırakılmaz.

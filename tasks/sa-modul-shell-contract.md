@@ -1,7 +1,7 @@
 # SA Modül Dalgası — SHELL SÖZLEŞMESİ (bağlayıcı)
 
 > Bu dosya Tur-1 modül dalgasının **tek bağlayıcı shell kaynağıdır.** Her teammate her ekranda
-> bu sözleşmeye BİREBİR uyar. Kanonik kaynak: `v5/sa-shell.html` (FREEZE, commit 5e7ab0d).
+> bu sözleşmeye BİREBİR uyar. Kanonik kaynak: `v6/sa-shell.html` (FREEZE, commit 5e7ab0d).
 > Amaç: 5 bölüm dosyasında shell bloğu **byte-identical** kalsın (drift yok).
 
 ## 0. Her ekranın iskeleti (sıra)
@@ -24,7 +24,7 @@
 ```
 
 ## 1. `<style>` — VERBATIM kopya
-- `v5/sa-shell.html` satır **13–315** arası (`<style>`'dan `</style>`'a, dahil) **AYNEN** kopyalanır. Tek karakter değişmez.
+- `v6/sa-shell.html` satır **13–315** arası (`<style>`'dan `</style>`'a, dahil) **AYNEN** kopyalanır. Tek karakter değişmez.
 - Ardından, `</style>`'dan HEMEN ÖNCE şu işaret + ekrana özel CSS eklenir:
 ```
 /* ===================================================================
@@ -195,7 +195,7 @@ Kullanım: form = `.pnl-card` içinde `.form-sec` blokları (her biri `.form-sec
 Denetim deseni (Sağlık/İşletme): form YOK → liste + detay (detayda onay/askıya/onay aksiyonları).
 
 ## 9. Yasaklar
-- `v5/sa-shell.html`'e dokunma (lead dalga sonunda yalnız rail href güncellemesi yapar).
+- `v6/sa-shell.html`'e dokunma (lead dalga sonunda yalnız rail href güncellemesi yapar).
 - Başka teammate'in dosyasına yazma (bölüm prefix = domain).
 - `panel-shell/dyt-*/mekan-*/giris-v1`'e dokunma.
 - Yeni renk yok. Kare görsel = div+bg-image (img değil). Commit yok.

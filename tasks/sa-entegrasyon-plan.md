@@ -1,7 +1,7 @@
 # Süper-Admin Entegrasyon Planı
 
 > Salt plan. Kod/değişiklik/commit YOK. Kaynak envanter: `tasks/sa-envanter-tarama.md`.
-> Onaylı kabuk: `v5/sa-shell.html` (çift-sidebar: ikon-rail + koyu 2. menü + açık içerik).
+> Onaylı kabuk: `v6/sa-shell.html` (çift-sidebar: ikon-rail + koyu 2. menü + açık içerik).
 > Tarih: 2026-06-20.
 
 ---

@@ -2,7 +2,7 @@ import { chromium } from 'playwright';
 
 const browser = await chromium.launch();
 const page = await browser.newPage({ viewport:{ width:390, height:780 }, deviceScaleFactor:1 });
-await page.goto('http://localhost:8765/v5/sa-isletme-isletmeler.html', { waitUntil:'networkidle' });
+await page.goto('http://localhost:8765/v6/sa-isletme-isletmeler.html', { waitUntil:'networkidle' });
 await page.waitForTimeout(150);
 
 const diag = await page.evaluate(() => {

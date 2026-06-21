@@ -1,6 +1,6 @@
 # Süper-Admin Entegrasyon — Envanter Taraması
 
-> Salt tespit. Kod/değişiklik YOK. Kaynak: `v5/*.html` (138 dosya, top-level).
+> Salt tespit. Kod/değişiklik YOK. Kaynak: `v6/*.html` (138 dosya, top-level).
 > Tarih: 2026-06-20. Yöntem: chrome imza taraması (`pnl-side` = orijinal operatör
 > paneli · `sa-rail` = wave-1 süper-admin ekranı) + içerik derinliği (ptable/kpi/
 > özel markup) + başlık. `arsiv/`, `outputs/`, `.ss-*` hariç.

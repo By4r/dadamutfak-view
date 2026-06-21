@@ -15,7 +15,7 @@ for(const {n,act,cnt} of PAGES){
     const p=await b.newPage({viewport:{width:vw,height:1000}});
     p.on('pageerror',e=>errors.push('PAGEERR:'+e.message));
     p.on('console',m=>{if(m.type()==='error')errors.push('CONSOLE:'+m.text())});
-    await p.goto(`http://localhost:8765/v5/${n}.html`,{waitUntil:'networkidle'});
+    await p.goto(`http://localhost:8765/v6/${n}.html`,{waitUntil:'networkidle'});
     await p.waitForTimeout(350);
     const base=await p.evaluate(()=>{const c=document.querySelector('.chip:not(.is-active):not(.is-on):not(.active)')||document.querySelector('.chip');return c?{pad:getComputedStyle(c).padding,fw:getComputedStyle(c).fontWeight,r:getComputedStyle(c).borderRadius}:null;});
     // aktif chip: DOM'da GERÇEKTEN render edilmiş aktif chip'i oku (sentetik toggle paint olmadan computed güncellemiyor)

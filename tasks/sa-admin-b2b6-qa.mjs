@@ -1,5 +1,5 @@
 import { chromium } from 'playwright';
-const BASE='http://localhost:8765/v5/';
+const BASE='http://localhost:8765/v6/';
 const OUT='/Users/gaviaworks/Developer/Projects/dadamutfak/outputs';
 const b=await chromium.launch();
 

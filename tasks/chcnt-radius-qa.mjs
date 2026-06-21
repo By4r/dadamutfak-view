@@ -8,7 +8,7 @@ for(const n of PAGES){
   const p=await b.newPage({viewport:{width:1440,height:1000}});
   p.on('pageerror',e=>errors.push('PAGEERR:'+e.message));
   p.on('console',m=>{if(m.type()==='error')errors.push('CONSOLE:'+m.text())});
-  await p.goto(`http://localhost:8765/v5/${n}.html`,{waitUntil:'networkidle'});
+  await p.goto(`http://localhost:8765/v6/${n}.html`,{waitUntil:'networkidle'});
   await p.waitForTimeout(350);
   const r=await p.evaluate(()=>{
     const chip=document.querySelector('.chip');

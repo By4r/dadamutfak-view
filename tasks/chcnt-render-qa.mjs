@@ -26,7 +26,7 @@ for (const P of PAGES) {
   const errors = [];
   page.on('console', m => { if (m.type()==='error') errors.push(m.text()); });
   page.on('pageerror', e => errors.push('PAGEERR '+e.message));
-  await page.goto('http://localhost:8765/v5/'+P.f+'.html', { waitUntil:'networkidle' });
+  await page.goto('http://localhost:8765/v6/'+P.f+'.html', { waitUntil:'networkidle' });
 
   // overflow check on chips container
   const overflow = await page.evaluate(sel => {

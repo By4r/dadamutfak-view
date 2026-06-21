@@ -1,6 +1,6 @@
 import { chromium } from 'playwright';
 const OUT='/Users/gaviaworks/Developer/Projects/dadamutfak/outputs';
-const B='http://localhost:8765/v5/';
+const B='http://localhost:8765/v6/';
 const SEF=B+'sa-admin-sefler.html', SEFD=B+'sa-admin-sefler-detay.html', SEFF=B+'sa-admin-sefler-form.html';
 const SLD=B+'sa-admin-slider.html', SLDF=B+'sa-admin-slider-form.html';
 const b=await chromium.launch();
