@@ -38,10 +38,10 @@
     saglik: { eyebrow:'Sağlık', title:'Sağlık & Diyet', menu:[
       {ic:'fa-gauge-high',     lbl:'Genel Bakış',  href:'sa-saglik.html',                screen:'genel', active:true},
       {ic:'fa-user-doctor',    lbl:'Diyetisyenler', href:'sa-saglik-diyetisyenler.html', screen:'diyetisyenler', cnt:'4'},
-      {ic:'fa-calendar-check', lbl:'Randevular',     soon:true},
-      {ic:'fa-clipboard-list', lbl:'Reçeteler',      soon:true},
-      {ic:'fa-vial',           lbl:'Testler',        soon:true},
-      {ic:'fa-calculator',     lbl:'Hesaplayıcılar', soon:true}
+      {ic:'fa-calendar-check', lbl:'Randevular',     href:'sa-saglik-randevular.html',     screen:'randevular'},
+      {ic:'fa-clipboard-list', lbl:'Reçeteler',      href:'sa-saglik-receteler.html',      screen:'receteler'},
+      {ic:'fa-vial',           lbl:'Testler',        href:'sa-saglik-testler.html',        screen:'testler'},
+      {ic:'fa-calculator',     lbl:'Hesaplayıcılar', href:'sa-saglik-hesaplayicilar.html', screen:'hesaplayicilar'}
     ]},
     store: { eyebrow:'E-Ticaret', title:'DadaStore', menu:[
       {ic:'fa-gauge-high',  lbl:'Genel Bakış', href:'sa-store.html',         screen:'genel', active:true},
@@ -57,19 +57,17 @@
     dadafit: { eyebrow:'Fitness', title:'DadaFit', menu:[
       {ic:'fa-gauge-high', lbl:'Genel Bakış',   href:'sa-dadafit.html',           screen:'genel', active:true},
       {ic:'fa-trophy',     lbl:"Challenge'lar", href:'sa-dadafit-challenge.html', screen:'challenge'},
-      {seclbl:'Faz 2 · Yakında'},
-      {ic:'fa-user-ninja', lbl:'Antrenörler', soon:true},
-      {ic:'fa-dumbbell',   lbl:'Egzersizler', soon:true},
-      {ic:'fa-list-check', lbl:'Programlar',  soon:true}
+      {ic:'fa-user-ninja', lbl:'Antrenörler', href:'sa-dadafit-antrenorler.html', screen:'antrenorler'},
+      {ic:'fa-dumbbell',   lbl:'Egzersizler', href:'sa-dadafit-egzersizler.html', screen:'egzersizler'},
+      {ic:'fa-list-check', lbl:'Programlar',  href:'sa-dadafit-programlar.html',  screen:'programlar'}
     ]},
     isletme: { eyebrow:'İşletme', title:'İşletmeler', menu:[
       {ic:'fa-gauge-high',    lbl:'Genel Bakış', href:'sa-isletme.html',            screen:'genel', active:true},
       {ic:'fa-store',         lbl:'İşletmeler',  href:'sa-isletme-isletmeler.html', screen:'isletmeler', cnt:'5'},
-      {seclbl:'Faz 2 · Yakında'},
-      {ic:'fa-calendar-day',  lbl:'Rezervasyonlar',    soon:true},
-      {ic:'fa-utensils',      lbl:'Menüler',           soon:true},
-      {ic:'fa-circle-check',  lbl:'Onaylar',           soon:true},
-      {ic:'fa-rectangle-ad',  lbl:'Reklam Paketleri',  soon:true}
+      {ic:'fa-calendar-day',  lbl:'Rezervasyonlar',    href:'sa-isletme-rezervasyonlar.html', screen:'rezervasyonlar'},
+      {ic:'fa-utensils',      lbl:'Menüler',           href:'sa-isletme-menuler.html',        screen:'menuler'},
+      {ic:'fa-circle-check',  lbl:'Onaylar',           href:'sa-isletme-onaylar.html',        screen:'onaylar'},
+      {ic:'fa-rectangle-ad',  lbl:'Reklam Paketleri',  href:'sa-isletme-reklam.html',         screen:'reklam'}
     ]},
     akademi: { eyebrow:'İçerik', title:'DadaAkademi', locked:true, menu:[] }
   };

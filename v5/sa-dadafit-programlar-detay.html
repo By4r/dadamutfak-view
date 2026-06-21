@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Program Detay — DadaFit Süper Admin</title>
+<link rel="shortcut icon" type="image/x-icon" href="assets/img/favicon.ico" />
+<!-- FontAwesome 6.5.2 (kilitli ikon seti) -->
+<link rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+      integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A=="
+      crossorigin="anonymous" referrerpolicy="no-referrer" />
+<link rel="stylesheet" href="assets/css/sa-shell.css" />
+<style>
+/* =====================================================================
+   SA-DADAFIT-PROGRAMLAR-DETAY — SAYFA CSS (kabuk CSS'i sa-shell.css'te).
+   CRUD detay deseni: sa-dadafit-challenge-detay flagship'ten uyarlandı.
+   ===================================================================== */
+
+/* Detay 2-kolon layout */
+.detail-layout{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);gap:20px;align-items:start}
+
+/* Kapak görseli (detay hero) */
+.pg-hero{width:100%;aspect-ratio:16/9;border-radius:var(--radius-lg);background-size:cover;background-position:center;border:1px solid var(--line);position:relative;overflow:hidden}
+.pg-hero-bar{position:absolute;bottom:0;left:0;right:0;padding:20px 22px 16px;background:linear-gradient(to top, rgba(33,30,22,.72) 0%, transparent 100%)}
+.pg-hero-title{font-size:22px;font-weight:700;color:#fff;line-height:1.2;letter-spacing:-.01em}
+.pg-hero-meta{display:flex;align-items:center;gap:10px;margin-top:6px;flex-wrap:wrap}
+.pg-hero-tag{font-size:12px;font-weight:700;color:rgba(255,255,255,.85);background:rgba(255,255,255,.15);padding:3px 9px;border-radius:5px;backdrop-filter:blur(4px)}
+
+/* Meta satır */
+.meta-row{display:flex;align-items:center;justify-content:space-between;padding:11px 0;border-bottom:1px solid var(--line);font-size:13.5px}
+.meta-row:last-child{border-bottom:none}
+.meta-row .mr-lbl{color:var(--muted);font-size:12.5px}
+.meta-row .mr-val{font-weight:700;color:var(--slate)}
+
+/* İlerleme çubuğu */
+.prog-bar-wrap{margin-top:6px}
+.prog-bar-labels{display:flex;justify-content:space-between;margin-bottom:5px;font-size:11.5px;color:var(--muted)}
+.prog-bar-labels b{color:var(--acc-deep)}
+.prog-track{height:8px;border-radius:var(--radius-pill);background:var(--bg);border:1px solid var(--line);overflow:hidden}
+.prog-fill{height:100%;border-radius:var(--radius-pill);background:var(--acc);transition:.6s var(--ease)}
+
+/* ============================================================
+   HAFTALIK / GÜNLÜK BREAKDOWN (detay görünümü)
+   ============================================================ */
+.plan-tabs{display:flex;gap:4px;padding:0 0 14px;flex-wrap:wrap}
+.plan-tab{height:32px;padding:0 13px;border-radius:var(--radius-pill);font-family:inherit;font-size:12.5px;font-weight:700;cursor:pointer;border:1px solid var(--line);background:var(--bg);color:var(--slate-2);transition:.15s var(--ease)}
+.plan-tab:hover{border-color:var(--acc);color:var(--acc-deep)}
+.plan-tab.active{background:var(--acc);border-color:var(--acc);color:#fff}
+.day-ex-list{display:flex;flex-direction:column;gap:8px}
+.day-ex{display:flex;align-items:center;gap:12px;padding:11px 13px;background:var(--bg);border:1px solid var(--line);border-radius:var(--radius-sm)}
+.day-ex .de-num{width:24px;height:24px;flex:none;border-radius:var(--radius-circle);background:rgba(var(--acc-rgb),.12);color:var(--acc-deep);display:flex;align-items:center;justify-content:center;font-size:11.5px;font-weight:700}
+.day-ex .de-thumb{width:38px;height:38px;flex:none;border-radius:6px;background-size:cover;background-position:center;border:1px solid var(--line)}
+.day-ex .de-info{flex:1;min-width:0;line-height:1.3}
+.day-ex .de-info strong{font-size:13px;font-weight:700;color:var(--slate);display:block}
+.day-ex .de-info span{font-size:11.5px;color:var(--muted)}
+.day-ex .de-sets{font-size:12.5px;font-weight:700;color:var(--acc-deep);white-space:nowrap}
+.day-rest{text-align:center;padding:24px;color:var(--muted);font-size:13px;background:var(--bg);border:1px dashed var(--line);border-radius:var(--radius-sm)}
+.day-rest i{display:block;font-size:22px;margin-bottom:8px;color:var(--line)}
+
+/* Sağ meta kart */
+.meta-card{position:sticky;top:calc(var(--pnl-top-h) + 28px);display:flex;flex-direction:column;gap:14px}
+.act-stack{display:flex;flex-direction:column;gap:8px}
+
+/* Katılımcı mini-avatar satırı */
+.part-avatars{display:flex;align-items:center}
+.pa-ava{width:28px;height:28px;border-radius:var(--radius-circle);border:2px solid var(--paper);margin-left:-8px;background-size:cover;background-position:center;flex:none}
+.pa-ava:first-child{margin-left:0}
+.pa-more{font-size:11.5px;font-weight:700;color:var(--acc-deep);margin-left:6px}
+
+@media(max-width:980px){
+  .detail-layout{grid-template-columns:minmax(0,1fr)}
+  .meta-card{position:static}
+}
+</style>
+</head>
+<body data-brand="mutfak" data-sec="dadafit" data-screen="programlar">
+
+<div class="sa-app">
+
+  <!-- §1 İKON-RAIL -->
+  <aside class="sa-rail" id="saRail">
+    <a class="sa-rail-logo" href="sa-giris-v1.html" title="Yönetim Girişi"><img src="assets/img/logo-mark.png" alt="DadaMutfak" /></a>
+    <a class="sa-rail-ico" data-sec="genel" href="sa-shell.html?sec=genel" title="Genel Bakış"><i class="fa-solid fa-gauge-high"></i></a>
+    <span class="sa-rail-div"></span>
+    <a class="sa-rail-ico" data-sec="admin"   href="sa-admin.html"   title="Admin"><i class="fa-solid fa-shield-halved"></i></a>
+    <a class="sa-rail-ico" data-sec="saglik"  href="sa-saglik.html"  title="Sağlık &amp; Diyet"><i class="fa-solid fa-heart-pulse"></i></a>
+    <a class="sa-rail-ico" data-sec="store"   href="sa-store.html"   title="DadaStore"><i class="fa-solid fa-bag-shopping"></i></a>
+    <a class="sa-rail-ico" data-sec="dadafit" href="sa-dadafit.html" title="DadaFit"><i class="fa-solid fa-dumbbell"></i></a>
+    <a class="sa-rail-ico" data-sec="isletme" href="sa-isletme.html" title="İşletmeler"><i class="fa-solid fa-store"></i></a>
+    <a class="sa-rail-ico is-locked" data-sec="akademi" href="#" title="DadaAkademi — Yakında"><i class="fa-solid fa-graduation-cap"></i><i class="fa-solid fa-lock sr-lock"></i></a>
+    <div class="sa-rail-foot"><a class="sa-rail-ico" href="anasayfa-portal-v3a.html" title="Siteye Dön"><i class="fa-solid fa-arrow-left"></i></a></div>
+  </aside>
+
+  <!-- §2 BÖLÜM MENÜSÜ (JS) -->
+  <nav class="sa-menu" id="saMenu"></nav>
+
+  <div class="sa-divider" id="saDivider" role="separator" aria-label="Menüyü daralt/genişlet" title="Sürükle veya tıkla — menüyü daralt/genişlet">
+    <span class="sa-grip"><i class="fa-solid fa-grip-lines-vertical"></i></span>
+  </div>
+
+  <div class="pnl-overlay" id="pnlOverlay"></div>
+
+  <!-- §3 ÜST BAR -->
+  <header class="pnl-top">
+    <button class="pnl-burger" id="pnlBurger" aria-label="Menü"><i class="fa-solid fa-bars"></i></button>
+    <div class="pnl-search">
+      <i class="fa-solid fa-magnifying-glass"></i>
+      <input type="text" placeholder="Program, hedef ara…" />
+    </div>
+    <div class="pnl-top-tools">
+      <button class="pnl-bell" aria-label="Bildirimler"><i class="fa-regular fa-bell"></i><span class="pb-dot"></span></button>
+      <div class="pnl-me">
+        <div class="pm-ava"><i class="fa-solid fa-user"></i></div>
+        <div class="pm-id">
+          <div class="pm-name" id="pmName">Süper Admin</div>
+          <div class="pm-role" id="pmRole">Tüm yetki</div>
+        </div>
+        <i class="fa-solid fa-chevron-down"></i>
+      </div>
+    </div>
+  </header>
+
+  <!-- §4 İÇERİK — Program Detay -->
+  <main class="pnl-main" id="saMain">
+
+    <!-- Sayfa başlığı: başlık + durum + aksiyonlar -->
+    <div class="pnl-page-head">
+      <div>
+        <div style="margin-bottom:6px">
+          <a href="sa-dadafit-programlar.html" style="font-size:13px;font-weight:700;color:var(--muted);display:inline-flex;align-items:center;gap:6px;transition:.18s" onmouseover="this.style.color='var(--acc-deep)'" onmouseout="this.style.color='var(--muted)'">
+            <i class="fa-solid fa-arrow-left"></i> Programlara Dön
+          </a>
+        </div>
+        <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+          <h1>Kuvvet Temelleri 8 Hafta</h1>
+          <span class="pstat ok">Aktif</span>
+        </div>
+        <div class="ph-sub">Kas Kazanma · Orta seviye · 8 hafta · haftada 3 gün</div>
+      </div>
+      <div class="ph-actions">
+        <a href="sa-dadafit-programlar-form.html" class="btn btn-ghost btn-sm"><i class="fa-solid fa-pen"></i> Düzenle</a>
+        <button type="button" class="btn btn-ghost btn-sm" style="color:var(--tomato);border-color:var(--tomato)" data-archive="Kuvvet Temelleri 8 Hafta"><i class="fa-solid fa-box-archive"></i> Arşivle</button>
+      </div>
+    </div>
+
+    <!-- 2-kolon detay layout -->
+    <div class="detail-layout">
+
+      <!-- Sol: içerik kartları -->
+      <div style="display:flex;flex-direction:column;gap:16px">
+
+        <!-- Hero kart -->
+        <div class="pnl-card" style="overflow:hidden">
+          <div class="pg-hero" style="background-image:url('https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=900&q=80&auto=format&fit=crop')">
+            <div class="pg-hero-bar">
+              <div class="pg-hero-title">Kuvvet Temelleri 8 Hafta</div>
+              <div class="pg-hero-meta">
+                <span class="pg-hero-tag">Kas Kazanma</span>
+                <span class="pg-hero-tag">8 Hafta</span>
+                <span class="pg-hero-tag">Orta</span>
+              </div>
+            </div>
+          </div>
+          <div class="pc-body">
+            <p style="font-size:13.5px;color:var(--slate-2);line-height:1.65">
+              Temel bileşik hareketlere dayanan, 8 haftalık ilerlemeli bir kuvvet programı. Haftada 3 antrenman günü ile
+              squat, deadlift ve bench press etrafında kurulu; başlangıç-orta seviye sporcuların kuvvet ve kas kütlesini
+              sistematik biçimde artırmasını hedefler.
+            </p>
+            <div class="prog-bar-wrap" style="margin-top:16px">
+              <div class="prog-bar-labels">
+                <span><b>4. hafta</b> / 8 — Program ortası</span>
+                <span><b>50%</b></span>
+              </div>
+              <div class="prog-track"><div class="prog-fill" style="width:50%"></div></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Haftalık / Günlük breakdown -->
+        <div class="pnl-card">
+          <div class="pc-head">
+            <div class="pc-title"><i class="fa-solid fa-calendar-week"></i> Haftalık Plan</div>
+            <span style="font-size:12px;color:var(--muted)">3 antrenman günü · 32 egzersiz</span>
+          </div>
+          <div class="pc-body">
+            <div class="plan-tabs" id="planTabs"><!-- JS doldurur --></div>
+            <div id="planDay"><!-- JS doldurur --></div>
+          </div>
+        </div>
+
+        <!-- Son aktivite -->
+        <div class="pnl-card">
+          <div class="pc-head">
+            <div class="pc-title"><i class="fa-solid fa-wave-square"></i> Son Aktivite</div>
+            <a class="pc-link" href="#" onclick="saToast('Tüm aktivite akışı Faz 3\'te');return false">Tümünü Gör <i class="fa-solid fa-arrow-right"></i></a>
+          </div>
+          <div class="act-list">
+            <div class="act-row">
+              <div class="act-ico t-dadafit"><i class="fa-solid fa-check-circle"></i></div>
+              <div class="act-info"><b>Ahmet T. — 4. hafta Gün 2 tamamlandı</b><span>Bench Press 4×8 · PR kırdı</span></div>
+              <span class="act-time">18 dk</span>
+            </div>
+            <div class="act-row">
+              <div class="act-ico t-dadafit"><i class="fa-solid fa-user-plus"></i></div>
+              <div class="act-info"><b>Yeni kayıt: Merve K.</b><span>Programa başladı · 1. hafta</span></div>
+              <span class="act-time">2 sa</span>
+            </div>
+            <div class="act-row">
+              <div class="act-ico t-dadafit"><i class="fa-solid fa-star"></i></div>
+              <div class="act-info"><b>412 kullanıcıya ulaştı</b><span>Bu ay en çok başlanan kuvvet programı</span></div>
+              <span class="act-time">5 sa</span>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /sol -->
+
+      <!-- Sağ: meta kart -->
+      <div class="meta-card">
+
+        <!-- İstatistikler -->
+        <div class="pnl-card">
+          <div class="pc-head">
+            <div class="pc-title"><i class="fa-solid fa-chart-bar"></i> İstatistikler</div>
+          </div>
+          <div class="pc-body" style="padding:0 22px">
+            <div class="meta-row"><span class="mr-lbl">Toplam Kayıt</span><span class="mr-val">412</span></div>
+            <div class="meta-row"><span class="mr-lbl">Aktif (bu hafta)</span><span class="mr-val">287</span></div>
+            <div class="meta-row"><span class="mr-lbl">Tamamlama Oranı</span><span class="mr-val">64%</span></div>
+            <div class="meta-row"><span class="mr-lbl">Ortalama İlerleme</span><span class="mr-val">4. hafta</span></div>
+          </div>
+          <div class="pc-body" style="padding:12px 22px 16px;border-top:1px solid var(--line)">
+            <div style="font-size:12px;font-weight:700;color:var(--muted);margin-bottom:8px;text-transform:uppercase;letter-spacing:.08em">Son Kayıtlar</div>
+            <div class="part-avatars">
+              <div class="pa-ava" style="background-image:url('https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=80&q=80&auto=format&fit=crop')"></div>
+              <div class="pa-ava" style="background-image:url('https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=80&q=80&auto=format&fit=crop')"></div>
+              <div class="pa-ava" style="background-image:url('https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=80&q=80&auto=format&fit=crop')"></div>
+              <div class="pa-ava" style="background-image:url('https://images.unsplash.com/photo-1494790108755-2616b9a58b91?w=80&q=80&auto=format&fit=crop')"></div>
+              <span class="pa-more">+408</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Bilgiler -->
+        <div class="pnl-card">
+          <div class="pc-head">
+            <div class="pc-title"><i class="fa-solid fa-circle-info"></i> Bilgiler</div>
+          </div>
+          <div class="pc-body" style="padding:0 22px">
+            <div class="meta-row"><span class="mr-lbl">Hedef</span><span class="mr-val">Kas Kazanma</span></div>
+            <div class="meta-row"><span class="mr-lbl">Seviye</span><span class="mr-val">Orta</span></div>
+            <div class="meta-row"><span class="mr-lbl">Süre</span><span class="mr-val">8 Hafta</span></div>
+            <div class="meta-row"><span class="mr-lbl">Haftalık Gün</span><span class="mr-val">3 gün</span></div>
+            <div class="meta-row"><span class="mr-lbl">Egzersiz Sayısı</span><span class="mr-val">32</span></div>
+            <div class="meta-row"><span class="mr-lbl">Oluşturulma</span><span class="mr-val">3 Mar 2026</span></div>
+          </div>
+        </div>
+
+        <!-- Aksiyon kutusu -->
+        <div class="pnl-card">
+          <div class="pc-head">
+            <div class="pc-title"><i class="fa-solid fa-bolt"></i> Aksiyonlar</div>
+          </div>
+          <div class="pc-body" style="padding:14px">
+            <div class="act-stack">
+              <a href="sa-dadafit-programlar-form.html" class="btn btn-ghost btn-sm" style="justify-content:flex-start"><i class="fa-solid fa-pen"></i> Düzenle</a>
+              <button type="button" class="btn btn-ghost btn-sm" style="justify-content:flex-start" onclick="saToast('Program kopyalandı')"><i class="fa-solid fa-copy"></i> Kopyala</button>
+              <button type="button" class="btn btn-ghost btn-sm" style="justify-content:flex-start;color:var(--tomato);border-color:var(--tomato)" data-archive="Kuvvet Temelleri 8 Hafta"><i class="fa-solid fa-box-archive"></i> Arşivle</button>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /sağ -->
+    </div><!-- /detail-layout -->
+
+  </main>
+
+</div><!-- /sa-app -->
+
+<script src="assets/js/sa-shell.js"></script>
+
+<!-- SAYFA JS — Haftalık breakdown + arşivle onayı -->
+<script>
+(function(){
+  /* Demo: 3 antrenman günü, gün gün egzersizler */
+  var DAYS = [
+    {ad:'Gün 1 — İtiş (Push)', ex:[
+      {ad:'Bench Press', kas:'Göğüs · Triceps', sets:'4×8', img:'https://images.unsplash.com/photo-1534368786749-d63b2c0d22ad?w=120&q=80&auto=format&fit=crop'},
+      {ad:'Overhead Press', kas:'Omuz', sets:'3×10', img:'https://images.unsplash.com/photo-1532029837206-abbe2b7620e3?w=120&q=80&auto=format&fit=crop'},
+      {ad:'Triceps Dips', kas:'Triceps', sets:'3×12', img:'https://images.unsplash.com/photo-1598971639058-fab3c3109a00?w=120&q=80&auto=format&fit=crop'},
+      {ad:'Plank', kas:'Core', sets:'3×45sn', img:'https://images.unsplash.com/photo-1566241142559-40e1dab266c6?w=120&q=80&auto=format&fit=crop'}
+    ]},
+    {ad:'Gün 2 — Çekiş (Pull)', ex:[
+      {ad:'Deadlift', kas:'Sırt · Hamstring', sets:'4×6', img:'https://images.unsplash.com/photo-1517963879433-6ad2b056d712?w=120&q=80&auto=format&fit=crop'},
+      {ad:'Barbell Row', kas:'Sırt', sets:'4×8', img:'https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?w=120&q=80&auto=format&fit=crop'},
+      {ad:'Pull-up', kas:'Sırt · Biceps', sets:'3×8', img:'https://images.unsplash.com/photo-1598971639058-fab3c3109a00?w=120&q=80&auto=format&fit=crop'}
+    ]},
+    {ad:'Gün 3 — Bacak (Legs)', ex:[
+      {ad:'Barbell Squat', kas:'Bacak · Glutes', sets:'4×8', img:'https://images.unsplash.com/photo-1534368786749-d63b2c0d22ad?w=120&q=80&auto=format&fit=crop'},
+      {ad:'Romanian Deadlift', kas:'Hamstring', sets:'3×10', img:'https://images.unsplash.com/photo-1517963879433-6ad2b056d712?w=120&q=80&auto=format&fit=crop'},
+      {ad:'Walking Lunge', kas:'Bacak', sets:'3×12', img:'https://images.unsplash.com/photo-1434596922112-19c563067271?w=120&q=80&auto=format&fit=crop'},
+      {ad:'Calf Raise', kas:'Baldır', sets:'4×15', img:'https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=120&q=80&auto=format&fit=crop'}
+    ]}
+  ];
+  var activeDay = 0;
+  var tabsEl = document.getElementById('planTabs');
+  var dayEl  = document.getElementById('planDay');
+
+  function renderTabs(){
+    tabsEl.innerHTML = DAYS.map(function(d,i){
+      return '<button type="button" class="plan-tab' + (i===activeDay?' active':'') + '" data-day="' + i + '">Gün ' + (i+1) + ' · ' + d.ex.length + '</button>';
+    }).join('');
+  }
+  function renderDay(){
+    var d = DAYS[activeDay];
+    if(!d.ex.length){
+      dayEl.innerHTML = '<div class="day-rest"><i class="fa-solid fa-bed"></i>Dinlenme günü.</div>';
+      return;
+    }
+    dayEl.innerHTML = '<div class="day-ex-list">' + d.ex.map(function(ex,i){
+      return '<div class="day-ex">'
+        + '<div class="de-num">' + (i+1) + '</div>'
+        + '<div class="de-thumb" style="background-image:url(\'' + ex.img + '\')"></div>'
+        + '<div class="de-info"><strong>' + ex.ad + '</strong><span>' + ex.kas + '</span></div>'
+        + '<span class="de-sets">' + ex.sets + '</span>'
+        + '</div>';
+    }).join('') + '</div>';
+  }
+  tabsEl.addEventListener('click', function(e){
+    var t = e.target.closest('.plan-tab');
+    if(!t) return;
+    activeDay = parseInt(t.dataset.day,10);
+    renderTabs(); renderDay();
+  });
+  renderTabs(); renderDay();
+
+  /* Arşivle onayı (saConfirm — sa-ui.js sa-shell tarafından enjekte) */
+  document.addEventListener('click', function(e){
+    var btn = e.target.closest('[data-archive]');
+    if(!btn) return;
+    e.preventDefault();
+    var ad = btn.dataset.archive || 'Program';
+    saConfirm({danger:true,icon:'fa-box-archive',title:'Program arşivlensin mi?',
+      message:'<b>'+ad+'</b> aktif listeden kaldırılıp arşive taşınır. Kayıtlı kullanıcılar programı tamamlayabilir.',
+      ok:'Arşivle',onConfirm:function(){saToast(ad+' arşivlendi')}});
+  }, true);
+})();
+</script>
+
+</body>
+</html>

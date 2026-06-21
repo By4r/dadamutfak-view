@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Yeni Program — DadaFit Süper Admin</title>
+<link rel="shortcut icon" type="image/x-icon" href="assets/img/favicon.ico" />
+<!-- FontAwesome 6.5.2 (kilitli ikon seti) -->
+<link rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+      integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A=="
+      crossorigin="anonymous" referrerpolicy="no-referrer" />
+<link rel="stylesheet" href="assets/css/sa-shell.css" />
+<style>
+/* =====================================================================
+   SA-DADAFIT-PROGRAMLAR-FORM — SAYFA CSS (kabuk CSS'i sa-shell.css'te).
+   CRUD form deseni: sa-dadafit-challenge-form flagship'ten uyarlandı.
+   ===================================================================== */
+
+/* ORTAK FORM ALANLARI */
+.form-grid{display:grid;gap:18px}
+.frow{display:flex;flex-direction:column;gap:7px}
+.frow label{font-size:12.5px;font-weight:700;color:var(--slate-2)}
+.frow .fhint{font-size:11.5px;color:var(--muted);font-weight:500}
+.finput,.fselect,.ftext{width:100%;font-family:inherit;font-size:13.5px;font-weight:500;color:var(--ink);background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-md);padding:0 14px;height:44px;outline:none;transition:.2s var(--ease)}
+.ftext{height:auto;padding:12px 14px;line-height:1.5;resize:vertical;min-height:96px}
+.finput:focus,.fselect:focus,.ftext:focus{border-color:var(--acc);box-shadow:0 0 0 3px rgba(var(--acc-rgb),.12)}
+.frow.two{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.form-sec{padding:18px 22px;border-bottom:1px solid var(--line)}
+.form-sec:last-child{border-bottom:none}
+.form-sec-tt{font-size:13px;font-weight:700;color:var(--slate);margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.form-sec-tt i{color:var(--acc)}
+.form-actions{display:flex;gap:10px;justify-content:flex-end;padding:16px 22px}
+
+/* Form layout: 2-kolon (sol geniş form + sağ özet) */
+.form-layout{display:grid;grid-template-columns:minmax(0,1fr) minmax(280px,360px);gap:24px;align-items:start}
+
+/* Kapak görseli yükleyici (statik placeholder — gerçek upload yok) */
+.img-upload{width:100%;aspect-ratio:16/9;border-radius:var(--radius-md);border:2px dashed var(--line);background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;cursor:pointer;transition:.2s var(--ease);position:relative;overflow:hidden}
+.img-upload:hover{border-color:var(--acc);background:rgba(var(--acc-rgb),.04)}
+.img-upload .iu-preview{position:absolute;inset:0;background-size:cover;background-position:center;border-radius:calc(var(--radius-md) - 2px)}
+.img-upload .iu-overlay{position:absolute;inset:0;background:rgba(33,30,22,.45);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;opacity:0;transition:.2s;border-radius:calc(var(--radius-md) - 2px)}
+.img-upload:hover .iu-overlay{opacity:1}
+.img-upload .iu-icon{width:44px;height:44px;border-radius:var(--radius-md);background:rgba(var(--acc-rgb),.14);color:var(--acc-deep);display:grid;place-items:center;font-size:18px}
+.img-upload .iu-lbl{font-size:13px;font-weight:700;color:var(--slate-2)}
+.img-upload .iu-hint{font-size:11.5px;color:var(--muted)}
+
+/* ============================================================
+   HAFTALIK / GÜNLÜK PLAN — gün gün egzersiz ekleme
+   ============================================================ */
+.plan-wrap{background:var(--bg);border-radius:var(--radius-md);border:1px solid var(--line);overflow:hidden}
+.plan-tabs{display:flex;gap:4px;padding:10px 12px;border-bottom:1px solid var(--line);background:var(--paper);flex-wrap:wrap}
+.plan-tab{height:32px;padding:0 13px;border-radius:var(--radius-pill);font-family:inherit;font-size:12.5px;font-weight:700;cursor:pointer;border:1px solid var(--line);background:var(--bg);color:var(--slate-2);transition:.15s var(--ease)}
+.plan-tab:hover{border-color:var(--acc);color:var(--acc-deep)}
+.plan-tab.active{background:var(--acc);border-color:var(--acc);color:#fff}
+.plan-day{padding:14px}
+.day-ex-list{display:flex;flex-direction:column;gap:8px}
+.day-ex{display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-sm)}
+.day-ex .de-grip{color:var(--muted);font-size:12px;cursor:grab}
+.day-ex .de-thumb{width:34px;height:34px;flex:none;border-radius:6px;background-size:cover;background-position:center;border:1px solid var(--line)}
+.day-ex .de-info{flex:1;min-width:0;line-height:1.3}
+.day-ex .de-info strong{font-size:13px;font-weight:700;color:var(--slate);display:block}
+.day-ex .de-info span{font-size:11.5px;color:var(--muted)}
+.day-ex .de-sets{font-size:12px;font-weight:700;color:var(--acc-deep);white-space:nowrap}
+.day-ex .de-del{width:28px;height:28px;flex:none;border:1px solid var(--line);border-radius:6px;background:var(--paper);color:var(--muted);cursor:pointer;transition:.15s var(--ease);display:flex;align-items:center;justify-content:center;font-size:11px}
+.day-ex .de-del:hover{border-color:var(--tomato);color:var(--tomato);background:var(--tomato-tint)}
+.add-ex{display:inline-flex;align-items:center;gap:7px;font-family:inherit;font-size:12.5px;font-weight:700;color:var(--acc-deep);background:rgba(var(--acc-rgb),.08);border:1px dashed var(--acc);border-radius:var(--radius-sm);padding:9px 14px;cursor:pointer;transition:.15s var(--ease);margin-top:10px;width:100%;justify-content:center}
+.add-ex:hover{background:rgba(var(--acc-rgb),.14)}
+.day-rest{text-align:center;padding:20px;color:var(--muted);font-size:13px}
+.day-rest i{display:block;font-size:22px;margin-bottom:8px;color:var(--line)}
+
+/* Özet yan kart */
+.summary-card{position:sticky;top:calc(var(--pnl-top-h) + 28px);display:flex;flex-direction:column;gap:14px}
+.sc-preview{width:100%;aspect-ratio:16/9;border-radius:var(--radius-md);border:1px solid var(--line);background:var(--bg);background-size:cover;background-position:center;overflow:hidden;display:flex;align-items:flex-end}
+.sc-preview-bar{width:100%;padding:10px 12px;background:linear-gradient(to top, rgba(33,30,22,.7), transparent)}
+.sc-preview-title{font-size:14px;font-weight:700;color:#fff;line-height:1.2}
+.sc-preview-sub{font-size:11.5px;color:rgba(255,255,255,.75)}
+.sc-meta{display:flex;flex-direction:column;gap:8px}
+.sc-meta-row{display:flex;align-items:center;justify-content:space-between;font-size:13px}
+.sc-meta-row .sm-lbl{color:var(--muted)}
+.sc-meta-row .sm-val{font-weight:700;color:var(--slate)}
+
+/* Responsive */
+@media(max-width:980px){
+  .form-layout{grid-template-columns:minmax(0,1fr)}
+  .summary-card{position:static}
+}
+@media(max-width:640px){
+  .frow.two{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body data-brand="mutfak" data-sec="dadafit" data-screen="programlar">
+
+<div class="sa-app">
+
+  <!-- §1 İKON-RAIL -->
+  <aside class="sa-rail" id="saRail">
+    <a class="sa-rail-logo" href="sa-giris-v1.html" title="Yönetim Girişi"><img src="assets/img/logo-mark.png" alt="DadaMutfak" /></a>
+    <a class="sa-rail-ico" data-sec="genel" href="sa-shell.html?sec=genel" title="Genel Bakış"><i class="fa-solid fa-gauge-high"></i></a>
+    <span class="sa-rail-div"></span>
+    <a class="sa-rail-ico" data-sec="admin"   href="sa-admin.html"   title="Admin"><i class="fa-solid fa-shield-halved"></i></a>
+    <a class="sa-rail-ico" data-sec="saglik"  href="sa-saglik.html"  title="Sağlık &amp; Diyet"><i class="fa-solid fa-heart-pulse"></i></a>
+    <a class="sa-rail-ico" data-sec="store"   href="sa-store.html"   title="DadaStore"><i class="fa-solid fa-bag-shopping"></i></a>
+    <a class="sa-rail-ico" data-sec="dadafit" href="sa-dadafit.html" title="DadaFit"><i class="fa-solid fa-dumbbell"></i></a>
+    <a class="sa-rail-ico" data-sec="isletme" href="sa-isletme.html" title="İşletmeler"><i class="fa-solid fa-store"></i></a>
+    <a class="sa-rail-ico is-locked" data-sec="akademi" href="#" title="DadaAkademi — Yakında"><i class="fa-solid fa-graduation-cap"></i><i class="fa-solid fa-lock sr-lock"></i></a>
+    <div class="sa-rail-foot"><a class="sa-rail-ico" href="anasayfa-portal-v3a.html" title="Siteye Dön"><i class="fa-solid fa-arrow-left"></i></a></div>
+  </aside>
+
+  <!-- §2 BÖLÜM MENÜSÜ (JS) -->
+  <nav class="sa-menu" id="saMenu"></nav>
+
+  <div class="sa-divider" id="saDivider" role="separator" aria-label="Menüyü daralt/genişlet" title="Sürükle veya tıkla — menüyü daralt/genişlet">
+    <span class="sa-grip"><i class="fa-solid fa-grip-lines-vertical"></i></span>
+  </div>
+
+  <div class="pnl-overlay" id="pnlOverlay"></div>
+
+  <!-- §3 ÜST BAR -->
+  <header class="pnl-top">
+    <button class="pnl-burger" id="pnlBurger" aria-label="Menü"><i class="fa-solid fa-bars"></i></button>
+    <div class="pnl-search">
+      <i class="fa-solid fa-magnifying-glass"></i>
+      <input type="text" placeholder="Program, hedef ara…" />
+    </div>
+    <div class="pnl-top-tools">
+      <button class="pnl-bell" aria-label="Bildirimler"><i class="fa-regular fa-bell"></i><span class="pb-dot"></span></button>
+      <div class="pnl-me">
+        <div class="pm-ava"><i class="fa-solid fa-user"></i></div>
+        <div class="pm-id">
+          <div class="pm-name" id="pmName">Süper Admin</div>
+          <div class="pm-role" id="pmRole">Tüm yetki</div>
+        </div>
+        <i class="fa-solid fa-chevron-down"></i>
+      </div>
+    </div>
+  </header>
+
+  <!-- §4 İÇERİK — Program Form -->
+  <main class="pnl-main" id="saMain">
+
+    <!-- Sayfa başlığı (geri linki) -->
+    <div class="pnl-page-head">
+      <div>
+        <div style="margin-bottom:6px">
+          <a href="sa-dadafit-programlar.html" style="font-size:13px;font-weight:700;color:var(--muted);display:inline-flex;align-items:center;gap:6px;transition:.18s" onmouseover="this.style.color='var(--acc-deep)'" onmouseout="this.style.color='var(--muted)'">
+            <i class="fa-solid fa-arrow-left"></i> Programlara Dön
+          </a>
+        </div>
+        <h1>Yeni Program</h1>
+        <div class="ph-sub">Program bilgilerini, süresini ve gün-gün egzersiz planını tanımla</div>
+      </div>
+    </div>
+
+    <!-- Form + Özet 2-kolon layout -->
+    <div class="form-layout">
+
+      <!-- Sol: Form alanları -->
+      <div style="display:flex;flex-direction:column;gap:16px">
+
+        <!-- Temel bilgiler -->
+        <div class="pnl-card">
+          <div class="pc-head">
+            <div class="pc-title"><i class="fa-solid fa-circle-info"></i> Temel Bilgiler</div>
+          </div>
+
+          <div class="form-sec">
+            <div class="form-sec-tt"><i class="fa-solid fa-pen"></i> Başlık & Hedef</div>
+            <div class="form-grid">
+              <div class="frow">
+                <label for="pg-name">Program Adı <span style="color:var(--tomato)">*</span></label>
+                <input class="finput" id="pg-name" type="text" placeholder="ör. Kuvvet Temelleri 8 Hafta" />
+              </div>
+              <div class="frow">
+                <label for="pg-desc">Açıklama</label>
+                <textarea class="ftext" id="pg-desc" placeholder="Programın hedefi, kimler için uygun ve beklenen sonuç…" rows="3"></textarea>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-sec">
+            <div class="form-sec-tt"><i class="fa-solid fa-tags"></i> Kategori & Ayarlar</div>
+            <div class="form-grid">
+              <div class="frow two">
+                <div class="frow" style="gap:7px">
+                  <label for="pg-goal">Hedef Kategori <span style="color:var(--tomato)">*</span></label>
+                  <select class="fselect" id="pg-goal">
+                    <option value="">Seç…</option>
+                    <option value="kilo">Kilo Verme</option>
+                    <option value="kas">Kas Kazanma</option>
+                    <option value="dayaniklilik">Dayanıklılık</option>
+                    <option value="genel">Genel Form</option>
+                  </select>
+                </div>
+                <div class="frow" style="gap:7px">
+                  <label for="pg-level">Seviye <span style="color:var(--tomato)">*</span></label>
+                  <select class="fselect" id="pg-level">
+                    <option value="">Seç…</option>
+                    <option>Başlangıç</option>
+                    <option>Orta</option>
+                    <option>İleri</option>
+                  </select>
+                </div>
+              </div>
+              <div class="frow two">
+                <div class="frow" style="gap:7px">
+                  <label for="pg-week">Süre (hafta) <span style="color:var(--tomato)">*</span></label>
+                  <select class="fselect" id="pg-week">
+                    <option value="4">4 hafta</option>
+                    <option value="6">6 hafta</option>
+                    <option value="8" selected>8 hafta</option>
+                    <option value="10">10 hafta</option>
+                    <option value="12">12 hafta</option>
+                  </select>
+                </div>
+                <div class="frow" style="gap:7px">
+                  <label for="pg-freq">Haftalık Gün Sayısı</label>
+                  <select class="fselect" id="pg-freq">
+                    <option value="3" selected>3 gün</option>
+                    <option value="4">4 gün</option>
+                    <option value="5">5 gün</option>
+                    <option value="6">6 gün</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div><!-- /temel bilgiler -->
+
+        <!-- Kapak görseli -->
+        <div class="pnl-card">
+          <div class="pc-head">
+            <div class="pc-title"><i class="fa-solid fa-image"></i> Kapak Görseli</div>
+          </div>
+          <div class="form-sec">
+            <div class="frow">
+              <label>Program Kapak Fotoğrafı <span style="color:var(--muted);font-weight:500">(16:9 önerilen)</span></label>
+              <div class="img-upload" id="coverUpload">
+                <div class="iu-preview" id="coverPreview"></div>
+                <div class="iu-icon"><i class="fa-solid fa-cloud-arrow-up"></i></div>
+                <div class="iu-lbl">Görsel yükle veya sürükle</div>
+                <div class="iu-hint">JPG / PNG / WebP · Maks. 4 MB · En az 1200×675</div>
+                <div class="iu-overlay">
+                  <i class="fa-solid fa-camera" style="color:#fff;font-size:18px"></i>
+                  <span style="font-size:12px;color:#fff;font-weight:700">Değiştir</span>
+                </div>
+              </div>
+              <span class="fhint">Görsel liste kartında ve program detayında kullanılır. img etiketi yerine div+background-image ile render edilir.</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Haftalık / Günlük Plan -->
+        <div class="pnl-card">
+          <div class="pc-head">
+            <div class="pc-title"><i class="fa-solid fa-calendar-week"></i> Haftalık Plan</div>
+            <span style="font-size:12px;color:var(--muted)">Her güne egzersiz ata</span>
+          </div>
+          <div class="form-sec">
+            <p style="font-size:12.5px;color:var(--muted);margin-bottom:12px">
+              Haftanın günlerini seç, her güne egzersiz ekle. Dinlenme günlerini boş bırakabilirsin.
+            </p>
+            <div class="plan-wrap">
+              <div class="plan-tabs" id="planTabs">
+                <!-- JS doldurur -->
+              </div>
+              <div class="plan-day" id="planDay">
+                <!-- JS doldurur -->
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Form aksiyonları -->
+        <div class="pnl-card">
+          <div class="form-actions">
+            <a href="sa-dadafit-programlar.html" class="btn btn-ghost btn-sm">İptal</a>
+            <button type="button" class="btn btn-ghost btn-sm" onclick="saToast('Taslak kaydedildi')"><i class="fa-solid fa-floppy-disk"></i> Taslak Kaydet</button>
+            <button type="button" class="btn btn-acc btn-sm" onclick="saToast('Program oluşturuldu')"><i class="fa-solid fa-check"></i> Program Oluştur</button>
+          </div>
+        </div>
+
+      </div><!-- /sol form -->
+
+      <!-- Sağ: Özet yan kart -->
+      <div class="summary-card">
+
+        <!-- Önizleme kartı -->
+        <div class="pnl-card">
+          <div class="pc-head">
+            <div class="pc-title"><i class="fa-solid fa-eye"></i> Önizleme</div>
+          </div>
+          <div class="pc-body" style="padding:14px">
+            <div class="sc-preview" id="scPreview" style="background-image:url('https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=400&q=80&auto=format&fit=crop')">
+              <div class="sc-preview-bar">
+                <div class="sc-preview-title" id="scTitle">Program Adı</div>
+                <div class="sc-preview-sub" id="scSub">Hedef · 8 hafta</div>
+              </div>
+            </div>
+            <div class="sc-meta" style="margin-top:14px">
+              <div class="sc-meta-row"><span class="sm-lbl">Hedef</span><span class="sm-val" id="scGoal">—</span></div>
+              <div class="sc-meta-row"><span class="sm-lbl">Seviye</span><span class="sm-val" id="scLevel">—</span></div>
+              <div class="sc-meta-row"><span class="sm-lbl">Süre</span><span class="sm-val" id="scWeek">8 hafta</span></div>
+              <div class="sc-meta-row"><span class="sm-lbl">Haftalık gün</span><span class="sm-val" id="scFreq">3 gün</span></div>
+              <div class="sc-meta-row"><span class="sm-lbl">Toplam egzersiz</span><span class="sm-val" id="scTotal">0</span></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Durum -->
+        <div class="pnl-card">
+          <div class="pc-head">
+            <div class="pc-title"><i class="fa-solid fa-circle-dot"></i> Durum</div>
+          </div>
+          <div class="pc-body" style="padding:14px;display:flex;flex-direction:column;gap:10px">
+            <div class="frow">
+              <label for="pg-status">Yayın Durumu</label>
+              <select class="fselect" id="pg-status">
+                <option value="taslak" selected>Taslak</option>
+                <option value="aktif">Aktif</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /sağ özet -->
+    </div><!-- /form-layout -->
+
+  </main>
+
+</div><!-- /sa-app -->
+
+<script src="assets/js/sa-shell.js"></script>
+
+<!-- SAYFA JS — Haftalık plan + önizleme senkronu -->
+<script>
+(function(){
+  var GUNLER = ['Pzt','Sal','Çar','Per','Cum','Cmt','Paz'];
+  /* Demo: her gün için egzersiz listesi (statik tasarım; ekle butonu demo egzersiz ekler) */
+  var DEMO_POOL = [
+    {ad:'Barbell Squat', kas:'Bacak', sets:'3×12', img:'https://images.unsplash.com/photo-1534368786749-d63b2c0d22ad?w=120&q=80&auto=format&fit=crop'},
+    {ad:'Push-up', kas:'Göğüs', sets:'3×15', img:'https://images.unsplash.com/photo-1598971639058-fab3c3109a00?w=120&q=80&auto=format&fit=crop'},
+    {ad:'Deadlift', kas:'Sırt', sets:'4×8', img:'https://images.unsplash.com/photo-1517963879433-6ad2b056d712?w=120&q=80&auto=format&fit=crop'},
+    {ad:'Plank', kas:'Core', sets:'3×45sn', img:'https://images.unsplash.com/photo-1566241142559-40e1dab266c6?w=120&q=80&auto=format&fit=crop'}
+  ];
+  var plan = {
+    0:[Object.assign({},DEMO_POOL[0]), Object.assign({},DEMO_POOL[2])],
+    1:[],
+    2:[Object.assign({},DEMO_POOL[1]), Object.assign({},DEMO_POOL[3])]
+  };
+  var freq = 3;
+  var activeDay = 0;
+  var poolIdx = 0;
+
+  var tabsEl = document.getElementById('planTabs');
+  var dayEl  = document.getElementById('planDay');
+
+  function renderTabs(){
+    var html = '';
+    for(var i=0;i<freq;i++){
+      var cnt = (plan[i]||[]).length;
+      html += '<button type="button" class="plan-tab' + (i===activeDay?' active':'') + '" data-day="' + i + '">Gün ' + (i+1) + (cnt? ' · '+cnt : '') + '</button>';
+    }
+    tabsEl.innerHTML = html;
+  }
+
+  function renderDay(){
+    var list = plan[activeDay] || [];
+    var html = '';
+    if(list.length === 0){
+      html = '<div class="day-rest"><i class="fa-solid fa-bed"></i>Bu gün için egzersiz eklenmedi (dinlenme).</div>';
+    } else {
+      html = '<div class="day-ex-list">' + list.map(function(ex, i){
+        return '<div class="day-ex">'
+          + '<i class="fa-solid fa-grip-vertical de-grip"></i>'
+          + '<div class="de-thumb" style="background-image:url(\'' + ex.img + '\')"></div>'
+          + '<div class="de-info"><strong>' + ex.ad + '</strong><span>' + ex.kas + '</span></div>'
+          + '<span class="de-sets">' + ex.sets + '</span>'
+          + '<button type="button" class="de-del" data-del="' + i + '" title="Çıkar"><i class="fa-solid fa-xmark"></i></button>'
+          + '</div>';
+      }).join('') + '</div>';
+    }
+    html += '<button type="button" class="add-ex" id="addExBtn"><i class="fa-solid fa-plus"></i> Egzersiz Ekle</button>';
+    dayEl.innerHTML = html;
+  }
+
+  function totalEx(){
+    var t = 0;
+    for(var k in plan){ if(parseInt(k,10) < freq) t += (plan[k]||[]).length; }
+    return t;
+  }
+
+  function renderAll(){
+    renderTabs();
+    renderDay();
+    document.getElementById('scTotal').textContent = totalEx();
+  }
+
+  tabsEl.addEventListener('click', function(e){
+    var t = e.target.closest('.plan-tab');
+    if(!t) return;
+    activeDay = parseInt(t.dataset.day,10);
+    renderTabs();
+    renderDay();
+  });
+
+  dayEl.addEventListener('click', function(e){
+    var add = e.target.closest('#addExBtn');
+    if(add){
+      if(!plan[activeDay]) plan[activeDay] = [];
+      plan[activeDay].push(Object.assign({}, DEMO_POOL[poolIdx % DEMO_POOL.length]));
+      poolIdx++;
+      renderAll();
+      return;
+    }
+    var del = e.target.closest('[data-del]');
+    if(del){
+      plan[activeDay].splice(parseInt(del.dataset.del,10),1);
+      renderAll();
+    }
+  });
+
+  /* Haftalık gün sayısı değişimi */
+  document.getElementById('pg-freq').addEventListener('change', function(){
+    freq = parseInt(this.value,10);
+    if(activeDay >= freq) activeDay = 0;
+    document.getElementById('scFreq').textContent = freq + ' gün';
+    renderAll();
+  });
+
+  /* --- Önizleme senkronu --- */
+  function goalLabel(v){return {kilo:'Kilo Verme',kas:'Kas Kazanma',dayaniklilik:'Dayanıklılık',genel:'Genel Form'}[v]||'—';}
+  function syncPreview(){
+    var name = document.getElementById('pg-name').value.trim();
+    var goal = document.getElementById('pg-goal').value;
+    var week = document.getElementById('pg-week').value;
+    document.getElementById('scTitle').textContent = name || 'Program Adı';
+    document.getElementById('scSub').textContent   = (goalLabel(goal)==='—'?'Hedef':goalLabel(goal)) + ' · ' + week + ' hafta';
+    document.getElementById('scGoal').textContent  = goalLabel(goal);
+    document.getElementById('scLevel').textContent = document.getElementById('pg-level').value || '—';
+    document.getElementById('scWeek').textContent  = week + ' hafta';
+  }
+  ['pg-name','pg-goal','pg-level','pg-week'].forEach(function(id){
+    var el = document.getElementById(id);
+    if(el){ el.addEventListener('input', syncPreview); el.addEventListener('change', syncPreview); }
+  });
+
+  /* --- Kapak görsel yükleyici (statik demo — gerçek upload yok) --- */
+  var coverUpload  = document.getElementById('coverUpload');
+  var coverPreview = document.getElementById('coverPreview');
+  var scPreview    = document.getElementById('scPreview');
+  var DEMO_IMGS = [
+    'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=800&q=80&auto=format&fit=crop',
+    'https://images.unsplash.com/photo-1518611012118-696072aa579a?w=800&q=80&auto=format&fit=crop',
+    'https://images.unsplash.com/photo-1549060279-7e168fcee0c2?w=800&q=80&auto=format&fit=crop'
+  ];
+  var demoIdx = 0;
+  coverUpload.addEventListener('click', function(){
+    var url = DEMO_IMGS[demoIdx % DEMO_IMGS.length];
+    demoIdx++;
+    coverPreview.style.backgroundImage = 'url(\'' + url + '\')';
+    scPreview.style.backgroundImage    = 'url(\'' + url + '\')';
+  });
+
+  /* İlk render */
+  renderAll();
+  syncPreview();
+})();
+</script>
+
+</body>
+</html>

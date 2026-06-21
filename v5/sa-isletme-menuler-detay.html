@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Menü Kalemi Detay — İşletmeler | DadaMutfak</title>
+<link rel="shortcut icon" type="image/x-icon" href="assets/img/favicon.ico" />
+<!-- FontAwesome 6.5.2 (kilitli ikon seti) -->
+<link rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+      integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A=="
+      crossorigin="anonymous" referrerpolicy="no-referrer" />
+<!-- PAYLAŞILAN KABUK (tek kaynak) -->
+<link rel="stylesheet" href="assets/css/sa-shell.css" />
+<style>
+/* =====================================================================
+   SA-ISLETME-MENULER-DETAY — SAYFA CSS (ekrana özel).
+   Düzen/sınıf dili sa-isletme-isletmeler-detay ile BİREBİR.
+   ===================================================================== */
+
+/* ORTAK FORM ALANLARI — tüm sa-* form/detay ekranlarında AYNEN */
+.form-grid{display:grid;gap:18px}
+.frow{display:flex;flex-direction:column;gap:7px}
+.frow label{font-size:12.5px;font-weight:700;color:var(--slate-2)}
+.frow .fhint{font-size:11.5px;color:var(--muted);font-weight:500}
+.finput,.fselect,.ftext{width:100%;font-family:inherit;font-size:13.5px;font-weight:500;color:var(--ink);background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-md);padding:0 14px;height:44px;outline:none;transition:.2s var(--ease)}
+.ftext{height:auto;padding:12px 14px;line-height:1.5;resize:vertical;min-height:96px}
+.finput:focus,.fselect:focus,.ftext:focus{border-color:var(--acc);box-shadow:0 0 0 3px rgba(var(--acc-rgb),.12)}
+.frow.two{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.form-sec{padding:18px 22px;border-bottom:1px solid var(--line)}
+.form-sec:last-child{border-bottom:none}
+.form-sec-tt{font-size:13px;font-weight:700;color:var(--slate);margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.form-sec-tt i{color:var(--acc)}
+
+/* Detay 2-kolon düzeni */
+.detail-grid{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);gap:20px;align-items:start}
+@media(max-width:980px){.detail-grid{grid-template-columns:1fr}}
+
+/* Menü kalemi kapak görseli (div+bg-image, img değil) */
+.menu-cover{
+  width:100%;height:220px;border-radius:var(--radius-md);
+  background-size:cover;background-position:center;
+  margin-bottom:16px;
+}
+
+/* Detay bilgi satırları */
+.info-list{display:flex;flex-direction:column}
+.info-row{display:flex;align-items:baseline;gap:12px;padding:11px 22px;border-bottom:1px solid var(--line)}
+.info-row:last-child{border-bottom:none}
+.info-lbl{font-size:11.5px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;min-width:120px;flex:none}
+.info-val{font-size:13.5px;color:var(--slate);font-weight:500}
+.info-val a{color:var(--acc-deep);text-decoration:underline;text-underline-offset:2px}
+
+/* Malzeme / alerjen etiket kümeleri */
+.tag-set{display:flex;flex-wrap:wrap;gap:7px;padding:4px 22px 18px}
+.tag-pill{
+  display:inline-flex;align-items:center;gap:6px;
+  font-size:12.5px;font-weight:600;color:var(--slate-2);
+  background:var(--bg);border:1px solid var(--line);
+  padding:5px 12px;border-radius:var(--radius-pill);
+}
+.tag-pill.alergen{background:var(--tomato-tint);border-color:rgba(225,72,39,.25);color:var(--tomato)}
+.tag-pill i{font-size:11px}
+
+/* Bağlı işletme satırı (mini kart, detaya link) */
+.biz-link{display:flex;align-items:center;gap:13px;padding:14px 22px;text-decoration:none}
+.biz-link .bl-logo{
+  width:42px;height:42px;flex:none;border-radius:var(--radius-sm);
+  background-size:cover;background-position:center;
+  border:1px solid var(--line);background-color:var(--bg);
+}
+.biz-link .bl-info{flex:1;min-width:0;line-height:1.3}
+.biz-link .bl-info strong{font-size:13.5px;font-weight:700;color:var(--slate);display:block}
+.biz-link .bl-info span{font-size:12px;color:var(--muted)}
+.biz-link .bl-go{font-size:12px;color:var(--muted);transition:.15s var(--ease)}
+.biz-link:hover .bl-go{color:var(--acc-deep)}
+.biz-link:hover .bl-info strong{color:var(--acc-deep)}
+
+/* Sağ meta kart */
+.meta-section{padding:18px 20px;border-bottom:1px solid var(--line)}
+.meta-section:last-child{border-bottom:none}
+.meta-section-tt{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:12px}
+.meta-stat{display:flex;justify-content:space-between;align-items:center;margin-bottom:9px}
+.meta-stat:last-child{margin-bottom:0}
+.meta-stat-lbl{font-size:13px;color:var(--slate-2)}
+.meta-stat-val{font-size:13.5px;font-weight:700;color:var(--slate)}
+
+/* Geri linki */
+.back-link{display:inline-flex;align-items:center;gap:7px;font-size:13px;font-weight:700;color:var(--muted);transition:.15s var(--ease);margin-bottom:6px}
+.back-link:hover{color:var(--slate)}
+.back-link i{font-size:11px}
+
+/* İşletme menü paneli — yer ayrıldı, bağlanmadı (sonraki dalga) */
+.panel-open-placeholder{
+  display:flex;align-items:center;gap:8px;
+  font-size:12.5px;font-weight:700;color:var(--muted);
+  padding:10px 12px;border:1px dashed var(--line);border-radius:var(--radius-sm);
+  background:var(--bg);cursor:not-allowed;
+}
+.panel-open-placeholder i{font-size:12px}
+
+/* Porsiyon / fiyat satırları */
+.portion-row{display:flex;justify-content:space-between;align-items:center;padding:10px 22px;border-bottom:1px solid var(--line);font-size:13.5px}
+.portion-row:last-child{border-bottom:none}
+.portion-name{color:var(--slate-2);font-weight:600}
+.portion-price{color:var(--slate);font-weight:700}
+</style>
+</head>
+<body data-brand="mutfak" data-sec="isletme" data-screen="menuler">
+
+<div class="sa-app">
+
+  <!-- §1 İKON-RAIL (statik; aktif/görünürlük JS) — paylaşılan kabuk dili -->
+  <aside class="sa-rail" id="saRail">
+    <a class="sa-rail-logo" href="sa-giris-v1.html" title="Yönetim Girişi"><img src="assets/img/logo-mark.png" alt="DadaMutfak" /></a>
+    <a class="sa-rail-ico" data-sec="genel" href="sa-shell.html?sec=genel" title="Genel Bakış"><i class="fa-solid fa-gauge-high"></i></a>
+    <span class="sa-rail-div"></span>
+    <a class="sa-rail-ico" data-sec="admin"   href="sa-admin.html"   title="Admin"><i class="fa-solid fa-shield-halved"></i></a>
+    <a class="sa-rail-ico" data-sec="saglik"  href="sa-saglik.html"  title="Sağlık &amp; Diyet"><i class="fa-solid fa-heart-pulse"></i></a>
+    <a class="sa-rail-ico" data-sec="store"   href="sa-store.html"   title="DadaStore"><i class="fa-solid fa-bag-shopping"></i></a>
+    <a class="sa-rail-ico" data-sec="dadafit" href="sa-dadafit.html" title="DadaFit"><i class="fa-solid fa-dumbbell"></i></a>
+    <a class="sa-rail-ico" data-sec="isletme" href="sa-isletme.html" title="İşletmeler"><i class="fa-solid fa-store"></i></a>
+    <a class="sa-rail-ico is-locked" data-sec="akademi" href="#" title="DadaAkademi — Yakında"><i class="fa-solid fa-graduation-cap"></i><i class="fa-solid fa-lock sr-lock"></i></a>
+    <div class="sa-rail-foot"><a class="sa-rail-ico" href="anasayfa-portal-v3a.html" title="Siteye Dön"><i class="fa-solid fa-arrow-left"></i></a></div>
+  </aside>
+
+  <!-- §2 BÖLÜM MENÜSÜ (JS render — İşletme menüsü) -->
+  <nav class="sa-menu" id="saMenu"></nav>
+
+  <!-- divider grip -->
+  <div class="sa-divider" id="saDivider" role="separator" aria-label="Menüyü daralt/genişlet" title="Sürükle veya tıkla — menüyü daralt/genişlet">
+    <span class="sa-grip"><i class="fa-solid fa-grip-lines-vertical"></i></span>
+  </div>
+
+  <div class="pnl-overlay" id="pnlOverlay"></div>
+
+  <!-- §3 ÜST BAR -->
+  <header class="pnl-top">
+    <button class="pnl-burger" id="pnlBurger" aria-label="Menü"><i class="fa-solid fa-bars"></i></button>
+    <div class="pnl-search">
+      <i class="fa-solid fa-magnifying-glass"></i>
+      <input type="text" placeholder="İşletme, menü ara…" />
+    </div>
+    <div class="pnl-top-tools">
+      <button class="pnl-bell" aria-label="Bildirimler"><i class="fa-regular fa-bell"></i><span class="pb-dot"></span></button>
+      <div class="pnl-me">
+        <div class="pm-ava"><i class="fa-solid fa-user"></i></div>
+        <div class="pm-id">
+          <div class="pm-name" id="pmName">Süper Admin</div>
+          <div class="pm-role" id="pmRole">Tüm yetki</div>
+        </div>
+        <i class="fa-solid fa-chevron-down"></i>
+      </div>
+    </div>
+  </header>
+
+  <!-- §4 İÇERİK — Menü Kalemi Detay -->
+  <main class="pnl-main" id="saMain">
+
+    <!-- Geri + sayfa başlığı -->
+    <a class="back-link" href="sa-isletme-menuler.html"><i class="fa-solid fa-arrow-left"></i> Menüler</a>
+    <div class="pnl-page-head">
+      <div>
+        <h1>Izgara Köfte Tabağı</h1>
+        <div class="ph-sub" style="display:flex;align-items:center;gap:10px;margin-top:6px">
+          <span class="pstat ok">Yayında</span>
+          <span style="font-size:13px;color:var(--muted)">Köşe Mutfağı · Ana Yemek · ₺240</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2-kolon detay düzeni -->
+    <div class="detail-grid">
+
+      <!-- SOL: Görsel + açıklama + malzeme/alerjen + porsiyon + bağlı işletme -->
+      <div style="display:flex;flex-direction:column;gap:16px">
+
+        <!-- Menü kalemi profili -->
+        <div class="pnl-card">
+          <div class="pc-head">
+            <div class="pc-title"><i class="fa-solid fa-utensils"></i> Menü Kalemi</div>
+          </div>
+          <div class="pc-body" style="padding-top:16px">
+            <!-- Kapak görseli (div+bg-image, img değil) -->
+            <div class="menu-cover" style="background-image:url('https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=900&q=80&auto=format&fit=crop')"></div>
+            <div>
+              <h3 style="font-size:18px;margin-bottom:4px">Izgara Köfte Tabağı</h3>
+              <div style="font-size:13px;color:var(--muted);margin-bottom:14px">Ana Yemek · Türk Mutfağı</div>
+              <p style="font-size:13.5px;color:var(--slate-2);line-height:1.65">
+                Günlük taze kıymadan elde hazırlanan ızgara köfte; yanında tereyağlı pilav, közlenmiş domates-biber ve mevsim yeşillikleriyle servis edilir. Odun ateşinde pişirilir.
+              </p>
+            </div>
+          </div>
+          <div class="info-list" style="margin-top:0">
+            <div class="info-row">
+              <span class="info-lbl">Kategori</span>
+              <span class="info-val">Ana Yemek</span>
+            </div>
+            <div class="info-row">
+              <span class="info-lbl">Hazırlama Süresi</span>
+              <span class="info-val">20–25 dk</span>
+            </div>
+            <div class="info-row">
+              <span class="info-lbl">Porsiyon</span>
+              <span class="info-val">Tek kişilik</span>
+            </div>
+            <div class="info-row">
+              <span class="info-lbl">Eklenme</span>
+              <span class="info-val">12 Mart 2026</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Malzemeler & alerjenler -->
+        <div class="pnl-card">
+          <div class="pc-head">
+            <div class="pc-title"><i class="fa-solid fa-carrot"></i> Malzemeler &amp; Alerjenler</div>
+          </div>
+          <div class="form-sec" style="border-bottom:1px solid var(--line)">
+            <div class="form-sec-tt" style="margin-bottom:10px"><i class="fa-solid fa-leaf"></i> İçindekiler</div>
+          </div>
+          <div class="tag-set">
+            <span class="tag-pill">Dana kıyma</span>
+            <span class="tag-pill">Soğan</span>
+            <span class="tag-pill">Pirinç</span>
+            <span class="tag-pill">Tereyağı</span>
+            <span class="tag-pill">Domates</span>
+            <span class="tag-pill">Yeşil biber</span>
+            <span class="tag-pill">Baharatlar</span>
+          </div>
+          <div class="form-sec" style="border-bottom:1px solid var(--line);border-top:1px solid var(--line)">
+            <div class="form-sec-tt" style="margin-bottom:10px"><i class="fa-solid fa-triangle-exclamation"></i> Alerjen Uyarısı</div>
+          </div>
+          <div class="tag-set">
+            <span class="tag-pill alergen"><i class="fa-solid fa-wheat-awn"></i> Glüten</span>
+            <span class="tag-pill alergen"><i class="fa-solid fa-cow"></i> Süt ürünü</span>
+          </div>
+        </div>
+
+        <!-- Porsiyon & fiyat -->
+        <div class="pnl-card">
+          <div class="pc-head">
+            <div class="pc-title"><i class="fa-solid fa-turkish-lira-sign"></i> Porsiyon &amp; Fiyat</div>
+          </div>
+          <div class="pc-body flush">
+            <div class="portion-row"><span class="portion-name">Tek porsiyon</span><span class="portion-price">₺240</span></div>
+            <div class="portion-row"><span class="portion-name">İkili tabak</span><span class="portion-price">₺440</span></div>
+            <div class="portion-row"><span class="portion-name">Ekstra köfte (4 adet)</span><span class="portion-price">₺90</span></div>
+          </div>
+        </div>
+
+        <!-- Bağlı işletme -->
+        <div class="pnl-card">
+          <div class="pc-head">
+            <div class="pc-title"><i class="fa-solid fa-store"></i> Bağlı İşletme</div>
+          </div>
+          <a class="biz-link" href="sa-isletme-isletmeler-detay.html">
+            <div class="bl-logo" style="background-image:url('https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=84&q=80&auto=format&fit=crop')"></div>
+            <div class="bl-info">
+              <strong>Köşe Mutfağı</strong>
+              <span>Restoran · İstanbul, Kadıköy</span>
+            </div>
+            <i class="fa-solid fa-chevron-right bl-go"></i>
+          </a>
+        </div>
+
+      </div><!-- /sol sütun -->
+
+      <!-- SAĞ: Yayın durumu meta + gözetim + özet -->
+      <div style="display:flex;flex-direction:column;gap:16px">
+
+        <!-- Yayın durumu -->
+        <div class="pnl-card">
+          <div class="pc-head">
+            <div class="pc-title"><i class="fa-solid fa-circle-dot"></i> Yayın Durumu</div>
+          </div>
+          <div class="meta-section">
+            <div class="meta-section-tt">Mevcut Durum</div>
+            <div style="margin-bottom:6px"><span class="pstat ok" style="font-size:13px;padding:6px 14px">Yayında</span></div>
+          </div>
+          <div class="meta-section">
+            <div class="meta-section-tt">Görünürlük</div>
+            <div class="meta-stat"><span class="meta-stat-lbl">İşletme menüsü</span><span class="meta-stat-val">Görünür</span></div>
+            <div class="meta-stat"><span class="meta-stat-lbl">Keşfet vitrini</span><span class="meta-stat-val">Öne çıkıyor</span></div>
+            <div class="meta-stat"><span class="meta-stat-lbl">Mevcudiyet</span><span class="meta-stat-val">Stokta</span></div>
+          </div>
+        </div>
+
+        <!-- Gözetim notu + menü paneli -->
+        <div class="pnl-card">
+          <div class="pc-head">
+            <div class="pc-title"><i class="fa-solid fa-shield-halved"></i> Gözetim</div>
+          </div>
+          <div class="meta-section">
+            <div class="meta-section-tt">Not Ekle (Dahili)</div>
+            <textarea class="ftext" placeholder="Gözetim notu girin…" style="font-size:13px;min-height:80px"></textarea>
+            <div style="margin-top:10px;text-align:right">
+              <button class="btn btn-ghost btn-sm" style="font-size:12.5px">Not Kaydet</button>
+            </div>
+          </div>
+          <div class="meta-section">
+            <div class="meta-section-tt">Hızlı Erişim</div>
+            <!-- İşletme menü paneli: yer ayrıldı, sonraki dalgada bağlanacak (disabled — dead-link DEĞİL) -->
+            <div class="panel-open-placeholder" title="Bu aksiyon sonraki dalgada bağlanacak">
+              <i class="fa-solid fa-arrow-up-right-from-square"></i> Menü Panelini Aç <span style="font-size:10px;margin-left:auto;background:var(--line);padding:2px 6px;border-radius:4px">Yakında</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Özet -->
+        <div class="pnl-card">
+          <div class="pc-head">
+            <div class="pc-title"><i class="fa-solid fa-chart-bar"></i> Özet</div>
+          </div>
+          <div class="meta-section">
+            <div class="meta-section-tt">Performans</div>
+            <div class="meta-stat"><span class="meta-stat-lbl">Görüntülenme (30g)</span><span class="meta-stat-val">1.240</span></div>
+            <div class="meta-stat"><span class="meta-stat-lbl">Favoriye eklenme</span><span class="meta-stat-val">86</span></div>
+            <div class="meta-stat"><span class="meta-stat-lbl">Değerlendirme</span><span class="meta-stat-val">4.7 / 5</span></div>
+          </div>
+          <div class="meta-section">
+            <div class="meta-section-tt">Kayıt</div>
+            <div class="meta-stat"><span class="meta-stat-lbl">Eklenme</span><span class="meta-stat-val">12 Mar 2026</span></div>
+            <div class="meta-stat"><span class="meta-stat-lbl">Son güncelleme</span><span class="meta-stat-val">9 Haz 2026</span></div>
+          </div>
+        </div>
+
+      </div><!-- /sağ sütun -->
+
+    </div><!-- /detail-grid -->
+
+  </main>
+
+</div>
+
+<script src="assets/js/sa-shell.js"></script>
+</body>
+</html>

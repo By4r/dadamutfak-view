@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Rezervasyonlar — İşletmeler | DadaMutfak</title>
+<link rel="shortcut icon" type="image/x-icon" href="assets/img/favicon.ico" />
+<!-- FontAwesome 6.5.2 (kilitli ikon seti) -->
+<link rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+      integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A=="
+      crossorigin="anonymous" referrerpolicy="no-referrer" />
+<!-- PAYLAŞILAN KABUK (tek kaynak) -->
+<link rel="stylesheet" href="assets/css/sa-shell.css" />
+<style>
+/* =====================================================================
+   SA-ISLETME-REZERVASYONLAR — SAYFA CSS (ekrana özel; kabuk CSS'i sa-shell.css'te).
+   Liste deseni sa-isletme-isletmeler ile BİREBİR (filter-bar/chips/ptable).
+   ===================================================================== */
+
+/* ---- Filtre çubuğu ---- */
+.filter-bar{
+  display:flex;align-items:center;gap:10px;
+  padding:14px 22px;border-bottom:1px solid var(--line);flex-wrap:wrap;
+}
+.filter-bar .fb-search{
+  flex:1;min-width:200px;max-width:320px;position:relative;
+}
+.filter-bar .fb-search i{
+  position:absolute;left:12px;top:50%;transform:translateY(-50%);
+  font-size:13px;color:var(--muted);pointer-events:none;
+}
+.filter-bar .fb-search input{
+  width:100%;height:36px;padding:0 12px 0 34px;
+  font-family:inherit;font-size:13px;font-weight:500;color:var(--ink);
+  background:var(--bg);border:1px solid var(--line);border-radius:var(--radius-sm);
+  outline:none;transition:.2s var(--ease);
+}
+.filter-bar .fb-search input::placeholder{color:var(--muted)}
+.filter-bar .fb-search input:focus{border-color:var(--acc);background:var(--paper);box-shadow:0 0 0 3px rgba(var(--acc-rgb),.10)}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chip{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:5px 13px;border-radius:var(--radius-pill);
+  font-size:12.5px;font-weight:700;cursor:pointer;border:1px solid var(--line);
+  background:var(--paper);color:var(--slate-2);transition:.15s var(--ease);
+}
+.chip:hover{border-color:var(--acc);color:var(--acc-deep)}
+.chip.is-active{background:rgba(var(--acc-rgb),.12);border-color:rgba(var(--acc-rgb),.3);color:var(--acc-deep)}
+.chip .ch-cnt{
+  font-size:10.5px;font-weight:700;
+  background:rgba(var(--acc-rgb),.15);color:var(--acc-deep);
+  min-width:18px;height:17px;display:inline-flex;align-items:center;justify-content:center;
+  padding:0 5px;border-radius:5px;
+}
+.chip.is-active .ch-cnt{background:rgba(var(--acc-rgb),.22)}
+
+/* ---- Tablo ---- */
+/* dar ekranda tablo kart içinde yatay kayar → sayfa-seviyesi taşma 0 (kanonik fallback) */
+.tbl-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.ptable{width:100%;border-collapse:collapse}
+.ptable thead th{
+  font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--muted);padding:10px 16px;text-align:left;
+  background:var(--bg);border-bottom:1px solid var(--line);
+  white-space:nowrap;
+}
+.ptable thead th:first-child{padding-left:22px}
+.ptable thead th:last-child{padding-right:22px;text-align:right}
+.ptable tbody tr{border-bottom:1px solid var(--line);transition:background .12s}
+.ptable tbody tr:last-child{border-bottom:none}
+.ptable tbody tr:hover{background:rgba(var(--acc-rgb),.03)}
+.ptable tbody td{padding:12px 16px;font-size:13.5px;color:var(--slate-2);vertical-align:middle}
+.ptable tbody td:first-child{padding-left:22px}
+.ptable tbody td:last-child{padding-right:22px;text-align:right}
+
+/* ---- Misafir kimlik hücresi ---- */
+.gst-cell{display:flex;align-items:center;gap:11px}
+.gst-ava{
+  width:38px;height:38px;flex:none;border-radius:50%;
+  background:rgba(var(--acc-rgb),.10);color:var(--acc-deep);
+  display:grid;place-items:center;font-size:14px;font-weight:700;
+}
+.gst-id{line-height:1.3}
+.gst-id strong{font-size:13.5px;font-weight:700;color:var(--slate);display:block}
+.gst-id span{font-size:12px;color:var(--muted);display:flex;align-items:center;gap:5px}
+.gst-id span i{font-size:11px}
+
+/* ---- İşletme hücresi ---- */
+.biz-cell{line-height:1.35}
+.biz-cell .biz-name{font-size:13px;font-weight:700;color:var(--slate)}
+.biz-cell .biz-city{font-size:12px;color:var(--muted);display:flex;align-items:center;gap:4px;margin-top:1px}
+.biz-cell .biz-city i{font-size:11px}
+
+/* ---- Tarih/saat hücresi ---- */
+.dt-cell{line-height:1.35}
+.dt-cell .dt-date{font-size:13px;font-weight:700;color:var(--slate)}
+.dt-cell .dt-time{font-size:12px;color:var(--muted);display:flex;align-items:center;gap:4px;margin-top:1px}
+.dt-cell .dt-time i{font-size:11px}
+
+/* ---- Aksiyon butonları ---- */
+.row-actions{display:flex;align-items:center;justify-content:flex-end;gap:6px}
+.act-btn{
+  display:inline-flex;align-items:center;gap:5px;
+  font-family:inherit;font-size:12.5px;font-weight:700;
+  padding:6px 11px;border-radius:var(--radius-sm);
+  border:1px solid var(--line);background:var(--paper);
+  color:var(--slate-2);cursor:pointer;transition:.15s var(--ease);white-space:nowrap;
+}
+.act-btn:hover{border-color:var(--slate);color:var(--slate)}
+
+/* ---- Responsive: dar ekranda ikincil kolonları gizle (store-urunler kanonu)
+        → yatay taşma yok, en kritik üçlü (Misafir·Durum·Aksiyon) hep görünür ---- */
+@media(max-width:980px){
+  .ptable thead th:nth-child(2),.ptable tbody td:nth-child(2){display:none} /* İşletme */
+}
+@media(max-width:640px){
+  .ptable thead th:nth-child(3),.ptable tbody td:nth-child(3){display:none} /* Tarih/Saat */
+  /* dar ekranda hücre yatay padding'ini kıs (shell 16px konvansiyonu) → taşma 0 */
+  .ptable thead th,.ptable tbody td{padding-left:12px;padding-right:12px}
+  .ptable thead th:first-child,.ptable tbody td:first-child{padding-left:16px}
+  .ptable thead th:last-child,.ptable tbody td:last-child{padding-right:16px}
+}
+</style>
+</head>
+<body data-brand="mutfak" data-sec="isletme" data-screen="rezervasyonlar">
+
+<div class="sa-app">
+
+  <!-- §1 İKON-RAIL (statik; aktif/görünürlük JS) — paylaşılan kabuk dili -->
+  <aside class="sa-rail" id="saRail">
+    <a class="sa-rail-logo" href="sa-giris-v1.html" title="Yönetim Girişi"><img src="assets/img/logo-mark.png" alt="DadaMutfak" /></a>
+    <a class="sa-rail-ico" data-sec="genel" href="sa-shell.html?sec=genel" title="Genel Bakış"><i class="fa-solid fa-gauge-high"></i></a>
+    <span class="sa-rail-div"></span>
+    <a class="sa-rail-ico" data-sec="admin"   href="sa-admin.html"   title="Admin"><i class="fa-solid fa-shield-halved"></i></a>
+    <a class="sa-rail-ico" data-sec="saglik"  href="sa-saglik.html"  title="Sağlık &amp; Diyet"><i class="fa-solid fa-heart-pulse"></i></a>
+    <a class="sa-rail-ico" data-sec="store"   href="sa-store.html"   title="DadaStore"><i class="fa-solid fa-bag-shopping"></i></a>
+    <a class="sa-rail-ico" data-sec="dadafit" href="sa-dadafit.html" title="DadaFit"><i class="fa-solid fa-dumbbell"></i></a>
+    <a class="sa-rail-ico" data-sec="isletme" href="sa-isletme.html" title="İşletmeler"><i class="fa-solid fa-store"></i></a>
+    <a class="sa-rail-ico is-locked" data-sec="akademi" href="#" title="DadaAkademi — Yakında"><i class="fa-solid fa-graduation-cap"></i><i class="fa-solid fa-lock sr-lock"></i></a>
+    <div class="sa-rail-foot"><a class="sa-rail-ico" href="anasayfa-portal-v3a.html" title="Siteye Dön"><i class="fa-solid fa-arrow-left"></i></a></div>
+  </aside>
+
+  <!-- §2 BÖLÜM MENÜSÜ (JS render — İşletme menüsü) -->
+  <nav class="sa-menu" id="saMenu"></nav>
+
+  <!-- divider grip -->
+  <div class="sa-divider" id="saDivider" role="separator" aria-label="Menüyü daralt/genişlet" title="Sürükle veya tıkla — menüyü daralt/genişlet">
+    <span class="sa-grip"><i class="fa-solid fa-grip-lines-vertical"></i></span>
+  </div>
+
+  <div class="pnl-overlay" id="pnlOverlay"></div>
+
+  <!-- §3 ÜST BAR -->
+  <header class="pnl-top">
+    <button class="pnl-burger" id="pnlBurger" aria-label="Menü"><i class="fa-solid fa-bars"></i></button>
+    <div class="pnl-search">
+      <i class="fa-solid fa-magnifying-glass"></i>
+      <input type="text" placeholder="İşletme, rezervasyon ara…" />
+    </div>
+    <div class="pnl-top-tools">
+      <button class="pnl-bell" aria-label="Bildirimler"><i class="fa-regular fa-bell"></i><span class="pb-dot"></span></button>
+      <div class="pnl-me">
+        <div class="pm-ava"><i class="fa-solid fa-user"></i></div>
+        <div class="pm-id">
+          <div class="pm-name" id="pmName">Süper Admin</div>
+          <div class="pm-role" id="pmRole">Tüm yetki</div>
+        </div>
+        <i class="fa-solid fa-chevron-down"></i>
+      </div>
+    </div>
+  </header>
+
+  <!-- §4 İÇERİK — Rezervasyon gözetim listesi -->
+  <main class="pnl-main" id="saMain">
+
+    <!-- Sayfa başlığı -->
+    <div class="pnl-page-head">
+      <div>
+        <h1>Rezervasyonlar</h1>
+        <div class="ph-sub">Tüm işletmelerden gelen rezervasyonlar — gözetim ve detay görüntüleme.</div>
+      </div>
+      <!-- DENETİM deseni: "Yeni" butonu yok -->
+    </div>
+
+    <!-- Liste kartı -->
+    <div class="pnl-card">
+
+      <!-- Filtre çubuğu -->
+      <div class="filter-bar">
+        <div class="fb-search">
+          <i class="fa-solid fa-magnifying-glass"></i>
+          <input type="text" placeholder="Misafir adı veya işletme ara…" id="rezSearch" />
+        </div>
+        <div class="chips">
+          <button class="chip is-active" data-filter="tumu" onclick="filterRez(this,'tumu')">
+            Tümü <span class="ch-cnt">6</span>
+          </button>
+          <button class="chip" data-filter="bekliyor" onclick="filterRez(this,'bekliyor')">
+            Bekliyor <span class="ch-cnt">2</span>
+          </button>
+          <button class="chip" data-filter="onaylandı" onclick="filterRez(this,'onaylandı')">
+            Onaylandı <span class="ch-cnt">2</span>
+          </button>
+          <button class="chip" data-filter="tamamlandı" onclick="filterRez(this,'tamamlandı')">
+            Tamamlandı <span class="ch-cnt">1</span>
+          </button>
+          <button class="chip" data-filter="iptal" onclick="filterRez(this,'iptal')">
+            İptal <span class="ch-cnt">1</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Tablo -->
+      <div class="pc-body flush tbl-scroll">
+        <table class="ptable" id="rezTable">
+          <thead>
+            <tr>
+              <th>Misafir</th>
+              <th>İşletme</th>
+              <th>Tarih / Saat</th>
+              <th>Durum</th>
+              <th>Aksiyonlar</th>
+            </tr>
+          </thead>
+          <tbody>
+
+            <!-- Satır 1: Bekliyor -->
+            <tr data-status="bekliyor">
+              <td>
+                <div class="gst-cell">
+                  <div class="gst-ava">EY</div>
+                  <div class="gst-id">
+                    <strong>Elif Yılmaz</strong>
+                    <span><i class="fa-solid fa-user-group"></i> 4 kişi</span>
+                  </div>
+                </div>
+              </td>
+              <td>
+                <div class="biz-cell">
+                  <div class="biz-name">Köşe Mutfağı</div>
+                  <div class="biz-city"><i class="fa-solid fa-location-dot"></i> İstanbul, Kadıköy</div>
+                </div>
+              </td>
+              <td>
+                <div class="dt-cell">
+                  <div class="dt-date">24 Haz 2026</div>
+                  <div class="dt-time"><i class="fa-regular fa-clock"></i> 20:00</div>
+                </div>
+              </td>
+              <td><span class="pstat wait">Bekliyor</span></td>
+              <td>
+                <div class="row-actions">
+                  <a class="act-btn" href="sa-isletme-rezervasyonlar-detay.html"><i class="fa-solid fa-eye"></i> Detay</a>
+                </div>
+              </td>
+            </tr>
+
+            <!-- Satır 2: Bekliyor -->
+            <tr data-status="bekliyor">
+              <td>
+                <div class="gst-cell">
+                  <div class="gst-ava">MK</div>
+                  <div class="gst-id">
+                    <strong>Mert Kaya</strong>
+                    <span><i class="fa-solid fa-user-group"></i> 2 kişi</span>
+                  </div>
+                </div>
+              </td>
+              <td>
+                <div class="biz-cell">
+                  <div class="biz-name">Zeytindalı Kahve</div>
+                  <div class="biz-city"><i class="fa-solid fa-location-dot"></i> İzmir, Alsancak</div>
+                </div>
+              </td>
+              <td>
+                <div class="dt-cell">
+                  <div class="dt-date">25 Haz 2026</div>
+                  <div class="dt-time"><i class="fa-regular fa-clock"></i> 11:30</div>
+                </div>
+              </td>
+              <td><span class="pstat wait">Bekliyor</span></td>
+              <td>
+                <div class="row-actions">
+                  <a class="act-btn" href="sa-isletme-rezervasyonlar-detay.html"><i class="fa-solid fa-eye"></i> Detay</a>
+                </div>
+              </td>
+            </tr>
+
+            <!-- Satır 3: Onaylandı -->
+            <tr data-status="onaylandı">
+              <td>
+                <div class="gst-cell">
+                  <div class="gst-ava">ZA</div>
+                  <div class="gst-id">
+                    <strong>Zeynep Aydın</strong>
+                    <span><i class="fa-solid fa-user-group"></i> 6 kişi</span>
+                  </div>
+                </div>
+              </td>
+              <td>
+                <div class="biz-cell">
+                  <div class="biz-name">Sağlıklı Sofra</div>
+                  <div class="biz-city"><i class="fa-solid fa-location-dot"></i> Ankara, Çankaya</div>
+                </div>
+              </td>
+              <td>
+                <div class="dt-cell">
+                  <div class="dt-date">23 Haz 2026</div>
+                  <div class="dt-time"><i class="fa-regular fa-clock"></i> 19:30</div>
+                </div>
+              </td>
+              <td><span class="pstat ok">Onaylandı</span></td>
+              <td>
+                <div class="row-actions">
+                  <a class="act-btn" href="sa-isletme-rezervasyonlar-detay.html"><i class="fa-solid fa-eye"></i> Detay</a>
+                </div>
+              </td>
+            </tr>
+
+            <!-- Satır 4: Onaylandı -->
+            <tr data-status="onaylandı">
+              <td>
+                <div class="gst-cell">
+                  <div class="gst-ava">OD</div>
+                  <div class="gst-id">
+                    <strong>Onur Demir</strong>
+                    <span><i class="fa-solid fa-user-group"></i> 3 kişi</span>
+                  </div>
+                </div>
+              </td>
+              <td>
+                <div class="biz-cell">
+                  <div class="biz-name">Meze Dünyası</div>
+                  <div class="biz-city"><i class="fa-solid fa-location-dot"></i> İstanbul, Beyoğlu</div>
+                </div>
+              </td>
+              <td>
+                <div class="dt-cell">
+                  <div class="dt-date">26 Haz 2026</div>
+                  <div class="dt-time"><i class="fa-regular fa-clock"></i> 21:00</div>
+                </div>
+              </td>
+              <td><span class="pstat ok">Onaylandı</span></td>
+              <td>
+                <div class="row-actions">
+                  <a class="act-btn" href="sa-isletme-rezervasyonlar-detay.html"><i class="fa-solid fa-eye"></i> Detay</a>
+                </div>
+              </td>
+            </tr>
+
+            <!-- Satır 5: Tamamlandı -->
+            <tr data-status="tamamlandı">
+              <td>
+                <div class="gst-cell">
+                  <div class="gst-ava">SŞ</div>
+                  <div class="gst-id">
+                    <strong>Selin Şahin</strong>
+                    <span><i class="fa-solid fa-user-group"></i> 2 kişi</span>
+                  </div>
+                </div>
+              </td>
+              <td>
+                <div class="biz-cell">
+                  <div class="biz-name">Meze Dünyası</div>
+                  <div class="biz-city"><i class="fa-solid fa-location-dot"></i> İstanbul, Beyoğlu</div>
+                </div>
+              </td>
+              <td>
+                <div class="dt-cell">
+                  <div class="dt-date">18 Haz 2026</div>
+                  <div class="dt-time"><i class="fa-regular fa-clock"></i> 20:30</div>
+                </div>
+              </td>
+              <td><span class="pstat off">Tamamlandı</span></td>
+              <td>
+                <div class="row-actions">
+                  <a class="act-btn" href="sa-isletme-rezervasyonlar-detay.html"><i class="fa-solid fa-eye"></i> Detay</a>
+                </div>
+              </td>
+            </tr>
+
+            <!-- Satır 6: İptal -->
+            <tr data-status="iptal">
+              <td>
+                <div class="gst-cell">
+                  <div class="gst-ava">BÇ</div>
+                  <div class="gst-id">
+                    <strong>Burak Çelik</strong>
+                    <span><i class="fa-solid fa-user-group"></i> 5 kişi</span>
+                  </div>
+                </div>
+              </td>
+              <td>
+                <div class="biz-cell">
+                  <div class="biz-name">Deniz Lokantası</div>
+                  <div class="biz-city"><i class="fa-solid fa-location-dot"></i> İzmir, Karşıyaka</div>
+                </div>
+              </td>
+              <td>
+                <div class="dt-cell">
+                  <div class="dt-date">20 Haz 2026</div>
+                  <div class="dt-time"><i class="fa-regular fa-clock"></i> 19:00</div>
+                </div>
+              </td>
+              <td><span class="pstat warm">İptal</span></td>
+              <td>
+                <div class="row-actions">
+                  <a class="act-btn" href="sa-isletme-rezervasyonlar-detay.html"><i class="fa-solid fa-eye"></i> Detay</a>
+                </div>
+              </td>
+            </tr>
+
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Boş durum (filtre sonucu) -->
+      <div class="pnl-empty" id="rezEmpty" style="display:none">
+        <div class="pe-ico"><i class="fa-solid fa-calendar-day"></i></div>
+        <h4>Rezervasyon bulunamadı</h4>
+        <p>Seçili filtreyle eşleşen rezervasyon yok. Filtreyi değiştirmeyi deneyin.</p>
+        <span class="pe-tag"><i class="fa-solid fa-filter"></i> Filtre temizle</span>
+      </div>
+
+    </div><!-- /pnl-card -->
+
+  </main>
+
+</div>
+
+<script src="assets/js/sa-shell.js"></script>
+
+<!-- Filtre / arama etkileşim JS (sayfa-özel) -->
+<script>
+function filterRez(btn, filter) {
+  document.querySelectorAll('.chip').forEach(function(c){ c.classList.remove('is-active'); });
+  btn.classList.add('is-active');
+
+  var rows = document.querySelectorAll('#rezTable tbody tr');
+  var visible = 0;
+  rows.forEach(function(row){
+    var show = (filter === 'tumu') || (row.dataset.status === filter);
+    row.style.display = show ? '' : 'none';
+    if(show) visible++;
+  });
+  var empty = document.getElementById('rezEmpty');
+  if(empty) empty.style.display = (visible === 0) ? '' : 'none';
+}
+
+/* canlı arama */
+document.getElementById('rezSearch').addEventListener('input', function(){
+  var q = this.value.toLowerCase().trim();
+  var rows = document.querySelectorAll('#rezTable tbody tr');
+  var visible = 0;
+  rows.forEach(function(row){
+    var txt = row.textContent.toLowerCase();
+    var show = !q || txt.indexOf(q) !== -1;
+    row.style.display = show ? '' : 'none';
+    if(show) visible++;
+  });
+  var empty = document.getElementById('rezEmpty');
+  if(empty) empty.style.display = (visible === 0) ? '' : 'none';
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Yeni Egzersiz — DadaFit Süper Admin</title>
+<link rel="shortcut icon" type="image/x-icon" href="assets/img/favicon.ico" />
+<!-- FontAwesome 6.5.2 (kilitli ikon seti) -->
+<link rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+      integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A=="
+      crossorigin="anonymous" referrerpolicy="no-referrer" />
+<link rel="stylesheet" href="assets/css/sa-shell.css" />
+<style>
+/* =====================================================================
+   SA-DADAFIT-EGZERSIZLER-FORM — SAYFA CSS (kabuk CSS'i sa-shell.css'te).
+   CRUD form deseni: sa-dadafit-challenge-form flagship'ten uyarlandı.
+   ===================================================================== */
+
+/* ORTAK FORM ALANLARI */
+.form-grid{display:grid;gap:18px}
+.frow{display:flex;flex-direction:column;gap:7px}
+.frow label{font-size:12.5px;font-weight:700;color:var(--slate-2)}
+.frow .fhint{font-size:11.5px;color:var(--muted);font-weight:500}
+.finput,.fselect,.ftext{width:100%;font-family:inherit;font-size:13.5px;font-weight:500;color:var(--ink);background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-md);padding:0 14px;height:44px;outline:none;transition:.2s var(--ease)}
+.ftext{height:auto;padding:12px 14px;line-height:1.5;resize:vertical;min-height:96px}
+.finput:focus,.fselect:focus,.ftext:focus{border-color:var(--acc);box-shadow:0 0 0 3px rgba(var(--acc-rgb),.12)}
+.frow.two{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.form-sec{padding:18px 22px;border-bottom:1px solid var(--line)}
+.form-sec:last-child{border-bottom:none}
+.form-sec-tt{font-size:13px;font-weight:700;color:var(--slate);margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.form-sec-tt i{color:var(--acc)}
+.form-actions{display:flex;gap:10px;justify-content:flex-end;padding:16px 22px}
+
+/* Form layout: 2-kolon (sol geniş form + sağ önizleme) */
+.form-layout{display:grid;grid-template-columns:minmax(0,1fr) minmax(280px,360px);gap:24px;align-items:start}
+
+/* Kapak görseli yükleyici (statik placeholder — gerçek upload yok) */
+.img-upload{width:100%;aspect-ratio:16/9;border-radius:var(--radius-md);border:2px dashed var(--line);background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;cursor:pointer;transition:.2s var(--ease);position:relative;overflow:hidden}
+.img-upload:hover{border-color:var(--acc);background:rgba(var(--acc-rgb),.04)}
+.img-upload .iu-preview{position:absolute;inset:0;background-size:cover;background-position:center;border-radius:calc(var(--radius-md) - 2px)}
+.img-upload .iu-overlay{position:absolute;inset:0;background:rgba(33,30,22,.45);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;opacity:0;transition:.2s;border-radius:calc(var(--radius-md) - 2px)}
+.img-upload:hover .iu-overlay{opacity:1}
+.img-upload .iu-icon{width:44px;height:44px;border-radius:var(--radius-md);background:rgba(var(--acc-rgb),.14);color:var(--acc-deep);display:grid;place-items:center;font-size:18px}
+.img-upload .iu-lbl{font-size:13px;font-weight:700;color:var(--slate-2)}
+.img-upload .iu-hint{font-size:11.5px;color:var(--muted)}
+
+/* Talimat adımları (dinamik liste) */
+.steps-list{display:flex;flex-direction:column;gap:10px}
+.step-row{display:flex;align-items:flex-start;gap:10px}
+.step-num{width:28px;height:28px;flex:none;border-radius:var(--radius-circle);background:rgba(var(--acc-rgb),.12);color:var(--acc-deep);display:flex;align-items:center;justify-content:center;font-size:12.5px;font-weight:700;margin-top:8px}
+.step-row .finput{flex:1}
+.step-del{width:36px;height:44px;flex:none;border:1px solid var(--line);border-radius:var(--radius-md);background:var(--paper);color:var(--muted);cursor:pointer;transition:.15s var(--ease);display:flex;align-items:center;justify-content:center}
+.step-del:hover{border-color:var(--tomato);color:var(--tomato);background:var(--tomato-tint)}
+.add-step{display:inline-flex;align-items:center;gap:7px;font-family:inherit;font-size:12.5px;font-weight:700;color:var(--acc-deep);background:rgba(var(--acc-rgb),.08);border:1px dashed var(--acc);border-radius:var(--radius-sm);padding:8px 13px;cursor:pointer;transition:.15s var(--ease);margin-top:10px}
+.add-step:hover{background:rgba(var(--acc-rgb),.14)}
+
+/* Önizleme yan kart */
+.summary-card{position:sticky;top:calc(var(--pnl-top-h) + 28px);display:flex;flex-direction:column;gap:14px}
+.sc-preview{width:100%;aspect-ratio:16/9;border-radius:var(--radius-md);border:1px solid var(--line);background:var(--bg);background-size:cover;background-position:center;overflow:hidden;display:flex;align-items:flex-end}
+.sc-preview-bar{width:100%;padding:10px 12px;background:linear-gradient(to top, rgba(33,30,22,.7), transparent)}
+.sc-preview-title{font-size:14px;font-weight:700;color:#fff;line-height:1.2}
+.sc-preview-sub{font-size:11.5px;color:rgba(255,255,255,.75)}
+.sc-meta{display:flex;flex-direction:column;gap:8px}
+.sc-meta-row{display:flex;align-items:center;justify-content:space-between;font-size:13px}
+.sc-meta-row .sm-lbl{color:var(--muted)}
+.sc-meta-row .sm-val{font-weight:700;color:var(--slate)}
+
+/* Responsive */
+@media(max-width:980px){
+  .form-layout{grid-template-columns:minmax(0,1fr)}
+  .summary-card{position:static}
+}
+@media(max-width:640px){
+  .frow.two{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body data-brand="mutfak" data-sec="dadafit" data-screen="egzersizler">
+
+<div class="sa-app">
+
+  <!-- §1 İKON-RAIL -->
+  <aside class="sa-rail" id="saRail">
+    <a class="sa-rail-logo" href="sa-giris-v1.html" title="Yönetim Girişi"><img src="assets/img/logo-mark.png" alt="DadaMutfak" /></a>
+    <a class="sa-rail-ico" data-sec="genel" href="sa-shell.html?sec=genel" title="Genel Bakış"><i class="fa-solid fa-gauge-high"></i></a>
+    <span class="sa-rail-div"></span>
+    <a class="sa-rail-ico" data-sec="admin"   href="sa-admin.html"   title="Admin"><i class="fa-solid fa-shield-halved"></i></a>
+    <a class="sa-rail-ico" data-sec="saglik"  href="sa-saglik.html"  title="Sağlık &amp; Diyet"><i class="fa-solid fa-heart-pulse"></i></a>
+    <a class="sa-rail-ico" data-sec="store"   href="sa-store.html"   title="DadaStore"><i class="fa-solid fa-bag-shopping"></i></a>
+    <a class="sa-rail-ico" data-sec="dadafit" href="sa-dadafit.html" title="DadaFit"><i class="fa-solid fa-dumbbell"></i></a>
+    <a class="sa-rail-ico" data-sec="isletme" href="sa-isletme.html" title="İşletmeler"><i class="fa-solid fa-store"></i></a>
+    <a class="sa-rail-ico is-locked" data-sec="akademi" href="#" title="DadaAkademi — Yakında"><i class="fa-solid fa-graduation-cap"></i><i class="fa-solid fa-lock sr-lock"></i></a>
+    <div class="sa-rail-foot"><a class="sa-rail-ico" href="anasayfa-portal-v3a.html" title="Siteye Dön"><i class="fa-solid fa-arrow-left"></i></a></div>
+  </aside>
+
+  <!-- §2 BÖLÜM MENÜSÜ (JS) -->
+  <nav class="sa-menu" id="saMenu"></nav>
+
+  <div class="sa-divider" id="saDivider" role="separator" aria-label="Menüyü daralt/genişlet" title="Sürükle veya tıkla — menüyü daralt/genişlet">
+    <span class="sa-grip"><i class="fa-solid fa-grip-lines-vertical"></i></span>
+  </div>
+
+  <div class="pnl-overlay" id="pnlOverlay"></div>
+
+  <!-- §3 ÜST BAR -->
+  <header class="pnl-top">
+    <button class="pnl-burger" id="pnlBurger" aria-label="Menü"><i class="fa-solid fa-bars"></i></button>
+    <div class="pnl-search">
+      <i class="fa-solid fa-magnifying-glass"></i>
+      <input type="text" placeholder="Egzersiz, kas grubu ara…" />
+    </div>
+    <div class="pnl-top-tools">
+      <button class="pnl-bell" aria-label="Bildirimler"><i class="fa-regular fa-bell"></i><span class="pb-dot"></span></button>
+      <div class="pnl-me">
+        <div class="pm-ava"><i class="fa-solid fa-user"></i></div>
+        <div class="pm-id">
+          <div class="pm-name" id="pmName">Süper Admin</div>
+          <div class="pm-role" id="pmRole">Tüm yetki</div>
+        </div>
+        <i class="fa-solid fa-chevron-down"></i>
+      </div>
+    </div>
+  </header>
+
+  <!-- §4 İÇERİK — Egzersiz Form -->
+  <main class="pnl-main" id="saMain">
+
+    <!-- Sayfa başlığı (geri linki) -->
+    <div class="pnl-page-head">
+      <div>
+        <div style="margin-bottom:6px">
+          <a href="sa-dadafit-egzersizler.html" style="font-size:13px;font-weight:700;color:var(--muted);display:inline-flex;align-items:center;gap:6px;transition:.18s" onmouseover="this.style.color='var(--acc-deep)'" onmouseout="this.style.color='var(--muted)'">
+            <i class="fa-solid fa-arrow-left"></i> Egzersizlere Dön
+          </a>
+        </div>
+        <h1>Yeni Egzersiz</h1>
+        <div class="ph-sub">Egzersiz bilgilerini, kas grubunu ve uygulama talimatlarını tanımla</div>
+      </div>
+    </div>
+
+    <!-- Form + Önizleme 2-kolon layout -->
+    <div class="form-layout">
+
+      <!-- Sol: Form alanları -->
+      <div style="display:flex;flex-direction:column;gap:16px">
+
+        <!-- Temel bilgiler -->
+        <div class="pnl-card">
+          <div class="pc-head">
+            <div class="pc-title"><i class="fa-solid fa-circle-info"></i> Temel Bilgiler</div>
+          </div>
+
+          <div class="form-sec">
+            <div class="form-sec-tt"><i class="fa-solid fa-pen"></i> Ad & Kas Grubu</div>
+            <div class="form-grid">
+              <div class="frow">
+                <label for="ex-name">Egzersiz Adı <span style="color:var(--tomato)">*</span></label>
+                <input class="finput" id="ex-name" type="text" placeholder="ör. Barbell Squat" />
+              </div>
+              <div class="frow">
+                <label for="ex-muscle">Hedef Kas Grubu <span style="color:var(--tomato)">*</span></label>
+                <input class="finput" id="ex-muscle" type="text" placeholder="ör. Bacak · Glutes" />
+              </div>
+            </div>
+          </div>
+
+          <div class="form-sec">
+            <div class="form-sec-tt"><i class="fa-solid fa-tags"></i> Kategori & Ayarlar</div>
+            <div class="form-grid">
+              <div class="frow two">
+                <div class="frow" style="gap:7px">
+                  <label for="ex-cat">Kategori <span style="color:var(--tomato)">*</span></label>
+                  <select class="fselect" id="ex-cat">
+                    <option value="">Seç…</option>
+                    <option value="kuvvet">Kuvvet</option>
+                    <option value="kardiyo">Kardiyo</option>
+                    <option value="esneklik">Esneklik</option>
+                    <option value="denge">Denge &amp; Core</option>
+                  </select>
+                </div>
+                <div class="frow" style="gap:7px">
+                  <label for="ex-equip">Ekipman</label>
+                  <select class="fselect" id="ex-equip">
+                    <option value="">Seç…</option>
+                    <option>Vücut Ağırlığı</option>
+                    <option>Barbell</option>
+                    <option>Dambıl</option>
+                    <option>Kettlebell</option>
+                    <option>Direnç Bandı</option>
+                    <option>Mat</option>
+                    <option>Makine</option>
+                  </select>
+                </div>
+              </div>
+              <div class="frow two">
+                <div class="frow" style="gap:7px">
+                  <label for="ex-level">Zorluk <span style="color:var(--tomato)">*</span></label>
+                  <select class="fselect" id="ex-level">
+                    <option value="">Seç…</option>
+                    <option value="baslangic">Başlangıç</option>
+                    <option value="orta">Orta</option>
+                    <option value="ileri">İleri</option>
+                  </select>
+                </div>
+                <div class="frow" style="gap:7px">
+                  <label for="ex-dur">Önerilen Süre / Tekrar</label>
+                  <input class="finput" id="ex-dur" type="text" placeholder="ör. 3×12 tekrar veya 45 sn" />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-sec">
+            <div class="form-sec-tt"><i class="fa-solid fa-align-left"></i> Açıklama</div>
+            <div class="frow">
+              <label for="ex-desc">Kısa Açıklama</label>
+              <textarea class="ftext" id="ex-desc" placeholder="Egzersizin amacı, çalıştırdığı kaslar ve faydası…" rows="3"></textarea>
+            </div>
+          </div>
+
+        </div><!-- /temel bilgiler -->
+
+        <!-- Kapak görseli -->
+        <div class="pnl-card">
+          <div class="pc-head">
+            <div class="pc-title"><i class="fa-solid fa-image"></i> Görsel / Video</div>
+          </div>
+          <div class="form-sec">
+            <div class="frow">
+              <label>Egzersiz Görseli <span style="color:var(--muted);font-weight:500">(16:9 önerilen)</span></label>
+              <div class="img-upload" id="coverUpload">
+                <div class="iu-preview" id="coverPreview"></div>
+                <div class="iu-icon"><i class="fa-solid fa-cloud-arrow-up"></i></div>
+                <div class="iu-lbl">Görsel yükle veya sürükle</div>
+                <div class="iu-hint">JPG / PNG / WebP · Maks. 4 MB · En az 1200×675</div>
+                <div class="iu-overlay">
+                  <i class="fa-solid fa-camera" style="color:#fff;font-size:18px"></i>
+                  <span style="font-size:12px;color:#fff;font-weight:700">Değiştir</span>
+                </div>
+              </div>
+              <span class="fhint">Görsel liste kartında ve egzersiz detayında kullanılır. img etiketi yerine div+background-image ile render edilir.</span>
+            </div>
+            <div class="frow" style="margin-top:14px">
+              <label for="ex-video">Demo Video URL <span style="color:var(--muted);font-weight:500">(opsiyonel)</span></label>
+              <input class="finput" id="ex-video" type="url" placeholder="https://…" />
+            </div>
+          </div>
+        </div>
+
+        <!-- Talimat adımları -->
+        <div class="pnl-card">
+          <div class="pc-head">
+            <div class="pc-title"><i class="fa-solid fa-list-ol"></i> Uygulama Talimatları</div>
+            <span style="font-size:12px;color:var(--muted)">Adım adım doğru form</span>
+          </div>
+          <div class="form-sec">
+            <div class="steps-list" id="stepsList">
+              <!-- JS doldurur -->
+            </div>
+            <button type="button" class="add-step" id="addStepBtn"><i class="fa-solid fa-plus"></i> Adım Ekle</button>
+          </div>
+        </div>
+
+        <!-- Form aksiyonları -->
+        <div class="pnl-card">
+          <div class="form-actions">
+            <a href="sa-dadafit-egzersizler.html" class="btn btn-ghost btn-sm">İptal</a>
+            <button type="button" class="btn btn-ghost btn-sm" onclick="saToast('Taslak kaydedildi')"><i class="fa-solid fa-floppy-disk"></i> Taslak Kaydet</button>
+            <button type="button" class="btn btn-acc btn-sm" onclick="saToast('Egzersiz oluşturuldu')"><i class="fa-solid fa-check"></i> Egzersiz Oluştur</button>
+          </div>
+        </div>
+
+      </div><!-- /sol form -->
+
+      <!-- Sağ: Önizleme yan kart -->
+      <div class="summary-card">
+
+        <!-- Önizleme kartı -->
+        <div class="pnl-card">
+          <div class="pc-head">
+            <div class="pc-title"><i class="fa-solid fa-eye"></i> Önizleme</div>
+          </div>
+          <div class="pc-body" style="padding:14px">
+            <div class="sc-preview" id="scPreview" style="background-image:url('https://images.unsplash.com/photo-1534368786749-d63b2c0d22ad?w=400&q=80&auto=format&fit=crop')">
+              <div class="sc-preview-bar">
+                <div class="sc-preview-title" id="scTitle">Egzersiz Adı</div>
+                <div class="sc-preview-sub" id="scSub">Kas grubu</div>
+              </div>
+            </div>
+            <div class="sc-meta" style="margin-top:14px">
+              <div class="sc-meta-row"><span class="sm-lbl">Kategori</span><span class="sm-val" id="scCat">—</span></div>
+              <div class="sc-meta-row"><span class="sm-lbl">Ekipman</span><span class="sm-val" id="scEquip">—</span></div>
+              <div class="sc-meta-row"><span class="sm-lbl">Zorluk</span><span class="sm-val" id="scLevel">—</span></div>
+              <div class="sc-meta-row"><span class="sm-lbl">Süre / Tekrar</span><span class="sm-val" id="scDur">—</span></div>
+              <div class="sc-meta-row"><span class="sm-lbl">Adım sayısı</span><span class="sm-val" id="scSteps">0</span></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Durum -->
+        <div class="pnl-card">
+          <div class="pc-head">
+            <div class="pc-title"><i class="fa-solid fa-circle-dot"></i> Durum</div>
+          </div>
+          <div class="pc-body" style="padding:14px;display:flex;flex-direction:column;gap:10px">
+            <div class="frow">
+              <label for="ex-status">Yayın Durumu</label>
+              <select class="fselect" id="ex-status">
+                <option value="taslak">Taslak</option>
+                <option value="yayinda" selected>Yayında</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /sağ önizleme -->
+    </div><!-- /form-layout -->
+
+  </main>
+
+</div><!-- /sa-app -->
+
+<script src="assets/js/sa-shell.js"></script>
+
+<!-- SAYFA JS — Talimat adımları + önizleme senkronu -->
+<script>
+(function(){
+  /* --- Talimat adımları --- */
+  var stepsList = document.getElementById('stepsList');
+  var steps = ['', '', ''];   /* başlangıçta 3 boş adım */
+
+  function renderSteps(){
+    stepsList.innerHTML = steps.map(function(val, i){
+      return '<div class="step-row">'
+        + '<div class="step-num">' + (i+1) + '</div>'
+        + '<input class="finput step-input" type="text" data-idx="' + i + '" value="' + val.replace(/"/g,'&quot;') + '" placeholder="Adım ' + (i+1) + ' açıklaması…" />'
+        + '<button type="button" class="step-del" data-del="' + i + '" title="Adımı sil"><i class="fa-solid fa-xmark"></i></button>'
+        + '</div>';
+    }).join('');
+    document.getElementById('scSteps').textContent = steps.length;
+  }
+
+  stepsList.addEventListener('input', function(e){
+    var inp = e.target.closest('.step-input');
+    if(!inp) return;
+    steps[parseInt(inp.dataset.idx,10)] = inp.value;
+  });
+  stepsList.addEventListener('click', function(e){
+    var del = e.target.closest('[data-del]');
+    if(!del) return;
+    var idx = parseInt(del.dataset.del,10);
+    if(steps.length <= 1){ steps[0]=''; } else { steps.splice(idx,1); }
+    renderSteps();
+  });
+  document.getElementById('addStepBtn').addEventListener('click', function(){
+    steps.push('');
+    renderSteps();
+  });
+
+  /* --- Önizleme senkronu --- */
+  var scTitle = document.getElementById('scTitle');
+  var scSub   = document.getElementById('scSub');
+  var scCat   = document.getElementById('scCat');
+  var scEquip = document.getElementById('scEquip');
+  var scLevel = document.getElementById('scLevel');
+  var scDur   = document.getElementById('scDur');
+
+  function catLabel(v){return {kuvvet:'Kuvvet',kardiyo:'Kardiyo',esneklik:'Esneklik',denge:'Denge & Core'}[v]||'—';}
+  function lvlLabel(v){return {baslangic:'Başlangıç',orta:'Orta',ileri:'İleri'}[v]||'—';}
+
+  function syncPreview(){
+    scTitle.textContent = document.getElementById('ex-name').value.trim() || 'Egzersiz Adı';
+    scSub.textContent   = document.getElementById('ex-muscle').value.trim() || 'Kas grubu';
+    scCat.textContent   = catLabel(document.getElementById('ex-cat').value);
+    scEquip.textContent = document.getElementById('ex-equip').value || '—';
+    scLevel.textContent = lvlLabel(document.getElementById('ex-level').value);
+    scDur.textContent   = document.getElementById('ex-dur').value.trim() || '—';
+  }
+  ['ex-name','ex-muscle','ex-cat','ex-equip','ex-level','ex-dur'].forEach(function(id){
+    var el = document.getElementById(id);
+    if(el){ el.addEventListener('input', syncPreview); el.addEventListener('change', syncPreview); }
+  });
+
+  /* --- Kapak görsel yükleyici (statik demo — gerçek upload yok) --- */
+  var coverUpload  = document.getElementById('coverUpload');
+  var coverPreview = document.getElementById('coverPreview');
+  var scPreview    = document.getElementById('scPreview');
+  var DEMO_IMGS = [
+    'https://images.unsplash.com/photo-1534368786749-d63b2c0d22ad?w=800&q=80&auto=format&fit=crop',
+    'https://images.unsplash.com/photo-1598971639058-fab3c3109a00?w=800&q=80&auto=format&fit=crop',
+    'https://images.unsplash.com/photo-1517963879433-6ad2b056d712?w=800&q=80&auto=format&fit=crop'
+  ];
+  var demoIdx = 0;
+  coverUpload.addEventListener('click', function(){
+    var url = DEMO_IMGS[demoIdx % DEMO_IMGS.length];
+    demoIdx++;
+    coverPreview.style.backgroundImage = 'url(\'' + url + '\')';
+    scPreview.style.backgroundImage    = 'url(\'' + url + '\')';
+  });
+
+  /* İlk render */
+  renderSteps();
+  syncPreview();
+})();
+</script>
+
+</body>
+</html>

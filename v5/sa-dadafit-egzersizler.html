@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Egzersizler — DadaFit Süper Admin</title>
+<link rel="shortcut icon" type="image/x-icon" href="assets/img/favicon.ico" />
+<!-- FontAwesome 6.5.2 (kilitli ikon seti) -->
+<link rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+      integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A=="
+      crossorigin="anonymous" referrerpolicy="no-referrer" />
+<link rel="stylesheet" href="assets/css/sa-shell.css" />
+<style>
+/* =====================================================================
+   SA-DADAFIT-EGZERSIZLER — SAYFA CSS (kabuk CSS'i sa-shell.css'te).
+   CRUD deseni: sa-dadafit-challenge liste flagship'ten uyarlandı.
+   ===================================================================== */
+
+/* Filtre çubuğu */
+.filter-bar{display:flex;align-items:center;gap:10px;padding:14px 20px;border-bottom:1px solid var(--line);flex-wrap:wrap}
+.filter-search{position:relative;flex:1;min-width:200px;max-width:320px}
+.filter-search i{position:absolute;left:12px;top:50%;transform:translateY(-50%);font-size:13px;color:var(--muted);pointer-events:none}
+.filter-search input{width:100%;height:36px;padding:0 12px 0 34px;font-family:inherit;font-size:13px;font-weight:500;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:var(--radius-sm);outline:none;transition:.2s var(--ease)}
+.filter-search input::placeholder{color:var(--muted)}
+.filter-search input:focus{border-color:var(--acc);background:var(--paper);box-shadow:0 0 0 3px rgba(var(--acc-rgb),.10)}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chip{display:inline-flex;align-items:center;gap:5px;height:32px;padding:0 13px;border-radius:var(--radius-pill);font-size:12.5px;font-weight:600;cursor:pointer;background:var(--bg);border:1px solid var(--line);color:var(--slate-2);transition:.18s var(--ease);white-space:nowrap}
+.chip:hover{border-color:var(--acc);color:var(--acc-deep)}
+.chip.active{background:rgba(var(--acc-rgb),.12);border-color:var(--acc);color:var(--acc-deep)}
+
+/* Tablo */
+.ptable{width:100%;border-collapse:collapse}
+.ptable thead tr{border-bottom:2px solid var(--line)}
+.ptable th{padding:11px 16px;font-size:11.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);text-align:left;white-space:nowrap}
+.ptable tbody tr{border-bottom:1px solid var(--line);transition:background .15s}
+.ptable tbody tr:last-child{border-bottom:none}
+.ptable tbody tr:hover{background:var(--bg)}
+.ptable td{padding:13px 16px;font-size:13.5px;vertical-align:middle}
+
+/* Egzersiz görsel hücresi (div+bg-image — img DEĞİL) */
+.ex-thumb{width:52px;height:52px;border-radius:var(--radius-sm);flex:none;background-size:cover;background-position:center;border:1px solid var(--line)}
+.ex-cell{display:flex;align-items:center;gap:12px}
+.ex-name{font-weight:700;color:var(--slate);font-size:13.5px;line-height:1.25}
+.ex-muscle{font-size:11.5px;color:var(--muted);margin-top:2px}
+
+/* Kategori / ekipman etiketi */
+.tag-pill{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:700;padding:3px 9px;border-radius:6px;background:rgba(var(--acc-rgb),.10);color:var(--acc-deep);white-space:nowrap}
+.equip{font-size:13px;color:var(--slate);display:inline-flex;align-items:center;gap:6px}
+.equip i{font-size:12px;color:var(--muted)}
+
+/* Zorluk rozeti */
+.lvl{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:700;padding:3px 10px;border-radius:var(--radius-pill);white-space:nowrap}
+.lvl .dot{width:6px;height:6px;border-radius:50%;display:inline-block}
+.lvl.l1{background:rgba(var(--acc-rgb),.10);color:var(--acc-deep)}
+.lvl.l1 .dot{background:var(--acc)}
+.lvl.l2{background:rgba(184,134,11,.12);color:#8a6508}
+.lvl.l2 .dot{background:#B8860B}
+.lvl.l3{background:var(--tomato-tint);color:var(--tomato)}
+.lvl.l3 .dot{background:var(--tomato)}
+
+/* Aksiyon butonları (satır içi) */
+.row-actions{display:flex;align-items:center;gap:6px}
+.act-btn{width:32px;height:32px;border-radius:var(--radius-sm);display:inline-flex;align-items:center;justify-content:center;font-size:13px;cursor:pointer;border:1px solid var(--line);background:var(--paper);color:var(--slate-2);transition:.18s var(--ease);text-decoration:none}
+.act-btn:hover{border-color:var(--acc);color:var(--acc-deep);background:rgba(var(--acc-rgb),.07)}
+.act-btn.danger:hover{border-color:var(--tomato);color:var(--tomato);background:var(--tomato-tint)}
+
+/* Responsive */
+@media(max-width:760px){
+  .pc-body.flush{overflow-x:auto;-webkit-overflow-scrolling:touch}
+  .ptable{min-width:680px}
+  .filter-bar{padding:12px 16px}
+}
+</style>
+</head>
+<body data-brand="mutfak" data-sec="dadafit" data-screen="egzersizler">
+
+<div class="sa-app">
+
+  <!-- §1 İKON-RAIL -->
+  <aside class="sa-rail" id="saRail">
+    <a class="sa-rail-logo" href="sa-giris-v1.html" title="Yönetim Girişi"><img src="assets/img/logo-mark.png" alt="DadaMutfak" /></a>
+    <a class="sa-rail-ico" data-sec="genel" href="sa-shell.html?sec=genel" title="Genel Bakış"><i class="fa-solid fa-gauge-high"></i></a>
+    <span class="sa-rail-div"></span>
+    <a class="sa-rail-ico" data-sec="admin"   href="sa-admin.html"   title="Admin"><i class="fa-solid fa-shield-halved"></i></a>
+    <a class="sa-rail-ico" data-sec="saglik"  href="sa-saglik.html"  title="Sağlık &amp; Diyet"><i class="fa-solid fa-heart-pulse"></i></a>
+    <a class="sa-rail-ico" data-sec="store"   href="sa-store.html"   title="DadaStore"><i class="fa-solid fa-bag-shopping"></i></a>
+    <a class="sa-rail-ico" data-sec="dadafit" href="sa-dadafit.html" title="DadaFit"><i class="fa-solid fa-dumbbell"></i></a>
+    <a class="sa-rail-ico" data-sec="isletme" href="sa-isletme.html" title="İşletmeler"><i class="fa-solid fa-store"></i></a>
+    <a class="sa-rail-ico is-locked" data-sec="akademi" href="#" title="DadaAkademi — Yakında"><i class="fa-solid fa-graduation-cap"></i><i class="fa-solid fa-lock sr-lock"></i></a>
+    <div class="sa-rail-foot"><a class="sa-rail-ico" href="anasayfa-portal-v3a.html" title="Siteye Dön"><i class="fa-solid fa-arrow-left"></i></a></div>
+  </aside>
+
+  <!-- §2 BÖLÜM MENÜSÜ (JS) -->
+  <nav class="sa-menu" id="saMenu"></nav>
+
+  <div class="sa-divider" id="saDivider" role="separator" aria-label="Menüyü daralt/genişlet" title="Sürükle veya tıkla — menüyü daralt/genişlet">
+    <span class="sa-grip"><i class="fa-solid fa-grip-lines-vertical"></i></span>
+  </div>
+
+  <div class="pnl-overlay" id="pnlOverlay"></div>
+
+  <!-- §3 ÜST BAR -->
+  <header class="pnl-top">
+    <button class="pnl-burger" id="pnlBurger" aria-label="Menü"><i class="fa-solid fa-bars"></i></button>
+    <div class="pnl-search">
+      <i class="fa-solid fa-magnifying-glass"></i>
+      <input type="text" placeholder="Egzersiz, kas grubu ara…" />
+    </div>
+    <div class="pnl-top-tools">
+      <button class="pnl-bell" aria-label="Bildirimler"><i class="fa-regular fa-bell"></i><span class="pb-dot"></span></button>
+      <div class="pnl-me">
+        <div class="pm-ava"><i class="fa-solid fa-user"></i></div>
+        <div class="pm-id">
+          <div class="pm-name" id="pmName">Süper Admin</div>
+          <div class="pm-role" id="pmRole">Tüm yetki</div>
+        </div>
+        <i class="fa-solid fa-chevron-down"></i>
+      </div>
+    </div>
+  </header>
+
+  <!-- §4 İÇERİK — Egzersiz liste ekranı -->
+  <main class="pnl-main" id="saMain">
+
+    <!-- Sayfa başlığı -->
+    <div class="pnl-page-head">
+      <div>
+        <h1>Egzersizler</h1>
+        <div class="ph-sub">DadaFit egzersiz bankasını yönet — program ve challenge'larda kullanılan hareketler</div>
+      </div>
+      <div class="ph-actions">
+        <a class="btn btn-ghost btn-sm" href="#" onclick="saToast('Dışa aktarma demo');return false"><i class="fa-solid fa-arrow-down-to-line"></i> Dışa Aktar</a>
+        <a class="btn btn-acc btn-sm" href="sa-dadafit-egzersizler-form.html"><i class="fa-solid fa-plus"></i> Yeni Egzersiz</a>
+      </div>
+    </div>
+
+    <!-- Tablo kartı -->
+    <div class="pnl-card">
+
+      <!-- Filtre çubuğu -->
+      <div class="filter-bar">
+        <div class="filter-search">
+          <i class="fa-solid fa-magnifying-glass"></i>
+          <input type="text" id="exSearch" placeholder="Egzersiz ara…" />
+        </div>
+        <div class="chips" id="filterChips">
+          <button class="chip active" data-filter="tümü">Tümü</button>
+          <button class="chip" data-filter="kuvvet">Kuvvet</button>
+          <button class="chip" data-filter="kardiyo">Kardiyo</button>
+          <button class="chip" data-filter="esneklik">Esneklik</button>
+          <button class="chip" data-filter="denge">Denge &amp; Core</button>
+        </div>
+      </div>
+
+      <!-- Tablo -->
+      <div class="pc-body flush">
+        <table class="ptable" id="exTable">
+          <thead>
+            <tr>
+              <th style="width:40%">Egzersiz</th>
+              <th style="width:16%">Kategori</th>
+              <th style="width:18%">Ekipman</th>
+              <th style="width:14%">Zorluk</th>
+              <th style="width:12%;text-align:right">Aksiyon</th>
+            </tr>
+          </thead>
+          <tbody id="exTbody">
+            <!-- satırlar JS ile dolduruluyor -->
+          </tbody>
+        </table>
+
+        <!-- Boş durum -->
+        <div class="pnl-empty" id="emptyState" style="display:none">
+          <div class="pe-ico"><i class="fa-solid fa-dumbbell"></i></div>
+          <h4>Hiç egzersiz bulunamadı</h4>
+          <p>Arama kriterlerinizi değiştirin ya da ilk egzersizi ekleyin.</p>
+          <a href="sa-dadafit-egzersizler-form.html" class="pe-tag"><i class="fa-solid fa-plus"></i> Yeni Egzersiz</a>
+        </div>
+      </div>
+
+    </div><!-- /pnl-card -->
+
+  </main>
+
+</div><!-- /sa-app -->
+
+<script src="assets/js/sa-shell.js"></script>
+
+<script>
+/* SAYFA JS — Egzersiz liste: veri + render + filtre + arama + sil(saConfirm) */
+(function(){
+  var exercises = [
+    {id:1, ad:'Barbell Squat', kas:'Bacak · Glutes', kategori:'kuvvet', ekipman:'Barbell', ekipmanIco:'fa-dumbbell', zorluk:'orta',
+     gorsel:'https://images.unsplash.com/photo-1534368786749-d63b2c0d22ad?w=200&q=80&auto=format&fit=crop'},
+    {id:2, ad:'Push-up', kas:'Göğüs · Triceps', kategori:'kuvvet', ekipman:'Vücut Ağırlığı', ekipmanIco:'fa-person', zorluk:'baslangic',
+     gorsel:'https://images.unsplash.com/photo-1598971639058-fab3c3109a00?w=200&q=80&auto=format&fit=crop'},
+    {id:3, ad:'Deadlift', kas:'Sırt · Hamstring', kategori:'kuvvet', ekipman:'Barbell', ekipmanIco:'fa-dumbbell', zorluk:'ileri',
+     gorsel:'https://images.unsplash.com/photo-1517963879433-6ad2b056d712?w=200&q=80&auto=format&fit=crop'},
+    {id:4, ad:'Burpee', kas:'Full Body', kategori:'kardiyo', ekipman:'Vücut Ağırlığı', ekipmanIco:'fa-person', zorluk:'orta',
+     gorsel:'https://images.unsplash.com/photo-1599058917212-d750089bc07e?w=200&q=80&auto=format&fit=crop'},
+    {id:5, ad:'Jumping Jack', kas:'Full Body', kategori:'kardiyo', ekipman:'Vücut Ağırlığı', ekipmanIco:'fa-person', zorluk:'baslangic',
+     gorsel:'https://images.unsplash.com/photo-1538805060514-97d9cc17730c?w=200&q=80&auto=format&fit=crop'},
+    {id:6, ad:'Plank', kas:'Core · Karın', kategori:'denge', ekipman:'Mat', ekipmanIco:'fa-grip-lines', zorluk:'baslangic',
+     gorsel:'https://images.unsplash.com/photo-1566241142559-40e1dab266c6?w=200&q=80&auto=format&fit=crop'},
+    {id:7, ad:'Russian Twist', kas:'Oblik · Core', kategori:'denge', ekipman:'Dambıl', ekipmanIco:'fa-dumbbell', zorluk:'orta',
+     gorsel:'https://images.unsplash.com/photo-1597347316205-36f6c451902a?w=200&q=80&auto=format&fit=crop'},
+    {id:8, ad:'Downward Dog', kas:'Sırt · Hamstring', kategori:'esneklik', ekipman:'Mat', ekipmanIco:'fa-grip-lines', zorluk:'baslangic',
+     gorsel:'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=200&q=80&auto=format&fit=crop'},
+    {id:9, ad:'Pigeon Pose', kas:'Kalça · Esneme', kategori:'esneklik', ekipman:'Mat', ekipmanIco:'fa-grip-lines', zorluk:'orta',
+     gorsel:'https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=200&q=80&auto=format&fit=crop'}
+  ];
+
+  var activeFilter = 'tümü';
+  var searchVal = '';
+
+  function lvlMeta(z){
+    if(z==='baslangic') return {cls:'l1', lbl:'Başlangıç'};
+    if(z==='orta')      return {cls:'l2', lbl:'Orta'};
+    if(z==='ileri')     return {cls:'l3', lbl:'İleri'};
+    return {cls:'l1', lbl:z};
+  }
+  function katLabel(k){
+    return {kuvvet:'Kuvvet', kardiyo:'Kardiyo', esneklik:'Esneklik', denge:'Denge & Core'}[k] || k;
+  }
+
+  function render(){
+    var filtered = exercises.filter(function(e){
+      var matchFilter = activeFilter === 'tümü' || e.kategori === activeFilter;
+      var matchSearch = !searchVal || e.ad.toLowerCase().indexOf(searchVal) !== -1
+                     || e.kas.toLowerCase().indexOf(searchVal) !== -1;
+      return matchFilter && matchSearch;
+    });
+
+    var tbody = document.getElementById('exTbody');
+    var empty = document.getElementById('emptyState');
+    var table = document.getElementById('exTable');
+
+    if(filtered.length === 0){
+      table.style.display = 'none';
+      empty.style.display = '';
+      return;
+    }
+    table.style.display = '';
+    empty.style.display = 'none';
+
+    tbody.innerHTML = filtered.map(function(e){
+      var lm = lvlMeta(e.zorluk);
+      return '<tr>'
+        + '<td><div class="ex-cell">'
+        +   '<div class="ex-thumb" style="background-image:url(\'' + e.gorsel + '\')"></div>'
+        +   '<div><div class="ex-name">' + e.ad + '</div><div class="ex-muscle">' + e.kas + '</div></div>'
+        + '</div></td>'
+        + '<td><span class="tag-pill">' + katLabel(e.kategori) + '</span></td>'
+        + '<td><span class="equip"><i class="fa-solid ' + e.ekipmanIco + '"></i> ' + e.ekipman + '</span></td>'
+        + '<td><span class="lvl ' + lm.cls + '"><span class="dot"></span> ' + lm.lbl + '</span></td>'
+        + '<td><div class="row-actions" style="justify-content:flex-end">'
+        +   '<a class="act-btn" href="sa-dadafit-egzersizler-detay.html" title="Görüntüle"><i class="fa-solid fa-eye"></i></a>'
+        +   '<a class="act-btn" href="sa-dadafit-egzersizler-form.html" title="Düzenle"><i class="fa-solid fa-pen"></i></a>'
+        +   '<button class="act-btn danger" title="Sil" data-del="' + e.ad.replace(/"/g,'&quot;') + '"><i class="fa-solid fa-trash"></i></button>'
+        + '</div></td>'
+        + '</tr>';
+    }).join('');
+  }
+
+  /* Chip filtre */
+  document.getElementById('filterChips').addEventListener('click', function(e){
+    var btn = e.target.closest('.chip');
+    if(!btn) return;
+    document.querySelectorAll('#filterChips .chip').forEach(function(c){ c.classList.remove('active'); });
+    btn.classList.add('active');
+    activeFilter = btn.dataset.filter;
+    render();
+  });
+
+  /* Arama */
+  document.getElementById('exSearch').addEventListener('input', function(e){
+    searchVal = e.target.value.trim().toLowerCase();
+    render();
+  });
+
+  /* Sil → saConfirm (sa-ui.js, sa-shell tarafından enjekte) */
+  document.addEventListener('click', function(e){
+    var btn = e.target.closest('[data-del]');
+    if(!btn) return;
+    e.preventDefault();
+    var ad = btn.dataset.del;
+    saConfirm({danger:true,icon:'fa-trash',title:'Egzersiz silinsin mi?',
+      message:'<b>'+ad+'</b> egzersiz bankasından kaldırılacak. Bu hareketi kullanan programlar etkilenebilir.',
+      ok:'Sil',onConfirm:function(){saToast(ad+' silindi')}});
+  }, true);
+
+  /* İlk render */
+  render();
+})();
+</script>
+
+</body>
+</html>
