@@ -1,6 +1,14 @@
-# DadaMutfak — Handoff (Faz 2 + Chip Sayaç + 390px + v6 Taşıma + Dizin Admin Sekmesi + 3 Revize BİTTİ · PUSH'LANDI)
+# DadaMutfak — Handoff (Faz 3 "Panelini Aç" KÖPRÜSÜ TAMAMLANDI · CANLI)
 
-> Tarih: 2026-06-21. Süper-admin gözetim paneli (`v6/sa-*`) Faz 2 tüm dalgaları + antrenör paneli + wiring + **filtre chip sayaçları (big-number-ready kompakt format)** + **390px liste-tablosu responsive fix** + **v5→v6 taşıma (v5 erişimi KAPALI)** + **dizin Admin Panel sekmesi** bitti, commit'li ve **`origin/main`'e PUSH EDİLDİ** (GitHub Pages canlı). **Klasör artık `v6/`.**
+> Tarih: 2026-06-22. **Faz 3 gözetim→operatör paneli köprüsü (impersonation) BİTTİ ve `origin/main`'e PUSH EDİLDİ (GitHub Pages canlı).** Önceki: Faz 2 tüm dalgaları + antrenör paneli + chip sayaçları + 390px fix + v5→v6 taşıma + dizin Admin sekmesi + 3 revize (hepsi canlı). **Klasör `v6/`.**
+
+## ✅ FAZ 3 — "Panelini Aç" köprüsü (TAMAMLANDI · CANLI)
+- **Ana iş:** `feat d33ded7` · **QA:** `chore 226ac57`. Mockup (gerçek auth yok, salt görsel akış).
+- **2 yeni izole asset:** `v6/assets/css/sa-gozetim.css` (panel-aç CTA + üst impersonation şeridi) + `v6/assets/js/sa-gozetim.js` (sessionStorage tabanlı banner, panel-içi gezinmede kalıcı, "Gözetime Dön" → geldiği gözetim ekranı). **Kanonik kabuğa (sa-shell/sa-ui) DOKUNULMADI.**
+- **6/6 detay hero buton** (`.pol-head` — dolgulu yatay-uzun, modül aksanı `var(--acc)`, başlık sağ ucu, mobil full-width): antrenörler · diyetisyenler · işletmeler · rezervasyonlar · onaylar · menüler detay. Bağlamsal etiket/href korundu (rezervasyon→`mekan-rezervasyonlar`, menü→`mekan-menu`, onay+işletme→`mekan-panel`, diyetisyen→`dyt-danisanlar`, antrenör→`antrenor-panel`).
+- **6/6 liste kompakt buton** (`.act-btn.gz-act` — accent-outline "Panel", satır ritmine uygun): antrenörler · diyetisyenler · işletmeler · rezervasyonlar · onaylar (İncele satırı dahil) · menüler. `?gozetim=1&from=<liste>` taşır (tüm satırlar aynı mock panele — kasıtlı).
+- **18/18 operatör paneline** banner link+script (Antrenör 8 + Diyetisyen 6 + Mekan 4). `body.has-gozetim` ile fixed kabuk aşağı itilir (izole override).
+- **Aksanlar doğru:** antrenör yeşil `#009d4f` · diyetisyen nane `#3BB77E` · işletme petrol `#006072` (sa-shell `body[data-sec]` çözer). **QA `tasks/gozetim-kopru-qa.mjs` → ALL PASS** (6 detay köprüsü + bağlamsal hedef + rol + Gözetime Dön + kalıcılık + temiz-ziyaret; 404/JSERR 0). 1440+390 render + bağlamsal hedef teyitli.
 
 ## DURUM — ne bitti (hepsi push'lı)
 - **1. dalga gözetim** (Sağlık 4 + İşletme 4 + DadaFit 3 = 11 modül / 24 ekran) + wiring → `cc0b2a5`.
@@ -14,10 +22,10 @@
 - **Dizin Admin Panel sekmesi** (feat) — `v6/dizin.html`'e 2'li tab toggle (`Genel` + `Admin Panel`). Public GROUPS'a dokunulmadı; renderer `buildTab(groups)`'a çıkarıldı, iki veri seti (GROUPS + ADMIN_GROUPS). **Admin sekmesi: 90 sayfa / 9 kategori** — sıra: **Giriş/Sistem 2 (en başta; Yönetim Girişi solda, Gözetim Kabuğu sağda)** · Gözetim-Admin 21 · Store 15 · Sağlık 11 · İşletme 11 · DadaFit 12 · Operatör-Antrenör 8 · Operatör-Diyetisyen 6 · Operatör-Mekan 4. (dyt-*/mekan- public Genel'de de var, dup kasıtlı; antrenor-detay+ol public, hariç.) Tüm linkler relative + v6'da mevcut + `target=_blank`. QA: `dizin-tab-qa.mjs` PASS.
 - **3 revize** (fix) — (1) dizin Admin "Giriş/Sistem": **Yönetim Girişi** kartı **solda/ilk** (sa-shell sağa). (2) `sa-dadafit-egzersizler`: Barbell Squat görseli ölü Unsplash 404'tü → çalışan squat görseliyle değiştirildi (diğer satırlarla tutarlı). (3) `sa-isletme-onaylar`: **Onayla** butonuna özel saConfirm handler (isletme adı + saToast); **Reddet** zaten sa-ui.js yerleşik destructive-delege ile yakalanıyor (dokunulmadı, çift pop-up önlendi). QA: `revize3-qa.mjs` PASS (tek pop-up, doğru toast, 404/JS/mojibake 0).
 
-## ⏭️ SIRADAKİ İŞ — Faz 3 "Panelini Aç" köprüsü
-**SIZING NETLEŞTİ:** 3 operatör paneli de **MEVCUT** → Antrenör 8 + Diyetisyen 6 (`dyt-*`) + Mekan 4 (`mekan-*`) = **18 ekran**. **Sıfırdan operatör paneli ÜRETİMİ YOK.** (Şef/store-vendor operatör paneli yok, gerek de yok. `panel-shell.html` = dyt/mekan kanonik iskeleti.)
-- **Köprü işi = sadece:** gözetim ekranlarındaki pasif **"Panelini Aç"** → ilgili operatör paneli (Antrenörler→`antrenor-panel`, Diyetisyenler→`dyt-*`, İşletmeler→`mekan-*`) + operatör panellerine **impersonation banner** (hangi operatör olarak bakılıyor) + **"Gözetime Dön"** linki. Yeni ekran değil.
-- **Opsiyonel minör (acele yok):** `sa-saglik` @390 3px sub-pixel · `sa-store-urunler-detay` @390 12px (detay, fix kapsamı dışıydı).
+## ⏭️ SIRADAKİ İŞ — adaylar
+- **(a) Sağlık alt-ekranları köprüsü = AYRI TUR, SEMANTİK KARAR GEREKİR.** `sa-saglik-randevular` (5 satır) · `sa-saglik-receteler` (5) · `sa-saglik-testler` (5) **hiç köprülü değil (detay dahil)**. Eklemek = yeni yüzey: hem detay hero hem liste butonu + "randevu/reçete/test diyetisyen paneline mi açılır, hangi sekmeye" eşleştirmesi. **Yasin Bey'e sorulabilir.** (Operatör-modülü diğer tüm çok-satırlı listeler köprülü; bunlar bilinçli kapsam-dışı bırakıldı.)
+- **(b) Opsiyonel minör (acele yok):** `sa-saglik` @390 3px sub-pixel · `sa-store-urunler-detay` @390 12px (detay, fix kapsamı dışıydı).
+- **(c) DadaFit/public faz işleri:** `tasks/public-faz-bekleyen.md` (DadaFit nav temizliği) · `tasks/spec-impact-public-revize.md` (koordinat/güzergah/şehir-öneri).
 
 ## DEĞİŞMEZ KURALLAR (gözetim paneli)
 - **Kanonik kabuk tek kaynak:** `assets/css/sa-shell.css` + `assets/js/sa-shell.js` (SECTIONS config) + `assets/css/sa-ui.css` + `assets/js/sa-ui.js` (saConfirm/saToast/dropdown). **DOKUNMA** — sadece `<link>`/`<script>` ile yükle; sa-ui shell.js tarafından auto-inject.
