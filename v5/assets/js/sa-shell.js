@@ -24,16 +24,15 @@
       {ic:'fa-award',          lbl:'Rozetler',             href:'admin-rozet-v1.html#rozet',       screen:'rozet'},
       {ic:'fa-crown',          lbl:'Abonelikler',          href:'admin-rozet-v1.html#abonelikler', screen:'abonelikler'},
       {ic:'fa-building-circle-check', lbl:'İşletme Başvuruları', href:'admin-rozet-v1.html#isletmeler', screen:'isletmeler'},
-      {seclbl:'Faz 2 · Yakında'},
-      {ic:'fa-book-open',      lbl:'Tarifler',         soon:true},
-      {ic:'fa-user-tie',       lbl:'Şefler',           soon:true},
-      {ic:'fa-ranking-star',   lbl:'Kademeler',        soon:true},
-      {ic:'fa-tags',           lbl:'Fiyatlandırma',    soon:true},
-      {ic:'fa-images',         lbl:'Slider / Banner',  soon:true},
-      {ic:'fa-file-lines',     lbl:'Sayfalar & SEO',   soon:true},
-      {ic:'fa-bars-staggered', lbl:'Menü / Navigasyon',soon:true},
-      {ic:'fa-sliders',        lbl:'Ayarlar',          soon:true},
-      {ic:'fa-chart-line',     lbl:'Raporlar',         soon:true}
+      {ic:'fa-book-open',      lbl:'Tarifler',         href:'sa-admin-tarifler.html',      screen:'tarifler'},
+      {ic:'fa-user-tie',       lbl:'Şefler',           href:'sa-admin-sefler.html',        screen:'sefler'},
+      {ic:'fa-ranking-star',   lbl:'Kademeler',        href:'sa-admin-kademeler.html',     screen:'kademeler'},
+      {ic:'fa-tags',           lbl:'Fiyatlandırma',    href:'sa-admin-fiyatlandirma.html', screen:'fiyatlandirma'},
+      {ic:'fa-images',         lbl:'Slider / Banner',  href:'sa-admin-slider.html',        screen:'slider'},
+      {ic:'fa-file-lines',     lbl:'Sayfalar & SEO',   href:'sa-admin-sayfalar.html',      screen:'sayfalar'},
+      {ic:'fa-bars-staggered', lbl:'Menü / Navigasyon',href:'sa-admin-menu.html',          screen:'menu'},
+      {ic:'fa-sliders',        lbl:'Ayarlar',          href:'sa-admin-ayarlar.html',       screen:'ayarlar'},
+      {ic:'fa-chart-line',     lbl:'Raporlar',         href:'sa-admin-raporlar.html',      screen:'raporlar'}
     ]},
     saglik: { eyebrow:'Sağlık', title:'Sağlık & Diyet', menu:[
       {ic:'fa-gauge-high',     lbl:'Genel Bakış',  href:'sa-saglik.html',                screen:'genel', active:true},
@@ -46,13 +45,12 @@
     store: { eyebrow:'E-Ticaret', title:'DadaStore', menu:[
       {ic:'fa-gauge-high',  lbl:'Genel Bakış', href:'sa-store.html',         screen:'genel', active:true},
       {ic:'fa-box',         lbl:'Ürünler',     href:'sa-store-urunler.html', screen:'urunler', cnt:'8'},
-      {seclbl:'Faz 2 · Yakında'},
-      {ic:'fa-layer-group', lbl:'Kategoriler',   soon:true},
-      {ic:'fa-receipt',     lbl:'Siparişler',    soon:true},
-      {ic:'fa-user-group',  lbl:'Müşteriler',    soon:true},
-      {ic:'fa-percent',     lbl:'Promosyonlar',  soon:true},
-      {ic:'fa-truck',       lbl:'Kargo & Ödeme', soon:true},
-      {ic:'fa-chart-line',  lbl:'Raporlar',      soon:true}
+      {ic:'fa-layer-group', lbl:'Kategoriler',   href:'sa-store-kategoriler.html',  screen:'kategoriler'},
+      {ic:'fa-receipt',     lbl:'Siparişler',    href:'sa-store-siparisler.html',   screen:'siparisler'},
+      {ic:'fa-user-group',  lbl:'Müşteriler',    href:'sa-store-musteriler.html',   screen:'musteriler'},
+      {ic:'fa-percent',     lbl:'Promosyonlar',  href:'sa-store-promosyonlar.html', screen:'promosyonlar'},
+      {ic:'fa-truck',       lbl:'Kargo & Ödeme', href:'sa-store-kargo.html',        screen:'kargo'},
+      {ic:'fa-chart-line',  lbl:'Raporlar',      href:'sa-store-raporlar.html',     screen:'raporlar'}
     ]},
     dadafit: { eyebrow:'Fitness', title:'DadaFit', menu:[
       {ic:'fa-gauge-high', lbl:'Genel Bakış',   href:'sa-dadafit.html',           screen:'genel', active:true},

@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Yeni Tarif — Admin · DadaMutfak</title>
+<link rel="shortcut icon" type="image/x-icon" href="assets/img/favicon.ico" />
+<!-- FontAwesome 6.5.2 (kilitli ikon seti) -->
+<link rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+      integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A=="
+      crossorigin="anonymous" referrerpolicy="no-referrer" />
+<!-- PAYLAŞILAN KABUK (tek kaynak) -->
+<link rel="stylesheet" href="assets/css/sa-shell.css" />
+<style>
+/* =====================================================================
+   SA-ADMIN-TARIFLER-FORM — SAYFA CSS (ekrana özel; kabuk CSS'i sa-shell.css'te).
+   Admin'in eklediği/düzenlediği tarif formu (hibrit CRUD tarafı).
+   Kanon: sa-store-urunler-form + sa-admin-kullanicilar-form.
+   Token: SADECE var(--acc)/var(--acc-deep)/rgba(var(--acc-rgb),..).
+   ===================================================================== */
+
+/* ORTAK FORM ALANLARI — tüm sa-* form/detay ekranlarında AYNEN */
+.form-grid{display:grid;gap:18px}
+.frow{display:flex;flex-direction:column;gap:7px}
+.frow label{font-size:12.5px;font-weight:700;color:var(--slate-2)}
+.frow .fhint{font-size:11.5px;color:var(--muted);font-weight:500}
+.finput,.fselect,.ftext{width:100%;font-family:inherit;font-size:13.5px;font-weight:500;color:var(--ink);background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-md);padding:0 14px;height:44px;outline:none;transition:.2s var(--ease)}
+.ftext{height:auto;padding:12px 14px;line-height:1.5;resize:vertical;min-height:96px}
+.finput:focus,.fselect:focus,.ftext:focus{border-color:var(--acc);box-shadow:0 0 0 3px rgba(var(--acc-rgb),.12)}
+.frow.two{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.form-sec{padding:18px 22px;border-bottom:1px solid var(--line)}
+.form-sec:last-child{border-bottom:none}
+.form-sec-tt{font-size:13px;font-weight:700;color:var(--slate);margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.form-sec-tt i{color:var(--acc)}
+.form-actions{display:flex;gap:10px;justify-content:flex-end;padding:16px 22px;flex-wrap:wrap}
+
+/* geri linki */
+.back-link{display:inline-flex;align-items:center;gap:8px;font-size:13px;font-weight:700;color:var(--muted);margin-bottom:18px;transition:.18s var(--ease)}
+.back-link:hover{color:var(--slate)}
+.back-link i{font-size:12px}
+
+/* görsel yükleme (div+bg-image cover+center — img DEĞİL) */
+.img-upload-zone{width:100%;height:240px;border-radius:var(--radius-md);border:2px dashed var(--line);background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;cursor:pointer;transition:.2s var(--ease);position:relative;overflow:hidden}
+.img-upload-zone:hover{border-color:var(--acc);background:rgba(var(--acc-rgb),.04)}
+.img-upload-zone .iuz-ico{font-size:28px;color:var(--muted)}
+.img-upload-zone .iuz-lbl{font-size:12.5px;color:var(--muted)}
+.img-upload-zone .iuz-hint{font-size:11px;color:var(--muted)}
+.img-preview{position:absolute;inset:0;border-radius:inherit;background-size:cover;background-position:center;background-image:url('https://images.unsplash.com/photo-1546549032-9571cd6b27df?w=700&q=80&auto=format&fit=crop')}
+.img-preview-overlay{position:absolute;inset:0;background:rgba(33,30,22,.45);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;opacity:0;transition:.2s var(--ease)}
+.img-upload-zone:hover .img-preview-overlay{opacity:1}
+.img-preview-overlay span{font-size:12.5px;font-weight:700;color:#fff}
+.img-preview-overlay i{font-size:18px;color:#fff}
+
+/* malzeme / adım tekrarlayıcı (repeater) */
+.rep-list{display:flex;flex-direction:column;gap:10px}
+.rep-row{display:flex;align-items:center;gap:10px}
+.rep-row .rep-num{width:26px;height:26px;flex:none;border-radius:var(--radius-circle);background:rgba(var(--acc-rgb),.12);color:var(--acc-deep);font-size:12.5px;font-weight:700;display:grid;place-items:center}
+.rep-row .finput{height:42px}
+.rep-row .rep-amt{max-width:140px}
+.rep-remove{width:36px;height:36px;flex:none;border:none;background:none;color:var(--muted);font-size:14px;cursor:pointer;border-radius:var(--radius-sm);transition:.15s;display:inline-flex;align-items:center;justify-content:center}
+.rep-remove:hover{background:var(--tomato-tint);color:var(--tomato)}
+.rep-add-btn{display:inline-flex;align-items:center;gap:7px;font-size:13px;font-weight:700;color:var(--acc-deep);cursor:pointer;margin-top:12px;background:none;border:none;font-family:inherit;padding:0;transition:.15s}
+.rep-add-btn:hover{color:var(--acc)}
+.rep-row.step .finput{height:auto}
+.rep-row.step{align-items:flex-start}
+.rep-row.step .rep-num{margin-top:6px}
+.rep-row.step .rep-remove{margin-top:3px}
+
+/* yan kart (yayın + kaynak + etiket) */
+.side-card{display:flex;flex-direction:column;gap:16px}
+.sc-field{display:flex;flex-direction:column;gap:7px}
+.sc-field label{font-size:12.5px;font-weight:700;color:var(--slate-2)}
+
+/* kaynak rozeti (admin / kullanıcı) — yan kart bilgi */
+.src-pill{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:700;padding:4px 11px;border-radius:var(--radius-sm);white-space:nowrap}
+.src-pill.admin{background:rgba(var(--acc-rgb),.12);color:var(--acc-deep)}
+.src-pill.user{background:var(--bg);color:var(--slate-2);border:1px solid var(--line)}
+
+/* toggle switch */
+.toggle-row{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.toggle-row span{font-size:13.5px;color:var(--slate)}
+.toggle{position:relative;width:40px;height:22px;flex:none}
+.toggle input{opacity:0;width:0;height:0;position:absolute}
+.toggle-track{position:absolute;inset:0;border-radius:999px;background:var(--line);transition:.2s var(--ease);cursor:pointer}
+.toggle input:checked+.toggle-track{background:var(--acc)}
+.toggle-thumb{position:absolute;top:3px;left:3px;width:16px;height:16px;border-radius:50%;background:#fff;transition:.2s var(--ease);pointer-events:none}
+.toggle input:checked~.toggle-thumb{left:21px}
+
+/* form + yan kart 2-kolon */
+.form-layout{display:grid;grid-template-columns:minmax(0,1fr) minmax(280px,340px);gap:24px;align-items:start}
+@media(max-width:900px){
+  .form-layout{grid-template-columns:minmax(0,1fr)}
+  .frow.two{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body data-brand="mutfak" data-sec="admin" data-screen="tarifler">
+
+<div class="sa-app">
+
+  <!-- §1 İKON-RAIL -->
+  <aside class="sa-rail" id="saRail">
+    <a class="sa-rail-logo" href="sa-giris-v1.html" title="Yönetim Girişi"><img src="assets/img/logo-mark.png" alt="DadaMutfak" /></a>
+    <a class="sa-rail-ico" data-sec="genel" href="sa-shell.html?sec=genel" title="Genel Bakış"><i class="fa-solid fa-gauge-high"></i></a>
+    <span class="sa-rail-div"></span>
+    <a class="sa-rail-ico" data-sec="admin"   href="sa-admin.html"   title="Admin"><i class="fa-solid fa-shield-halved"></i></a>
+    <a class="sa-rail-ico" data-sec="saglik"  href="sa-saglik.html"  title="Sağlık &amp; Diyet"><i class="fa-solid fa-heart-pulse"></i></a>
+    <a class="sa-rail-ico" data-sec="store"   href="sa-store.html"   title="DadaStore"><i class="fa-solid fa-bag-shopping"></i></a>
+    <a class="sa-rail-ico" data-sec="dadafit" href="sa-dadafit.html" title="DadaFit"><i class="fa-solid fa-dumbbell"></i></a>
+    <a class="sa-rail-ico" data-sec="isletme" href="sa-isletme.html" title="İşletmeler"><i class="fa-solid fa-store"></i></a>
+    <a class="sa-rail-ico is-locked" data-sec="akademi" href="#" title="DadaAkademi — Yakında"><i class="fa-solid fa-graduation-cap"></i><i class="fa-solid fa-lock sr-lock"></i></a>
+    <div class="sa-rail-foot"><a class="sa-rail-ico" href="sa-giris-v1.html" title="Siteye Dön"><i class="fa-solid fa-arrow-left"></i></a></div>
+  </aside>
+
+  <!-- §2 BÖLÜM MENÜSÜ (JS render) -->
+  <nav class="sa-menu" id="saMenu"></nav>
+
+  <div class="sa-divider" id="saDivider" role="separator" aria-label="Menüyü daralt/genişlet" title="Sürükle veya tıkla — menüyü daralt/genişlet">
+    <span class="sa-grip"><i class="fa-solid fa-grip-lines-vertical"></i></span>
+  </div>
+
+  <div class="pnl-overlay" id="pnlOverlay"></div>
+
+  <!-- §3 ÜST BAR -->
+  <header class="pnl-top">
+    <button class="pnl-burger" id="pnlBurger" aria-label="Menü"><i class="fa-solid fa-bars"></i></button>
+    <div class="pnl-search">
+      <i class="fa-solid fa-magnifying-glass"></i>
+      <input type="text" placeholder="Tarif, kullanıcı, içerik ara…" />
+    </div>
+    <div class="pnl-top-tools">
+      <button class="pnl-bell" aria-label="Bildirimler"><i class="fa-regular fa-bell"></i><span class="pb-dot"></span></button>
+      <div class="pnl-me">
+        <div class="pm-ava" style="background-image:url('https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=240&q=80&auto=format&fit=crop')"></div>
+        <div class="pm-id">
+          <div class="pm-name" id="pmName">Süper Admin</div>
+          <div class="pm-role" id="pmRole">Tüm yetki</div>
+        </div>
+        <i class="fa-solid fa-chevron-down"></i>
+      </div>
+    </div>
+  </header>
+
+  <!-- §4 İÇERİK — Yeni Tarif Formu (admin CRUD) -->
+  <main class="pnl-main" id="saMain">
+
+    <a class="back-link" href="sa-admin-tarifler.html"><i class="fa-solid fa-arrow-left"></i> Tarifler</a>
+
+    <div class="pnl-page-head">
+      <div>
+        <h1>Yeni Tarif</h1>
+        <div class="ph-sub">Editöryel tarif ekleyin — yayınlanan içerik "Admin" kaynağıyla etiketlenir.</div>
+      </div>
+    </div>
+
+    <div class="form-layout">
+
+      <!-- ana form kartı -->
+      <div style="display:flex;flex-direction:column;gap:16px">
+
+        <div class="pnl-card">
+
+          <!-- Temel Bilgiler -->
+          <div class="form-sec">
+            <div class="form-sec-tt"><i class="fa-solid fa-circle-info"></i> Temel Bilgiler</div>
+            <div class="form-grid">
+              <div class="frow">
+                <label for="f-baslik">Tarif Başlığı</label>
+                <input class="finput" id="f-baslik" type="text" placeholder="ör. Fırında Sebzeli Tavuk" />
+              </div>
+              <div class="frow two">
+                <div class="frow">
+                  <label for="f-kategori">Kategori</label>
+                  <select class="fselect" id="f-kategori">
+                    <option value="">— Kategori seçin —</option>
+                    <option>Ana Yemek</option>
+                    <option>Çorba</option>
+                    <option>Kahvaltı</option>
+                    <option>Tatlı</option>
+                    <option>Hamur İşi</option>
+                    <option>Makarna</option>
+                    <option>Pasta &amp; Kek</option>
+                    <option>İçecek</option>
+                  </select>
+                </div>
+                <div class="frow">
+                  <label for="f-zorluk">Zorluk</label>
+                  <select class="fselect" id="f-zorluk">
+                    <option>Kolay</option>
+                    <option selected>Orta</option>
+                    <option>Zor</option>
+                  </select>
+                </div>
+              </div>
+              <div class="frow two">
+                <div class="frow">
+                  <label for="f-sure">Hazırlık Süresi (dk)</label>
+                  <input class="finput" id="f-sure" type="number" placeholder="55" />
+                </div>
+                <div class="frow">
+                  <label for="f-porsiyon">Porsiyon</label>
+                  <input class="finput" id="f-porsiyon" type="number" placeholder="4" />
+                </div>
+              </div>
+              <div class="frow">
+                <label for="f-aciklama">Açıklama</label>
+                <textarea class="ftext" id="f-aciklama" placeholder="Tarif hakkında kısa bir tanıtım…"></textarea>
+              </div>
+            </div>
+          </div>
+
+          <!-- Görsel -->
+          <div class="form-sec">
+            <div class="form-sec-tt"><i class="fa-solid fa-image"></i> Kapak Görseli</div>
+            <!-- div+background-image cover+center (img tag DEĞİL) -->
+            <div class="img-upload-zone">
+              <div class="img-preview"></div>
+              <div class="img-preview-overlay">
+                <i class="fa-solid fa-arrows-rotate"></i>
+                <span>Görseli Değiştir</span>
+              </div>
+            </div>
+            <span class="fhint" style="display:block;margin-top:10px">Önerilen: 1200×800 px · JPG/PNG · maks. 4 MB</span>
+          </div>
+
+          <!-- Malzemeler (repeater) -->
+          <div class="form-sec">
+            <div class="form-sec-tt"><i class="fa-solid fa-basket-shopping"></i> Malzemeler</div>
+            <div class="rep-list" id="ingrList">
+              <div class="rep-row">
+                <input class="finput" type="text" placeholder="Malzeme (ör. Tavuk göğsü)" />
+                <input class="finput rep-amt" type="text" placeholder="Miktar" />
+                <button class="rep-remove" type="button" title="Kaldır"><i class="fa-solid fa-xmark"></i></button>
+              </div>
+              <div class="rep-row">
+                <input class="finput" type="text" placeholder="Malzeme (ör. Kabak)" />
+                <input class="finput rep-amt" type="text" placeholder="Miktar" />
+                <button class="rep-remove" type="button" title="Kaldır"><i class="fa-solid fa-xmark"></i></button>
+              </div>
+            </div>
+            <button class="rep-add-btn" type="button" id="ingrAdd"><i class="fa-solid fa-plus"></i> Malzeme Ekle</button>
+          </div>
+
+          <!-- Hazırlanış Adımları (repeater) -->
+          <div class="form-sec">
+            <div class="form-sec-tt"><i class="fa-solid fa-list-ol"></i> Hazırlanış Adımları</div>
+            <div class="rep-list" id="stepList">
+              <div class="rep-row step">
+                <span class="rep-num">1</span>
+                <textarea class="finput ftext" placeholder="Adımı açıklayın…" style="min-height:64px"></textarea>
+                <button class="rep-remove" type="button" title="Kaldır"><i class="fa-solid fa-xmark"></i></button>
+              </div>
+              <div class="rep-row step">
+                <span class="rep-num">2</span>
+                <textarea class="finput ftext" placeholder="Adımı açıklayın…" style="min-height:64px"></textarea>
+                <button class="rep-remove" type="button" title="Kaldır"><i class="fa-solid fa-xmark"></i></button>
+              </div>
+            </div>
+            <button class="rep-add-btn" type="button" id="stepAdd"><i class="fa-solid fa-plus"></i> Adım Ekle</button>
+          </div>
+
+        </div><!-- /pnl-card -->
+
+        <!-- form aksiyonları -->
+        <div class="pnl-card">
+          <div class="form-actions">
+            <a class="btn btn-ghost btn-sm" href="sa-admin-tarifler.html">İptal</a>
+            <button class="btn btn-ghost btn-sm" type="button" id="saveDraft"><i class="fa-solid fa-floppy-disk"></i> Taslak Kaydet</button>
+            <button class="btn btn-acc btn-sm" type="button" id="publish"><i class="fa-solid fa-check"></i> Yayınla</button>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- sağ: yan kart -->
+      <div class="side-card">
+
+        <!-- yayın durumu -->
+        <div class="pnl-card">
+          <div class="pc-head"><div class="pc-title"><i class="fa-solid fa-circle-dot"></i> Yayın Durumu</div></div>
+          <div class="pc-body">
+            <div style="display:flex;flex-direction:column;gap:14px">
+              <div class="sc-field">
+                <label>Durum</label>
+                <select class="fselect">
+                  <option value="taslak">Taslak</option>
+                  <option value="yayinda">Yayında</option>
+                  <option value="gizli">Gizli</option>
+                </select>
+              </div>
+              <div class="toggle-row">
+                <span>Öne Çıkar (vitrin)</span>
+                <label class="toggle">
+                  <input type="checkbox" />
+                  <div class="toggle-track"></div>
+                  <div class="toggle-thumb"></div>
+                </label>
+              </div>
+              <div class="toggle-row">
+                <span>Yorumlara Aç</span>
+                <label class="toggle">
+                  <input type="checkbox" checked />
+                  <div class="toggle-track"></div>
+                  <div class="toggle-thumb"></div>
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- kaynak (admin editöryel) -->
+        <div class="pnl-card">
+          <div class="pc-head"><div class="pc-title"><i class="fa-solid fa-shield-halved"></i> Kaynak</div></div>
+          <div class="pc-body">
+            <div style="display:flex;flex-direction:column;gap:10px">
+              <span class="src-pill admin"><i class="fa-solid fa-shield-halved"></i> Admin · Editöryel</span>
+              <p style="font-size:12px;color:var(--muted);line-height:1.5;margin:0">
+                Bu tarif yönetim panelinden ekleniyor; moderasyon kuyruğuna girmeden doğrudan yayınlanabilir.
+                Kullanıcı gönderimleri ayrıca moderasyondan geçer.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- etiketler -->
+        <div class="pnl-card">
+          <div class="pc-head"><div class="pc-title"><i class="fa-solid fa-tags"></i> Etiketler</div></div>
+          <div class="pc-body">
+            <div class="frow">
+              <input class="finput" type="text" placeholder="ör. pratik, fırın, sağlıklı… (virgülle ayır)" />
+              <span class="fhint">Arama ve filtrelemede kullanılır</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div><!-- /form-layout -->
+
+  </main>
+
+</div><!-- /sa-app -->
+
+<script src="assets/js/sa-shell.js"></script>
+<script>
+/* sayfa JS — malzeme/adım repeater + kaydet/yayınla toast */
+(function(){
+  /* Malzeme satırı ekle/kaldır */
+  var ingrList=document.getElementById('ingrList');
+  var ingrAdd=document.getElementById('ingrAdd');
+  function bindRemove(row){
+    var btn=row.querySelector('.rep-remove');
+    if(btn) btn.addEventListener('click',function(){ row.remove(); renumberSteps(); });
+  }
+  if(ingrAdd) ingrAdd.addEventListener('click',function(){
+    var row=document.createElement('div');
+    row.className='rep-row';
+    row.innerHTML='<input class="finput" type="text" placeholder="Malzeme" />'
+      +'<input class="finput rep-amt" type="text" placeholder="Miktar" />'
+      +'<button class="rep-remove" type="button" title="Kaldır"><i class="fa-solid fa-xmark"></i></button>';
+    ingrList.appendChild(row); bindRemove(row);
+  });
+  if(ingrList) ingrList.querySelectorAll('.rep-row').forEach(bindRemove);
+
+  /* Adım satırı ekle/kaldır + numara güncelle */
+  var stepList=document.getElementById('stepList');
+  var stepAdd=document.getElementById('stepAdd');
+  function renumberSteps(){
+    if(!stepList) return;
+    stepList.querySelectorAll('.rep-row.step .rep-num').forEach(function(n,i){ n.textContent=i+1; });
+  }
+  function bindStepRemove(row){
+    var btn=row.querySelector('.rep-remove');
+    if(btn) btn.addEventListener('click',function(){ row.remove(); renumberSteps(); });
+  }
+  if(stepAdd) stepAdd.addEventListener('click',function(){
+    var row=document.createElement('div');
+    row.className='rep-row step';
+    row.innerHTML='<span class="rep-num"></span>'
+      +'<textarea class="finput ftext" placeholder="Adımı açıklayın…" style="min-height:64px"></textarea>'
+      +'<button class="rep-remove" type="button" title="Kaldır"><i class="fa-solid fa-xmark"></i></button>';
+    stepList.appendChild(row); bindStepRemove(row); renumberSteps();
+  });
+  if(stepList) stepList.querySelectorAll('.rep-row.step').forEach(bindStepRemove);
+
+  /* Kaydet / Yayınla → toast */
+  var saveDraft=document.getElementById('saveDraft');
+  var publish=document.getElementById('publish');
+  if(saveDraft) saveDraft.addEventListener('click',function(){
+    if(window.saToast) saToast('Tarif taslak olarak kaydedildi',{type:'ok',icon:'fa-floppy-disk'});
+  });
+  if(publish) publish.addEventListener('click',function(){
+    if(window.saToast) saToast('Tarif yayınlandı',{type:'ok'});
+  });
+})();
+</script>
+</body>
+</html>

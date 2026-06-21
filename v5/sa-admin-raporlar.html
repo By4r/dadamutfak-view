@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Raporlar — Admin — DadaMutfak</title>
+<link rel="shortcut icon" type="image/x-icon" href="assets/img/favicon.ico" />
+<!-- FontAwesome 6.5.2 (kilitli ikon seti) -->
+<link rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+      integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A=="
+      crossorigin="anonymous" referrerpolicy="no-referrer" />
+<!-- PAYLAŞILAN KABUK (tek kaynak) -->
+<link rel="stylesheet" href="assets/css/sa-shell.css" />
+<link rel="stylesheet" href="assets/css/sa-ui.css" />
+<style>
+/* =====================================================================
+   SA-ADMIN-RAPORLAR — SAYFA CSS (ekrana özel; kabuk CSS'i sa-shell.css'te).
+   Raporlar = tek dashboard (liste DEĞİL). Grafikler saf CSS — harici lib YOK.
+   ===================================================================== */
+
+/* tarih aralığı chip grubu (ph-actions içinde) */
+.range-chips{display:inline-flex;gap:6px;background:var(--bg);border:1px solid var(--line);border-radius:var(--radius-md);padding:3px}
+.range-chips .chip{
+  font-size:12.5px;font-weight:500;color:var(--slate-2);
+  background:transparent;border:none;
+  padding:7px 14px;border-radius:var(--radius-sm);cursor:pointer;transition:.18s var(--ease);
+  white-space:nowrap;
+}
+.range-chips .chip:hover{color:var(--acc-deep)}
+.range-chips .chip.is-on{
+  background:var(--paper);color:var(--acc-deep);font-weight:700;
+  box-shadow:var(--sh-sm);
+}
+
+/* 2-kolon grafik satırı: ana sütun grafik (1.6fr) + yan donut/dağılım (1fr) */
+.rep-2col{display:grid;grid-template-columns:minmax(0,1.7fr) minmax(0,1fr);gap:16px;margin-bottom:16px}
+
+/* ---- saf CSS sütun grafik (büyüme trendi) ---- */
+.chart-wrap{padding:22px 22px 16px}
+.chart-legend{display:flex;align-items:center;gap:18px;margin-bottom:18px;flex-wrap:wrap}
+.cl-item{display:inline-flex;align-items:center;gap:8px;font-size:12.5px;font-weight:600;color:var(--slate-2)}
+.cl-dot{width:11px;height:11px;border-radius:3px;flex:none}
+.cl-dot.recipe{background:var(--acc)}
+.cl-dot.user{background:rgba(var(--acc-rgb),.28)}
+.cl-val{margin-left:auto;font-size:12.5px;color:var(--muted)}
+
+.bars{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:14px;align-items:end;height:188px;padding-top:6px}
+.bar-col{display:flex;flex-direction:column;align-items:center;gap:0;height:100%;justify-content:flex-end;position:relative}
+/* her ay = iki bar (tarif önde, üye arkada) yan yana */
+.bar-pair{display:flex;align-items:flex-end;justify-content:center;gap:4px;width:100%;height:100%}
+.bar{
+  width:14px;border-radius:5px 5px 0 0;position:relative;
+  transition:height .5s var(--ease), background .2s;
+  min-height:4px;
+}
+.bar.recipe{background:var(--acc)}
+.bar.user{background:rgba(var(--acc-rgb),.26)}
+.bar-col:hover .bar.recipe{background:var(--acc-deep)}
+.bar-tip{
+  position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%);
+  background:var(--slate);color:#fff;font-size:11px;font-weight:600;line-height:1.4;
+  padding:6px 9px;border-radius:var(--radius-sm);white-space:nowrap;
+  opacity:0;pointer-events:none;transition:.16s var(--ease);box-shadow:var(--sh-md);z-index:5;
+}
+.bar-tip::after{content:"";position:absolute;top:100%;left:50%;transform:translateX(-50%);border:5px solid transparent;border-top-color:var(--slate)}
+.bar-col:hover .bar-tip{opacity:1}
+.bar-x{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:14px;margin-top:10px}
+.bar-x span{text-align:center;font-size:11.5px;font-weight:600;color:var(--muted)}
+
+/* ---- yan kart: kanal dağılımı (yatay bar listesi) ---- */
+.dist-list{display:flex;flex-direction:column;gap:16px;padding:22px}
+.dist-row{display:flex;flex-direction:column;gap:7px}
+.dist-head{display:flex;align-items:center;justify-content:space-between;font-size:13px}
+.dist-head b{font-weight:700;color:var(--slate);display:inline-flex;align-items:center;gap:8px}
+.dist-head .dh-ico{width:24px;height:24px;border-radius:7px;display:grid;place-items:center;font-size:11px;background:rgba(var(--acc-rgb),.12);color:var(--acc-deep)}
+.dist-head span{font-weight:700;color:var(--slate-2);font-variant-numeric:tabular-nums}
+.dist-track{height:9px;border-radius:999px;background:var(--bg);overflow:hidden}
+.dist-fill{height:100%;border-radius:999px;background:var(--acc);transition:width .5s var(--ease)}
+.dist-fill.lvl2{background:rgba(var(--acc-rgb),.62)}
+.dist-fill.lvl3{background:rgba(var(--acc-rgb),.4)}
+.dist-fill.lvl4{background:rgba(var(--acc-rgb),.24)}
+
+/* ---- alt 2-kolon tablolar ---- */
+.rep-tables{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin-bottom:16px}
+
+/* .ptable (oku-amaçlı özet tablo) */
+.ptable{width:100%;border-collapse:collapse}
+.ptable th{font-size:11.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);padding:12px 16px;border-bottom:1px solid var(--line);text-align:left;white-space:nowrap}
+.ptable th:first-child{padding-left:22px}
+.ptable th:last-child{padding-right:22px;text-align:right}
+.ptable td{padding:13px 16px;border-bottom:1px solid var(--line);font-size:13.5px;vertical-align:middle}
+.ptable td:first-child{padding-left:22px}
+.ptable td:last-child{padding-right:22px;text-align:right}
+.ptable tr:last-child td{border-bottom:none}
+.ptable tr:hover td{background:var(--bg)}
+
+/* sıralama rozeti (en çok görüntülenen) */
+.rank-cell{display:flex;align-items:center;gap:12px;min-width:0}
+.rank-no{width:24px;height:24px;flex:none;border-radius:7px;display:grid;place-items:center;font-size:12px;font-weight:700;background:var(--bg);color:var(--muted)}
+.rank-no.top{background:rgba(var(--acc-rgb),.12);color:var(--acc-deep)}
+.rank-name{font-size:13.5px;font-weight:700;color:var(--slate);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rank-meta{font-size:12px;color:var(--muted)}
+.num{font-variant-numeric:tabular-nums;font-weight:700;color:var(--slate-2)}
+
+/* mini trend ok (tablo) */
+.trend{font-size:11.5px;font-weight:700;display:inline-flex;align-items:center;gap:4px;white-space:nowrap}
+.trend.up{color:var(--green-deep)}
+.trend.down{color:var(--tomato)}
+
+@media(max-width:1000px){
+  .rep-2col{grid-template-columns:minmax(0,1fr)}
+}
+@media(max-width:720px){
+  .rep-tables{grid-template-columns:minmax(0,1fr)}
+  .bars{grid-template-columns:repeat(8,minmax(0,1fr));gap:7px}
+  .bar{width:10px}
+  .bar-pair{gap:2px}
+  .bar-x{gap:7px}
+  /* tablo: dar ekranda hücre dolgusu küçült + tarif adı sarılabilsin (taşma engeli) */
+  .ptable th,.ptable td{padding-left:10px;padding-right:10px}
+  .ptable th:first-child,.ptable td:first-child{padding-left:16px}
+  .ptable th:last-child,.ptable td:last-child{padding-right:16px}
+  .rank-name{white-space:normal}
+  .rank-cell{gap:9px}
+  /* hover ipucu ekran kenarına taşmasın */
+  .bar-tip{white-space:normal;max-width:130px;text-align:center}
+}
+</style>
+</head>
+<body data-brand="mutfak" data-sec="admin" data-screen="raporlar">
+
+<div class="sa-app">
+
+  <!-- §1 İKON-RAIL (statik; aktif/görünürlük JS) -->
+  <aside class="sa-rail" id="saRail">
+    <a class="sa-rail-logo" href="sa-giris-v1.html" title="Yönetim Girişi"><img src="assets/img/logo-mark.png" alt="DadaMutfak" /></a>
+    <a class="sa-rail-ico" data-sec="genel" href="sa-shell.html?sec=genel" title="Genel Bakış"><i class="fa-solid fa-gauge-high"></i></a>
+    <span class="sa-rail-div"></span>
+    <a class="sa-rail-ico" data-sec="admin"   href="sa-admin.html"   title="Admin"><i class="fa-solid fa-shield-halved"></i></a>
+    <a class="sa-rail-ico" data-sec="saglik"  href="sa-saglik.html"  title="Sağlık &amp; Diyet"><i class="fa-solid fa-heart-pulse"></i></a>
+    <a class="sa-rail-ico" data-sec="store"   href="sa-store.html"   title="DadaStore"><i class="fa-solid fa-bag-shopping"></i></a>
+    <a class="sa-rail-ico" data-sec="dadafit" href="sa-dadafit.html" title="DadaFit"><i class="fa-solid fa-dumbbell"></i></a>
+    <a class="sa-rail-ico" data-sec="isletme" href="sa-isletme.html" title="İşletmeler"><i class="fa-solid fa-store"></i></a>
+    <a class="sa-rail-ico is-locked" data-sec="akademi" href="#" title="DadaAkademi — Yakında"><i class="fa-solid fa-graduation-cap"></i><i class="fa-solid fa-lock sr-lock"></i></a>
+    <div class="sa-rail-foot"><a class="sa-rail-ico" href="sa-giris-v1.html" title="Siteye Dön"><i class="fa-solid fa-arrow-left"></i></a></div>
+  </aside>
+
+  <!-- §2 BÖLÜM MENÜSÜ (JS render) -->
+  <nav class="sa-menu" id="saMenu"></nav>
+
+  <!-- divider grip -->
+  <div class="sa-divider" id="saDivider" role="separator" aria-label="Menüyü daralt/genişlet" title="Sürükle veya tıkla — menüyü daralt/genişlet">
+    <span class="sa-grip"><i class="fa-solid fa-grip-lines-vertical"></i></span>
+  </div>
+
+  <div class="pnl-overlay" id="pnlOverlay"></div>
+
+  <!-- §3 ÜST BAR -->
+  <header class="pnl-top">
+    <button class="pnl-burger" id="pnlBurger" aria-label="Menü"><i class="fa-solid fa-bars"></i></button>
+    <div class="pnl-search">
+      <i class="fa-solid fa-magnifying-glass"></i>
+      <input type="text" placeholder="Kullanıcı, içerik ara…" />
+    </div>
+    <div class="pnl-top-tools">
+      <button class="pnl-bell" aria-label="Bildirimler"><i class="fa-regular fa-bell"></i><span class="pb-dot"></span></button>
+      <div class="pnl-me">
+        <div class="pm-ava" style="background-image:url('https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=240&q=80&auto=format&fit=crop')"></div>
+        <div class="pm-id">
+          <div class="pm-name" id="pmName">Süper Admin</div>
+          <div class="pm-role" id="pmRole">Tüm yetki</div>
+        </div>
+        <i class="fa-solid fa-chevron-down"></i>
+      </div>
+    </div>
+  </header>
+
+  <!-- §4 İÇERİK — Raporlar dashboard -->
+  <main class="pnl-main" id="saMain">
+
+    <!-- sayfa başlığı + tarih aralığı + dışa aktar -->
+    <div class="pnl-page-head">
+      <div>
+        <h1>Raporlar</h1>
+        <div class="ph-sub" id="repSub">Son 30 günün platform özeti — büyüme, içerik ve gelir göstergeleri</div>
+      </div>
+      <div class="ph-actions">
+        <div class="range-chips" id="rangeChips" role="group" aria-label="Tarih aralığı">
+          <button class="chip" data-range="bugun">Bugün</button>
+          <button class="chip" data-range="7g">Son 7 Gün</button>
+          <button class="chip is-on" data-range="30g">Son 30 Gün</button>
+        </div>
+        <a class="btn btn-ghost btn-sm" href="#" id="exportBtn"><i class="fa-solid fa-arrow-down-to-line"></i> Dışa Aktar</a>
+      </div>
+    </div>
+
+    <!-- KPI grid (4 kart) -->
+    <div class="kpi-grid">
+      <div class="kpi-card">
+        <div class="kpi-ico"><i class="fa-solid fa-users"></i></div>
+        <div>
+          <div class="kpi-num">8.412</div>
+          <div class="kpi-lbl">Toplam kullanıcı</div>
+          <div class="kpi-delta up"><i class="fa-solid fa-arrow-trend-up"></i> +6,1% bu ay</div>
+        </div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-ico"><i class="fa-solid fa-crown"></i></div>
+        <div>
+          <div class="kpi-num">1.286</div>
+          <div class="kpi-lbl">Aktif Pro abonelik</div>
+          <div class="kpi-delta up"><i class="fa-solid fa-arrow-trend-up"></i> +9,4% bu ay</div>
+        </div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-ico"><i class="fa-solid fa-utensils"></i></div>
+        <div>
+          <div class="kpi-num">472</div>
+          <div class="kpi-lbl">Yayınlanan tarif</div>
+          <div class="kpi-delta up"><i class="fa-solid fa-arrow-trend-up"></i> +38 bu ay</div>
+        </div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-ico"><i class="fa-solid fa-sack-dollar"></i></div>
+        <div>
+          <div class="kpi-num">₺142.500</div>
+          <div class="kpi-lbl">Aylık gelir</div>
+          <div class="kpi-delta up"><i class="fa-solid fa-arrow-trend-up"></i> +18% bu ay</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2-kolon: büyüme grafiği (sütun) + kanal dağılımı -->
+    <div class="rep-2col">
+
+      <!-- sol: büyüme trendi — saf CSS sütun grafik -->
+      <div class="pnl-card">
+        <div class="pc-head">
+          <div class="pc-title"><i class="fa-solid fa-chart-column"></i> Büyüme Trendi</div>
+          <a class="pc-link" href="#" id="growthDetail">Detay <i class="fa-solid fa-arrow-right"></i></a>
+        </div>
+        <div class="chart-wrap">
+          <div class="chart-legend">
+            <span class="cl-item"><span class="cl-dot recipe"></span> Yeni tarif</span>
+            <span class="cl-item"><span class="cl-dot user"></span> Yeni üye</span>
+            <span class="cl-val">Son 8 ay</span>
+          </div>
+          <!-- bars: her ay tarif(önde)+üye(arka) çift bar. max ölçek: tarif 70, üye 1400 -->
+          <div class="bars" id="growthBars">
+            <div class="bar-col">
+              <div class="bar-pair">
+                <div class="bar recipe" style="height:36%"><span class="bar-tip">Kas · 25 tarif / 740 üye</span></div>
+                <div class="bar user" style="height:53%"></div>
+              </div>
+            </div>
+            <div class="bar-col">
+              <div class="bar-pair">
+                <div class="bar recipe" style="height:44%"><span class="bar-tip">Ara · 31 tarif / 820 üye</span></div>
+                <div class="bar user" style="height:59%"></div>
+              </div>
+            </div>
+            <div class="bar-col">
+              <div class="bar-pair">
+                <div class="bar recipe" style="height:41%"><span class="bar-tip">Oca · 29 tarif / 690 üye</span></div>
+                <div class="bar user" style="height:49%"></div>
+              </div>
+            </div>
+            <div class="bar-col">
+              <div class="bar-pair">
+                <div class="bar recipe" style="height:53%"><span class="bar-tip">Şub · 37 tarif / 910 üye</span></div>
+                <div class="bar user" style="height:65%"></div>
+              </div>
+            </div>
+            <div class="bar-col">
+              <div class="bar-pair">
+                <div class="bar recipe" style="height:60%"><span class="bar-tip">Mar · 42 tarif / 1.020 üye</span></div>
+                <div class="bar user" style="height:73%"></div>
+              </div>
+            </div>
+            <div class="bar-col">
+              <div class="bar-pair">
+                <div class="bar recipe" style="height:71%"><span class="bar-tip">Nis · 50 tarif / 1.180 üye</span></div>
+                <div class="bar user" style="height:84%"></div>
+              </div>
+            </div>
+            <div class="bar-col">
+              <div class="bar-pair">
+                <div class="bar recipe" style="height:80%"><span class="bar-tip">May · 56 tarif / 1.290 üye</span></div>
+                <div class="bar user" style="height:92%"></div>
+              </div>
+            </div>
+            <div class="bar-col">
+              <div class="bar-pair">
+                <div class="bar recipe" style="height:100%"><span class="bar-tip">Haz · 70 tarif / 1.400 üye</span></div>
+                <div class="bar user" style="height:100%"></div>
+              </div>
+            </div>
+          </div>
+          <div class="bar-x">
+            <span>Kas</span><span>Ara</span><span>Oca</span><span>Şub</span>
+            <span>Mar</span><span>Nis</span><span>May</span><span>Haz</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- sağ: kullanıcı kazanım kanalları (yatay bar) -->
+      <div class="pnl-card">
+        <div class="pc-head">
+          <div class="pc-title"><i class="fa-solid fa-diagram-project"></i> Kazanım Kanalları</div>
+        </div>
+        <div class="dist-list">
+          <div class="dist-row">
+            <div class="dist-head">
+              <b><span class="dh-ico"><i class="fa-solid fa-magnifying-glass"></i></span> Organik arama</b>
+              <span>%48</span>
+            </div>
+            <div class="dist-track"><div class="dist-fill" style="width:48%"></div></div>
+          </div>
+          <div class="dist-row">
+            <div class="dist-head">
+              <b><span class="dh-ico"><i class="fa-solid fa-share-nodes"></i></span> Sosyal medya</b>
+              <span>%27</span>
+            </div>
+            <div class="dist-track"><div class="dist-fill lvl2" style="width:27%"></div></div>
+          </div>
+          <div class="dist-row">
+            <div class="dist-head">
+              <b><span class="dh-ico"><i class="fa-solid fa-link"></i></span> Doğrudan</b>
+              <span>%17</span>
+            </div>
+            <div class="dist-track"><div class="dist-fill lvl3" style="width:17%"></div></div>
+          </div>
+          <div class="dist-row">
+            <div class="dist-head">
+              <b><span class="dh-ico"><i class="fa-solid fa-envelope"></i></span> E-bülten</b>
+              <span>%8</span>
+            </div>
+            <div class="dist-track"><div class="dist-fill lvl4" style="width:8%"></div></div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /rep-2col -->
+
+    <!-- alt 2-kolon tablolar: en çok görüntülenen tarifler + son aktiviteler -->
+    <div class="rep-tables">
+
+      <!-- en çok görüntülenen tarifler -->
+      <div class="pnl-card">
+        <div class="pc-head">
+          <div class="pc-title"><i class="fa-solid fa-fire"></i> En Çok Görüntülenen Tarifler</div>
+          <a class="pc-link" href="sa-admin-tarifler.html">Tümü <i class="fa-solid fa-arrow-right"></i></a>
+        </div>
+        <div class="pc-body flush">
+          <table class="ptable">
+            <thead>
+              <tr><th>Tarif</th><th>Görüntülenme</th><th>Değişim</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>
+                  <div class="rank-cell">
+                    <span class="rank-no top">1</span>
+                    <div><div class="rank-name">Mercimek Çorbası</div><div class="rank-meta">Çorbalar</div></div>
+                  </div>
+                </td>
+                <td class="num">42.180</td>
+                <td><span class="trend up"><i class="fa-solid fa-arrow-up"></i> %12</span></td>
+              </tr>
+              <tr>
+                <td>
+                  <div class="rank-cell">
+                    <span class="rank-no top">2</span>
+                    <div><div class="rank-name">Fırın Tavuk But</div><div class="rank-meta">Ana Yemek</div></div>
+                  </div>
+                </td>
+                <td class="num">38.640</td>
+                <td><span class="trend up"><i class="fa-solid fa-arrow-up"></i> %9</span></td>
+              </tr>
+              <tr>
+                <td>
+                  <div class="rank-cell">
+                    <span class="rank-no top">3</span>
+                    <div><div class="rank-name">Kıymalı Patates</div><div class="rank-meta">Ana Yemek</div></div>
+                  </div>
+                </td>
+                <td class="num">31.205</td>
+                <td><span class="trend up"><i class="fa-solid fa-arrow-up"></i> %6</span></td>
+              </tr>
+              <tr>
+                <td>
+                  <div class="rank-cell">
+                    <span class="rank-no">4</span>
+                    <div><div class="rank-name">Sütlaç</div><div class="rank-meta">Tatlılar</div></div>
+                  </div>
+                </td>
+                <td class="num">27.910</td>
+                <td><span class="trend down"><i class="fa-solid fa-arrow-down"></i> %3</span></td>
+              </tr>
+              <tr>
+                <td>
+                  <div class="rank-cell">
+                    <span class="rank-no">5</span>
+                    <div><div class="rank-name">Menemen</div><div class="rank-meta">Kahvaltı</div></div>
+                  </div>
+                </td>
+                <td class="num">24.350</td>
+                <td><span class="trend up"><i class="fa-solid fa-arrow-up"></i> %4</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- son aktiviteler -->
+      <div class="pnl-card">
+        <div class="pc-head">
+          <div class="pc-title"><i class="fa-solid fa-wave-square"></i> Son Aktiviteler</div>
+          <a class="pc-link" href="sa-admin.html">Tümü <i class="fa-solid fa-arrow-right"></i></a>
+        </div>
+        <div class="act-list">
+          <div class="act-row">
+            <div class="act-ico" style="background:rgba(var(--acc-rgb),.12);color:var(--acc-deep)"><i class="fa-solid fa-utensils"></i></div>
+            <div class="act-info"><b>Yeni tarif yayınlandı</b><span>"Közlenmiş Patlıcan Salatası" — moderasyondan geçti</span></div>
+            <span class="act-time">12 dk</span>
+          </div>
+          <div class="act-row">
+            <div class="act-ico" style="background:#FCF3DD;color:#B8860B"><i class="fa-solid fa-crown"></i></div>
+            <div class="act-info"><b>Pro abonelik başladı</b><span>Selin Yıldız — Pro+ yıllık plana geçti</span></div>
+            <span class="act-time">48 dk</span>
+          </div>
+          <div class="act-row">
+            <div class="act-ico" style="background:var(--green-tint);color:var(--green-deep)"><i class="fa-solid fa-user-plus"></i></div>
+            <div class="act-info"><b>Kayıt zirvesi</b><span>Bugün 184 yeni üye — günlük ortalamanın %22 üzerinde</span></div>
+            <span class="act-time">2 sa</span>
+          </div>
+          <div class="act-row">
+            <div class="act-ico" style="background:var(--tomato-tint);color:var(--tomato)"><i class="fa-solid fa-flag"></i></div>
+            <div class="act-info"><b>İçerik şikayeti</b><span>"Mercimek Köftesi" yorumu — moderasyon bekliyor</span></div>
+            <span class="act-time">3 sa</span>
+          </div>
+          <div class="act-row">
+            <div class="act-ico" style="background:rgba(var(--acc-rgb),.12);color:var(--acc-deep)"><i class="fa-solid fa-sack-dollar"></i></div>
+            <div class="act-info"><b>Gelir kilometre taşı</b><span>Haziran geliri ₺140.000 eşiğini aştı</span></div>
+            <span class="act-time">6 sa</span>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /rep-tables -->
+
+  </main>
+
+</div><!-- /sa-app -->
+
+<script src="assets/js/sa-ui.js"></script>
+<script src="assets/js/sa-shell.js"></script>
+<script>
+/* sayfa JS — tarih aralığı chip toggle (veri statik kalır, görsel feedback) */
+(function(){
+  var chips=document.querySelectorAll('#rangeChips .chip');
+  var sub=document.getElementById('repSub');
+  var labels={
+    'bugun':'Bugünün platform özeti — büyüme, içerik ve gelir göstergeleri',
+    '7g':'Son 7 günün platform özeti — büyüme, içerik ve gelir göstergeleri',
+    '30g':'Son 30 günün platform özeti — büyüme, içerik ve gelir göstergeleri'
+  };
+  chips.forEach(function(chip){
+    chip.addEventListener('click',function(){
+      chips.forEach(function(c){c.classList.remove('is-on')});
+      chip.classList.add('is-on');
+      var r=chip.dataset.range;
+      if(sub&&labels[r])sub.textContent=labels[r];
+    });
+  });
+
+  /* Dışa Aktar — placeholder toast (gerçek export backend işi) */
+  var exp=document.getElementById('exportBtn');
+  if(exp){
+    exp.addEventListener('click',function(e){
+      e.preventDefault();
+      if(window.saToast)saToast('Rapor dışa aktarılıyor…',{type:'info'});
+    });
+  }
+})();
+</script>
+</body>
+</html>

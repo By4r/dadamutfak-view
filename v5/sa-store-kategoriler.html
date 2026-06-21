@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Kategoriler — DadaStore · Süper Admin · DadaMutfak</title>
+<link rel="shortcut icon" type="image/x-icon" href="assets/img/favicon.ico" />
+<!-- FontAwesome 6.5.2 (kilitli ikon seti) -->
+<link rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+      integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A=="
+      crossorigin="anonymous" referrerpolicy="no-referrer" />
+<!-- PAYLAŞILAN KABUK (tek kaynak) -->
+<link rel="stylesheet" href="assets/css/sa-shell.css" />
+<style>
+/* =====================================================================
+   SA-STORE-KATEGORILER — SAYFA CSS (ekrana özel; kabuk CSS'i sa-shell.css'te).
+   Config CRUD: kategori ağacı (üst kategori + alt kategoriler). Yeni/Düzenle var.
+   Token: SADECE var(--acc)/var(--acc-deep)/rgba(var(--acc-rgb),..).
+   ===================================================================== */
+
+/* ---- filtre çubuğu ---- */
+.filter-bar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:16px}
+.filter-search{position:relative;flex:1;min-width:220px;max-width:340px}
+.filter-search i{position:absolute;left:12px;top:50%;transform:translateY(-50%);font-size:13px;color:var(--muted);pointer-events:none}
+.filter-search input{
+  width:100%;height:38px;padding:0 12px 0 36px;
+  font-family:inherit;font-size:13px;font-weight:500;color:var(--ink);
+  background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-sm);
+  outline:none;transition:.2s var(--ease);
+}
+.filter-search input::placeholder{color:var(--muted)}
+.filter-search input:focus{border-color:var(--acc);box-shadow:0 0 0 3px rgba(var(--acc-rgb),.12)}
+
+.chips{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.chip{
+  font-size:12.5px;font-weight:500;color:var(--slate-2);background:var(--paper);
+  border:1px solid var(--line);padding:7px 14px;border-radius:var(--radius-sm);
+  cursor:pointer;transition:.18s var(--ease);white-space:nowrap;
+}
+.chip:hover{border-color:var(--acc);color:var(--acc-deep)}
+.chip.is-on{border-color:var(--acc);color:var(--acc-deep);background:rgba(var(--acc-rgb),.08);font-weight:700}
+
+/* ---- kategori ağacı ---- */
+.cat-tree{display:flex;flex-direction:column}
+.cat-node{border-bottom:1px solid var(--line)}
+.cat-node:last-child{border-bottom:none}
+
+/* üst kategori satırı */
+.cat-row{display:flex;align-items:center;gap:14px;padding:15px 22px;transition:background .15s}
+.cat-row:hover{background:var(--bg)}
+.cat-caret{width:24px;height:24px;flex:none;border:none;background:none;color:var(--muted);font-size:12px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;border-radius:var(--radius-sm);transition:.18s var(--ease)}
+.cat-caret:hover{background:rgba(var(--acc-rgb),.1);color:var(--acc-deep)}
+.cat-caret i{transition:transform .22s var(--ease)}
+.cat-node.is-open > .cat-row .cat-caret i{transform:rotate(90deg)}
+.cat-ico{width:40px;height:40px;flex:none;border-radius:var(--radius-md);background:rgba(var(--acc-rgb),.12);color:var(--acc-deep);display:grid;place-items:center;font-size:15px}
+.cat-main{flex:1;min-width:0;line-height:1.35}
+.cat-name{font-size:14px;font-weight:700;color:var(--slate);display:flex;align-items:center;gap:9px}
+.cat-slug{font-size:11.5px;color:var(--muted);font-family:monospace}
+.cat-count{font-size:12.5px;color:var(--slate-2);font-weight:600;white-space:nowrap;flex:none}
+.cat-count b{color:var(--slate);font-weight:700}
+
+/* alt kategori grubu */
+.cat-children{display:none;background:var(--bg);border-top:1px solid var(--line)}
+.cat-node.is-open > .cat-children{display:block}
+.cat-child{display:flex;align-items:center;gap:13px;padding:11px 22px 11px 60px;border-bottom:1px solid var(--line);transition:background .15s}
+.cat-child:last-child{border-bottom:none}
+.cat-child:hover{background:var(--paper)}
+.cat-child-dot{width:6px;height:6px;flex:none;border-radius:50%;background:rgba(var(--acc-rgb),.5)}
+.cat-child-name{flex:1;min-width:0;font-size:13.5px;font-weight:600;color:var(--slate)}
+.cat-child-count{font-size:12px;color:var(--muted);white-space:nowrap}
+
+/* satır aksiyonları */
+.row-actions{display:inline-flex;align-items:center;gap:6px;flex:none}
+.act-btn{
+  width:32px;height:32px;border:1px solid var(--line);border-radius:var(--radius-sm);
+  background:var(--paper);color:var(--muted);font-size:13px;
+  display:inline-flex;align-items:center;justify-content:center;
+  cursor:pointer;transition:.18s var(--ease);
+}
+.act-btn:hover{border-color:var(--acc);color:var(--acc-deep);background:rgba(var(--acc-rgb),.06)}
+.act-btn.danger:hover{border-color:var(--tomato);color:var(--tomato);background:var(--tomato-tint)}
+
+/* boş durum */
+.pnl-empty{display:none;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:64px 22px;gap:14px}
+.pnl-empty i{font-size:34px;color:var(--line)}
+.pnl-empty .pe-tt{font-size:15px;font-weight:700;color:var(--slate)}
+.pnl-empty .pe-sub{font-size:13px;color:var(--muted);max-width:360px;line-height:1.6}
+
+@media(max-width:640px){
+  .cat-slug{display:none}
+  .cat-child{padding-left:44px}
+}
+</style>
+</head>
+<body data-brand="mutfak" data-sec="store" data-screen="kategoriler">
+
+<div class="sa-app">
+
+  <!-- §1 İKON-RAIL -->
+  <aside class="sa-rail" id="saRail">
+    <a class="sa-rail-logo" href="sa-giris-v1.html" title="Yönetim Girişi"><img src="assets/img/logo-mark.png" alt="DadaMutfak" /></a>
+    <a class="sa-rail-ico" data-sec="genel" href="sa-shell.html?sec=genel" title="Genel Bakış"><i class="fa-solid fa-gauge-high"></i></a>
+    <span class="sa-rail-div"></span>
+    <a class="sa-rail-ico" data-sec="admin"   href="sa-admin.html"   title="Admin"><i class="fa-solid fa-shield-halved"></i></a>
+    <a class="sa-rail-ico" data-sec="saglik"  href="sa-saglik.html"  title="Sağlık &amp; Diyet"><i class="fa-solid fa-heart-pulse"></i></a>
+    <a class="sa-rail-ico" data-sec="store"   href="sa-store.html"   title="DadaStore"><i class="fa-solid fa-bag-shopping"></i></a>
+    <a class="sa-rail-ico" data-sec="dadafit" href="sa-dadafit.html" title="DadaFit"><i class="fa-solid fa-dumbbell"></i></a>
+    <a class="sa-rail-ico" data-sec="isletme" href="sa-isletme.html" title="İşletmeler"><i class="fa-solid fa-store"></i></a>
+    <a class="sa-rail-ico is-locked" data-sec="akademi" href="#" title="DadaAkademi — Yakında"><i class="fa-solid fa-graduation-cap"></i><i class="fa-solid fa-lock sr-lock"></i></a>
+    <div class="sa-rail-foot"><a class="sa-rail-ico" href="sa-giris-v1.html" title="Siteye Dön"><i class="fa-solid fa-arrow-left"></i></a></div>
+  </aside>
+
+  <!-- §2 BÖLÜM MENÜSÜ (JS render) -->
+  <nav class="sa-menu" id="saMenu"></nav>
+
+  <!-- divider grip -->
+  <div class="sa-divider" id="saDivider" role="separator" aria-label="Menüyü daralt/genişlet" title="Sürükle veya tıkla — menüyü daralt/genişlet">
+    <span class="sa-grip"><i class="fa-solid fa-grip-lines-vertical"></i></span>
+  </div>
+
+  <div class="pnl-overlay" id="pnlOverlay"></div>
+
+  <!-- §3 ÜST BAR -->
+  <header class="pnl-top">
+    <button class="pnl-burger" id="pnlBurger" aria-label="Menü"><i class="fa-solid fa-bars"></i></button>
+    <div class="pnl-search">
+      <i class="fa-solid fa-magnifying-glass"></i>
+      <input type="text" placeholder="Ürün, sipariş ara…" />
+    </div>
+    <div class="pnl-top-tools">
+      <button class="pnl-bell" aria-label="Bildirimler"><i class="fa-regular fa-bell"></i><span class="pb-dot"></span></button>
+      <div class="pnl-me">
+        <div class="pm-ava"><i class="fa-solid fa-user"></i></div>
+        <div class="pm-id">
+          <div class="pm-name" id="pmName">Süper Admin</div>
+          <div class="pm-role" id="pmRole">Tüm yetki</div>
+        </div>
+        <i class="fa-solid fa-chevron-down"></i>
+      </div>
+    </div>
+  </header>
+
+  <!-- §4 İÇERİK — Kategoriler (config CRUD) -->
+  <main class="pnl-main" id="saMain">
+
+    <!-- sayfa başlığı + Yeni Kategori -->
+    <div class="pnl-page-head">
+      <div>
+        <h1>Kategoriler</h1>
+        <div class="ph-sub">DadaStore kategori ağacı — 6 üst kategori, 18 alt kategori</div>
+      </div>
+      <div class="ph-actions">
+        <a class="btn btn-acc btn-sm" href="sa-store-kategoriler-form.html"><i class="fa-solid fa-plus"></i> Yeni Kategori</a>
+      </div>
+    </div>
+
+    <!-- filtre çubuğu -->
+    <div class="filter-bar">
+      <div class="filter-search">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <input type="text" placeholder="Kategori adı…" id="catSearch" />
+      </div>
+      <div class="chips">
+        <button class="chip is-on" data-filter="tumu" onclick="filterCat(this,'tumu')">Tümü</button>
+        <button class="chip" data-filter="aktif" onclick="filterCat(this,'aktif')">Aktif</button>
+        <button class="chip" data-filter="pasif" onclick="filterCat(this,'pasif')">Pasif</button>
+      </div>
+    </div>
+
+    <!-- kategori ağacı -->
+    <div class="pnl-card" style="overflow:hidden">
+      <div class="pc-body flush">
+        <div class="cat-tree" id="catTree">
+
+          <!-- Kategori 1 -->
+          <div class="cat-node is-open" data-stat="aktif">
+            <div class="cat-row">
+              <button class="cat-caret" aria-label="Aç/Kapat"><i class="fa-solid fa-chevron-right"></i></button>
+              <div class="cat-ico"><i class="fa-solid fa-mortar-pestle"></i></div>
+              <div class="cat-main">
+                <div class="cat-name">Baharat &amp; Sos <span class="pstat ok">Aktif</span></div>
+                <div class="cat-slug">/baharat-sos</div>
+              </div>
+              <div class="cat-count"><b>14</b> ürün · 4 alt</div>
+              <div class="row-actions">
+                <a class="act-btn" href="sa-store-kategoriler-form.html" title="Düzenle"><i class="fa-solid fa-pen"></i></a>
+                <button class="act-btn danger" title="Sil"><i class="fa-solid fa-trash"></i></button>
+              </div>
+            </div>
+            <div class="cat-children">
+              <div class="cat-child"><span class="cat-child-dot"></span><span class="cat-child-name">Pul Biber &amp; İsot</span><span class="cat-child-count">5 ürün</span></div>
+              <div class="cat-child"><span class="cat-child-dot"></span><span class="cat-child-name">Salça &amp; Ezme</span><span class="cat-child-count">4 ürün</span></div>
+              <div class="cat-child"><span class="cat-child-dot"></span><span class="cat-child-name">Nar Ekşisi &amp; Sirke</span><span class="cat-child-count">3 ürün</span></div>
+              <div class="cat-child"><span class="cat-child-dot"></span><span class="cat-child-name">Kuru Baharat</span><span class="cat-child-count">2 ürün</span></div>
+            </div>
+          </div>
+
+          <!-- Kategori 2 -->
+          <div class="cat-node" data-stat="aktif">
+            <div class="cat-row">
+              <button class="cat-caret" aria-label="Aç/Kapat"><i class="fa-solid fa-chevron-right"></i></button>
+              <div class="cat-ico"><i class="fa-solid fa-wheat-awn"></i></div>
+              <div class="cat-main">
+                <div class="cat-name">Tahıl &amp; Kurubaklagil <span class="pstat ok">Aktif</span></div>
+                <div class="cat-slug">/tahil-kurubaklagil</div>
+              </div>
+              <div class="cat-count"><b>11</b> ürün · 3 alt</div>
+              <div class="row-actions">
+                <a class="act-btn" href="sa-store-kategoriler-form.html" title="Düzenle"><i class="fa-solid fa-pen"></i></a>
+                <button class="act-btn danger" title="Sil"><i class="fa-solid fa-trash"></i></button>
+              </div>
+            </div>
+            <div class="cat-children">
+              <div class="cat-child"><span class="cat-child-dot"></span><span class="cat-child-name">Bulgur &amp; Pirinç</span><span class="cat-child-count">4 ürün</span></div>
+              <div class="cat-child"><span class="cat-child-dot"></span><span class="cat-child-name">Mercimek &amp; Nohut</span><span class="cat-child-count">5 ürün</span></div>
+              <div class="cat-child"><span class="cat-child-dot"></span><span class="cat-child-name">Un &amp; İrmik</span><span class="cat-child-count">2 ürün</span></div>
+            </div>
+          </div>
+
+          <!-- Kategori 3 -->
+          <div class="cat-node" data-stat="aktif">
+            <div class="cat-row">
+              <button class="cat-caret" aria-label="Aç/Kapat"><i class="fa-solid fa-chevron-right"></i></button>
+              <div class="cat-ico"><i class="fa-solid fa-bottle-droplet"></i></div>
+              <div class="cat-main">
+                <div class="cat-name">Zeytinyağı &amp; Yağ <span class="pstat ok">Aktif</span></div>
+                <div class="cat-slug">/zeytinyagi-yag</div>
+              </div>
+              <div class="cat-count"><b>8</b> ürün · 2 alt</div>
+              <div class="row-actions">
+                <a class="act-btn" href="sa-store-kategoriler-form.html" title="Düzenle"><i class="fa-solid fa-pen"></i></a>
+                <button class="act-btn danger" title="Sil"><i class="fa-solid fa-trash"></i></button>
+              </div>
+            </div>
+            <div class="cat-children">
+              <div class="cat-child"><span class="cat-child-dot"></span><span class="cat-child-name">Naturel Sızma</span><span class="cat-child-count">5 ürün</span></div>
+              <div class="cat-child"><span class="cat-child-dot"></span><span class="cat-child-name">Riviera &amp; Çekirdek</span><span class="cat-child-count">3 ürün</span></div>
+            </div>
+          </div>
+
+          <!-- Kategori 4 -->
+          <div class="cat-node" data-stat="aktif">
+            <div class="cat-row">
+              <button class="cat-caret" aria-label="Aç/Kapat"><i class="fa-solid fa-chevron-right"></i></button>
+              <div class="cat-ico"><i class="fa-solid fa-cookie-bite"></i></div>
+              <div class="cat-main">
+                <div class="cat-name">Atıştırmalık <span class="pstat ok">Aktif</span></div>
+                <div class="cat-slug">/atistirmalik</div>
+              </div>
+              <div class="cat-count"><b>9</b> ürün · 3 alt</div>
+              <div class="row-actions">
+                <a class="act-btn" href="sa-store-kategoriler-form.html" title="Düzenle"><i class="fa-solid fa-pen"></i></a>
+                <button class="act-btn danger" title="Sil"><i class="fa-solid fa-trash"></i></button>
+              </div>
+            </div>
+            <div class="cat-children">
+              <div class="cat-child"><span class="cat-child-dot"></span><span class="cat-child-name">Kuruyemiş</span><span class="cat-child-count">4 ürün</span></div>
+              <div class="cat-child"><span class="cat-child-dot"></span><span class="cat-child-name">Kuru Meyve</span><span class="cat-child-count">3 ürün</span></div>
+              <div class="cat-child"><span class="cat-child-dot"></span><span class="cat-child-name">Çikolata &amp; Lokum</span><span class="cat-child-count">2 ürün</span></div>
+            </div>
+          </div>
+
+          <!-- Kategori 5 -->
+          <div class="cat-node" data-stat="aktif">
+            <div class="cat-row">
+              <button class="cat-caret" aria-label="Aç/Kapat"><i class="fa-solid fa-chevron-right"></i></button>
+              <div class="cat-ico"><i class="fa-solid fa-kitchen-set"></i></div>
+              <div class="cat-main">
+                <div class="cat-name">Mutfak Ekipmanları <span class="pstat ok">Aktif</span></div>
+                <div class="cat-slug">/mutfak-ekipmanlari</div>
+              </div>
+              <div class="cat-count"><b>6</b> ürün · 3 alt</div>
+              <div class="row-actions">
+                <a class="act-btn" href="sa-store-kategoriler-form.html" title="Düzenle"><i class="fa-solid fa-pen"></i></a>
+                <button class="act-btn danger" title="Sil"><i class="fa-solid fa-trash"></i></button>
+              </div>
+            </div>
+            <div class="cat-children">
+              <div class="cat-child"><span class="cat-child-dot"></span><span class="cat-child-name">Ahşap Ürünler</span><span class="cat-child-count">3 ürün</span></div>
+              <div class="cat-child"><span class="cat-child-dot"></span><span class="cat-child-name">Pişirme Kapları</span><span class="cat-child-count">2 ürün</span></div>
+              <div class="cat-child"><span class="cat-child-dot"></span><span class="cat-child-name">Servis &amp; Sunum</span><span class="cat-child-count">1 ürün</span></div>
+            </div>
+          </div>
+
+          <!-- Kategori 6 (pasif) -->
+          <div class="cat-node" data-stat="pasif">
+            <div class="cat-row">
+              <button class="cat-caret" aria-label="Aç/Kapat"><i class="fa-solid fa-chevron-right"></i></button>
+              <div class="cat-ico"><i class="fa-solid fa-seedling"></i></div>
+              <div class="cat-main">
+                <div class="cat-name">Organik <span class="pstat off">Pasif</span></div>
+                <div class="cat-slug">/organik</div>
+              </div>
+              <div class="cat-count"><b>4</b> ürün · 3 alt</div>
+              <div class="row-actions">
+                <a class="act-btn" href="sa-store-kategoriler-form.html" title="Düzenle"><i class="fa-solid fa-pen"></i></a>
+                <button class="act-btn danger" title="Sil"><i class="fa-solid fa-trash"></i></button>
+              </div>
+            </div>
+            <div class="cat-children">
+              <div class="cat-child"><span class="cat-child-dot"></span><span class="cat-child-name">Organik Baklagil</span><span class="cat-child-count">2 ürün</span></div>
+              <div class="cat-child"><span class="cat-child-dot"></span><span class="cat-child-name">Organik Bal &amp; Reçel</span><span class="cat-child-count">1 ürün</span></div>
+              <div class="cat-child"><span class="cat-child-dot"></span><span class="cat-child-name">Organik Çay &amp; Bitki</span><span class="cat-child-count">1 ürün</span></div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- boş durum -->
+        <div class="pnl-empty" id="catEmpty">
+          <i class="fa-solid fa-layer-group"></i>
+          <div class="pe-tt">Eşleşen kategori yok</div>
+          <div class="pe-sub">Arama teriminizi veya durum filtresini değiştirip yeniden deneyin.</div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+</div>
+
+<script src="assets/js/sa-shell.js"></script>
+
+<!-- Ağaç aç/kapat + filtre/arama JS (sayfa-özel) -->
+<script>
+/* caret toggle */
+document.querySelectorAll('#catTree .cat-caret').forEach(function(c){
+  c.addEventListener('click', function(){
+    c.closest('.cat-node').classList.toggle('is-open');
+  });
+});
+
+var catCurFilter = 'tumu';
+function catApply(){
+  var q = (document.getElementById('catSearch').value || '').toLowerCase().trim();
+  var nodes = document.querySelectorAll('#catTree .cat-node');
+  var shown = 0;
+  nodes.forEach(function(node){
+    var matchFilter = (catCurFilter === 'tumu') || (node.dataset.stat === catCurFilter);
+    var matchSearch = (!q || node.textContent.toLowerCase().indexOf(q) !== -1);
+    var show = matchFilter && matchSearch;
+    node.style.display = show ? '' : 'none';
+    if(show) shown++;
+  });
+  var empty = document.getElementById('catEmpty');
+  if(empty) empty.style.display = (shown === 0) ? 'flex' : 'none';
+}
+function filterCat(btn, filter){
+  document.querySelectorAll('.chip').forEach(function(c){ c.classList.remove('is-on'); });
+  btn.classList.add('is-on');
+  catCurFilter = filter;
+  catApply();
+}
+var catSrch = document.getElementById('catSearch');
+if(catSrch) catSrch.addEventListener('input', catApply);
+</script>
+</body>
+</html>

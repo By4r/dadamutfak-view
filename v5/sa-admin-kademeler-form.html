@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Kademe Düzenle — Admin — DadaMutfak</title>
+<link rel="shortcut icon" type="image/x-icon" href="assets/img/favicon.ico" />
+<link rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+      integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A=="
+      crossorigin="anonymous" referrerpolicy="no-referrer" />
+<link rel="stylesheet" href="assets/css/sa-shell.css" />
+<link rel="stylesheet" href="assets/css/sa-ui.css" />
+<style>
+/* =====================================================================
+   SA-ADMIN-KADEMELER-FORM — SAYFA CSS. Rütbe tanımı. Form alanları VERBATIM.
+   ===================================================================== */
+.form-grid{display:grid;gap:18px}
+.frow{display:flex;flex-direction:column;gap:7px}
+.frow label{font-size:12.5px;font-weight:700;color:var(--slate-2)}
+.frow .fhint{font-size:11.5px;color:var(--muted);font-weight:500}
+.finput,.fselect,.ftext{width:100%;font-family:inherit;font-size:13.5px;font-weight:500;color:var(--ink);background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-md);padding:0 14px;height:44px;outline:none;transition:.2s var(--ease)}
+.ftext{height:auto;padding:12px 14px;line-height:1.5;resize:vertical;min-height:80px}
+.finput:focus,.fselect:focus,.ftext:focus{border-color:var(--acc);box-shadow:0 0 0 3px rgba(var(--acc-rgb),.12)}
+.frow.two{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.form-sec{padding:18px 22px;border-bottom:1px solid var(--line)}
+.form-sec:last-child{border-bottom:none}
+.form-sec-tt{font-size:13px;font-weight:700;color:var(--slate);margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.form-sec-tt i{color:var(--acc)}
+.form-actions{display:flex;gap:10px;justify-content:flex-end;padding:16px 22px}
+.form-layout{display:grid;grid-template-columns:minmax(0,1fr) minmax(280px,340px);gap:24px;align-items:start}
+
+/* ikon seçici (radius-sm KÖŞELİ chip) */
+.ico-pick{display:flex;flex-wrap:wrap;gap:8px}
+.ico-opt{width:46px;height:46px;border-radius:var(--radius-sm);border:1px solid var(--line);background:var(--paper);color:var(--slate-2);font-size:17px;display:grid;place-items:center;cursor:pointer;transition:.16s var(--ease)}
+.ico-opt:hover{border-color:var(--acc);color:var(--acc-deep)}
+.ico-opt.is-on{border-color:var(--acc);background:rgba(var(--acc-rgb),.10);color:var(--acc-deep)}
+
+/* sayısal birim eki */
+.num-wrap{display:flex;align-items:stretch;border:1px solid var(--line);border-radius:var(--radius-md);overflow:hidden;transition:.2s var(--ease)}
+.num-wrap:focus-within{border-color:var(--acc);box-shadow:0 0 0 3px rgba(var(--acc-rgb),.12)}
+.num-wrap .finput{border:none;border-radius:0;box-shadow:none!important}
+.num-suf{display:flex;align-items:center;padding:0 14px;background:var(--bg);color:var(--muted);font-size:12.5px;font-weight:700;border-left:1px solid var(--line);white-space:nowrap}
+
+/* canlı kademe önizleme (liste kartı yansıması) */
+.tier-prev{position:relative;background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-lg);padding:18px;overflow:hidden}
+.tier-prev::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--acc)}
+.tp-top{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.tp-medal{width:44px;height:44px;flex:none;border-radius:var(--radius-md);background:rgba(var(--acc-rgb),.10);color:var(--acc-deep);display:grid;place-items:center;font-size:18px}
+.tp-name{font-size:15px;font-weight:700;color:var(--slate)}
+.tp-lvl{font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);margin-top:2px}
+.tp-req{font-size:12.5px;color:var(--slate-2);line-height:1.5}
+.tp-req b{color:var(--slate);font-weight:700}
+
+@media(max-width:900px){.form-layout{grid-template-columns:minmax(0,1fr)}.frow.two{grid-template-columns:1fr}}
+</style>
+</head>
+<body data-brand="mutfak" data-sec="admin" data-screen="kademeler">
+
+<div class="sa-app">
+
+  <aside class="sa-rail" id="saRail">
+    <a class="sa-rail-logo" href="sa-giris-v1.html" title="Yönetim Girişi"><img src="assets/img/logo-mark.png" alt="DadaMutfak" /></a>
+    <a class="sa-rail-ico" data-sec="genel" href="sa-shell.html?sec=genel" title="Genel Bakış"><i class="fa-solid fa-gauge-high"></i></a>
+    <span class="sa-rail-div"></span>
+    <a class="sa-rail-ico" data-sec="admin"   href="sa-admin.html"   title="Admin"><i class="fa-solid fa-shield-halved"></i></a>
+    <a class="sa-rail-ico" data-sec="saglik"  href="sa-saglik.html"  title="Sağlık &amp; Diyet"><i class="fa-solid fa-heart-pulse"></i></a>
+    <a class="sa-rail-ico" data-sec="store"   href="sa-store.html"   title="DadaStore"><i class="fa-solid fa-bag-shopping"></i></a>
+    <a class="sa-rail-ico" data-sec="dadafit" href="sa-dadafit.html" title="DadaFit"><i class="fa-solid fa-dumbbell"></i></a>
+    <a class="sa-rail-ico" data-sec="isletme" href="sa-isletme.html" title="İşletmeler"><i class="fa-solid fa-store"></i></a>
+    <a class="sa-rail-ico is-locked" data-sec="akademi" href="#" title="DadaAkademi — Yakında"><i class="fa-solid fa-graduation-cap"></i><i class="fa-solid fa-lock sr-lock"></i></a>
+    <div class="sa-rail-foot"><a class="sa-rail-ico" href="sa-giris-v1.html" title="Siteye Dön"><i class="fa-solid fa-arrow-left"></i></a></div>
+  </aside>
+
+  <nav class="sa-menu" id="saMenu"></nav>
+  <div class="sa-divider" id="saDivider" role="separator" aria-label="Menüyü daralt/genişlet" title="Sürükle veya tıkla — menüyü daralt/genişlet"><span class="sa-grip"><i class="fa-solid fa-grip-lines-vertical"></i></span></div>
+  <div class="pnl-overlay" id="pnlOverlay"></div>
+
+  <header class="pnl-top">
+    <button class="pnl-burger" id="pnlBurger" aria-label="Menü"><i class="fa-solid fa-bars"></i></button>
+    <div class="pnl-search"><i class="fa-solid fa-magnifying-glass"></i><input type="text" placeholder="Kullanıcı, içerik ara…" /></div>
+    <div class="pnl-top-tools">
+      <button class="pnl-bell" aria-label="Bildirimler"><i class="fa-regular fa-bell"></i><span class="pb-dot"></span></button>
+      <div class="pnl-me">
+        <div class="pm-ava" style="background-image:url('https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=240&q=80&auto=format&fit=crop')"></div>
+        <div class="pm-id"><div class="pm-name" id="pmName">Süper Admin</div><div class="pm-role" id="pmRole">Tüm yetki</div></div>
+        <i class="fa-solid fa-chevron-down"></i>
+      </div>
+    </div>
+  </header>
+
+  <main class="pnl-main" id="saMain">
+
+    <div class="pnl-page-head">
+      <div>
+        <a href="sa-admin-kademeler.html" style="display:inline-flex;align-items:center;gap:7px;font-size:13px;font-weight:700;color:var(--muted);margin-bottom:8px;transition:.18s" onmouseover="this.style.color='var(--acc)'" onmouseout="this.style.color='var(--muted)'"><i class="fa-solid fa-arrow-left"></i> Kademeler</a>
+        <h1>Kademe Düzenle</h1>
+        <div class="ph-sub">Rütbe adını, eşik puanını ve görsel ikonunu tanımlayın</div>
+      </div>
+    </div>
+
+    <div class="form-layout">
+
+      <div class="pnl-card">
+
+        <div class="form-sec">
+          <div class="form-sec-tt"><i class="fa-solid fa-ranking-star"></i> Kademe Tanımı</div>
+          <div class="form-grid">
+            <div class="frow two">
+              <div class="frow">
+                <label for="f-ad">Kademe adı</label>
+                <input class="finput" id="f-ad" type="text" value="Aşçı" />
+              </div>
+              <div class="frow">
+                <label for="f-seviye">Seviye sırası</label>
+                <select class="fselect" id="f-seviye">
+                  <option value="1">Seviye 1</option>
+                  <option value="2">Seviye 2</option>
+                  <option value="3" selected>Seviye 3</option>
+                  <option value="4">Seviye 4</option>
+                  <option value="5">Seviye 5</option>
+                </select>
+              </div>
+            </div>
+            <div class="frow">
+              <label for="f-esik">Eşik puanı</label>
+              <div class="num-wrap">
+                <input class="finput" id="f-esik" type="number" value="1000" min="0" />
+                <span class="num-suf">katkı puanı</span>
+              </div>
+              <span class="fhint">Üye bu puana ulaştığında otomatik olarak bu kademeye yükselir.</span>
+            </div>
+            <div class="frow">
+              <label for="f-rozet">Rozet etiketi</label>
+              <input class="finput" id="f-rozet" type="text" value="Deneyimli" />
+              <span class="fhint">Kademe kartında gösterilen kısa etiket.</span>
+            </div>
+            <div class="frow">
+              <label for="f-aciklama">Açıklama</label>
+              <textarea class="ftext" id="f-aciklama">Düzenli içerik üreten deneyimli üyeler.</textarea>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-sec">
+          <div class="form-sec-tt"><i class="fa-solid fa-icons"></i> Görsel İkon</div>
+          <div class="ico-pick" id="icoPick">
+            <button type="button" class="ico-opt" data-ico="fa-seedling"><i class="fa-solid fa-seedling"></i></button>
+            <button type="button" class="ico-opt" data-ico="fa-leaf"><i class="fa-solid fa-leaf"></i></button>
+            <button type="button" class="ico-opt is-on" data-ico="fa-utensils"><i class="fa-solid fa-utensils"></i></button>
+            <button type="button" class="ico-opt" data-ico="fa-hat-cowboy"><i class="fa-solid fa-hat-cowboy"></i></button>
+            <button type="button" class="ico-opt" data-ico="fa-crown"><i class="fa-solid fa-crown"></i></button>
+            <button type="button" class="ico-opt" data-ico="fa-medal"><i class="fa-solid fa-medal"></i></button>
+            <button type="button" class="ico-opt" data-ico="fa-fire"><i class="fa-solid fa-fire"></i></button>
+            <button type="button" class="ico-opt" data-ico="fa-star"><i class="fa-solid fa-star"></i></button>
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <a class="btn btn-ghost btn-sm" href="sa-admin-kademeler.html">İptal</a>
+          <button class="btn btn-acc btn-sm" type="button" id="saveBtn"><i class="fa-solid fa-floppy-disk"></i> Kaydet</button>
+        </div>
+
+      </div><!-- /pnl-card -->
+
+      <!-- yan: canlı önizleme -->
+      <div>
+        <div class="side-card pnl-card">
+          <div class="form-sec">
+            <div class="form-sec-tt" style="margin-bottom:16px"><i class="fa-solid fa-eye"></i> Önizleme</div>
+            <div class="tier-prev">
+              <div class="tp-top">
+                <div class="tp-medal"><i class="fa-solid fa-utensils" id="prevIco"></i></div>
+                <div><div class="tp-name" id="prevName">Aşçı</div><div class="tp-lvl" id="prevLvl">Seviye 3</div></div>
+              </div>
+              <div class="tp-req">Eşik: <b id="prevEsik">1.000</b> puan · <span id="prevAcik">Düzenli içerik üreten deneyimli üyeler.</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /form-layout -->
+
+  </main>
+
+</div><!-- /sa-app -->
+
+<script src="assets/js/sa-ui.js"></script>
+<script src="assets/js/sa-shell.js"></script>
+<script>
+/* sayfa JS — ikon seçici + canlı önizleme */
+(function(){
+  var fAd=document.getElementById('f-ad');
+  var fSeviye=document.getElementById('f-seviye');
+  var fEsik=document.getElementById('f-esik');
+  var fAcik=document.getElementById('f-aciklama');
+  var prevName=document.getElementById('prevName');
+  var prevLvl=document.getElementById('prevLvl');
+  var prevEsik=document.getElementById('prevEsik');
+  var prevAcik=document.getElementById('prevAcik');
+  var prevIco=document.getElementById('prevIco');
+
+  function fmt(n){return (parseInt(n,10)||0).toLocaleString('tr-TR');}
+
+  function render(){
+    prevName.textContent=fAd.value||'Kademe adı';
+    prevLvl.textContent='Seviye '+fSeviye.value;
+    prevEsik.textContent=fmt(fEsik.value);
+    prevAcik.textContent=fAcik.value||'Açıklama girilmedi.';
+  }
+  [fAd,fSeviye,fEsik,fAcik].forEach(function(el){el.addEventListener('input',render)});
+
+  document.querySelectorAll('#icoPick .ico-opt').forEach(function(opt){
+    opt.addEventListener('click',function(){
+      document.querySelectorAll('#icoPick .ico-opt').forEach(function(o){o.classList.remove('is-on')});
+      opt.classList.add('is-on');
+      prevIco.className='fa-solid '+opt.getAttribute('data-ico');
+    });
+  });
+
+  document.getElementById('saveBtn').addEventListener('click',function(){
+    if(window.saToast)saToast('Kademe kaydedildi',{type:'ok'});
+  });
+  render();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Siparişler — DadaStore · Süper Admin · DadaMutfak</title>
+<link rel="shortcut icon" type="image/x-icon" href="assets/img/favicon.ico" />
+<!-- FontAwesome 6.5.2 (kilitli ikon seti) -->
+<link rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+      integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A=="
+      crossorigin="anonymous" referrerpolicy="no-referrer" />
+<!-- PAYLAŞILAN KABUK (tek kaynak) -->
+<link rel="stylesheet" href="assets/css/sa-shell.css" />
+<style>
+/* =====================================================================
+   SA-STORE-SIPARISLER — SAYFA CSS (ekrana özel; kabuk CSS'i sa-shell.css'te).
+   Gözetim listesi: sipariş izleme — Yeni/Düzenle YOK, satır aksiyonu Detay.
+   Token: SADECE var(--acc)/var(--acc-deep)/rgba(var(--acc-rgb),..).
+   ===================================================================== */
+
+/* ---- filtre çubuğu ---- */
+.filter-bar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:16px}
+.filter-search{position:relative;flex:1;min-width:220px;max-width:340px}
+.filter-search i{position:absolute;left:12px;top:50%;transform:translateY(-50%);font-size:13px;color:var(--muted);pointer-events:none}
+.filter-search input{
+  width:100%;height:38px;padding:0 12px 0 36px;
+  font-family:inherit;font-size:13px;font-weight:500;color:var(--ink);
+  background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-sm);
+  outline:none;transition:.2s var(--ease);
+}
+.filter-search input::placeholder{color:var(--muted)}
+.filter-search input:focus{border-color:var(--acc);box-shadow:0 0 0 3px rgba(var(--acc-rgb),.12)}
+
+.chips{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.chip{
+  font-size:12.5px;font-weight:500;color:var(--slate-2);background:var(--paper);
+  border:1px solid var(--line);padding:7px 14px;border-radius:var(--radius-sm);
+  cursor:pointer;transition:.18s var(--ease);white-space:nowrap;
+}
+.chip:hover{border-color:var(--acc);color:var(--acc-deep)}
+.chip.is-on{border-color:var(--acc);color:var(--acc-deep);background:rgba(var(--acc-rgb),.08);font-weight:700}
+
+/* ---- siparişler tablosu ---- */
+.ptable{width:100%;border-collapse:collapse}
+.ptable thead th{
+  font-size:11.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;
+  color:var(--muted);padding:13px 16px;text-align:left;
+  border-bottom:1px solid var(--line);white-space:nowrap;
+}
+.ptable thead th:first-child{padding-left:22px}
+.ptable thead th:last-child{padding-right:22px;text-align:right}
+
+.ptable tbody tr{border-bottom:1px solid var(--line);transition:background .15s}
+.ptable tbody tr:last-child{border-bottom:none}
+.ptable tbody tr:hover{background:var(--bg)}
+
+.ptable tbody td{padding:14px 16px;font-size:13.5px;color:var(--slate);vertical-align:middle}
+.ptable tbody td:first-child{padding-left:22px}
+.ptable tbody td:last-child{padding-right:22px;text-align:right}
+
+/* sipariş no hücresi */
+.ord-no{font-weight:700;color:var(--slate);white-space:nowrap;font-variant-numeric:tabular-nums}
+
+/* müşteri hücresi: avatar + ad */
+.cust-cell{display:flex;align-items:center;gap:11px}
+.cust-ava{
+  width:36px;height:36px;flex:none;border-radius:var(--radius-circle);
+  background-size:cover;background-position:center;background-color:var(--cream);
+  border:1px solid var(--line);
+}
+.cust-name{font-size:13.5px;font-weight:700;color:var(--slate);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:180px}
+
+.td-date{font-size:13px;color:var(--slate-2);white-space:nowrap}
+.td-items{font-size:13px;color:var(--slate-2);white-space:nowrap}
+.td-amount{font-size:13.5px;font-weight:700;color:var(--slate);white-space:nowrap;font-variant-numeric:tabular-nums}
+
+/* aksiyon ikon butonu (gözetim: SADECE Detay) */
+.row-actions{display:inline-flex;align-items:center;gap:6px;justify-content:flex-end}
+.act-btn{
+  width:32px;height:32px;border:1px solid var(--line);border-radius:var(--radius-sm);
+  background:var(--paper);color:var(--muted);font-size:13px;
+  display:inline-flex;align-items:center;justify-content:center;
+  cursor:pointer;transition:.18s var(--ease);
+}
+.act-btn:hover{border-color:var(--acc);color:var(--acc-deep);background:rgba(var(--acc-rgb),.06)}
+
+/* tablo footer: sayfalama bilgisi */
+.table-foot{display:flex;align-items:center;justify-content:space-between;padding:14px 22px;border-top:1px solid var(--line);font-size:12.5px;color:var(--muted);gap:12px;flex-wrap:wrap}
+.table-foot-cnt b{color:var(--slate)}
+.tpager{display:flex;align-items:center;gap:6px}
+.tpager button{
+  width:30px;height:30px;border:1px solid var(--line);border-radius:var(--radius-sm);
+  background:var(--paper);color:var(--slate-2);font-size:12.5px;
+  display:inline-flex;align-items:center;justify-content:center;
+  cursor:pointer;transition:.15s var(--ease);font-family:inherit;font-weight:700;
+}
+.tpager button:hover{border-color:var(--acc);color:var(--acc-deep)}
+.tpager button.is-active{background:var(--acc);color:#fff;border-color:var(--acc)}
+.tpager button:disabled{opacity:.4;cursor:not-allowed}
+
+/* boş durum (filtre sonuç yok) */
+.pnl-empty{display:none;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:64px 22px;gap:14px}
+.pnl-empty i{font-size:34px;color:var(--line)}
+.pnl-empty .pe-tt{font-size:15px;font-weight:700;color:var(--slate)}
+.pnl-empty .pe-sub{font-size:13px;color:var(--muted);max-width:360px;line-height:1.6}
+
+@media(max-width:980px){
+  .ptable thead th:nth-child(3),.ptable tbody td:nth-child(3),
+  .ptable thead th:nth-child(4),.ptable tbody td:nth-child(4){display:none}
+}
+@media(max-width:640px){
+  .ptable thead th:nth-child(5),.ptable tbody td:nth-child(5){display:none}
+  .cust-name{max-width:120px}
+}
+</style>
+</head>
+<body data-brand="mutfak" data-sec="store" data-screen="siparisler">
+
+<div class="sa-app">
+
+  <!-- §1 İKON-RAIL -->
+  <aside class="sa-rail" id="saRail">
+    <a class="sa-rail-logo" href="sa-giris-v1.html" title="Yönetim Girişi"><img src="assets/img/logo-mark.png" alt="DadaMutfak" /></a>
+    <a class="sa-rail-ico" data-sec="genel" href="sa-shell.html?sec=genel" title="Genel Bakış"><i class="fa-solid fa-gauge-high"></i></a>
+    <span class="sa-rail-div"></span>
+    <a class="sa-rail-ico" data-sec="admin"   href="sa-admin.html"   title="Admin"><i class="fa-solid fa-shield-halved"></i></a>
+    <a class="sa-rail-ico" data-sec="saglik"  href="sa-saglik.html"  title="Sağlık &amp; Diyet"><i class="fa-solid fa-heart-pulse"></i></a>
+    <a class="sa-rail-ico" data-sec="store"   href="sa-store.html"   title="DadaStore"><i class="fa-solid fa-bag-shopping"></i></a>
+    <a class="sa-rail-ico" data-sec="dadafit" href="sa-dadafit.html" title="DadaFit"><i class="fa-solid fa-dumbbell"></i></a>
+    <a class="sa-rail-ico" data-sec="isletme" href="sa-isletme.html" title="İşletmeler"><i class="fa-solid fa-store"></i></a>
+    <a class="sa-rail-ico is-locked" data-sec="akademi" href="#" title="DadaAkademi — Yakında"><i class="fa-solid fa-graduation-cap"></i><i class="fa-solid fa-lock sr-lock"></i></a>
+    <div class="sa-rail-foot"><a class="sa-rail-ico" href="sa-giris-v1.html" title="Siteye Dön"><i class="fa-solid fa-arrow-left"></i></a></div>
+  </aside>
+
+  <!-- §2 BÖLÜM MENÜSÜ (JS render) -->
+  <nav class="sa-menu" id="saMenu"></nav>
+
+  <!-- divider grip -->
+  <div class="sa-divider" id="saDivider" role="separator" aria-label="Menüyü daralt/genişlet" title="Sürükle veya tıkla — menüyü daralt/genişlet">
+    <span class="sa-grip"><i class="fa-solid fa-grip-lines-vertical"></i></span>
+  </div>
+
+  <div class="pnl-overlay" id="pnlOverlay"></div>
+
+  <!-- §3 ÜST BAR -->
+  <header class="pnl-top">
+    <button class="pnl-burger" id="pnlBurger" aria-label="Menü"><i class="fa-solid fa-bars"></i></button>
+    <div class="pnl-search">
+      <i class="fa-solid fa-magnifying-glass"></i>
+      <input type="text" placeholder="Ürün, sipariş ara…" />
+    </div>
+    <div class="pnl-top-tools">
+      <button class="pnl-bell" aria-label="Bildirimler"><i class="fa-regular fa-bell"></i><span class="pb-dot"></span></button>
+      <div class="pnl-me">
+        <div class="pm-ava"><i class="fa-solid fa-user"></i></div>
+        <div class="pm-id">
+          <div class="pm-name" id="pmName">Süper Admin</div>
+          <div class="pm-role" id="pmRole">Tüm yetki</div>
+        </div>
+        <i class="fa-solid fa-chevron-down"></i>
+      </div>
+    </div>
+  </header>
+
+  <!-- §4 İÇERİK — Siparişler listesi (GÖZETİM: Yeni/Düzenle YOK) -->
+  <main class="pnl-main" id="saMain">
+
+    <!-- sayfa başlığı + aksiyon (gözetim: yalnızca Dışa Aktar) -->
+    <div class="pnl-page-head">
+      <div>
+        <h1>Siparişler</h1>
+        <div class="ph-sub">DadaStore sipariş akışı — gözetim · 312 sipariş, son 30 gün</div>
+      </div>
+      <div class="ph-actions">
+        <a class="btn btn-ghost btn-sm" href="#"><i class="fa-solid fa-arrow-down-to-line"></i> Dışa Aktar</a>
+      </div>
+    </div>
+
+    <!-- filtre çubuğu -->
+    <div class="filter-bar">
+      <div class="filter-search">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <input type="text" placeholder="Sipariş no, müşteri…" id="ordSearch" />
+      </div>
+      <div class="chips">
+        <button class="chip is-on" data-filter="tumu" onclick="filterOrd(this,'tumu')">Tümü</button>
+        <button class="chip" data-filter="hazirlaniyor" onclick="filterOrd(this,'hazirlaniyor')">Hazırlanıyor</button>
+        <button class="chip" data-filter="kargoda" onclick="filterOrd(this,'kargoda')">Kargoda</button>
+        <button class="chip" data-filter="teslim" onclick="filterOrd(this,'teslim')">Teslim Edildi</button>
+        <button class="chip" data-filter="iptal" onclick="filterOrd(this,'iptal')">İptal</button>
+      </div>
+    </div>
+
+    <!-- siparişler tablosu -->
+    <div class="pnl-card" style="overflow:hidden">
+      <div class="pc-body flush">
+        <table class="ptable" id="ordTable">
+          <thead>
+            <tr>
+              <th>Sipariş No</th>
+              <th>Müşteri</th>
+              <th>Tarih</th>
+              <th>Ürün</th>
+              <th>Tutar</th>
+              <th>Durum</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+
+            <!-- Sipariş 1 -->
+            <tr data-stat="hazirlaniyor">
+              <td><span class="ord-no">#DS-2041</span></td>
+              <td>
+                <div class="cust-cell">
+                  <div class="cust-ava" style="background-image:url('https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=96&q=80&auto=format&fit=crop')"></div>
+                  <span class="cust-name">Selin Korkmaz</span>
+                </div>
+              </td>
+              <td class="td-date">21 Haz 2026, 09:14</td>
+              <td class="td-items">3 ürün</td>
+              <td class="td-amount">₺640</td>
+              <td><span class="pstat wait">Hazırlanıyor</span></td>
+              <td>
+                <div class="row-actions">
+                  <a class="act-btn" href="sa-store-siparisler-detay.html" title="Detay"><i class="fa-solid fa-eye"></i></a>
+                </div>
+              </td>
+            </tr>
+
+            <!-- Sipariş 2 -->
+            <tr data-stat="kargoda">
+              <td><span class="ord-no">#DS-2040</span></td>
+              <td>
+                <div class="cust-cell">
+                  <div class="cust-ava" style="background-image:url('https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=96&q=80&auto=format&fit=crop')"></div>
+                  <span class="cust-name">Emre Yıldırım</span>
+                </div>
+              </td>
+              <td class="td-date">21 Haz 2026, 08:02</td>
+              <td class="td-items">1 ürün</td>
+              <td class="td-amount">₺349</td>
+              <td><span class="pstat ok">Kargoda</span></td>
+              <td>
+                <div class="row-actions">
+                  <a class="act-btn" href="sa-store-siparisler-detay.html" title="Detay"><i class="fa-solid fa-eye"></i></a>
+                </div>
+              </td>
+            </tr>
+
+            <!-- Sipariş 3 -->
+            <tr data-stat="teslim">
+              <td><span class="ord-no">#DS-2038</span></td>
+              <td>
+                <div class="cust-cell">
+                  <div class="cust-ava" style="background-image:url('https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=96&q=80&auto=format&fit=crop')"></div>
+                  <span class="cust-name">Ayşe Tunç</span>
+                </div>
+              </td>
+              <td class="td-date">20 Haz 2026, 14:11</td>
+              <td class="td-items">5 ürün</td>
+              <td class="td-amount">₺1.284</td>
+              <td><span class="pstat off">Teslim Edildi</span></td>
+              <td>
+                <div class="row-actions">
+                  <a class="act-btn" href="sa-store-siparisler-detay.html" title="Detay"><i class="fa-solid fa-eye"></i></a>
+                </div>
+              </td>
+            </tr>
+
+            <!-- Sipariş 4 -->
+            <tr data-stat="hazirlaniyor">
+              <td><span class="ord-no">#DS-2037</span></td>
+              <td>
+                <div class="cust-cell">
+                  <div class="cust-ava" style="background-image:url('https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=96&q=80&auto=format&fit=crop')"></div>
+                  <span class="cust-name">Murat Aslan</span>
+                </div>
+              </td>
+              <td class="td-date">20 Haz 2026, 11:48</td>
+              <td class="td-items">2 ürün</td>
+              <td class="td-amount">₺417</td>
+              <td><span class="pstat wait">Hazırlanıyor</span></td>
+              <td>
+                <div class="row-actions">
+                  <a class="act-btn" href="sa-store-siparisler-detay.html" title="Detay"><i class="fa-solid fa-eye"></i></a>
+                </div>
+              </td>
+            </tr>
+
+            <!-- Sipariş 5 -->
+            <tr data-stat="kargoda">
+              <td><span class="ord-no">#DS-2035</span></td>
+              <td>
+                <div class="cust-cell">
+                  <div class="cust-ava" style="background-image:url('https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=96&q=80&auto=format&fit=crop')"></div>
+                  <span class="cust-name">Deniz Kaya</span>
+                </div>
+              </td>
+              <td class="td-date">20 Haz 2026, 09:33</td>
+              <td class="td-items">4 ürün</td>
+              <td class="td-amount">₺892</td>
+              <td><span class="pstat ok">Kargoda</span></td>
+              <td>
+                <div class="row-actions">
+                  <a class="act-btn" href="sa-store-siparisler-detay.html" title="Detay"><i class="fa-solid fa-eye"></i></a>
+                </div>
+              </td>
+            </tr>
+
+            <!-- Sipariş 6 -->
+            <tr data-stat="iptal">
+              <td><span class="ord-no">#DS-2034</span></td>
+              <td>
+                <div class="cust-cell">
+                  <div class="cust-ava" style="background-image:url('https://images.unsplash.com/photo-1531123897727-8f129e1688ce?w=96&q=80&auto=format&fit=crop')"></div>
+                  <span class="cust-name">Kerem Demir</span>
+                </div>
+              </td>
+              <td class="td-date">19 Haz 2026, 16:22</td>
+              <td class="td-items">1 ürün</td>
+              <td class="td-amount">₺128</td>
+              <td><span class="pstat warm">İptal</span></td>
+              <td>
+                <div class="row-actions">
+                  <a class="act-btn" href="sa-store-siparisler-detay.html" title="Detay"><i class="fa-solid fa-eye"></i></a>
+                </div>
+              </td>
+            </tr>
+
+            <!-- Sipariş 7 -->
+            <tr data-stat="teslim">
+              <td><span class="ord-no">#DS-2031</span></td>
+              <td>
+                <div class="cust-cell">
+                  <div class="cust-ava" style="background-image:url('https://images.unsplash.com/photo-1502685104226-ee32379fefbe?w=96&q=80&auto=format&fit=crop')"></div>
+                  <span class="cust-name">Zeynep Aksoy</span>
+                </div>
+              </td>
+              <td class="td-date">18 Haz 2026, 10:05</td>
+              <td class="td-items">2 ürün</td>
+              <td class="td-amount">₺378</td>
+              <td><span class="pstat off">Teslim Edildi</span></td>
+              <td>
+                <div class="row-actions">
+                  <a class="act-btn" href="sa-store-siparisler-detay.html" title="Detay"><i class="fa-solid fa-eye"></i></a>
+                </div>
+              </td>
+            </tr>
+
+            <!-- Sipariş 8 -->
+            <tr data-stat="teslim">
+              <td><span class="ord-no">#DS-2029</span></td>
+              <td>
+                <div class="cust-cell">
+                  <div class="cust-ava" style="background-image:url('https://images.unsplash.com/photo-1463453091185-61582044d556?w=96&q=80&auto=format&fit=crop')"></div>
+                  <span class="cust-name">Burak Şahin</span>
+                </div>
+              </td>
+              <td class="td-date">18 Haz 2026, 08:47</td>
+              <td class="td-items">6 ürün</td>
+              <td class="td-amount">₺1.560</td>
+              <td><span class="pstat off">Teslim Edildi</span></td>
+              <td>
+                <div class="row-actions">
+                  <a class="act-btn" href="sa-store-siparisler-detay.html" title="Detay"><i class="fa-solid fa-eye"></i></a>
+                </div>
+              </td>
+            </tr>
+
+          </tbody>
+        </table>
+
+        <!-- boş durum (filtre/arama sonuç yok) -->
+        <div class="pnl-empty" id="ordEmpty">
+          <i class="fa-solid fa-receipt"></i>
+          <div class="pe-tt">Eşleşen sipariş yok</div>
+          <div class="pe-sub">Arama teriminizi veya durum filtresini değiştirip yeniden deneyin.</div>
+        </div>
+      </div>
+
+      <!-- tablo footer -->
+      <div class="table-foot" id="ordFoot">
+        <div class="table-foot-cnt"><b>312</b> siparişten 1–8 gösteriliyor</div>
+        <div class="tpager">
+          <button disabled aria-label="Önceki"><i class="fa-solid fa-chevron-left"></i></button>
+          <button class="is-active">1</button>
+          <button>2</button>
+          <button>3</button>
+          <button>4</button>
+          <button aria-label="Sonraki"><i class="fa-solid fa-chevron-right"></i></button>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+</div>
+
+<script src="assets/js/sa-shell.js"></script>
+
+<!-- Filtre / arama JS (sayfa-özel) -->
+<script>
+var ordCurFilter = 'tumu';
+
+function ordApply(){
+  var q = (document.getElementById('ordSearch').value || '').toLowerCase().trim();
+  var rows = document.querySelectorAll('#ordTable tbody tr');
+  var shown = 0;
+  rows.forEach(function(row){
+    var matchFilter = (ordCurFilter === 'tumu') || (row.dataset.stat === ordCurFilter);
+    var matchSearch = (!q || row.textContent.toLowerCase().indexOf(q) !== -1);
+    var show = matchFilter && matchSearch;
+    row.style.display = show ? '' : 'none';
+    if(show) shown++;
+  });
+  var empty = document.getElementById('ordEmpty');
+  var foot  = document.getElementById('ordFoot');
+  if(empty) empty.style.display = (shown === 0) ? 'flex' : 'none';
+  if(foot)  foot.style.display  = (shown === 0) ? 'none' : 'flex';
+}
+
+function filterOrd(btn, filter){
+  document.querySelectorAll('.chip').forEach(function(c){ c.classList.remove('is-on'); });
+  btn.classList.add('is-on');
+  ordCurFilter = filter;
+  ordApply();
+}
+
+var ordSrch = document.getElementById('ordSearch');
+if(ordSrch) ordSrch.addEventListener('input', ordApply);
+</script>
+</body>
+</html>

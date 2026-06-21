@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Sayfa Düzenle — Admin — DadaMutfak</title>
+<link rel="shortcut icon" type="image/x-icon" href="assets/img/favicon.ico" />
+<!-- FontAwesome 6.5.2 (kilitli ikon seti) -->
+<link rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+      integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A=="
+      crossorigin="anonymous" referrerpolicy="no-referrer" />
+<!-- PAYLAŞILAN KABUK (tek kaynak) -->
+<link rel="stylesheet" href="assets/css/sa-shell.css" />
+<link rel="stylesheet" href="assets/css/sa-ui.css" />
+<style>
+/* =====================================================================
+   SA-ADMIN-SAYFALAR-FORM — SAYFA CSS (ekrana özel).
+   İçerik + SEO meta editör. Form alanları sa-admin-kullanicilar-form VERBATIM.
+   ===================================================================== */
+
+/* ORTAK FORM ALANLARI — tüm sa-* form ekranlarında AYNEN */
+.form-grid{display:grid;gap:18px}
+.frow{display:flex;flex-direction:column;gap:7px}
+.frow label{font-size:12.5px;font-weight:700;color:var(--slate-2)}
+.frow .fhint{font-size:11.5px;color:var(--muted);font-weight:500}
+.finput,.fselect,.ftext{width:100%;font-family:inherit;font-size:13.5px;font-weight:500;color:var(--ink);background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-md);padding:0 14px;height:44px;outline:none;transition:.2s var(--ease)}
+.ftext{height:auto;padding:12px 14px;line-height:1.5;resize:vertical;min-height:96px}
+.finput:focus,.fselect:focus,.ftext:focus{border-color:var(--acc);box-shadow:0 0 0 3px rgba(var(--acc-rgb),.12)}
+.frow.two{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.form-sec{padding:18px 22px;border-bottom:1px solid var(--line)}
+.form-sec:last-child{border-bottom:none}
+.form-sec-tt{font-size:13px;font-weight:700;color:var(--slate);margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.form-sec-tt i{color:var(--acc)}
+.form-actions{display:flex;gap:10px;justify-content:flex-end;padding:16px 22px}
+.form-layout{display:grid;grid-template-columns:minmax(0,1fr) minmax(280px,360px);gap:24px;align-items:start}
+
+/* URL slug ön-ekli input */
+.slug-wrap{display:flex;align-items:stretch;border:1px solid var(--line);border-radius:var(--radius-md);overflow:hidden;transition:.2s var(--ease)}
+.slug-wrap:focus-within{border-color:var(--acc);box-shadow:0 0 0 3px rgba(var(--acc-rgb),.12)}
+.slug-pre{display:flex;align-items:center;padding:0 12px;background:var(--bg);color:var(--muted);font-size:13px;font-weight:600;border-right:1px solid var(--line);white-space:nowrap}
+.slug-wrap .finput{border:none;border-radius:0;box-shadow:none!important}
+
+/* karakter sayacı */
+.char-meter{display:flex;align-items:center;justify-content:space-between;font-size:11.5px;font-weight:600;color:var(--muted)}
+.char-meter b{font-variant-numeric:tabular-nums}
+.char-meter.warn b{color:#B8860B}
+.char-meter.over b{color:var(--tomato)}
+
+/* ---- SERP önizleme (Google sonuç kartı — nötr, palet-dışı renk YOK) ---- */
+.serp{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-md);padding:16px 18px}
+.serp-url{display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--slate-2);margin-bottom:5px}
+.serp-fav{width:18px;height:18px;border-radius:var(--radius-circle);background:rgba(var(--acc-rgb),.12);color:var(--acc-deep);display:grid;place-items:center;font-size:9px;flex:none}
+.serp-url span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.serp-title{font-size:17px;line-height:1.3;color:var(--acc-deep);font-weight:600;margin-bottom:5px;overflow:hidden;display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical}
+.serp-desc{font-size:13px;line-height:1.5;color:var(--slate-2);overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.serp-empty{color:var(--muted);font-style:italic}
+
+/* SEO skor halkası (yan kart) — saf CSS conic, accent tonları */
+.seo-score{display:flex;align-items:center;gap:16px;margin-bottom:16px}
+.score-ring{width:72px;height:72px;flex:none;border-radius:var(--radius-circle);display:grid;place-items:center;position:relative;background:conic-gradient(var(--acc) calc(var(--p,0)*1%),var(--bg) 0)}
+.score-ring::after{content:"";position:absolute;inset:7px;border-radius:var(--radius-circle);background:var(--paper)}
+.score-num{position:relative;z-index:1;font-size:22px;font-weight:700;color:var(--slate);line-height:1;font-variant-numeric:tabular-nums}
+.score-meta b{display:block;font-size:13.5px;font-weight:700;color:var(--slate)}
+.score-meta span{font-size:12px;color:var(--muted)}
+
+/* SEO denetim listesi */
+.seo-checks{display:flex;flex-direction:column;gap:10px}
+.seo-chk{display:flex;align-items:flex-start;gap:9px;font-size:12.5px;line-height:1.4;color:var(--slate-2)}
+.seo-chk i{font-size:13px;margin-top:1px;flex:none}
+.seo-chk.pass i{color:var(--green-deep)}
+.seo-chk.fail i{color:var(--muted)}
+
+@media(max-width:900px){.form-layout{grid-template-columns:minmax(0,1fr)}.frow.two{grid-template-columns:1fr}}
+</style>
+</head>
+<body data-brand="mutfak" data-sec="admin" data-screen="sayfalar">
+
+<div class="sa-app">
+
+  <!-- §1 İKON-RAIL -->
+  <aside class="sa-rail" id="saRail">
+    <a class="sa-rail-logo" href="sa-giris-v1.html" title="Yönetim Girişi"><img src="assets/img/logo-mark.png" alt="DadaMutfak" /></a>
+    <a class="sa-rail-ico" data-sec="genel" href="sa-shell.html?sec=genel" title="Genel Bakış"><i class="fa-solid fa-gauge-high"></i></a>
+    <span class="sa-rail-div"></span>
+    <a class="sa-rail-ico" data-sec="admin"   href="sa-admin.html"   title="Admin"><i class="fa-solid fa-shield-halved"></i></a>
+    <a class="sa-rail-ico" data-sec="saglik"  href="sa-saglik.html"  title="Sağlık &amp; Diyet"><i class="fa-solid fa-heart-pulse"></i></a>
+    <a class="sa-rail-ico" data-sec="store"   href="sa-store.html"   title="DadaStore"><i class="fa-solid fa-bag-shopping"></i></a>
+    <a class="sa-rail-ico" data-sec="dadafit" href="sa-dadafit.html" title="DadaFit"><i class="fa-solid fa-dumbbell"></i></a>
+    <a class="sa-rail-ico" data-sec="isletme" href="sa-isletme.html" title="İşletmeler"><i class="fa-solid fa-store"></i></a>
+    <a class="sa-rail-ico is-locked" data-sec="akademi" href="#" title="DadaAkademi — Yakında"><i class="fa-solid fa-graduation-cap"></i><i class="fa-solid fa-lock sr-lock"></i></a>
+    <div class="sa-rail-foot"><a class="sa-rail-ico" href="sa-giris-v1.html" title="Siteye Dön"><i class="fa-solid fa-arrow-left"></i></a></div>
+  </aside>
+
+  <!-- §2 BÖLÜM MENÜSÜ -->
+  <nav class="sa-menu" id="saMenu"></nav>
+  <div class="sa-divider" id="saDivider" role="separator" aria-label="Menüyü daralt/genişlet" title="Sürükle veya tıkla — menüyü daralt/genişlet"><span class="sa-grip"><i class="fa-solid fa-grip-lines-vertical"></i></span></div>
+  <div class="pnl-overlay" id="pnlOverlay"></div>
+
+  <!-- §3 ÜST BAR -->
+  <header class="pnl-top">
+    <button class="pnl-burger" id="pnlBurger" aria-label="Menü"><i class="fa-solid fa-bars"></i></button>
+    <div class="pnl-search"><i class="fa-solid fa-magnifying-glass"></i><input type="text" placeholder="Kullanıcı, içerik ara…" /></div>
+    <div class="pnl-top-tools">
+      <button class="pnl-bell" aria-label="Bildirimler"><i class="fa-regular fa-bell"></i><span class="pb-dot"></span></button>
+      <div class="pnl-me">
+        <div class="pm-ava" style="background-image:url('https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=240&q=80&auto=format&fit=crop')"></div>
+        <div class="pm-id"><div class="pm-name" id="pmName">Süper Admin</div><div class="pm-role" id="pmRole">Tüm yetki</div></div>
+        <i class="fa-solid fa-chevron-down"></i>
+      </div>
+    </div>
+  </header>
+
+  <!-- §4 İÇERİK — Sayfa formu -->
+  <main class="pnl-main" id="saMain">
+
+    <div class="pnl-page-head">
+      <div>
+        <a href="sa-admin-sayfalar.html" style="display:inline-flex;align-items:center;gap:7px;font-size:13px;font-weight:700;color:var(--muted);margin-bottom:8px;transition:.18s" onmouseover="this.style.color='var(--acc)'" onmouseout="this.style.color='var(--muted)'"><i class="fa-solid fa-arrow-left"></i> Sayfalar &amp; SEO</a>
+        <h1>Sayfa Düzenle</h1>
+        <div class="ph-sub">İçeriği ve arama motoru meta bilgilerini düzenleyin</div>
+      </div>
+    </div>
+
+    <div class="form-layout">
+
+      <!-- ana form kartı -->
+      <div class="pnl-card">
+
+        <!-- İçerik -->
+        <div class="form-sec">
+          <div class="form-sec-tt"><i class="fa-solid fa-file-lines"></i> Sayfa İçeriği</div>
+          <div class="form-grid">
+            <div class="frow">
+              <label for="f-baslik">Sayfa başlığı</label>
+              <input class="finput" id="f-baslik" type="text" value="Hakkımızda" />
+            </div>
+            <div class="frow">
+              <label for="f-slug">URL adresi</label>
+              <div class="slug-wrap">
+                <span class="slug-pre">dadamutfak.com/</span>
+                <input class="finput" id="f-slug" type="text" value="hakkimizda" />
+              </div>
+              <span class="fhint">Yalnızca küçük harf, rakam ve tire kullanın.</span>
+            </div>
+            <div class="frow">
+              <label for="f-icerik">İçerik metni</label>
+              <textarea class="ftext" id="f-icerik" style="min-height:180px">DadaMutfak, ev yemeklerini sevenleri bir araya getiren, kullanıcı katkılı bir yemek tarifi topluluğudur. 2018'den bu yana binlerce tarif paylaşan üyemizle birlikte mutfağı herkes için keyifli ve erişilebilir kılmayı hedefliyoruz.</textarea>
+              <span class="fhint">Zengin metin desteği yayın aşamasında eklenecektir.</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- SEO Meta -->
+        <div class="form-sec">
+          <div class="form-sec-tt"><i class="fa-solid fa-magnifying-glass-chart"></i> SEO Meta Bilgileri</div>
+          <div class="form-grid">
+            <div class="frow">
+              <label for="f-metatitle">Meta başlık (title)</label>
+              <input class="finput" id="f-metatitle" type="text" value="Hakkımızda — DadaMutfak Yemek Tarifi Topluluğu" maxlength="70" />
+              <div class="char-meter" id="titleMeter"><span>İdeal: 50–60 karakter</span><b><span id="titleCount">0</span>/60</b></div>
+            </div>
+            <div class="frow">
+              <label for="f-metadesc">Meta açıklama (description)</label>
+              <textarea class="ftext" id="f-metadesc" maxlength="170">DadaMutfak; ev yemeklerini sevenleri buluşturan kullanıcı katkılı yemek tarifi topluluğu. Binlerce tarif, diyetisyen desteği ve mutfak ürünleri bir arada.</textarea>
+              <div class="char-meter" id="descMeter"><span>İdeal: 120–158 karakter</span><b><span id="descCount">0</span>/158</b></div>
+            </div>
+            <div class="frow">
+              <label for="f-keywords">Anahtar kelimeler <span style="font-weight:500;color:var(--muted)">(virgülle ayırın)</span></label>
+              <input class="finput" id="f-keywords" type="text" value="yemek tarifi, ev yemekleri, dadamutfak, tarif topluluğu" />
+            </div>
+            <div class="frow">
+              <label>Arama sonucu önizlemesi</label>
+              <div class="serp">
+                <div class="serp-url"><span class="serp-fav"><i class="fa-solid fa-utensils"></i></span><span id="serpUrl">dadamutfak.com › hakkimizda</span></div>
+                <div class="serp-title" id="serpTitle">Hakkımızda — DadaMutfak Yemek Tarifi Topluluğu</div>
+                <div class="serp-desc" id="serpDesc">DadaMutfak; ev yemeklerini sevenleri buluşturan kullanıcı katkılı yemek tarifi topluluğu.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Yayın -->
+        <div class="form-sec">
+          <div class="form-sec-tt"><i class="fa-solid fa-globe"></i> Yayın Durumu</div>
+          <div class="form-grid">
+            <div class="frow">
+              <label for="f-durum">Durum</label>
+              <select class="fselect" id="f-durum">
+                <option value="published" selected>Yayında — herkese açık</option>
+                <option value="draft">Taslak — yalnızca yöneticiler görür</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- aksiyonlar -->
+        <div class="form-actions">
+          <a class="btn btn-ghost btn-sm" href="sa-admin-sayfalar.html">İptal</a>
+          <button class="btn btn-acc btn-sm" type="button" id="saveBtn"><i class="fa-solid fa-floppy-disk"></i> Değişiklikleri Kaydet</button>
+        </div>
+
+      </div><!-- /pnl-card -->
+
+      <!-- yan: SEO skor + denetim -->
+      <div>
+        <div class="side-card pnl-card">
+          <div class="form-sec" style="border-bottom:1px solid var(--line)">
+            <div class="form-sec-tt" style="margin-bottom:16px"><i class="fa-solid fa-gauge-high"></i> SEO Skoru</div>
+            <div class="seo-score">
+              <div class="score-ring" id="scoreRing" style="--p:78"><span class="score-num" id="scoreNum">78</span></div>
+              <div class="score-meta">
+                <b id="scoreLabel">İyi</b>
+                <span>Yayına hazır seviyede</span>
+              </div>
+            </div>
+            <div class="seo-checks" id="seoChecks">
+              <div class="seo-chk pass" data-chk="title"><i class="fa-solid fa-circle-check"></i> Meta başlık uygun uzunlukta</div>
+              <div class="seo-chk pass" data-chk="desc"><i class="fa-solid fa-circle-check"></i> Meta açıklama dolu</div>
+              <div class="seo-chk pass" data-chk="slug"><i class="fa-solid fa-circle-check"></i> URL temiz ve okunabilir</div>
+              <div class="seo-chk pass" data-chk="kw"><i class="fa-solid fa-circle-check"></i> Anahtar kelime tanımlı</div>
+              <div class="seo-chk fail" data-chk="img"><i class="fa-regular fa-circle"></i> Sosyal paylaşım görseli eksik</div>
+            </div>
+          </div>
+        </div>
+
+        <div style="margin-top:14px;padding:14px 16px;background:rgba(var(--acc-rgb),.07);border:1px solid rgba(var(--acc-rgb),.18);border-radius:var(--radius-md)">
+          <div style="display:flex;align-items:flex-start;gap:10px">
+            <i class="fa-solid fa-lightbulb" style="color:var(--acc-deep);font-size:14px;margin-top:1px;flex:none"></i>
+            <div style="font-size:12.5px;color:var(--slate-2);line-height:1.5">Meta başlık ve açıklama ideal uzunlukta tutulduğunda arama sonuçlarında kırpılmaz. Skor otomatik güncellenir.</div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /form-layout -->
+
+  </main>
+
+</div><!-- /sa-app -->
+
+<script src="assets/js/sa-ui.js"></script>
+<script src="assets/js/sa-shell.js"></script>
+<script>
+/* sayfa JS — canlı SERP önizleme + karakter sayaçları + SEO skor */
+(function(){
+  var baslik=document.getElementById('f-baslik');
+  var slug=document.getElementById('f-slug');
+  var mTitle=document.getElementById('f-metatitle');
+  var mDesc=document.getElementById('f-metadesc');
+  var kw=document.getElementById('f-keywords');
+
+  var serpUrl=document.getElementById('serpUrl');
+  var serpTitle=document.getElementById('serpTitle');
+  var serpDesc=document.getElementById('serpDesc');
+  var titleCount=document.getElementById('titleCount');
+  var descCount=document.getElementById('descCount');
+  var titleMeter=document.getElementById('titleMeter');
+  var descMeter=document.getElementById('descMeter');
+  var scoreRing=document.getElementById('scoreRing');
+  var scoreNum=document.getElementById('scoreNum');
+  var scoreLabel=document.getElementById('scoreLabel');
+
+  function setChk(name,pass){
+    var el=document.querySelector('.seo-chk[data-chk="'+name+'"]');
+    if(!el)return;
+    el.className='seo-chk '+(pass?'pass':'fail');
+    el.querySelector('i').className=pass?'fa-solid fa-circle-check':'fa-regular fa-circle';
+  }
+
+  function render(){
+    var t=(mTitle.value||baslik.value||'').trim();
+    var d=(mDesc.value||'').trim();
+    var s=(slug.value||'').trim();
+
+    /* SERP */
+    serpTitle.textContent=t||'Sayfa başlığı görünecek';
+    serpTitle.classList.toggle('serp-empty',!t);
+    serpDesc.textContent=d||'Meta açıklama buraya gelecek — arama sonucunda bu metin görünür.';
+    serpDesc.classList.toggle('serp-empty',!d);
+    serpUrl.textContent='dadamutfak.com'+(s?' › '+s:'');
+
+    /* sayaçlar */
+    titleCount.textContent=t.length;
+    descCount.textContent=d.length;
+    titleMeter.className='char-meter'+(t.length>60?' over':(t.length>0&&t.length<40?' warn':''));
+    descMeter.className='char-meter'+(d.length>158?' over':(d.length>0&&d.length<120?' warn':''));
+
+    /* skor: 5 kriter, her biri 20p */
+    var cTitle=t.length>=40&&t.length<=60;
+    var cDesc=d.length>=120&&d.length<=158;
+    var cSlug=/^[a-z0-9-]+$/.test(s)&&s.length>0;
+    var cKw=(kw.value||'').trim().length>0;
+    var cImg=false; /* mock: görsel henüz yok */
+    setChk('title',cTitle);setChk('desc',cDesc);setChk('slug',cSlug);setChk('kw',cKw);setChk('img',cImg);
+
+    var score=(cTitle?20:0)+(cDesc?20:0)+(cSlug?20:0)+(cKw?20:0)+(cImg?20:0);
+    /* kısmi puan: dolu ama ideal değilse yarı */
+    if(!cTitle&&t.length>0)score+=10;
+    if(!cDesc&&d.length>0)score+=10;
+    scoreRing.style.setProperty('--p',score);
+    scoreNum.textContent=score;
+    scoreLabel.textContent=score>=75?'İyi':score>=50?'Orta':'Düşük';
+  }
+
+  [baslik,slug,mTitle,mDesc,kw].forEach(function(el){el.addEventListener('input',render)});
+  render();
+
+  document.getElementById('saveBtn').addEventListener('click',function(){
+    if(window.saToast)saToast('Sayfa kaydedildi',{type:'ok'});
+  });
+})();
+</script>
+</body>
+</html>

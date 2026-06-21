@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Sipariş #DS-2041 · Detay — DadaStore · Süper Admin · DadaMutfak</title>
+<link rel="shortcut icon" type="image/x-icon" href="assets/img/favicon.ico" />
+<!-- FontAwesome 6.5.2 (kilitli ikon seti) -->
+<link rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+      integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A=="
+      crossorigin="anonymous" referrerpolicy="no-referrer" />
+<!-- PAYLAŞILAN KABUK (tek kaynak) -->
+<link rel="stylesheet" href="assets/css/sa-shell.css" />
+<style>
+/* =====================================================================
+   SA-STORE-SIPARISLER-DETAY — SAYFA CSS (kabuk sa-shell.css'te).
+   Gözetim detayı: müşteri & teslimat + kalemler + durum geçmişi +
+   denetim aksiyonları. "Düzenle" YOK. Yıkıcı aksiyon → saConfirm.
+   Token: SADECE var(--acc)/var(--acc-deep)/rgba(var(--acc-rgb),..).
+   ===================================================================== */
+
+/* ORTAK FORM ALANLARI */
+.frow{display:flex;flex-direction:column;gap:7px}
+.frow label{font-size:12.5px;font-weight:700;color:var(--slate-2)}
+.ftext{width:100%;font-family:inherit;font-size:13.5px;font-weight:500;color:var(--ink);background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-md);padding:12px 14px;line-height:1.5;resize:vertical;min-height:96px;outline:none;transition:.2s var(--ease)}
+.ftext:focus{border-color:var(--acc);box-shadow:0 0 0 3px rgba(var(--acc-rgb),.12)}
+
+/* Detay 2-kolon düzeni — sol uzun içerik akışı, sağ meta side-rail.
+   Sağ kolon sticky: uzun sol içerik kaydırılırken meta sabit kalır →
+   kart-seam'lerini zorla hizalamadan dengeli dikey ritim. */
+.detay-layout{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);gap:20px;align-items:start}
+.detay-col{display:flex;flex-direction:column;gap:16px;min-width:0}   /* eşit kart gap'i; grid çocuğu min-content altına inebilsin */
+.detay-col.meta{position:sticky;top:84px;align-self:start}            /* sağ meta side-rail (üst bar 84px altına yapışır) */
+@media(max-width:980px){
+  .detay-layout{grid-template-columns:minmax(0,1fr)}
+  .detay-col.meta{position:static;top:auto}                          /* mobilde akışa dön */
+}
+
+/* Geri linki */
+.back-link{display:inline-flex;align-items:center;gap:8px;font-size:13px;font-weight:700;color:var(--muted);margin-bottom:18px;transition:.18s var(--ease)}
+.back-link:hover{color:var(--slate)}
+.back-link i{font-size:12px}
+
+/* Müşteri & teslimat blokları */
+.deliv-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;padding:18px 22px}
+@media(max-width:560px){.deliv-grid{grid-template-columns:1fr}}
+.deliv-block{display:flex;flex-direction:column;gap:6px}
+.deliv-block .db-lbl{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:4px}
+.deliv-cust{display:flex;align-items:center;gap:12px;margin-bottom:4px}
+.deliv-ava{width:44px;height:44px;flex:none;border-radius:var(--radius-circle);background-size:cover;background-position:center;border:2px solid var(--line)}
+.deliv-cust strong{font-size:14.5px;font-weight:700;color:var(--slate);display:block;line-height:1.3}
+.deliv-cust span{font-size:12.5px;color:var(--muted)}
+.deliv-line{font-size:13.5px;color:var(--slate-2);line-height:1.6}
+.deliv-line i{width:16px;color:var(--muted);margin-right:6px}
+
+/* Sipariş kalemleri tablosu */
+.ptable{width:100%;border-collapse:collapse}
+.ptable thead th{font-size:11.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);padding:11px 14px;text-align:left;border-bottom:1px solid var(--line);white-space:nowrap}
+.ptable thead th:first-child{padding-left:22px}
+.ptable thead th:last-child{padding-right:22px;text-align:right}
+.ptable tbody tr{border-bottom:1px solid var(--line)}
+.ptable tbody tr:last-child{border-bottom:none}
+.ptable tbody td{padding:12px 14px;font-size:13.5px;color:var(--slate);vertical-align:middle}
+.ptable tbody td:first-child{padding-left:22px}
+.ptable tbody td:last-child{padding-right:22px;text-align:right}
+.item-cell{display:flex;align-items:center;gap:12px}
+.item-thumb{width:44px;height:44px;flex:none;border-radius:var(--radius-sm);background-size:cover;background-position:center;background-color:var(--cream);border:1px solid var(--line)}
+.item-name{font-size:13.5px;font-weight:700;color:var(--slate);line-height:1.3}
+.item-sku{font-size:11.5px;color:var(--muted)}
+.td-num{font-variant-numeric:tabular-nums;white-space:nowrap}
+
+/* Toplam özeti satırları */
+.totals{padding:14px 22px}
+.tot-row{display:flex;align-items:center;justify-content:space-between;padding:8px 0;font-size:13.5px;color:var(--slate-2)}
+.tot-row .tot-val{font-weight:700;color:var(--slate);font-variant-numeric:tabular-nums}
+.tot-row.grand{border-top:1px solid var(--line);margin-top:6px;padding-top:14px;font-size:15px;color:var(--slate);font-weight:700}
+.tot-row.grand .tot-val{font-size:16px}
+
+/* Zaman çizelgesi */
+.timeline{display:flex;flex-direction:column;padding:18px 22px;gap:0}
+.tl-item{display:flex;gap:14px;position:relative;padding-bottom:18px}
+.tl-item:last-child{padding-bottom:0}
+.tl-item::before{content:"";position:absolute;left:8px;top:20px;bottom:0;width:2px;background:var(--line)}
+.tl-item:last-child::before{display:none}
+.tl-dot{width:18px;height:18px;flex:none;border-radius:var(--radius-circle);background:var(--paper);border:2px solid var(--line);margin-top:2px;z-index:1}
+.tl-item.done .tl-dot{background:var(--acc);border-color:var(--acc)}
+.tl-item.cur .tl-dot{background:var(--paper);border-color:var(--acc);box-shadow:0 0 0 3px rgba(var(--acc-rgb),.15)}
+.tl-body{line-height:1.4}
+.tl-body strong{font-size:13.5px;font-weight:700;color:var(--slate);display:block}
+.tl-body span{font-size:12px;color:var(--muted)}
+
+/* Sağ meta */
+.meta-section{padding:18px 20px;border-bottom:1px solid var(--line)}
+.meta-section:last-child{border-bottom:none}
+.meta-section-tt{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:12px}
+.meta-row{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;padding:9px 0;font-size:13.5px}
+.meta-row .mr-lbl{color:var(--muted);font-size:12.5px;font-weight:700;min-width:96px;flex:none}
+.meta-row .mr-val{color:var(--slate);font-weight:500;text-align:right}
+
+/* Denetim aksiyon butonları */
+.act-stack{display:flex;flex-direction:column;gap:8px}
+.audit-btn{display:inline-flex;align-items:center;gap:8px;font-family:inherit;font-size:12.5px;font-weight:700;padding:9px 12px;border-radius:var(--radius-sm);border:1px solid var(--line);background:var(--paper);color:var(--slate-2);cursor:pointer;transition:.15s var(--ease);width:100%;justify-content:flex-start}
+.audit-btn:hover{border-color:var(--acc);color:var(--acc-deep);background:rgba(var(--acc-rgb),.06)}
+.audit-btn i{width:16px;text-align:center}
+.audit-btn.warn{border-color:rgba(var(--acc-rgb),.3)}
+.audit-btn.warn{color:var(--tomato);border-color:rgba(225,72,39,.3);background:var(--tomato-tint)}
+.audit-btn.warn:hover{background:#f7d6cd;border-color:var(--tomato);color:var(--tomato)}
+</style>
+</head>
+<body data-brand="mutfak" data-sec="store" data-screen="siparisler">
+
+<div class="sa-app">
+
+  <!-- §1 İKON-RAIL -->
+  <aside class="sa-rail" id="saRail">
+    <a class="sa-rail-logo" href="sa-giris-v1.html" title="Yönetim Girişi"><img src="assets/img/logo-mark.png" alt="DadaMutfak" /></a>
+    <a class="sa-rail-ico" data-sec="genel" href="sa-shell.html?sec=genel" title="Genel Bakış"><i class="fa-solid fa-gauge-high"></i></a>
+    <span class="sa-rail-div"></span>
+    <a class="sa-rail-ico" data-sec="admin"   href="sa-admin.html"   title="Admin"><i class="fa-solid fa-shield-halved"></i></a>
+    <a class="sa-rail-ico" data-sec="saglik"  href="sa-saglik.html"  title="Sağlık &amp; Diyet"><i class="fa-solid fa-heart-pulse"></i></a>
+    <a class="sa-rail-ico" data-sec="store"   href="sa-store.html"   title="DadaStore"><i class="fa-solid fa-bag-shopping"></i></a>
+    <a class="sa-rail-ico" data-sec="dadafit" href="sa-dadafit.html" title="DadaFit"><i class="fa-solid fa-dumbbell"></i></a>
+    <a class="sa-rail-ico" data-sec="isletme" href="sa-isletme.html" title="İşletmeler"><i class="fa-solid fa-store"></i></a>
+    <a class="sa-rail-ico is-locked" data-sec="akademi" href="#" title="DadaAkademi — Yakında"><i class="fa-solid fa-graduation-cap"></i><i class="fa-solid fa-lock sr-lock"></i></a>
+    <div class="sa-rail-foot"><a class="sa-rail-ico" href="sa-giris-v1.html" title="Siteye Dön"><i class="fa-solid fa-arrow-left"></i></a></div>
+  </aside>
+
+  <!-- §2 BÖLÜM MENÜSÜ (JS render) -->
+  <nav class="sa-menu" id="saMenu"></nav>
+
+  <!-- divider grip -->
+  <div class="sa-divider" id="saDivider" role="separator" aria-label="Menüyü daralt/genişlet" title="Sürükle veya tıkla — menüyü daralt/genişlet">
+    <span class="sa-grip"><i class="fa-solid fa-grip-lines-vertical"></i></span>
+  </div>
+
+  <div class="pnl-overlay" id="pnlOverlay"></div>
+
+  <!-- §3 ÜST BAR -->
+  <header class="pnl-top">
+    <button class="pnl-burger" id="pnlBurger" aria-label="Menü"><i class="fa-solid fa-bars"></i></button>
+    <div class="pnl-search">
+      <i class="fa-solid fa-magnifying-glass"></i>
+      <input type="text" placeholder="Ürün, sipariş ara…" />
+    </div>
+    <div class="pnl-top-tools">
+      <button class="pnl-bell" aria-label="Bildirimler"><i class="fa-regular fa-bell"></i><span class="pb-dot"></span></button>
+      <div class="pnl-me">
+        <div class="pm-ava"><i class="fa-solid fa-user"></i></div>
+        <div class="pm-id">
+          <div class="pm-name" id="pmName">Süper Admin</div>
+          <div class="pm-role" id="pmRole">Tüm yetki</div>
+        </div>
+        <i class="fa-solid fa-chevron-down"></i>
+      </div>
+    </div>
+  </header>
+
+  <!-- §4 İÇERİK — Sipariş detay (GÖZETİM: "Düzenle" YOK) -->
+  <main class="pnl-main" id="saMain">
+
+    <a class="back-link" href="sa-store-siparisler.html"><i class="fa-solid fa-arrow-left"></i> Siparişler</a>
+
+    <!-- başlık: sipariş no + durum (gözetim: "Düzenle" YOK) -->
+    <div class="pnl-page-head">
+      <div>
+        <h1 style="display:flex;align-items:center;gap:12px">
+          Sipariş #DS-2041
+          <span class="pstat wait">Hazırlanıyor</span>
+        </h1>
+        <div class="ph-sub">21 Haziran 2026, 09:14 · Selin Korkmaz · 3 ürün · ₺640</div>
+      </div>
+      <!-- DENETİM: "Düzenle" yok; aksiyonlar sağ "Denetim Aksiyonları" kartında -->
+    </div>
+
+    <div class="detay-layout">
+
+      <!-- SOL: müşteri & teslimat + kalemler + toplamlar + durum geçmişi -->
+      <div class="detay-col">
+
+        <!-- müşteri & teslimat -->
+        <div class="pnl-card">
+          <div class="pc-head"><div class="pc-title"><i class="fa-solid fa-truck-fast"></i> Müşteri &amp; Teslimat</div></div>
+          <div class="deliv-grid">
+            <div class="deliv-block">
+              <div class="db-lbl">Müşteri</div>
+              <div class="deliv-cust">
+                <div class="deliv-ava" style="background-image:url('https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=128&q=80&auto=format&fit=crop')"></div>
+                <div>
+                  <strong>Selin Korkmaz</strong>
+                  <span>Üye · 7 sipariş</span>
+                </div>
+              </div>
+              <div class="deliv-line"><i class="fa-solid fa-envelope"></i>selin.korkmaz@ornek.com</div>
+              <div class="deliv-line"><i class="fa-solid fa-phone"></i>+90 532 000 00 00</div>
+            </div>
+            <div class="deliv-block">
+              <div class="db-lbl">Teslimat Adresi</div>
+              <div class="deliv-line"><i class="fa-solid fa-location-dot"></i>Caferağa Mah. Moda Cad. No:42 D:7</div>
+              <div class="deliv-line" style="padding-left:22px">Kadıköy / İstanbul · 34710</div>
+              <div class="deliv-line" style="margin-top:8px"><i class="fa-solid fa-note-sticky"></i>Kapıda zile basmayın, arayın.</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- sipariş kalemleri -->
+        <div class="pnl-card" style="overflow:hidden">
+          <div class="pc-head"><div class="pc-title"><i class="fa-solid fa-box-open"></i> Sipariş Kalemleri</div></div>
+          <div class="pc-body flush" style="overflow-x:auto">
+            <table class="ptable" style="min-width:340px">
+              <thead>
+                <tr>
+                  <th>Ürün</th>
+                  <th>Adet</th>
+                  <th>Birim Fiyat</th>
+                  <th>Ara Toplam</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>
+                    <div class="item-cell">
+                      <div class="item-thumb" style="background-image:url('https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=96&q=75&auto=format&fit=crop')"></div>
+                      <div>
+                        <div class="item-name">Pul Biber — Urfa İsot · 250 g</div>
+                        <div class="item-sku">SKU: DS-00121-250G</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td class="td-num">2</td>
+                  <td class="td-num">₺189</td>
+                  <td class="td-num" style="font-weight:700">₺378</td>
+                </tr>
+                <tr>
+                  <td>
+                    <div class="item-cell">
+                      <div class="item-thumb" style="background-image:url('https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=96&q=75&auto=format&fit=crop')"></div>
+                      <div>
+                        <div class="item-name">Zeytinyağı Naturel Sızma 750 ml</div>
+                        <div class="item-sku">SKU: DS-00087</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td class="td-num">1</td>
+                  <td class="td-num">₺349</td>
+                  <td class="td-num" style="font-weight:700">₺349</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- toplam özeti -->
+          <div class="totals">
+            <div class="tot-row"><span>Ara Toplam</span><span class="tot-val">₺727</span></div>
+            <div class="tot-row"><span>Kargo</span><span class="tot-val">₺0 (ücretsiz)</span></div>
+            <div class="tot-row"><span>KDV (%10)</span><span class="tot-val">₺73</span></div>
+            <div class="tot-row"><span>İndirim (DADA10)</span><span class="tot-val" style="color:var(--tomato)">−₺160</span></div>
+            <div class="tot-row grand"><span>Genel Toplam</span><span class="tot-val">₺640</span></div>
+          </div>
+        </div>
+
+        <!-- durum geçmişi -->
+        <div class="pnl-card">
+          <div class="pc-head"><div class="pc-title"><i class="fa-solid fa-timeline"></i> Durum Geçmişi</div></div>
+          <div class="timeline">
+            <div class="tl-item done">
+              <div class="tl-dot"></div>
+              <div class="tl-body">
+                <strong>Sipariş oluşturuldu</strong>
+                <span>21 Haziran 2026, 09:14 · Müşteri tarafından</span>
+              </div>
+            </div>
+            <div class="tl-item done">
+              <div class="tl-dot"></div>
+              <div class="tl-body">
+                <strong>Ödeme onaylandı</strong>
+                <span>21 Haziran 2026, 09:15 · Kredi kartı · ₺640</span>
+              </div>
+            </div>
+            <div class="tl-item cur">
+              <div class="tl-dot"></div>
+              <div class="tl-body">
+                <strong>Hazırlanıyor</strong>
+                <span>İşlem sürüyor · depo ekibi</span>
+              </div>
+            </div>
+            <div class="tl-item">
+              <div class="tl-dot"></div>
+              <div class="tl-body">
+                <strong>Kargoya verilecek</strong>
+                <span>Bekliyor</span>
+              </div>
+            </div>
+            <div class="tl-item">
+              <div class="tl-dot"></div>
+              <div class="tl-body">
+                <strong>Teslim edilecek</strong>
+                <span>Bekliyor</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /sol sütun -->
+
+      <!-- SAĞ: sipariş bilgileri + denetim aksiyonları (sticky side-rail) -->
+      <div class="detay-col meta">
+
+        <!-- sipariş bilgileri -->
+        <div class="pnl-card">
+          <div class="pc-head"><div class="pc-title"><i class="fa-solid fa-circle-info"></i> Sipariş Bilgileri</div></div>
+          <div class="meta-section">
+            <div class="meta-row"><span class="mr-lbl">Sipariş No</span><span class="mr-val" style="font-family:monospace;font-size:12.5px">DS-2041</span></div>
+            <div class="meta-row"><span class="mr-lbl">Tarih</span><span class="mr-val">21 Haz 2026, 09:14</span></div>
+            <div class="meta-row"><span class="mr-lbl">Ödeme</span><span class="mr-val">Kredi Kartı · ****4242</span></div>
+            <div class="meta-row"><span class="mr-lbl">Kargo Firması</span><span class="mr-val">Yurtiçi Kargo</span></div>
+            <div class="meta-row"><span class="mr-lbl">Takip No</span><span class="mr-val" style="color:var(--muted)">Henüz atanmadı</span></div>
+            <div class="meta-row"><span class="mr-lbl">Durum</span><span class="mr-val"><span class="pstat wait">Hazırlanıyor</span></span></div>
+          </div>
+        </div>
+
+        <!-- denetim aksiyonları -->
+        <div class="pnl-card">
+          <div class="pc-head"><div class="pc-title"><i class="fa-solid fa-shield-halved"></i> Denetim Aksiyonları</div></div>
+          <div class="meta-section">
+            <div class="meta-section-tt">İşlem Yap</div>
+            <div class="act-stack">
+              <button class="audit-btn" onclick="ordUpdateStatus()"><i class="fa-solid fa-rotate"></i> Durum Güncelle</button>
+              <button class="audit-btn" onclick="ordAddShipping()"><i class="fa-solid fa-truck"></i> Kargo Bilgisi Ekle</button>
+              <button class="audit-btn warn" onclick="saToast('Sipariş iptal edildi, iade süreci başlatıldı.',{type:'danger'})"><i class="fa-solid fa-xmark"></i> Siparişi İptal Et</button>
+            </div>
+            <div style="font-size:11.5px;color:var(--muted);margin-top:12px;line-height:1.5">
+              Gözetim modülü: sipariş içeriği depo ve müşteri tarafından yönetilir. Süper admin yalnızca durum denetimi yapar.
+            </div>
+          </div>
+          <div class="meta-section">
+            <div class="meta-section-tt">Not Ekle (Dahili)</div>
+            <textarea class="ftext" id="ordNote" placeholder="Denetim notu girin…" style="font-size:13px;min-height:80px"></textarea>
+            <div style="margin-top:10px;text-align:right">
+              <button class="btn btn-ghost btn-sm" style="font-size:12.5px" onclick="ordSaveNote()">Not Kaydet</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- özet -->
+        <div class="pnl-card">
+          <div class="pc-head"><div class="pc-title"><i class="fa-solid fa-chart-bar"></i> Özet</div></div>
+          <div class="meta-section">
+            <div class="meta-section-tt">Müşteri Geçmişi</div>
+            <div class="meta-row"><span class="mr-lbl">Toplam sipariş</span><span class="mr-val" style="font-weight:700">7</span></div>
+            <div class="meta-row"><span class="mr-lbl">Toplam harcama</span><span class="mr-val" style="font-weight:700">₺4.290</span></div>
+            <div class="meta-row"><span class="mr-lbl">İlk sipariş</span><span class="mr-val">11 Mar 2026</span></div>
+            <div class="meta-row"><span class="mr-lbl">İptal oranı</span><span class="mr-val">%0</span></div>
+          </div>
+        </div>
+
+      </div><!-- /sağ sütun -->
+
+    </div><!-- /detay-layout -->
+
+  </main>
+
+</div>
+
+<script src="assets/js/sa-shell.js"></script>
+
+<!-- Denetim aksiyonları (sayfa-özel). saToast/saConfirm = sa-ui.js global
+     (kabuk otomatik yükler). "Siparişi İptal Et" yıkıcı → sa-ui.js delege
+     handler'ı önce saConfirm açar, onay sonrası inline onclick'i çalıştırır. -->
+<script>
+function ordUpdateStatus(){
+  saToast('Durum güncelleme paneli açılıyor…', {type:'info'});
+}
+function ordAddShipping(){
+  saToast('Kargo bilgisi formu açılıyor…', {type:'info'});
+}
+function ordSaveNote(){
+  var note = document.getElementById('ordNote');
+  if(note && !note.value.trim()){
+    saToast('Lütfen önce bir not girin.', {type:'info'});
+    return;
+  }
+  if(note) note.value = '';
+  saToast('Denetim notu kaydedildi.', {type:'ok'});
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Ayarlar — Admin — DadaMutfak</title>
+<link rel="shortcut icon" type="image/x-icon" href="assets/img/favicon.ico" />
+<link rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+      integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A=="
+      crossorigin="anonymous" referrerpolicy="no-referrer" />
+<link rel="stylesheet" href="assets/css/sa-shell.css" />
+<link rel="stylesheet" href="assets/css/sa-ui.css" />
+<style>
+/* =====================================================================
+   SA-ADMIN-AYARLAR — SAYFA CSS. Tek sekmeli form (?tab=genel|marka|entegrasyon|bildirim).
+   Sekme barı: dyt-profil-ayar .pf-tabs deseni (aktif rengi DOMATES var(--acc)).
+   Form alanları VERBATIM.
+   ===================================================================== */
+
+/* ---- sekme barı (dyt .pf-tabs deseni; aktif: domates) ---- */
+.pf-tabbar{margin-bottom:22px}
+.pf-tabs{display:flex;gap:4px;background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-md);padding:4px;overflow-x:auto;scrollbar-width:none}
+.pf-tabs::-webkit-scrollbar{display:none}
+.pf-tabs .dt{font-family:inherit;font-weight:700;font-size:13px;color:var(--muted);background:transparent;border:none;border-radius:var(--radius-sm);padding:9px 16px;cursor:pointer;display:inline-flex;align-items:center;gap:7px;transition:.2s var(--ease);white-space:nowrap;flex:none}
+.pf-tabs .dt:hover{color:var(--acc-deep)}
+.pf-tabs .dt.active{background:var(--acc);color:#fff}
+
+/* sekme paneli */
+.tabpane{display:none}
+.tabpane.active{display:block}
+
+/* form alanları VERBATIM */
+.form-grid{display:grid;gap:18px}
+.frow{display:flex;flex-direction:column;gap:7px}
+.frow label{font-size:12.5px;font-weight:700;color:var(--slate-2)}
+.frow .fhint{font-size:11.5px;color:var(--muted);font-weight:500}
+.finput,.fselect,.ftext{width:100%;font-family:inherit;font-size:13.5px;font-weight:500;color:var(--ink);background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-md);padding:0 14px;height:44px;outline:none;transition:.2s var(--ease)}
+.ftext{height:auto;padding:12px 14px;line-height:1.5;resize:vertical;min-height:90px}
+.finput:focus,.fselect:focus,.ftext:focus{border-color:var(--acc);box-shadow:0 0 0 3px rgba(var(--acc-rgb),.12)}
+.frow.two{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.form-sec{padding:18px 22px;border-bottom:1px solid var(--line)}
+.form-sec:last-child{border-bottom:none}
+.form-sec-tt{font-size:13px;font-weight:700;color:var(--slate);margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.form-sec-tt i{color:var(--acc)}
+.form-actions{display:flex;gap:10px;justify-content:flex-end;padding:16px 22px;border-top:1px solid var(--line)}
+
+/* toggle satırı (switch — 999px kalabilir) */
+.set-row{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:14px 0;border-bottom:1px solid var(--line)}
+.set-row:last-child{border-bottom:none}
+.set-txt{min-width:0;line-height:1.4}
+.set-txt b{display:block;font-size:13.5px;font-weight:700;color:var(--slate)}
+.set-txt span{font-size:12px;color:var(--muted)}
+.switch{position:relative;width:44px;height:25px;flex:none;cursor:pointer}
+.switch input{opacity:0;width:0;height:0;position:absolute}
+.switch .track{position:absolute;inset:0;background:var(--line);border-radius:999px;transition:.2s var(--ease)}
+.switch .track::before{content:"";position:absolute;left:3px;top:3px;width:19px;height:19px;border-radius:var(--radius-circle);background:var(--paper);box-shadow:var(--sh-sm);transition:.2s var(--ease)}
+.switch input:checked + .track{background:var(--acc)}
+.switch input:checked + .track::before{transform:translateX(19px)}
+.switch input:focus-visible + .track{box-shadow:0 0 0 3px rgba(var(--acc-rgb),.25)}
+
+/* marka renk önizleme noktaları */
+.brand-swatches{display:flex;gap:10px;flex-wrap:wrap;margin-top:4px}
+.swatch{display:flex;align-items:center;gap:8px;font-size:12px;font-weight:600;color:var(--slate-2);background:var(--bg);border:1px solid var(--line);padding:7px 12px;border-radius:var(--radius-sm)}
+.swatch .dot{width:16px;height:16px;border-radius:var(--radius-sm);flex:none;border:1px solid rgba(0,0,0,.08)}
+
+/* logo yükleme alanı */
+.upload-box{display:flex;align-items:center;gap:14px;padding:16px;border:1px dashed var(--line);border-radius:var(--radius-md);background:var(--bg)}
+.upload-prev{width:56px;height:56px;flex:none;border-radius:var(--radius-md);background:var(--paper);border:1px solid var(--line);display:grid;place-items:center;font-size:22px;color:var(--acc-deep)}
+.upload-info{flex:1;min-width:0}
+.upload-info b{font-size:13px;font-weight:700;color:var(--slate);display:block}
+.upload-info span{font-size:11.5px;color:var(--muted)}
+
+/* entegrasyon durum rozeti (radius-sm KÖŞELİ — pstat zaten radius-sm) */
+.int-row{display:flex;align-items:center;gap:14px;padding:14px 0;border-bottom:1px solid var(--line)}
+.int-row:last-child{border-bottom:none}
+.int-ico{width:42px;height:42px;flex:none;border-radius:var(--radius-md);background:var(--bg);border:1px solid var(--line);display:grid;place-items:center;font-size:17px;color:var(--slate-2)}
+.int-id{flex:1;min-width:0}
+.int-id b{font-size:13.5px;font-weight:700;color:var(--slate);display:block}
+.int-id span{font-size:12px;color:var(--muted)}
+
+@media(max-width:900px){.frow.two{grid-template-columns:1fr}}
+@media(max-width:560px){.pf-tabs .dt{padding:9px 13px}}
+</style>
+</head>
+<body data-brand="mutfak" data-sec="admin" data-screen="ayarlar">
+
+<div class="sa-app">
+
+  <aside class="sa-rail" id="saRail">
+    <a class="sa-rail-logo" href="sa-giris-v1.html" title="Yönetim Girişi"><img src="assets/img/logo-mark.png" alt="DadaMutfak" /></a>
+    <a class="sa-rail-ico" data-sec="genel" href="sa-shell.html?sec=genel" title="Genel Bakış"><i class="fa-solid fa-gauge-high"></i></a>
+    <span class="sa-rail-div"></span>
+    <a class="sa-rail-ico" data-sec="admin"   href="sa-admin.html"   title="Admin"><i class="fa-solid fa-shield-halved"></i></a>
+    <a class="sa-rail-ico" data-sec="saglik"  href="sa-saglik.html"  title="Sağlık &amp; Diyet"><i class="fa-solid fa-heart-pulse"></i></a>
+    <a class="sa-rail-ico" data-sec="store"   href="sa-store.html"   title="DadaStore"><i class="fa-solid fa-bag-shopping"></i></a>
+    <a class="sa-rail-ico" data-sec="dadafit" href="sa-dadafit.html" title="DadaFit"><i class="fa-solid fa-dumbbell"></i></a>
+    <a class="sa-rail-ico" data-sec="isletme" href="sa-isletme.html" title="İşletmeler"><i class="fa-solid fa-store"></i></a>
+    <a class="sa-rail-ico is-locked" data-sec="akademi" href="#" title="DadaAkademi — Yakında"><i class="fa-solid fa-graduation-cap"></i><i class="fa-solid fa-lock sr-lock"></i></a>
+    <div class="sa-rail-foot"><a class="sa-rail-ico" href="sa-giris-v1.html" title="Siteye Dön"><i class="fa-solid fa-arrow-left"></i></a></div>
+  </aside>
+
+  <nav class="sa-menu" id="saMenu"></nav>
+  <div class="sa-divider" id="saDivider" role="separator" aria-label="Menüyü daralt/genişlet" title="Sürükle veya tıkla — menüyü daralt/genişlet"><span class="sa-grip"><i class="fa-solid fa-grip-lines-vertical"></i></span></div>
+  <div class="pnl-overlay" id="pnlOverlay"></div>
+
+  <header class="pnl-top">
+    <button class="pnl-burger" id="pnlBurger" aria-label="Menü"><i class="fa-solid fa-bars"></i></button>
+    <div class="pnl-search"><i class="fa-solid fa-magnifying-glass"></i><input type="text" placeholder="Kullanıcı, içerik ara…" /></div>
+    <div class="pnl-top-tools">
+      <button class="pnl-bell" aria-label="Bildirimler"><i class="fa-regular fa-bell"></i><span class="pb-dot"></span></button>
+      <div class="pnl-me">
+        <div class="pm-ava" style="background-image:url('https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=240&q=80&auto=format&fit=crop')"></div>
+        <div class="pm-id"><div class="pm-name" id="pmName">Süper Admin</div><div class="pm-role" id="pmRole">Tüm yetki</div></div>
+        <i class="fa-solid fa-chevron-down"></i>
+      </div>
+    </div>
+  </header>
+
+  <main class="pnl-main" id="saMain">
+
+    <div class="pnl-page-head">
+      <div>
+        <h1>Ayarlar</h1>
+        <div class="ph-sub">Site geneli yapılandırma · marka, entegrasyon ve bildirim tercihleri</div>
+      </div>
+    </div>
+
+    <!-- sekme barı -->
+    <div class="pf-tabbar">
+      <div class="pf-tabs" role="tablist" aria-label="Ayar bölümleri">
+        <button class="dt active" type="button" data-tab="genel" role="tab" aria-selected="true"><i class="fa-solid fa-sliders"></i> Genel</button>
+        <button class="dt" type="button" data-tab="marka" role="tab" aria-selected="false"><i class="fa-solid fa-palette"></i> Marka</button>
+        <button class="dt" type="button" data-tab="entegrasyon" role="tab" aria-selected="false"><i class="fa-solid fa-plug"></i> Entegrasyon</button>
+        <button class="dt" type="button" data-tab="bildirim" role="tab" aria-selected="false"><i class="fa-regular fa-bell"></i> Bildirim</button>
+      </div>
+    </div>
+
+    <!-- GENEL -->
+    <div class="tabpane active" data-pane="genel">
+      <div class="pnl-card">
+        <div class="form-sec">
+          <div class="form-sec-tt"><i class="fa-solid fa-globe"></i> Site Bilgileri</div>
+          <div class="form-grid">
+            <div class="frow">
+              <label for="g-ad">Site adı</label>
+              <input class="finput" id="g-ad" type="text" value="DadaMutfak" />
+            </div>
+            <div class="frow">
+              <label for="g-slogan">Slogan</label>
+              <input class="finput" id="g-slogan" type="text" value="Ev yemeklerinin buluşma noktası" />
+            </div>
+            <div class="frow two">
+              <div class="frow">
+                <label for="g-email">İletişim e-postası</label>
+                <input class="finput" id="g-email" type="email" value="info@dadamutfak.com" />
+              </div>
+              <div class="frow">
+                <label for="g-tel">Telefon</label>
+                <input class="finput" id="g-tel" type="tel" value="+90 212 000 00 00" />
+              </div>
+            </div>
+            <div class="frow two">
+              <div class="frow">
+                <label for="g-dil">Varsayılan dil</label>
+                <select class="fselect" id="g-dil"><option selected>Türkçe</option><option>English</option></select>
+              </div>
+              <div class="frow">
+                <label for="g-tz">Saat dilimi</label>
+                <select class="fselect" id="g-tz"><option selected>İstanbul (GMT+3)</option><option>UTC</option></select>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="form-sec">
+          <div class="form-sec-tt"><i class="fa-solid fa-toggle-on"></i> Site Durumu</div>
+          <div class="set-row">
+            <div class="set-txt"><b>Bakım modu</b><span>Açıldığında ziyaretçilere bakım sayfası gösterilir.</span></div>
+            <label class="switch"><input type="checkbox" /><span class="track"></span></label>
+          </div>
+          <div class="set-row">
+            <div class="set-txt"><b>Yeni üye kaydı</b><span>Kapatıldığında yeni kayıtlar durdurulur.</span></div>
+            <label class="switch"><input type="checkbox" checked /><span class="track"></span></label>
+          </div>
+        </div>
+        <div class="form-actions">
+          <button class="btn btn-ghost btn-sm" type="button">Vazgeç</button>
+          <button class="btn btn-acc btn-sm" type="button" data-save><i class="fa-solid fa-floppy-disk"></i> Kaydet</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- MARKA -->
+    <div class="tabpane" data-pane="marka">
+      <div class="pnl-card">
+        <div class="form-sec">
+          <div class="form-sec-tt"><i class="fa-solid fa-image"></i> Logo</div>
+          <div class="upload-box">
+            <div class="upload-prev"><i class="fa-solid fa-utensils"></i></div>
+            <div class="upload-info"><b>logo-mark.png</b><span>PNG · 512×512 · 48 KB</span></div>
+            <button class="btn btn-ghost btn-sm" type="button"><i class="fa-solid fa-arrow-up-from-bracket"></i> Değiştir</button>
+          </div>
+        </div>
+        <div class="form-sec">
+          <div class="form-sec-tt"><i class="fa-solid fa-palette"></i> Kurumsal Renkler</div>
+          <div class="frow">
+            <label>Aktif palet</label>
+            <span class="fhint">Marka kimliği kılavuzuna göre kilitli kurumsal renkler.</span>
+            <div class="brand-swatches">
+              <span class="swatch"><span class="dot" style="background:#E14827"></span> Domates · #E14827</span>
+              <span class="swatch"><span class="dot" style="background:#211E16"></span> Koyu · #211E16</span>
+              <span class="swatch"><span class="dot" style="background:#EFE5D3"></span> Krem · #EFE5D3</span>
+            </div>
+          </div>
+        </div>
+        <div class="form-sec">
+          <div class="form-sec-tt"><i class="fa-solid fa-font"></i> Tipografi</div>
+          <div class="frow">
+            <label for="m-font">Ana yazı tipi</label>
+            <select class="fselect" id="m-font"><option selected>Gilroy</option><option>Inter</option><option>System UI</option></select>
+            <span class="fhint">Marka kimliği yazı tipi Gilroy'dur.</span>
+          </div>
+        </div>
+        <div class="form-actions">
+          <button class="btn btn-ghost btn-sm" type="button">Vazgeç</button>
+          <button class="btn btn-acc btn-sm" type="button" data-save><i class="fa-solid fa-floppy-disk"></i> Kaydet</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ENTEGRASYON -->
+    <div class="tabpane" data-pane="entegrasyon">
+      <div class="pnl-card">
+        <div class="form-sec">
+          <div class="form-sec-tt"><i class="fa-solid fa-envelope"></i> E-posta (SMTP)</div>
+          <div class="form-grid">
+            <div class="frow two">
+              <div class="frow"><label for="e-host">SMTP sunucu</label><input class="finput" id="e-host" type="text" value="smtp.dadamutfak.com" /></div>
+              <div class="frow"><label for="e-port">Port</label><input class="finput" id="e-port" type="number" value="587" /></div>
+            </div>
+            <div class="frow"><label for="e-user">Kullanıcı adı</label><input class="finput" id="e-user" type="text" value="no-reply@dadamutfak.com" /></div>
+          </div>
+        </div>
+        <div class="form-sec">
+          <div class="form-sec-tt"><i class="fa-solid fa-plug"></i> Bağlı Servisler</div>
+          <div class="int-row">
+            <div class="int-ico"><i class="fa-brands fa-google"></i></div>
+            <div class="int-id"><b>Google Analytics</b><span>Ziyaretçi istatistikleri</span></div>
+            <span class="pstat ok">Bağlı</span>
+          </div>
+          <div class="int-row">
+            <div class="int-ico"><i class="fa-solid fa-credit-card"></i></div>
+            <div class="int-id"><b>Ödeme sağlayıcı (iyzico)</b><span>Abonelik tahsilatı</span></div>
+            <span class="pstat ok">Bağlı</span>
+          </div>
+          <div class="int-row">
+            <div class="int-ico"><i class="fa-brands fa-facebook"></i></div>
+            <div class="int-id"><b>Meta Pixel</b><span>Reklam dönüşüm takibi</span></div>
+            <span class="pstat off">Bağlı değil</span>
+          </div>
+        </div>
+        <div class="form-actions">
+          <button class="btn btn-ghost btn-sm" type="button">Vazgeç</button>
+          <button class="btn btn-acc btn-sm" type="button" data-save><i class="fa-solid fa-floppy-disk"></i> Kaydet</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- BİLDİRİM -->
+    <div class="tabpane" data-pane="bildirim">
+      <div class="pnl-card">
+        <div class="form-sec">
+          <div class="form-sec-tt"><i class="fa-regular fa-bell"></i> Yönetici Bildirimleri</div>
+          <div class="set-row">
+            <div class="set-txt"><b>Yeni üye kaydı</b><span>Her yeni kayıtta e-posta al.</span></div>
+            <label class="switch"><input type="checkbox" checked /><span class="track"></span></label>
+          </div>
+          <div class="set-row">
+            <div class="set-txt"><b>İçerik şikayeti</b><span>Moderasyon gerektiren içerik bildirildiğinde uyar.</span></div>
+            <label class="switch"><input type="checkbox" checked /><span class="track"></span></label>
+          </div>
+          <div class="set-row">
+            <div class="set-txt"><b>Yeni Pro abonelik</b><span>Abonelik dönüşümlerinde bildirim al.</span></div>
+            <label class="switch"><input type="checkbox" /><span class="track"></span></label>
+          </div>
+          <div class="set-row">
+            <div class="set-txt"><b>Haftalık özet raporu</b><span>Her pazartesi platform özetini e-posta ile gönder.</span></div>
+            <label class="switch"><input type="checkbox" checked /><span class="track"></span></label>
+          </div>
+        </div>
+        <div class="form-sec">
+          <div class="form-sec-tt"><i class="fa-solid fa-users"></i> Üye Bildirimleri (Varsayılan)</div>
+          <div class="set-row">
+            <div class="set-txt"><b>Tarif beğenisi</b><span>Üyelere tarifleri beğenildiğinde bildir.</span></div>
+            <label class="switch"><input type="checkbox" checked /><span class="track"></span></label>
+          </div>
+          <div class="set-row">
+            <div class="set-txt"><b>Pazarlama e-postaları</b><span>Kampanya ve duyuru e-postaları (üye kapatabilir).</span></div>
+            <label class="switch"><input type="checkbox" /><span class="track"></span></label>
+          </div>
+        </div>
+        <div class="form-actions">
+          <button class="btn btn-ghost btn-sm" type="button">Vazgeç</button>
+          <button class="btn btn-acc btn-sm" type="button" data-save><i class="fa-solid fa-floppy-disk"></i> Kaydet</button>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+</div><!-- /sa-app -->
+
+<script src="assets/js/sa-ui.js"></script>
+<script src="assets/js/sa-shell.js"></script>
+<script>
+/* sayfa JS — ?tab= sekmeleri + kaydet toast */
+(function(){
+  var tabs=document.querySelectorAll('.pf-tabs .dt');
+  var panes=document.querySelectorAll('.tabpane');
+  var VALID=['genel','marka','entegrasyon','bildirim'];
+
+  function setTab(key,push){
+    if(VALID.indexOf(key)<0)key='genel';
+    tabs.forEach(function(b){
+      var on=b.getAttribute('data-tab')===key;
+      b.classList.toggle('active',on);
+      b.setAttribute('aria-selected',on?'true':'false');
+    });
+    panes.forEach(function(p){p.classList.toggle('active',p.getAttribute('data-pane')===key)});
+    if(push){
+      var url=key==='genel'?location.pathname:location.pathname+'?tab='+key;
+      history.replaceState(null,'',url);
+    }
+  }
+  tabs.forEach(function(b){b.addEventListener('click',function(){setTab(b.getAttribute('data-tab'),true)})});
+
+  /* ilk yükleme: ?tab= oku */
+  var params=new URLSearchParams(location.search);
+  setTab(params.get('tab')||'genel',false);
+
+  /* kaydet toast */
+  document.querySelectorAll('[data-save]').forEach(function(btn){
+    btn.addEventListener('click',function(){if(window.saToast)saToast('Ayarlar kaydedildi',{type:'ok'})});
+  });
+})();
+</script>
+</body>
+</html>

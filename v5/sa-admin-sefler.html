@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Şefler — Admin · DadaMutfak</title>
+<link rel="shortcut icon" type="image/x-icon" href="assets/img/favicon.ico" />
+<!-- FontAwesome 6.5.2 (kilitli ikon seti) -->
+<link rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+      integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A=="
+      crossorigin="anonymous" referrerpolicy="no-referrer" />
+<!-- PAYLAŞILAN KABUK (tek kaynak) -->
+<link rel="stylesheet" href="assets/css/sa-shell.css" />
+<style>
+/* =====================================================================
+   SA-ADMIN-SEFLER — SAYFA CSS (ekrana özel; kabuk CSS'i sa-shell.css'te).
+   Şef dizini = admin'in resmi içeriği → tam CRUD (gözetim disiplini YOK).
+   Token: SADECE var(--acc)/var(--acc-deep)/rgba(var(--acc-rgb),..).
+   ===================================================================== */
+
+/* ---- Filtre çubuğu ---- */
+.filter-bar{display:flex;align-items:center;gap:12px;padding:14px 22px;border-bottom:1px solid var(--line);flex-wrap:wrap}
+.filter-bar .fb-search{flex:1;min-width:200px;max-width:340px;position:relative}
+.filter-bar .fb-search i{position:absolute;left:12px;top:50%;transform:translateY(-50%);font-size:13px;color:var(--muted);pointer-events:none}
+.filter-bar .fb-search input{width:100%;height:38px;padding:0 12px 0 34px;font-family:inherit;font-size:13px;font-weight:500;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:var(--radius-sm);outline:none;transition:.2s var(--ease)}
+.filter-bar .fb-search input::placeholder{color:var(--muted)}
+.filter-bar .fb-search input:focus{border-color:var(--acc);background:var(--paper);box-shadow:0 0 0 3px rgba(var(--acc-rgb),.11)}
+
+/* ---- Durum chip'leri (KÖŞELİ — radius-sm, flagship standardı) ---- */
+.chips{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.chip{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;font-weight:500;color:var(--slate-2);background:var(--paper);border:1px solid var(--line);padding:7px 14px;border-radius:var(--radius-sm);cursor:pointer;transition:.16s var(--ease)}
+.chip:hover{border-color:var(--acc);color:var(--acc-deep)}
+.chip.is-on{border-color:rgba(var(--acc-rgb),.3);color:var(--acc-deep);background:rgba(var(--acc-rgb),.10);font-weight:700}
+.chip .ch-cnt{font-size:10.5px;font-weight:700;background:rgba(var(--acc-rgb),.14);color:var(--acc-deep);min-width:18px;height:17px;display:inline-flex;align-items:center;justify-content:center;padding:0 5px;border-radius:var(--radius-sm)}
+.chip.is-on .ch-cnt{background:rgba(var(--acc-rgb),.22)}
+
+/* ---- Tablo ---- */
+.ptable{width:100%;border-collapse:collapse}
+.ptable thead th{font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);padding:11px 16px;text-align:left;background:var(--bg);border-bottom:1px solid var(--line);white-space:nowrap}
+.ptable thead th:first-child{padding-left:22px}
+.ptable thead th:last-child{padding-right:22px;text-align:right}
+.ptable tbody tr{border-bottom:1px solid var(--line);transition:background .12s}
+.ptable tbody tr:last-child{border-bottom:none}
+.ptable tbody tr:hover{background:rgba(var(--acc-rgb),.03)}
+.ptable tbody td{padding:12px 16px;font-size:13.5px;color:var(--slate-2);vertical-align:middle}
+.ptable tbody td:first-child{padding-left:22px}
+.ptable tbody td:last-child{padding-right:22px;text-align:right}
+
+/* ---- Şef kimlik hücresi (avatar + ad + ünvan) ---- */
+.sef-cell{display:flex;align-items:center;gap:12px;min-width:0}
+.sef-ava{width:42px;height:42px;flex:none;border-radius:var(--radius-circle);background-size:cover;background-position:center;border:2px solid var(--line)}
+.sef-id{min-width:0;line-height:1.35}
+.sef-name{font-size:13.5px;font-weight:700;color:var(--slate);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:flex;align-items:center;gap:7px}
+.sef-title{font-size:12px;color:var(--muted)}
+/* doğrulanmış rozeti (inline ad yanı) */
+.verified{color:var(--acc-deep);font-size:12px}
+
+/* ---- Uzmanlık etiketi (badge — radius-sm) ---- */
+.spec-tag{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:700;padding:3px 10px;border-radius:var(--radius-sm);background:var(--bg);color:var(--slate-2);border:1px solid var(--line);white-space:nowrap}
+
+/* ---- Rozet sayacı (kazanılan rozet) ---- */
+.badge-count{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:700;color:var(--slate-2)}
+.badge-count i{color:var(--acc);font-size:12px}
+
+/* ---- Satır aksiyon butonları ---- */
+.row-acts{display:flex;align-items:center;justify-content:flex-end;gap:6px}
+.ia-btn{width:32px;height:32px;border-radius:var(--radius-sm);border:1px solid var(--line);background:var(--paper);color:var(--muted);font-size:13px;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;transition:.16s var(--ease)}
+.ia-btn:hover{border-color:var(--acc);color:var(--acc-deep);background:rgba(var(--acc-rgb),.07)}
+.ia-btn.danger:hover{border-color:var(--tomato);color:var(--tomato);background:var(--tomato-tint)}
+
+/* ---- Sayfalama ---- */
+.pager{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:14px 22px;border-top:1px solid var(--line);flex-wrap:wrap}
+.pager-info{font-size:12.5px;color:var(--muted)}
+.pager-btns{display:flex;gap:6px}
+.pg-btn{min-width:34px;height:34px;padding:0 10px;border-radius:var(--radius-sm);border:1px solid var(--line);background:var(--paper);font-family:inherit;font-size:13px;font-weight:700;color:var(--slate-2);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;transition:.16s var(--ease)}
+.pg-btn:hover{border-color:var(--acc);color:var(--acc-deep)}
+.pg-btn.is-on{border-color:var(--acc);background:var(--acc);color:#fff}
+.pg-btn:disabled{opacity:.4;cursor:not-allowed}
+
+/* ---- Responsif kolon gizleme (yatay taşma 0) ----
+   Kolonlar: 1 Şef · 2 Uzmanlık · 3 Rozet · 4 Durum · 5 Aksiyon ---- */
+@media(max-width:1000px){
+  .ptable thead th:nth-child(2),.ptable tbody td:nth-child(2),
+  .ptable thead th:nth-child(3),.ptable tbody td:nth-child(3){display:none}
+}
+@media(max-width:640px){
+  .filter-bar{padding:12px 16px}
+}
+</style>
+</head>
+<body data-brand="mutfak" data-sec="admin" data-screen="sefler">
+
+<div class="sa-app">
+
+  <!-- §1 İKON-RAIL -->
+  <aside class="sa-rail" id="saRail">
+    <a class="sa-rail-logo" href="sa-giris-v1.html" title="Yönetim Girişi"><img src="assets/img/logo-mark.png" alt="DadaMutfak" /></a>
+    <a class="sa-rail-ico" data-sec="genel" href="sa-shell.html?sec=genel" title="Genel Bakış"><i class="fa-solid fa-gauge-high"></i></a>
+    <span class="sa-rail-div"></span>
+    <a class="sa-rail-ico" data-sec="admin"   href="sa-admin.html"   title="Admin"><i class="fa-solid fa-shield-halved"></i></a>
+    <a class="sa-rail-ico" data-sec="saglik"  href="sa-saglik.html"  title="Sağlık &amp; Diyet"><i class="fa-solid fa-heart-pulse"></i></a>
+    <a class="sa-rail-ico" data-sec="store"   href="sa-store.html"   title="DadaStore"><i class="fa-solid fa-bag-shopping"></i></a>
+    <a class="sa-rail-ico" data-sec="dadafit" href="sa-dadafit.html" title="DadaFit"><i class="fa-solid fa-dumbbell"></i></a>
+    <a class="sa-rail-ico" data-sec="isletme" href="sa-isletme.html" title="İşletmeler"><i class="fa-solid fa-store"></i></a>
+    <a class="sa-rail-ico is-locked" data-sec="akademi" href="#" title="DadaAkademi — Yakında"><i class="fa-solid fa-graduation-cap"></i><i class="fa-solid fa-lock sr-lock"></i></a>
+    <div class="sa-rail-foot"><a class="sa-rail-ico" href="sa-giris-v1.html" title="Siteye Dön"><i class="fa-solid fa-arrow-left"></i></a></div>
+  </aside>
+
+  <!-- §2 BÖLÜM MENÜSÜ (JS render) -->
+  <nav class="sa-menu" id="saMenu"></nav>
+
+  <div class="sa-divider" id="saDivider" role="separator" aria-label="Menüyü daralt/genişlet" title="Sürükle veya tıkla — menüyü daralt/genişlet">
+    <span class="sa-grip"><i class="fa-solid fa-grip-lines-vertical"></i></span>
+  </div>
+
+  <div class="pnl-overlay" id="pnlOverlay"></div>
+
+  <!-- §3 ÜST BAR -->
+  <header class="pnl-top">
+    <button class="pnl-burger" id="pnlBurger" aria-label="Menü"><i class="fa-solid fa-bars"></i></button>
+    <div class="pnl-search">
+      <i class="fa-solid fa-magnifying-glass"></i>
+      <input type="text" placeholder="Şef, uzmanlık ara…" />
+    </div>
+    <div class="pnl-top-tools">
+      <button class="pnl-bell" aria-label="Bildirimler"><i class="fa-regular fa-bell"></i><span class="pb-dot"></span></button>
+      <div class="pnl-me">
+        <div class="pm-ava" style="background-image:url('https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=240&q=80&auto=format&fit=crop')"></div>
+        <div class="pm-id">
+          <div class="pm-name" id="pmName">Süper Admin</div>
+          <div class="pm-role" id="pmRole">Tüm yetki</div>
+        </div>
+        <i class="fa-solid fa-chevron-down"></i>
+      </div>
+    </div>
+  </header>
+
+  <!-- §4 İÇERİK — Şefler (CRUD) -->
+  <main class="pnl-main" id="saMain">
+
+    <!-- sayfa başlığı -->
+    <div class="pnl-page-head">
+      <div>
+        <h1>Şefler</h1>
+        <div class="ph-sub">Resmi şef dizini — profil, uzmanlık ve doğrulama yönetimi · <strong>32</strong> şef</div>
+      </div>
+      <div class="ph-actions">
+        <a class="btn btn-ghost btn-sm" href="#"><i class="fa-solid fa-download"></i> Dışa Aktar</a>
+        <a class="btn btn-acc btn-sm" href="sa-admin-sefler-form.html"><i class="fa-solid fa-plus"></i> Yeni Şef</a>
+      </div>
+    </div>
+
+    <!-- liste kartı -->
+    <div class="pnl-card" style="overflow:hidden">
+
+      <!-- filtre çubuğu -->
+      <div class="filter-bar">
+        <div class="fb-search">
+          <i class="fa-solid fa-magnifying-glass"></i>
+          <input type="text" placeholder="Şef adı veya uzmanlık ara…" id="sefSearch" />
+        </div>
+        <div class="chips" id="sefChips">
+          <button class="chip is-on" data-status="all">Tümü <span class="ch-cnt">7</span></button>
+          <button class="chip" data-status="dogrulanmis">Doğrulanmış <span class="ch-cnt">4</span></button>
+          <button class="chip" data-status="bekliyor">Onay Bekliyor <span class="ch-cnt">2</span></button>
+          <button class="chip" data-status="pasif">Pasif <span class="ch-cnt">1</span></button>
+        </div>
+      </div>
+
+      <!-- tablo -->
+      <div class="pc-body flush">
+        <table class="ptable" id="sefTable">
+          <thead>
+            <tr>
+              <th>Şef</th>
+              <th>Uzmanlık</th>
+              <th>Rozet</th>
+              <th>Durum</th>
+              <th>Aksiyon</th>
+            </tr>
+          </thead>
+          <tbody>
+
+            <!-- Satır 1 -->
+            <tr data-status="dogrulanmis">
+              <td>
+                <div class="sef-cell">
+                  <div class="sef-ava" style="background-image:url('https://images.unsplash.com/photo-1577219491135-ce391730fb2c?w=96&q=80&auto=format&fit=crop')"></div>
+                  <div class="sef-id">
+                    <div class="sef-name">Mehmet Usta <i class="fa-solid fa-circle-check verified" title="Doğrulanmış"></i></div>
+                    <div class="sef-title">Kıdemli Şef · 12 yıl</div>
+                  </div>
+                </div>
+              </td>
+              <td><span class="spec-tag"><i class="fa-solid fa-fire-burner"></i> Türk Mutfağı</span></td>
+              <td><span class="badge-count"><i class="fa-solid fa-medal"></i> 8</span></td>
+              <td><span class="pstat ok">Doğrulanmış</span></td>
+              <td>
+                <div class="row-acts">
+                  <a class="ia-btn" href="sa-admin-sefler-detay.html" title="Detay"><i class="fa-solid fa-eye"></i></a>
+                  <a class="ia-btn" href="sa-admin-sefler-form.html" title="Düzenle"><i class="fa-solid fa-pen"></i></a>
+                  <button class="ia-btn danger" title="Sil"><i class="fa-solid fa-trash"></i></button>
+                </div>
+              </td>
+            </tr>
+
+            <!-- Satır 2 -->
+            <tr data-status="dogrulanmis">
+              <td>
+                <div class="sef-cell">
+                  <div class="sef-ava" style="background-image:url('https://images.unsplash.com/photo-1583394293214-28a5b42b9b76?w=96&q=80&auto=format&fit=crop')"></div>
+                  <div class="sef-id">
+                    <div class="sef-name">Ayten Hanım <i class="fa-solid fa-circle-check verified" title="Doğrulanmış"></i></div>
+                    <div class="sef-title">Pasta Şefi · 9 yıl</div>
+                  </div>
+                </div>
+              </td>
+              <td><span class="spec-tag"><i class="fa-solid fa-cake-candles"></i> Pastacılık</span></td>
+              <td><span class="badge-count"><i class="fa-solid fa-medal"></i> 11</span></td>
+              <td><span class="pstat ok">Doğrulanmış</span></td>
+              <td>
+                <div class="row-acts">
+                  <a class="ia-btn" href="sa-admin-sefler-detay.html" title="Detay"><i class="fa-solid fa-eye"></i></a>
+                  <a class="ia-btn" href="sa-admin-sefler-form.html" title="Düzenle"><i class="fa-solid fa-pen"></i></a>
+                  <button class="ia-btn danger" title="Sil"><i class="fa-solid fa-trash"></i></button>
+                </div>
+              </td>
+            </tr>
+
+            <!-- Satır 3 -->
+            <tr data-status="bekliyor">
+              <td>
+                <div class="sef-cell">
+                  <div class="sef-ava" style="background-image:url('https://images.unsplash.com/photo-1607631568010-a87245c0daf8?w=96&q=80&auto=format&fit=crop')"></div>
+                  <div class="sef-id">
+                    <div class="sef-name">Caner Yılmaz</div>
+                    <div class="sef-title">Sous Şef · 5 yıl</div>
+                  </div>
+                </div>
+              </td>
+              <td><span class="spec-tag"><i class="fa-solid fa-fish"></i> Deniz Ürünleri</span></td>
+              <td><span class="badge-count"><i class="fa-solid fa-medal"></i> 2</span></td>
+              <td><span class="pstat wait">Onay Bekliyor</span></td>
+              <td>
+                <div class="row-acts">
+                  <a class="ia-btn" href="sa-admin-sefler-detay.html" title="Detay"><i class="fa-solid fa-eye"></i></a>
+                  <a class="ia-btn" href="sa-admin-sefler-form.html" title="Düzenle"><i class="fa-solid fa-pen"></i></a>
+                  <button class="ia-btn danger" title="Sil"><i class="fa-solid fa-trash"></i></button>
+                </div>
+              </td>
+            </tr>
+
+            <!-- Satır 4 -->
+            <tr data-status="dogrulanmis">
+              <td>
+                <div class="sef-cell">
+                  <div class="sef-ava" style="background-image:url('https://images.unsplash.com/photo-1595273670150-bd0c3c392e46?w=96&q=80&auto=format&fit=crop')"></div>
+                  <div class="sef-id">
+                    <div class="sef-name">Elif Demirci <i class="fa-solid fa-circle-check verified" title="Doğrulanmış"></i></div>
+                    <div class="sef-title">Vegan Şef · 7 yıl</div>
+                  </div>
+                </div>
+              </td>
+              <td><span class="spec-tag"><i class="fa-solid fa-seedling"></i> Vegan / Bitkisel</span></td>
+              <td><span class="badge-count"><i class="fa-solid fa-medal"></i> 6</span></td>
+              <td><span class="pstat ok">Doğrulanmış</span></td>
+              <td>
+                <div class="row-acts">
+                  <a class="ia-btn" href="sa-admin-sefler-detay.html" title="Detay"><i class="fa-solid fa-eye"></i></a>
+                  <a class="ia-btn" href="sa-admin-sefler-form.html" title="Düzenle"><i class="fa-solid fa-pen"></i></a>
+                  <button class="ia-btn danger" title="Sil"><i class="fa-solid fa-trash"></i></button>
+                </div>
+              </td>
+            </tr>
+
+            <!-- Satır 5 -->
+            <tr data-status="bekliyor">
+              <td>
+                <div class="sef-cell">
+                  <div class="sef-ava" style="background-image:url('https://images.unsplash.com/photo-1622021142947-da7dedc7c39a?w=96&q=80&auto=format&fit=crop')"></div>
+                  <div class="sef-id">
+                    <div class="sef-name">Burak Şahin</div>
+                    <div class="sef-title">Komi → Şef adayı · 3 yıl</div>
+                  </div>
+                </div>
+              </td>
+              <td><span class="spec-tag"><i class="fa-solid fa-pizza-slice"></i> İtalyan Mutfağı</span></td>
+              <td><span class="badge-count"><i class="fa-solid fa-medal"></i> 1</span></td>
+              <td><span class="pstat wait">Onay Bekliyor</span></td>
+              <td>
+                <div class="row-acts">
+                  <a class="ia-btn" href="sa-admin-sefler-detay.html" title="Detay"><i class="fa-solid fa-eye"></i></a>
+                  <a class="ia-btn" href="sa-admin-sefler-form.html" title="Düzenle"><i class="fa-solid fa-pen"></i></a>
+                  <button class="ia-btn danger" title="Sil"><i class="fa-solid fa-trash"></i></button>
+                </div>
+              </td>
+            </tr>
+
+            <!-- Satır 6 -->
+            <tr data-status="dogrulanmis">
+              <td>
+                <div class="sef-cell">
+                  <div class="sef-ava" style="background-image:url('https://images.unsplash.com/photo-1581299894007-aaa50297cf16?w=96&q=80&auto=format&fit=crop')"></div>
+                  <div class="sef-id">
+                    <div class="sef-name">Selma Korkmaz <i class="fa-solid fa-circle-check verified" title="Doğrulanmış"></i></div>
+                    <div class="sef-title">Kahvaltı Şefi · 8 yıl</div>
+                  </div>
+                </div>
+              </td>
+              <td><span class="spec-tag"><i class="fa-solid fa-egg"></i> Kahvaltı &amp; Brunch</span></td>
+              <td><span class="badge-count"><i class="fa-solid fa-medal"></i> 5</span></td>
+              <td><span class="pstat ok">Doğrulanmış</span></td>
+              <td>
+                <div class="row-acts">
+                  <a class="ia-btn" href="sa-admin-sefler-detay.html" title="Detay"><i class="fa-solid fa-eye"></i></a>
+                  <a class="ia-btn" href="sa-admin-sefler-form.html" title="Düzenle"><i class="fa-solid fa-pen"></i></a>
+                  <button class="ia-btn danger" title="Sil"><i class="fa-solid fa-trash"></i></button>
+                </div>
+              </td>
+            </tr>
+
+            <!-- Satır 7 -->
+            <tr data-status="pasif">
+              <td>
+                <div class="sef-cell">
+                  <div class="sef-ava" style="background-image:url('https://images.unsplash.com/photo-1566554273541-37a9ca77b91f?w=96&q=80&auto=format&fit=crop')"></div>
+                  <div class="sef-id">
+                    <div class="sef-name">Hakan Aydın</div>
+                    <div class="sef-title">Izgara Şefi · 6 yıl</div>
+                  </div>
+                </div>
+              </td>
+              <td><span class="spec-tag"><i class="fa-solid fa-drumstick-bite"></i> Et &amp; Izgara</span></td>
+              <td><span class="badge-count"><i class="fa-solid fa-medal"></i> 4</span></td>
+              <td><span class="pstat off">Pasif</span></td>
+              <td>
+                <div class="row-acts">
+                  <a class="ia-btn" href="sa-admin-sefler-detay.html" title="Detay"><i class="fa-solid fa-eye"></i></a>
+                  <a class="ia-btn" href="sa-admin-sefler-form.html" title="Düzenle"><i class="fa-solid fa-pen"></i></a>
+                  <button class="ia-btn danger" title="Sil"><i class="fa-solid fa-trash"></i></button>
+                </div>
+              </td>
+            </tr>
+
+          </tbody>
+        </table>
+
+        <!-- BOŞ DURUM (gizli; filtre sonucu boşsa JS açar) -->
+        <div class="pnl-empty" id="sefEmpty" style="display:none">
+          <div class="pe-ico"><i class="fa-solid fa-utensils"></i></div>
+          <h4>Şef bulunamadı</h4>
+          <p>Arama veya filtre kriterlerine uyan şef yok. Filtreyi sıfırlayın ya da yeni şef ekleyin.</p>
+          <a class="pe-tag" href="sa-admin-sefler-form.html"><i class="fa-solid fa-plus"></i> Yeni Şef Ekle</a>
+        </div>
+
+      </div><!-- /pc-body flush -->
+
+      <!-- sayfalama -->
+      <div class="pager" id="sefPager">
+        <div class="pager-info">32 şeften <strong>1–7</strong> gösteriliyor</div>
+        <div class="pager-btns">
+          <button class="pg-btn" disabled><i class="fa-solid fa-chevron-left"></i></button>
+          <button class="pg-btn is-on">1</button>
+          <button class="pg-btn">2</button>
+          <button class="pg-btn">3</button>
+          <button class="pg-btn">4</button>
+          <button class="pg-btn"><i class="fa-solid fa-chevron-right"></i></button>
+        </div>
+      </div>
+
+    </div><!-- /pnl-card -->
+
+  </main>
+
+</div><!-- /sa-app -->
+
+<script src="assets/js/sa-shell.js"></script>
+<script>
+/* sayfa JS — durum chip filtre + arama (kanon: sa-admin-kullanicilar) */
+(function(){
+  var chips=document.querySelectorAll('#sefChips .chip');
+  var rows=document.querySelectorAll('#sefTable tbody tr');
+  var searchInput=document.getElementById('sefSearch');
+  var emptyState=document.getElementById('sefEmpty');
+  var pager=document.getElementById('sefPager');
+  var activeStatus='all';
+
+  function applyFilters(){
+    var q=(searchInput.value||'').toLowerCase().trim();
+    var visible=0;
+    rows.forEach(function(row){
+      var statusMatch=(activeStatus==='all'||row.dataset.status===activeStatus);
+      var name=(row.querySelector('.sef-name')||{}).textContent||'';
+      var spec=(row.querySelector('.spec-tag')||{}).textContent||'';
+      var title=(row.querySelector('.sef-title')||{}).textContent||'';
+      var textMatch=!q||(name.toLowerCase().indexOf(q)>-1)||(spec.toLowerCase().indexOf(q)>-1)||(title.toLowerCase().indexOf(q)>-1);
+      var show=statusMatch&&textMatch;
+      row.style.display=show?'':'none';
+      if(show)visible++;
+    });
+    emptyState.style.display=visible===0?'block':'none';
+    pager.style.display=visible===0?'none':'flex';
+  }
+
+  chips.forEach(function(chip){
+    chip.addEventListener('click',function(){
+      chips.forEach(function(c){c.classList.remove('is-on')});
+      chip.classList.add('is-on');
+      activeStatus=chip.dataset.status;
+      applyFilters();
+    });
+  });
+
+  searchInput.addEventListener('input',applyFilters);
+  /* Sil → saConfirm: trash ikonu sa-ui delege handler'ınca otomatik yakalanır (kind=sil). */
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Slider &amp; Banner — Admin · DadaMutfak</title>
+<link rel="shortcut icon" type="image/x-icon" href="assets/img/favicon.ico" />
+<!-- FontAwesome 6.5.2 (kilitli ikon seti) -->
+<link rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+      integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A=="
+      crossorigin="anonymous" referrerpolicy="no-referrer" />
+<!-- PAYLAŞILAN KABUK (tek kaynak) -->
+<link rel="stylesheet" href="assets/css/sa-shell.css" />
+<style>
+/* =====================================================================
+   SA-ADMIN-SLIDER — SAYFA CSS (kabuk sa-shell.css'te).
+   Slider/Banner = config CRUD. Görsel slot kartları (div+bg, img YOK).
+   Token: SADECE var(--acc)/var(--acc-deep)/rgba(var(--acc-rgb),..).
+   ===================================================================== */
+
+/* ---- Filtre çubuğu ---- */
+.filter-bar{display:flex;align-items:center;gap:12px;padding:14px 22px;border-bottom:1px solid var(--line);flex-wrap:wrap}
+.filter-bar .fb-search{flex:1;min-width:200px;max-width:340px;position:relative}
+.filter-bar .fb-search i{position:absolute;left:12px;top:50%;transform:translateY(-50%);font-size:13px;color:var(--muted);pointer-events:none}
+.filter-bar .fb-search input{width:100%;height:38px;padding:0 12px 0 34px;font-family:inherit;font-size:13px;font-weight:500;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:var(--radius-sm);outline:none;transition:.2s var(--ease)}
+.filter-bar .fb-search input::placeholder{color:var(--muted)}
+.filter-bar .fb-search input:focus{border-color:var(--acc);background:var(--paper);box-shadow:0 0 0 3px rgba(var(--acc-rgb),.11)}
+
+/* ---- Konum chip'leri (KÖŞELİ — radius-sm) ---- */
+.chips{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.chip{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;font-weight:500;color:var(--slate-2);background:var(--paper);border:1px solid var(--line);padding:7px 14px;border-radius:var(--radius-sm);cursor:pointer;transition:.16s var(--ease)}
+.chip:hover{border-color:var(--acc);color:var(--acc-deep)}
+.chip.is-on{border-color:rgba(var(--acc-rgb),.3);color:var(--acc-deep);background:rgba(var(--acc-rgb),.10);font-weight:700}
+.chip .ch-cnt{font-size:10.5px;font-weight:700;background:rgba(var(--acc-rgb),.14);color:var(--acc-deep);min-width:18px;height:17px;display:inline-flex;align-items:center;justify-content:center;padding:0 5px;border-radius:var(--radius-sm)}
+.chip.is-on .ch-cnt{background:rgba(var(--acc-rgb),.22)}
+
+/* ---- Slot kartı grid ---- */
+.slot-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:18px;padding:22px}
+.slot-card{border:1px solid var(--line);border-radius:var(--radius-lg);background:var(--paper);overflow:hidden;box-shadow:var(--sh-sm);transition:.18s var(--ease);display:flex;flex-direction:column}
+.slot-card:hover{box-shadow:var(--sh-md);transform:translateY(-2px)}
+/* görsel = div+background-image cover+center (img DEĞİL) */
+.slot-img{width:100%;aspect-ratio:16/7;background-size:cover;background-position:center;position:relative;background-color:var(--bg)}
+.slot-img-overlay{position:absolute;inset:0;background:linear-gradient(180deg,rgba(33,30,22,0) 40%,rgba(33,30,22,.55) 100%)}
+.slot-order{position:absolute;top:10px;left:10px;width:26px;height:26px;border-radius:var(--radius-sm);background:rgba(33,30,22,.7);color:#fff;font-size:12.5px;font-weight:700;display:grid;place-items:center;z-index:1}
+.slot-status{position:absolute;top:10px;right:10px;z-index:1}
+.slot-cta-preview{position:absolute;left:12px;bottom:12px;z-index:1;color:#fff}
+.slot-cta-preview .scp-title{font-size:14px;font-weight:700;line-height:1.2;text-shadow:0 1px 4px rgba(0,0,0,.4)}
+.slot-cta-preview .scp-btn{display:inline-flex;align-items:center;gap:6px;margin-top:7px;font-size:11px;font-weight:700;padding:4px 10px;border-radius:var(--radius-sm);background:var(--acc);color:#fff}
+
+/* slot gövde */
+.slot-body{padding:14px 16px;flex:1;display:flex;flex-direction:column;gap:10px}
+.slot-name{font-size:14px;font-weight:700;color:var(--slate)}
+.slot-meta{display:flex;flex-direction:column;gap:6px}
+.slot-meta-row{display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--muted)}
+.slot-meta-row i{font-size:11px;width:14px;text-align:center;color:var(--acc)}
+.slot-meta-row b{color:var(--slate-2);font-weight:700}
+.loc-tag{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;font-weight:700;padding:3px 9px;border-radius:var(--radius-sm);background:var(--bg);color:var(--slate-2);border:1px solid var(--line);white-space:nowrap}
+
+/* slot footer aksiyonları */
+.slot-foot{display:flex;align-items:center;gap:8px;padding:12px 16px;border-top:1px solid var(--line)}
+.slot-foot .sf-btn{flex:1;display:inline-flex;align-items:center;justify-content:center;gap:7px;font-family:inherit;font-size:12.5px;font-weight:700;padding:8px 10px;border-radius:var(--radius-sm);border:1px solid var(--line);background:var(--paper);color:var(--slate-2);cursor:pointer;transition:.15s var(--ease);text-decoration:none}
+.slot-foot .sf-btn:hover{border-color:var(--acc);color:var(--acc-deep);background:rgba(var(--acc-rgb),.06)}
+.slot-foot .sf-btn.danger{flex:none;width:38px}
+.slot-foot .sf-btn.danger:hover{border-color:var(--tomato);color:var(--tomato);background:var(--tomato-tint)}
+
+@media(max-width:640px){
+  .filter-bar{padding:12px 16px}
+  .slot-grid{padding:16px;gap:14px}
+}
+</style>
+</head>
+<body data-brand="mutfak" data-sec="admin" data-screen="slider">
+
+<div class="sa-app">
+
+  <!-- §1 İKON-RAIL -->
+  <aside class="sa-rail" id="saRail">
+    <a class="sa-rail-logo" href="sa-giris-v1.html" title="Yönetim Girişi"><img src="assets/img/logo-mark.png" alt="DadaMutfak" /></a>
+    <a class="sa-rail-ico" data-sec="genel" href="sa-shell.html?sec=genel" title="Genel Bakış"><i class="fa-solid fa-gauge-high"></i></a>
+    <span class="sa-rail-div"></span>
+    <a class="sa-rail-ico" data-sec="admin"   href="sa-admin.html"   title="Admin"><i class="fa-solid fa-shield-halved"></i></a>
+    <a class="sa-rail-ico" data-sec="saglik"  href="sa-saglik.html"  title="Sağlık &amp; Diyet"><i class="fa-solid fa-heart-pulse"></i></a>
+    <a class="sa-rail-ico" data-sec="store"   href="sa-store.html"   title="DadaStore"><i class="fa-solid fa-bag-shopping"></i></a>
+    <a class="sa-rail-ico" data-sec="dadafit" href="sa-dadafit.html" title="DadaFit"><i class="fa-solid fa-dumbbell"></i></a>
+    <a class="sa-rail-ico" data-sec="isletme" href="sa-isletme.html" title="İşletmeler"><i class="fa-solid fa-store"></i></a>
+    <a class="sa-rail-ico is-locked" data-sec="akademi" href="#" title="DadaAkademi — Yakında"><i class="fa-solid fa-graduation-cap"></i><i class="fa-solid fa-lock sr-lock"></i></a>
+    <div class="sa-rail-foot"><a class="sa-rail-ico" href="sa-giris-v1.html" title="Siteye Dön"><i class="fa-solid fa-arrow-left"></i></a></div>
+  </aside>
+
+  <!-- §2 BÖLÜM MENÜSÜ (JS render) -->
+  <nav class="sa-menu" id="saMenu"></nav>
+
+  <div class="sa-divider" id="saDivider" role="separator" aria-label="Menüyü daralt/genişlet" title="Sürükle veya tıkla — menüyü daralt/genişlet">
+    <span class="sa-grip"><i class="fa-solid fa-grip-lines-vertical"></i></span>
+  </div>
+
+  <div class="pnl-overlay" id="pnlOverlay"></div>
+
+  <!-- §3 ÜST BAR -->
+  <header class="pnl-top">
+    <button class="pnl-burger" id="pnlBurger" aria-label="Menü"><i class="fa-solid fa-bars"></i></button>
+    <div class="pnl-search">
+      <i class="fa-solid fa-magnifying-glass"></i>
+      <input type="text" placeholder="Banner, slider ara…" />
+    </div>
+    <div class="pnl-top-tools">
+      <button class="pnl-bell" aria-label="Bildirimler"><i class="fa-regular fa-bell"></i><span class="pb-dot"></span></button>
+      <div class="pnl-me">
+        <div class="pm-ava" style="background-image:url('https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=240&q=80&auto=format&fit=crop')"></div>
+        <div class="pm-id">
+          <div class="pm-name" id="pmName">Süper Admin</div>
+          <div class="pm-role" id="pmRole">Tüm yetki</div>
+        </div>
+        <i class="fa-solid fa-chevron-down"></i>
+      </div>
+    </div>
+  </header>
+
+  <!-- §4 İÇERİK — Slider / Banner (config CRUD) -->
+  <main class="pnl-main" id="saMain">
+
+    <!-- sayfa başlığı -->
+    <div class="pnl-page-head">
+      <div>
+        <h1>Slider &amp; Banner</h1>
+        <div class="ph-sub">Ana sayfa ve modül başı görsel slotları — sıra, görsel ve CTA yönetimi · <strong>6</strong> slot</div>
+      </div>
+      <div class="ph-actions">
+        <a class="btn btn-acc btn-sm" href="sa-admin-slider-form.html"><i class="fa-solid fa-plus"></i> Yeni Slot</a>
+      </div>
+    </div>
+
+    <!-- liste kartı -->
+    <div class="pnl-card" style="overflow:hidden">
+
+      <!-- filtre çubuğu -->
+      <div class="filter-bar">
+        <div class="fb-search">
+          <i class="fa-solid fa-magnifying-glass"></i>
+          <input type="text" placeholder="Başlık veya konum ara…" id="slotSearch" />
+        </div>
+        <div class="chips" id="slotChips">
+          <button class="chip is-on" data-loc="all">Tümü <span class="ch-cnt">6</span></button>
+          <button class="chip" data-loc="anasayfa">Ana Sayfa <span class="ch-cnt">3</span></button>
+          <button class="chip" data-loc="store">DadaStore <span class="ch-cnt">2</span></button>
+          <button class="chip" data-loc="pasif">Pasif <span class="ch-cnt">1</span></button>
+        </div>
+      </div>
+
+      <!-- slot kartları grid -->
+      <div class="slot-grid" id="slotGrid">
+
+        <!-- Slot 1 -->
+        <div class="slot-card" data-loc="anasayfa">
+          <div class="slot-img" style="background-image:url('https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=600&q=80&auto=format&fit=crop')">
+            <div class="slot-img-overlay"></div>
+            <span class="slot-order">1</span>
+            <span class="slot-status"><span class="pstat ok">Yayında</span></span>
+            <div class="slot-cta-preview">
+              <div class="scp-title">Haftanın Lezzetleri</div>
+              <span class="scp-btn">Keşfet</span>
+            </div>
+          </div>
+          <div class="slot-body">
+            <div class="slot-name">Haftanın Lezzetleri</div>
+            <div class="slot-meta">
+              <div class="slot-meta-row"><i class="fa-solid fa-location-dot"></i> <span class="loc-tag">Ana Sayfa · Hero</span></div>
+              <div class="slot-meta-row"><i class="fa-solid fa-link"></i> Hedef: <b>/tarifler/haftanin</b></div>
+              <div class="slot-meta-row"><i class="fa-regular fa-calendar"></i> <b>1 Haz</b> – <b>30 Haz 2026</b></div>
+            </div>
+          </div>
+          <div class="slot-foot">
+            <a class="sf-btn" href="sa-admin-slider-form.html"><i class="fa-solid fa-pen"></i> Düzenle</a>
+            <button class="sf-btn danger" title="Sil"><i class="fa-solid fa-trash"></i></button>
+          </div>
+        </div>
+
+        <!-- Slot 2 -->
+        <div class="slot-card" data-loc="anasayfa">
+          <div class="slot-img" style="background-image:url('https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=600&q=80&auto=format&fit=crop')">
+            <div class="slot-img-overlay"></div>
+            <span class="slot-order">2</span>
+            <span class="slot-status"><span class="pstat ok">Yayında</span></span>
+            <div class="slot-cta-preview">
+              <div class="scp-title">Sağlıklı Tarifler</div>
+              <span class="scp-btn">İncele</span>
+            </div>
+          </div>
+          <div class="slot-body">
+            <div class="slot-name">Sağlıklı Tarifler Kampanyası</div>
+            <div class="slot-meta">
+              <div class="slot-meta-row"><i class="fa-solid fa-location-dot"></i> <span class="loc-tag">Ana Sayfa · Hero</span></div>
+              <div class="slot-meta-row"><i class="fa-solid fa-link"></i> Hedef: <b>/saglik/tarifler</b></div>
+              <div class="slot-meta-row"><i class="fa-regular fa-calendar"></i> <b>10 Haz</b> – <b>10 Tem 2026</b></div>
+            </div>
+          </div>
+          <div class="slot-foot">
+            <a class="sf-btn" href="sa-admin-slider-form.html"><i class="fa-solid fa-pen"></i> Düzenle</a>
+            <button class="sf-btn danger" title="Sil"><i class="fa-solid fa-trash"></i></button>
+          </div>
+        </div>
+
+        <!-- Slot 3 -->
+        <div class="slot-card" data-loc="anasayfa">
+          <div class="slot-img" style="background-image:url('https://images.unsplash.com/photo-1467003909585-2f8a72700288?w=600&q=80&auto=format&fit=crop')">
+            <div class="slot-img-overlay"></div>
+            <span class="slot-order">3</span>
+            <span class="slot-status"><span class="pstat wait">Zamanlanmış</span></span>
+            <div class="slot-cta-preview">
+              <div class="scp-title">Yaz Menüsü</div>
+              <span class="scp-btn">Hazır Ol</span>
+            </div>
+          </div>
+          <div class="slot-body">
+            <div class="slot-name">Yaz Menüsü Lansmanı</div>
+            <div class="slot-meta">
+              <div class="slot-meta-row"><i class="fa-solid fa-location-dot"></i> <span class="loc-tag">Ana Sayfa · Hero</span></div>
+              <div class="slot-meta-row"><i class="fa-solid fa-link"></i> Hedef: <b>/kampanya/yaz</b></div>
+              <div class="slot-meta-row"><i class="fa-regular fa-calendar"></i> <b>1 Tem</b> – <b>31 Ağu 2026</b></div>
+            </div>
+          </div>
+          <div class="slot-foot">
+            <a class="sf-btn" href="sa-admin-slider-form.html"><i class="fa-solid fa-pen"></i> Düzenle</a>
+            <button class="sf-btn danger" title="Sil"><i class="fa-solid fa-trash"></i></button>
+          </div>
+        </div>
+
+        <!-- Slot 4 -->
+        <div class="slot-card" data-loc="store">
+          <div class="slot-img" style="background-image:url('https://images.unsplash.com/photo-1556909211-36987daf7b4d?w=600&q=80&auto=format&fit=crop')">
+            <div class="slot-img-overlay"></div>
+            <span class="slot-order">1</span>
+            <span class="slot-status"><span class="pstat ok">Yayında</span></span>
+            <div class="slot-cta-preview">
+              <div class="scp-title">Mutfak Gereçleri</div>
+              <span class="scp-btn">Alışverişe Başla</span>
+            </div>
+          </div>
+          <div class="slot-body">
+            <div class="slot-name">DadaStore Açılış Banner'ı</div>
+            <div class="slot-meta">
+              <div class="slot-meta-row"><i class="fa-solid fa-location-dot"></i> <span class="loc-tag">DadaStore · Üst</span></div>
+              <div class="slot-meta-row"><i class="fa-solid fa-link"></i> Hedef: <b>/store/gerecler</b></div>
+              <div class="slot-meta-row"><i class="fa-regular fa-calendar"></i> <b>Süresiz</b></div>
+            </div>
+          </div>
+          <div class="slot-foot">
+            <a class="sf-btn" href="sa-admin-slider-form.html"><i class="fa-solid fa-pen"></i> Düzenle</a>
+            <button class="sf-btn danger" title="Sil"><i class="fa-solid fa-trash"></i></button>
+          </div>
+        </div>
+
+        <!-- Slot 5 -->
+        <div class="slot-card" data-loc="store">
+          <div class="slot-img" style="background-image:url('https://images.unsplash.com/photo-1466637574441-749b8f19452f?w=600&q=80&auto=format&fit=crop')">
+            <div class="slot-img-overlay"></div>
+            <span class="slot-order">2</span>
+            <span class="slot-status"><span class="pstat ok">Yayında</span></span>
+            <div class="slot-cta-preview">
+              <div class="scp-title">İndirim Haftası</div>
+              <span class="scp-btn">Fırsatları Gör</span>
+            </div>
+          </div>
+          <div class="slot-body">
+            <div class="slot-name">İndirim Haftası Banner'ı</div>
+            <div class="slot-meta">
+              <div class="slot-meta-row"><i class="fa-solid fa-location-dot"></i> <span class="loc-tag">DadaStore · Üst</span></div>
+              <div class="slot-meta-row"><i class="fa-solid fa-link"></i> Hedef: <b>/store/indirim</b></div>
+              <div class="slot-meta-row"><i class="fa-regular fa-calendar"></i> <b>18 Haz</b> – <b>25 Haz 2026</b></div>
+            </div>
+          </div>
+          <div class="slot-foot">
+            <a class="sf-btn" href="sa-admin-slider-form.html"><i class="fa-solid fa-pen"></i> Düzenle</a>
+            <button class="sf-btn danger" title="Sil"><i class="fa-solid fa-trash"></i></button>
+          </div>
+        </div>
+
+        <!-- Slot 6 -->
+        <div class="slot-card" data-loc="pasif">
+          <div class="slot-img" style="background-image:url('https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=600&q=80&auto=format&fit=crop')">
+            <div class="slot-img-overlay"></div>
+            <span class="slot-order">—</span>
+            <span class="slot-status"><span class="pstat off">Pasif</span></span>
+            <div class="slot-cta-preview">
+              <div class="scp-title">Eski Bahar Menüsü</div>
+              <span class="scp-btn">Detay</span>
+            </div>
+          </div>
+          <div class="slot-body">
+            <div class="slot-name">Bahar Menüsü (arşiv)</div>
+            <div class="slot-meta">
+              <div class="slot-meta-row"><i class="fa-solid fa-location-dot"></i> <span class="loc-tag">Ana Sayfa · Hero</span></div>
+              <div class="slot-meta-row"><i class="fa-solid fa-link"></i> Hedef: <b>/kampanya/bahar</b></div>
+              <div class="slot-meta-row"><i class="fa-regular fa-calendar"></i> <b>1 Mar</b> – <b>31 May 2026</b></div>
+            </div>
+          </div>
+          <div class="slot-foot">
+            <a class="sf-btn" href="sa-admin-slider-form.html"><i class="fa-solid fa-pen"></i> Düzenle</a>
+            <button class="sf-btn danger" title="Sil"><i class="fa-solid fa-trash"></i></button>
+          </div>
+        </div>
+
+      </div><!-- /slot-grid -->
+
+      <!-- BOŞ DURUM (gizli; filtre sonucu boşsa JS açar) -->
+      <div class="pnl-empty" id="slotEmpty" style="display:none">
+        <div class="pe-ico"><i class="fa-solid fa-images"></i></div>
+        <h4>Slot bulunamadı</h4>
+        <p>Arama veya filtre kriterlerine uyan slot yok. Filtreyi sıfırlayın ya da yeni slot ekleyin.</p>
+        <a class="pe-tag" href="sa-admin-slider-form.html"><i class="fa-solid fa-plus"></i> Yeni Slot Ekle</a>
+      </div>
+
+    </div><!-- /pnl-card -->
+
+  </main>
+
+</div><!-- /sa-app -->
+
+<script src="assets/js/sa-shell.js"></script>
+<script>
+/* sayfa JS — konum chip filtre + arama (kart grid) */
+(function(){
+  var chips=document.querySelectorAll('#slotChips .chip');
+  var cards=document.querySelectorAll('#slotGrid .slot-card');
+  var searchInput=document.getElementById('slotSearch');
+  var emptyState=document.getElementById('slotEmpty');
+  var grid=document.getElementById('slotGrid');
+  var activeLoc='all';
+
+  /* TR-duyarlı normalize: "İndirim"→"indirim" (JS toLowerCase TR İ'yi i+nokta yapar). */
+  function norm(s){return (s||'').replace(/İ/g,'i').replace(/I/g,'ı').toLowerCase();}
+
+  function applyFilters(){
+    var q=norm(searchInput.value).trim();
+    var visible=0;
+    cards.forEach(function(card){
+      var locMatch=(activeLoc==='all'||card.dataset.loc===activeLoc);
+      var name=(card.querySelector('.slot-name')||{}).textContent||'';
+      var loc=(card.querySelector('.loc-tag')||{}).textContent||'';
+      var textMatch=!q||(norm(name).indexOf(q)>-1)||(norm(loc).indexOf(q)>-1);
+      var show=locMatch&&textMatch;
+      card.style.display=show?'':'none';
+      if(show)visible++;
+    });
+    emptyState.style.display=visible===0?'block':'none';
+    grid.style.display=visible===0?'none':'grid';
+  }
+
+  chips.forEach(function(chip){
+    chip.addEventListener('click',function(){
+      chips.forEach(function(c){c.classList.remove('is-on')});
+      chip.classList.add('is-on');
+      activeLoc=chip.dataset.loc;
+      applyFilters();
+    });
+  });
+
+  searchInput.addEventListener('input',applyFilters);
+  /* Sil → saConfirm: trash ikonu sa-ui delege handler'ınca yakalanır (kind=sil). */
+})();
+</script>
+</body>
+</html>

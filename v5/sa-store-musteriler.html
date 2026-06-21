@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Müşteriler — DadaStore · Süper Admin · DadaMutfak</title>
+<link rel="shortcut icon" type="image/x-icon" href="assets/img/favicon.ico" />
+<!-- FontAwesome 6.5.2 (kilitli ikon seti) -->
+<link rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+      integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A=="
+      crossorigin="anonymous" referrerpolicy="no-referrer" />
+<!-- PAYLAŞILAN KABUK (tek kaynak) -->
+<link rel="stylesheet" href="assets/css/sa-shell.css" />
+<style>
+/* =====================================================================
+   SA-STORE-MUSTERILER — SAYFA CSS (ekrana özel; kabuk CSS'i sa-shell.css'te).
+   Gözetim listesi: müşteri izleme — Yeni/Düzenle YOK, satır aksiyonu Detay.
+   Token: SADECE var(--acc)/var(--acc-deep)/rgba(var(--acc-rgb),..).
+   ===================================================================== */
+
+/* ---- filtre çubuğu ---- */
+.filter-bar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:16px}
+.filter-search{position:relative;flex:1;min-width:220px;max-width:340px}
+.filter-search i{position:absolute;left:12px;top:50%;transform:translateY(-50%);font-size:13px;color:var(--muted);pointer-events:none}
+.filter-search input{
+  width:100%;height:38px;padding:0 12px 0 36px;
+  font-family:inherit;font-size:13px;font-weight:500;color:var(--ink);
+  background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-sm);
+  outline:none;transition:.2s var(--ease);
+}
+.filter-search input::placeholder{color:var(--muted)}
+.filter-search input:focus{border-color:var(--acc);box-shadow:0 0 0 3px rgba(var(--acc-rgb),.12)}
+
+.chips{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.chip{
+  font-size:12.5px;font-weight:500;color:var(--slate-2);background:var(--paper);
+  border:1px solid var(--line);padding:7px 14px;border-radius:var(--radius-sm);
+  cursor:pointer;transition:.18s var(--ease);white-space:nowrap;
+}
+.chip:hover{border-color:var(--acc);color:var(--acc-deep)}
+.chip.is-on{border-color:var(--acc);color:var(--acc-deep);background:rgba(var(--acc-rgb),.08);font-weight:700}
+
+/* ---- müşteriler tablosu ---- */
+.ptable{width:100%;border-collapse:collapse}
+.ptable thead th{
+  font-size:11.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;
+  color:var(--muted);padding:13px 16px;text-align:left;
+  border-bottom:1px solid var(--line);white-space:nowrap;
+}
+.ptable thead th:first-child{padding-left:22px}
+.ptable thead th:last-child{padding-right:22px;text-align:right}
+
+.ptable tbody tr{border-bottom:1px solid var(--line);transition:background .15s}
+.ptable tbody tr:last-child{border-bottom:none}
+.ptable tbody tr:hover{background:var(--bg)}
+
+.ptable tbody td{padding:14px 16px;font-size:13.5px;color:var(--slate);vertical-align:middle}
+.ptable tbody td:first-child{padding-left:22px}
+.ptable tbody td:last-child{padding-right:22px;text-align:right}
+
+/* müşteri hücresi: avatar + ad + e-posta */
+.cust-cell{display:flex;align-items:center;gap:12px}
+.cust-ava{
+  width:42px;height:42px;flex:none;border-radius:var(--radius-circle);
+  background-size:cover;background-position:center;background-color:var(--cream);
+  border:1px solid var(--line);
+}
+.cust-info{min-width:0;line-height:1.3}
+.cust-name{font-size:13.5px;font-weight:700;color:var(--slate);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:200px}
+.cust-mail{font-size:11.5px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:200px}
+
+.td-num{font-size:13.5px;font-weight:700;color:var(--slate);white-space:nowrap;font-variant-numeric:tabular-nums}
+.td-date{font-size:13px;color:var(--slate-2);white-space:nowrap}
+
+/* aksiyon ikon butonu (gözetim: SADECE Detay) */
+.row-actions{display:inline-flex;align-items:center;gap:6px;justify-content:flex-end}
+.act-btn{
+  width:32px;height:32px;border:1px solid var(--line);border-radius:var(--radius-sm);
+  background:var(--paper);color:var(--muted);font-size:13px;
+  display:inline-flex;align-items:center;justify-content:center;
+  cursor:pointer;transition:.18s var(--ease);
+}
+.act-btn:hover{border-color:var(--acc);color:var(--acc-deep);background:rgba(var(--acc-rgb),.06)}
+
+/* tablo footer: sayfalama bilgisi */
+.table-foot{display:flex;align-items:center;justify-content:space-between;padding:14px 22px;border-top:1px solid var(--line);font-size:12.5px;color:var(--muted);gap:12px;flex-wrap:wrap}
+.table-foot-cnt b{color:var(--slate)}
+.tpager{display:flex;align-items:center;gap:6px}
+.tpager button{
+  width:30px;height:30px;border:1px solid var(--line);border-radius:var(--radius-sm);
+  background:var(--paper);color:var(--slate-2);font-size:12.5px;
+  display:inline-flex;align-items:center;justify-content:center;
+  cursor:pointer;transition:.15s var(--ease);font-family:inherit;font-weight:700;
+}
+.tpager button:hover{border-color:var(--acc);color:var(--acc-deep)}
+.tpager button.is-active{background:var(--acc);color:#fff;border-color:var(--acc)}
+.tpager button:disabled{opacity:.4;cursor:not-allowed}
+
+/* boş durum (filtre sonuç yok) */
+.pnl-empty{display:none;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:64px 22px;gap:14px}
+.pnl-empty i{font-size:34px;color:var(--line)}
+.pnl-empty .pe-tt{font-size:15px;font-weight:700;color:var(--slate)}
+.pnl-empty .pe-sub{font-size:13px;color:var(--muted);max-width:360px;line-height:1.6}
+
+@media(max-width:980px){
+  .ptable thead th:nth-child(2),.ptable tbody td:nth-child(2),
+  .ptable thead th:nth-child(5),.ptable tbody td:nth-child(5){display:none}
+  .cust-name,.cust-mail{max-width:150px}
+}
+@media(max-width:640px){
+  .ptable thead th:nth-child(3),.ptable tbody td:nth-child(3){display:none}
+}
+</style>
+</head>
+<body data-brand="mutfak" data-sec="store" data-screen="musteriler">
+
+<div class="sa-app">
+
+  <!-- §1 İKON-RAIL -->
+  <aside class="sa-rail" id="saRail">
+    <a class="sa-rail-logo" href="sa-giris-v1.html" title="Yönetim Girişi"><img src="assets/img/logo-mark.png" alt="DadaMutfak" /></a>
+    <a class="sa-rail-ico" data-sec="genel" href="sa-shell.html?sec=genel" title="Genel Bakış"><i class="fa-solid fa-gauge-high"></i></a>
+    <span class="sa-rail-div"></span>
+    <a class="sa-rail-ico" data-sec="admin"   href="sa-admin.html"   title="Admin"><i class="fa-solid fa-shield-halved"></i></a>
+    <a class="sa-rail-ico" data-sec="saglik"  href="sa-saglik.html"  title="Sağlık &amp; Diyet"><i class="fa-solid fa-heart-pulse"></i></a>
+    <a class="sa-rail-ico" data-sec="store"   href="sa-store.html"   title="DadaStore"><i class="fa-solid fa-bag-shopping"></i></a>
+    <a class="sa-rail-ico" data-sec="dadafit" href="sa-dadafit.html" title="DadaFit"><i class="fa-solid fa-dumbbell"></i></a>
+    <a class="sa-rail-ico" data-sec="isletme" href="sa-isletme.html" title="İşletmeler"><i class="fa-solid fa-store"></i></a>
+    <a class="sa-rail-ico is-locked" data-sec="akademi" href="#" title="DadaAkademi — Yakında"><i class="fa-solid fa-graduation-cap"></i><i class="fa-solid fa-lock sr-lock"></i></a>
+    <div class="sa-rail-foot"><a class="sa-rail-ico" href="sa-giris-v1.html" title="Siteye Dön"><i class="fa-solid fa-arrow-left"></i></a></div>
+  </aside>
+
+  <!-- §2 BÖLÜM MENÜSÜ (JS render) -->
+  <nav class="sa-menu" id="saMenu"></nav>
+
+  <!-- divider grip -->
+  <div class="sa-divider" id="saDivider" role="separator" aria-label="Menüyü daralt/genişlet" title="Sürükle veya tıkla — menüyü daralt/genişlet">
+    <span class="sa-grip"><i class="fa-solid fa-grip-lines-vertical"></i></span>
+  </div>
+
+  <div class="pnl-overlay" id="pnlOverlay"></div>
+
+  <!-- §3 ÜST BAR -->
+  <header class="pnl-top">
+    <button class="pnl-burger" id="pnlBurger" aria-label="Menü"><i class="fa-solid fa-bars"></i></button>
+    <div class="pnl-search">
+      <i class="fa-solid fa-magnifying-glass"></i>
+      <input type="text" placeholder="Ürün, sipariş ara…" />
+    </div>
+    <div class="pnl-top-tools">
+      <button class="pnl-bell" aria-label="Bildirimler"><i class="fa-regular fa-bell"></i><span class="pb-dot"></span></button>
+      <div class="pnl-me">
+        <div class="pm-ava"><i class="fa-solid fa-user"></i></div>
+        <div class="pm-id">
+          <div class="pm-name" id="pmName">Süper Admin</div>
+          <div class="pm-role" id="pmRole">Tüm yetki</div>
+        </div>
+        <i class="fa-solid fa-chevron-down"></i>
+      </div>
+    </div>
+  </header>
+
+  <!-- §4 İÇERİK — Müşteriler listesi (GÖZETİM: Yeni/Düzenle YOK) -->
+  <main class="pnl-main" id="saMain">
+
+    <!-- sayfa başlığı + aksiyon (gözetim: yalnızca Dışa Aktar) -->
+    <div class="pnl-page-head">
+      <div>
+        <h1>Müşteriler</h1>
+        <div class="ph-sub">DadaStore müşteri tabanı — gözetim · 1.840 kayıtlı müşteri</div>
+      </div>
+      <div class="ph-actions">
+        <a class="btn btn-ghost btn-sm" href="#"><i class="fa-solid fa-arrow-down-to-line"></i> Dışa Aktar</a>
+      </div>
+    </div>
+
+    <!-- filtre çubuğu -->
+    <div class="filter-bar">
+      <div class="filter-search">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <input type="text" placeholder="Müşteri adı, e-posta…" id="custSearch" />
+      </div>
+      <div class="chips">
+        <button class="chip is-on" data-filter="tumu" onclick="filterCust(this,'tumu')">Tümü</button>
+        <button class="chip" data-filter="aktif" onclick="filterCust(this,'aktif')">Aktif</button>
+        <button class="chip" data-filter="yeni" onclick="filterCust(this,'yeni')">Yeni</button>
+        <button class="chip" data-filter="vip" onclick="filterCust(this,'vip')">VIP</button>
+        <button class="chip" data-filter="pasif" onclick="filterCust(this,'pasif')">Pasif</button>
+      </div>
+    </div>
+
+    <!-- müşteriler tablosu -->
+    <div class="pnl-card" style="overflow:hidden">
+      <div class="pc-body flush">
+        <table class="ptable" id="custTable">
+          <thead>
+            <tr>
+              <th>Müşteri</th>
+              <th>Kayıt</th>
+              <th>Sipariş</th>
+              <th>Toplam Harcama</th>
+              <th>Son Sipariş</th>
+              <th>Durum</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+
+            <!-- Müşteri 1 -->
+            <tr data-seg="vip">
+              <td>
+                <div class="cust-cell">
+                  <div class="cust-ava" style="background-image:url('https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=96&q=80&auto=format&fit=crop')"></div>
+                  <div class="cust-info">
+                    <div class="cust-name">Selin Korkmaz</div>
+                    <div class="cust-mail">selin.korkmaz@ornek.com</div>
+                  </div>
+                </div>
+              </td>
+              <td class="td-date">11 Mar 2026</td>
+              <td class="td-num">7</td>
+              <td class="td-num">₺4.290</td>
+              <td class="td-date">21 Haz 2026</td>
+              <td><span class="pstat ok">Aktif</span></td>
+              <td>
+                <div class="row-actions">
+                  <a class="act-btn" href="sa-store-musteriler-detay.html" title="Detay"><i class="fa-solid fa-eye"></i></a>
+                </div>
+              </td>
+            </tr>
+
+            <!-- Müşteri 2 -->
+            <tr data-seg="aktif">
+              <td>
+                <div class="cust-cell">
+                  <div class="cust-ava" style="background-image:url('https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=96&q=80&auto=format&fit=crop')"></div>
+                  <div class="cust-info">
+                    <div class="cust-name">Emre Yıldırım</div>
+                    <div class="cust-mail">emre.yildirim@ornek.com</div>
+                  </div>
+                </div>
+              </td>
+              <td class="td-date">28 Nis 2026</td>
+              <td class="td-num">3</td>
+              <td class="td-num">₺1.120</td>
+              <td class="td-date">21 Haz 2026</td>
+              <td><span class="pstat ok">Aktif</span></td>
+              <td>
+                <div class="row-actions">
+                  <a class="act-btn" href="sa-store-musteriler-detay.html" title="Detay"><i class="fa-solid fa-eye"></i></a>
+                </div>
+              </td>
+            </tr>
+
+            <!-- Müşteri 3 -->
+            <tr data-seg="vip">
+              <td>
+                <div class="cust-cell">
+                  <div class="cust-ava" style="background-image:url('https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=96&q=80&auto=format&fit=crop')"></div>
+                  <div class="cust-info">
+                    <div class="cust-name">Ayşe Tunç</div>
+                    <div class="cust-mail">ayse.tunc@ornek.com</div>
+                  </div>
+                </div>
+              </td>
+              <td class="td-date">02 Şub 2026</td>
+              <td class="td-num">12</td>
+              <td class="td-num">₺6.840</td>
+              <td class="td-date">20 Haz 2026</td>
+              <td><span class="pstat ok">Aktif</span></td>
+              <td>
+                <div class="row-actions">
+                  <a class="act-btn" href="sa-store-musteriler-detay.html" title="Detay"><i class="fa-solid fa-eye"></i></a>
+                </div>
+              </td>
+            </tr>
+
+            <!-- Müşteri 4 -->
+            <tr data-seg="aktif">
+              <td>
+                <div class="cust-cell">
+                  <div class="cust-ava" style="background-image:url('https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=96&q=80&auto=format&fit=crop')"></div>
+                  <div class="cust-info">
+                    <div class="cust-name">Murat Aslan</div>
+                    <div class="cust-mail">murat.aslan@ornek.com</div>
+                  </div>
+                </div>
+              </td>
+              <td class="td-date">15 May 2026</td>
+              <td class="td-num">4</td>
+              <td class="td-num">₺1.560</td>
+              <td class="td-date">20 Haz 2026</td>
+              <td><span class="pstat ok">Aktif</span></td>
+              <td>
+                <div class="row-actions">
+                  <a class="act-btn" href="sa-store-musteriler-detay.html" title="Detay"><i class="fa-solid fa-eye"></i></a>
+                </div>
+              </td>
+            </tr>
+
+            <!-- Müşteri 5 -->
+            <tr data-seg="yeni">
+              <td>
+                <div class="cust-cell">
+                  <div class="cust-ava" style="background-image:url('https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=96&q=80&auto=format&fit=crop')"></div>
+                  <div class="cust-info">
+                    <div class="cust-name">Deniz Kaya</div>
+                    <div class="cust-mail">deniz.kaya@ornek.com</div>
+                  </div>
+                </div>
+              </td>
+              <td class="td-date">19 Haz 2026</td>
+              <td class="td-num">1</td>
+              <td class="td-num">₺892</td>
+              <td class="td-date">19 Haz 2026</td>
+              <td><span class="pstat ok">Aktif</span></td>
+              <td>
+                <div class="row-actions">
+                  <a class="act-btn" href="sa-store-musteriler-detay.html" title="Detay"><i class="fa-solid fa-eye"></i></a>
+                </div>
+              </td>
+            </tr>
+
+            <!-- Müşteri 6 -->
+            <tr data-seg="pasif">
+              <td>
+                <div class="cust-cell">
+                  <div class="cust-ava" style="background-image:url('https://images.unsplash.com/photo-1531123897727-8f129e1688ce?w=96&q=80&auto=format&fit=crop')"></div>
+                  <div class="cust-info">
+                    <div class="cust-name">Kerem Demir</div>
+                    <div class="cust-mail">kerem.demir@ornek.com</div>
+                  </div>
+                </div>
+              </td>
+              <td class="td-date">07 Oca 2026</td>
+              <td class="td-num">2</td>
+              <td class="td-num">₺378</td>
+              <td class="td-date">14 Mar 2026</td>
+              <td><span class="pstat off">Pasif</span></td>
+              <td>
+                <div class="row-actions">
+                  <a class="act-btn" href="sa-store-musteriler-detay.html" title="Detay"><i class="fa-solid fa-eye"></i></a>
+                </div>
+              </td>
+            </tr>
+
+            <!-- Müşteri 7 -->
+            <tr data-seg="aktif">
+              <td>
+                <div class="cust-cell">
+                  <div class="cust-ava" style="background-image:url('https://images.unsplash.com/photo-1502685104226-ee32379fefbe?w=96&q=80&auto=format&fit=crop')"></div>
+                  <div class="cust-info">
+                    <div class="cust-name">Zeynep Aksoy</div>
+                    <div class="cust-mail">zeynep.aksoy@ornek.com</div>
+                  </div>
+                </div>
+              </td>
+              <td class="td-date">22 Şub 2026</td>
+              <td class="td-num">5</td>
+              <td class="td-num">₺2.140</td>
+              <td class="td-date">18 Haz 2026</td>
+              <td><span class="pstat ok">Aktif</span></td>
+              <td>
+                <div class="row-actions">
+                  <a class="act-btn" href="sa-store-musteriler-detay.html" title="Detay"><i class="fa-solid fa-eye"></i></a>
+                </div>
+              </td>
+            </tr>
+
+            <!-- Müşteri 8 -->
+            <tr data-seg="yeni">
+              <td>
+                <div class="cust-cell">
+                  <div class="cust-ava" style="background-image:url('https://images.unsplash.com/photo-1463453091185-61582044d556?w=96&q=80&auto=format&fit=crop')"></div>
+                  <div class="cust-info">
+                    <div class="cust-name">Burak Şahin</div>
+                    <div class="cust-mail">burak.sahin@ornek.com</div>
+                  </div>
+                </div>
+              </td>
+              <td class="td-date">17 Haz 2026</td>
+              <td class="td-num">1</td>
+              <td class="td-num">₺1.560</td>
+              <td class="td-date">18 Haz 2026</td>
+              <td><span class="pstat ok">Aktif</span></td>
+              <td>
+                <div class="row-actions">
+                  <a class="act-btn" href="sa-store-musteriler-detay.html" title="Detay"><i class="fa-solid fa-eye"></i></a>
+                </div>
+              </td>
+            </tr>
+
+          </tbody>
+        </table>
+
+        <!-- boş durum (filtre/arama sonuç yok) -->
+        <div class="pnl-empty" id="custEmpty">
+          <i class="fa-solid fa-user-group"></i>
+          <div class="pe-tt">Eşleşen müşteri yok</div>
+          <div class="pe-sub">Arama teriminizi veya segment filtresini değiştirip yeniden deneyin.</div>
+        </div>
+      </div>
+
+      <!-- tablo footer -->
+      <div class="table-foot" id="custFoot">
+        <div class="table-foot-cnt"><b>1.840</b> müşteriden 1–8 gösteriliyor</div>
+        <div class="tpager">
+          <button disabled aria-label="Önceki"><i class="fa-solid fa-chevron-left"></i></button>
+          <button class="is-active">1</button>
+          <button>2</button>
+          <button>3</button>
+          <button>4</button>
+          <button aria-label="Sonraki"><i class="fa-solid fa-chevron-right"></i></button>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+</div>
+
+<script src="assets/js/sa-shell.js"></script>
+
+<!-- Filtre / arama JS (sayfa-özel) -->
+<script>
+var custCurFilter = 'tumu';
+
+function custApply(){
+  var q = (document.getElementById('custSearch').value || '').toLowerCase().trim();
+  var rows = document.querySelectorAll('#custTable tbody tr');
+  var shown = 0;
+  rows.forEach(function(row){
+    var matchFilter = (custCurFilter === 'tumu') || (row.dataset.seg === custCurFilter);
+    var matchSearch = (!q || row.textContent.toLowerCase().indexOf(q) !== -1);
+    var show = matchFilter && matchSearch;
+    row.style.display = show ? '' : 'none';
+    if(show) shown++;
+  });
+  var empty = document.getElementById('custEmpty');
+  var foot  = document.getElementById('custFoot');
+  if(empty) empty.style.display = (shown === 0) ? 'flex' : 'none';
+  if(foot)  foot.style.display  = (shown === 0) ? 'none' : 'flex';
+}
+
+function filterCust(btn, filter){
+  document.querySelectorAll('.chip').forEach(function(c){ c.classList.remove('is-on'); });
+  btn.classList.add('is-on');
+  custCurFilter = filter;
+  custApply();
+}
+
+var custSrch = document.getElementById('custSearch');
+if(custSrch) custSrch.addEventListener('input', custApply);
+</script>
+</body>
+</html>

@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Kargo &amp; Ödeme — DadaStore · Süper Admin · DadaMutfak</title>
+<link rel="shortcut icon" type="image/x-icon" href="assets/img/favicon.ico" />
+<!-- FontAwesome 6.5.2 (kilitli ikon seti) -->
+<link rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+      integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A=="
+      crossorigin="anonymous" referrerpolicy="no-referrer" />
+<!-- PAYLAŞILAN KABUK (tek kaynak) -->
+<link rel="stylesheet" href="assets/css/sa-shell.css" />
+<style>
+/* =====================================================================
+   SA-STORE-KARGO — SAYFA CSS (ekrana özel; kabuk CSS'i sa-shell.css'te).
+   Config CRUD: kargo bölgeleri + ödeme yöntemleri. Yeni/Düzenle/Sil var.
+   Token: SADECE var(--acc)/var(--acc-deep)/rgba(var(--acc-rgb),..).
+   ===================================================================== */
+
+/* sekme şeridi */
+.tabbar{display:flex;gap:6px;background:var(--bg);border:1px solid var(--line);border-radius:var(--radius-md);padding:4px;margin-bottom:18px;width:fit-content;max-width:100%;overflow-x:auto}
+.tab{
+  font-size:13px;font-weight:600;color:var(--slate-2);background:transparent;border:none;
+  padding:8px 16px;border-radius:var(--radius-sm);cursor:pointer;transition:.18s var(--ease);
+  white-space:nowrap;display:inline-flex;align-items:center;gap:8px;font-family:inherit;
+}
+.tab:hover{color:var(--acc-deep)}
+.tab.is-on{background:var(--paper);color:var(--acc-deep);font-weight:700;box-shadow:var(--sh-sm)}
+
+.tab-panel{display:none}
+.tab-panel.is-on{display:block}
+
+/* ---- tablo ---- */
+.ptable{width:100%;border-collapse:collapse}
+.ptable thead th{
+  font-size:11.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;
+  color:var(--muted);padding:13px 16px;text-align:left;
+  border-bottom:1px solid var(--line);white-space:nowrap;
+}
+.ptable thead th:first-child{padding-left:22px}
+.ptable thead th:last-child{padding-right:22px;text-align:right}
+.ptable tbody tr{border-bottom:1px solid var(--line);transition:background .15s}
+.ptable tbody tr:last-child{border-bottom:none}
+.ptable tbody tr:hover{background:var(--bg)}
+.ptable tbody td{padding:14px 16px;font-size:13.5px;color:var(--slate);vertical-align:middle}
+.ptable tbody td:first-child{padding-left:22px}
+.ptable tbody td:last-child{padding-right:22px;text-align:right}
+
+/* satır birincil hücre (ikon + ad) */
+.row-lead{display:flex;align-items:center;gap:13px}
+.row-ico{width:40px;height:40px;flex:none;border-radius:var(--radius-md);background:rgba(var(--acc-rgb),.12);color:var(--acc-deep);display:grid;place-items:center;font-size:15px}
+.row-name{font-size:13.5px;font-weight:700;color:var(--slate);line-height:1.3}
+.row-sub{font-size:11.5px;color:var(--muted)}
+
+.td-price{font-size:13.5px;font-weight:700;color:var(--slate);white-space:nowrap}
+.td-mut{font-size:13px;color:var(--slate-2)}
+
+/* aksiyon ikon butonları */
+.row-actions{display:inline-flex;align-items:center;gap:6px;justify-content:flex-end}
+.act-btn{
+  width:32px;height:32px;border:1px solid var(--line);border-radius:var(--radius-sm);
+  background:var(--paper);color:var(--muted);font-size:13px;
+  display:inline-flex;align-items:center;justify-content:center;
+  cursor:pointer;transition:.18s var(--ease);
+}
+.act-btn:hover{border-color:var(--acc);color:var(--acc-deep);background:rgba(var(--acc-rgb),.06)}
+.act-btn.danger:hover{border-color:var(--tomato);color:var(--tomato);background:var(--tomato-tint)}
+
+@media(max-width:640px){
+  .ptable thead th:nth-child(2),.ptable tbody td:nth-child(2){display:none}
+}
+</style>
+</head>
+<body data-brand="mutfak" data-sec="store" data-screen="kargo">
+
+<div class="sa-app">
+
+  <!-- §1 İKON-RAIL -->
+  <aside class="sa-rail" id="saRail">
+    <a class="sa-rail-logo" href="sa-giris-v1.html" title="Yönetim Girişi"><img src="assets/img/logo-mark.png" alt="DadaMutfak" /></a>
+    <a class="sa-rail-ico" data-sec="genel" href="sa-shell.html?sec=genel" title="Genel Bakış"><i class="fa-solid fa-gauge-high"></i></a>
+    <span class="sa-rail-div"></span>
+    <a class="sa-rail-ico" data-sec="admin"   href="sa-admin.html"   title="Admin"><i class="fa-solid fa-shield-halved"></i></a>
+    <a class="sa-rail-ico" data-sec="saglik"  href="sa-saglik.html"  title="Sağlık &amp; Diyet"><i class="fa-solid fa-heart-pulse"></i></a>
+    <a class="sa-rail-ico" data-sec="store"   href="sa-store.html"   title="DadaStore"><i class="fa-solid fa-bag-shopping"></i></a>
+    <a class="sa-rail-ico" data-sec="dadafit" href="sa-dadafit.html" title="DadaFit"><i class="fa-solid fa-dumbbell"></i></a>
+    <a class="sa-rail-ico" data-sec="isletme" href="sa-isletme.html" title="İşletmeler"><i class="fa-solid fa-store"></i></a>
+    <a class="sa-rail-ico is-locked" data-sec="akademi" href="#" title="DadaAkademi — Yakında"><i class="fa-solid fa-graduation-cap"></i><i class="fa-solid fa-lock sr-lock"></i></a>
+    <div class="sa-rail-foot"><a class="sa-rail-ico" href="sa-giris-v1.html" title="Siteye Dön"><i class="fa-solid fa-arrow-left"></i></a></div>
+  </aside>
+
+  <!-- §2 BÖLÜM MENÜSÜ (JS render) -->
+  <nav class="sa-menu" id="saMenu"></nav>
+
+  <!-- divider grip -->
+  <div class="sa-divider" id="saDivider" role="separator" aria-label="Menüyü daralt/genişlet" title="Sürükle veya tıkla — menüyü daralt/genişlet">
+    <span class="sa-grip"><i class="fa-solid fa-grip-lines-vertical"></i></span>
+  </div>
+
+  <div class="pnl-overlay" id="pnlOverlay"></div>
+
+  <!-- §3 ÜST BAR -->
+  <header class="pnl-top">
+    <button class="pnl-burger" id="pnlBurger" aria-label="Menü"><i class="fa-solid fa-bars"></i></button>
+    <div class="pnl-search">
+      <i class="fa-solid fa-magnifying-glass"></i>
+      <input type="text" placeholder="Ürün, sipariş ara…" />
+    </div>
+    <div class="pnl-top-tools">
+      <button class="pnl-bell" aria-label="Bildirimler"><i class="fa-regular fa-bell"></i><span class="pb-dot"></span></button>
+      <div class="pnl-me">
+        <div class="pm-ava"><i class="fa-solid fa-user"></i></div>
+        <div class="pm-id">
+          <div class="pm-name" id="pmName">Süper Admin</div>
+          <div class="pm-role" id="pmRole">Tüm yetki</div>
+        </div>
+        <i class="fa-solid fa-chevron-down"></i>
+      </div>
+    </div>
+  </header>
+
+  <!-- §4 İÇERİK — Kargo & Ödeme (config CRUD) -->
+  <main class="pnl-main" id="saMain">
+
+    <!-- sayfa başlığı + Yeni -->
+    <div class="pnl-page-head">
+      <div>
+        <h1>Kargo &amp; Ödeme</h1>
+        <div class="ph-sub">Kargo bölgeleri ve ödeme yöntemi ayarları</div>
+      </div>
+      <div class="ph-actions">
+        <a class="btn btn-acc btn-sm" href="sa-store-kargo-form.html" id="newBtn"><i class="fa-solid fa-plus"></i> Yeni Kargo Bölgesi</a>
+      </div>
+    </div>
+
+    <!-- sekme şeridi -->
+    <div class="tabbar" id="kargoTabs" role="tablist">
+      <button class="tab is-on" data-tab="kargo" role="tab"><i class="fa-solid fa-truck"></i> Kargo Bölgeleri</button>
+      <button class="tab" data-tab="odeme" role="tab"><i class="fa-solid fa-credit-card"></i> Ödeme Yöntemleri</button>
+    </div>
+
+    <!-- PANEL: Kargo Bölgeleri -->
+    <div class="tab-panel is-on" data-panel="kargo">
+      <div class="pnl-card" style="overflow:hidden">
+        <div class="pc-body flush">
+          <table class="ptable">
+            <thead>
+              <tr>
+                <th>Bölge / Yöntem</th>
+                <th>Teslim Süresi</th>
+                <th>Ücret</th>
+                <th>Ücretsiz Eşiği</th>
+                <th>Durum</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>
+                  <div class="row-lead">
+                    <div class="row-ico"><i class="fa-solid fa-truck"></i></div>
+                    <div><div class="row-name">Standart Kargo</div><div class="row-sub">Tüm Türkiye · Yurtiçi Kargo</div></div>
+                  </div>
+                </td>
+                <td class="td-mut">3–5 iş günü</td>
+                <td class="td-price">₺49</td>
+                <td class="td-mut">₺500 üzeri</td>
+                <td><span class="pstat ok">Aktif</span></td>
+                <td>
+                  <div class="row-actions">
+                    <a class="act-btn" href="sa-store-kargo-form.html" title="Düzenle"><i class="fa-solid fa-pen"></i></a>
+                    <button class="act-btn danger" title="Sil"><i class="fa-solid fa-trash"></i></button>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <div class="row-lead">
+                    <div class="row-ico"><i class="fa-solid fa-bolt"></i></div>
+                    <div><div class="row-name">Ekspres Kargo</div><div class="row-sub">81 il · Aras Kargo</div></div>
+                  </div>
+                </td>
+                <td class="td-mut">1–2 iş günü</td>
+                <td class="td-price">₺89</td>
+                <td class="td-mut">₺1.000 üzeri</td>
+                <td><span class="pstat ok">Aktif</span></td>
+                <td>
+                  <div class="row-actions">
+                    <a class="act-btn" href="sa-store-kargo-form.html" title="Düzenle"><i class="fa-solid fa-pen"></i></a>
+                    <button class="act-btn danger" title="Sil"><i class="fa-solid fa-trash"></i></button>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <div class="row-lead">
+                    <div class="row-ico"><i class="fa-solid fa-store"></i></div>
+                    <div><div class="row-name">Mağazadan Teslim</div><div class="row-sub">İstanbul · Kadıköy şubesi</div></div>
+                  </div>
+                </td>
+                <td class="td-mut">Aynı gün</td>
+                <td class="td-price">Ücretsiz</td>
+                <td class="td-mut">—</td>
+                <td><span class="pstat ok">Aktif</span></td>
+                <td>
+                  <div class="row-actions">
+                    <a class="act-btn" href="sa-store-kargo-form.html" title="Düzenle"><i class="fa-solid fa-pen"></i></a>
+                    <button class="act-btn danger" title="Sil"><i class="fa-solid fa-trash"></i></button>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <div class="row-lead">
+                    <div class="row-ico"><i class="fa-solid fa-snowflake"></i></div>
+                    <div><div class="row-name">Soğuk Zincir</div><div class="row-sub">Seçili iller · özel paketleme</div></div>
+                  </div>
+                </td>
+                <td class="td-mut">1–3 iş günü</td>
+                <td class="td-price">₺129</td>
+                <td class="td-mut">—</td>
+                <td><span class="pstat off">Pasif</span></td>
+                <td>
+                  <div class="row-actions">
+                    <a class="act-btn" href="sa-store-kargo-form.html" title="Düzenle"><i class="fa-solid fa-pen"></i></a>
+                    <button class="act-btn danger" title="Sil"><i class="fa-solid fa-trash"></i></button>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- PANEL: Ödeme Yöntemleri -->
+    <div class="tab-panel" data-panel="odeme">
+      <div class="pnl-card" style="overflow:hidden">
+        <div class="pc-body flush">
+          <table class="ptable">
+            <thead>
+              <tr>
+                <th>Ödeme Yöntemi</th>
+                <th>Sağlayıcı</th>
+                <th>Komisyon</th>
+                <th>Taksit</th>
+                <th>Durum</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>
+                  <div class="row-lead">
+                    <div class="row-ico"><i class="fa-solid fa-credit-card"></i></div>
+                    <div><div class="row-name">Kredi / Banka Kartı</div><div class="row-sub">Visa, Mastercard, Troy</div></div>
+                  </div>
+                </td>
+                <td class="td-mut">iyzico</td>
+                <td class="td-price">%1,9</td>
+                <td class="td-mut">12 aya kadar</td>
+                <td><span class="pstat ok">Aktif</span></td>
+                <td>
+                  <div class="row-actions">
+                    <a class="act-btn" href="sa-store-kargo-form.html" title="Düzenle"><i class="fa-solid fa-pen"></i></a>
+                    <button class="act-btn danger" title="Sil"><i class="fa-solid fa-trash"></i></button>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <div class="row-lead">
+                    <div class="row-ico"><i class="fa-solid fa-building-columns"></i></div>
+                    <div><div class="row-name">Havale / EFT</div><div class="row-sub">Banka transferi</div></div>
+                  </div>
+                </td>
+                <td class="td-mut">Manuel</td>
+                <td class="td-price">%0</td>
+                <td class="td-mut">—</td>
+                <td><span class="pstat ok">Aktif</span></td>
+                <td>
+                  <div class="row-actions">
+                    <a class="act-btn" href="sa-store-kargo-form.html" title="Düzenle"><i class="fa-solid fa-pen"></i></a>
+                    <button class="act-btn danger" title="Sil"><i class="fa-solid fa-trash"></i></button>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <div class="row-lead">
+                    <div class="row-ico"><i class="fa-solid fa-money-bill-wave"></i></div>
+                    <div><div class="row-name">Kapıda Ödeme</div><div class="row-sub">Nakit / kart</div></div>
+                  </div>
+                </td>
+                <td class="td-mut">Kargo firması</td>
+                <td class="td-price">₺25</td>
+                <td class="td-mut">—</td>
+                <td><span class="pstat ok">Aktif</span></td>
+                <td>
+                  <div class="row-actions">
+                    <a class="act-btn" href="sa-store-kargo-form.html" title="Düzenle"><i class="fa-solid fa-pen"></i></a>
+                    <button class="act-btn danger" title="Sil"><i class="fa-solid fa-trash"></i></button>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <div class="row-lead">
+                    <div class="row-ico"><i class="fa-solid fa-wallet"></i></div>
+                    <div><div class="row-name">Dijital Cüzdan</div><div class="row-sub">Papara, Apple Pay</div></div>
+                  </div>
+                </td>
+                <td class="td-mut">iyzico</td>
+                <td class="td-price">%2,2</td>
+                <td class="td-mut">—</td>
+                <td><span class="pstat off">Pasif</span></td>
+                <td>
+                  <div class="row-actions">
+                    <a class="act-btn" href="sa-store-kargo-form.html" title="Düzenle"><i class="fa-solid fa-pen"></i></a>
+                    <button class="act-btn danger" title="Sil"><i class="fa-solid fa-trash"></i></button>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+</div>
+
+<script src="assets/js/sa-shell.js"></script>
+
+<!-- Sekme geçişi (sayfa-özel) — Yeni butonu etiketi sekmeye göre değişir -->
+<script>
+var kargoTabs = document.getElementById('kargoTabs');
+var newBtn = document.getElementById('newBtn');
+var newLabels = {
+  'kargo': '<i class="fa-solid fa-plus"></i> Yeni Kargo Bölgesi',
+  'odeme': '<i class="fa-solid fa-plus"></i> Yeni Ödeme Yöntemi'
+};
+if(kargoTabs){
+  kargoTabs.querySelectorAll('.tab').forEach(function(tab){
+    tab.addEventListener('click', function(){
+      var t = tab.dataset.tab;
+      kargoTabs.querySelectorAll('.tab').forEach(function(x){ x.classList.remove('is-on'); });
+      tab.classList.add('is-on');
+      document.querySelectorAll('.tab-panel').forEach(function(p){
+        p.classList.toggle('is-on', p.dataset.panel === t);
+      });
+      if(newBtn && newLabels[t]) newBtn.innerHTML = newLabels[t];
+    });
+  });
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Promosyonlar — DadaStore · Süper Admin · DadaMutfak</title>
+<link rel="shortcut icon" type="image/x-icon" href="assets/img/favicon.ico" />
+<!-- FontAwesome 6.5.2 (kilitli ikon seti) -->
+<link rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+      integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A=="
+      crossorigin="anonymous" referrerpolicy="no-referrer" />
+<!-- PAYLAŞILAN KABUK (tek kaynak) -->
+<link rel="stylesheet" href="assets/css/sa-shell.css" />
+<style>
+/* =====================================================================
+   SA-STORE-PROMOSYONLAR — SAYFA CSS (ekrana özel; kabuk CSS'i sa-shell.css'te).
+   Config CRUD: kupon/kampanya listesi. Yeni/Düzenle/Sil var.
+   Token: SADECE var(--acc)/var(--acc-deep)/rgba(var(--acc-rgb),..).
+   ===================================================================== */
+
+/* ---- filtre çubuğu ---- */
+.filter-bar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:16px}
+.filter-search{position:relative;flex:1;min-width:220px;max-width:340px}
+.filter-search i{position:absolute;left:12px;top:50%;transform:translateY(-50%);font-size:13px;color:var(--muted);pointer-events:none}
+.filter-search input{
+  width:100%;height:38px;padding:0 12px 0 36px;
+  font-family:inherit;font-size:13px;font-weight:500;color:var(--ink);
+  background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-sm);
+  outline:none;transition:.2s var(--ease);
+}
+.filter-search input::placeholder{color:var(--muted)}
+.filter-search input:focus{border-color:var(--acc);box-shadow:0 0 0 3px rgba(var(--acc-rgb),.12)}
+
+.chips{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.chip{
+  font-size:12.5px;font-weight:500;color:var(--slate-2);background:var(--paper);
+  border:1px solid var(--line);padding:7px 14px;border-radius:var(--radius-sm);
+  cursor:pointer;transition:.18s var(--ease);white-space:nowrap;
+}
+.chip:hover{border-color:var(--acc);color:var(--acc-deep)}
+.chip.is-on{border-color:var(--acc);color:var(--acc-deep);background:rgba(var(--acc-rgb),.08);font-weight:700}
+
+/* ---- promosyon tablosu ---- */
+.ptable{width:100%;border-collapse:collapse}
+.ptable thead th{
+  font-size:11.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;
+  color:var(--muted);padding:13px 16px;text-align:left;
+  border-bottom:1px solid var(--line);white-space:nowrap;
+}
+.ptable thead th:first-child{padding-left:22px}
+.ptable thead th:last-child{padding-right:22px;text-align:right}
+
+.ptable tbody tr{border-bottom:1px solid var(--line);transition:background .15s}
+.ptable tbody tr:last-child{border-bottom:none}
+.ptable tbody tr:hover{background:var(--bg)}
+
+.ptable tbody td{padding:14px 16px;font-size:13.5px;color:var(--slate);vertical-align:middle}
+.ptable tbody td:first-child{padding-left:22px}
+.ptable tbody td:last-child{padding-right:22px;text-align:right}
+
+/* kupon kodu hücresi */
+.promo-cell{display:flex;align-items:center;gap:12px}
+.promo-ico{width:38px;height:38px;flex:none;border-radius:var(--radius-md);background:rgba(var(--acc-rgb),.12);color:var(--acc-deep);display:grid;place-items:center;font-size:14px}
+.promo-info{min-width:0;line-height:1.3}
+.promo-code{font-size:13.5px;font-weight:700;color:var(--slate);font-family:monospace;letter-spacing:.02em}
+.promo-name{font-size:11.5px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:200px}
+
+.td-val{font-size:13.5px;font-weight:700;color:var(--slate);white-space:nowrap}
+.td-date{font-size:13px;color:var(--slate-2);white-space:nowrap}
+
+/* kullanım progress mini */
+.usage{display:flex;flex-direction:column;gap:5px;min-width:90px}
+.usage-num{font-size:12.5px;font-weight:600;color:var(--slate-2);font-variant-numeric:tabular-nums}
+.usage-track{height:6px;border-radius:999px;background:var(--bg);overflow:hidden}
+.usage-fill{height:100%;border-radius:999px;background:var(--acc)}
+
+/* aksiyon ikon butonları */
+.row-actions{display:inline-flex;align-items:center;gap:6px;justify-content:flex-end}
+.act-btn{
+  width:32px;height:32px;border:1px solid var(--line);border-radius:var(--radius-sm);
+  background:var(--paper);color:var(--muted);font-size:13px;
+  display:inline-flex;align-items:center;justify-content:center;
+  cursor:pointer;transition:.18s var(--ease);
+}
+.act-btn:hover{border-color:var(--acc);color:var(--acc-deep);background:rgba(var(--acc-rgb),.06)}
+.act-btn.danger:hover{border-color:var(--tomato);color:var(--tomato);background:var(--tomato-tint)}
+
+/* tablo footer */
+.table-foot{display:flex;align-items:center;justify-content:space-between;padding:14px 22px;border-top:1px solid var(--line);font-size:12.5px;color:var(--muted);gap:12px;flex-wrap:wrap}
+.table-foot-cnt b{color:var(--slate)}
+
+/* boş durum */
+.pnl-empty{display:none;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:64px 22px;gap:14px}
+.pnl-empty i{font-size:34px;color:var(--line)}
+.pnl-empty .pe-tt{font-size:15px;font-weight:700;color:var(--slate)}
+.pnl-empty .pe-sub{font-size:13px;color:var(--muted);max-width:360px;line-height:1.6}
+
+@media(max-width:980px){
+  .ptable thead th:nth-child(3),.ptable tbody td:nth-child(3),
+  .ptable thead th:nth-child(5),.ptable tbody td:nth-child(5){display:none}
+}
+@media(max-width:640px){
+  .ptable thead th:nth-child(4),.ptable tbody td:nth-child(4){display:none}
+  .promo-name{max-width:120px}
+}
+</style>
+</head>
+<body data-brand="mutfak" data-sec="store" data-screen="promosyonlar">
+
+<div class="sa-app">
+
+  <!-- §1 İKON-RAIL -->
+  <aside class="sa-rail" id="saRail">
+    <a class="sa-rail-logo" href="sa-giris-v1.html" title="Yönetim Girişi"><img src="assets/img/logo-mark.png" alt="DadaMutfak" /></a>
+    <a class="sa-rail-ico" data-sec="genel" href="sa-shell.html?sec=genel" title="Genel Bakış"><i class="fa-solid fa-gauge-high"></i></a>
+    <span class="sa-rail-div"></span>
+    <a class="sa-rail-ico" data-sec="admin"   href="sa-admin.html"   title="Admin"><i class="fa-solid fa-shield-halved"></i></a>
+    <a class="sa-rail-ico" data-sec="saglik"  href="sa-saglik.html"  title="Sağlık &amp; Diyet"><i class="fa-solid fa-heart-pulse"></i></a>
+    <a class="sa-rail-ico" data-sec="store"   href="sa-store.html"   title="DadaStore"><i class="fa-solid fa-bag-shopping"></i></a>
+    <a class="sa-rail-ico" data-sec="dadafit" href="sa-dadafit.html" title="DadaFit"><i class="fa-solid fa-dumbbell"></i></a>
+    <a class="sa-rail-ico" data-sec="isletme" href="sa-isletme.html" title="İşletmeler"><i class="fa-solid fa-store"></i></a>
+    <a class="sa-rail-ico is-locked" data-sec="akademi" href="#" title="DadaAkademi — Yakında"><i class="fa-solid fa-graduation-cap"></i><i class="fa-solid fa-lock sr-lock"></i></a>
+    <div class="sa-rail-foot"><a class="sa-rail-ico" href="sa-giris-v1.html" title="Siteye Dön"><i class="fa-solid fa-arrow-left"></i></a></div>
+  </aside>
+
+  <!-- §2 BÖLÜM MENÜSÜ (JS render) -->
+  <nav class="sa-menu" id="saMenu"></nav>
+
+  <!-- divider grip -->
+  <div class="sa-divider" id="saDivider" role="separator" aria-label="Menüyü daralt/genişlet" title="Sürükle veya tıkla — menüyü daralt/genişlet">
+    <span class="sa-grip"><i class="fa-solid fa-grip-lines-vertical"></i></span>
+  </div>
+
+  <div class="pnl-overlay" id="pnlOverlay"></div>
+
+  <!-- §3 ÜST BAR -->
+  <header class="pnl-top">
+    <button class="pnl-burger" id="pnlBurger" aria-label="Menü"><i class="fa-solid fa-bars"></i></button>
+    <div class="pnl-search">
+      <i class="fa-solid fa-magnifying-glass"></i>
+      <input type="text" placeholder="Ürün, sipariş ara…" />
+    </div>
+    <div class="pnl-top-tools">
+      <button class="pnl-bell" aria-label="Bildirimler"><i class="fa-regular fa-bell"></i><span class="pb-dot"></span></button>
+      <div class="pnl-me">
+        <div class="pm-ava"><i class="fa-solid fa-user"></i></div>
+        <div class="pm-id">
+          <div class="pm-name" id="pmName">Süper Admin</div>
+          <div class="pm-role" id="pmRole">Tüm yetki</div>
+        </div>
+        <i class="fa-solid fa-chevron-down"></i>
+      </div>
+    </div>
+  </header>
+
+  <!-- §4 İÇERİK — Promosyonlar (config CRUD) -->
+  <main class="pnl-main" id="saMain">
+
+    <!-- sayfa başlığı + Yeni Promosyon -->
+    <div class="pnl-page-head">
+      <div>
+        <h1>Promosyonlar</h1>
+        <div class="ph-sub">Kupon kodları &amp; kampanyalar — 5 aktif, 2 zamanlanmış</div>
+      </div>
+      <div class="ph-actions">
+        <a class="btn btn-acc btn-sm" href="sa-store-promosyonlar-form.html"><i class="fa-solid fa-plus"></i> Yeni Promosyon</a>
+      </div>
+    </div>
+
+    <!-- filtre çubuğu -->
+    <div class="filter-bar">
+      <div class="filter-search">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <input type="text" placeholder="Kupon kodu, kampanya adı…" id="promoSearch" />
+      </div>
+      <div class="chips">
+        <button class="chip is-on" data-filter="tumu" onclick="filterPromo(this,'tumu')">Tümü</button>
+        <button class="chip" data-filter="aktif" onclick="filterPromo(this,'aktif')">Aktif</button>
+        <button class="chip" data-filter="zamanli" onclick="filterPromo(this,'zamanli')">Zamanlanmış</button>
+        <button class="chip" data-filter="bitti" onclick="filterPromo(this,'bitti')">Süresi Doldu</button>
+      </div>
+    </div>
+
+    <!-- promosyon tablosu -->
+    <div class="pnl-card" style="overflow:hidden">
+      <div class="pc-body flush">
+        <table class="ptable" id="promoTable">
+          <thead>
+            <tr>
+              <th>Kupon / Kampanya</th>
+              <th>İndirim</th>
+              <th>Geçerlilik</th>
+              <th>Kullanım</th>
+              <th>Durum</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+
+            <!-- Promo 1 -->
+            <tr data-stat="aktif">
+              <td>
+                <div class="promo-cell">
+                  <div class="promo-ico"><i class="fa-solid fa-ticket"></i></div>
+                  <div class="promo-info">
+                    <div class="promo-code">DADA10</div>
+                    <div class="promo-name">Yeni üye hoş geldin indirimi</div>
+                  </div>
+                </div>
+              </td>
+              <td class="td-val">%10</td>
+              <td class="td-date">01 Haz – 31 Ağu 2026</td>
+              <td>
+                <div class="usage">
+                  <span class="usage-num">428 / 1.000</span>
+                  <div class="usage-track"><div class="usage-fill" style="width:43%"></div></div>
+                </div>
+              </td>
+              <td><span class="pstat ok">Aktif</span></td>
+              <td>
+                <div class="row-actions">
+                  <a class="act-btn" href="sa-store-promosyonlar-form.html" title="Düzenle"><i class="fa-solid fa-pen"></i></a>
+                  <button class="act-btn danger" title="Sil"><i class="fa-solid fa-trash"></i></button>
+                </div>
+              </td>
+            </tr>
+
+            <!-- Promo 2 -->
+            <tr data-stat="aktif">
+              <td>
+                <div class="promo-cell">
+                  <div class="promo-ico"><i class="fa-solid fa-truck-fast"></i></div>
+                  <div class="promo-info">
+                    <div class="promo-code">KARGOBEDAVA</div>
+                    <div class="promo-name">₺500 üzeri ücretsiz kargo</div>
+                  </div>
+                </div>
+              </td>
+              <td class="td-val">Ücretsiz Kargo</td>
+              <td class="td-date">Süresiz</td>
+              <td>
+                <div class="usage">
+                  <span class="usage-num">1.284 / ∞</span>
+                  <div class="usage-track"><div class="usage-fill" style="width:72%"></div></div>
+                </div>
+              </td>
+              <td><span class="pstat ok">Aktif</span></td>
+              <td>
+                <div class="row-actions">
+                  <a class="act-btn" href="sa-store-promosyonlar-form.html" title="Düzenle"><i class="fa-solid fa-pen"></i></a>
+                  <button class="act-btn danger" title="Sil"><i class="fa-solid fa-trash"></i></button>
+                </div>
+              </td>
+            </tr>
+
+            <!-- Promo 3 -->
+            <tr data-stat="aktif">
+              <td>
+                <div class="promo-cell">
+                  <div class="promo-ico"><i class="fa-solid fa-percent"></i></div>
+                  <div class="promo-info">
+                    <div class="promo-code">YAZ25</div>
+                    <div class="promo-name">Yaz kampanyası — seçili ürünler</div>
+                  </div>
+                </div>
+              </td>
+              <td class="td-val">%25</td>
+              <td class="td-date">15 Haz – 15 Tem 2026</td>
+              <td>
+                <div class="usage">
+                  <span class="usage-num">96 / 300</span>
+                  <div class="usage-track"><div class="usage-fill" style="width:32%"></div></div>
+                </div>
+              </td>
+              <td><span class="pstat ok">Aktif</span></td>
+              <td>
+                <div class="row-actions">
+                  <a class="act-btn" href="sa-store-promosyonlar-form.html" title="Düzenle"><i class="fa-solid fa-pen"></i></a>
+                  <button class="act-btn danger" title="Sil"><i class="fa-solid fa-trash"></i></button>
+                </div>
+              </td>
+            </tr>
+
+            <!-- Promo 4 -->
+            <tr data-stat="zamanli">
+              <td>
+                <div class="promo-cell">
+                  <div class="promo-ico"><i class="fa-solid fa-gift"></i></div>
+                  <div class="promo-info">
+                    <div class="promo-code">BAYRAM50</div>
+                    <div class="promo-name">Kurban Bayramı özel indirimi</div>
+                  </div>
+                </div>
+              </td>
+              <td class="td-val">₺50</td>
+              <td class="td-date">28 Haz – 02 Tem 2026</td>
+              <td>
+                <div class="usage">
+                  <span class="usage-num">0 / 500</span>
+                  <div class="usage-track"><div class="usage-fill" style="width:0%"></div></div>
+                </div>
+              </td>
+              <td><span class="pstat wait">Zamanlanmış</span></td>
+              <td>
+                <div class="row-actions">
+                  <a class="act-btn" href="sa-store-promosyonlar-form.html" title="Düzenle"><i class="fa-solid fa-pen"></i></a>
+                  <button class="act-btn danger" title="Sil"><i class="fa-solid fa-trash"></i></button>
+                </div>
+              </td>
+            </tr>
+
+            <!-- Promo 5 -->
+            <tr data-stat="zamanli">
+              <td>
+                <div class="promo-cell">
+                  <div class="promo-ico"><i class="fa-solid fa-star"></i></div>
+                  <div class="promo-info">
+                    <div class="promo-code">VIP15</div>
+                    <div class="promo-name">VIP müşteri sadakat indirimi</div>
+                  </div>
+                </div>
+              </td>
+              <td class="td-val">%15</td>
+              <td class="td-date">01 Tem – 31 Ara 2026</td>
+              <td>
+                <div class="usage">
+                  <span class="usage-num">0 / 200</span>
+                  <div class="usage-track"><div class="usage-fill" style="width:0%"></div></div>
+                </div>
+              </td>
+              <td><span class="pstat wait">Zamanlanmış</span></td>
+              <td>
+                <div class="row-actions">
+                  <a class="act-btn" href="sa-store-promosyonlar-form.html" title="Düzenle"><i class="fa-solid fa-pen"></i></a>
+                  <button class="act-btn danger" title="Sil"><i class="fa-solid fa-trash"></i></button>
+                </div>
+              </td>
+            </tr>
+
+            <!-- Promo 6 (süresi doldu) -->
+            <tr data-stat="bitti">
+              <td>
+                <div class="promo-cell">
+                  <div class="promo-ico"><i class="fa-solid fa-clock-rotate-left"></i></div>
+                  <div class="promo-info">
+                    <div class="promo-code">ANNELER20</div>
+                    <div class="promo-name">Anneler Günü kampanyası</div>
+                  </div>
+                </div>
+              </td>
+              <td class="td-val">%20</td>
+              <td class="td-date">08 – 12 May 2026</td>
+              <td>
+                <div class="usage">
+                  <span class="usage-num">312 / 400</span>
+                  <div class="usage-track"><div class="usage-fill" style="width:78%"></div></div>
+                </div>
+              </td>
+              <td><span class="pstat off">Süresi Doldu</span></td>
+              <td>
+                <div class="row-actions">
+                  <a class="act-btn" href="sa-store-promosyonlar-form.html" title="Düzenle"><i class="fa-solid fa-pen"></i></a>
+                  <button class="act-btn danger" title="Sil"><i class="fa-solid fa-trash"></i></button>
+                </div>
+              </td>
+            </tr>
+
+          </tbody>
+        </table>
+
+        <!-- boş durum -->
+        <div class="pnl-empty" id="promoEmpty">
+          <i class="fa-solid fa-ticket"></i>
+          <div class="pe-tt">Eşleşen promosyon yok</div>
+          <div class="pe-sub">Arama teriminizi veya durum filtresini değiştirip yeniden deneyin.</div>
+        </div>
+      </div>
+
+      <!-- tablo footer -->
+      <div class="table-foot" id="promoFoot">
+        <div class="table-foot-cnt"><b>6</b> promosyondan 6'sı gösteriliyor</div>
+      </div>
+    </div>
+
+  </main>
+
+</div>
+
+<script src="assets/js/sa-shell.js"></script>
+
+<!-- Filtre / arama JS (sayfa-özel) -->
+<script>
+var promoCurFilter = 'tumu';
+function promoApply(){
+  var q = (document.getElementById('promoSearch').value || '').toLowerCase().trim();
+  var rows = document.querySelectorAll('#promoTable tbody tr');
+  var shown = 0;
+  rows.forEach(function(row){
+    var matchFilter = (promoCurFilter === 'tumu') || (row.dataset.stat === promoCurFilter);
+    var matchSearch = (!q || row.textContent.toLowerCase().indexOf(q) !== -1);
+    var show = matchFilter && matchSearch;
+    row.style.display = show ? '' : 'none';
+    if(show) shown++;
+  });
+  var empty = document.getElementById('promoEmpty');
+  var foot  = document.getElementById('promoFoot');
+  if(empty) empty.style.display = (shown === 0) ? 'flex' : 'none';
+  if(foot)  foot.style.display  = (shown === 0) ? 'none' : 'flex';
+}
+function filterPromo(btn, filter){
+  document.querySelectorAll('.chip').forEach(function(c){ c.classList.remove('is-on'); });
+  btn.classList.add('is-on');
+  promoCurFilter = filter;
+  promoApply();
+}
+var promoSrch = document.getElementById('promoSearch');
+if(promoSrch) promoSrch.addEventListener('input', promoApply);
+</script>
+</body>
+</html>

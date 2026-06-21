@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Tarif Detay — Admin · DadaMutfak</title>
+<link rel="shortcut icon" type="image/x-icon" href="assets/img/favicon.ico" />
+<link rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+      integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A=="
+      crossorigin="anonymous" referrerpolicy="no-referrer" />
+<link rel="stylesheet" href="assets/css/sa-shell.css" />
+<style>
+/* =====================================================================
+   SA-ADMIN-TARIFLER-DETAY — SAYFA CSS (kabuk sa-shell.css'te).
+   Moderasyon detayı: görsel + içerik + şikayet + denetim aksiyonları.
+   "Düzenle" YOK (içerik kullanıcıya ait); admin yalnız moderasyon yapar.
+   Token: SADECE var(--acc)/var(--acc-deep)/rgba(var(--acc-rgb),..).
+   ===================================================================== */
+
+/* Geri linki */
+.back-link{display:inline-flex;align-items:center;gap:7px;font-size:13px;font-weight:700;color:var(--muted);transition:.15s var(--ease);margin-bottom:6px}
+.back-link:hover{color:var(--slate)}
+.back-link i{font-size:11px}
+
+/* Kaynak rozeti (kullanıcı gönderimi vs admin editöryel) */
+.src-pill{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:700;padding:4px 11px;border-radius:var(--radius-sm);white-space:nowrap}
+.src-pill.admin{background:rgba(var(--acc-rgb),.12);color:var(--acc-deep)}
+.src-pill.user{background:var(--bg);color:var(--slate-2);border:1px solid var(--line)}
+.src-pill i{font-size:10px}
+
+/* 2-kolon detay düzeni */
+.detail-grid{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);gap:20px;align-items:start}
+@media(max-width:980px){.detail-grid{grid-template-columns:1fr}}
+
+/* Büyük tarif görseli (div+background-image cover+center — img DEĞİL) */
+.rcp-hero{width:100%;height:300px;border-radius:var(--radius-md);background-size:cover;background-position:center;border:1px solid var(--line);background-image:url('https://images.unsplash.com/photo-1546549032-9571cd6b27df?w=900&q=80&auto=format&fit=crop')}
+@media(max-width:560px){.rcp-hero{height:210px}}
+
+/* Açıklama metni */
+.rcp-desc{font-size:14px;color:var(--slate-2);line-height:1.7}
+
+/* Meta etiket satırı (görsel altı: kategori + süre + porsiyon) */
+.rcp-tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.rcp-tag{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;font-weight:700;padding:5px 11px;border-radius:var(--radius-sm);background:var(--bg);color:var(--slate-2);border:1px solid var(--line)}
+.rcp-tag i{font-size:11px;color:var(--muted)}
+
+/* Malzeme listesi */
+.ingr-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column}
+.ingr-list li{display:flex;align-items:center;gap:11px;padding:10px 22px;border-bottom:1px solid var(--line);font-size:13.5px;color:var(--slate-2)}
+.ingr-list li:last-child{border-bottom:none}
+.ingr-list li i{font-size:12px;color:var(--acc);flex:none}
+.ingr-amt{margin-left:auto;font-size:12.5px;font-weight:700;color:var(--muted)}
+
+/* Hazırlık adımları */
+.step-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column}
+.step-list li{display:flex;gap:14px;padding:14px 22px;border-bottom:1px solid var(--line)}
+.step-list li:last-child{border-bottom:none}
+.step-num{width:26px;height:26px;flex:none;border-radius:var(--radius-circle);background:rgba(var(--acc-rgb),.12);color:var(--acc-deep);font-size:12.5px;font-weight:700;display:grid;place-items:center}
+.step-txt{font-size:13.5px;color:var(--slate-2);line-height:1.6;padding-top:2px}
+
+/* Şikayet listesi */
+.flag-list{display:flex;flex-direction:column}
+.flag-item{display:flex;gap:13px;padding:14px 22px;border-bottom:1px solid var(--line)}
+.flag-item:last-child{border-bottom:none}
+.flag-ico{width:34px;height:34px;flex:none;border-radius:var(--radius-circle);background:var(--tomato-tint);color:var(--tomato);display:grid;place-items:center;font-size:13px}
+.flag-body{line-height:1.45;min-width:0}
+.flag-body strong{font-size:13px;font-weight:700;color:var(--slate);display:block}
+.flag-reason{font-size:13px;color:var(--slate-2);margin-top:2px}
+.flag-meta{font-size:11.5px;color:var(--muted);margin-top:3px}
+
+/* Sağ meta kart içi (kanon: sa-saglik-randevular-detay) */
+.meta-section{padding:18px 20px;border-bottom:1px solid var(--line)}
+.meta-section:last-child{border-bottom:none}
+.meta-section-tt{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:12px}
+.meta-row{display:flex;align-items:center;gap:12px;margin-bottom:13px}
+.meta-row:last-child{margin-bottom:0}
+.meta-row .mr-ava{width:34px;height:34px;flex:none;border-radius:var(--radius-circle);background-size:cover;background-position:center;border:1px solid var(--line)}
+.meta-row .mr-id{line-height:1.3;min-width:0}
+.meta-row .mr-id strong{font-size:13px;font-weight:700;color:var(--slate);display:block}
+.meta-row .mr-id span{font-size:11.5px;color:var(--muted)}
+.meta-stat{display:flex;justify-content:space-between;align-items:center;margin-bottom:9px}
+.meta-stat:last-child{margin-bottom:0}
+.meta-stat-lbl{font-size:13px;color:var(--slate-2);display:inline-flex;align-items:center;gap:7px}
+.meta-stat-lbl i{font-size:12px;color:var(--muted)}
+.meta-stat-val{font-size:13.5px;font-weight:700;color:var(--slate)}
+
+/* Denetim aksiyon yığını */
+.action-stack{display:flex;flex-direction:column;gap:8px}
+.act-btn{display:inline-flex;align-items:center;gap:7px;font-family:inherit;font-size:13px;font-weight:700;padding:9px 13px;border-radius:var(--radius-sm);border:1px solid var(--line);background:var(--paper);color:var(--slate-2);cursor:pointer;transition:.15s var(--ease);white-space:nowrap;width:100%;justify-content:center}
+.act-btn:hover{border-color:var(--slate);color:var(--slate)}
+.act-btn.primary{border-color:rgba(var(--acc-rgb),.35);background:rgba(var(--acc-rgb),.08);color:var(--acc-deep)}
+.act-btn.primary:hover{background:rgba(var(--acc-rgb),.14);border-color:var(--acc)}
+.act-btn.good{border-color:rgba(44,153,99,.4);background:var(--green-tint);color:var(--green-deep)}
+.act-btn.good:hover{background:#d6f0e2;border-color:var(--green-deep)}
+.act-btn.warn{border-color:rgba(225,72,39,.3);background:var(--tomato-tint);color:var(--tomato)}
+.act-btn.warn:hover{background:#f7d6cd;border-color:var(--tomato)}
+
+/* Dahili not alanı */
+.ftext{width:100%;font-family:inherit;font-size:13px;font-weight:500;color:var(--ink);background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-md);padding:11px 13px;line-height:1.5;resize:vertical;min-height:80px;outline:none;transition:.2s var(--ease)}
+.ftext:focus{border-color:var(--acc);box-shadow:0 0 0 3px rgba(var(--acc-rgb),.12)}
+</style>
+</head>
+<body data-brand="mutfak" data-sec="admin" data-screen="tarifler">
+
+<div class="sa-app">
+
+  <!-- §1 İKON-RAIL -->
+  <aside class="sa-rail" id="saRail">
+    <a class="sa-rail-logo" href="sa-giris-v1.html" title="Yönetim Girişi"><img src="assets/img/logo-mark.png" alt="DadaMutfak" /></a>
+    <a class="sa-rail-ico" data-sec="genel" href="sa-shell.html?sec=genel" title="Genel Bakış"><i class="fa-solid fa-gauge-high"></i></a>
+    <span class="sa-rail-div"></span>
+    <a class="sa-rail-ico" data-sec="admin"   href="sa-admin.html"   title="Admin"><i class="fa-solid fa-shield-halved"></i></a>
+    <a class="sa-rail-ico" data-sec="saglik"  href="sa-saglik.html"  title="Sağlık &amp; Diyet"><i class="fa-solid fa-heart-pulse"></i></a>
+    <a class="sa-rail-ico" data-sec="store"   href="sa-store.html"   title="DadaStore"><i class="fa-solid fa-bag-shopping"></i></a>
+    <a class="sa-rail-ico" data-sec="dadafit" href="sa-dadafit.html" title="DadaFit"><i class="fa-solid fa-dumbbell"></i></a>
+    <a class="sa-rail-ico" data-sec="isletme" href="sa-isletme.html" title="İşletmeler"><i class="fa-solid fa-store"></i></a>
+    <a class="sa-rail-ico is-locked" data-sec="akademi" href="#" title="DadaAkademi — Yakında"><i class="fa-solid fa-graduation-cap"></i><i class="fa-solid fa-lock sr-lock"></i></a>
+    <div class="sa-rail-foot"><a class="sa-rail-ico" href="sa-giris-v1.html" title="Siteye Dön"><i class="fa-solid fa-arrow-left"></i></a></div>
+  </aside>
+
+  <!-- §2 BÖLÜM MENÜSÜ (JS) -->
+  <nav class="sa-menu" id="saMenu"></nav>
+
+  <div class="sa-divider" id="saDivider" role="separator" aria-label="Menüyü daralt/genişlet" title="Sürükle veya tıkla — menüyü daralt/genişlet">
+    <span class="sa-grip"><i class="fa-solid fa-grip-lines-vertical"></i></span>
+  </div>
+
+  <div class="pnl-overlay" id="pnlOverlay"></div>
+
+  <!-- §3 ÜST BAR -->
+  <header class="pnl-top">
+    <button class="pnl-burger" id="pnlBurger" aria-label="Menü"><i class="fa-solid fa-bars"></i></button>
+    <div class="pnl-search">
+      <i class="fa-solid fa-magnifying-glass"></i>
+      <input type="text" placeholder="Tarif, kullanıcı, içerik ara…" />
+    </div>
+    <div class="pnl-top-tools">
+      <button class="pnl-bell" aria-label="Bildirimler"><i class="fa-regular fa-bell"></i><span class="pb-dot"></span></button>
+      <div class="pnl-me">
+        <div class="pm-ava" style="background-image:url('https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=240&q=80&auto=format&fit=crop')"></div>
+        <div class="pm-id">
+          <div class="pm-name" id="pmName">Süper Admin</div>
+          <div class="pm-role" id="pmRole">Tüm yetki</div>
+        </div>
+        <i class="fa-solid fa-chevron-down"></i>
+      </div>
+    </div>
+  </header>
+
+  <!-- §4 İÇERİK — Tarif detay (moderasyon) -->
+  <main class="pnl-main" id="saMain">
+
+    <!-- Geri + sayfa başlığı -->
+    <a class="back-link" href="sa-admin-tarifler.html"><i class="fa-solid fa-arrow-left"></i> Tarifler</a>
+    <div class="pnl-page-head">
+      <div>
+        <h1>Fırında Sebzeli Tavuk</h1>
+        <div class="ph-sub" style="display:flex;align-items:center;gap:10px;margin-top:6px;flex-wrap:wrap">
+          <span class="src-pill user"><i class="fa-regular fa-user"></i> Kullanıcı Gönderimi</span>
+          <span class="pstat warm">3 Şikayet</span>
+          <span style="font-size:13px;color:var(--muted)">Ana Yemek · 14 Haziran 2026'da gönderildi</span>
+        </div>
+      </div>
+      <!-- HİBRİT: bu kayıt KULLANICI GÖNDERİMİ → sağda Denetim Aksiyonları (moderasyon).
+           Admin-editöryel kayıtta header'da "Admin" rozeti + sağ kartta "Düzenle" (→form)
+           gösterilir; aşağıdaki sağ kartta admin-senaryosu da notlandı. -->
+    </div>
+
+    <!-- 2-kolon detay düzeni -->
+    <div class="detail-grid">
+
+      <!-- SOL: Görsel + açıklama + malzeme + adım + şikayet -->
+      <div style="display:flex;flex-direction:column;gap:16px">
+
+        <!-- Görsel + açıklama -->
+        <div class="pnl-card">
+          <div class="pc-body">
+            <div class="rcp-hero"></div>
+            <div class="rcp-tags">
+              <span class="rcp-tag"><i class="fa-solid fa-drumstick-bite"></i> Ana Yemek</span>
+              <span class="rcp-tag"><i class="fa-regular fa-clock"></i> 55 dk</span>
+              <span class="rcp-tag"><i class="fa-solid fa-utensils"></i> 4 porsiyon</span>
+              <span class="rcp-tag"><i class="fa-solid fa-fire"></i> Orta</span>
+            </div>
+            <p class="rcp-desc" style="margin-top:16px">
+              Fırında pişen, mevsim sebzeleriyle harmanlanmış pratik bir tavuk tarifi. Az yağlı, doyurucu
+              ve haftalık öğün planına uygun. Marine süresiyle birlikte hazırlığı kolay; misafir sofralarında
+              da rahatça sunulabilir.
+            </p>
+          </div>
+        </div>
+
+        <!-- Malzemeler -->
+        <div class="pnl-card">
+          <div class="pc-head">
+            <div class="pc-title"><i class="fa-solid fa-basket-shopping"></i> Malzemeler</div>
+          </div>
+          <ul class="ingr-list">
+            <li><i class="fa-solid fa-circle-check"></i> Tavuk göğsü <span class="ingr-amt">500 g</span></li>
+            <li><i class="fa-solid fa-circle-check"></i> Kabak <span class="ingr-amt">2 adet</span></li>
+            <li><i class="fa-solid fa-circle-check"></i> Kırmızı biber <span class="ingr-amt">1 adet</span></li>
+            <li><i class="fa-solid fa-circle-check"></i> Zeytinyağı <span class="ingr-amt">3 yemek kaşığı</span></li>
+            <li><i class="fa-solid fa-circle-check"></i> Sarımsak <span class="ingr-amt">2 diş</span></li>
+            <li><i class="fa-solid fa-circle-check"></i> Tuz, karabiber, kekik <span class="ingr-amt">Damak tadına göre</span></li>
+          </ul>
+        </div>
+
+        <!-- Hazırlık adımları -->
+        <div class="pnl-card">
+          <div class="pc-head">
+            <div class="pc-title"><i class="fa-solid fa-list-ol"></i> Hazırlanışı</div>
+          </div>
+          <ul class="step-list">
+            <li><span class="step-num">1</span><span class="step-txt">Tavuk göğsünü kuşbaşı doğrayın; zeytinyağı, ezilmiş sarımsak, tuz ve baharatlarla harmanlayıp 20 dakika marine edin.</span></li>
+            <li><span class="step-num">2</span><span class="step-txt">Sebzeleri iri parçalar halinde doğrayın ve fırın tepsisine yayın.</span></li>
+            <li><span class="step-num">3</span><span class="step-txt">Marine ettiğiniz tavukları sebzelerin üzerine ekleyin, üzerine bir miktar daha zeytinyağı gezdirin.</span></li>
+            <li><span class="step-num">4</span><span class="step-txt">Önceden 200°C'ye ısıtılmış fırında 35–40 dakika, üzeri kızarana kadar pişirin. Sıcak servis edin.</span></li>
+          </ul>
+        </div>
+
+        <!-- Şikayet / bildirim -->
+        <div class="pnl-card">
+          <div class="pc-head">
+            <div class="pc-title"><i class="fa-solid fa-flag"></i> Şikayetler &amp; Bildirimler</div>
+            <span class="pstat warm" style="font-size:11px;padding:3px 9px">3 aktif</span>
+          </div>
+          <div class="flag-list">
+            <div class="flag-item">
+              <div class="flag-ico"><i class="fa-solid fa-triangle-exclamation"></i></div>
+              <div class="flag-body">
+                <strong>mehmet_k</strong>
+                <div class="flag-reason">Malzeme miktarları yanlış görünüyor, ölçüler tutmuyor.</div>
+                <div class="flag-meta">Yanlış bilgi · 18 Haz 2026, 14:22</div>
+              </div>
+            </div>
+            <div class="flag-item">
+              <div class="flag-ico"><i class="fa-solid fa-triangle-exclamation"></i></div>
+              <div class="flag-body">
+                <strong>seda.demir</strong>
+                <div class="flag-reason">Görsel tarifle uyuşmuyor, farklı bir yemek fotoğrafı kullanılmış.</div>
+                <div class="flag-meta">Yanıltıcı görsel · 17 Haz 2026, 09:05</div>
+              </div>
+            </div>
+            <div class="flag-item">
+              <div class="flag-ico"><i class="fa-solid fa-triangle-exclamation"></i></div>
+              <div class="flag-body">
+                <strong>anonim_kullanici</strong>
+                <div class="flag-reason">Açıklamada alakasız bir bağlantı paylaşılmış.</div>
+                <div class="flag-meta">Spam · 16 Haz 2026, 21:40</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /sol sütun -->
+
+      <!-- SAĞ: Bilgiler + İstatistik + Denetim Aksiyonları -->
+      <div style="display:flex;flex-direction:column;gap:16px">
+
+        <!-- Denetim aksiyonları -->
+        <div class="pnl-card">
+          <div class="pc-head">
+            <div class="pc-title"><i class="fa-solid fa-shield-halved"></i> Denetim Aksiyonları</div>
+          </div>
+          <div class="meta-section">
+            <div class="meta-section-tt">Mevcut Durum</div>
+            <div style="margin-bottom:14px"><span class="pstat warm" style="font-size:13px;padding:6px 14px">Şikayetli — İnceleniyor</span></div>
+            <div class="meta-section-tt" style="margin-top:14px">İşlem Yap</div>
+            <div class="action-stack">
+              <button class="act-btn good" id="actApprove"><i class="fa-solid fa-check"></i> Onayla &amp; Yayınla</button>
+              <button class="act-btn primary" id="actFeature"><i class="fa-solid fa-star"></i> Öne Çıkar</button>
+              <button class="act-btn" id="actHide"><i class="fa-solid fa-eye-slash"></i> Tarifi Gizle</button>
+              <button class="act-btn warn" id="actRemove" data-no-confirm><i class="fa-solid fa-trash"></i> İçeriği Kaldır</button>
+            </div>
+            <div style="font-size:11.5px;color:var(--muted);margin-top:12px;line-height:1.5">
+              Bu kayıt <strong>kullanıcı gönderimi</strong> olduğundan içerik gönderen üyeye aittir; admin yalnızca moderasyon (onay / gizleme / kaldırma) yapar, metni düzenlemez.
+            </div>
+            <!-- HİBRİT: admin-editöryel kayıtta bu blok yerine "Düzenle" görünür (aşağıdaki not) -->
+            <div style="margin-top:12px;padding:11px 13px;background:rgba(var(--acc-rgb),.07);border:1px solid rgba(var(--acc-rgb),.18);border-radius:var(--radius-md);display:flex;align-items:flex-start;gap:9px">
+              <i class="fa-solid fa-circle-info" style="color:var(--acc-deep);font-size:13px;margin-top:1px;flex:none"></i>
+              <div style="font-size:11.5px;color:var(--slate-2);line-height:1.5">
+                Kaynağı <strong>Admin</strong> olan editöryel tariflerde bu kartta moderasyon yerine
+                <a href="sa-admin-tarifler-form.html" style="color:var(--acc-deep);font-weight:700">Düzenle</a>
+                aksiyonu görünür (içeriği forma taşır).
+              </div>
+            </div>
+          </div>
+          <div class="meta-section">
+            <div class="meta-section-tt">Dahili Not</div>
+            <textarea class="ftext" placeholder="Moderasyon notu girin…"></textarea>
+            <div style="margin-top:10px;text-align:right">
+              <button class="btn btn-ghost btn-sm" id="actNote" style="font-size:12.5px">Not Kaydet</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Bilgiler -->
+        <div class="pnl-card">
+          <div class="pc-head">
+            <div class="pc-title"><i class="fa-solid fa-circle-info"></i> Bilgiler</div>
+          </div>
+          <div class="meta-section">
+            <div class="meta-section-tt">Gönderen</div>
+            <div class="meta-row">
+              <div class="mr-ava" style="background-image:url('https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=80&q=80&auto=format&fit=crop')"></div>
+              <div class="mr-id">
+                <strong>Elif Yıldırım</strong>
+                <span>@elif_mutfakta · 42 tarif</span>
+              </div>
+            </div>
+          </div>
+          <div class="meta-section">
+            <div class="meta-section-tt">Tarif Detayları</div>
+            <div class="meta-stat"><span class="meta-stat-lbl"><i class="fa-regular fa-calendar"></i> Gönderim</span><span class="meta-stat-val">14 Haz 2026</span></div>
+            <div class="meta-stat"><span class="meta-stat-lbl"><i class="fa-solid fa-layer-group"></i> Kategori</span><span class="meta-stat-val">Ana Yemek</span></div>
+            <div class="meta-stat"><span class="meta-stat-lbl"><i class="fa-regular fa-clock"></i> Süre</span><span class="meta-stat-val">55 dk</span></div>
+            <div class="meta-stat"><span class="meta-stat-lbl"><i class="fa-solid fa-users"></i> Porsiyon</span><span class="meta-stat-val">4 kişilik</span></div>
+          </div>
+        </div>
+
+        <!-- İstatistik -->
+        <div class="pnl-card">
+          <div class="pc-head">
+            <div class="pc-title"><i class="fa-solid fa-chart-bar"></i> İstatistik</div>
+          </div>
+          <div class="meta-section">
+            <div class="meta-stat"><span class="meta-stat-lbl"><i class="fa-regular fa-eye"></i> Görüntülenme</span><span class="meta-stat-val">8.412</span></div>
+            <div class="meta-stat"><span class="meta-stat-lbl"><i class="fa-solid fa-heart"></i> Beğeni</span><span class="meta-stat-val">1.034</span></div>
+            <div class="meta-stat"><span class="meta-stat-lbl"><i class="fa-regular fa-bookmark"></i> Kaydedilme</span><span class="meta-stat-val">276</span></div>
+            <div class="meta-stat"><span class="meta-stat-lbl"><i class="fa-regular fa-comment"></i> Yorum</span><span class="meta-stat-val">58</span></div>
+          </div>
+        </div>
+
+      </div><!-- /sağ sütun -->
+
+    </div><!-- /detail-grid -->
+
+  </main>
+
+</div>
+
+<script src="assets/js/sa-shell.js"></script>
+<script>
+/* sayfa JS — denetim aksiyonları.
+   Onayla/Öne Çıkar/Not → saToast. Gizle → saConfirm (yıkıcı, eye-slash; delege
+   yakalamaz, açıkça çağır). İçeriği Kaldır → delege saConfirm yakalar ("Kaldır"). */
+(function(){
+  function onReady(){
+    var approve=document.getElementById('actApprove');
+    var feature=document.getElementById('actFeature');
+    var hide=document.getElementById('actHide');
+    var remove=document.getElementById('actRemove');
+    var note=document.getElementById('actNote');
+
+    if(approve) approve.addEventListener('click',function(){
+      if(window.saToast) saToast('Tarif onaylandı ve yayınlandı',{type:'ok'});
+    });
+    if(feature) feature.addEventListener('click',function(){
+      if(window.saToast) saToast('Tarif öne çıkarıldı',{type:'ok',icon:'fa-star'});
+    });
+    if(hide) hide.addEventListener('click',function(){
+      if(!window.saConfirm) return;
+      saConfirm({
+        danger:true, icon:'fa-eye-slash', ok:'Gizle', cancel:'Vazgeç',
+        title:'Tarif gizlensin mi?',
+        message:'“Fırında Sebzeli Tavuk” yayından kaldırılacak; kullanıcı tarafından görüntülenemeyecek. İstediğiniz zaman tekrar yayına alabilirsiniz.',
+        onConfirm:function(){ saToast('Tarif gizlendi',{type:'danger',icon:'fa-eye-slash'}); }
+      });
+    });
+    if(remove) remove.addEventListener('click',function(){
+      if(!window.saConfirm) return;
+      saConfirm({
+        danger:true, icon:'fa-trash', ok:'İçeriği Kaldır', cancel:'Vazgeç',
+        title:'İçerik kaldırılsın mı?',
+        message:'“Fırında Sebzeli Tavuk” yayından kaldırılacak. Tarif kullanıcının arşivinde kalır; istenirse tekrar değerlendirmeye alınabilir.',
+        onConfirm:function(){ saToast('İçerik yayından kaldırıldı',{type:'danger',icon:'fa-trash'}); }
+      });
+    });
+    if(note) note.addEventListener('click',function(){
+      if(window.saToast) saToast('Moderasyon notu kaydedildi',{type:'ok'});
+    });
+  }
+  if(document.readyState!=='loading') onReady();
+  else document.addEventListener('DOMContentLoaded',onReady);
+})();
+</script>
+</body>
+</html>

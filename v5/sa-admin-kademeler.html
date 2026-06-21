@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Kademeler — Admin — DadaMutfak</title>
+<link rel="shortcut icon" type="image/x-icon" href="assets/img/favicon.ico" />
+<!-- FontAwesome 6.5.2 (kilitli ikon seti) -->
+<link rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+      integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A=="
+      crossorigin="anonymous" referrerpolicy="no-referrer" />
+<link rel="stylesheet" href="assets/css/sa-shell.css" />
+<link rel="stylesheet" href="assets/css/sa-ui.css" />
+<style>
+/* =====================================================================
+   SA-ADMIN-KADEMELER — SAYFA CSS. Kullanıcı rütbe/kademe tanımları.
+   Liste = kart grid (her kademe görsel rütbe kartı). Form ayrı dosya.
+   ===================================================================== */
+
+/* açıklama bandı */
+.intro-band{display:flex;align-items:center;gap:14px;padding:16px 20px;background:rgba(var(--acc-rgb),.06);border:1px solid rgba(var(--acc-rgb),.16);border-radius:var(--radius-lg);margin-bottom:20px}
+.intro-band i{font-size:20px;color:var(--acc-deep);flex:none}
+.intro-band p{font-size:13px;color:var(--slate-2);line-height:1.5;margin:0}
+
+/* kademe kart grid */
+.tier-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px}
+.tier-card{position:relative;background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-lg);box-shadow:var(--sh-sm);padding:20px;transition:.22s var(--ease);overflow:hidden}
+.tier-card:hover{transform:translateY(-3px);box-shadow:var(--sh-md);border-color:rgba(var(--acc-rgb),.4)}
+/* sol renk şeridi = kademe seviyesi */
+.tier-card::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--acc)}
+.tier-card.lv1::before{background:rgba(var(--acc-rgb),.22)}
+.tier-card.lv2::before{background:rgba(var(--acc-rgb),.42)}
+.tier-card.lv3::before{background:rgba(var(--acc-rgb),.65)}
+.tier-card.lv4::before{background:var(--acc)}
+.tier-card.lv5::before{background:var(--acc-deep)}
+
+.tier-top{display:flex;align-items:flex-start;gap:13px;margin-bottom:16px}
+.tier-medal{width:46px;height:46px;flex:none;border-radius:var(--radius-md);background:rgba(var(--acc-rgb),.10);color:var(--acc-deep);display:grid;place-items:center;font-size:19px}
+.tier-id{flex:1;min-width:0}
+.tier-name{font-size:15.5px;font-weight:700;color:var(--slate);line-height:1.2}
+.tier-lvl{font-size:11.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);margin-top:3px}
+.tier-acts{display:flex;gap:6px;flex:none}
+.ia-btn{width:30px;height:30px;border-radius:var(--radius-sm);border:1px solid var(--line);background:var(--paper);color:var(--muted);font-size:12px;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;transition:.18s var(--ease)}
+.ia-btn:hover{border-color:var(--acc);color:var(--acc-deep);background:rgba(var(--acc-rgb),.07)}
+.ia-btn.danger:hover{border-color:var(--tomato);color:var(--tomato);background:var(--tomato-tint)}
+
+.tier-req{font-size:12.5px;color:var(--slate-2);line-height:1.5;margin-bottom:14px;min-height:38px}
+.tier-req b{color:var(--slate);font-weight:700;font-variant-numeric:tabular-nums}
+
+.tier-foot{display:flex;align-items:center;justify-content:space-between;padding-top:13px;border-top:1px solid var(--line)}
+.tier-count{font-size:12px;color:var(--muted)}
+.tier-count b{font-size:13.5px;color:var(--slate);font-weight:700;font-variant-numeric:tabular-nums}
+/* kademe rozeti (radius-sm KÖŞELİ) */
+.tier-badge{font-size:11px;font-weight:700;padding:4px 10px;border-radius:var(--radius-sm);background:rgba(var(--acc-rgb),.12);color:var(--acc-deep)}
+
+@media(max-width:560px){.tier-grid{grid-template-columns:minmax(0,1fr)}}
+</style>
+</head>
+<body data-brand="mutfak" data-sec="admin" data-screen="kademeler">
+
+<div class="sa-app">
+
+  <aside class="sa-rail" id="saRail">
+    <a class="sa-rail-logo" href="sa-giris-v1.html" title="Yönetim Girişi"><img src="assets/img/logo-mark.png" alt="DadaMutfak" /></a>
+    <a class="sa-rail-ico" data-sec="genel" href="sa-shell.html?sec=genel" title="Genel Bakış"><i class="fa-solid fa-gauge-high"></i></a>
+    <span class="sa-rail-div"></span>
+    <a class="sa-rail-ico" data-sec="admin"   href="sa-admin.html"   title="Admin"><i class="fa-solid fa-shield-halved"></i></a>
+    <a class="sa-rail-ico" data-sec="saglik"  href="sa-saglik.html"  title="Sağlık &amp; Diyet"><i class="fa-solid fa-heart-pulse"></i></a>
+    <a class="sa-rail-ico" data-sec="store"   href="sa-store.html"   title="DadaStore"><i class="fa-solid fa-bag-shopping"></i></a>
+    <a class="sa-rail-ico" data-sec="dadafit" href="sa-dadafit.html" title="DadaFit"><i class="fa-solid fa-dumbbell"></i></a>
+    <a class="sa-rail-ico" data-sec="isletme" href="sa-isletme.html" title="İşletmeler"><i class="fa-solid fa-store"></i></a>
+    <a class="sa-rail-ico is-locked" data-sec="akademi" href="#" title="DadaAkademi — Yakında"><i class="fa-solid fa-graduation-cap"></i><i class="fa-solid fa-lock sr-lock"></i></a>
+    <div class="sa-rail-foot"><a class="sa-rail-ico" href="sa-giris-v1.html" title="Siteye Dön"><i class="fa-solid fa-arrow-left"></i></a></div>
+  </aside>
+
+  <nav class="sa-menu" id="saMenu"></nav>
+  <div class="sa-divider" id="saDivider" role="separator" aria-label="Menüyü daralt/genişlet" title="Sürükle veya tıkla — menüyü daralt/genişlet"><span class="sa-grip"><i class="fa-solid fa-grip-lines-vertical"></i></span></div>
+  <div class="pnl-overlay" id="pnlOverlay"></div>
+
+  <header class="pnl-top">
+    <button class="pnl-burger" id="pnlBurger" aria-label="Menü"><i class="fa-solid fa-bars"></i></button>
+    <div class="pnl-search"><i class="fa-solid fa-magnifying-glass"></i><input type="text" placeholder="Kullanıcı, içerik ara…" /></div>
+    <div class="pnl-top-tools">
+      <button class="pnl-bell" aria-label="Bildirimler"><i class="fa-regular fa-bell"></i><span class="pb-dot"></span></button>
+      <div class="pnl-me">
+        <div class="pm-ava" style="background-image:url('https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=240&q=80&auto=format&fit=crop')"></div>
+        <div class="pm-id"><div class="pm-name" id="pmName">Süper Admin</div><div class="pm-role" id="pmRole">Tüm yetki</div></div>
+        <i class="fa-solid fa-chevron-down"></i>
+      </div>
+    </div>
+  </header>
+
+  <!-- §4 İÇERİK — Kademeler -->
+  <main class="pnl-main" id="saMain">
+
+    <div class="pnl-page-head">
+      <div>
+        <h1>Kademeler</h1>
+        <div class="ph-sub">Topluluk rütbe sistemi · katkı puanına göre üye seviyeleri · <strong>5</strong> kademe</div>
+      </div>
+      <div class="ph-actions">
+        <a class="btn btn-acc btn-sm" href="sa-admin-kademeler-form.html"><i class="fa-solid fa-plus"></i> Yeni Kademe</a>
+      </div>
+    </div>
+
+    <div class="intro-band">
+      <i class="fa-solid fa-ranking-star"></i>
+      <p>Üyeler tarif paylaşımı, beğeni ve yorumlarla <b>katkı puanı</b> kazanır. Eşik puana ulaşan üye otomatik olarak bir üst kademeye yükselir. Kademe sıralaması puana göre belirlenir.</p>
+    </div>
+
+    <div class="tier-grid" id="tierGrid">
+
+      <div class="tier-card lv1">
+        <div class="tier-top">
+          <div class="tier-medal"><i class="fa-solid fa-seedling"></i></div>
+          <div class="tier-id"><div class="tier-name">Çırak</div><div class="tier-lvl">Seviye 1</div></div>
+          <div class="tier-acts">
+            <a class="ia-btn" href="sa-admin-kademeler-form.html" title="Düzenle"><i class="fa-solid fa-pen"></i></a>
+            <button class="ia-btn danger" data-del="Çırak" title="Sil"><i class="fa-solid fa-trash"></i></button>
+          </div>
+        </div>
+        <div class="tier-req">Eşik: <b>0</b> puan · Yeni katılan tüm üyelerin başlangıç kademesi.</div>
+        <div class="tier-foot"><div class="tier-count"><b>5.840</b> üye</div><span class="tier-badge">Başlangıç</span></div>
+      </div>
+
+      <div class="tier-card lv2">
+        <div class="tier-top">
+          <div class="tier-medal"><i class="fa-solid fa-leaf"></i></div>
+          <div class="tier-id"><div class="tier-name">Aşçı Yamağı</div><div class="tier-lvl">Seviye 2</div></div>
+          <div class="tier-acts">
+            <a class="ia-btn" href="sa-admin-kademeler-form.html" title="Düzenle"><i class="fa-solid fa-pen"></i></a>
+            <button class="ia-btn danger" data-del="Aşçı Yamağı" title="Sil"><i class="fa-solid fa-trash"></i></button>
+          </div>
+        </div>
+        <div class="tier-req">Eşik: <b>250</b> puan · İlk tariflerini paylaşmış aktif üyeler.</div>
+        <div class="tier-foot"><div class="tier-count"><b>1.620</b> üye</div><span class="tier-badge">Aktif</span></div>
+      </div>
+
+      <div class="tier-card lv3">
+        <div class="tier-top">
+          <div class="tier-medal"><i class="fa-solid fa-utensils"></i></div>
+          <div class="tier-id"><div class="tier-name">Aşçı</div><div class="tier-lvl">Seviye 3</div></div>
+          <div class="tier-acts">
+            <a class="ia-btn" href="sa-admin-kademeler-form.html" title="Düzenle"><i class="fa-solid fa-pen"></i></a>
+            <button class="ia-btn danger" data-del="Aşçı" title="Sil"><i class="fa-solid fa-trash"></i></button>
+          </div>
+        </div>
+        <div class="tier-req">Eşik: <b>1.000</b> puan · Düzenli içerik üreten deneyimli üyeler.</div>
+        <div class="tier-foot"><div class="tier-count"><b>640</b> üye</div><span class="tier-badge">Deneyimli</span></div>
+      </div>
+
+      <div class="tier-card lv4">
+        <div class="tier-top">
+          <div class="tier-medal"><i class="fa-solid fa-hat-cowboy"></i></div>
+          <div class="tier-id"><div class="tier-name">Şef</div><div class="tier-lvl">Seviye 4</div></div>
+          <div class="tier-acts">
+            <a class="ia-btn" href="sa-admin-kademeler-form.html" title="Düzenle"><i class="fa-solid fa-pen"></i></a>
+            <button class="ia-btn danger" data-del="Şef" title="Sil"><i class="fa-solid fa-trash"></i></button>
+          </div>
+        </div>
+        <div class="tier-req">Eşik: <b>5.000</b> puan · Topluluk tarafından beğenilen üretken şefler.</div>
+        <div class="tier-foot"><div class="tier-count"><b>148</b> üye</div><span class="tier-badge">Üretken</span></div>
+      </div>
+
+      <div class="tier-card lv5">
+        <div class="tier-top">
+          <div class="tier-medal"><i class="fa-solid fa-crown"></i></div>
+          <div class="tier-id"><div class="tier-name">Usta Şef</div><div class="tier-lvl">Seviye 5</div></div>
+          <div class="tier-acts">
+            <a class="ia-btn" href="sa-admin-kademeler-form.html" title="Düzenle"><i class="fa-solid fa-pen"></i></a>
+            <button class="ia-btn danger" data-del="Usta Şef" title="Sil"><i class="fa-solid fa-trash"></i></button>
+          </div>
+        </div>
+        <div class="tier-req">Eşik: <b>15.000</b> puan · Toplulukta öne çıkan en üst seviye ustalar.</div>
+        <div class="tier-foot"><div class="tier-count"><b>23</b> üye</div><span class="tier-badge">Elit</span></div>
+      </div>
+
+    </div><!-- /tier-grid -->
+
+  </main>
+
+</div><!-- /sa-app -->
+
+<script src="assets/js/sa-ui.js"></script>
+<script src="assets/js/sa-shell.js"></script>
+<script>
+/* sayfa JS — kademe sil onayı */
+(function(){
+  document.querySelectorAll('[data-del]').forEach(function(btn){
+    btn.addEventListener('click',function(){
+      var name=btn.getAttribute('data-del');
+      if(!window.saConfirm)return;
+      saConfirm({
+        danger:true,title:'Kademeyi sil',
+        message:'"'+name+'" kademesi silinecek. Bu kademedeki üyeler bir alt seviyeye taşınır. İşlem geri alınamaz.',
+        ok:'Sil',cancel:'Vazgeç',
+        onConfirm:function(){
+          var card=btn.closest('.tier-card');if(card)card.remove();
+          if(window.saToast)saToast('"'+name+'" kademesi silindi',{type:'danger'});
+        }
+      });
+    });
+  });
+})();
+</script>
+</body>
+</html>

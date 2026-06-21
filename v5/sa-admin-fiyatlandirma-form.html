@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Plan Düzenle — Admin — DadaMutfak</title>
+<link rel="shortcut icon" type="image/x-icon" href="assets/img/favicon.ico" />
+<link rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+      integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A=="
+      crossorigin="anonymous" referrerpolicy="no-referrer" />
+<link rel="stylesheet" href="assets/css/sa-shell.css" />
+<link rel="stylesheet" href="assets/css/sa-ui.css" />
+<style>
+/* =====================================================================
+   SA-ADMIN-FIYATLANDIRMA-FORM — SAYFA CSS. Plan tanımı + canlı kart önizleme.
+   Form alanları VERBATIM.
+   ===================================================================== */
+.form-grid{display:grid;gap:18px}
+.frow{display:flex;flex-direction:column;gap:7px}
+.frow label{font-size:12.5px;font-weight:700;color:var(--slate-2)}
+.frow .fhint{font-size:11.5px;color:var(--muted);font-weight:500}
+.finput,.fselect,.ftext{width:100%;font-family:inherit;font-size:13.5px;font-weight:500;color:var(--ink);background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-md);padding:0 14px;height:44px;outline:none;transition:.2s var(--ease)}
+.ftext{height:auto;padding:12px 14px;line-height:1.5;resize:vertical;min-height:80px}
+.finput:focus,.fselect:focus,.ftext:focus{border-color:var(--acc);box-shadow:0 0 0 3px rgba(var(--acc-rgb),.12)}
+.frow.two{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.form-sec{padding:18px 22px;border-bottom:1px solid var(--line)}
+.form-sec:last-child{border-bottom:none}
+.form-sec-tt{font-size:13px;font-weight:700;color:var(--slate);margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.form-sec-tt i{color:var(--acc)}
+.form-actions{display:flex;gap:10px;justify-content:flex-end;padding:16px 22px}
+.form-layout{display:grid;grid-template-columns:minmax(0,1fr) minmax(280px,340px);gap:24px;align-items:start}
+
+.frow-check{display:flex;align-items:center;gap:10px;padding:6px 0}
+.frow-check input[type=checkbox]{width:18px;height:18px;accent-color:var(--acc);cursor:pointer;flex:none}
+.frow-check label{font-size:13.5px;font-weight:500;color:var(--slate);cursor:pointer}
+
+/* fiyat girişi ₺ ön-ek */
+.cur-wrap{display:flex;align-items:stretch;border:1px solid var(--line);border-radius:var(--radius-md);overflow:hidden;transition:.2s var(--ease)}
+.cur-wrap:focus-within{border-color:var(--acc);box-shadow:0 0 0 3px rgba(var(--acc-rgb),.12)}
+.cur-pre{display:flex;align-items:center;padding:0 14px;background:var(--bg);color:var(--slate-2);font-size:15px;font-weight:700;border-right:1px solid var(--line)}
+.cur-wrap .finput{border:none;border-radius:0;box-shadow:none!important}
+
+/* özellik satırları editörü */
+.feat-edit{display:flex;flex-direction:column;gap:8px}
+.feat-line{display:flex;align-items:center;gap:9px}
+.feat-line input[type=checkbox]{width:17px;height:17px;accent-color:var(--green-deep);cursor:pointer;flex:none}
+.feat-line .finput{flex:1;height:40px}
+
+/* canlı plan kart önizleme (liste kartı yansıması) */
+.plan-prev{background:var(--paper);border:1px solid rgba(var(--acc-rgb),.4);border-radius:var(--radius-lg);padding:20px}
+.pp-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px}
+.pp-name{font-size:16px;font-weight:700;color:var(--slate);display:flex;align-items:center;gap:8px}
+.pp-name i{color:var(--acc-deep);font-size:14px}
+.pp-tag{font-size:10px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:3px 8px;border-radius:var(--radius-sm);background:rgba(var(--acc-rgb),.12);color:var(--acc-deep)}
+.pp-price{display:flex;align-items:baseline;gap:5px;padding:12px 0;border-bottom:1px solid var(--line);margin-bottom:12px}
+.pp-amount{font-size:26px;font-weight:700;color:var(--slate);font-variant-numeric:tabular-nums}
+.pp-per{font-size:12px;color:var(--muted);font-weight:600}
+.pp-feats{display:flex;flex-direction:column;gap:7px}
+.pp-feat{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--slate-2)}
+.pp-feat i{font-size:11px;color:var(--green-deep);flex:none}
+
+@media(max-width:900px){.form-layout{grid-template-columns:minmax(0,1fr)}.frow.two{grid-template-columns:1fr}}
+</style>
+</head>
+<body data-brand="mutfak" data-sec="admin" data-screen="fiyatlandirma">
+
+<div class="sa-app">
+
+  <aside class="sa-rail" id="saRail">
+    <a class="sa-rail-logo" href="sa-giris-v1.html" title="Yönetim Girişi"><img src="assets/img/logo-mark.png" alt="DadaMutfak" /></a>
+    <a class="sa-rail-ico" data-sec="genel" href="sa-shell.html?sec=genel" title="Genel Bakış"><i class="fa-solid fa-gauge-high"></i></a>
+    <span class="sa-rail-div"></span>
+    <a class="sa-rail-ico" data-sec="admin"   href="sa-admin.html"   title="Admin"><i class="fa-solid fa-shield-halved"></i></a>
+    <a class="sa-rail-ico" data-sec="saglik"  href="sa-saglik.html"  title="Sağlık &amp; Diyet"><i class="fa-solid fa-heart-pulse"></i></a>
+    <a class="sa-rail-ico" data-sec="store"   href="sa-store.html"   title="DadaStore"><i class="fa-solid fa-bag-shopping"></i></a>
+    <a class="sa-rail-ico" data-sec="dadafit" href="sa-dadafit.html" title="DadaFit"><i class="fa-solid fa-dumbbell"></i></a>
+    <a class="sa-rail-ico" data-sec="isletme" href="sa-isletme.html" title="İşletmeler"><i class="fa-solid fa-store"></i></a>
+    <a class="sa-rail-ico is-locked" data-sec="akademi" href="#" title="DadaAkademi — Yakında"><i class="fa-solid fa-graduation-cap"></i><i class="fa-solid fa-lock sr-lock"></i></a>
+    <div class="sa-rail-foot"><a class="sa-rail-ico" href="sa-giris-v1.html" title="Siteye Dön"><i class="fa-solid fa-arrow-left"></i></a></div>
+  </aside>
+
+  <nav class="sa-menu" id="saMenu"></nav>
+  <div class="sa-divider" id="saDivider" role="separator" aria-label="Menüyü daralt/genişlet" title="Sürükle veya tıkla — menüyü daralt/genişlet"><span class="sa-grip"><i class="fa-solid fa-grip-lines-vertical"></i></span></div>
+  <div class="pnl-overlay" id="pnlOverlay"></div>
+
+  <header class="pnl-top">
+    <button class="pnl-burger" id="pnlBurger" aria-label="Menü"><i class="fa-solid fa-bars"></i></button>
+    <div class="pnl-search"><i class="fa-solid fa-magnifying-glass"></i><input type="text" placeholder="Kullanıcı, içerik ara…" /></div>
+    <div class="pnl-top-tools">
+      <button class="pnl-bell" aria-label="Bildirimler"><i class="fa-regular fa-bell"></i><span class="pb-dot"></span></button>
+      <div class="pnl-me">
+        <div class="pm-ava" style="background-image:url('https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=240&q=80&auto=format&fit=crop')"></div>
+        <div class="pm-id"><div class="pm-name" id="pmName">Süper Admin</div><div class="pm-role" id="pmRole">Tüm yetki</div></div>
+        <i class="fa-solid fa-chevron-down"></i>
+      </div>
+    </div>
+  </header>
+
+  <main class="pnl-main" id="saMain">
+
+    <div class="pnl-page-head">
+      <div>
+        <a href="sa-admin-fiyatlandirma.html" style="display:inline-flex;align-items:center;gap:7px;font-size:13px;font-weight:700;color:var(--muted);margin-bottom:8px;transition:.18s" onmouseover="this.style.color='var(--acc)'" onmouseout="this.style.color='var(--muted)'"><i class="fa-solid fa-arrow-left"></i> Fiyatlandırma</a>
+        <h1>Plan Düzenle</h1>
+        <div class="ph-sub">Abonelik planının fiyatını ve özelliklerini tanımlayın</div>
+      </div>
+    </div>
+
+    <div class="form-layout">
+
+      <div class="pnl-card">
+
+        <div class="form-sec">
+          <div class="form-sec-tt"><i class="fa-solid fa-tag"></i> Plan Bilgileri</div>
+          <div class="form-grid">
+            <div class="frow two">
+              <div class="frow">
+                <label for="f-ad">Plan adı</label>
+                <input class="finput" id="f-ad" type="text" value="Pro 1" />
+              </div>
+              <div class="frow">
+                <label for="f-rozet">Rozet etiketi</label>
+                <input class="finput" id="f-rozet" type="text" value="Öne çıkan" />
+              </div>
+            </div>
+            <div class="frow">
+              <label for="f-aciklama">Kısa açıklama</label>
+              <input class="finput" id="f-aciklama" type="text" value="Reklamsız deneyim ve gelişmiş planlama araçları." />
+            </div>
+          </div>
+        </div>
+
+        <div class="form-sec">
+          <div class="form-sec-tt"><i class="fa-solid fa-money-bill-wave"></i> Fiyatlandırma</div>
+          <div class="form-grid">
+            <div class="frow two">
+              <div class="frow">
+                <label for="f-aylik">Aylık ücret</label>
+                <div class="cur-wrap"><span class="cur-pre">₺</span><input class="finput" id="f-aylik" type="number" value="79" min="0" /></div>
+              </div>
+              <div class="frow">
+                <label for="f-yillik">Yıllık ücret</label>
+                <div class="cur-wrap"><span class="cur-pre">₺</span><input class="finput" id="f-yillik" type="number" value="790" min="0" /></div>
+              </div>
+            </div>
+            <div class="frow-check">
+              <input type="checkbox" id="f-featured" checked />
+              <label for="f-featured">Üyelik sayfasında öne çıkar (vurgulanan plan)</label>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-sec">
+          <div class="form-sec-tt"><i class="fa-solid fa-list-check"></i> Özellikler</div>
+          <div class="feat-edit" id="featEdit">
+            <div class="feat-line"><input type="checkbox" checked /><input class="finput" type="text" value="Ücretsiz plandaki her şey" /></div>
+            <div class="feat-line"><input type="checkbox" checked /><input class="finput" type="text" value="Reklamsız deneyim" /></div>
+            <div class="feat-line"><input type="checkbox" checked /><input class="finput" type="text" value="Haftalık menü planlayıcı" /></div>
+            <div class="feat-line"><input type="checkbox" /><input class="finput" type="text" value="Diyetisyen randevusu" /></div>
+          </div>
+          <span class="fhint" style="margin-top:10px;display:block">İşaretli özellikler plan kartında tik ile, işaretsizler kapalı gösterilir.</span>
+        </div>
+
+        <div class="form-actions">
+          <a class="btn btn-ghost btn-sm" href="sa-admin-fiyatlandirma.html">İptal</a>
+          <button class="btn btn-acc btn-sm" type="button" id="saveBtn"><i class="fa-solid fa-floppy-disk"></i> Kaydet</button>
+        </div>
+
+      </div><!-- /pnl-card -->
+
+      <!-- yan: canlı plan kart önizleme -->
+      <div>
+        <div class="side-card pnl-card">
+          <div class="form-sec">
+            <div class="form-sec-tt" style="margin-bottom:16px"><i class="fa-solid fa-eye"></i> Önizleme</div>
+            <div class="plan-prev" id="planPrev">
+              <div class="pp-top">
+                <div class="pp-name"><i class="fa-solid fa-crown"></i> <span id="ppName">Pro 1</span></div>
+                <span class="pp-tag" id="ppTag">Öne çıkan</span>
+              </div>
+              <div class="pp-price"><span class="pp-amount" id="ppAmount">₺79</span><span class="pp-per">/ay</span></div>
+              <div class="pp-feats" id="ppFeats"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /form-layout -->
+
+  </main>
+
+</div><!-- /sa-app -->
+
+<script src="assets/js/sa-ui.js"></script>
+<script src="assets/js/sa-shell.js"></script>
+<script>
+/* sayfa JS — canlı plan kart önizleme */
+(function(){
+  var fAd=document.getElementById('f-ad');
+  var fRozet=document.getElementById('f-rozet');
+  var fAylik=document.getElementById('f-aylik');
+  var fFeatured=document.getElementById('f-featured');
+  var featLines=document.querySelectorAll('#featEdit .feat-line');
+
+  var ppName=document.getElementById('ppName');
+  var ppTag=document.getElementById('ppTag');
+  var ppAmount=document.getElementById('ppAmount');
+  var ppFeats=document.getElementById('ppFeats');
+  var planPrev=document.getElementById('planPrev');
+
+  function render(){
+    ppName.textContent=fAd.value||'Plan adı';
+    var tag=(fRozet.value||'').trim();
+    ppTag.textContent=tag||'—';
+    ppTag.style.display=tag?'':'none';
+    ppAmount.textContent='₺'+(parseInt(fAylik.value,10)||0);
+    planPrev.style.borderColor=fFeatured.checked?'rgba(var(--acc-rgb),.4)':'var(--line)';
+
+    ppFeats.innerHTML='';
+    featLines.forEach(function(line){
+      var on=line.querySelector('input[type=checkbox]').checked;
+      var txt=line.querySelector('input[type=text]').value.trim();
+      if(!txt)return;
+      var row=document.createElement('div');
+      row.className='pp-feat';
+      row.innerHTML='<i class="fa-solid '+(on?'fa-check':'fa-xmark')+'" style="'+(on?'':'color:var(--line)')+'"></i> <span style="'+(on?'':'color:var(--muted)')+'">'+txt+'</span>';
+      ppFeats.appendChild(row);
+    });
+  }
+
+  [fAd,fRozet,fAylik,fFeatured].forEach(function(el){el.addEventListener('input',render)});
+  featLines.forEach(function(line){line.querySelectorAll('input').forEach(function(i){i.addEventListener('input',render)})});
+
+  document.getElementById('saveBtn').addEventListener('click',function(){
+    if(window.saToast)saToast('Plan kaydedildi',{type:'ok'});
+  });
+  render();
+})();
+</script>
+</body>
+</html>
