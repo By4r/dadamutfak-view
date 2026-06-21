@@ -37,7 +37,7 @@
 }
 
 *{margin:0;padding:0;box-sizing:border-box}
-html{scroll-behavior:smooth;scroll-padding-top:132px}
+html{scroll-behavior:smooth;scroll-padding-top:190px}
 body{
   font-family:"Gilroy",system-ui,sans-serif;
   font-weight:500;
@@ -98,6 +98,21 @@ img{display:block;max-width:100%}
 .chip:hover{border-color:var(--tomato);color:var(--tomato)}
 .chip b{font-weight:800;color:var(--muted);font-size:11px}
 
+/* sekme geçişi (Genel / Admin Panel) */
+.tabs{
+  max-width:1240px;margin:0 auto;padding:12px 22px 12px;
+  display:flex;gap:8px;
+}
+.tab{
+  display:inline-flex;align-items:center;gap:8px;
+  font-family:inherit;font-size:13px;font-weight:800;color:var(--muted);
+  padding:9px 16px;border:1px solid var(--line);border-radius:12px;
+  background:var(--paper);cursor:pointer;transition:.2s var(--ease);
+}
+.tab i{font-size:12px}
+.tab:hover{border-color:var(--tomato);color:var(--tomato)}
+.tab.on{background:var(--tomato);border-color:var(--tomato);color:#fff}
+
 /* ============ HERO / GİRİŞ ============ */
 .intro{max-width:1240px;margin:0 auto;padding:38px 22px 8px}
 .eyebrow{
@@ -120,7 +135,7 @@ img{display:block;max-width:100%}
 
 /* ============ GRUP BÖLÜMLERİ ============ */
 .wrap{max-width:1240px;margin:0 auto;padding:18px 22px 80px}
-.group{margin-top:42px;scroll-margin-top:132px}
+.group{margin-top:42px;scroll-margin-top:190px}
 .group.hide{display:none}
 .g-head{
   display:flex;align-items:center;gap:13px;margin-bottom:18px;
@@ -186,6 +201,7 @@ footer{
   .bar-row{flex-wrap:wrap;gap:12px;padding:12px 16px}
   .search{margin-left:0;max-width:none;order:3;width:100%}
   .chips{padding:0 16px 12px}
+  .tabs{padding:10px 16px 8px}
   .intro{padding:28px 16px 6px}
   .wrap{padding:14px 16px 64px}
   .grid{grid-template-columns:1fr}
@@ -210,6 +226,10 @@ footer{
       <input id="q" type="search" placeholder="Sayfa ara…  (örn. tarif, sofra, diyet)"
              autocomplete="off" aria-label="Sayfa ara" />
     </div>
+  </div>
+  <div class="tabs" role="tablist" aria-label="Dizin sekmeleri">
+    <button class="tab on" type="button" data-tab="genel"><i class="fa-solid fa-compass"></i> Genel</button>
+    <button class="tab" type="button" data-tab="admin"><i class="fa-solid fa-shield-halved"></i> Admin Panel</button>
   </div>
   <nav class="chips" id="chips" aria-label="Gruplara atla"></nav>
 </header>
@@ -383,6 +403,105 @@ const GROUPS = [
   ]],
 ];
 
+/* Admin Panel sekmesi — gözetim + operatör panelleri (v6 sa-* / antrenor-*).
+   Aynı [dosya, etiket, açıklama] formatı; public GROUPS ile birebir renderer. */
+const ADMIN_GROUPS = [
+  ["Gözetim — Admin","fa-shield-halved",[
+    ["sa-admin","Genel Bakış","Admin gözetim panosu"],
+    ["sa-admin-kullanicilar","Kullanıcılar","Kullanıcı & yetki listesi"],
+    ["sa-admin-kullanicilar-detay","Kullanıcılar · Detay","Kullanıcı kaydı"],
+    ["sa-admin-kullanicilar-form","Kullanıcılar · Form","Kullanıcı ekle/düzenle"],
+    ["sa-admin-tarifler","Tarifler","Tarif moderasyonu"],
+    ["sa-admin-tarifler-detay","Tarifler · Detay","Tarif incelemesi"],
+    ["sa-admin-tarifler-form","Tarifler · Form","Tarif düzenle"],
+    ["sa-admin-sefler","Şefler","Şef listesi"],
+    ["sa-admin-sefler-detay","Şefler · Detay","Şef profili"],
+    ["sa-admin-sefler-form","Şefler · Form","Şef ekle/düzenle"],
+    ["sa-admin-slider","Slider","Anasayfa slider"],
+    ["sa-admin-slider-form","Slider · Form","Slider düzenle"],
+    ["sa-admin-sayfalar","Sayfalar & SEO","Statik sayfa listesi"],
+    ["sa-admin-sayfalar-form","Sayfalar · Form","Sayfa düzenle"],
+    ["sa-admin-fiyatlandirma","Fiyatlandırma","Plan/fiyat listesi"],
+    ["sa-admin-fiyatlandirma-form","Fiyatlandırma · Form","Fiyat düzenle"],
+    ["sa-admin-kademeler","Kademeler","Üyelik kademeleri"],
+    ["sa-admin-kademeler-form","Kademeler · Form","Kademe düzenle"],
+    ["sa-admin-raporlar","Raporlar","Admin raporları"],
+    ["sa-admin-ayarlar","Ayarlar","Sistem ayarları"],
+    ["sa-admin-menu","Menü Yönetimi","Navigasyon menüsü"],
+  ]],
+  ["Gözetim — Store","fa-bag-shopping",[
+    ["sa-store","Genel Bakış","Store gözetim panosu"],
+    ["sa-store-urunler","Ürünler","Ürün listesi"],
+    ["sa-store-urunler-detay","Ürünler · Detay","Ürün kaydı"],
+    ["sa-store-urunler-form","Ürünler · Form","Ürün ekle/düzenle"],
+    ["sa-store-siparisler","Siparişler","Sipariş listesi"],
+    ["sa-store-siparisler-detay","Siparişler · Detay","Sipariş kaydı"],
+    ["sa-store-musteriler","Müşteriler","Müşteri listesi"],
+    ["sa-store-musteriler-detay","Müşteriler · Detay","Müşteri kaydı"],
+    ["sa-store-kategoriler","Kategoriler","Kategori ağacı"],
+    ["sa-store-kategoriler-form","Kategoriler · Form","Kategori düzenle"],
+    ["sa-store-promosyonlar","Promosyonlar","Promosyon listesi"],
+    ["sa-store-promosyonlar-form","Promosyonlar · Form","Promosyon düzenle"],
+    ["sa-store-kargo","Kargo","Kargo ayarları"],
+    ["sa-store-kargo-form","Kargo · Form","Kargo düzenle"],
+    ["sa-store-raporlar","Raporlar","Store raporları"],
+  ]],
+  ["Gözetim — Sağlık","fa-heart-pulse",[
+    ["sa-saglik","Genel Bakış","Sağlık gözetim panosu"],
+    ["sa-saglik-diyetisyenler","Diyetisyenler","Diyetisyen listesi"],
+    ["sa-saglik-diyetisyenler-detay","Diyetisyenler · Detay","Diyetisyen profili"],
+    ["sa-saglik-randevular","Randevular","Randevu listesi"],
+    ["sa-saglik-randevular-detay","Randevular · Detay","Randevu kaydı"],
+    ["sa-saglik-receteler","Reçeteler","Reçete listesi"],
+    ["sa-saglik-receteler-detay","Reçeteler · Detay","Reçete kaydı"],
+    ["sa-saglik-testler","Testler","Sağlık testleri"],
+    ["sa-saglik-testler-detay","Testler · Detay","Test kaydı"],
+    ["sa-saglik-hesaplayicilar","Hesaplayıcılar","Hesaplayıcı listesi"],
+    ["sa-saglik-hesaplayicilar-form","Hesaplayıcılar · Form","Hesaplayıcı düzenle"],
+  ]],
+  ["Gözetim — İşletme","fa-store",[
+    ["sa-isletme","Genel Bakış","İşletme gözetim panosu"],
+    ["sa-isletme-isletmeler","İşletmeler","İşletme listesi"],
+    ["sa-isletme-isletmeler-detay","İşletmeler · Detay","İşletme kaydı"],
+    ["sa-isletme-menuler","Menüler","Menü listesi"],
+    ["sa-isletme-menuler-detay","Menüler · Detay","Menü kaydı"],
+    ["sa-isletme-onaylar","Onaylar","Onay kuyruğu"],
+    ["sa-isletme-onaylar-detay","Onaylar · Detay","Onay kaydı"],
+    ["sa-isletme-rezervasyonlar","Rezervasyonlar","Rezervasyon listesi"],
+    ["sa-isletme-rezervasyonlar-detay","Rezervasyonlar · Detay","Rezervasyon kaydı"],
+    ["sa-isletme-reklam","Reklam","Reklam listesi"],
+    ["sa-isletme-reklam-form","Reklam · Form","Reklam düzenle"],
+  ]],
+  ["Gözetim — DadaFit","fa-dumbbell",[
+    ["sa-dadafit","Genel Bakış","DadaFit gözetim panosu"],
+    ["sa-dadafit-antrenorler","Antrenörler","Antrenör listesi"],
+    ["sa-dadafit-antrenorler-detay","Antrenörler · Detay","Antrenör profili"],
+    ["sa-dadafit-programlar","Programlar","Program listesi"],
+    ["sa-dadafit-programlar-detay","Programlar · Detay","Program kaydı"],
+    ["sa-dadafit-programlar-form","Programlar · Form","Program düzenle"],
+    ["sa-dadafit-egzersizler","Egzersizler","Egzersiz listesi"],
+    ["sa-dadafit-egzersizler-detay","Egzersizler · Detay","Egzersiz kaydı"],
+    ["sa-dadafit-egzersizler-form","Egzersizler · Form","Egzersiz düzenle"],
+    ["sa-dadafit-challenge","Challenge","Challenge listesi"],
+    ["sa-dadafit-challenge-detay","Challenge · Detay","Challenge kaydı"],
+    ["sa-dadafit-challenge-form","Challenge · Form","Challenge düzenle"],
+  ]],
+  ["Operatör — Antrenör","fa-user-tie",[
+    ["antrenor-panel-v1","Panel","Antrenör paneli"],
+    ["antrenor-uyeler-v1","Üyeler","Üye listesi"],
+    ["antrenor-programlar-v1","Programlar","Program listesi"],
+    ["antrenor-program-builder-v1","Program Oluşturucu","Program builder"],
+    ["antrenor-egzersizler-v1","Egzersizler","Egzersiz kütüphanesi"],
+    ["antrenor-challenge-v1","Challenge","Challenge yönetimi"],
+    ["antrenor-mesajlar-v1","Mesajlar","Üye mesajları"],
+    ["antrenor-profil-ayar-v1","Profil Ayarları","Antrenör profili"],
+  ]],
+  ["Giriş / Sistem","fa-right-to-bracket",[
+    ["sa-shell","Gözetim Kabuğu","Genel bakış / shell host"],
+    ["sa-giris-v1","Yönetim Girişi","Süper admin giriş"],
+  ]],
+];
+
 const slug = s => s.toLowerCase()
   .replace(/ç/g,"c").replace(/ğ/g,"g").replace(/ı/g,"i").replace(/ö/g,"o")
   .replace(/ş/g,"s").replace(/ü/g,"u").replace(/[^a-z0-9]+/g,"");
@@ -390,9 +509,12 @@ const slug = s => s.toLowerCase()
 const wrap = document.getElementById("wrap");
 const chipsEl = document.getElementById("chips");
 const emptyEl = document.getElementById("empty");
-let total = 0;
 
-GROUPS.forEach((g,gi)=>{
+function buildTab(groups){
+  wrap.querySelectorAll(".group").forEach(s=>s.remove());
+  chipsEl.innerHTML = "";
+  let total = 0;
+  groups.forEach((g,gi)=>{
   const [name,icon,pages] = g;
   total += pages.length;
   const gid = "g"+gi;
@@ -434,19 +556,33 @@ GROUPS.forEach((g,gi)=>{
   });
   sec.appendChild(grid);
   wrap.insertBefore(sec, emptyEl);
-});
+  });
+  document.getElementById("total").textContent = total;
+  document.getElementById("gtotal").textContent = groups.length;
+}
 
-document.getElementById("total").textContent = total;
-document.getElementById("gtotal").textContent = GROUPS.length;
-
-/* ---- canlı arama filtresi ---- */
+/* ---- sekme geçişi (Genel / Admin Panel) — aynı renderer, iki veri seti ---- */
+const TABS = { genel: GROUPS, admin: ADMIN_GROUPS };
 const q = document.getElementById("q");
 const note = document.getElementById("countNote");
-const cards = [...document.querySelectorAll(".card")];
-const groups = [...document.querySelectorAll(".group")];
 
+document.querySelectorAll(".tab").forEach(t=>{
+  t.addEventListener("click", ()=>{
+    if(t.classList.contains("on")) return;
+    document.querySelectorAll(".tab").forEach(x=>x.classList.remove("on"));
+    t.classList.add("on");
+    q.value = "";
+    note.classList.remove("on"); emptyEl.classList.remove("on");
+    buildTab(TABS[t.dataset.tab] || GROUPS);
+    window.scrollTo({top:0});
+  });
+});
+
+/* ---- canlı arama filtresi (aktif sekmenin kartları üzerinde) ---- */
 q.addEventListener("input", ()=>{
   const term = slug(q.value.trim());
+  const cards = [...document.querySelectorAll(".card")];
+  const groups = [...document.querySelectorAll(".group")];
   if(!term){
     cards.forEach(c=>c.classList.remove("hide"));
     groups.forEach(g=>g.classList.remove("hide"));
@@ -468,6 +604,9 @@ q.addEventListener("input", ()=>{
   emptyEl.classList.toggle("on", shown===0);
   document.getElementById("emptyq").textContent = q.value.trim();
 });
+
+/* ilk render — Genel sekmesi */
+buildTab(GROUPS);
 </script>
 </body>
 </html>
