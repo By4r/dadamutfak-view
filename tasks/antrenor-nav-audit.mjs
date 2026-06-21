@@ -5,10 +5,14 @@ const PAGES=[
   ['uyeler','antrenor-uyeler-v1.html'],
   ['programlar','antrenor-programlar-v1.html'],
   ['builder','antrenor-program-builder-v1.html'],
+  ['challenge','antrenor-challenge-v1.html'],
+  ['egzersiz','antrenor-egzersizler-v1.html'],
   ['mesajlar','antrenor-mesajlar-v1.html'],
   ['profil','antrenor-profil-ayar-v1.html'],
 ];
-const NAVS=['panel','uyeler','programlar','mesajlar','profil'];
+const NAVS=['panel','uyeler','programlar','egzersiz','challenge','mesajlar','profil'];
+// 2. dalga TAM: tüm antrenör nav linkleri aktif — bilinçli "yakında" KALMADI.
+const EXPECTED_SOON=[];
 const br=await chromium.launch();
 const rows=[];
 for(const [key,file] of PAGES){
@@ -33,7 +37,16 @@ console.log(['SAYFA'.padEnd(11),...NAVS.map(c=>c.padEnd(14))].join('| '));
 for(const [key,nav] of rows){
   console.log([key.padEnd(11),...NAVS.map(c=>cell(nav[c]).padEnd(14))].join('| '));
 }
-// pasif tespiti
-const bad=[];
-for(const [key,nav] of rows) for(const c of NAVS) if(nav[c]&&nav[c].soon) bad.push(key+'/'+c);
-console.log('\nPASİF-YAKINDA kalan:',bad.length?bad.join(', '):'YOK ✓');
+// pasif tespiti — beklenen (egzersiz) vs beklenmeyen ayrımı
+const expectedSoon=[], unexpected=[];
+for(const [key,nav] of rows) for(const c of NAVS) if(nav[c]&&nav[c].soon){
+  (EXPECTED_SOON.includes(c)?expectedSoon:unexpected).push(key+'/'+c);
+}
+console.log('\nBEKLENEN pasif:',expectedSoon.length?expectedSoon.join(', '):'YOK (2. dalga TAM) ✓');
+console.log('BEKLENMEYEN pasif-yakında:',unexpected.length?unexpected.join(', '):'YOK ✓');
+// challenge + egzersiz her sayfada aktif link mi?
+for(const k of ['challenge','egzersiz']){
+  const miss=[];
+  for(const [key,nav] of rows){ const c=nav[k]; if(!c) miss.push(key+':YOK'); else if(c.soon) miss.push(key+':PASİF'); }
+  console.log(k+' tüm sayfalarda aktif link:',miss.length?('EKSİK → '+miss.join(', ')):'EVET ✓');
+}
