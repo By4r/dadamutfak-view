@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Challenge'larım — DadaMutfak Antrenör Paneli</title>
+<link rel="shortcut icon" type="image/x-icon" href="assets/img/favicon.ico" />
+<!-- FontAwesome 6.5.2 (kilitli ikon seti) -->
+<link rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+      integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A=="
+      crossorigin="anonymous" referrerpolicy="no-referrer" />
+<link rel="stylesheet" href="assets/css/sa-ui.css" />
+<style>
+/* =====================================================================
+   ANTRENOR-CHALLENGE-V1 — DADAFİT ANTRENÖR OPERATÖR PANELİ (Faz 2 / Dalga E · 2. dalga)
+   sa-dadafit-challenge (gözetim eşi) KOPYALA-UYARLA — antrenör semantiği: antrenör KENDİ
+   challenge'larını yönetir (gözetim DEĞİL). İçerik: challenge kart listesi (.chl-grid) +
+   işlevsel filtre (Tümü/Aktif/Bitmiş) + detay modal (katılımcı ilerlemesi, salt gösterim) +
+   light "Yeni Challenge" modal (builder kadar ağır değil). AKSAN: DadaFit KURUMSAL YEŞİL
+   #009d4f — --green-rgb token'ı MERKEZİ, mint kaçağı 0. dyt-*/mekan-*/sa-* ORİJİNALLERİNE
+   DOKUNULMADI (tek kaynak). saConfirm/saToast paylaşılan sa-ui.js primitifleri.
+   ===================================================================== */
+
+@font-face{
+  font-family:"Gilroy";
+  src:url("assets/fonts/Gilroy-Medium.ttf") format("truetype");
+  font-weight:500; font-style:normal; font-display:swap;
+}
+
+:root{
+  --tomato:#E14827;
+  --tomato-dark:#C43D20;
+  --tomato-deep:#A8331A;
+  --tomato-tint:#FBE9E3;
+  --slate:#211E16;
+  --slate-2:#56514a;
+
+  /* DadaFit kurumsal yeşil — tek aksan kaynağı; --green-rgb tüm rgba() literallerini besler */
+  --green:#009d4f;
+  --green-deep:#007d3e;
+  --green-tint:#E5F4EC;
+  --green-rgb:0,157,79;
+
+  --yellow:#FAC045;
+  --muted:#7E7E7E;
+  --line:#ECECEC;
+  --cream:#EFE5D3;
+  --cream-2:#F7F1E6;
+  --paper:#ffffff;
+  --bg:#f9f9f9;
+  --ink:#211E16;
+
+  --radius-sm:8px; --radius-md:12px; --radius-lg:16px; --radius-xl:24px; --radius-pill:999px; --radius-circle:50%;
+  --sh-sm:0 1px 2px rgba(33,30,22,.04), 0 2px 6px rgba(33,30,22,.05);
+  --sh-md:0 6px 22px rgba(33,30,22,.09);
+  --sh-lg:0 18px 50px rgba(33,30,22,.16);
+  --ease:cubic-bezier(.22,.61,.36,1);
+
+  --pnl-side-w:248px;
+  --pnl-top-h:64px;
+}
+
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:"Gilroy",system-ui,sans-serif;font-weight:500;color:var(--ink);background:var(--bg);line-height:1.55;-webkit-font-smoothing:antialiased}
+h1,h2,h3,h4{font-weight:700;color:var(--slate);line-height:1.12;letter-spacing:-.02em}
+a{color:inherit;text-decoration:none}
+img{display:block;max-width:100%}
+.muted{color:var(--muted);font-weight:500}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;font-family:inherit;font-weight:700;font-size:14.5px;cursor:pointer;border:none;padding:14px 26px;border-radius:var(--radius-md);transition:.25s var(--ease)}
+.btn-primary{background:var(--tomato);color:#fff}
+.btn-primary:hover{background:var(--tomato-dark);transform:translateY(-2px)}
+.btn-ghost{background:var(--paper);color:var(--slate);border:1px solid var(--line)}
+.btn-ghost:hover{border-color:var(--slate);transform:translateY(-2px)}
+.btn-green{background:var(--green);color:#fff}
+.btn-green:hover{background:var(--green-deep);transform:translateY(-2px)}
+.btn-sm{padding:10px 16px;font-size:13px;border-radius:var(--radius-sm)}
+/* pasif "yakında" — henüz yapılmamış ekran CTA'ları (sessiz 404 yok) */
+.btn:disabled,.btn.is-soon{opacity:.5;cursor:not-allowed;pointer-events:none;transform:none}
+.btn .b-soon{font-size:9px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;margin-left:2px;padding:2px 7px;border-radius:999px;background:rgba(255,255,255,.28);color:#fff}
+.btn-ghost .b-soon{background:var(--bg);color:var(--muted)}
+
+.chips{display:flex;flex-wrap:wrap;gap:9px;align-items:center}
+.chip{font-size:13px;font-weight:500;color:var(--slate);background:var(--paper);border:1px solid var(--line);padding:8px 15px;border-radius:var(--radius-sm);cursor:pointer;transition:.2s var(--ease)}
+.chip:hover{border-color:var(--green);color:var(--green-deep);background:var(--green-tint)}
+.chip.is-on{border-color:var(--green);color:var(--green-deep);background:var(--green-tint);font-weight:700}
+
+/* =====================================================================
+   PANEL DÜZENİ
+   ===================================================================== */
+.pnl-app{min-height:100vh}
+.pnl-side{position:fixed;top:0;left:0;bottom:0;width:var(--pnl-side-w);z-index:80;background:var(--slate);color:#e9e2d6;display:flex;flex-direction:column;background-image:radial-gradient(420px 260px at -20% -10%, rgba(var(--green-rgb),.16), transparent 60%)}
+.pnl-logo{display:flex;align-items:center;gap:10px;padding:22px 22px 18px;border-bottom:1px solid rgba(233,226,214,.1)}
+.pnl-logo img{height:30px;width:auto;flex:none}
+.pnl-logo .pl-tag{flex:none;white-space:nowrap;font-size:10.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--green);background:rgba(var(--green-rgb),.16);padding:3px 6px;border-radius:var(--radius-sm)}
+.pnl-nav{flex:1;overflow-y:auto;padding:18px 14px;display:flex;flex-direction:column;gap:3px}
+.pnl-sec-lbl{font-size:10.5px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:rgba(233,226,214,.42);padding:14px 12px 7px}
+.pnl-link{position:relative;display:flex;align-items:center;gap:12px;padding:11px 12px;border-radius:var(--radius-md);font-size:14px;font-weight:500;color:rgba(233,226,214,.78);transition:.2s var(--ease)}
+.pnl-link i{width:20px;text-align:center;font-size:15px;color:rgba(233,226,214,.55);transition:.2s var(--ease)}
+.pnl-link:hover{background:rgba(255,255,255,.06);color:#fff}
+.pnl-link:hover i{color:var(--green)}
+.pnl-link.is-active{background:rgba(var(--green-rgb),.16);color:#fff;font-weight:700}
+.pnl-link.is-active i{color:var(--green)}
+.pnl-link.is-active::before{content:"";position:absolute;left:-14px;top:9px;bottom:9px;width:3px;background:var(--green);border-radius:0 var(--radius-sm) var(--radius-sm) 0}
+.pnl-link .pl-cnt{margin-left:auto;font-size:11.5px;font-weight:700;background:var(--green);color:#fff;min-width:20px;height:20px;display:inline-flex;align-items:center;justify-content:center;padding:0 6px;border-radius:var(--radius-sm)}
+.pnl-link.is-soon{opacity:.42;pointer-events:none;cursor:default}
+.pnl-link .pl-soon{margin-left:auto;font-size:9px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:rgba(233,226,214,.55);background:rgba(255,255,255,.07);padding:3px 7px;border-radius:var(--radius-sm)}
+.pnl-side-foot{padding:14px;border-top:1px solid rgba(233,226,214,.1);display:flex;flex-direction:column;gap:3px}
+.pnl-side-foot .pnl-link{font-size:13px}
+.pnl-side-foot .sa-sig{display:flex;align-items:center;justify-content:center;margin-top:8px;opacity:.75;transition:.2s var(--ease)}
+.pnl-side-foot .sa-sig:hover{opacity:1}
+.pnl-side-foot .sa-sig img{height:20px;width:auto}
+
+.pnl-top{position:fixed;top:0;left:var(--pnl-side-w);right:0;z-index:70;height:var(--pnl-top-h);background:var(--paper);border-bottom:1px solid var(--line);display:flex;align-items:center;gap:16px;padding:0 28px}
+.pnl-burger{display:none;width:40px;height:40px;border:1px solid var(--line);border-radius:var(--radius-md);background:var(--paper);cursor:pointer;font-size:16px;color:var(--slate);align-items:center;justify-content:center;flex:none}
+.pnl-search{flex:1;max-width:420px;position:relative}
+.pnl-search i{position:absolute;left:14px;top:50%;transform:translateY(-50%);font-size:13.5px;color:var(--muted);pointer-events:none}
+.pnl-search input{width:100%;height:40px;padding:0 14px 0 38px;font-family:inherit;font-size:13.5px;font-weight:500;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:var(--radius-md);outline:none;transition:.2s var(--ease)}
+.pnl-search input::placeholder{color:var(--muted)}
+.pnl-search input:focus{border-color:var(--green);background:var(--paper);box-shadow:0 0 0 3px rgba(var(--green-rgb),.12)}
+.pnl-top-tools{margin-left:auto;display:flex;align-items:center;gap:10px}
+.pnl-bell{position:relative;width:40px;height:40px;border:1px solid var(--line);border-radius:var(--radius-md);background:var(--paper);cursor:pointer;font-size:15px;color:var(--slate);display:inline-flex;align-items:center;justify-content:center;transition:.2s var(--ease)}
+.pnl-bell:hover{border-color:var(--green);color:var(--green-deep)}
+.pnl-bell .pb-dot{position:absolute;top:9px;right:10px;width:8px;height:8px;background:var(--tomato);border:2px solid var(--paper);border-radius:var(--radius-circle)}
+.pnl-me{display:flex;align-items:center;gap:11px;cursor:pointer;padding:6px 8px 6px 6px;border-radius:var(--radius-md);transition:.2s var(--ease)}
+.pnl-me:hover{background:var(--bg)}
+.pnl-me .pm-ava{width:36px;height:36px;border-radius:var(--radius-circle);flex:none;background-size:cover;background-position:center;box-shadow:0 0 0 2px var(--paper), 0 0 0 4px var(--green)}
+.pnl-me .pm-id{line-height:1.25}
+.pnl-me .pm-name{font-size:13.5px;font-weight:700;color:var(--slate)}
+.pnl-me .pm-role{font-size:11.5px;color:var(--muted)}
+.pnl-me>i{font-size:11px;color:var(--muted)}
+
+.pnl-main{margin-left:var(--pnl-side-w);padding:calc(var(--pnl-top-h) + 28px) 28px 48px;min-height:100vh}
+.pnl-page-head{display:flex;align-items:flex-end;justify-content:space-between;gap:18px;margin-bottom:24px;flex-wrap:wrap}
+.pnl-page-head h1{font-size:24px}
+.pnl-page-head .ph-sub{margin-top:5px;font-size:13.5px;color:var(--muted)}
+.pnl-page-head .ph-actions{display:flex;gap:10px;flex:none;flex-wrap:wrap;justify-content:flex-end}
+
+.pnl-card{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-lg);box-shadow:var(--sh-sm)}
+.pc-head{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:18px 22px;border-bottom:1px solid var(--line)}
+.pc-title{font-size:16px;font-weight:700;color:var(--slate);display:flex;align-items:center;gap:10px}
+.pc-title i{color:var(--green);font-size:15px}
+.pc-body{padding:22px}
+.pc-body.flush{padding:0}
+.pc-foot{padding:14px 22px;border-top:1px solid var(--line)}
+
+.pstat{display:inline-flex;align-items:center;gap:6px;font-size:11.5px;font-weight:700;padding:4px 10px;border-radius:var(--radius-sm);white-space:nowrap}
+.pstat::before{content:"";width:6px;height:6px;border-radius:var(--radius-circle);background:currentColor}
+.pstat.ok{background:var(--green-tint);color:var(--green-deep)}
+.pstat.wait{background:#FCF3DD;color:#B8860B}
+.pstat.off{background:var(--bg);color:var(--muted);border:1px solid var(--line)}
+.pstat.warm{background:var(--tomato-tint);color:var(--tomato)}
+
+.pnl-empty{padding:44px 24px;text-align:center}
+.pnl-empty .pe-ico{width:58px;height:58px;margin:0 auto 14px;border-radius:var(--radius-md);background:var(--green-tint);color:var(--green-deep);display:flex;align-items:center;justify-content:center;font-size:22px}
+.pnl-empty h4{font-size:15.5px;margin-bottom:5px}
+.pnl-empty p{font-size:13px;color:var(--muted);max-width:300px;margin:0 auto 16px}
+
+.dash-row{margin-bottom:16px}
+
+.pnl-overlay{position:fixed;inset:0;background:rgba(33,30,22,.5);z-index:79;opacity:0;pointer-events:none;transition:.25s}
+@media(max-width:980px){
+  .pnl-side{transform:translateX(-100%);transition:transform .28s var(--ease)}
+  body.nav-open .pnl-side{transform:translateX(0)}
+  body.nav-open .pnl-overlay{opacity:1;pointer-events:auto}
+  .pnl-top{left:0}
+  .pnl-burger{display:inline-flex}
+  .pnl-main{margin-left:0;padding:calc(var(--pnl-top-h) + 20px) 16px 40px}
+  .pnl-me .pm-id,.pnl-me>i{display:none}
+}
+@media(max-width:640px){
+  .pnl-search{max-width:none}
+  .pnl-page-head .ph-actions{width:100%}
+  .pc-head,.pc-body{padding-left:16px;padding-right:16px}
+  .pnl-page-head h1{font-size:20px}
+}
+
+/* =====================================================================
+   SAYFA CSS — Challenge kart listesi + filtre + detay/oluştur modalları
+   (sa-dadafit-challenge ch-* dilinin antrenör operatör türevi — yeşil)
+   ===================================================================== */
+/* araç barı: arama + durum filtre chip'leri */
+.chl-bar{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:18px}
+.chl-search{position:relative;flex:1 1 260px;max-width:340px}
+.chl-search i{position:absolute;left:14px;top:50%;transform:translateY(-50%);font-size:13.5px;color:var(--muted);pointer-events:none}
+.chl-search input{width:100%;height:42px;padding:0 14px 0 38px;font-family:inherit;font-size:13.5px;font-weight:500;color:var(--ink);background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-md);outline:none;transition:.2s var(--ease)}
+.chl-search input::placeholder{color:var(--muted)}
+.chl-search input:focus{border-color:var(--green);box-shadow:0 0 0 3px rgba(var(--green-rgb),.12)}
+.chl-bar .chips{flex:none}
+
+/* kart ızgarası */
+.chl-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(322px,1fr));gap:16px}
+
+/* challenge kartı — tıklanınca detay modalı açar (salt gösterim) */
+.chl-c{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-lg);box-shadow:var(--sh-sm);display:flex;flex-direction:column;overflow:hidden;cursor:pointer;transition:.2s var(--ease)}
+.chl-c:hover{border-color:rgba(var(--green-rgb),.45);box-shadow:var(--sh-md);transform:translateY(-2px)}
+.chl-c-top{display:flex;align-items:flex-start;gap:13px;padding:18px 18px 14px}
+.chl-c-ico{width:48px;height:48px;flex:none;border-radius:var(--radius-md);background:var(--green-tint);color:var(--green-deep);display:grid;place-items:center;font-size:21px}
+.chl-c-hd{flex:1;min-width:0}
+.chl-c-hd b{display:block;font-size:15.5px;color:var(--slate);font-weight:700;letter-spacing:-.01em;line-height:1.25}
+.chl-c-hd .chl-c-goal{display:block;font-size:12.5px;color:var(--muted);margin-top:4px;line-height:1.4}
+.chl-c-body{padding:0 18px 14px;display:flex;flex-direction:column;gap:12px}
+/* durum + tip rozet satırı */
+.chl-c-tags{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.chl-type{display:inline-flex;align-items:center;gap:6px;font-size:11.5px;font-weight:700;color:var(--slate-2);background:var(--bg);border:1px solid var(--line);padding:4px 10px;border-radius:var(--radius-sm);white-space:nowrap}
+.chl-type i{font-size:11px;color:var(--green-deep)}
+/* ilerleme çubuğu */
+.chl-prog{}
+.chl-prog-lbl{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px;font-size:12px;color:var(--muted)}
+.chl-prog-lbl b{color:var(--green-deep);font-size:12.5px}
+.chl-track{height:8px;border-radius:var(--radius-pill);background:var(--bg);border:1px solid var(--line);overflow:hidden}
+.chl-fill{height:100%;border-radius:var(--radius-pill);background:linear-gradient(90deg,var(--green),var(--green-deep));transition:.5s var(--ease)}
+.chl-c.is-done .chl-fill{background:var(--muted)}
+/* alt istatistik şeridi */
+.chl-c-stats{display:flex;gap:0;border-top:1px solid var(--line);margin-top:2px}
+.chl-c-stat{flex:1;text-align:center;padding:12px 6px;border-right:1px solid var(--line)}
+.chl-c-stat:last-child{border-right:none}
+.chl-c-stat b{display:block;font-size:15px;font-weight:700;color:var(--slate);line-height:1.1;font-variant-numeric:tabular-nums}
+.chl-c-stat span{font-size:10.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+/* kart aksiyon ayağı */
+.chl-c-foot{display:flex;align-items:center;gap:8px;padding:12px 18px;border-top:1px solid var(--line);background:var(--bg)}
+.chl-c-foot .cf-spacer{flex:1}
+.chl-act{width:34px;height:34px;border:1px solid var(--line);border-radius:var(--radius-sm);background:var(--paper);cursor:pointer;font-size:13px;color:var(--slate-2);display:inline-flex;align-items:center;justify-content:center;transition:.2s var(--ease)}
+.chl-act:hover{border-color:var(--green);color:var(--green-deep);background:var(--green-tint)}
+.chl-act.cdel:hover{border-color:var(--tomato);color:var(--tomato);background:var(--tomato-tint)}
+.chl-btn-detay{display:inline-flex;align-items:center;gap:7px;font-family:inherit;font-weight:700;font-size:12.5px;color:var(--green-deep);background:var(--green-tint);border:1px solid rgba(var(--green-rgb),.3);padding:8px 14px;border-radius:var(--radius-sm);cursor:pointer;transition:.2s var(--ease)}
+.chl-btn-detay:hover{background:var(--green);color:#fff;border-color:var(--green)}
+.chl-btn-bitir{display:inline-flex;align-items:center;gap:6px;font-family:inherit;font-weight:700;font-size:12.5px;color:var(--slate-2);background:var(--paper);border:1px solid var(--line);padding:8px 12px;border-radius:var(--radius-sm);cursor:pointer;transition:.2s var(--ease)}
+.chl-btn-bitir:hover{border-color:var(--tomato);color:var(--tomato);background:var(--tomato-tint)}
+
+/* =====================================================================
+   MODAL (detay + oluştur) — saConfirm'den AYRI (kendi overlay'i)
+   ===================================================================== */
+.cm-ov{position:fixed;inset:0;z-index:120;background:rgba(33,30,22,.55);display:flex;align-items:flex-start;justify-content:center;padding:48px 20px;overflow-y:auto;opacity:0;pointer-events:none;transition:.22s var(--ease)}
+.cm-ov.open{opacity:1;pointer-events:auto}
+.cm{width:100%;max-width:600px;background:var(--paper);border-radius:var(--radius-xl);box-shadow:var(--sh-lg);transform:translateY(14px);transition:.24s var(--ease);overflow:hidden}
+.cm-ov.open .cm{transform:none}
+.cm-wide{max-width:680px}
+.cm-head{display:flex;align-items:flex-start;gap:14px;padding:22px 24px;border-bottom:1px solid var(--line)}
+.cm-head .cm-ico{width:46px;height:46px;flex:none;border-radius:var(--radius-md);background:var(--green-tint);color:var(--green-deep);display:grid;place-items:center;font-size:20px}
+.cm-head .cm-hd{flex:1;min-width:0}
+.cm-head h3{font-size:18px;line-height:1.2}
+.cm-head .cm-sub{font-size:12.5px;color:var(--muted);margin-top:4px}
+.cm-x{width:36px;height:36px;flex:none;border:1px solid var(--line);border-radius:var(--radius-sm);background:var(--paper);cursor:pointer;font-size:14px;color:var(--slate-2);display:inline-flex;align-items:center;justify-content:center;transition:.2s var(--ease)}
+.cm-x:hover{border-color:var(--tomato);color:var(--tomato);background:var(--tomato-tint)}
+.cm-body{padding:22px 24px}
+.cm-foot{display:flex;gap:10px;justify-content:flex-end;padding:16px 24px;border-top:1px solid var(--line);background:var(--bg)}
+
+/* detay modal: özet şerit + katılımcı listesi */
+.cm-prog{margin-bottom:20px}
+.cm-prog .chl-prog-lbl{font-size:13px}
+.cm-meta{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:18px}
+.cm-meta .cmm{flex:1 1 120px;background:var(--bg);border:1px solid var(--line);border-radius:var(--radius-md);padding:12px 14px}
+.cm-meta .cmm b{display:block;font-size:17px;font-weight:700;color:var(--slate);line-height:1.1;font-variant-numeric:tabular-nums}
+.cm-meta .cmm span{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+.cm-sec-tt{font-size:12.5px;font-weight:700;color:var(--slate);text-transform:uppercase;letter-spacing:.06em;margin:4px 0 12px;display:flex;align-items:center;gap:8px}
+.cm-sec-tt i{color:var(--green-deep);font-size:12px}
+/* katılımcı satırı */
+.part-row{display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid var(--line)}
+.part-row:last-child{border-bottom:none}
+.part-ava{width:38px;height:38px;flex:none;border-radius:var(--radius-circle);background-size:cover;background-position:center;background-color:var(--bg)}
+.part-id{flex:1;min-width:0}
+.part-id b{display:block;font-size:13.5px;color:var(--slate);font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.part-id span{display:block;font-size:11.5px;color:var(--muted);margin-top:1px}
+.part-prog{flex:0 0 150px;max-width:150px}
+.part-prog .pp-lbl{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-bottom:4px}
+.part-prog .pp-lbl b{color:var(--green-deep)}
+.part-prog .chl-track{height:6px}
+
+/* oluştur modal: light form */
+.cm-form{display:flex;flex-direction:column;gap:16px}
+.cm-fld{display:flex;flex-direction:column;gap:7px}
+.cm-fld>label{font-size:12.5px;font-weight:700;color:var(--slate-2)}
+.cm-fld .fhint{font-size:11.5px;color:var(--muted);font-weight:500}
+.cm-input,.cm-select,.cm-text{width:100%;font-family:inherit;font-size:13.5px;font-weight:500;color:var(--ink);background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-md);padding:0 14px;height:44px;outline:none;transition:.2s var(--ease)}
+.cm-text{height:auto;padding:11px 14px;line-height:1.5;resize:vertical;min-height:72px}
+.cm-input:focus,.cm-select:focus,.cm-text:focus{border-color:var(--green);box-shadow:0 0 0 3px rgba(var(--green-rgb),.12)}
+.cm-two{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+/* katılımcı seçimi (checkbox listesi) */
+.cm-members{border:1px solid var(--line);border-radius:var(--radius-md);max-height:184px;overflow-y:auto}
+.cm-mrow{display:flex;align-items:center;gap:11px;padding:9px 13px;border-bottom:1px solid var(--line);cursor:pointer;transition:.15s}
+.cm-mrow:last-child{border-bottom:none}
+.cm-mrow:hover{background:var(--green-tint)}
+.cm-mrow input{accent-color:var(--green);width:16px;height:16px;flex:none;cursor:pointer}
+.cm-mrow .cmm-ava{width:30px;height:30px;flex:none;border-radius:var(--radius-circle);background-size:cover;background-position:center}
+.cm-mrow .cmm-nm{font-size:13px;font-weight:600;color:var(--slate)}
+.cm-mcount{font-size:11.5px;color:var(--muted);margin-top:6px}
+.cm-mcount b{color:var(--green-deep)}
+
+@media(max-width:640px){
+  .chl-search{max-width:none}
+  .chl-grid{grid-template-columns:minmax(0,1fr)}
+  .cm-ov{padding:20px 12px}
+  .cm-two{grid-template-columns:1fr}
+  .part-prog{flex-basis:108px}
+}
+</style>
+</head>
+<body data-brand="mutfak">
+
+<div class="pnl-app">
+
+  <!-- ============ SOL SIDEBAR — antrenör (Challenge'larım AKTİF) ============ -->
+  <aside class="pnl-side" id="pnlSide">
+    <a class="pnl-logo" href="anasayfa-portal-v3a.html">
+      <img src="assets/img/logo-official-white.png" alt="DadaMutfak" />
+      <span class="pl-tag">Antrenör</span>
+    </a>
+    <nav class="pnl-nav">
+      <a class="pnl-link" href="antrenor-panel-v1.html" data-nav="panel"><i class="fa-solid fa-gauge-high"></i> Panel</a>
+      <a class="pnl-link" href="antrenor-uyeler-v1.html" data-nav="uyeler"><i class="fa-solid fa-user-group"></i> Üyelerim <span class="pl-cnt">28</span></a>
+      <a class="pnl-link" href="antrenor-programlar-v1.html" data-nav="programlar"><i class="fa-solid fa-list-check"></i> Programlar</a>
+      <a class="pnl-link" href="antrenor-egzersizler-v1.html" data-nav="egzersiz"><i class="fa-solid fa-dumbbell"></i> Egzersiz Kütüphanesi</a>
+      <a class="pnl-link is-active" href="antrenor-challenge-v1.html" data-nav="challenge"><i class="fa-solid fa-trophy"></i> Challenge'larım</a>
+      <a class="pnl-link" href="antrenor-mesajlar-v1.html" data-nav="mesajlar"><i class="fa-regular fa-comment-dots"></i> Mesajlar <span class="pl-cnt">3</span></a>
+      <div class="pnl-sec-lbl">Hesap</div>
+      <a class="pnl-link" href="antrenor-profil-ayar-v1.html" data-nav="profil"><i class="fa-regular fa-id-badge"></i> Profil &amp; Ayarlar</a>
+    </nav>
+    <div class="pnl-side-foot">
+      <a class="pnl-link" href="antrenor-detay-v1.html"><i class="fa-regular fa-eye"></i> Public Profilim</a>
+      <a class="sa-sig" href="https://gaviaworks.com" target="_blank" rel="noopener" data-tip="Gaviaworks" aria-label="Gaviaworks — gaviaworks.com"><img src="assets/img/gavia-mark.png" alt="Gaviaworks" /></a>
+    </div>
+  </aside>
+  <div class="pnl-overlay" id="pnlOverlay"></div>
+
+  <!-- ============ ÜST İNCE BAR ============ -->
+  <header class="pnl-top">
+    <button class="pnl-burger" id="pnlBurger" aria-label="Menü"><i class="fa-solid fa-bars"></i></button>
+    <div class="pnl-search">
+      <i class="fa-solid fa-magnifying-glass"></i>
+      <input type="text" placeholder="Üye, program veya challenge ara…" />
+    </div>
+    <div class="pnl-top-tools">
+      <a class="pnl-bell pnl-site" href="anasayfa-portal-v3a.html" data-tip="Siteyi Görüntüle" aria-label="Siteyi Görüntüle"><i class="fa-solid fa-globe"></i></a>
+      <button class="pnl-bell" aria-label="Bildirimler" data-tip="Bildirimler"><i class="fa-regular fa-bell"></i><span class="pb-dot"></span></button>
+      <div class="pnl-me">
+        <div class="pm-ava" style="background-image:url('https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?w=240&h=240&q=80&auto=format&fit=facearea&facepad=3&sat=-22')"></div>
+        <div class="pm-id">
+          <div class="pm-name" id="pmName">Antr. Kerem Aydın</div>
+          <div class="pm-role" id="pmRole">Antrenör · Doğrulanmış</div>
+        </div>
+        <i class="fa-solid fa-chevron-down"></i>
+      </div>
+    </div>
+  </header>
+
+  <!-- ============ İÇERİK ALANI — CHALLENGE'LARIM ============ -->
+  <main class="pnl-main">
+
+    <div class="pnl-page-head">
+      <div>
+        <h1>Challenge'larım</h1>
+        <div class="ph-sub">Üyelerin için kurduğun fitness challenge'ları — ilerlemeyi izle, yenisini başlat.</div>
+      </div>
+      <div class="ph-actions">
+        <button class="btn btn-green btn-sm" type="button" id="chlNew"><i class="fa-solid fa-plus"></i> Yeni Challenge</button>
+      </div>
+    </div>
+
+    <!-- araç barı: arama + durum filtre chip'leri -->
+    <div class="chl-bar">
+      <div class="chl-search">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <input type="text" id="chlSearch" placeholder="Challenge ara…" />
+      </div>
+      <div class="chips" id="chlChips">
+        <button class="chip is-on" type="button" data-f="all">Tümü</button>
+        <button class="chip" type="button" data-f="aktif">Aktif</button>
+        <button class="chip" type="button" data-f="bitti">Bitmiş</button>
+      </div>
+    </div>
+
+    <!-- kart ızgarası (JS render eder) -->
+    <div class="chl-grid" id="chlGrid"></div>
+
+    <!-- boş durum -->
+    <div class="pnl-empty" id="chlEmpty" hidden>
+      <div class="pe-ico"><i class="fa-solid fa-trophy"></i></div>
+      <h4>Eşleşen challenge yok</h4>
+      <p>Arama ya da filtrenle eşleşen challenge bulunamadı. Filtreyi temizle ya da yeni bir challenge başlat.</p>
+      <button class="btn btn-ghost btn-sm" type="button" id="chlReset"><i class="fa-solid fa-rotate-left"></i> Filtreleri Temizle</button>
+    </div>
+
+  </main>
+</div>
+
+<!-- ============ DETAY MODAL (salt gösterim — katılımcı ilerlemesi) ============ -->
+<div class="cm-ov" id="detayOv" aria-hidden="true">
+  <div class="cm cm-wide" role="dialog" aria-modal="true" aria-labelledby="detayTitle">
+    <div class="cm-head">
+      <div class="cm-ico"><i class="fa-solid fa-trophy" id="detayIco"></i></div>
+      <div class="cm-hd">
+        <h3 id="detayTitle">Challenge</h3>
+        <div class="cm-sub" id="detaySub"></div>
+      </div>
+      <button class="cm-x" type="button" data-no-confirm data-cm-close aria-label="Kapat"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="cm-body">
+      <!-- ilerleme -->
+      <div class="cm-prog">
+        <div class="chl-prog-lbl"><span id="detayProgTxt">Challenge devam ediyor</span><b id="detayProgPct">0%</b></div>
+        <div class="chl-track"><div class="chl-fill" id="detayProgFill" style="width:0%"></div></div>
+      </div>
+      <!-- özet metrikler -->
+      <div class="cm-meta" id="detayMeta"></div>
+      <!-- katılımcı listesi -->
+      <div class="cm-sec-tt"><i class="fa-solid fa-user-group"></i> Katılımcı İlerlemesi</div>
+      <div id="detayParts"></div>
+    </div>
+    <div class="cm-foot">
+      <button class="btn btn-ghost btn-sm" type="button" data-no-confirm data-cm-close>Kapat</button>
+      <button class="btn btn-green btn-sm" type="button" id="detayBitir"><i class="fa-solid fa-flag-checkered"></i> Challenge'ı Bitir</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ OLUŞTUR MODAL (light form) ============ -->
+<div class="cm-ov" id="yeniOv" aria-hidden="true">
+  <div class="cm" role="dialog" aria-modal="true" aria-labelledby="yeniTitle">
+    <div class="cm-head">
+      <div class="cm-ico"><i class="fa-solid fa-plus"></i></div>
+      <div class="cm-hd">
+        <h3 id="yeniTitle">Yeni Challenge</h3>
+        <div class="cm-sub">Üyelerin için kısa bir challenge kur — detay & günlük plan sonra eklenebilir.</div>
+      </div>
+      <button class="cm-x" type="button" data-no-confirm data-cm-close aria-label="Kapat"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="cm-body">
+      <form class="cm-form" id="yeniForm" autocomplete="off">
+        <div class="cm-fld">
+          <label for="yfAd">Challenge adı</label>
+          <input class="cm-input" type="text" id="yfAd" placeholder="ör. 30 Günlük Şınav Challenge" />
+        </div>
+        <div class="cm-two">
+          <div class="cm-fld">
+            <label for="yfSure">Süre (hafta)</label>
+            <input class="cm-input" type="number" id="yfSure" min="1" max="52" value="4" />
+          </div>
+          <div class="cm-fld">
+            <label for="yfTip">Hedef tipi</label>
+            <select class="cm-select" id="yfTip">
+              <option value="Güç">Güç</option>
+              <option value="Kondisyon">Kondisyon</option>
+              <option value="Kilo verme">Kilo verme</option>
+              <option value="Dayanıklılık">Dayanıklılık</option>
+              <option value="Genel form">Genel form</option>
+            </select>
+          </div>
+        </div>
+        <div class="cm-fld">
+          <label for="yfHedef">Kısa hedef <span class="fhint">(opsiyonel)</span></label>
+          <input class="cm-input" type="text" id="yfHedef" placeholder="ör. Her gün 100 şınav, 30 günde alışkanlık" />
+        </div>
+        <div class="cm-fld">
+          <label>Katılımcı seç</label>
+          <div class="cm-members" id="yfMembers">
+            <label class="cm-mrow"><input type="checkbox" value="Deniz Yılmaz" data-ava="https://images.unsplash.com/photo-1517841905240-472988babdf9?w=80&q=80&auto=format&fit=crop"><span class="cmm-ava" style="background-image:url('https://images.unsplash.com/photo-1517841905240-472988babdf9?w=80&q=80&auto=format&fit=crop')"></span><span class="cmm-nm">Deniz Yılmaz</span></label>
+            <label class="cm-mrow"><input type="checkbox" value="Burak Şen" data-ava="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=80&q=80&auto=format&fit=crop"><span class="cmm-ava" style="background-image:url('https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=80&q=80&auto=format&fit=crop')"></span><span class="cmm-nm">Burak Şen</span></label>
+            <label class="cm-mrow"><input type="checkbox" value="Elif Korkmaz" data-ava="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=80&q=80&auto=format&fit=crop"><span class="cmm-ava" style="background-image:url('https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=80&q=80&auto=format&fit=crop')"></span><span class="cmm-nm">Elif Korkmaz</span></label>
+            <label class="cm-mrow"><input type="checkbox" value="Caner Tunç" data-ava="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=80&q=80&auto=format&fit=crop"><span class="cmm-ava" style="background-image:url('https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=80&q=80&auto=format&fit=crop')"></span><span class="cmm-nm">Caner Tunç</span></label>
+            <label class="cm-mrow"><input type="checkbox" value="Gizem Acar" data-ava="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=80&q=80&auto=format&fit=crop"><span class="cmm-ava" style="background-image:url('https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=80&q=80&auto=format&fit=crop')"></span><span class="cmm-nm">Gizem Acar</span></label>
+            <label class="cm-mrow"><input type="checkbox" value="Mert Aslan" data-ava="https://images.unsplash.com/photo-1531123897727-8f129e1688ce?w=80&q=80&auto=format&fit=crop"><span class="cmm-ava" style="background-image:url('https://images.unsplash.com/photo-1531123897727-8f129e1688ce?w=80&q=80&auto=format&fit=crop')"></span><span class="cmm-nm">Mert Aslan</span></label>
+          </div>
+          <div class="cm-mcount"><b id="yfCount">0</b> üye seçildi</div>
+        </div>
+      </form>
+    </div>
+    <div class="cm-foot">
+      <button class="btn btn-ghost btn-sm" type="button" data-no-confirm data-cm-close>İptal</button>
+      <button class="btn btn-green btn-sm" type="button" id="yeniKaydet"><i class="fa-solid fa-check"></i> Challenge'ı Başlat</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ============ PANEL ORTAK JS — panel-shell BİREBİR kopya (mobil drawer) ============ */
+(function(){
+  var burger=document.getElementById('pnlBurger'),
+      overlay=document.getElementById('pnlOverlay');
+  if(burger) burger.addEventListener('click',function(){document.body.classList.toggle('nav-open')});
+  if(overlay) overlay.addEventListener('click',function(){document.body.classList.remove('nav-open')});
+  var q=new URLSearchParams(location.search);
+  if(q.get('nav')==='1') document.body.classList.add('nav-open');
+})();
+</script>
+
+<script>
+/* ===== SAYFA JS — Challenge'larım: veri + kart render + filtre + detay/oluştur ===== */
+(function(){
+  /* Demo verisi — gerçek uygulamada API'den gelir. Antrenörün KENDİ challenge'ları. */
+  var TIP_ICO={'Güç':'fa-dumbbell','Kondisyon':'fa-person-running','Kilo verme':'fa-fire-flame-curved','Dayanıklılık':'fa-heart-pulse','Genel form':'fa-heart-pulse'};
+
+  var challenges=[
+    {id:1,ad:'30 Günlük Şeker Detoksu',tip:'Genel form',goal:'30 gün boyunca rafine şekersiz beslenme + günlük takip.',durum:'aktif',sureHafta:4,gun:30,kalan:16,ilerleme:47,
+     parts:[
+       {ad:'Deniz Yılmaz',ava:'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=80&q=80&auto=format&fit=crop',ilerleme:62,son:'Bugün, 08.40 — Gün 18 işaretlendi'},
+       {ad:'Elif Korkmaz',ava:'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=80&q=80&auto=format&fit=crop',ilerleme:54,son:'Dün, 21.10 — Gün 16 işaretlendi'},
+       {ad:'Burak Şen',ava:'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=80&q=80&auto=format&fit=crop',ilerleme:38,son:'2 gün önce — Gün 11 işaretlendi'},
+       {ad:'Caner Tunç',ava:'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=80&q=80&auto=format&fit=crop',ilerleme:30,son:'3 gün önce — Gün 9 işaretlendi'}
+     ]},
+    {id:2,ad:'21 Gün Şınav Challenge',tip:'Güç',goal:'Her gün artan tekrarla 21 günde üst vücut gücü.',durum:'aktif',sureHafta:3,gun:21,kalan:9,ilerleme:57,
+     parts:[
+       {ad:'Caner Tunç',ava:'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=80&q=80&auto=format&fit=crop',ilerleme:71,son:'Bugün, 07.20 — Gün 15 işaretlendi'},
+       {ad:'Mert Aslan',ava:'https://images.unsplash.com/photo-1531123897727-8f129e1688ce?w=80&q=80&auto=format&fit=crop',ilerleme:48,son:'Dün, 19.05 — Gün 10 işaretlendi'},
+       {ad:'Burak Şen',ava:'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=80&q=80&auto=format&fit=crop',ilerleme:43,son:'Dün, 12.30 — Gün 9 işaretlendi'}
+     ]},
+    {id:3,ad:'Haftalık 10K Adım',tip:'Kondisyon',goal:'4 hafta boyunca her gün 10.000 adım hedefi.',durum:'aktif',sureHafta:4,gun:28,kalan:21,ilerleme:25,
+     parts:[
+       {ad:'Gizem Acar',ava:'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=80&q=80&auto=format&fit=crop',ilerleme:32,son:'Bugün, 10.15 — 9.840 adım'},
+       {ad:'Elif Korkmaz',ava:'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=80&q=80&auto=format&fit=crop',ilerleme:21,son:'Dün, 22.00 — 11.200 adım'}
+     ]},
+    {id:4,ad:'14 Gün Plank Serisi',tip:'Güç',goal:'Çekirdek dayanıklılığı için her gün artan süreyle plank.',durum:'aktif',sureHafta:2,gun:14,kalan:5,ilerleme:64,
+     parts:[
+       {ad:'Deniz Yılmaz',ava:'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=80&q=80&auto=format&fit=crop',ilerleme:79,son:'Bugün, 09.00 — 02.40 plank'},
+       {ad:'Mert Aslan',ava:'https://images.unsplash.com/photo-1531123897727-8f129e1688ce?w=80&q=80&auto=format&fit=crop',ilerleme:50,son:'Dün, 18.20 — 01.55 plank'}
+     ]},
+    {id:5,ad:'Mayıs Koşu Serisi',tip:'Dayanıklılık',goal:'30 günde kademeli mesafe artışıyla 5K hedefi.',durum:'bitti',sureHafta:4,gun:30,kalan:0,ilerleme:100,
+     parts:[
+       {ad:'Gizem Acar',ava:'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=80&q=80&auto=format&fit=crop',ilerleme:100,son:'30 May — Challenge tamamlandı'},
+       {ad:'Burak Şen',ava:'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=80&q=80&auto=format&fit=crop',ilerleme:93,son:'29 May — Gün 28 işaretlendi'},
+       {ad:'Caner Tunç',ava:'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=80&q=80&auto=format&fit=crop',ilerleme:100,son:'30 May — Challenge tamamlandı'}
+     ]},
+    {id:6,ad:'Nisan Esneklik 14 Gün',tip:'Genel form',goal:'Her sabah 10 dk esneme rutiniyle hareket açıklığı.',durum:'bitti',sureHafta:2,gun:14,kalan:0,ilerleme:100,
+     parts:[
+       {ad:'Elif Korkmaz',ava:'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=80&q=80&auto=format&fit=crop',ilerleme:100,son:'14 Nis — Challenge tamamlandı'},
+       {ad:'Deniz Yılmaz',ava:'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=80&q=80&auto=format&fit=crop',ilerleme:86,son:'13 Nis — Gün 12 işaretlendi'}
+     ]},
+  ];
+
+  var filter='all', query='';
+  var grid=document.getElementById('chlGrid'),
+      empty=document.getElementById('chlEmpty'),
+      chips=document.getElementById('chlChips'),
+      search=document.getElementById('chlSearch');
+
+  function statPill(d){
+    return d.durum==='aktif'
+      ? '<span class="pstat ok">Aktif</span>'
+      : '<span class="pstat off">Bitti</span>';
+  }
+
+  function cardHtml(d){
+    var done=d.durum==='bitti';
+    var progTxt=done ? d.gun+' gün · tamamlandı' : 'Gün '+(d.gun-d.kalan)+' / '+d.gun+' — '+d.kalan+' gün kaldı';
+    return '<article class="chl-c'+(done?' is-done':'')+'" data-id="'+d.id+'" data-status="'+d.durum+'" data-name="'+(d.ad+' '+d.tip).toLocaleLowerCase('tr')+'" tabindex="0" role="button" aria-label="'+d.ad+' — detay">'
+      + '<div class="chl-c-top">'
+      +   '<div class="chl-c-ico"><i class="fa-solid '+(TIP_ICO[d.tip]||'fa-trophy')+'"></i></div>'
+      +   '<div class="chl-c-hd"><b>'+d.ad+'</b><span class="chl-c-goal">'+d.goal+'</span></div>'
+      + '</div>'
+      + '<div class="chl-c-body">'
+      +   '<div class="chl-c-tags">'+statPill(d)+'<span class="chl-type"><i class="fa-solid '+(TIP_ICO[d.tip]||'fa-trophy')+'"></i> '+d.tip+'</span></div>'
+      +   '<div class="chl-prog"><div class="chl-prog-lbl"><span>'+progTxt+'</span><b>%'+d.ilerleme+'</b></div><div class="chl-track"><div class="chl-fill" style="width:'+d.ilerleme+'%"></div></div></div>'
+      + '</div>'
+      + '<div class="chl-c-stats">'
+      +   '<div class="chl-c-stat"><b>'+d.parts.length+'</b><span>Katılımcı</span></div>'
+      +   '<div class="chl-c-stat"><b>'+d.sureHafta+' hf</b><span>Süre</span></div>'
+      +   '<div class="chl-c-stat"><b>'+(done?'—':d.kalan)+'</b><span>'+(done?'Bitti':'Gün kaldı')+'</span></div>'
+      + '</div>'
+      + '<div class="chl-c-foot">'
+      +   '<button class="chl-btn-detay" type="button" data-act="detay"><i class="fa-solid fa-eye"></i> Detayı Gör</button>'
+      +   (done ? '' : '<button class="chl-btn-bitir" type="button" data-act="bitir"><i class="fa-solid fa-flag-checkered"></i> Bitir</button>')
+      +   '<span class="cf-spacer"></span>'
+      +   '<button class="chl-act cdel" type="button" data-act="sil" onclick="dmDelChallenge(this)" title="Sil" aria-label="Sil"><i class="fa-regular fa-trash-can"></i></button>'
+      + '</div>'
+      + '</article>';
+  }
+
+  function render(){
+    var q=(query||'').toLocaleLowerCase('tr'), shown=0, html='';
+    challenges.forEach(function(d){
+      var okF=(filter==='all'||d.durum===filter),
+          okQ=!q||(d.ad+' '+d.tip).toLocaleLowerCase('tr').indexOf(q)>-1;
+      if(okF&&okQ){ html+=cardHtml(d); shown++; }
+    });
+    grid.innerHTML=html;
+    empty.hidden=shown>0;
+    grid.style.display=shown>0?'':'none';
+  }
+  window.dmRenderChallenge=render;
+  function find(id){ for(var i=0;i<challenges.length;i++) if(challenges[i].id===+id) return challenges[i]; return null; }
+
+  /* ---- filtre / arama ---- */
+  if(search) search.addEventListener('input',function(){query=this.value;render();});
+  if(chips) chips.addEventListener('click',function(e){
+    var c=e.target.closest('.chip');if(!c)return;
+    chips.querySelectorAll('.chip').forEach(function(x){x.classList.remove('is-on')});
+    c.classList.add('is-on');filter=c.getAttribute('data-f');render();
+  });
+  document.getElementById('chlReset').addEventListener('click',function(){
+    filter='all';query='';if(search)search.value='';
+    chips.querySelectorAll('.chip').forEach(function(x){x.classList.toggle('is-on',x.getAttribute('data-f')==='all')});
+    render();
+  });
+
+  /* ---- kart etkileşimi: detay / bitir / (sil onclick ile) ---- */
+  function openDetay(d){
+    if(!d) return;
+    document.getElementById('detayIco').className='fa-solid '+(TIP_ICO[d.tip]||'fa-trophy');
+    document.getElementById('detayTitle').textContent=d.ad;
+    var done=d.durum==='bitti';
+    document.getElementById('detaySub').textContent=d.tip+' · '+d.sureHafta+' hafta · '+(done?'Tamamlandı':d.kalan+' gün kaldı');
+    document.getElementById('detayProgTxt').textContent=done?'Challenge tamamlandı':'Gün '+(d.gun-d.kalan)+' / '+d.gun+' — devam ediyor';
+    document.getElementById('detayProgPct').textContent='%'+d.ilerleme;
+    document.getElementById('detayProgFill').style.width=d.ilerleme+'%';
+    document.getElementById('detayProgFill').style.background=done?'var(--muted)':'';
+    /* özet metrikler */
+    var ort=d.parts.length?Math.round(d.parts.reduce(function(s,p){return s+p.ilerleme},0)/d.parts.length):0;
+    document.getElementById('detayMeta').innerHTML=
+       '<div class="cmm"><b>'+d.parts.length+'</b><span>Katılımcı</span></div>'
+      +'<div class="cmm"><b>%'+ort+'</b><span>Ort. ilerleme</span></div>'
+      +'<div class="cmm"><b>'+d.gun+'</b><span>Toplam gün</span></div>'
+      +'<div class="cmm"><b>'+(done?'—':d.kalan)+'</b><span>Kalan gün</span></div>';
+    /* katılımcı listesi (üye · %ilerleme · son aktivite) */
+    document.getElementById('detayParts').innerHTML=d.parts.map(function(p){
+      return '<div class="part-row">'
+        +'<div class="part-ava" style="background-image:url(\''+p.ava+'\')"></div>'
+        +'<div class="part-id"><b>'+p.ad+'</b><span>'+p.son+'</span></div>'
+        +'<div class="part-prog"><div class="pp-lbl"><span>İlerleme</span><b>%'+p.ilerleme+'</b></div><div class="chl-track"><div class="chl-fill" style="width:'+p.ilerleme+'%"></div></div></div>'
+        +'</div>';
+    }).join('');
+    /* bitir butonu: bitmiş challenge'da gizle */
+    var bitirBtn=document.getElementById('detayBitir');
+    bitirBtn.style.display=done?'none':'';
+    bitirBtn.onclick=function(){ askBitir(d, function(){ closeModal(detayOv); }); };
+    openModal(detayOv);
+  }
+
+  function askBitir(d, after){
+    saConfirm({danger:true,icon:'fa-flag-checkered',ok:'Bitir',cancel:'Vazgeç',
+      title:'Challenge bitirilsin mi?',
+      message:'“'+d.ad+'” bitmiş olarak işaretlenecek; katılımcılar yeni ilerleme kaydedemez.',
+      onConfirm:function(){
+        d.durum='bitti'; d.kalan=0; d.ilerleme=100;
+        render();
+        if(window.saToast) saToast('“'+d.ad+'” bitirildi',{icon:'fa-flag-checkered'});
+        if(after) after();
+      }});
+  }
+
+  grid.addEventListener('click',function(e){
+    var card=e.target.closest('.chl-c'); if(!card) return;
+    var d=find(card.getAttribute('data-id'));
+    var actBtn=e.target.closest('[data-act]');
+    if(actBtn){
+      var act=actBtn.getAttribute('data-act');
+      if(act==='detay'){ openDetay(d); }
+      else if(act==='bitir'){ askBitir(d); }
+      /* act==='sil' → onclick + sa-ui capture-handler (otomatik saConfirm) */
+      return;
+    }
+    /* kart gövdesine tıklama → detay */
+    openDetay(d);
+  });
+  grid.addEventListener('keydown',function(e){
+    if(e.key!=='Enter'&&e.key!==' ') return;
+    var card=e.target.closest('.chl-c'); if(!card||e.target!==card) return;
+    e.preventDefault(); openDetay(find(card.getAttribute('data-id')));
+  });
+
+  /* sil → sa-ui.js capture-handler ONAY sonrası bu onclick'i çalıştırır
+     (trash ikonu → otomatik "Silinsin mi?"). Onay sonrası kart verisi + DOM kaldırılır. */
+  window.dmDelChallenge=function(btn){
+    var card=btn.closest('.chl-c'); if(!card) return;
+    var id=+card.getAttribute('data-id');
+    var d=find(id), name=d?d.ad:'Challenge';
+    challenges=challenges.filter(function(x){return x.id!==id});
+    render();
+    if(window.saToast) saToast('“'+name+'” silindi',{type:'danger'});
+  };
+
+  /* ---- modal aç/kapat ortak ---- */
+  var detayOv=document.getElementById('detayOv'),
+      yeniOv=document.getElementById('yeniOv');
+  function openModal(ov){ ov.classList.add('open'); ov.setAttribute('aria-hidden','false'); document.body.style.overflow='hidden'; }
+  function closeModal(ov){ ov.classList.remove('open'); ov.setAttribute('aria-hidden','true'); document.body.style.overflow=''; }
+  [detayOv,yeniOv].forEach(function(ov){
+    ov.addEventListener('click',function(e){
+      if(e.target===ov || e.target.closest('[data-cm-close]')) closeModal(ov);
+    });
+  });
+  document.addEventListener('keydown',function(e){
+    if(e.key==='Escape'){ closeModal(detayOv); closeModal(yeniOv); }
+  });
+
+  /* ---- oluştur modal ---- */
+  document.getElementById('chlNew').addEventListener('click',function(){
+    document.getElementById('yeniForm').reset();
+    document.getElementById('yfCount').textContent='0';
+    openModal(yeniOv);
+    setTimeout(function(){ document.getElementById('yfAd').focus(); },120);
+  });
+  var membersBox=document.getElementById('yfMembers');
+  membersBox.addEventListener('change',function(){
+    var n=membersBox.querySelectorAll('input:checked').length;
+    document.getElementById('yfCount').textContent=n;
+  });
+  document.getElementById('yeniKaydet').addEventListener('click',function(){
+    var ad=document.getElementById('yfAd').value.trim();
+    if(!ad){ if(window.saToast) saToast('Challenge adı gerekli',{type:'info',icon:'fa-circle-info'}); document.getElementById('yfAd').focus(); return; }
+    var hafta=Math.max(1,parseInt(document.getElementById('yfSure').value,10)||4);
+    var tip=document.getElementById('yfTip').value;
+    var hedef=document.getElementById('yfHedef').value.trim()||(tip+' odaklı '+hafta+' haftalık challenge.');
+    var sel=Array.prototype.slice.call(membersBox.querySelectorAll('input:checked'));
+    var parts=sel.map(function(c){return {ad:c.value,ava:c.getAttribute('data-ava'),ilerleme:0,son:'Henüz başlamadı'}});
+    var nid=challenges.reduce(function(m,x){return Math.max(m,x.id)},0)+1;
+    challenges.unshift({id:nid,ad:ad,tip:tip,goal:hedef,durum:'aktif',sureHafta:hafta,gun:hafta*7,kalan:hafta*7,ilerleme:0,parts:parts});
+    /* yeni eklenen aktif → filtre bitti ise görünür olsun diye Tümü'ye al */
+    if(filter==='bitti'){ filter='all'; chips.querySelectorAll('.chip').forEach(function(x){x.classList.toggle('is-on',x.getAttribute('data-f')==='all')}); }
+    render();
+    closeModal(yeniOv);
+    if(window.saToast) saToast('“'+ad+'” başlatıldı'+(parts.length?' — '+parts.length+' üye eklendi':''),{icon:'fa-trophy'});
+  });
+
+  /* ilk render */
+  render();
+})();
+</script>
+
+<script src="assets/js/sa-ui.js"></script>
+</body>
+</html>
