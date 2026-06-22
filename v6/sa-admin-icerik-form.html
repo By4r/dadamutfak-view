@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>İçerik Düzenle — Admin — DadaMutfak</title>
+<link rel="shortcut icon" type="image/x-icon" href="assets/img/favicon.ico" />
+<!-- FontAwesome 6.5.2 (kilitli ikon seti) -->
+<link rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+      integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A=="
+      crossorigin="anonymous" referrerpolicy="no-referrer" />
+<!-- PAYLAŞILAN KABUK (tek kaynak) -->
+<link rel="stylesheet" href="assets/css/sa-shell.css" />
+<link rel="stylesheet" href="assets/css/sa-ui.css" />
+<style>
+/* =====================================================================
+   SA-ADMIN-ICERIK-FORM — SAYFA CSS (ekrana özel).
+   İKİ KAYNAK MİRAS:
+   (1) ÇERÇEVE/SEO/YAYIN = sa-admin-sayfalar-form (form-sec · form-layout ·
+       slug-wrap · SERP · SEO skor halkası · sticky side-card).
+   (2) GÖVDE EDİTÖRÜ = puf-noktasi-ekle-v1 "İÇERİK BLOKLARI" sistemi (st-card:
+       paragraf/görsel/video + drag-sırala + paragraf-AI). Hardcode --tomato
+       yerine --acc kullanıldı → admin aksanı (domates) otomatik miras.
+   ===================================================================== */
+
+/* ---- ORTAK FORM ALANLARI (sa-admin-sayfalar-form VERBATIM) ---- */
+.form-grid{display:grid;gap:18px}
+.frow{display:flex;flex-direction:column;gap:7px}
+.frow label{font-size:12.5px;font-weight:700;color:var(--slate-2)}
+.frow .fhint{font-size:11.5px;color:var(--muted);font-weight:500}
+.finput,.fselect,.ftext{width:100%;font-family:inherit;font-size:13.5px;font-weight:500;color:var(--ink);background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-md);padding:0 14px;height:44px;outline:none;transition:.2s var(--ease)}
+.ftext{height:auto;padding:12px 14px;line-height:1.5;resize:vertical;min-height:96px}
+.finput:focus,.fselect:focus,.ftext:focus{border-color:var(--acc);box-shadow:0 0 0 3px rgba(var(--acc-rgb),.12)}
+.frow.two{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.form-sec{padding:18px 22px;border-bottom:1px solid var(--line)}
+.form-sec:last-child{border-bottom:none}
+.form-sec-tt{font-size:13px;font-weight:700;color:var(--slate);margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.form-sec-tt i{color:var(--acc)}
+.form-actions{display:flex;gap:10px;justify-content:flex-end;padding:16px 22px}
+.form-layout{display:grid;grid-template-columns:minmax(0,1fr) minmax(280px,360px);gap:24px;align-items:start}
+
+/* select açılır ok (puf-ekle fk-select dilinden) */
+.fselect{appearance:none;-webkit-appearance:none;cursor:pointer;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%237E7E7E' stroke-width='1.6' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 15px center;padding-right:40px}
+
+/* URL slug ön-ekli input */
+.slug-wrap{display:flex;align-items:stretch;border:1px solid var(--line);border-radius:var(--radius-md);overflow:hidden;transition:.2s var(--ease)}
+.slug-wrap:focus-within{border-color:var(--acc);box-shadow:0 0 0 3px rgba(var(--acc-rgb),.12)}
+.slug-pre{display:flex;align-items:center;padding:0 12px;background:var(--bg);color:var(--muted);font-size:13px;font-weight:600;border-right:1px solid var(--line);white-space:nowrap}
+.slug-wrap .finput{border:none;border-radius:0;box-shadow:none!important}
+
+/* karakter sayacı */
+.char-meter{display:flex;align-items:center;justify-content:space-between;font-size:11.5px;font-weight:600;color:var(--muted)}
+.char-meter b{font-variant-numeric:tabular-nums}
+.char-meter.warn b{color:#B8860B}
+.char-meter.over b{color:var(--tomato)}
+
+/* ---- KAPAK GÖRSELİ (div+bg-image cover center — Kerem Bey kuralı, <img> DEĞİL) ---- */
+.cover-field{display:flex;flex-direction:column;gap:10px}
+.cover-shot{position:relative;width:100%;height:180px;border-radius:var(--radius-md);background-color:var(--bg);background-size:cover;background-position:center;border:1px solid var(--line);overflow:hidden}
+.cover-shot.is-empty{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:9px;border:1.5px dashed rgba(var(--acc-rgb),.45);background-color:rgba(var(--acc-rgb),.06);color:var(--acc)}
+.cover-shot.is-empty i{font-size:26px}
+.cover-shot.is-empty b{font-size:13.5px;font-weight:700}
+.cover-shot.is-empty small{font-size:11.5px;font-weight:500;color:var(--slate-2)}
+.cover-acts{position:absolute;right:9px;bottom:9px;display:flex;gap:7px}
+.cover-shot.is-empty .cover-acts{display:none}
+.cover-acts button{display:inline-flex;align-items:center;gap:6px;font-family:inherit;font-size:12px;font-weight:700;border:none;border-radius:var(--radius-sm);padding:7px 11px;cursor:pointer;background:rgba(255,255,255,.94);color:var(--slate);transition:.16s var(--ease)}
+.cover-acts button:hover{background:var(--acc);color:#fff}
+
+/* ---- SERP önizleme (Google sonuç kartı — nötr) ---- */
+.serp{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-md);padding:16px 18px}
+.serp-url{display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--slate-2);margin-bottom:5px}
+.serp-fav{width:18px;height:18px;border-radius:var(--radius-circle);background:rgba(var(--acc-rgb),.12);color:var(--acc-deep);display:grid;place-items:center;font-size:9px;flex:none}
+.serp-url span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.serp-title{font-size:17px;line-height:1.3;color:var(--acc-deep);font-weight:600;margin-bottom:5px;overflow:hidden;display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical}
+.serp-desc{font-size:13px;line-height:1.5;color:var(--slate-2);overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.serp-empty{color:var(--muted);font-style:italic}
+
+/* SEO skor halkası (yan kart) — saf CSS conic, accent tonları */
+.seo-score{display:flex;align-items:center;gap:16px;margin-bottom:16px}
+.score-ring{width:72px;height:72px;flex:none;border-radius:var(--radius-circle);display:grid;place-items:center;position:relative;background:conic-gradient(var(--acc) calc(var(--p,0)*1%),var(--bg) 0)}
+.score-ring::after{content:"";position:absolute;inset:7px;border-radius:var(--radius-circle);background:var(--paper)}
+.score-num{position:relative;z-index:1;font-size:22px;font-weight:700;color:var(--slate);line-height:1;font-variant-numeric:tabular-nums}
+.score-meta b{display:block;font-size:13.5px;font-weight:700;color:var(--slate)}
+.score-meta span{font-size:12px;color:var(--muted)}
+
+/* SEO denetim listesi */
+.seo-checks{display:flex;flex-direction:column;gap:10px}
+.seo-chk{display:flex;align-items:flex-start;gap:9px;font-size:12.5px;line-height:1.4;color:var(--slate-2)}
+.seo-chk i{font-size:13px;margin-top:1px;flex:none}
+.seo-chk.pass i{color:var(--green-deep)}
+.seo-chk.fail i{color:var(--muted)}
+/* SEO halkası, panel pc-body içinde: skor bloğu ile denetim arasına ince ayraç */
+.pc-body .seo-score{padding-bottom:16px;margin-bottom:16px;border-bottom:1px solid var(--line)}
+
+/* ---- YAN RAY PANELLERİ (sa-admin-tarifler-form side-card kalıbı) ---- */
+.sc-stack{display:flex;flex-direction:column;gap:14px}
+.sc-field{display:flex;flex-direction:column;gap:7px}
+.sc-field label{font-size:12.5px;font-weight:700;color:var(--slate-2)}
+.sc-field .fhint{font-size:11.5px;color:var(--muted);font-weight:500}
+.toggle-row{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.toggle-row span{font-size:13.5px;color:var(--slate)}
+.toggle{position:relative;width:40px;height:22px;flex:none}
+.toggle input{opacity:0;width:0;height:0;position:absolute}
+.toggle-track{position:absolute;inset:0;border-radius:999px;background:var(--line);transition:.2s var(--ease);cursor:pointer}
+.toggle input:checked+.toggle-track{background:var(--acc)}
+.toggle-thumb{position:absolute;top:3px;left:3px;width:16px;height:16px;border-radius:50%;background:#fff;transition:.2s var(--ease);pointer-events:none}
+.toggle input:checked~.toggle-thumb{left:21px}
+.sc-preview{width:100%;justify-content:center;margin-top:2px}
+/* yayın durumu nokta göstergesi (pc-head sağına) */
+.status-dot{width:10px;height:10px;border-radius:var(--radius-circle);flex:none;background:var(--green-deep);box-shadow:0 0 0 4px rgba(44,153,99,.14)}
+.status-dot[data-state="draft"]{background:var(--muted);box-shadow:0 0 0 4px rgba(126,126,126,.14)}
+.status-dot[data-state="review"]{background:#B8860B;box-shadow:0 0 0 4px rgba(184,134,11,.16)}
+
+/* =====================================================================
+   GÖVDE EDİTÖRÜ — puf-noktasi-ekle-v1 "İÇERİK BLOKLARI" mirası.
+   --tomato → --acc (admin aksanı). st-card / st-num / st-side / ie-drag /
+   ie-del / cb-kind / cb-head / ai-* / st-figs / st-shot / st-up / add-row.
+   ===================================================================== */
+.bloks-head{margin-bottom:14px}
+.bloks-head p{font-size:12.5px;color:var(--muted);font-weight:500;line-height:1.5;margin-top:4px}
+
+.st-list{display:flex;flex-direction:column;gap:14px}
+.st-card{display:flex;gap:14px;background:var(--bg);border:1px solid var(--line);border-radius:var(--radius-lg);padding:16px;transition:box-shadow .18s var(--ease),opacity .18s var(--ease)}
+.st-card.is-dragging{opacity:.45}
+.st-card.is-over{box-shadow:0 0 0 2px var(--acc) inset}
+.st-num{flex:none;width:38px;height:38px;border-radius:var(--radius-circle);background:var(--acc);color:#fff;font-size:14px;font-weight:700;display:grid;place-items:center;box-shadow:0 5px 12px rgba(var(--acc-rgb),.28)}
+.st-body{flex:1;min-width:0}
+
+.fk-textarea{width:100%;font-family:inherit;font-size:13.5px;font-weight:500;color:var(--ink);background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-md);padding:12px 14px;min-height:96px;line-height:1.6;resize:vertical;outline:none;transition:.2s var(--ease)}
+.fk-textarea::placeholder{color:#a7a7a7}
+.fk-input{width:100%;font-family:inherit;font-size:13.5px;font-weight:500;color:var(--ink);background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-md);height:44px;padding:0 14px;outline:none;transition:.2s var(--ease)}
+.fk-input::placeholder{color:#a7a7a7}
+.fk-textarea:focus,.fk-input:focus{border-color:var(--acc);box-shadow:0 0 0 3px rgba(var(--acc-rgb),.10)}
+.fk-help{display:flex;align-items:flex-start;gap:7px;font-size:12.5px;color:var(--muted);font-weight:500;margin-top:8px;line-height:1.5}
+.fk-help i{color:var(--acc);font-size:12px;margin-top:2px;flex:none}
+
+/* görsel bloğu */
+.st-figs{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.st-shot{position:relative;flex:none;width:148px;height:92px;border-radius:var(--radius-md);background-size:cover;background-position:center;overflow:hidden}
+.st-shot button{position:absolute;right:5px;top:5px;width:26px;height:26px;border:none;border-radius:var(--radius-sm);background:rgba(255,255,255,.94);color:var(--slate);font-size:11px;cursor:pointer;display:grid;place-items:center;opacity:0;transition:.18s var(--ease)}
+.st-shot:hover button{opacity:1}
+.st-shot button:hover{background:var(--acc);color:#fff}
+.st-up{display:inline-flex;align-items:center;gap:8px;font-family:inherit;font-size:12.5px;font-weight:700;color:var(--slate-2);background:var(--paper);border:1.5px dashed var(--line);border-radius:var(--radius-md);width:148px;height:92px;justify-content:center;cursor:pointer;transition:.18s var(--ease);text-align:center;line-height:1.3}
+.st-up i{font-size:15px}
+.st-up small{font-weight:500;opacity:.8}
+.st-up:hover{border-color:var(--acc);color:var(--acc)}
+.cb-cap{margin-top:10px;font-size:13px}
+
+/* blok kind etiketi + AI başlık */
+.cb-kind{display:inline-flex;align-items:center;gap:7px;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--acc);background:rgba(var(--acc-rgb),.10);padding:5px 10px;border-radius:var(--radius-sm);margin-bottom:10px}
+.cb-kind i{font-size:11px}
+.cb-head{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.cb-head .cb-kind{margin-bottom:0}
+.cb-head .ai-btn{margin-left:auto}
+
+/* AI desteği (puf-ekle pattern) */
+.ai-btn{display:inline-flex;align-items:center;gap:7px;font-family:inherit;font-size:12px;font-weight:700;letter-spacing:.01em;color:var(--acc);background:rgba(var(--acc-rgb),.10);border:1px solid rgba(var(--acc-rgb),.32);border-radius:var(--radius-sm);padding:6px 12px;cursor:pointer;transition:.18s var(--ease)}
+.ai-btn i{font-size:12px}
+.ai-btn:hover:not(:disabled){background:var(--acc);color:#fff;border-color:var(--acc)}
+.ai-btn:disabled{opacity:.7;cursor:default}
+.ai-btn .ai-spin{animation:aiSpin .8s linear infinite}
+@keyframes aiSpin{to{transform:rotate(360deg)}}
+.fk-textarea.ai-working{border-color:var(--acc);box-shadow:0 0 0 3px rgba(var(--acc-rgb),.10)}
+.fk-textarea.ai-applied{border-color:var(--acc)}
+.ai-result{display:none;align-items:center;gap:12px;margin-top:10px;padding:11px 14px;background:rgba(var(--acc-rgb),.08);border:1px solid rgba(var(--acc-rgb),.28);border-radius:var(--radius-md)}
+.ai-result.show{display:flex}
+.ai-result .ai-badge{flex:none;display:inline-flex;align-items:center;gap:7px;font-size:11.5px;font-weight:700;color:#fff;background:var(--acc);padding:5px 11px;border-radius:var(--radius-sm);letter-spacing:.02em}
+.ai-result .ai-msg{flex:1;min-width:0;font-size:12.5px;font-weight:500;color:var(--slate-2);line-height:1.4}
+.ai-result .ai-acts{flex:none;display:flex;gap:8px}
+.ai-result .ai-acts button{font-family:inherit;font-size:12.5px;font-weight:700;border-radius:var(--radius-sm);padding:7px 14px;cursor:pointer;transition:.16s var(--ease);border:1px solid transparent}
+.ai-keep{background:var(--acc);color:#fff}
+.ai-keep:hover{background:var(--acc-deep)}
+.ai-undo{background:var(--paper);color:var(--slate);border-color:var(--line)}
+.ai-undo:hover{border-color:var(--slate)}
+
+/* blok yan kolon: drag tutamağı + sil */
+.st-side{flex:none;display:flex;flex-direction:column;align-items:center;gap:7px}
+.ie-drag{flex:none;color:#c9c9c9;cursor:grab;font-size:13px;padding:6px 4px;transition:color .18s}
+.ie-drag:hover{color:var(--acc)}
+.ie-drag:active{cursor:grabbing}
+.ie-del{display:grid;place-items:center;width:30px;height:30px;border:1px solid var(--line);border-radius:var(--radius-sm);background:var(--paper);color:var(--muted);font-size:12px;cursor:pointer;transition:.16s var(--ease)}
+.ie-del:hover{border-color:var(--tomato);color:var(--tomato);background:var(--tomato-tint)}
+
+/* blok ekle butonları */
+.ie-actions{display:flex;gap:10px;margin-top:16px;flex-wrap:wrap}
+.add-row{display:inline-flex;align-items:center;justify-content:center;gap:8px;font-family:inherit;font-size:13px;font-weight:700;color:var(--slate-2);background:var(--paper);border:1.5px dashed var(--line);border-radius:var(--radius-md);padding:13px 22px;cursor:pointer;transition:.18s var(--ease)}
+.add-row:hover{border-color:var(--acc);color:var(--acc)}
+
+@media(max-width:520px){
+  .ai-result{flex-wrap:wrap}
+  .ai-result .ai-acts{width:100%}
+  .ai-result .ai-acts button{flex:1}
+  .ie-actions{flex-direction:column}
+  .add-row{padding:13px}
+  .st-shot,.st-up{width:104px;height:70px}
+}
+
+/* ---- STICKY SIDE-CARD (cascade dersi: static override base'den SONRA) ----
+   sa-admin-sayfalar-form collapse bp'si = 900px. side-card artık çok-panelli
+   flex sütun (tarifler-form kalıbı) → uzun sol blok-editörle dengeli; sticky
+   dolu rayla doğal oturur, havada yüzmez. */
+.side-card{position:sticky;top:calc(var(--pnl-top-h) + 28px);display:flex;flex-direction:column;gap:16px}
+@media(max-width:900px){
+  .form-layout{grid-template-columns:minmax(0,1fr)}
+  .side-card{position:static}
+  .frow.two{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body data-brand="mutfak" data-sec="admin" data-screen="icerik">
+
+<div class="sa-app">
+
+  <!-- §1 İKON-RAIL -->
+  <aside class="sa-rail" id="saRail">
+    <a class="sa-rail-logo" href="sa-giris-v1.html" title="Yönetim Girişi"><img src="assets/img/logo-mark.png" alt="DadaMutfak" /></a>
+    <a class="sa-rail-ico" data-sec="genel" href="sa-shell.html?sec=genel" title="Genel Bakış"><i class="fa-solid fa-gauge-high"></i></a>
+    <span class="sa-rail-div"></span>
+    <a class="sa-rail-ico" data-sec="admin"   href="sa-admin.html"   title="Admin"><i class="fa-solid fa-shield-halved"></i></a>
+    <a class="sa-rail-ico" data-sec="saglik"  href="sa-saglik.html"  title="Sağlık &amp; Diyet"><i class="fa-solid fa-heart-pulse"></i></a>
+    <a class="sa-rail-ico" data-sec="store"   href="sa-store.html"   title="DadaStore"><i class="fa-solid fa-bag-shopping"></i></a>
+    <a class="sa-rail-ico" data-sec="dadafit" href="sa-dadafit.html" title="DadaFit"><i class="fa-solid fa-dumbbell"></i></a>
+    <a class="sa-rail-ico" data-sec="isletme" href="sa-isletme.html" title="İşletmeler"><i class="fa-solid fa-store"></i></a>
+    <a class="sa-rail-ico is-locked" data-sec="akademi" href="#" title="DadaAkademi — Yakında"><i class="fa-solid fa-graduation-cap"></i><i class="fa-solid fa-lock sr-lock"></i></a>
+    <div class="sa-rail-foot"><a class="sa-rail-ico" href="sa-giris-v1.html" title="Siteye Dön"><i class="fa-solid fa-arrow-left"></i></a></div>
+  </aside>
+
+  <!-- §2 BÖLÜM MENÜSÜ -->
+  <nav class="sa-menu" id="saMenu"></nav>
+  <div class="sa-divider" id="saDivider" role="separator" aria-label="Menüyü daralt/genişlet" title="Sürükle veya tıkla — menüyü daralt/genişlet"><span class="sa-grip"><i class="fa-solid fa-grip-lines-vertical"></i></span></div>
+  <div class="pnl-overlay" id="pnlOverlay"></div>
+
+  <!-- §3 ÜST BAR -->
+  <header class="pnl-top">
+    <button class="pnl-burger" id="pnlBurger" aria-label="Menü"><i class="fa-solid fa-bars"></i></button>
+    <div class="pnl-search"><i class="fa-solid fa-magnifying-glass"></i><input type="text" placeholder="Kullanıcı, içerik ara…" /></div>
+    <div class="pnl-top-tools">
+      <button class="pnl-bell" aria-label="Bildirimler"><i class="fa-regular fa-bell"></i><span class="pb-dot"></span></button>
+      <div class="pnl-me">
+        <div class="pm-ava" style="background-image:url('https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=240&q=80&auto=format&fit=crop')"></div>
+        <div class="pm-id"><div class="pm-name" id="pmName">Süper Admin</div><div class="pm-role" id="pmRole">Tüm yetki</div></div>
+        <i class="fa-solid fa-chevron-down"></i>
+      </div>
+    </div>
+  </header>
+
+  <!-- §4 İÇERİK — İçerik formu/editörü -->
+  <main class="pnl-main" id="saMain">
+
+    <div class="pnl-page-head">
+      <div>
+        <a href="sa-admin-icerik.html" style="display:inline-flex;align-items:center;gap:7px;font-size:13px;font-weight:700;color:var(--muted);margin-bottom:8px;transition:.18s" onmouseover="this.style.color='var(--acc)'" onmouseout="this.style.color='var(--muted)'"><i class="fa-solid fa-arrow-left"></i> Blog &amp; İçerik</a>
+        <h1>İçerik Düzenle</h1>
+        <div class="ph-sub">Makaleyi blok blok yaz, kapak ve arama motoru meta bilgilerini düzenle</div>
+      </div>
+    </div>
+
+    <div class="form-layout">
+
+      <!-- ana form kartı -->
+      <div class="pnl-card">
+
+        <!-- Künye: başlık / slug / tip / kategori -->
+        <div class="form-sec">
+          <div class="form-sec-tt"><i class="fa-solid fa-feather"></i> İçerik Künyesi</div>
+          <div class="form-grid">
+            <div class="frow">
+              <label for="f-baslik">Başlık</label>
+              <input class="finput" id="f-baslik" type="text" value="Tane Tane Pilavın Sırrı" />
+            </div>
+            <div class="frow">
+              <label for="f-slug">URL adresi</label>
+              <div class="slug-wrap">
+                <span class="slug-pre" id="slugPre">dadamutfak.com/puf-noktalari/</span>
+                <input class="finput" id="f-slug" type="text" value="tane-tane-pilavin-sirri" />
+              </div>
+              <span class="fhint">Yalnızca küçük harf, rakam ve tire kullanın.</span>
+            </div>
+            <div class="frow two">
+              <div class="frow">
+                <label for="f-tip">İçerik tipi</label>
+                <select class="fselect" id="f-tip">
+                  <option value="mutfaga-giris">Mutfağa Giriş</option>
+                  <option value="puf-noktalari" selected>Püf Noktaları</option>
+                  <option value="gurme">Gurme Lezzetler</option>
+                  <option value="ansiklopedi" disabled>Mutfak Ansiklopedisi (yakında)</option>
+                  <option value="sezon" disabled>Sezon Mutfağı (yakında)</option>
+                </select>
+                <span class="fhint">Tip, makalenin yayınlanacağı bölümü ve URL ön-ekini belirler.</span>
+              </div>
+              <div class="frow">
+                <label for="f-kategori">Kategori</label>
+                <select class="fselect" id="f-kategori">
+                  <option>Pişirme Teknikleri</option>
+                  <option selected>Pilav &amp; Tahıllar</option>
+                  <option>Hamur İşleri</option>
+                  <option>Et &amp; Tavuk</option>
+                  <option>Saklama &amp; Tazelik</option>
+                </select>
+              </div>
+            </div>
+            <div class="frow" id="row-etiket">
+              <label for="f-etiket">Etiketler <span style="font-weight:500;color:var(--muted)">(virgülle ayırın)</span></label>
+              <input class="finput" id="f-etiket" type="text" value="pilav, tane tane, pirinç" />
+              <span class="fhint">İlgili tariflerde teaser olarak çıkar.</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Kapak görseli -->
+        <div class="form-sec">
+          <div class="form-sec-tt"><i class="fa-regular fa-image"></i> Kapak Görseli</div>
+          <div class="cover-field">
+            <!-- div+background-image cover center (Kerem Bey kuralı — <img> DEĞİL) -->
+            <div class="cover-shot" id="coverShot" style="background-image:url('https://images.unsplash.com/photo-1516684732162-798a0062be99?w=900&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')">
+              <div class="cover-acts">
+                <button type="button" id="coverChange"><i class="fa-solid fa-arrows-rotate"></i> Değiştir</button>
+                <button type="button" id="coverRemove" onclick="icerikRemoveCover()"><i class="fa-solid fa-trash-can"></i> Kaldır</button>
+              </div>
+            </div>
+            <span class="fhint">Kapak, içerik listesinde ve makale başında görünür. PNG / JPG · en az 1200px genişlik önerilir.</span>
+          </div>
+        </div>
+
+        <!-- Gövde = blok editör (puf-noktasi-ekle-v1 mirası) -->
+        <div class="form-sec">
+          <div class="form-sec-tt"><i class="fa-solid fa-align-left"></i> İçerik Gövdesi</div>
+          <div class="bloks-head">
+            <p>Makaleyi paragraf, görsel ve videolarla blok blok yaz. Blokları sağdaki tutamaçtan sürükleyerek yeniden sırala.</p>
+          </div>
+
+          <div class="st-list" id="cbList">
+            <!-- Paragraf bloğu -->
+            <div class="st-card" data-kind="para">
+              <span class="st-num">1</span>
+              <div class="st-body">
+                <div class="cb-head"><span class="cb-kind"><i class="fa-solid fa-align-left"></i> Paragraf</span><button class="ai-btn" type="button" title="Metnini akıcı ve net bir anlatıma dönüştür"><i class="fa-solid fa-wand-magic-sparkles"></i> AI ile İyileştir</button></div>
+                <textarea class="fk-textarea" placeholder="Bir fikir, net cümlelerle anlat...">Pilavı kavurmadan önce pirinci ılık tuzlu suda 20 dakika beklet, sonra durulayıp süzgece al. Bu adım nişastanın fazlasını alır; taneler haşlanırken birbirine yapışmaz.</textarea>
+                <div class="ai-result" role="status"><span class="ai-badge"><i class="fa-solid fa-wand-magic-sparkles"></i> AI önerisi</span><span class="ai-msg">Metin daha akıcı ve net bir anlatıma dönüştürüldü. Beğenmezsen geri alabilirsin.</span><span class="ai-acts"><button class="ai-undo" type="button"><i class="fa-solid fa-rotate-left"></i> Geri Al</button><button class="ai-keep" type="button"><i class="fa-solid fa-check"></i> Kabul Et</button></span></div>
+              </div>
+              <div class="st-side">
+                <span class="ie-drag" draggable="true" title="Sürükleyerek sırala"><i class="fa-solid fa-grip-vertical"></i></span>
+                <button class="ie-del st-del" type="button" title="Bloğu sil" aria-label="Bloğu sil" onclick="icerikDelBlock(this)"><i class="fa-solid fa-trash-can"></i></button>
+              </div>
+            </div>
+            <!-- Görsel bloğu -->
+            <div class="st-card" data-kind="img">
+              <span class="st-num">2</span>
+              <div class="st-body">
+                <span class="cb-kind"><i class="fa-regular fa-image"></i> Görsel</span>
+                <div class="st-figs">
+                  <div class="st-shot" style="background-image:url('https://images.unsplash.com/photo-1536304993881-ff6e9eefa2a6?w=300&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')">
+                    <button type="button" title="Görseli sil" aria-label="Görseli sil" onclick="icerikDelShot(this)"><i class="fa-solid fa-trash-can"></i></button>
+                  </div>
+                  <button class="st-up" type="button"><i class="fa-regular fa-image"></i> Görsel değiştir <small>1/1</small></button>
+                </div>
+                <input class="fk-input cb-cap" type="text" value="Süzülmüş pirinç, kavurma öncesi." placeholder="Görsel açıklaması (opsiyonel)" />
+              </div>
+              <div class="st-side">
+                <span class="ie-drag" draggable="true" title="Sürükleyerek sırala"><i class="fa-solid fa-grip-vertical"></i></span>
+                <button class="ie-del st-del" type="button" title="Bloğu sil" aria-label="Bloğu sil" onclick="icerikDelBlock(this)"><i class="fa-solid fa-trash-can"></i></button>
+              </div>
+            </div>
+            <!-- Video bloğu -->
+            <div class="st-card" data-kind="video">
+              <span class="st-num">3</span>
+              <div class="st-body">
+                <span class="cb-kind"><i class="fa-brands fa-youtube"></i> Video</span>
+                <input class="fk-input" type="url" value="https://youtube.com/watch?v=pilav-puf" placeholder="https://youtube.com/watch?v=..." aria-label="Video bağlantısı" />
+                <span class="fk-help"><i class="fa-brands fa-youtube"></i> YouTube veya Vimeo bağlantısı — sayfada oynatıcı olarak gömülür.</span>
+              </div>
+              <div class="st-side">
+                <span class="ie-drag" draggable="true" title="Sürükleyerek sırala"><i class="fa-solid fa-grip-vertical"></i></span>
+                <button class="ie-del st-del" type="button" title="Bloğu sil" aria-label="Bloğu sil" onclick="icerikDelBlock(this)"><i class="fa-solid fa-trash-can"></i></button>
+              </div>
+            </div>
+          </div>
+
+          <div class="ie-actions">
+            <button class="add-row" type="button" id="addPara"><i class="fa-solid fa-align-left"></i> Paragraf Ekle</button>
+            <button class="add-row" type="button" id="addImg"><i class="fa-regular fa-image"></i> Görsel Ekle</button>
+            <button class="add-row" type="button" id="addVideo"><i class="fa-brands fa-youtube"></i> Video Ekle</button>
+          </div>
+        </div>
+
+        <!-- SEO Meta -->
+        <div class="form-sec">
+          <div class="form-sec-tt"><i class="fa-solid fa-magnifying-glass-chart"></i> SEO Meta Bilgileri</div>
+          <div class="form-grid">
+            <div class="frow">
+              <label for="f-metatitle">Meta başlık (title)</label>
+              <input class="finput" id="f-metatitle" type="text" value="Tane Tane Pilavın Sırrı — Püf Noktaları — DadaMutfak" maxlength="70" />
+              <div class="char-meter" id="titleMeter"><span>İdeal: 50–60 karakter</span><b><span id="titleCount">0</span>/60</b></div>
+            </div>
+            <div class="frow">
+              <label for="f-metadesc">Meta açıklama (description)</label>
+              <textarea class="ftext" id="f-metadesc" maxlength="170">Pilavın tane tane olmasının sırrı pişirmeden önce başlar. Pirinci doğru bekletip durulayarak her seferinde kabarık, birbirine yapışmayan bir pilav elde edin.</textarea>
+              <div class="char-meter" id="descMeter"><span>İdeal: 120–158 karakter</span><b><span id="descCount">0</span>/158</b></div>
+            </div>
+            <div class="frow">
+              <label for="f-keywords">Anahtar kelimeler <span style="font-weight:500;color:var(--muted)">(virgülle ayırın)</span></label>
+              <input class="finput" id="f-keywords" type="text" value="pilav, tane tane pilav, pirinç pişirme, mutfak püf noktası" />
+            </div>
+            <div class="frow">
+              <label>Arama sonucu önizlemesi</label>
+              <div class="serp">
+                <div class="serp-url"><span class="serp-fav"><i class="fa-solid fa-utensils"></i></span><span id="serpUrl">dadamutfak.com › puf-noktalari › tane-tane-pilavin-sirri</span></div>
+                <div class="serp-title" id="serpTitle">Tane Tane Pilavın Sırrı — Püf Noktaları — DadaMutfak</div>
+                <div class="serp-desc" id="serpDesc">Pilavın tane tane olmasının sırrı pişirmeden önce başlar.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- aksiyonlar (yayın durumu sağ raydaki panele taşındı) -->
+        <div class="form-actions">
+          <a class="btn btn-ghost btn-sm" href="sa-admin-icerik.html">İptal</a>
+          <button class="btn btn-acc btn-sm" type="button" id="saveBtn"><i class="fa-solid fa-floppy-disk"></i> Değişiklikleri Kaydet</button>
+        </div>
+
+      </div><!-- /pnl-card -->
+
+      <!-- yan ray: yayın · SEO skoru · ipuçları (sa-admin-tarifler-form side-card kalıbı) -->
+      <aside class="side-card">
+
+        <!-- Yayın Durumu -->
+        <div class="pnl-card">
+          <div class="pc-head"><div class="pc-title"><i class="fa-solid fa-globe"></i> Yayın Durumu</div><span class="status-dot" id="statusDot" data-state="published" title="Yayında"></span></div>
+          <div class="pc-body">
+            <div class="sc-stack">
+              <div class="sc-field">
+                <label for="f-durum">Durum</label>
+                <select class="fselect" id="f-durum">
+                  <option value="published" selected>Yayında — herkese açık</option>
+                  <option value="draft">Taslak — yalnızca yöneticiler görür</option>
+                  <option value="review">İncelemede — editör onayı bekliyor</option>
+                </select>
+              </div>
+              <div class="sc-field">
+                <label for="f-tarih">Yayın tarihi</label>
+                <input class="finput" id="f-tarih" type="datetime-local" value="2026-06-22T09:30" />
+                <span class="fhint">İleri bir tarih seçersen içerik o ana dek taslakta bekler.</span>
+              </div>
+              <div class="toggle-row">
+                <span>Öne çıkar (vitrin)</span>
+                <label class="toggle"><input type="checkbox" /><div class="toggle-track"></div><div class="toggle-thumb"></div></label>
+              </div>
+              <div class="toggle-row">
+                <span>Yorumlara aç</span>
+                <label class="toggle"><input type="checkbox" checked /><div class="toggle-track"></div><div class="toggle-thumb"></div></label>
+              </div>
+              <button class="btn btn-ghost btn-sm sc-preview" type="button" id="previewBtn"><i class="fa-solid fa-arrow-up-right-from-square"></i> Yeni sekmede önizle</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- SEO Skoru -->
+        <div class="pnl-card">
+          <div class="pc-head"><div class="pc-title"><i class="fa-solid fa-gauge-high"></i> SEO Skoru</div></div>
+          <div class="pc-body">
+            <div class="seo-score">
+              <div class="score-ring" id="scoreRing" style="--p:82"><span class="score-num" id="scoreNum">82</span></div>
+              <div class="score-meta">
+                <b id="scoreLabel">İyi</b>
+                <span>Yayına hazır seviyede</span>
+              </div>
+            </div>
+            <div class="seo-checks" id="seoChecks">
+              <div class="seo-chk pass" data-chk="title"><i class="fa-solid fa-circle-check"></i> Meta başlık uygun uzunlukta</div>
+              <div class="seo-chk pass" data-chk="desc"><i class="fa-solid fa-circle-check"></i> Meta açıklama dolu</div>
+              <div class="seo-chk pass" data-chk="slug"><i class="fa-solid fa-circle-check"></i> URL temiz ve okunabilir</div>
+              <div class="seo-chk pass" data-chk="kw"><i class="fa-solid fa-circle-check"></i> Anahtar kelime tanımlı</div>
+              <div class="seo-chk pass" data-chk="img"><i class="fa-solid fa-circle-check"></i> Kapak görseli eklendi</div>
+            </div>
+          </div>
+        </div>
+
+      </aside>
+
+    </div><!-- /form-layout -->
+
+  </main>
+
+</div><!-- /sa-app -->
+
+<script src="assets/js/sa-ui.js"></script>
+<script src="assets/js/sa-shell.js"></script>
+<script>
+/* ===== SAYFA JS =====
+   1) SERP önizleme + karakter sayaçları + SEO skor (sa-admin-sayfalar-form port).
+   2) İçerik tipi select → slug ön-eki + ilgisiz alan göster/gizle (mockup).
+   3) Kapak görseli değiştir/kaldır (mockup).
+   4) BLOK EDİTÖRÜ — puf-noktasi-ekle-v1 port: ekle/sil/renumber + paragraf-AI
+      + GERÇEK drag-sırala (HTML5 DnD). Mockup; veri persist etmez. */
+(function(){
+  /* ---- tip → URL ön-eki haritası ---- */
+  var TIP_PRE={
+    'mutfaga-giris':'mutfaga-giris/',
+    'puf-noktalari':'puf-noktalari/',
+    'gurme':'kesfet/',
+    'ansiklopedi':'ansiklopedi/',
+    'sezon':'sezon/'
+  };
+
+  var baslik=document.getElementById('f-baslik');
+  var slug=document.getElementById('f-slug');
+  var tip=document.getElementById('f-tip');
+  var slugPre=document.getElementById('slugPre');
+  var rowEtiket=document.getElementById('row-etiket');
+  var mTitle=document.getElementById('f-metatitle');
+  var mDesc=document.getElementById('f-metadesc');
+  var kw=document.getElementById('f-keywords');
+  var coverShot=document.getElementById('coverShot');
+
+  var serpUrl=document.getElementById('serpUrl');
+  var serpTitle=document.getElementById('serpTitle');
+  var serpDesc=document.getElementById('serpDesc');
+  var titleCount=document.getElementById('titleCount');
+  var descCount=document.getElementById('descCount');
+  var titleMeter=document.getElementById('titleMeter');
+  var descMeter=document.getElementById('descMeter');
+  var scoreRing=document.getElementById('scoreRing');
+  var scoreNum=document.getElementById('scoreNum');
+  var scoreLabel=document.getElementById('scoreLabel');
+
+  function setChk(name,pass){
+    var el=document.querySelector('.seo-chk[data-chk="'+name+'"]');
+    if(!el)return;
+    el.className='seo-chk '+(pass?'pass':'fail');
+    el.querySelector('i').className=pass?'fa-solid fa-circle-check':'fa-regular fa-circle';
+  }
+
+  function preKey(){return TIP_PRE[tip.value]||'';}
+
+  function render(){
+    var t=(mTitle.value||baslik.value||'').trim();
+    var d=(mDesc.value||'').trim();
+    var s=(slug.value||'').trim();
+    var pre=preKey();
+
+    /* slug ön-eki (tip-bağlı) */
+    slugPre.textContent='dadamutfak.com/'+pre;
+
+    /* SERP */
+    serpTitle.textContent=t||'İçerik başlığı görünecek';
+    serpTitle.classList.toggle('serp-empty',!t);
+    serpDesc.textContent=d||'Meta açıklama buraya gelecek — arama sonucunda bu metin görünür.';
+    serpDesc.classList.toggle('serp-empty',!d);
+    var crumb=(pre+s).replace(/\/+$/,'').split('/').filter(Boolean).join(' › ');
+    serpUrl.textContent='dadamutfak.com'+(crumb?' › '+crumb:'');
+
+    /* sayaçlar */
+    titleCount.textContent=t.length;
+    descCount.textContent=d.length;
+    titleMeter.className='char-meter'+(t.length>60?' over':(t.length>0&&t.length<40?' warn':''));
+    descMeter.className='char-meter'+(d.length>158?' over':(d.length>0&&d.length<120?' warn':''));
+
+    /* skor: 5 kriter, her biri 20p */
+    var cTitle=t.length>=40&&t.length<=60;
+    var cDesc=d.length>=120&&d.length<=158;
+    var cSlug=/^[a-z0-9-]+$/.test(s)&&s.length>0;
+    var cKw=(kw.value||'').trim().length>0;
+    var cImg=!coverShot.classList.contains('is-empty');
+    setChk('title',cTitle);setChk('desc',cDesc);setChk('slug',cSlug);setChk('kw',cKw);setChk('img',cImg);
+
+    var score=(cTitle?20:0)+(cDesc?20:0)+(cSlug?20:0)+(cKw?20:0)+(cImg?20:0);
+    if(!cTitle&&t.length>0)score+=10;
+    if(!cDesc&&d.length>0)score+=10;
+    if(score>100)score=100;
+    scoreRing.style.setProperty('--p',score);
+    scoreNum.textContent=score;
+    scoreLabel.textContent=score>=75?'İyi':score>=50?'Orta':'Düşük';
+  }
+
+  [baslik,slug,mTitle,mDesc,kw].forEach(function(el){el.addEventListener('input',render)});
+
+  /* ---- tip select → ön-ek + alan göster/gizle (mockup) ---- */
+  tip.addEventListener('change',function(){
+    /* Blog/Keşfet'te kategori opsiyonel hissi: etiket her tipte var; ansiklopedi/sezon pasif
+       (disabled option) zaten seçilemez. Mockup'ta etiket satırını sade tipte gizleyebiliriz —
+       şimdilik 3 aktif tipte de etiket gösteriliyor (hepsi teaser/etiket kullanır). */
+    rowEtiket.style.display='';
+    render();
+  });
+
+  /* ---- kapak görseli değiştir / kaldır (mockup) ---- */
+  var SPARE_COVERS=[
+    'photo-1547592180-85f173990554','photo-1604908176997-125f25cc6f3d','photo-1556910103-1c02745aae4d'
+  ];
+  var coverIdx=0;
+  var COVER_ACTS='<div class="cover-acts"><button type="button" id="coverChange"><i class="fa-solid fa-arrows-rotate"></i> Değiştir</button><button type="button" id="coverRemove" onclick="icerikRemoveCover()"><i class="fa-solid fa-trash-can"></i> Kaldır</button></div>';
+  function setCover(){
+    var url='https://images.unsplash.com/'+SPARE_COVERS[coverIdx++%SPARE_COVERS.length]+'?w=900&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5';
+    coverShot.classList.remove('is-empty');
+    coverShot.style.backgroundImage="url('"+url+"')";
+    coverShot.innerHTML=COVER_ACTS;
+    render();
+  }
+  /* Değiştir = trash ikonu YOK → delegasyon güvenli (sa-ui onaya sokmaz) */
+  coverShot.addEventListener('click',function(e){
+    if(e.target.closest('#coverChange')){e.stopPropagation();setCover();}
+  });
+  /* Kaldır = trash ikonu VAR → sa-ui CAPTURE'da onay modalı açar; ONAY sonrası bu çalışır */
+  window.icerikRemoveCover=function(){
+    coverShot.classList.add('is-empty');
+    coverShot.style.backgroundImage='none';
+    coverShot.innerHTML='<i class="fa-solid fa-cloud-arrow-up"></i><b>Kapak görseli yok</b><small>Eklemek için Değiştir’e bas</small><div class="cover-acts"><button type="button" id="coverChange"><i class="fa-solid fa-arrows-rotate"></i> Değiştir</button></div>';
+    render();
+  };
+
+  /* ============================================================
+     BLOK EDİTÖRÜ — puf-noktasi-ekle-v1 port (ekle/sil/renumber + AI + drag)
+     ============================================================ */
+  var cbList=document.getElementById('cbList');
+  function renumber(){cbList.querySelectorAll('.st-card .st-num').forEach(function(n,i){n.textContent=i+1;});}
+  var STEP_IMGS=['photo-1556910103-1c02745aae4d','photo-1547592180-85f173990554','photo-1604908176997-125f25cc6f3d'];
+  var imgIdx=0;
+  function sideHtml(){
+    return '<div class="st-side">'+
+      '<span class="ie-drag" draggable="true" title="Sürükleyerek sırala"><i class="fa-solid fa-grip-vertical"></i></span>'+
+      '<button class="ie-del st-del" type="button" title="Bloğu sil" aria-label="Bloğu sil" onclick="icerikDelBlock(this)"><i class="fa-solid fa-trash-can"></i></button>'+
+      '</div>';
+  }
+  function addBlock(kind){
+    var c=document.createElement('div');
+    c.className='st-card';c.setAttribute('data-kind',kind);
+    var body='';
+    if(kind==='para'){
+      body='<div class="cb-head"><span class="cb-kind"><i class="fa-solid fa-align-left"></i> Paragraf</span><button class="ai-btn" type="button" title="Metnini akıcı ve net bir anlatıma dönüştür"><i class="fa-solid fa-wand-magic-sparkles"></i> AI ile İyileştir</button></div>'+
+        '<textarea class="fk-textarea" placeholder="Bir fikir, net cümlelerle anlat..."></textarea>'+
+        '<div class="ai-result" role="status"><span class="ai-badge"><i class="fa-solid fa-wand-magic-sparkles"></i> AI önerisi</span><span class="ai-msg">Metin daha akıcı ve net bir anlatıma dönüştürüldü. Beğenmezsen geri alabilirsin.</span><span class="ai-acts"><button class="ai-undo" type="button"><i class="fa-solid fa-rotate-left"></i> Geri Al</button><button class="ai-keep" type="button"><i class="fa-solid fa-check"></i> Kabul Et</button></span></div>';
+    }else if(kind==='img'){
+      var url='https://images.unsplash.com/'+STEP_IMGS[imgIdx++%STEP_IMGS.length]+'?w=300&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5';
+      body='<span class="cb-kind"><i class="fa-regular fa-image"></i> Görsel</span>'+
+        '<div class="st-figs">'+
+        '<div class="st-shot" style="background-image:url(\''+url+'\')"><button type="button" title="Görseli sil" aria-label="Görseli sil" onclick="icerikDelShot(this)"><i class="fa-solid fa-trash-can"></i></button></div>'+
+        '<button class="st-up" type="button"><i class="fa-regular fa-image"></i> Görsel değiştir <small>1/1</small></button>'+
+        '</div>'+
+        '<input class="fk-input cb-cap" type="text" placeholder="Görsel açıklaması (opsiyonel)" />';
+    }else{
+      body='<span class="cb-kind"><i class="fa-brands fa-youtube"></i> Video</span>'+
+        '<input class="fk-input" type="url" placeholder="https://youtube.com/watch?v=..." aria-label="Video bağlantısı" />'+
+        '<span class="fk-help"><i class="fa-brands fa-youtube"></i> YouTube veya Vimeo bağlantısı — sayfada oynatıcı olarak gömülür.</span>';
+    }
+    c.innerHTML='<span class="st-num"></span><div class="st-body">'+body+'</div>'+sideHtml();
+    cbList.appendChild(c);renumber();
+    var first=c.querySelector('textarea,input');if(first)first.focus();
+  }
+  document.getElementById('addPara').addEventListener('click',function(){addBlock('para');});
+  document.getElementById('addImg').addEventListener('click',function(){addBlock('img');});
+  document.getElementById('addVideo').addEventListener('click',function(){addBlock('video');});
+
+  /* paragraf AI desteği (per-blok, delegasyon) */
+  (function(){
+    if(!cbList)return;
+    function enrich(v){
+      var t=(v||'').trim();
+      if(!t) return "Fikrini tek bir net cümleyle aç: neyi, neden, nasıl yapıyorsun. Okuyan ilk satırda faydayı görsün.";
+      return t.charAt(0).toUpperCase()+t.slice(1)+" — anlatım daha akıcı ve net bir dile getirildi, faydası öne çıkarıldı.";
+    }
+    function btnReset(b){b.disabled=false;b.innerHTML='<i class="fa-solid fa-wand-magic-sparkles"></i> AI ile İyileştir';}
+    function reset(body,restore){
+      if(!body)return;
+      var ta=body.querySelector('textarea'),bar=body.querySelector('.ai-result'),b=body.querySelector('.ai-btn');
+      if(restore&&b&&b.dataset.orig!=null&&b.dataset.orig!=='')ta.value=b.dataset.orig;
+      if(bar)bar.classList.remove('show');if(ta)ta.classList.remove('ai-applied');
+      if(b){b.dataset.orig='';btnReset(b);}
+    }
+    cbList.addEventListener('click',function(e){
+      var btn=e.target.closest('.ai-btn');
+      if(btn){
+        if(btn.disabled)return;
+        var body=btn.closest('.st-body');if(!body)return;
+        var ta=body.querySelector('textarea'),bar=body.querySelector('.ai-result');if(!ta)return;
+        btn.dataset.orig=ta.value;
+        btn.disabled=true;btn.innerHTML='<i class="fa-solid fa-spinner ai-spin"></i> İyileştiriliyor…';
+        ta.classList.add('ai-working');
+        setTimeout(function(){
+          ta.classList.remove('ai-working');ta.classList.add('ai-applied');
+          ta.value=enrich(btn.dataset.orig);
+          if(bar)bar.classList.add('show');
+          btn.disabled=false;btn.innerHTML='<i class="fa-solid fa-wand-magic-sparkles"></i> Yeniden Dene';
+        },900);
+        return;
+      }
+      var keep=e.target.closest('.ai-keep');
+      if(keep){reset(keep.closest('.st-body'),false);return;}
+      var undo=e.target.closest('.ai-undo');
+      if(undo){reset(undo.closest('.st-body'),true);return;}
+    });
+  })();
+
+  /* blok sil / görsel sil — KANONİK ONAY üzerinden.
+     sa-ui.js trash-ikonlu butonları CAPTURE'da yakalar → saConfirm modalı açar →
+     ONAY sonrası bu inline onclick (icerikDelBlock/icerikDelShot) çalışır.
+     Bu yüzden silmeyi global fonksiyon + onclick olarak kurguladık (delege click
+     handler sa-ui'nin stopImmediatePropagation'ı yüzünden tetiklenmezdi). */
+  window.icerikDelBlock=function(btn){
+    var card=btn.closest('.st-card');if(!card)return;
+    card.remove();renumber();
+  };
+  window.icerikDelShot=function(btn){
+    var shot=btn.closest('.st-shot');if(!shot)return;
+    shot.style.backgroundImage='none';shot.style.background='var(--bg)';
+    btn.remove();
+  };
+
+  /* ---- GERÇEK DRAG-SIRALA (HTML5 DnD, .ie-drag tutamağından) ---- */
+  var dragCard=null;
+  cbList.addEventListener('dragstart',function(e){
+    var handle=e.target.closest('.ie-drag');
+    if(!handle){e.preventDefault();return;}
+    dragCard=handle.closest('.st-card');
+    if(!dragCard){e.preventDefault();return;}
+    dragCard.classList.add('is-dragging');
+    e.dataTransfer.effectAllowed='move';
+    try{e.dataTransfer.setData('text/plain','blok');}catch(_){}
+  });
+  cbList.addEventListener('dragend',function(){
+    if(dragCard)dragCard.classList.remove('is-dragging');
+    cbList.querySelectorAll('.st-card.is-over').forEach(function(c){c.classList.remove('is-over');});
+    dragCard=null;renumber();
+  });
+  cbList.addEventListener('dragover',function(e){
+    if(!dragCard)return;
+    e.preventDefault();
+    e.dataTransfer.dropEffect='move';
+    var over=e.target.closest('.st-card');
+    cbList.querySelectorAll('.st-card.is-over').forEach(function(c){if(c!==over)c.classList.remove('is-over');});
+    if(!over||over===dragCard)return;
+    over.classList.add('is-over');
+    var rect=over.getBoundingClientRect();
+    var after=(e.clientY-rect.top)>rect.height/2;
+    if(after)cbList.insertBefore(dragCard,over.nextSibling);
+    else cbList.insertBefore(dragCard,over);
+    renumber();
+  });
+  cbList.addEventListener('drop',function(e){
+    if(!dragCard)return;
+    e.preventDefault();
+    cbList.querySelectorAll('.st-card.is-over').forEach(function(c){c.classList.remove('is-over');});
+    renumber();
+  });
+
+  /* ---- yayın durumu → durum noktası (pc-head göstergesi) ---- */
+  var durum=document.getElementById('f-durum');
+  var statusDot=document.getElementById('statusDot');
+  var STATE_TITLE={published:'Yayında',draft:'Taslak',review:'İncelemede'};
+  function syncStatus(){
+    statusDot.setAttribute('data-state',durum.value);
+    statusDot.title=STATE_TITLE[durum.value]||'';
+  }
+  durum.addEventListener('change',syncStatus);
+
+  /* ---- önizle (mockup: gerçek hedef yayın fazında slug'a bağlanır) ---- */
+  document.getElementById('previewBtn').addEventListener('click',function(){
+    if(window.saToast)saToast('Önizleme yeni sekmede açılacak (yayın fazında bağlanır)',{type:'info'});
+  });
+
+  /* ---- ilk render + kaydet ---- */
+  syncStatus();
+  render();
+  document.getElementById('saveBtn').addEventListener('click',function(){
+    if(window.saToast)saToast('İçerik kaydedildi',{type:'ok'});
+  });
+})();
+</script>
+</body>
+</html>

@@ -30,6 +30,7 @@
       {ic:'fa-tags',           lbl:'Fiyatlandırma',    href:'sa-admin-fiyatlandirma.html', screen:'fiyatlandirma'},
       {ic:'fa-images',         lbl:'Slider / Banner',  href:'sa-admin-slider.html',        screen:'slider'},
       {ic:'fa-file-lines',     lbl:'Sayfalar & SEO',   href:'sa-admin-sayfalar.html',      screen:'sayfalar'},
+      {ic:'fa-feather',        lbl:'Blog & İçerik',    href:'sa-admin-icerik.html',        screen:'icerik'},
       {ic:'fa-bars-staggered', lbl:'Menü / Navigasyon',href:'sa-admin-menu.html',          screen:'menu'},
       {ic:'fa-sliders',        lbl:'Ayarlar',          href:'sa-admin-ayarlar.html',       screen:'ayarlar'},
       {ic:'fa-chart-line',     lbl:'Raporlar',         href:'sa-admin-raporlar.html',      screen:'raporlar'}
