@@ -1,10 +1,25 @@
-# DadaMutfak — Handoff (PUBLIC REVİZE r1-4 TAMAM · ✅ CANLI — PUSH EDİLDİ)
+# DadaMutfak — Handoff (MEGA-REVİZE D1 + round2 + ek + ufak fix · ✅ CANLI — PUSH EDİLDİ)
 
-> Tarih: 2026-06-22. **Public v6 revize turu (round 1→4) tamam + Beyar tarayıcıda görsel ONAYLADI + commit'lenip `origin/main`'e PUSH edildi (GitHub Pages deploy).** Temiz baseline hazır — İşletme üretim turu başlayabilir. Önceki canlı temel: Faz 3 gözetim→operatör köprüsü + Faz 2 dalgaları + antrenör paneli + chip sayaçları + 390px fix + v5→v6 taşıma + dizin Admin sekmesi. **Klasör `v6/`.**
+> Tarih: 2026-06-22. **Mega-revize Dalga-1 + round-2 + ek revize + ufak fix TAMAM, Beyar görsel onayladı, `origin/main`'e PUSH edildi (son commit `435d3fa`; öncesinde `7fce1c6`). GitHub Pages canlı.** Kanonik kabuk (sa-shell/sa-ui/sa-*.css/js) hiç dokunulmadı. **Klasör `v6/`.** (Alttaki tarihsel bölümler önceki oturum referansı.)
 
-## 🚨 YENİ SESSION — İLK İŞ
-1. ✅ **TAMAM** — round 1-4 revizeleri tek commit ile kapatıldı + `origin/main`'e push edildi (GitHub Pages deploy). Temiz baseline CANLI.
-2. **Sıradaki: İşletme üretim turu** (↓ SIRADAKİ İŞ bölümü; audit planı + kararlar hazır).
+## ✅ BU OTURUM — TAMAMLANDI (push edildi · son commit `435d3fa`)
+- **Mega-revize Dalga-1 + round-2 + ek revize + ufak fix** (commit `7fce1c6` + `435d3fa`). 3 şerit (public/isletme/admin-form) agent-team, lead Playwright/render ile bağımsız doğrulandı; kanonik kabuk 0 dokunuş.
+- **Public içerik (dada-revize 8 madde):** bugun-ne-pisirsem (rename UI), tarif-bulucu (filtre+protein), kesfet (Mekan Öner modal), mutfaga-giris + **YENİ mutfaga-giris-liste** (slider + Tümünü-gör fix), ansiklopedi, olcu-birimleri, sezon. (item-9 TBD.)
+- **İşletme akışı:** giris (rol→panel), hesabim (İşletmem söküldü), isletme-ekle (**faz-bölme**: temel kayıt → mock geçiş → ekstra alanlar), 4 mekan panel (consumer `SA_ACCOUNT_ITEMS`), mekan-detay (**?owner=1 önizleme bandı**), mekan-panel "Public Sayfam" tek-link→owner=1 (fazla CTA'lar söküldü).
+- **Admin tarif formu wizard paritesi:** `sa-admin-tarifler-form` — malzeme grup/drag(Sortable)/autocomplete/birim, adım AI-iyileştir/görsel/süre/drag, searchable mutfak multi-select + 14 etiket chip.
+- **tarif-bulucu ingredient slider:** 2-sütun cat-cols + çift-açma (sol→sağ eş, sik-dahil parite fix — latent çapraz bug çözüldü) + tek-satır slider (~5 görünür, 98px) + **15+ malzemeli kategori 2-row** (Sebzeler 20→2 satır). Filtre+protein korundu.
+- **sezon:** belirgin hilal/yıldız hero motifi + sayfa-geneli soluk watermark (opacity 0.08-0.09).
+
+## ⏭️ KALAN İŞLER (öncelik sırası)
+1. **Besin 4-rehber kararı** — `besin-kalori-cetveli`/`protein-rehberi`/`karbonhidrat-rehberi`/`yag-rehberi` şu an **wave-öncesi temiz halde** (round-2 intro + round-1 bd-tab geri alındı, commit dışı). Karar: bd-tab geri al MI yoksa besin-degerleri konu-tab'a yönlendir Mİ. **Ayrı turda ele alınacak.**
+2. **sezon watermark daha belirgin** (ufak iterasyon — şu an 0.08-0.09).
+3. **İşletme login avatar/yönlendirme:** işletme girişinde header dropdown işletme avatarı + otomatik işletme paneli (B3 ile birlikte).
+4. **Sticky-sağ tutarlılık:** operatör edit-formlarında sağ sütun sticky var/yok keşfet, eksiklere (admin tarif form dahil) uygula.
+5. **B3 consumer-header sweep** (~93 public+isletme sayfa, header dropdown "Halka Açık Profilim") — EN SON.
+6. **Dalga 2:** Admin-B içerik modülü (ayrı modül + nav), Admin-C rapor (Yasin C-scope bekliyor), yol-guzergahim Leaflet (ayrı session), dada-revize 9. madde (Beyar dolduracak).
+7. **Yasin'e 2 soru:** A5 (admin eski-panel kapsamı) · C-scope (rapor detay önceliği).
+
+> Plan referansları: `tasks/mega-revize-plan.md` (5 batch şerit haritası + çakışma bayrakları) · `tasks/admin-review-yasin-plan.md` (Admin-A/B/C).
 
 ## ✅ PUBLIC REVİZE TURU (round 1→4) — TAMAMLANDI · CANLI
 > Saf frontend, targeted edit, kanonik kabuğa (sa-shell/sa-ui/sa-*.css) DOKUNULMADI. 3 teammate (layout-css/icerik/premium-shop) round 1-2; round 3-4 lead linear (teammate'ler güvenilmez idle olunca devralındı). Görsel QA Beyar tarayıcıda onayladı.
