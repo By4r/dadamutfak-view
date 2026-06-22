@@ -906,12 +906,15 @@ html,body{overflow-x:hidden}
 .mz-cat-h:hover h4{color:var(--mode-deep)}
 .mz-cat:not(.open) .mz-grid{display:none}
 
-/* görselli malzeme ızgarası — SOLDAN SAĞA WRAP: satır dolunca alt satıra geçer (row-major).
-   2-sütun kategori dar (~yarım genişlik) → ~5 kart/satır; 15+ malzeme ~3 satıra yayılır.
-   column-flow YOK (zigzag yapan grid-auto-flow:column kaldırıldı — temiz row-major akış). */
-.mz-grid{display:flex;flex-wrap:wrap;gap:8px;width:100%;min-width:0;max-width:100%;padding-bottom:6px}
-/* DAR kart → ~10 malzeme/satır (543px kategori; Sebzeler 20 = 2 satır). Wrap + çift-açma değişmez. */
-.mz-grid>.mz{flex:0 0 47px}
+/* görselli malzeme ızgarası — TEK SATIR yatay slider (her kategori kendi slider'ı).
+   Okunabilir kartlar nowrap dizilir; ~5 kart görünür, gerisi overflow-x:auto ile kayar.
+   column-flow YOK (zigzag yapan grid-auto-flow:column kaldırıldı). Çift-açma değişmez. */
+.mz-grid{display:flex;flex-wrap:nowrap;gap:10px;width:100%;min-width:0;max-width:100%;overflow-x:auto;overscroll-behavior-x:contain;scrollbar-width:thin;padding-bottom:14px}
+.mz-grid>.mz{flex:0 0 98px}
+/* UF#1: 15+ malzemeli kategori → 2 SATIR yatay track (grid column-flow: yukarıdan aşağı
+   2 satır dolar, sonra sağa kayar). Yatay scroll korunur; ≤15 kategori tek-satır kalır. */
+.mz-grid.two-row{display:grid;grid-auto-flow:column;grid-template-rows:repeat(2,auto);grid-auto-columns:98px;align-items:start}
+.mz-grid.two-row>.mz{flex:none;width:98px}
 /* 3-satır cap "daha fazla"yı kapsar → buton gizli, tüm malzeme (xtra dahil) slider'da */
 .mz-more{display:none}
 .mz.xtra{display:flex}
@@ -919,11 +922,11 @@ html,body{overflow-x:hidden}
 /* ===== GÖRSELLİ MALZEME KARTI ===== */
 .mz{position:relative;display:flex;flex-direction:column;align-items:stretch;gap:0;background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-md);padding:0;cursor:pointer;font-family:inherit;overflow:hidden;transition:transform .12s var(--ease),border-color .18s var(--ease),box-shadow .18s var(--ease)}
 .mz-img{position:relative;aspect-ratio:1;background-color:color-mix(in srgb,var(--cat,var(--muted)) 9%,#fff);background-size:cover;background-position:center;display:grid;place-items:center}
-.mz-img i{font-size:17px;color:color-mix(in srgb,var(--cat,var(--muted)) 78%,#000)}
+.mz-img i{font-size:26px;color:color-mix(in srgb,var(--cat,var(--muted)) 78%,#000)}
 .mz.has-photo .mz-img{background-size:88%;background-repeat:no-repeat}
 .mz.has-photo .mz-img i{display:none}
-.mz-name{display:block;padding:4px 3px 5px;font-size:9px;font-weight:600;color:var(--slate);text-align:center;line-height:1.15;letter-spacing:-.02em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.mz-ck{position:absolute;top:3px;right:3px;width:15px;height:15px;border-radius:var(--radius-circle);background:var(--mode);color:#fff;font-size:7.5px;display:none;place-items:center;box-shadow:0 2px 6px rgba(33,30,22,.25)}
+.mz-name{display:block;padding:6px 6px 8px;font-size:11.5px;font-weight:600;color:var(--slate);text-align:center;line-height:1.2;letter-spacing:-.01em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mz-ck{position:absolute;top:6px;right:6px;width:19px;height:19px;border-radius:var(--radius-circle);background:var(--mode);color:#fff;font-size:9px;display:none;place-items:center;box-shadow:0 2px 8px rgba(33,30,22,.25)}
 .mz:hover{border-color:var(--mode);transform:translateY(-1px);box-shadow:var(--sh-sm)}
 .mz:active{transform:scale(.97)}
 .mz.sel{border-color:var(--mode)}
@@ -1052,8 +1055,6 @@ html,body{overflow-x:hidden}
    (kategoriyle alakalı marka+ürün). Köşede koyu "Sponsorlu" rozeti ile ayrışır;
    seçim durumu YOK (malzeme değil → seçilemez). Görsel idarelik placeholder —
    gerçek ürün görseli .mz-img background-image ile sonra swap edilir. */
-/* sponsor kartı dar ızgarada okunmaz → 2 malzeme genişliği kadar yer kaplar */
-.mz-grid>.mz-sponsor{flex:0 0 102px}
 .mz-sponsor{text-decoration:none;border-color:rgba(225,72,39,.32);background:linear-gradient(180deg,#fff,#fff7f4)}
 .mz-sponsor:hover{border-color:var(--tomato);transform:translateY(-1px);box-shadow:var(--sh-sm)}
 .mz-sponsor .mz-img{background-color:color-mix(in srgb,var(--tomato) 7%,#fff)}
@@ -2293,9 +2294,11 @@ document.addEventListener('click',function(e){
     var sp=SPONSOR[cat.key], sponsor=sp?sponsorCardHTML(sp):'';
     var more=hasXtra?'<button type="button" class="mz-more"><i class="fa-solid fa-chevron-down"></i> Daha fazla</button>':'';
     var openDef=cat.key==='sik';          // varsayılan yalnız Sık Kullanılan açık
+    // UF#1: 15'ten FAZLA malzemeli kategori → slider kendi içinde 2 satıra dizilir (yatay scroll korunur)
+    var twoRow=cat.items.length>15?' two-row':'';
     return '<section class="mz-cat'+(openDef?' open':'')+'" id="cat-'+mode+'-'+cat.key+'" data-cat="'+cat.key+'" style="--cat:'+cat.color+'">'+
       '<button type="button" class="mz-cat-h" aria-expanded="'+(openDef?'true':'false')+'"><span class="mh-ic"><i class="fa-solid '+cat.icon+'"></i></span><h4>'+cat.name+'</h4><span class="mh-n">'+cat.items.length+' malzeme</span><span class="mh-sp"></span><span class="mh-sel">0</span><i class="fa-solid fa-chevron-down mh-chev"></i></button>'+
-      '<div class="mz-grid">'+cards+sponsor+more+'</div></section>';
+      '<div class="mz-grid'+twoRow+'">'+cards+sponsor+more+'</div></section>';
   }
   // kategori blokları 2 KOLON sarmalda (Revize 1)
   function buildCols(mode){

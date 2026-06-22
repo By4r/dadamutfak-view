@@ -139,19 +139,21 @@ await page.waitForTimeout(400);
 const ek4cta = await page.getAttribute('#olSuccess a', 'href');
 must(ek4cta === 'mekan-panel-v1.html?business=1', 'iki-faz sonu başarı CTA → mekan-panel?business=1 korundu');
 
-// ---------- EK#5: panel gövdesinde Public Sayfam CTA ----------
-log('\n== EK#5 panel Public Sayfam CTA ==');
+// ---------- DZ: Public Sayfam = TEK sidebar footer linki (gövde CTA söküldü) ----------
+log('\n== DZ panel Public Sayfam (sidebar footer tek) ==');
 await go('mekan-panel-v1.html?business=1');
-const bodyCta = page.locator('.ph-actions a[href="mekan-detay-v1.html?owner=1"]');
-must(await bodyCta.count() > 0, 'panel GÖVDESİNDE (ph-actions) Public Sayfam CTA var → owner=1');
-must(await bodyCta.isVisible(), 'gövde CTA görünür');
+const bodyCta = page.locator('.ph-actions a[href*="mekan-detay"]');
+must(await bodyCta.count() === 0, 'gövde (ph-actions) Public Sayfam CTA SÖKÜLDÜ (fazlalık gitti)');
 const sideCta = page.locator('.pnl-side-foot a[href="mekan-detay-v1.html?owner=1"]');
-must(await sideCta.count() > 0, 'sidebar Public Sayfam → owner=1 (güncellendi)');
-await shot('ek5-panel-cta');
-await bodyCta.click();
+must(await sideCta.count() === 1, 'sol-alt sidebar footer Public Sayfam TEK link → owner=1');
+must(await sideCta.isVisible(), 'sidebar footer link görünür');
+await shot('dz-panel-cta');
+// sidebar footer link tıkla → band tetiklenir mi
+await sideCta.click();
 await page.waitForLoadState('networkidle');
-must(page.url().includes('mekan-detay-v1.html') && page.url().includes('owner=1'), 'gövde CTA tıkla → mekan-detay?owner=1 (' + page.url().split('/').pop() + ')');
-must(await page.locator('.sa-owner-bar').isVisible(), 'açılan sayfada sahip önizleme bandı görünür');
+must(page.url().includes('mekan-detay-v1.html') && page.url().includes('owner=1'), 'sidebar link tıkla → mekan-detay?owner=1 (' + page.url().split('/').pop() + ')');
+must(await page.evaluate(() => document.body.classList.contains('is-owner')), 'mekan-detay body.is-owner=true (param okundu)');
+must(await page.locator('.sa-owner-bar').isVisible(), 'sahip önizleme bandı GÖRÜNÜR (band tetiklendi)');
 
 // ---------- 390 render (ek değişen sayfalar) ----------
 log('\n== 390 render ==');
