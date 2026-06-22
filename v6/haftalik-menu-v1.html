@@ -794,8 +794,9 @@ html,body{overflow-x:clip}
 .wk-mealcol b{font-size:13px;font-weight:700;color:var(--slate)}
 .wk-mealcol small{font-size:11px;color:var(--muted);font-weight:500}
 .wk-grid .wk-mealcol:last-of-type,.wk-grid .mcell.lastrow{border-bottom:none}
-/* hücre */
-.mcell{position:relative;padding:9px;border-bottom:1px solid var(--line);border-left:1px solid var(--line);min-height:126px}
+/* hücre — SABİT yükseklik: satır yüksekliği içerikten bağımsız sabittir, bir hücreye tarif
+   eklemek/çıkarmak satırı büyütmez → komşu hücreler (Ekle butonu + hiza) ASLA etkilenmez */
+.mcell{position:relative;padding:9px;border-bottom:1px solid var(--line);border-left:1px solid var(--line);height:172px}
 .mc-card{display:flex;flex-direction:column;gap:7px;height:100%;cursor:pointer}
 .mc-thumb{position:relative;height:60px;border-radius:var(--radius-sm);background-size:cover;background-position:center;overflow:hidden;flex:none}
 .mc-card:hover .mc-thumb::after{content:"";position:absolute;inset:0;background:rgba(225,72,39,.12)}
@@ -810,6 +811,40 @@ html,body{overflow-x:clip}
 .mc-add{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;width:100%;height:100%;min-height:104px;border:1.5px dashed #dcdcdc;border-radius:var(--radius-sm);background:transparent;color:var(--muted);font-family:inherit;font-size:11px;font-weight:700;cursor:pointer;transition:.18s var(--ease);white-space:nowrap;text-align:center}
 .mc-add i{font-size:15px}
 .mc-add:hover{border-color:var(--tomato);color:var(--tomato);background:var(--tomato-tint)}
+
+/* hücre içi çoklu tarif yığını + "başka ekle" mini butonu (çoklu ekleme) */
+/* stack SABİT hücrenin içinde scroll eder (max-height:100% → hücre yüksekliğini AŞMAZ, satırı büyütmez) */
+.mc-stack{display:flex;flex-direction:column;gap:8px;max-height:100%;height:100%;overflow-y:auto;overflow-x:hidden;scrollbar-width:thin}
+.mc-stack::-webkit-scrollbar{width:5px}
+.mc-stack::-webkit-scrollbar-thumb{background:#d8d2c6;border-radius:3px}
+.mc-stack .mc-card{height:auto}
+.mc-stack .mc-addmini{flex:none}
+.mc-cardwrap{flex:none;position:relative}
+.mc-cardwrap .mc-x{position:absolute;top:7px;right:7px;width:22px;height:22px;background:rgba(255,255,255,.92);border-radius:var(--radius-sm);display:grid;place-items:center;opacity:0;z-index:2}
+.mc-cardwrap:hover .mc-x{opacity:1}
+.mc-addmini{display:flex;align-items:center;justify-content:center;gap:6px;width:100%;padding:7px;border:1.5px dashed #dcdcdc;border-radius:var(--radius-sm);background:transparent;color:var(--muted);font-family:inherit;font-size:10.5px;font-weight:700;cursor:pointer;transition:.18s var(--ease)}
+.mc-addmini i{font-size:11px}
+.mc-addmini:hover{border-color:var(--tomato);color:var(--tomato);background:var(--tomato-tint)}
+
+/* ---- TARİF ARAMA POPOVER — dyt-recete-builder .tsr dilinin public (tomato) türevi ---- */
+.tsr{position:fixed;z-index:120;width:294px;background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-md);box-shadow:var(--sh-lg);display:none;flex-direction:column;overflow:hidden}
+.tsr.show{display:flex}
+.tsr-head{position:relative;border-bottom:1px solid var(--line);flex:none}
+.tsr-head i{position:absolute;left:13px;top:50%;transform:translateY(-50%);font-size:12.5px;color:var(--muted);pointer-events:none}
+.tsr-head input{width:100%;height:42px;padding:0 13px 0 36px;border:none;outline:none;font-family:inherit;font-size:13px;font-weight:500;color:var(--slate);background:var(--paper)}
+.tsr-head input::placeholder{color:var(--muted)}
+.tsr-list{max-height:264px;overflow-y:auto;padding:6px}
+.tsr-row{display:flex;align-items:center;gap:10px;width:100%;text-align:left;font-family:inherit;background:none;border:none;border-radius:var(--radius-sm);padding:7px 8px;cursor:pointer;transition:.16s var(--ease)}
+.tsr-row:hover{background:var(--tomato-tint)}
+.tsr-th{flex:none;width:38px;height:38px;border-radius:var(--radius-sm);background-size:cover;background-position:center}
+.tsr-info{flex:1;min-width:0;line-height:1.3}
+.tsr-info b{display:block;font-size:12.5px;font-weight:700;color:var(--slate);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tsr-info span{display:block;font-size:10.5px;color:var(--muted);font-weight:500;margin-top:1px}
+.tsr-row>i{flex:none;font-size:11px;color:var(--tomato);opacity:0;transition:.16s}
+.tsr-row:hover>i{opacity:1}
+.tsr-none{padding:18px 12px;text-align:center;font-size:12.5px;color:var(--muted)}
+.tsr-foot{flex:none;border-top:1px solid var(--line);padding:8px 12px;font-size:11px;color:var(--muted);font-weight:500;display:flex;align-items:center;gap:7px}
+.tsr-foot i{color:var(--tomato)}
 
 /* gün kalori özeti satırı (mobil günde gösterilir, desktop gizli) */
 .wk-daysum{display:none}
@@ -1545,6 +1580,16 @@ html,body{overflow-x:clip}
 
 </main><!-- /.page-main -->
 
+<!-- ===== TARİF ARAMA POPOVER (dyt-recete-builder .tsr türevi — aranabilir öneri + çoklu ekle) ===== -->
+<div class="tsr" id="tsr" role="dialog" aria-label="Tarif ara ve ekle">
+  <div class="tsr-head">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <input type="text" id="tsrInput" placeholder="Tarif ara… örn. çorba, salata" autocomplete="off" />
+  </div>
+  <div class="tsr-list" id="tsrList"></div>
+  <div class="tsr-foot"><i class="fa-solid fa-circle-plus"></i> Birden fazla tarif ekleyebilirsin — bitince dışarı tıkla.</div>
+</div>
+
 <!-- ===== LG-GATE (giriş kapısı) — logged-out mikro-aksiyon (yorum/kaydet/takip) =====
      Markup </main> SONRASINA (lessons: fixed overlay page-main stacking context'ine girmez).
      body.is-auth iken hiç açılmaz; data-lg-gate taşıyan öğeler tetikler. SS: ?lg=1 -->
@@ -2045,43 +2090,129 @@ document.addEventListener('click',function(e){
     setTimeout(function(){board.style.opacity='1';showToast('Menün yenilendi — alışveriş listesi güncel');},280);
   });
 
-  // ---- hücre kaldır → boş slot ----
-  function bindRemove(btn){
-    btn.addEventListener('click',function(e){
-      e.stopPropagation();
-      var cell=btn.closest('.mcell');
+  // ---- TARİF EKLE: aranabilir öneri popover + çoklu ekleme (dyt-recete-builder .tsr modeli) ----
+  function uImg(id){return 'https://images.unsplash.com/'+id+'?w=300&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5';}
+  // site tarif havuzu (mock) — picker tüm havuzda arar; öğünden bağımsız
+  var POOL=[
+    {n:'Domatesli Menemen',img:uImg('photo-1525755662778-989d0524087e'),k:320},
+    {n:'Peynirli Omlet',img:uImg('photo-1612240498936-65f5101365d2'),k:290},
+    {n:'Sucuklu Yumurta',img:uImg('photo-1482049016688-2d3e1b311543'),k:340},
+    {n:'Sebzeli Omlet',img:uImg('photo-1467003909585-2f8a72700288'),k:250},
+    {n:'Meyveli Yulaf Kâsesi',img:uImg('photo-1517673400267-0251440c45dc'),k:260},
+    {n:'Serpme Kahvaltı Tabağı',img:uImg('photo-1533089860892-a7c6f0a88666'),k:410},
+    {n:'Bal-Kaymak Tabağı',img:uImg('photo-1525351484163-7529414344d8'),k:300},
+    {n:'Ezogelin Çorbası',img:uImg('photo-1547592180-85f173990554'),k:220},
+    {n:'Mercimek Çorbası',img:uImg('photo-1543339308-43e59d6b73a6'),k:240},
+    {n:'Tavuklu Sezar Salata',img:uImg('photo-1546069901-ba9599a7e63c'),k:380},
+    {n:'Sebzeli Bulgur Pilavı',img:uImg('photo-1596797038530-2c107229654b'),k:340},
+    {n:'Izgara Köfte',img:uImg('photo-1529692236671-f1f6cf9683ba'),k:450},
+    {n:'Mercimek Köftesi',img:uImg('photo-1512621776951-a57141f2eefd'),k:310},
+    {n:'Fırında Sebzeli Tavuk',img:uImg('photo-1604908176997-125f25cc6f3d'),k:520},
+    {n:'Buğulama Levrek',img:uImg('photo-1485921325833-c519f76c4927'),k:360},
+    {n:'Karnıyarık',img:uImg('photo-1565299624946-b28f40a0ae38'),k:480},
+    {n:'Sebzeli Güveç',img:uImg('photo-1547592166-23ac45744acd'),k:380},
+    {n:'Yoğurtlu Makarna',img:uImg('photo-1621996346565-e3dbc646d9a9'),k:390},
+    {n:'Izgara Tavuk & Salata',img:uImg('photo-1598103442097-8b74394b95c6'),k:400},
+    {n:'Etli Nohut Yemeği',img:uImg('photo-1455619452474-d2be8b1e70cd'),k:540}
+  ];
+
+  var tsr=document.getElementById('tsr'),
+      tsrInput=document.getElementById('tsrInput'),
+      tsrList=document.getElementById('tsrList'),
+      board=document.querySelector('.wk-board'),
+      actCell=null;  // popover açıkken hedef hücre
+
+  // legacy tek-kartlı hücreyi çoklu-yığın modeline çevir (ilk etkileşimde)
+  function ensureStack(cell){
+    if(cell.querySelector('.mc-stack'))return;
+    var card=cell.querySelector('.mc-card');
+    cell.classList.remove('empty');
+    cell.innerHTML='<div class="mc-stack"></div>';
+    var stack=cell.querySelector('.mc-stack');
+    if(card){
+      var name=card.querySelector('.mc-name'),meta=card.querySelector('.mc-meta'),
+          thumb=card.querySelector('.mc-thumb');
+      stack.appendChild(makeCardWrap(
+        name?name.textContent:'Tarif',
+        thumb?thumb.style.backgroundImage.replace(/^url\(["']?|["']?\)$/g,''):'',
+        meta?meta.textContent.replace(/[^0-9]/g,''):''
+      ));
+    }
+    stack.insertAdjacentHTML('beforeend','<button class="mc-addmini" type="button"><i class="fa-solid fa-plus"></i> Başka tarif ekle</button>');
+  }
+  function makeCardWrap(name,img,kcal){
+    var w=document.createElement('div');w.className='mc-cardwrap';
+    w.innerHTML='<button class="mc-x" type="button" aria-label="Kaldır"><i class="fa-solid fa-xmark"></i></button>'+
+      '<div class="mc-card" onclick="location.href=\'tarif-detay-v1.html\'"><div class="mc-thumb" style="background-image:url(\''+img+'\')"></div>'+
+      '<div class="mc-name">'+name+'</div><div class="mc-meta"><i class="fa-solid fa-fire-flame-curved"></i> '+kcal+' kcal</div></div>';
+    return w;
+  }
+  function addRecipe(cell,r){
+    ensureStack(cell);
+    var stack=cell.querySelector('.mc-stack'),
+        mini=stack.querySelector('.mc-addmini');
+    stack.insertBefore(makeCardWrap(r.n,r.img,r.k),mini);
+    rebuildShop();
+  }
+  function removeCard(x){
+    var cell=x.closest('.mcell'),wrap=x.closest('.mc-cardwrap');
+    if(wrap){
+      wrap.remove();
+      var stack=cell.querySelector('.mc-stack');
+      if(stack&&!stack.querySelector('.mc-cardwrap')){          // yığında son kart çıktı → boş slot
+        cell.classList.add('empty');
+        cell.innerHTML='<button class="mc-add" type="button"><i class="fa-solid fa-plus"></i> Ekle</button>';
+      }
+    }else{                                                       // legacy tek-kartlı hücre → boş slot
       cell.classList.add('empty');
       cell.innerHTML='<button class="mc-add" type="button"><i class="fa-solid fa-plus"></i> Ekle</button>';
-      bindAdd(cell.querySelector('.mc-add'));
-      rebuildShop(); showToast('Tarif menüden çıkarıldı — liste güncellendi');
-    });
+    }
+    rebuildShop(); showToast('Tarif menüden çıkarıldı — liste güncellendi');
   }
-  // ---- boş slot doldur (görsel) — öğüne uygun tarif, her tıkta dönüşümlü ----
-  function uImg(id){return 'https://images.unsplash.com/'+id+'?w=300&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5';}
-  var POOL={
-    'Kahvaltı':[['Sucuklu Yumurta',uImg('photo-1482049016688-2d3e1b311543'),'340'],['Sebzeli Omlet',uImg('photo-1467003909585-2f8a72700288'),'250'],['Bal-Kaymak Tabağı',uImg('photo-1525351484163-7529414344d8'),'300']],
-    'Öğle':[['Mercimek Köftesi',uImg('photo-1543339308-43e59d6b73a6'),'240'],['Sebzeli Bulgur Pilavı',uImg('photo-1596797038530-2c107229654b'),'340'],['Tavuklu Salata',uImg('photo-1546069901-ba9599a7e63c'),'360']],
-    'Akşam':[['Sebzeli Sote',uImg('photo-1512621776951-a57141f2eefd'),'280'],['Yoğurtlu Makarna',uImg('photo-1621996346565-e3dbc646d9a9'),'390'],['Fırın Köfte',uImg('photo-1529692236671-f1f6cf9683ba'),'450']]
-  };
-  var addRot={};
-  function bindAdd(btn){
-    btn.addEventListener('click',function(e){
-      e.stopPropagation();
-      var cell=btn.closest('.mcell');
-      var meal=cell.dataset.meal||'Akşam';
-      var arr=POOL[meal]||POOL['Akşam'];
-      var k=addRot[meal]=(addRot[meal]||0)%arr.length;
-      var p=arr[k]; addRot[meal]=k+1;
-      cell.classList.remove('empty');
-      cell.innerHTML='<button class="mc-x" type="button" aria-label="Kaldır"><i class="fa-solid fa-xmark"></i></button>'+
-        '<div class="mc-card" onclick="location.href=\'tarif-detay-v1.html\'"><div class="mc-thumb" style="background-image:url(\''+p[1]+'\')"></div>'+
-        '<div class="mc-name">'+p[0]+'</div><div class="mc-meta"><i class="fa-solid fa-fire-flame-curved"></i> '+p[2]+' kcal</div></div>';
-      bindRemove(cell.querySelector('.mc-x'));
-      rebuildShop(); showToast('Tarif eklendi — liste güncellendi');
-    });
+
+  // ---- popover ----
+  function renderResults(q){
+    q=(q||'').toLocaleLowerCase('tr');
+    var hits=POOL.map(function(r,i){return{r:r,i:i};})
+      .filter(function(o){return !q||o.r.n.toLocaleLowerCase('tr').indexOf(q)>-1;}).slice(0,8);
+    if(!hits.length){tsrList.innerHTML='<div class="tsr-none">“'+q+'” için sonuç yok</div>';return;}
+    tsrList.innerHTML=hits.map(function(o){
+      return '<button class="tsr-row" type="button" data-id="'+o.i+'">'
+        +'<div class="tsr-th" style="background-image:url(\''+o.r.img+'\')"></div>'
+        +'<div class="tsr-info"><b>'+o.r.n+'</b><span>'+o.r.k+' kcal</span></div>'
+        +'<i class="fa-solid fa-plus"></i></button>';
+    }).join('');
   }
-  document.querySelectorAll('.mc-x').forEach(bindRemove);
-  document.querySelectorAll('.mc-add').forEach(bindAdd);
+  function openTsr(btn,cell){
+    actCell=cell;
+    var rc=btn.getBoundingClientRect(),vw=window.innerWidth,vh=window.innerHeight,
+        w=294,hh=320,
+        left=Math.max(8,Math.min(rc.left,vw-w-8)),
+        top=rc.bottom+8;
+    if(top+hh>vh-8)top=Math.max(8,rc.top-hh-8);
+    tsr.style.left=left+'px';tsr.style.top=top+'px';
+    tsr.classList.add('show');
+    tsrInput.value='';renderResults('');tsrInput.focus();
+  }
+  function closeTsr(){tsr.classList.remove('show');actCell=null;}
+
+  // event delegation — DOM yeniden yazımı sonrası rebind gerekmez
+  board.addEventListener('click',function(e){
+    var x=e.target.closest('.mc-x');
+    if(x){e.stopPropagation();removeCard(x);return;}
+    var add=e.target.closest('.mc-add,.mc-addmini');
+    if(add){e.stopPropagation();openTsr(add,add.closest('.mcell'));}
+  });
+  tsrInput.addEventListener('input',function(){renderResults(tsrInput.value);});
+  tsrList.addEventListener('click',function(e){
+    var row=e.target.closest('.tsr-row');if(!row||!actCell)return;
+    addRecipe(actCell,POOL[+row.getAttribute('data-id')]);
+    showToast('Tarif eklendi — liste güncellendi');   // popover açık kalır → çoklu ekle
+  });
+  document.addEventListener('click',function(e){
+    if(tsr.classList.contains('show')&&!e.target.closest('.tsr')&&!e.target.closest('.mc-add')&&!e.target.closest('.mc-addmini'))closeTsr();
+  });
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')closeTsr();});
 
   scale(); rebuildShop();
 })();

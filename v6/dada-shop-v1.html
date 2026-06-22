@@ -786,9 +786,15 @@ body.shop-searching .catstrip .cat-track,body.shop-searching .catstrip .sec-tool
 /* ---- editöryal ikili promo bandı (tarif→sepet köprüsü + yöresel) ---- */
 .shop-promo{padding:8px 0 70px}
 .promo-grid{display:grid;grid-template-columns:1fr 1fr;gap:26px}
-.promo-tile{position:relative;min-height:280px;border-radius:var(--radius-xl);overflow:hidden;display:flex;align-items:flex-end;padding:34px;cursor:pointer;background-size:cover;background-position:center}
-.promo-tile::after{content:"";position:absolute;inset:0;border-radius:inherit;background:linear-gradient(115deg,rgba(20,18,12,.82) 8%,rgba(20,18,12,.34) 64%,transparent);transition:.35s var(--ease)}
-.promo-tile:hover::after{background:linear-gradient(115deg,rgba(20,18,12,.86) 8%,rgba(20,18,12,.42) 70%,rgba(0,0,0,.05))}
+/* R2: koyu bandda border + background-image (clip border-box) köşeden taşıyordu →
+   background-clip:padding-box ile görsel border içine kırpılır, radius korunur. */
+.promo-tile{position:relative;min-height:280px;border-radius:var(--radius-xl);overflow:hidden;isolation:isolate;display:flex;align-items:flex-end;padding:34px;cursor:pointer;background-size:cover;background-position:center;background-clip:padding-box}
+/* R-revize: tek-yön diagonal sağ uçta tamamen açılıp metin/buton kenarlarını zemine
+   karıştırıyordu → KATMANLI scrim. (1) alttan dikey scrim = metin/buton ayağı her görselde
+   okunur; (2) soldan yatay koyu taban = başlık bloğu üstü; sağ uç tam-transparan yerine
+   ince rgba(.16) taban tutar (CLAUDE.md ara ton bandı, metin-üstü taban .82'de okunur). */
+.promo-tile::after{content:"";position:absolute;inset:0;border-radius:inherit;background:linear-gradient(180deg,transparent 34%,rgba(20,18,12,.58) 100%),linear-gradient(115deg,rgba(20,18,12,.82) 6%,rgba(20,18,12,.40) 58%,rgba(20,18,12,.16) 100%);transition:.35s var(--ease)}
+.promo-tile:hover::after{background:linear-gradient(180deg,transparent 30%,rgba(20,18,12,.64) 100%),linear-gradient(115deg,rgba(20,18,12,.86) 6%,rgba(20,18,12,.46) 60%,rgba(20,18,12,.20) 100%)}
 .pt-body{position:relative;z-index:2;max-width:330px}
 .pt-eb{display:inline-flex;align-items:center;gap:8px;font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#fff}
 .pt-eb i{color:#ff8763}
@@ -1001,7 +1007,6 @@ body.shop-searching .catstrip .cat-track,body.shop-searching .catstrip .sec-tool
         </div>
         <div class="nav-item"><a href="urun-liste-v1.html">Kampanyalar <span class="hot">İndirim</span></a></div>
         <div class="nav-item"><a href="urun-liste-v1.html">Çok Satanlar</a></div>
-        <div class="nav-item"><a href="urun-liste-v1.html">Yöresel</a></div>
       </nav>
       <div class="head-actions">
         <button class="icon-btn" aria-label="Ürün ara" onclick="location.href='arama-v1.html?brand=store'"><i class="fa-solid fa-magnifying-glass"></i></button>
@@ -1020,7 +1025,7 @@ body.shop-searching .catstrip .cat-track,body.shop-searching .catstrip .sec-tool
             </div>
           </div>
         </div>
-        <button class="btn-login" data-login-open type="button"><i class="fa-regular fa-user"></i> Giriş Yap</button>
+        <button class="btn-login" type="button" onclick="location.href='giris-v1.html'"><i class="fa-regular fa-user"></i> Giriş Yap</button>
         <button class="icon-btn hamburger" id="hamburger" aria-label="Menü"><i class="fa-solid fa-bars"></i></button>
       </div>
     </div>
@@ -1055,7 +1060,7 @@ body.shop-searching .catstrip .cat-track,body.shop-searching .catstrip .sec-tool
     <div class="d-item"><a class="d-link" href="sepet-v1.html"><i class="fa-solid fa-bag-shopping"></i> Sepetim</a></div>
   </nav>
   <div class="drawer-foot">
-    <button class="btn btn-primary" style="width:100%" data-login-open type="button"><i class="fa-regular fa-user"></i> Giriş Yap</button>
+    <button class="btn btn-primary" style="width:100%" type="button" onclick="location.href='giris-v1.html'"><i class="fa-regular fa-user"></i> Giriş Yap</button>
     <a href="anasayfa-portal-v3a.html" class="drawer-add"><i class="fa-solid fa-arrow-left-long"></i> DadaMutfak'a Dön</a>
     <div class="drawer-lang" id="drawerLang">
       <button class="drawer-lang-toggle" type="button" aria-haspopup="true" aria-expanded="false">

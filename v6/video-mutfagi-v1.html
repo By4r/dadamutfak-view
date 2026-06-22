@@ -316,9 +316,11 @@ body.is-auth .drawer-login{display:none}
 
 /* ===== PRO-GATE (Foundation F1) — ÜCRETLİ premium içerik kilidi (lg-gate kardeşi).
    [data-pro-gate] taşıyan öğeler kapıyı açar (data-pro-title / data-pro-desc ile metin özelleştir → "Pro'ya Yükselt" CTA = pro-v1.html). SS: ?pro=1 ===== */
-.pg-overlay{position:fixed;inset:0;background:rgba(20,18,12,.5);z-index:97;opacity:0;visibility:hidden;transition:opacity .25s var(--ease),visibility .25s}
+/* z-index 130/131: pro-gate en üst öncelikli dönüşüm modalı → fullscreen Dada Akış
+   reels viewer'dan (.dakis z-index:120) açıldığında ÜSTTE görünmeli (arkada kalmamalı). */
+.pg-overlay{position:fixed;inset:0;background:rgba(20,18,12,.5);z-index:130;opacity:0;visibility:hidden;transition:opacity .25s var(--ease),visibility .25s}
 .pg-overlay.show{opacity:1;visibility:visible}
-.pro-gate{position:fixed;inset:0;z-index:98;display:grid;place-items:center;padding:20px;opacity:0;visibility:hidden;pointer-events:none;transition:opacity .25s var(--ease),visibility .25s}
+.pro-gate{position:fixed;inset:0;z-index:131;display:grid;place-items:center;padding:20px;opacity:0;visibility:hidden;pointer-events:none;transition:opacity .25s var(--ease),visibility .25s}
 .pro-gate.show{opacity:1;visibility:visible;pointer-events:auto}
 .pg-panel{position:relative;width:min(420px,100%);background:#fff;border-radius:var(--radius-lg);box-shadow:var(--sh-lg);padding:32px 26px 26px;text-align:center;transform:translateY(14px);transition:transform .3s var(--ease)}
 .pro-gate.show .pg-panel{transform:translateY(0)}
@@ -912,10 +914,24 @@ html,body{overflow-x:hidden}
 .pro-flag i{font-size:10px}
 .vray.is-pro .vray-info b i{color:#b8860b}
 .vray-info .vray-name{display:flex;align-items:center;gap:9px;flex-wrap:wrap}
-/* premium seri kartı kilit katmanı — pro-gate'i tetikler */
-.vid-card.locked .vid-thumb::before{content:"";position:absolute;inset:0;background:rgba(20,18,12,.42);z-index:2}
-.vid-card.locked .vid-thumb .play{background:linear-gradient(180deg,#fbeeb4,#e9c468);color:#7a560c;border:none}
-.vlock-badge{position:absolute;top:10px;left:10px;z-index:3;display:inline-flex;align-items:center;gap:5px;font-size:10.5px;font-weight:800;color:#7a560c;background:linear-gradient(180deg,#fbeeb4,#f1cf73);padding:4px 9px;border-radius:999px}
+/* ============================================================================
+   KİLİTLİ PREMIUM GÖRSEL DİLİ (ortak) — crown + blur + altın.
+   İki bölüme uygulanır: .vid-card.locked (Restoran Sırları) ve .short-card.locked
+   (Dada Akış). Tutarlılık garantisi: blur/crown/altın değerleri TEK kaynaktan.
+   Kural: tüm görsel katmanlar pointer-events:none → kart [data-pro-gate] click
+   delegation'ı (→ #proGate "Pro'ya Yükselt" modalı) BOZULMAZ.
+   ----------------------------------------------------------------------------
+   --lk-blur: kilitli görselin bulanıklığı ("var ama net değil" premium dili)
+   --lk-dim : blur üstü hafif karartma (blur sezilsin diye ölçülü)
+   --lk-gold/--lk-gold-2: mevcut .vlock-badge/.pro-flag altın paleti (yeni renk YOK) */
+.vid-card.locked,.short-card.locked{--lk-blur:7px;--lk-dim:.30;--lk-gold:#fbeeb4;--lk-gold-2:#e9c468}
+/* premium seri kartı kilit katmanı — pro-gate'i tetikler.
+   Kral logosu görseli KAPLAR: dev soluk crown watermark (::before content) + blur. */
+.vid-card.locked .vid-thumb::before{content:"\f521";font-family:"Font Awesome 6 Free";font-weight:900;position:absolute;inset:0;z-index:2;display:grid;place-items:center;font-size:128px;color:rgba(251,238,180,.20);background:rgba(20,18,12,var(--lk-dim));-webkit-backdrop-filter:blur(var(--lk-blur));backdrop-filter:blur(var(--lk-blur));pointer-events:none;text-shadow:0 6px 26px rgba(10,9,6,.5)}
+/* merkez crown play düğmesi — büyütülmüş + altın (tıklanır his; üstte) */
+.vid-card.locked .vid-thumb .play{width:74px;height:74px;font-size:26px;background:linear-gradient(180deg,var(--lk-gold),var(--lk-gold-2));color:#7a560c;border:none;z-index:3;box-shadow:0 10px 30px rgba(10,9,6,.45)}
+.vid-card.locked:hover .vid-thumb .play{transform:scale(1.08)}
+.vlock-badge{position:absolute;top:10px;left:10px;z-index:4;display:inline-flex;align-items:center;gap:5px;font-size:10.5px;font-weight:800;color:#7a560c;background:linear-gradient(180deg,#fbeeb4,#f1cf73);padding:4px 9px;border-radius:999px;pointer-events:none}
 .vlock-badge i{font-size:10px}
 
 /* M13 — CREATOR (ŞEFLER) vitrini. .creator-sub (Foundation) ücretsiz abone butonu HER kartta. */
@@ -984,9 +1000,12 @@ html,body{overflow-x:hidden}
    ÜCRETSİZ .creator-sub "Abone Ol"dan AYRI: abone olmak bunları AÇMAZ, yalnız Pro açar.
    Görsel dil = mevcut .vlock-badge / .pro-flag altın/crown dili (Restoran Sırları kilidi ile tutarlı). */
 .short-card.locked{cursor:pointer}
-.short-card.locked::before{content:"";position:absolute;inset:0;z-index:2;background:rgba(20,18,12,.5);backdrop-filter:blur(1px)}
-.short-card.locked .sc-play{opacity:1;transform:scale(1);background:linear-gradient(180deg,#fbeeb4,#e9c468);border:none;color:#7a560c;z-index:3}
-.short-card .sc-pro{position:absolute;top:10px;left:10px;z-index:3;display:inline-flex;align-items:center;gap:5px;font-size:10.5px;font-weight:800;letter-spacing:.04em;color:#7a560c;background:linear-gradient(180deg,#fbeeb4,#f1cf73);padding:4px 9px;border-radius:999px}
+/* Restoran Sırları ile EŞİT premium dil: dev crown watermark (::before content) +
+   ortak --lk-blur / --lk-dim. pointer-events:none → data-pro-gate→#proGate akışı korunur. */
+.short-card.locked::before{content:"\f521";font-family:"Font Awesome 6 Free";font-weight:900;position:absolute;inset:0;z-index:2;display:grid;place-items:center;font-size:96px;color:rgba(251,238,180,.20);background:rgba(20,18,12,var(--lk-dim));-webkit-backdrop-filter:blur(var(--lk-blur));backdrop-filter:blur(var(--lk-blur));pointer-events:none;text-shadow:0 6px 22px rgba(10,9,6,.5)}
+.short-card.locked .sc-play{opacity:1;transform:scale(1);width:54px;height:54px;font-size:18px;background:linear-gradient(180deg,var(--lk-gold),var(--lk-gold-2));border:none;color:#7a560c;z-index:3;box-shadow:0 8px 24px rgba(10,9,6,.45)}
+.short-card.locked:hover .sc-play{transform:scale(1.06)}
+.short-card .sc-pro{position:absolute;top:10px;left:10px;z-index:4;display:inline-flex;align-items:center;gap:5px;font-size:10.5px;font-weight:800;letter-spacing:.04em;color:#7a560c;background:linear-gradient(180deg,#fbeeb4,#f1cf73);padding:4px 9px;border-radius:999px;pointer-events:none}
 .short-card .sc-pro i{font-size:10px}
 .short-card.locked .sc-body span{color:rgba(251,238,180,.92)}
 .short-card.locked .sc-body span i{color:#fbeeb4}
@@ -1122,6 +1141,30 @@ html,body{overflow-x:hidden}
 .dk-playbtn:hover{background:var(--tomato);border-color:var(--tomato);transform:scale(1.08)}
 .dakis.playing .dk-playbtn{opacity:0}
 .dk-stage:hover .dk-playbtn{opacity:1}
+/* KİLİTLİ PREMIUM REEL — .vid-card.locked / .short-card.locked ile EŞİT dil
+   (--lk-blur:7px / --lk-dim:.30 / altın #fbeeb4→#e9c468). #dakis.locked iken görünür:
+   dev crown watermark görseli kaplar (FA \f521), media blur'lanır, merkez altın CTA. */
+.dk-lock{display:none}
+.dakis.locked .dk-media{-webkit-filter:blur(7px);filter:blur(7px);transform:scale(1.04)}
+.dakis.locked .dk-playbtn{display:none}                       /* kilitli reel oynatılmaz */
+.dakis.locked .dk-lock{
+  position:absolute;inset:0;z-index:4;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:18px;
+  background:rgba(20,18,12,.30);border:none;cursor:pointer;font-family:inherit;
+}
+/* dev soluk crown watermark (görseli kaplar) — tıklamayı engellemez */
+.dk-lock::before{content:"\f521";font-family:"Font Awesome 6 Free";font-weight:900;
+  position:absolute;inset:0;display:grid;place-items:center;font-size:200px;
+  color:rgba(251,238,180,.18);text-shadow:0 8px 34px rgba(10,9,6,.5);pointer-events:none}
+.dk-lock-pro{position:absolute;top:54px;left:14px;z-index:2;display:inline-flex;align-items:center;gap:5px;
+  font-size:11px;font-weight:800;letter-spacing:.04em;color:#7a560c;
+  background:linear-gradient(180deg,#fbeeb4,#f1cf73);padding:5px 11px;border-radius:999px;pointer-events:none}
+.dk-lock-pro i{font-size:10px}
+.dk-lock-cta{position:relative;z-index:2;display:inline-flex;align-items:center;gap:9px;
+  font-size:14px;font-weight:800;color:#7a560c;
+  background:linear-gradient(180deg,#fbeeb4,#e9c468);border:none;
+  padding:13px 22px;border-radius:999px;box-shadow:0 12px 30px rgba(10,9,6,.45);transition:.2s var(--ease)}
+.dk-lock:hover .dk-lock-cta{transform:translateY(-2px);box-shadow:0 16px 38px rgba(10,9,6,.5)}
 .dk-info{position:absolute;left:16px;right:16px;bottom:16px;z-index:2;color:#fff}
 .dk-info h3{color:#fff;font-size:18.5px;line-height:1.32;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .dk-chef{display:flex;align-items:center;gap:10px;margin-top:11px}
@@ -2346,6 +2389,15 @@ html,body{overflow-x:hidden}
       <div class="dk-segs" id="dkSegs"></div>
       <span class="dk-cat" id="dkCat">Tarif</span>
       <button class="dk-playbtn" id="dkPlay" type="button" aria-label="Oynat / Duraklat"><i class="fa-solid fa-play"></i></button>
+      <!-- KİLİTLİ PREMIUM REEL katmanı (Restoran Sırları / inline locked short ile aynı dil:
+           crown watermark + blur + altın). data-pro-gate → #proGate "Pro'ya Yükselt". render() locked
+           short'ta #dakis'e .locked ekler; pro-title/desc dinamik set edilir. -->
+      <button class="dk-lock" id="dkLock" type="button" data-pro-gate
+        data-pro-title="Dada Akış Pro — şefin tam serisi"
+        data-pro-desc="Bu akış DadaMutfak Pro üyelerine özel. Bir şefe abone olmak bu içeriği açmaz — yalnız Pro açar.">
+        <span class="dk-lock-pro"><i class="fa-solid fa-crown"></i> Pro</span>
+        <span class="dk-lock-cta"><i class="fa-solid fa-crown"></i> Pro'ya Yükselt</span>
+      </button>
       <div class="dk-info">
         <h3 id="dkTitle">—</h3>
         <div class="dk-chef">
@@ -2871,7 +2923,7 @@ document.addEventListener('click',function(e){
   var shorts=[
     {cat:'Teknik',      title:'Soğan Doğrarken Ağlamamanın Yolu',         chef:'Şef Kaan Demir',  av:'photo-1522075469751-3a6694fb2f61', img:'photo-1518977956812-cd3dbadaaf31', likes:'31,5K', views:'524K'},
     {cat:'Püf Noktası', title:'Nar Taneleme — Tek Hamlede',               chef:'Zeynep Usta',     av:'photo-1573496359142-b8d87734a5a2', img:'photo-1490645935967-10de6ba17061', likes:'18,3K', views:'287K'},
-    {cat:'Tarif',       title:'1 Dakikada Tahinli Sos',                   chef:'Dyt. Selin Aksoy',av:'photo-1559839734-2b71ea197ec2',    img:'photo-1473093295043-cdd812d0e601', likes:'9,8K',  views:'156K'},
+    {cat:'Pro',         title:'Restoran Sosları — Tam Seri (Pro)',       chef:'Zeynep Usta',     av:'photo-1559839734-2b71ea197ec2',    img:'photo-1473093295043-cdd812d0e601', likes:'9,8K',  views:'156K', locked:true, proTitle:'Dada Akış Pro — şefin tam serisi', proDesc:"Zeynep Usta'nın 'Restoran Sosları' Pro akış serisini izlemek için DadaMutfak Pro'ya yükselt. Bir şefe abone olmak bu içeriği açmaz — yalnız Pro açar."},
     {cat:'Pratik',      title:'Meal Prep: 1 Saatte Haftalık Sebze Hazırlığı', chef:'Arda Bozkurt',av:'photo-1507003211169-0a1dd7228f2d', img:'photo-1466978913421-dad2ebd01d17', likes:'24,1K', views:'412K'},
     {cat:'Tatlı',       title:'Sufle Çökmesin: 30 Saniyelik Hile',        chef:'Ayşe Tülin',      av:'photo-1438761681033-6461ffad8d80', img:'photo-1495521821757-a1efb6729352', likes:'12,4K', views:'198K'},
     {cat:'Kahvaltı',    title:'Pratik Kahvaltı Tabağı — 5 Dakika',        chef:'Mehmet Karaca',   av:'photo-1500648767791-00dcc994a43e', img:'photo-1525351484163-7529414344d8', likes:'21,7K', views:'341K'}
@@ -2887,7 +2939,7 @@ document.addEventListener('click',function(e){
       elLikeCount=document.getElementById('dkLikeCount'),elSave=document.getElementById('dkSave'),
       elFollow=document.getElementById('dkFollow'),elCount=document.getElementById('dkCount'),
       btnPrev=document.getElementById('dkPrev'),btnNext=document.getElementById('dkNext'),
-      btnPlay=document.getElementById('dkPlay');
+      btnPlay=document.getElementById('dkPlay'),elLock=document.getElementById('dkLock');
   // segment barını kur
   shorts.forEach(function(){segs.appendChild(document.createElement('i'))});
   function stopVideo(){
@@ -2914,6 +2966,12 @@ document.addEventListener('click',function(e){
     segs.querySelectorAll('i').forEach(function(seg,k){seg.classList.toggle('on',k<=idx)});
     btnPrev.disabled=idx===0;
     btnNext.disabled=idx===shorts.length-1;
+    // KİLİTLİ PREMIUM REEL — blur+crown+altın CTA göster, pro-title/desc set et (→ #proGate)
+    dakis.classList.toggle('locked',!!s.locked);
+    if(s.locked&&elLock){
+      if(s.proTitle)elLock.setAttribute('data-pro-title',s.proTitle);
+      if(s.proDesc)elLock.setAttribute('data-pro-desc',s.proDesc);
+    }
   }
   function open(i){
     render(i||0);

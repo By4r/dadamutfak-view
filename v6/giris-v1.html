@@ -761,12 +761,14 @@ html,body{overflow-x:hidden}
 .au-top .rd-crumb i{color:rgba(255,255,255,.4)}
 .au-top .rd-crumb b{color:#fff}
 @media (max-width:640px){.au-top{padding-top:74px}}
+/* align-items:stretch → hero ile form kartı AYNI satır yüksekliğini paylaşır (giriş+kayıt state'inde eşit boy) */
 .au-layout{display:grid;grid-template-columns:minmax(0,1fr) 520px;gap:28px;align-items:stretch;margin-top:6px}
 
 /* ---- görsel yarı — lst-hero koyu-overlay dilinin KART varyantı ---- */
 .au-visual{
   position:relative;display:flex;flex-direction:column;justify-content:flex-end;
-  min-height:560px;border-radius:var(--radius-xl);overflow:hidden;box-shadow:var(--sh-md);
+  /* min yükseklik floor: stretch ile form kartına eşitlenir; uzun kayıt formunda ikisi birlikte uzar (eşit boy) */
+  min-height:624px;border-radius:var(--radius-xl);overflow:hidden;box-shadow:var(--sh-md);
   background-image:linear-gradient(180deg,rgba(28,25,18,.30) 0%,rgba(28,25,18,.55) 55%,rgba(20,18,12,.86) 100%),
     url('https://images.unsplash.com/photo-1556910103-1c02745aae4d?w=1200&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5');
   background-size:cover;background-position:center;
@@ -893,26 +895,41 @@ html,body{overflow-x:hidden}
 .au-seg-btn:hover{color:var(--tomato)}
 .au-seg-btn.active{background:var(--tomato);color:#fff}
 .au-seg-btn i{font-size:12px}
+/* kayıt rol segmenti — au-seg dilinin 4'lü varyantı (Kullanıcı/Antrenör/Diyetisyen/İşletme) */
+.au-rseg{flex-wrap:wrap;margin-bottom:8px}
+.au-rseg .au-seg-btn{flex:1 1 calc(50% - 4px);min-width:0}
+@media(min-width:560px){.au-rseg .au-seg-btn{flex:1 1 0}}
+.au-rseg-lead{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--muted);font-weight:600;margin:0 0 16px}
+.au-rseg-lead i{color:var(--tomato);font-size:12px}
+/* per-rol aksan — aktif sekme rolün KANONİK modül rengini taşır (yeni renk yok; #giSeg e-posta/tel hariç) */
+.au-rseg .au-seg-btn[data-karole="kullanici"].active,.au-rseg .au-seg-btn[data-as="kullanici"].active{background:var(--tomato);color:#fff}      /* normal kullanıcı — domates */
+.au-rseg .au-seg-btn[data-karole="antrenor"].active,.au-rseg .au-seg-btn[data-as="antrenor"].active{background:var(--c-green);color:#fff}        /* DadaFit — kurumsal yeşil #009d4f */
+.au-rseg .au-seg-btn[data-karole="diyetisyen"].active,.au-rseg .au-seg-btn[data-as="diyetisyen"].active{background:var(--green);color:#fff}      /* sağlık — nane #3BB77E */
+.au-rseg .au-seg-btn[data-karole="isletme"].active,.au-rseg .au-seg-btn[data-as="isletme"].active{background:var(--c-petrol);color:#fff}        /* mekan — petrol #006072 */
+/* pasif sekme hover'da kendi rol rengine ısınır → ayrışır; AKTİF sekme HARİÇ (:not(.active)) ki dolu zeminde yazı ezilmesin */
+.au-rseg .au-seg-btn[data-karole="antrenor"]:not(.active):hover,.au-rseg .au-seg-btn[data-as="antrenor"]:not(.active):hover{color:var(--c-green)}
+.au-rseg .au-seg-btn[data-karole="diyetisyen"]:not(.active):hover,.au-rseg .au-seg-btn[data-as="diyetisyen"]:not(.active):hover{color:var(--green-deep)}
+.au-rseg .au-seg-btn[data-karole="isletme"]:not(.active):hover,.au-rseg .au-seg-btn[data-as="isletme"]:not(.active):hover{color:var(--c-petrol)}
+/* aktif sekme: dolu aksan zemininde yazı + ikon DAİMA beyaz (yüksek kontrast, hover dahil) */
+.au-rseg .au-seg-btn.active,.au-rseg .au-seg-btn.active i{color:#fff}
+/* rol-özel ek alan bloğu — kayıt formunda segmentle açılır (uzman/işletme başvuru alanları) */
+.au-rolefields{margin-top:2px}
+.au-rolefields[hidden]{display:none}
+.au-rolenote{display:flex;gap:10px;align-items:flex-start;margin:0 0 16px;padding:11px 13px;background:var(--bg-cream);border:1px solid var(--line);border-radius:var(--radius-md);font-size:12px;line-height:1.5;color:var(--slate-2);font-weight:500}
+.au-rolenote i{flex:none;margin-top:1px;color:var(--green-deep);font-size:13px}
+/* (giriş hesap-türü artık #giAsSeg segmenti — .au-rseg dilini paylaşır; eski .au-asrow select kaldırıldı) */
 /* telefon önek kutusu — fk-input içinde sabit +90 göstergesi */
 .fk-tel{position:relative}
 .fk-tel .fk-input{padding-left:60px}
 .fk-tel-cc{position:absolute;left:1px;top:1px;bottom:1px;width:50px;display:grid;place-items:center;font-size:13px;font-weight:700;color:var(--slate);background:var(--bg-cream);border-right:1px solid var(--line);border-radius:var(--radius-md) 0 0 var(--radius-md);pointer-events:none}
 
-/* diyetisyen kayıt köprüsü — kayıt pane callout (yeşil sağlık aksanı, diyetisyen-dizin dili) */
-.au-dyt{display:flex;align-items:center;gap:13px;margin-top:18px;padding:14px 15px;background:rgba(59,183,126,.08);border:1px solid rgba(59,183,126,.30);border-radius:var(--radius-lg)}
-.au-dyt-ico{flex:none;width:42px;height:42px;border-radius:var(--radius-md);background:rgba(59,183,126,.15);color:var(--green-deep);display:grid;place-items:center;font-size:17px}
-.au-dyt-body{flex:1;min-width:0}
-.au-dyt-body b{display:block;font-size:13.5px;color:var(--slate);font-weight:700;line-height:1.3}
-.au-dyt-body span{font-size:12px;color:var(--slate-2);font-weight:500;line-height:1.45}
-.au-dyt-go{flex:none;display:inline-flex;align-items:center;gap:7px;font-family:inherit;font-size:12.5px;font-weight:700;color:var(--green-deep);background:var(--paper);border:1px solid rgba(59,183,126,.45);border-radius:var(--radius-md);padding:10px 14px;cursor:pointer;white-space:nowrap;transition:.2s var(--ease)}
-.au-dyt-go:hover{background:var(--green);color:#fff;border-color:var(--green);transform:translateY(-1px)}
-.au-dyt-go i{font-size:11px}
+/* (diyetisyen kayıt köprüsü kaldırıldı — rol seçimi artık kayıt rol segmentinde) */
 
 /* ===================== TABLET (≤1024px) ===================== */
 @media (max-width:1024px){
   .au-layout{grid-template-columns:1fr;gap:20px}
   .au-card{order:1;padding:28px 26px 30px}
-  .au-visual{order:2;min-height:0;padding:30px 28px}
+  .au-visual{order:2;height:auto;min-height:0;padding:30px 28px}
   .au-visual h2{font-size:29px}
   .au-perks{display:none}
 }
@@ -929,8 +946,6 @@ html,body{overflow-x:hidden}
   .au-stats{gap:22px;margin-top:18px;padding-top:16px}
   .au-stats .st b{font-size:21px}
   .au-row{flex-wrap:wrap;gap:10px}
-  .au-dyt{flex-wrap:wrap;gap:11px}
-  .au-dyt-go{width:100%;justify-content:center}
 }
 
 /* saglik-dropdown: scoped health chrome */
@@ -1403,6 +1418,15 @@ html,body{overflow-x:hidden}
           <div class="au-div">veya e-posta ile</div>
 
           <form id="formGiris" novalidate>
+            <!-- hesap türü — register rol sekmeleriyle TUTARLI segment (MOCK: role göre panel yönlendirmesi) -->
+            <p class="au-rseg-lead"><i class="fa-solid fa-arrow-right-to-bracket"></i> Hangi hesaba giriyorsun?</p>
+            <div class="au-seg au-rseg" role="tablist" aria-label="Hesap türü" id="giAsSeg">
+              <button class="au-seg-btn active" type="button" data-as="kullanici" role="tab" aria-selected="true"><i class="fa-regular fa-user"></i> Kullanıcı</button>
+              <button class="au-seg-btn" type="button" data-as="antrenor" role="tab" aria-selected="false"><i class="fa-solid fa-dumbbell"></i> Antrenör</button>
+              <button class="au-seg-btn" type="button" data-as="diyetisyen" role="tab" aria-selected="false"><i class="fa-solid fa-stethoscope"></i> Diyetisyen</button>
+              <button class="au-seg-btn" type="button" data-as="isletme" role="tab" aria-selected="false"><i class="fa-solid fa-store"></i> İşletme</button>
+            </div>
+
             <!-- e-posta / telefon ile giriş geçişi (segment) -->
             <div class="au-seg" role="tablist" aria-label="Giriş yöntemi" id="giSeg">
               <button class="au-seg-btn active" type="button" data-gimode="email" role="tab" aria-selected="true"><i class="fa-regular fa-envelope"></i> E-posta</button>
@@ -1448,6 +1472,15 @@ html,body{overflow-x:hidden}
           </div>
 
           <form id="formKayit" novalidate>
+            <!-- rol seçimi — au-seg dilinin 4'lü varyantı; seçime göre alt alan blokları açılır -->
+            <p class="au-rseg-lead"><i class="fa-solid fa-id-card"></i> Ne olarak katılıyorsun?</p>
+            <div class="au-seg au-rseg" role="tablist" aria-label="Üyelik türü" id="kaRoleSeg">
+              <button class="au-seg-btn active" type="button" data-karole="kullanici" role="tab" aria-selected="true"><i class="fa-regular fa-user"></i> Kullanıcı</button>
+              <button class="au-seg-btn" type="button" data-karole="antrenor" role="tab" aria-selected="false"><i class="fa-solid fa-dumbbell"></i> Antrenör</button>
+              <button class="au-seg-btn" type="button" data-karole="diyetisyen" role="tab" aria-selected="false"><i class="fa-solid fa-stethoscope"></i> Diyetisyen</button>
+              <button class="au-seg-btn" type="button" data-karole="isletme" role="tab" aria-selected="false"><i class="fa-solid fa-store"></i> İşletme</button>
+            </div>
+
             <div class="soc-col">
               <button class="soc-btn" type="button"><i class="fa-brands fa-google" style="color:#4285F4"></i> Google ile kayıt ol</button>
               <button class="soc-btn" type="button"><i class="fa-brands fa-facebook-f" style="color:#1877F2"></i> Facebook ile kayıt ol</button>
@@ -1487,6 +1520,104 @@ html,body{overflow-x:hidden}
               <span class="fk-help"><i class="fa-solid fa-circle-info"></i> En az 8 karakter; büyük/küçük harf, rakam ve özel karakter içermeli.</span>
             </div>
 
+            <!-- ====== ROL-ÖZEL ALANLAR — segmentle açılır; gizliyken required taşımaz (validate hidden-skip) ====== -->
+            <!-- ANTRENÖR -->
+            <div class="au-rolefields" data-rolefields="antrenor" hidden>
+              <p class="au-rolenote"><i class="fa-solid fa-dumbbell"></i> <span>Antrenör başvurusu incelenir; onaylanınca Antrenör Paneli'ne erişirsin. Sertifika doğrulaması için ek belge istenebilir.</span></p>
+              <div class="fk-field">
+                <label class="fk-label" for="kaAtUzmanlik">Uzmanlık alanların <span class="req">*</span></label>
+                <input class="fk-input" id="kaAtUzmanlik" type="text" placeholder="Örn. fonksiyonel antrenman, kilo yönetimi" data-role-req="antrenor" />
+              </div>
+              <div class="fk-grid c2">
+                <div class="fk-field">
+                  <label class="fk-label" for="kaAtSert">Antrenörlük sertifikan <span class="req">*</span></label>
+                  <input class="fk-input" id="kaAtSert" type="text" placeholder="Örn. Pilates Mat L1" data-role-req="antrenor" />
+                </div>
+                <div class="fk-field">
+                  <label class="fk-label" for="kaAtYil">Deneyim (yıl) <span class="req">*</span></label>
+                  <input class="fk-input" id="kaAtYil" type="number" min="0" placeholder="Örn. 5" data-role-req="antrenor" />
+                </div>
+              </div>
+              <div class="fk-field">
+                <label class="fk-label" for="kaAtKurum">Sertifika veren kurum</label>
+                <input class="fk-input" id="kaAtKurum" type="text" placeholder="Örn. Türkiye Pilates Federasyonu" />
+              </div>
+              <div class="fk-field">
+                <label class="fk-label" for="kaAtBio">Kısa bio</label>
+                <textarea class="fk-input" id="kaAtBio" rows="3" placeholder="Danışanlarına kendini birkaç cümleyle tanıt."></textarea>
+              </div>
+            </div>
+
+            <!-- DİYETİSYEN -->
+            <div class="au-rolefields" data-rolefields="diyetisyen" hidden>
+              <p class="au-rolenote"><i class="fa-solid fa-stethoscope"></i> <span>Uzman başvurusu diploma doğrulamasından sonra onaylanır; onaylanınca danışan kabul edip Diyetisyen Paneli'ni kullanırsın.</span></p>
+              <div class="fk-field">
+                <label class="fk-label" for="kaDtDiploma">Diploma numaran <span class="req">*</span></label>
+                <input class="fk-input" id="kaDtDiploma" type="text" placeholder="Beslenme ve Diyetetik diploma numaran" data-role-req="diyetisyen" />
+              </div>
+              <div class="fk-grid c2">
+                <div class="fk-field">
+                  <label class="fk-label" for="kaDtUni">Mezun olduğun üniversite <span class="req">*</span></label>
+                  <input class="fk-input" id="kaDtUni" type="text" placeholder="Örn. Hacettepe Üniversitesi" data-role-req="diyetisyen" />
+                </div>
+                <div class="fk-field">
+                  <label class="fk-label" for="kaDtYil">Mezuniyet yılı <span class="req">*</span></label>
+                  <input class="fk-input" id="kaDtYil" type="number" min="1950" placeholder="2015" data-role-req="diyetisyen" />
+                </div>
+              </div>
+              <div class="fk-grid c2">
+                <div class="fk-field">
+                  <label class="fk-label" for="kaDtUzmanlik">Uzmanlık</label>
+                  <input class="fk-input" id="kaDtUzmanlik" type="text" placeholder="Örn. sporcu beslenmesi" />
+                </div>
+                <div class="fk-field">
+                  <label class="fk-label" for="kaDtDil">Konuşulan diller</label>
+                  <input class="fk-input" id="kaDtDil" type="text" placeholder="Örn. Türkçe, İngilizce" />
+                </div>
+              </div>
+              <div class="fk-field">
+                <label class="fk-label" for="kaDtAdres">İl / ilçe</label>
+                <input class="fk-input" id="kaDtAdres" type="text" placeholder="Örn. Kadıköy, İstanbul" />
+              </div>
+            </div>
+
+            <!-- İŞLETME -->
+            <div class="au-rolefields" data-rolefields="isletme" hidden>
+              <p class="au-rolenote"><i class="fa-solid fa-store"></i> <span>İşletme kaydı onaylandıktan sonra Mekân Paneli'nden menü, rezervasyon ve reklamlarını yönetirsin.</span></p>
+              <div class="fk-field">
+                <label class="fk-label" for="kaIsAd">İşletme adı <span class="req">*</span></label>
+                <input class="fk-input" id="kaIsAd" type="text" placeholder="Örn. Nalia Karadeniz Mutfağı" data-role-req="isletme" />
+              </div>
+              <div class="fk-grid c2">
+                <div class="fk-field">
+                  <label class="fk-label" for="kaIsBolge">Bölge / semt <span class="req">*</span></label>
+                  <input class="fk-input" id="kaIsBolge" type="text" placeholder="Örn. İçerenköy, Ataşehir" data-role-req="isletme" />
+                </div>
+                <div class="fk-field">
+                  <label class="fk-label" for="kaIsYetkili">Yetkili kişi <span class="req">*</span></label>
+                  <input class="fk-input" id="kaIsYetkili" type="text" placeholder="İşletme yetkilisi" data-role-req="isletme" />
+                </div>
+              </div>
+              <div class="fk-field">
+                <label class="fk-label" for="kaIsAdres">Açık adres</label>
+                <input class="fk-input" id="kaIsAdres" type="text" placeholder="Mahalle, cadde, no" />
+              </div>
+              <div class="fk-grid c2">
+                <div class="fk-field">
+                  <label class="fk-label" for="kaIsTel">Sabit telefon</label>
+                  <input class="fk-input" id="kaIsTel" type="tel" placeholder="0(2__) ___ __ __" />
+                </div>
+                <div class="fk-field">
+                  <label class="fk-label" for="kaIsWeb">Web sitesi</label>
+                  <input class="fk-input" id="kaIsWeb" type="text" placeholder="ornek.com" />
+                </div>
+              </div>
+              <div class="fk-field">
+                <label class="fk-label" for="kaIsVergi">Vergi / ruhsat no</label>
+                <input class="fk-input" id="kaIsVergi" type="text" placeholder="Vergi numaran veya işletme ruhsat no" />
+              </div>
+            </div>
+
             <div class="ol-consents">
               <label class="fb-kvkk">
                 <input type="checkbox" required />
@@ -1516,16 +1647,7 @@ html,body{overflow-x:hidden}
           </div>
 
           <p class="au-alt" id="kayitAlt">Zaten üye misin? <button type="button" data-goto="giris">Giriş Yap</button></p>
-
-          <!-- diyetisyen kayıt ayrımı — uzman başvurusu ayrı akış (diyetisyen-ol) -->
-          <div class="au-dyt" id="kayitDyt">
-            <span class="au-dyt-ico"><i class="fa-solid fa-stethoscope"></i></span>
-            <div class="au-dyt-body">
-              <b>Diyetisyen misin?</b>
-              <span>Danışan kabul etmek için uzman başvurusu yap — diploma ve uzmanlık bilgilerinle.</span>
-            </div>
-            <a class="au-dyt-go" href="diyetisyen-ol-v1.html">Diyetisyen Ol <i class="fa-solid fa-arrow-right"></i></a>
-          </div>
+          <!-- (Diyetisyen/antrenör/işletme başvurusu artık üstteki rol sekmesinde toplandı.) -->
         </div>
 
         <!-- ============ PANE: ŞİFREMİ UNUTTUM ============ -->
@@ -2004,6 +2126,37 @@ document.addEventListener('click',function(e){
     });
   }
 
+  // KAYIT ROL SEGMENTİ — seçili role göre ek alan bloğunu aç, required'ı taşı (giSeg pattern'ı)
+  // role→panel haritası (giriş yönlendirmesinde de kullanılır) — MOCK, gerçek auth yok
+  var ROLE_PANEL={
+    kullanici:'anasayfa-portal-v3a.html',
+    antrenor:'antrenor-panel-v1.html',
+    diyetisyen:'dyt-danisanlar-v1.html',
+    isletme:'mekan-panel-v1.html'
+  };
+  var kaRoleSeg=document.getElementById('kaRoleSeg');
+  var setKayitRole=function(){};   // IIFE kapsamına hoist (init bloğu da çağırır)
+  if(kaRoleSeg){
+    var roleBlocks=document.querySelectorAll('.au-rolefields');
+    setKayitRole=function(role){
+      kaRoleSeg.querySelectorAll('.au-seg-btn').forEach(function(x){
+        var on=x.getAttribute('data-karole')===role;
+        x.classList.toggle('active',on);x.setAttribute('aria-selected',on?'true':'false');
+      });
+      roleBlocks.forEach(function(blk){
+        var on=blk.getAttribute('data-rolefields')===role;
+        blk.hidden=!on;
+        // required'ı yalnız aktif blokta uygula (gizli alan validate'te atlanır ama temizlik için de taşı)
+        blk.querySelectorAll('[data-role-req]').forEach(function(inp){
+          if(on)inp.setAttribute('required','');else{inp.removeAttribute('required');var f=inp.closest('.fk-field');if(f)f.classList.remove('has-error');}
+        });
+      });
+    };
+    kaRoleSeg.querySelectorAll('.au-seg-btn').forEach(function(b){
+      b.addEventListener('click',function(){ setKayitRole(b.getAttribute('data-karole')); });
+    });
+  }
+
   // TR telefon maskesi (5xx xxx xx xx) — fk-* kiti, [data-tel-mask]
   function fmtTel(v){
     var d=v.replace(/\D/g,'');
@@ -2040,13 +2193,29 @@ document.addEventListener('click',function(e){
     return ok;
   }
 
-  // GİRİŞ — mock: doğrulama geçerse is-auth ile yönlendirir.
-  // ?return=<sayfa> varsa oraya, yoksa anasayfaya — her durumda ?auth=1 (login-state).
+  // GİRİŞ HESAP TÜRÜ SEGMENTİ (#giAsSeg) — register rol sekmesi grameriyle aynı; aktif butondan oku
+  var giAsSeg=document.getElementById('giAsSeg');
+  function getGiAs(){var b=giAsSeg&&giAsSeg.querySelector('.au-seg-btn.active');return b?b.getAttribute('data-as'):'kullanici';}
+  function setGiAs(role){
+    if(!giAsSeg)return;
+    giAsSeg.querySelectorAll('.au-seg-btn').forEach(function(x){
+      var on=x.getAttribute('data-as')===role;x.classList.toggle('active',on);x.setAttribute('aria-selected',on?'true':'false');
+    });
+  }
+  if(giAsSeg){giAsSeg.querySelectorAll('.au-seg-btn').forEach(function(b){
+    b.addEventListener('click',function(){setGiAs(b.getAttribute('data-as'));});
+  });}
+
+  // GİRİŞ — mock: doğrulama geçerse yönlendirir. Hesap türü segmentine göre ilgili panele;
+  // kullanıcı seçiliyse ?return=<sayfa> varsa oraya, yoksa anasayfaya — her durumda ?auth=1.
+  // NOT: gerçek auth yok; rol→panel eşlemesi salt mockup amaçlıdır.
   var fGiris=document.getElementById('formGiris');
   fGiris.addEventListener('submit',function(e){
     e.preventDefault();
     if(!validate(fGiris))return;
     document.getElementById('loginErr').classList.remove('show');
+    var role=getGiAs();
+    if(role!=='kullanici'&&ROLE_PANEL[role]){ location.href=ROLE_PANEL[role]; return; }
     var ret=new URLSearchParams(location.search).get('return');
     var dest=(ret&&/^[a-z0-9_-]+\.html$/i.test(ret))?ret:'anasayfa-portal-v3a.html';
     location.href=dest+(dest.indexOf('?')<0?'?':'&')+'auth=1';
@@ -2090,6 +2259,12 @@ document.addEventListener('click',function(e){
   if(qs.get('err')==='1'){show('giris');document.getElementById('loginErr').classList.add('show');}
   if(qs.get('sent')==='1'){show('sifre');fSifre.hidden=true;document.getElementById('sifreOk').hidden=false;}
   if(qs.get('ok')==='1'){show('kayit');fKayit.hidden=true;document.getElementById('kayitAlt').hidden=true;document.getElementById('kayitOk').hidden=false;}
+  // ?role=antrenor|diyetisyen|isletme — kayıt sekmesini açıp ilgili rol bloğunu seçer (deep-link)
+  var r=qs.get('role');
+  if(r&&ROLE_PANEL[r]&&r!=='kullanici'){show('kayit');if(kaRoleSeg)setKayitRole(r);setGiAs(r);}
+  // ?as=<role> — giriş hesap türü segmentini ön-seçer (panel demo girişi)
+  var asParam=qs.get('as');
+  if(asParam&&ROLE_PANEL[asParam])setGiAs(asParam);
 })();
 
 </script>

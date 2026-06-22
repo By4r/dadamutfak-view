@@ -1,6 +1,22 @@
-# DadaMutfak — Handoff (Faz 3 "Panelini Aç" KÖPRÜSÜ TAMAMLANDI · CANLI)
+# DadaMutfak — Handoff (PUBLIC REVİZE r1-4 TAMAM · ✅ CANLI — PUSH EDİLDİ)
 
-> Tarih: 2026-06-22. **Faz 3 gözetim→operatör paneli köprüsü (impersonation) BİTTİ ve `origin/main`'e PUSH EDİLDİ (GitHub Pages canlı).** Önceki: Faz 2 tüm dalgaları + antrenör paneli + chip sayaçları + 390px fix + v5→v6 taşıma + dizin Admin sekmesi + 3 revize (hepsi canlı). **Klasör `v6/`.**
+> Tarih: 2026-06-22. **Public v6 revize turu (round 1→4) tamam + Beyar tarayıcıda görsel ONAYLADI + commit'lenip `origin/main`'e PUSH edildi (GitHub Pages deploy).** Temiz baseline hazır — İşletme üretim turu başlayabilir. Önceki canlı temel: Faz 3 gözetim→operatör köprüsü + Faz 2 dalgaları + antrenör paneli + chip sayaçları + 390px fix + v5→v6 taşıma + dizin Admin sekmesi. **Klasör `v6/`.**
+
+## 🚨 YENİ SESSION — İLK İŞ
+1. ✅ **TAMAM** — round 1-4 revizeleri tek commit ile kapatıldı + `origin/main`'e push edildi (GitHub Pages deploy). Temiz baseline CANLI.
+2. **Sıradaki: İşletme üretim turu** (↓ SIRADAKİ İŞ bölümü; audit planı + kararlar hazır).
+
+## ✅ PUBLIC REVİZE TURU (round 1→4) — TAMAMLANDI · CANLI
+> Saf frontend, targeted edit, kanonik kabuğa (sa-shell/sa-ui/sa-*.css) DOKUNULMADI. 3 teammate (layout-css/icerik/premium-shop) round 1-2; round 3-4 lead linear (teammate'ler güvenilmez idle olunca devralındı). Görsel QA Beyar tarayıcıda onayladı.
+- **tarif-bulucu-v1** — Malzeme kategorileri TUM uniform: `.mz-grid` column-flow (grid-auto-flow:column + grid-template-rows:repeat(3)) KALDIRILDI → `display:flex;flex-wrap:nowrap;overflow-x:auto` + `.mz-grid>.mz{flex:0 0 106px}` (mobil 88px). Tüm kategoriler "Sebzeler" gibi soldan-sağa tek-satır yatay slider (zigzag/erken-satır-atlama yok). mz-more gizli.
+- **kesfet-v1** — Mekan listesi çok-satır: grid'e 9 yeni disc-card eklendi → 18 kart = 6 satır × 3 kolon (uzatılmış filtre sütununa denk). CSS cap yoktu (9 kart = 1 sayfaydı). Kolon/kart boyutu + filtre uzatması (round-1) + Semt/Özellikler default-açık korundu.
+- **giris-v1** — (a) İki kolon EŞİT yükseklik: `.au-layout align-items:stretch` + `.au-visual height:624px→min-height:624px` (floor) → hero+form giriş ve kayıtta eşit boy (uzun kayıtta birlikte uzar). (b) Kayıt'a 4 ROL SEKMESİ (Kullanıcı/Antrenör/Diyetisyen/İşletme) + role özel `[data-role-req]` alan blokları + giriş'te `#giAsSeg` rol mini-seçici (MOCK role→panel: antrenor-panel/dyt-danisanlar/mekan-panel). `.au-dyt` kutusu kaldırıldı. (c) Rol sekmeleri PER-MODÜL AKSAN: aktif zemin Kullanıcı=`--tomato` · Antrenör=`--c-green` #009d4f · Diyetisyen=`--green` #3BB77E · İşletme=`--c-petrol` #006072 (`.au-rseg` scope, `#giSeg` e-posta/tel hariç). (d) round-4 KONTRAST fix: pasif hover `:not(.active)`'e sınırlandı + `.au-rseg .au-seg-btn.active{color:#fff}` → aktif sekmede yazı+ikon daima beyaz (hover'da aksan-renkli-yazı-görünmez bug'ı çözüldü).
+- **haftalik-menu-v1** — Komşu hücre bağımsızlığı: `.mcell min-height:126px→height:172px` (SABİT) + `.mc-stack max-height:268px→max-height:100%;height:100%` (sabit hücre içinde scroll). Satır yüksekliği içerikten bağımsız → bir hücreye ekleme/çıkarma komşu Ekle butonu+hizasını ASLA etkilemez. Ayrıca round-1 aranabilir `.tsr` öneri popover + çoklu ekleme (dyt-recete-builder modeli).
+- **diyetisyen-profil-v1** — Alttaki "Rozet Koleksiyonu" section + sadece `.pfr-*` CSS silindi; üst `.pf-badges` özeti + shared `.badge-*` korundu.
+- **besin-degerleri-v1** — Tablolar zaten kanonik `.ref-table` (dokunulmadı); makro sekme çubuğu segment-pill diline + 4 tekrarlı "Değerleri karşılaştır" başlığı sekmeye göre anlamlandırıldı.
+- **dada-shop-v1** — Giriş Yap×2 → `giris-v1.html` reroute (in-page modal ölü-zararsız); üst "Yöresel" nav silindi (drawer "Yöresel Lezzetler" kaldı); promo kart köşe taşması `background-clip:padding-box`+`isolation:isolate`; "Tariften Sepete" overlay katmanlı scrim.
+- **video-mutfagi-v1** — Restoran Sırları + Dada Akış locked kartlar ortak premium dil (blur 7px + altın crown watermark, `pointer-events:none`); fullscreen reels viewer'a kilitli premium reel (shorts[2], `#dkLock data-pro-gate` → `#proGate`, z-index 130/131 reels üstünde).
+- **QA notu:** round-3/4 sırasında Bash classifier servisi kesintideydi → lead render-QA (`outputs/_qa_r3_all.mjs`, hazır) çalıştırılamadı; tüm edit'ler Read-seviyesi yapısal teyit + Beyar tarayıcı onayı ile kapatıldı.
 
 ## ✅ FAZ 3 — "Panelini Aç" köprüsü (TAMAMLANDI · CANLI)
 - **Ana iş:** `feat d33ded7` · **QA:** `chore 226ac57`. Mockup (gerçek auth yok, salt görsel akış).
@@ -22,7 +38,19 @@
 - **Dizin Admin Panel sekmesi** (feat) — `v6/dizin.html`'e 2'li tab toggle (`Genel` + `Admin Panel`). Public GROUPS'a dokunulmadı; renderer `buildTab(groups)`'a çıkarıldı, iki veri seti (GROUPS + ADMIN_GROUPS). **Admin sekmesi: 90 sayfa / 9 kategori** — sıra: **Giriş/Sistem 2 (en başta; Yönetim Girişi solda, Gözetim Kabuğu sağda)** · Gözetim-Admin 21 · Store 15 · Sağlık 11 · İşletme 11 · DadaFit 12 · Operatör-Antrenör 8 · Operatör-Diyetisyen 6 · Operatör-Mekan 4. (dyt-*/mekan- public Genel'de de var, dup kasıtlı; antrenor-detay+ol public, hariç.) Tüm linkler relative + v6'da mevcut + `target=_blank`. QA: `dizin-tab-qa.mjs` PASS.
 - **3 revize** (fix) — (1) dizin Admin "Giriş/Sistem": **Yönetim Girişi** kartı **solda/ilk** (sa-shell sağa). (2) `sa-dadafit-egzersizler`: Barbell Squat görseli ölü Unsplash 404'tü → çalışan squat görseliyle değiştirildi (diğer satırlarla tutarlı). (3) `sa-isletme-onaylar`: **Onayla** butonuna özel saConfirm handler (isletme adı + saToast); **Reddet** zaten sa-ui.js yerleşik destructive-delege ile yakalanıyor (dokunulmadı, çift pop-up önlendi). QA: `revize3-qa.mjs` PASS (tek pop-up, doğru toast, 404/JS/mojibake 0).
 
-## ⏭️ SIRADAKİ İŞ — adaylar
+## ⏭️ SIRADAKİ İŞ — İŞLETME ÜRETİM TURU (audit planı HAZIR, ayrı temiz session'da)
+> İşletme (mekan) hesabı public akış audit'i tamamlandı (read-only). Public profil EKSİK DEĞİL (`mekan-detay-v1.html` zaten zengin) — yeni sayfa GEREKMEZ. Net iş 6 madde:
+- **B1** — `giris-v1.html` İşletme kayıt submit → `isletme-ekle-v1.html`; giriş submit → `mekan-panel-v1.html?business=1` (organik `has-business` kurar; şu an paramsız → `dm_business` hiç set olmuyordu).
+- **K1** — `hesabim-v1.html` "İşletmem" sekmesi+pane (eski 1976-2022) + ona özel `biz-*` CSS söküm. (Beyar kararı: KALDIR — audit "kasıtlı huni" dese de Beyar normal kullanıcıda işletme bölümü istemiyor.)
+- **W1** — `isletme-ekle-v1.html` wizard sonu → `mekan-panel-v1.html?business=1` (şu an hesabim'e dönüyor).
+- **B2** — 4 mekan panel sayfasına (`mekan-panel/-rezervasyonlar/-ayarlar/-menu`) inline `window.SA_ACCOUNT_ITEMS` (sa-ui.js'ten ÖNCE; İşletme Profilim/Public Sayfam/Müsaitlik&Ayarlar/Çıkış→consumer logout). sa-ui.js DEFAULT_ITEMS süper-admin'e + `sa-giris`'e düşüyor (KOPUK).
+- **B3** — Consumer header `.acct-menu`'ye `body.has-business` ile `.biz-only` blok (İşletme Panelim→mekan-panel · Halka Açık Profilim→mekan-detay). **Toplu enjeksiyon UNIFORM**: header byte-identical (`_shell.html` kopyası), `has-business` JS zaten Faz3'ten her sayfada. Anchor = `Ayarlar / Hesabım` + `.acct-div` + `.acct-logout` (sadece mutfak-brand sayfalarda var → store-brand `dada-shop` ailesi + auth sayfaları otomatik atlanır, self-selection). CSS kuralı her sayfanın inline `<style>`'ına (`.biz-only{display:none} body.has-business .biz-only{display:flex}`). Idempotent (zaten `biz-only` varsa atla). Spot-check: anasayfa-portal + kesfet + mekan-detay + besin-degerleri + dada-shop(negatif).
+- **C2** — `mekan-detay-v1.html`'e `?owner=1` ince önizleme bandı (sa-gozetim banner deseni; "ziyaretçi görünümü · Panelden Düzenle"). Inline editing AÇILMAZ.
+- **Walkable** — uçtan uca: kayıt→wizard→panel(business=1)→Public Sayfam→header dropdown→ayarlar; dead-link 0.
+- **Ek (mock akış) — kayıt/giriş formları MOCK-DOLU + TIKLA-YÜRÜ.** Beyar spec akışını gerçek auth olmadan gezebilsin: `giris-v1` İşletme kayıt + `isletme-ekle-v1` wizard alanları örnek değerlerle dolu/önizlemeli gelsin; submit/ileri butonları görsel olarak bir sonraki adıma götürsün (mock), kullanıcı tüm akışı tıklayarak yürüyebilsin. Gerçek backend yok — saf görsel yürüyüş.
+- **DOKUNMA:** `assets/js/sa-ui.js`, `assets/css/sa-*.css`, sa-shell. Audit kararları: hesabim İşletmem KALDIRILACAK · kayıt "İşletme olarak kaydol"dan başlar · owner ince önizleme bandı.
+
+## ⏭️ DİĞER ADAYLAR (public revize turu öncesinden)
 - **(a) Sağlık alt-ekranları köprüsü = AYRI TUR, SEMANTİK KARAR GEREKİR.** `sa-saglik-randevular` (5 satır) · `sa-saglik-receteler` (5) · `sa-saglik-testler` (5) **hiç köprülü değil (detay dahil)**. Eklemek = yeni yüzey: hem detay hero hem liste butonu + "randevu/reçete/test diyetisyen paneline mi açılır, hangi sekmeye" eşleştirmesi. **Yasin Bey'e sorulabilir.** (Operatör-modülü diğer tüm çok-satırlı listeler köprülü; bunlar bilinçli kapsam-dışı bırakıldı.)
 - **(b) Opsiyonel minör (acele yok):** `sa-saglik` @390 3px sub-pixel · `sa-store-urunler-detay` @390 12px (detay, fix kapsamı dışıydı).
 - **(c) DadaFit/public faz işleri:** `tasks/public-faz-bekleyen.md` (DadaFit nav temizliği) · `tasks/spec-impact-public-revize.md` (koordinat/güzergah/şehir-öneri).
