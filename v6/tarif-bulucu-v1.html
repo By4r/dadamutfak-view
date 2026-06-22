@@ -906,11 +906,12 @@ html,body{overflow-x:hidden}
 .mz-cat-h:hover h4{color:var(--mode-deep)}
 .mz-cat:not(.open) .mz-grid{display:none}
 
-/* görselli malzeme ızgarası — TEK SATIR yatay slider (soldan sağa, taşınca container yatay kayar)
-   Tüm kategoriler birebir aynı: sabit genişlikli kartlar nowrap dizilir; column-flow YOK (zigzag/erken
-   satır atlama yapan grid-auto-flow:column kaldırıldı — çok-öğeli kategori de Sebzeler gibi temiz akar) */
-.mz-grid{display:flex;flex-wrap:nowrap;gap:10px;width:100%;min-width:0;max-width:100%;overflow-x:auto;overscroll-behavior-x:contain;scrollbar-width:thin;padding-bottom:14px}
-.mz-grid>.mz{flex:0 0 106px}
+/* görselli malzeme ızgarası — SOLDAN SAĞA WRAP: satır dolunca alt satıra geçer (row-major).
+   2-sütun kategori dar (~yarım genişlik) → ~5 kart/satır; 15+ malzeme ~3 satıra yayılır.
+   column-flow YOK (zigzag yapan grid-auto-flow:column kaldırıldı — temiz row-major akış). */
+.mz-grid{display:flex;flex-wrap:wrap;gap:8px;width:100%;min-width:0;max-width:100%;padding-bottom:6px}
+/* DAR kart → ~10 malzeme/satır (543px kategori; Sebzeler 20 = 2 satır). Wrap + çift-açma değişmez. */
+.mz-grid>.mz{flex:0 0 47px}
 /* 3-satır cap "daha fazla"yı kapsar → buton gizli, tüm malzeme (xtra dahil) slider'da */
 .mz-more{display:none}
 .mz.xtra{display:flex}
@@ -918,11 +919,11 @@ html,body{overflow-x:hidden}
 /* ===== GÖRSELLİ MALZEME KARTI ===== */
 .mz{position:relative;display:flex;flex-direction:column;align-items:stretch;gap:0;background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-md);padding:0;cursor:pointer;font-family:inherit;overflow:hidden;transition:transform .12s var(--ease),border-color .18s var(--ease),box-shadow .18s var(--ease)}
 .mz-img{position:relative;aspect-ratio:1;background-color:color-mix(in srgb,var(--cat,var(--muted)) 9%,#fff);background-size:cover;background-position:center;display:grid;place-items:center}
-.mz-img i{font-size:26px;color:color-mix(in srgb,var(--cat,var(--muted)) 78%,#000)}
+.mz-img i{font-size:17px;color:color-mix(in srgb,var(--cat,var(--muted)) 78%,#000)}
 .mz.has-photo .mz-img{background-size:88%;background-repeat:no-repeat}
 .mz.has-photo .mz-img i{display:none}
-.mz-name{display:block;padding:6px 6px 8px;font-size:11.5px;font-weight:600;color:var(--slate);text-align:center;line-height:1.2;letter-spacing:-.01em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.mz-ck{position:absolute;top:6px;right:6px;width:19px;height:19px;border-radius:var(--radius-circle);background:var(--mode);color:#fff;font-size:9px;display:none;place-items:center;box-shadow:0 2px 8px rgba(33,30,22,.25)}
+.mz-name{display:block;padding:4px 3px 5px;font-size:9px;font-weight:600;color:var(--slate);text-align:center;line-height:1.15;letter-spacing:-.02em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mz-ck{position:absolute;top:3px;right:3px;width:15px;height:15px;border-radius:var(--radius-circle);background:var(--mode);color:#fff;font-size:7.5px;display:none;place-items:center;box-shadow:0 2px 6px rgba(33,30,22,.25)}
 .mz:hover{border-color:var(--mode);transform:translateY(-1px);box-shadow:var(--sh-sm)}
 .mz:active{transform:scale(.97)}
 .mz.sel{border-color:var(--mode)}
@@ -936,20 +937,25 @@ html,body{overflow-x:hidden}
 .r-card.ex-hidden{display:none}
 
 /* ===== FİLTRELER + CANLI SONUÇ ÇIPASI (tezgah alt şeridi) ===== */
-.dolap-filters{margin-top:20px;border-top:1px solid var(--line)}
-.flt-toggle{display:inline-flex;align-items:center;gap:10px;background:none;border:none;font-family:inherit;font-size:13px;font-weight:700;color:var(--slate);padding:15px 0 13px;cursor:pointer}
-.flt-toggle .fi{color:var(--tomato);font-size:13px}
-.flt-toggle .flt-count{font-size:11px;font-weight:700;color:var(--tomato);background:var(--tomato-tint);border-radius:var(--radius-pill);padding:2px 8px}
-.flt-toggle .fc{font-size:11px;color:var(--muted);transition:transform .25s var(--ease)}
-.dolap-filters.open .flt-toggle .fc{transform:rotate(180deg)}
-.flt-body{display:none;padding-bottom:10px}
-.dolap-filters.open .flt-body{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px 40px;animation:fadeUp .22s var(--ease)}
-.df-block{padding:4px 0 8px}
+/* FİLTRELER — her zaman açık, belirgin panel (kalori · protein · süre); item-2 */
+.dolap-filters{margin-top:18px;padding-top:16px;border-top:1px solid var(--line)}
+.flt-head{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+.flt-title{display:inline-flex;align-items:center;gap:9px;font-size:13.5px;font-weight:800;color:var(--slate);letter-spacing:-.01em}
+.flt-title .fi{color:var(--tomato);font-size:13px}
+.flt-reset{margin-left:auto;display:inline-flex;align-items:center;gap:7px;background:none;border:none;font-family:inherit;font-size:12px;font-weight:700;color:var(--muted);cursor:pointer;transition:.16s var(--ease)}
+.flt-reset:hover{color:var(--tomato)}
+.flt-reset i{font-size:11px}
+.flt-body{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:14px 36px}
+.df-block{padding:2px 0 6px}
+.df-krange{grid-column:1/-1}
 .df-block .dfl{display:flex;align-items:center;gap:8px;font-size:12.5px;font-weight:700;color:var(--slate);margin-bottom:11px}
 .df-block .dfl i{color:var(--tomato);font-size:12px}
-.df-sure .chips{gap:8px}
-.df-sure .chip{font-size:12.5px;padding:8px 13px}
-.df-sure .chip.active{border-color:var(--tomato);background:var(--tomato-tint);color:var(--tomato);font-weight:700}
+.df-block .dfl .dfl-val{margin-left:auto;font-size:12px;font-weight:700;color:var(--tomato);background:var(--tomato-tint);border-radius:var(--radius-pill);padding:3px 10px}
+.df-sure .chips,.df-protein .chips{gap:8px;flex-wrap:wrap}
+.df-sure .chip,.df-protein .chip{font-size:12.5px;padding:8px 13px}
+.df-sure .chip.active,.df-protein .chip.active{border-color:var(--tomato);background:var(--tomato-tint);color:var(--tomato);font-weight:700}
+.df-protein .ch-tag{font-size:9.5px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;color:var(--tomato);background:var(--tomato-tint);border-radius:var(--radius-sm);padding:1px 5px;margin-left:5px}
+.df-protein .chip.active .ch-tag{background:rgba(255,255,255,.6)}
 .krange{padding-top:2px}
 .kr-track{position:relative;height:5px;background:var(--line);border-radius:var(--radius-sm);margin:8px 9px 12px}
 .kr-fill{position:absolute;top:0;height:100%;background:var(--tomato);border-radius:var(--radius-sm)}
@@ -1046,15 +1052,17 @@ html,body{overflow-x:hidden}
    (kategoriyle alakalı marka+ürün). Köşede koyu "Sponsorlu" rozeti ile ayrışır;
    seçim durumu YOK (malzeme değil → seçilemez). Görsel idarelik placeholder —
    gerçek ürün görseli .mz-img background-image ile sonra swap edilir. */
+/* sponsor kartı dar ızgarada okunmaz → 2 malzeme genişliği kadar yer kaplar */
+.mz-grid>.mz-sponsor{flex:0 0 102px}
 .mz-sponsor{text-decoration:none;border-color:rgba(225,72,39,.32);background:linear-gradient(180deg,#fff,#fff7f4)}
 .mz-sponsor:hover{border-color:var(--tomato);transform:translateY(-1px);box-shadow:var(--sh-sm)}
 .mz-sponsor .mz-img{background-color:color-mix(in srgb,var(--tomato) 7%,#fff)}
-.mz-sponsor .mz-img i{color:color-mix(in srgb,var(--tomato) 72%,#000)}
-.mz-sponsor .mz-name{white-space:normal;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;color:var(--slate);font-weight:700}
-.mz-spon{position:absolute;top:6px;left:6px;z-index:2;display:inline-flex;align-items:center;gap:4px;
-  background:var(--slate);color:#fff;font-size:9px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;
-  padding:3px 7px;border-radius:var(--radius-sm);line-height:1;box-shadow:0 2px 7px rgba(33,30,22,.28)}
-.mz-spon i{font-size:8px;opacity:.9}
+.mz-sponsor .mz-img i{color:color-mix(in srgb,var(--tomato) 72%,#000);font-size:22px}
+.mz-sponsor .mz-name{white-space:normal;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;color:var(--slate);font-weight:700;font-size:10px;line-height:1.2;padding:5px 6px 7px}
+.mz-spon{position:absolute;top:5px;left:5px;z-index:2;display:inline-flex;align-items:center;gap:3px;
+  background:var(--slate);color:#fff;font-size:8px;font-weight:800;letter-spacing:.03em;text-transform:uppercase;
+  padding:2px 6px;border-radius:var(--radius-sm);line-height:1;box-shadow:0 2px 7px rgba(33,30,22,.28)}
+.mz-spon i{font-size:7px;opacity:.9}
 
 /* 3 · ÜST PANEL ORTALI — kontrol bloğu dar max-width sütunda ortalanır;
    alttaki kategori ızgarası (cat-jump + cat-cols) tam genişlikte kalır. */
@@ -1077,7 +1085,7 @@ html,body{overflow-x:hidden}
   .dolap-body{padding:20px 20px 22px}
   .dolap-head{padding:16px 20px}
   .tb-grid{grid-template-columns:1fr 1fr}
-  .dolap-filters.open .flt-body{grid-template-columns:1fr;gap:0}
+  .flt-body{grid-template-columns:1fr;gap:8px}
 }
 /* ===================== MOBİL (≤640px) ===================== */
 @media (max-width:640px){
@@ -1599,12 +1607,15 @@ html,body{overflow-x:hidden}
           <div class="mode-pane active" id="paneHave" data-mode="have"></div>
           <div class="mode-pane" id="paneNo" data-mode="no"></div>
 
-          <!-- FİLTRELER (katlanır alt blok) -->
+          <!-- FİLTRELER (belirgin, her zaman açık — kalori · protein · süre) -->
           <div class="dolap-filters" id="dolapFilters">
-            <button class="flt-toggle" type="button" id="fltToggle" aria-expanded="false"><i class="fa-solid fa-sliders fi"></i> Filtreler <span class="flt-count" id="fltCount" hidden>0</span> <i class="fa-solid fa-chevron-down fc"></i></button>
+            <div class="flt-head">
+              <span class="flt-title"><i class="fa-solid fa-sliders fi"></i> Sonuçları daralt</span>
+              <button class="flt-reset" type="button" id="fltReset" hidden><i class="fa-solid fa-rotate-left"></i> Filtreleri sıfırla</button>
+            </div>
             <div class="flt-body">
               <div class="df-block df-krange">
-                <div class="dfl"><i class="fa-solid fa-fire-flame-curved"></i> Porsiyon kalorisi: <span id="krMin">120</span>–<span id="krMax">650</span> kcal</div>
+                <div class="dfl"><i class="fa-solid fa-fire-flame-curved"></i> Porsiyon kalorisi <span class="dfl-val"><span id="krMin">120</span>–<span id="krMax">650</span> kcal</span></div>
                 <div class="krange">
                   <div class="kr-track" id="krTrack">
                     <div class="kr-fill" id="krFill"></div>
@@ -1612,6 +1623,14 @@ html,body{overflow-x:hidden}
                     <input type="range" id="krHi" min="0" max="1200" step="10" value="650" aria-label="Üst kalori" />
                   </div>
                   <div class="kr-ends"><span>0</span><span>1200+ kcal</span></div>
+                </div>
+              </div>
+              <div class="df-block df-protein">
+                <div class="dfl"><i class="fa-solid fa-drumstick-bite"></i> Porsiyon proteini</div>
+                <div class="chips" data-name="protein">
+                  <button class="chip" type="button" data-val="15g">15 g+</button>
+                  <button class="chip" type="button" data-val="25g">25 g+</button>
+                  <button class="chip" type="button" data-val="35g">35 g+ <span class="ch-tag">yüksek</span></button>
                 </div>
               </div>
               <div class="df-block df-sure">
@@ -2442,19 +2461,20 @@ document.addEventListener('click',function(e){
     m.innerHTML=icon+(open?' Daha az':' Daha fazla');
   });
   // ACCORDION — başlığa tıkla aç/kapa (ÇOKLU-açık: diğerleri etkilenmez)
-  // Açma senkron: karşı sütundaki eşlenik kategori de açılır; kapama tek taraflı.
+  // Açma senkron: AYNI SATIRDAKİ (2-sütun grid) yatay eşlenik kategori de açılır; kapama tek taraflı.
+  // Eşlenik = TÜM kategori listesindeki DOM-komşu çift (sik dahil sayılır → grid satır parite'si
+  // şaşmaz; sik'i listeden çıkarınca parite kayıp ÇAPRAZ açılıyordu — düzeltildi).
   dolap.addEventListener('click',function(e){
     var h=e.target.closest('.mz-cat-h'); if(!h)return;
     var sec=h.closest('.mz-cat'); var open=sec.classList.toggle('open');
     h.setAttribute('aria-expanded',open?'true':'false');
-    // senkron eşlenik: sik (tam genişlik, grid-column:1/-1) hariç
-    if(open&&sec.dataset.cat!=='sik'){
+    if(open){
       var cols=sec.closest('.cat-cols');
       if(cols){
-        var all=Array.prototype.slice.call(cols.querySelectorAll('.mz-cat:not([data-cat="sik"])'));
+        var all=Array.prototype.slice.call(cols.querySelectorAll('.mz-cat'));
         var idx=all.indexOf(sec);
-        var pairIdx=idx%2===0?idx+1:idx-1;
-        var pair=pairIdx>=0?all[pairIdx]:null;
+        var pairIdx=idx%2===0?idx+1:idx-1;   // grid satır eşi (col1↔col2), sik dahil parite
+        var pair=(pairIdx>=0&&pairIdx<all.length)?all[pairIdx]:null;
         if(pair&&!pair.classList.contains('open')){
           pair.classList.add('open');
           var ph=pair.querySelector('.mz-cat-h');
@@ -2558,14 +2578,29 @@ document.addEventListener('click',function(e){
   window.addEventListener('scroll',function(){ if(sugg) sugg.classList.remove('show'); },true);
 
   // ---- FİLTRELER katlanır blok + sayaç ----
-  var fltWrap=document.getElementById('dolapFilters'), fltToggle=document.getElementById('fltToggle'), fltCount=document.getElementById('fltCount');
-  if(fltToggle){ fltToggle.addEventListener('click',function(){ var open=fltWrap.classList.toggle('open'); fltToggle.setAttribute('aria-expanded',open?'true':'false'); }); }
-  function updFltCount(){ if(!fltCount)return;
-    var n=document.querySelectorAll('[data-name="sure"] .chip.active').length;
+  var fltReset=document.getElementById('fltReset');
+  function activeFltCount(){
+    var n=document.querySelectorAll('[data-name="sure"] .chip.active, [data-name="protein"] .chip.active').length;
     var lo2=document.getElementById('krLo'),hi2=document.getElementById('krHi');
     if(lo2&&hi2&&(+lo2.value!==120||+hi2.value!==650))n++;
-    fltCount.hidden=n===0; fltCount.textContent=n; }
-  document.querySelectorAll('[data-name="sure"] .chip').forEach(function(c){ c.addEventListener('click',function(){c.classList.toggle('active');updFltCount();}); });
+    return n;
+  }
+  function updFltCount(){ if(fltReset)fltReset.hidden=activeFltCount()===0; }
+  // süre + protein chip'leri (tek-seçim grup içi: aynı grupta diğerlerini kapat)
+  document.querySelectorAll('[data-name="sure"] .chip, [data-name="protein"] .chip').forEach(function(c){
+    c.addEventListener('click',function(){
+      var was=c.classList.contains('active');
+      c.parentElement.querySelectorAll('.chip').forEach(function(s){s.classList.remove('active');});
+      if(!was)c.classList.add('active');
+      updFltCount();
+    });
+  });
+  if(fltReset){ fltReset.addEventListener('click',function(){
+    document.querySelectorAll('[data-name="sure"] .chip.active, [data-name="protein"] .chip.active').forEach(function(s){s.classList.remove('active');});
+    var lo3=document.getElementById('krLo'),hi3=document.getElementById('krHi');
+    if(lo3&&hi3){ lo3.value=120; hi3.value=650; if(typeof krSync==='function')krSync(); }
+    updFltCount();
+  }); }
 
   // ---- KALORİ DUAL RANGE ----
   var lo=document.getElementById('krLo'),hi=document.getElementById('krHi'),fill=document.getElementById('krFill'),

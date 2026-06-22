@@ -10,6 +10,8 @@
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
       integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A=="
       crossorigin="anonymous" referrerpolicy="no-referrer" />
+<!-- SortableJS — malzeme + adım sürükle-bırak (public wizard paritesi; defer) -->
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js" defer></script>
 <!-- PAYLAŞILAN KABUK (tek kaynak) -->
 <link rel="stylesheet" href="assets/css/sa-shell.css" />
 <style>
@@ -52,20 +54,130 @@
 .img-preview-overlay span{font-size:12.5px;font-weight:700;color:#fff}
 .img-preview-overlay i{font-size:18px;color:#fff}
 
-/* malzeme / adım tekrarlayıcı (repeater) */
-.rep-list{display:flex;flex-direction:column;gap:10px}
-.rep-row{display:flex;align-items:center;gap:10px}
-.rep-row .rep-num{width:26px;height:26px;flex:none;border-radius:var(--radius-circle);background:rgba(var(--acc-rgb),.12);color:var(--acc-deep);font-size:12.5px;font-weight:700;display:grid;place-items:center}
-.rep-row .finput{height:42px}
-.rep-row .rep-amt{max-width:140px}
-.rep-remove{width:36px;height:36px;flex:none;border:none;background:none;color:var(--muted);font-size:14px;cursor:pointer;border-radius:var(--radius-sm);transition:.15s;display:inline-flex;align-items:center;justify-content:center}
-.rep-remove:hover{background:var(--tomato-tint);color:var(--tomato)}
-.rep-add-btn{display:inline-flex;align-items:center;gap:7px;font-size:13px;font-weight:700;color:var(--acc-deep);cursor:pointer;margin-top:12px;background:none;border:none;font-family:inherit;padding:0;transition:.15s}
-.rep-add-btn:hover{color:var(--acc)}
-.rep-row.step .finput{height:auto}
-.rep-row.step{align-items:flex-start}
-.rep-row.step .rep-num{margin-top:6px}
-.rep-row.step .rep-remove{margin-top:3px}
+/* =====================================================================
+   ROUND-2 — PUBLIC tarif-ekle-v1 WIZARD PARİTESİ (admin tek-sayfa eşdeğeri)
+   Wizardın .ie-*/.st-*/.ms-*/.ai-* dili admin kabuğuna (var(--acc)) uyarlandı.
+   sa-shell/sa-ui'ye dokunulmadı; tüm bunlar sayfa-içi.
+   ===================================================================== */
+
+/* ---- süre soneki (fk-suffix → admin) ---- */
+.fk-suffix{position:relative}
+.fk-suffix>span{position:absolute;right:13px;top:50%;transform:translateY(-50%);font-size:11.5px;font-weight:700;color:var(--muted);pointer-events:none}
+
+/* ---- MALZEME: dinamik satır + grup + drag (wizard .ie-list paritesi) ---- */
+.ie-list{display:flex;flex-direction:column;gap:10px}
+.ie-group{display:flex;align-items:center;gap:10px;margin-top:10px}
+.ie-list>.ie-group:first-child{margin-top:0}
+.ie-drag{flex:none;color:#c9c9c9;cursor:grab;font-size:13px;padding:4px 2px;transition:color .18s var(--ease)}
+.ie-drag:hover{color:var(--acc)}
+.ie-group>input{flex:none;width:220px;font-family:inherit;font-size:11.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--slate);background:transparent;border:1px solid transparent;border-radius:var(--radius-sm);padding:7px 9px;outline:none;transition:.2s var(--ease)}
+.ie-group>input::placeholder{color:#bdbdbd;text-transform:none;letter-spacing:0;font-weight:500}
+.ie-group>input:hover,.ie-group>input:focus{border-color:var(--line);background:var(--paper)}
+.ie-group>input:focus{border-color:var(--acc)}
+.ie-group::after{content:"";flex:1;height:1px;background:var(--line)}
+.ie-row{display:grid;grid-template-columns:auto 92px 148px minmax(0,1fr) auto;grid-template-areas:"drag amt unit name del";gap:10px;align-items:center;background:var(--bg);border:1px solid var(--line);border-radius:var(--radius-md);padding:9px 12px}
+.ie-row .ie-drag{grid-area:drag}
+.ie-row .ie-amt{grid-area:amt}
+.ie-row .ie-unit{grid-area:unit}
+.ie-row .ie-name{grid-area:name}
+.ie-row .ie-del{grid-area:del}
+.ie-row .finput,.ie-row .fselect{background:var(--paper);height:40px;font-size:13.5px}
+.ie-row .fselect{padding-right:30px}
+.ie-del,.ie-gdel{flex:none;width:34px;height:34px;border:1px solid var(--line);border-radius:var(--radius-sm);background:var(--paper);color:var(--muted);font-size:12.5px;cursor:pointer;display:grid;place-items:center;transition:.18s var(--ease)}
+.ie-del:hover,.ie-gdel:hover{border-color:var(--acc);color:var(--acc);background:rgba(var(--acc-rgb),.06)}
+.ie-gdel{width:28px;height:28px;border-color:transparent;background:transparent;font-size:11.5px}
+.ie-actions{display:flex;gap:10px;margin-top:16px}
+.add-row{flex:1;display:flex;align-items:center;justify-content:center;gap:9px;font-family:inherit;font-size:13px;font-weight:700;color:var(--muted);background:transparent;border:1.5px dashed #d9d9d9;border-radius:var(--radius-md);padding:13px;cursor:pointer;transition:.18s var(--ease)}
+.add-row:hover{border-color:var(--acc);color:var(--acc)}
+.add-row.alt{flex:0 0 auto;padding:13px 22px}
+
+/* malzeme adı autocomplete havuz (wizard .ie-sugg paritesi) */
+.ie-sugg{position:fixed;z-index:90;background:#fff;border:1px solid var(--line);border-radius:var(--radius-md);box-shadow:var(--sh-md);padding:6px;display:none;max-height:228px;overflow-y:auto}
+.ie-sugg.show{display:block}
+.ie-sugg button{display:flex;align-items:center;gap:9px;width:100%;text-align:left;font-family:inherit;font-size:13.5px;font-weight:500;color:var(--slate);background:none;border:none;border-radius:var(--radius-sm);padding:9px 11px;cursor:pointer;transition:.16s var(--ease)}
+.ie-sugg button i{width:16px;text-align:center;color:var(--muted);font-size:12px}
+.ie-sugg button:hover{background:rgba(var(--acc-rgb),.08);color:var(--acc)}
+.ie-sugg button:hover i{color:var(--acc)}
+.ie-sugg .sg-new{color:var(--acc);font-weight:700;border-top:1px dashed var(--line);margin-top:4px;padding-top:10px}
+.ie-sugg .sg-new i{color:var(--acc)}
+
+/* ---- ADIM: kart + AI iyileştir + görsel + süre + drag (wizard .st-card paritesi) ---- */
+.st-list{display:flex;flex-direction:column;gap:14px}
+.st-card{display:flex;gap:14px;background:var(--bg);border:1px solid var(--line);border-radius:var(--radius-lg);padding:16px}
+.st-num{flex:none;width:34px;height:34px;border-radius:var(--radius-circle);background:var(--acc);color:#fff;font-size:13.5px;font-weight:700;display:grid;place-items:center;box-shadow:0 5px 12px rgba(var(--acc-rgb),.28)}
+.st-body{flex:1;min-width:0;display:flex;flex-direction:column}
+.st-body .ftext{background:var(--paper);min-height:90px}
+.st-side{flex:none;display:flex;flex-direction:column;align-items:center;gap:9px}
+.st-meta{display:flex;align-items:center;gap:12px;margin-top:12px;flex-wrap:wrap}
+.st-time{width:130px}
+.st-time .finput{height:40px;padding-right:34px}
+
+/* AI ile İyileştir butonu + sonuç bandı (mock) */
+.st-ai{display:flex;justify-content:flex-end;margin-bottom:8px}
+.ai-btn{display:inline-flex;align-items:center;gap:7px;font-family:inherit;font-size:12px;font-weight:700;letter-spacing:.01em;color:var(--acc);background:rgba(var(--acc-rgb),.10);border:1px solid rgba(var(--acc-rgb),.32);border-radius:var(--radius-sm);padding:6px 12px;cursor:pointer;transition:.18s var(--ease)}
+.ai-btn i{font-size:12px}
+.ai-btn:hover:not(:disabled){background:var(--acc);color:#fff;border-color:var(--acc)}
+.ai-btn:disabled{opacity:.7;cursor:default}
+.ai-btn .ai-spin{animation:aiSpin .8s linear infinite}
+@keyframes aiSpin{to{transform:rotate(360deg)}}
+.ftext.ai-working{border-color:var(--acc);box-shadow:0 0 0 3px rgba(var(--acc-rgb),.10)}
+.ftext.ai-applied{border-color:var(--acc)}
+.ai-result{display:none;align-items:center;gap:12px;margin-top:10px;padding:11px 14px;background:rgba(var(--acc-rgb),.08);border:1px solid rgba(var(--acc-rgb),.28);border-radius:var(--radius-md);animation:aiFade .22s var(--ease)}
+.ai-result.show{display:flex}
+@keyframes aiFade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.ai-result .ai-badge{flex:none;display:inline-flex;align-items:center;gap:7px;font-size:11.5px;font-weight:700;color:#fff;background:var(--acc);padding:5px 11px;border-radius:var(--radius-sm);letter-spacing:.02em}
+.ai-result .ai-msg{flex:1;min-width:0;font-size:12.5px;font-weight:500;color:var(--slate-2);line-height:1.4}
+.ai-result .ai-acts{flex:none;display:flex;gap:8px}
+.ai-result .ai-acts button{font-family:inherit;font-size:12.5px;font-weight:700;border-radius:var(--radius-sm);padding:7px 14px;cursor:pointer;transition:.16s var(--ease);border:1px solid transparent;display:inline-flex;align-items:center;gap:6px}
+.ai-keep{background:var(--acc);color:#fff}
+.ai-keep:hover{background:var(--acc-deep)}
+.ai-undo{background:var(--paper);color:var(--slate);border-color:var(--line)}
+.ai-undo:hover{border-color:var(--slate)}
+
+/* adım görselleri — max 3 slot (div+bg cover, img DEĞİL — Kerem Bey) */
+.st-figs{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.st-shot{position:relative;flex:none;width:122px;height:78px;border-radius:var(--radius-md);background-size:cover;background-position:center;overflow:hidden}
+.st-shot button{position:absolute;right:5px;top:5px;width:26px;height:26px;border:none;border-radius:var(--radius-sm);background:rgba(255,255,255,.94);color:var(--slate);font-size:11px;cursor:pointer;display:grid;place-items:center;opacity:0;transition:.18s var(--ease)}
+.st-shot:hover button{opacity:1}
+.st-shot button:hover{background:var(--acc);color:#fff}
+.st-up{flex:none;width:122px;height:78px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;border:1.5px dashed #d9d9d9;background:transparent;color:var(--muted);border-radius:var(--radius-md);font-family:inherit;font-size:11px;font-weight:700;cursor:pointer;transition:.18s var(--ease);text-align:center}
+.st-up i{font-size:15px}
+.st-up:hover{border-color:var(--acc);color:var(--acc)}
+.st-up small{font-weight:500;opacity:.8}
+
+/* ---- MUTFAK çoklu-seçim (token-input, wizard .ms-field paritesi) ---- */
+.ms-field{position:relative}
+.ms-box{display:flex;flex-wrap:wrap;align-items:center;gap:8px;width:100%;background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-md);padding:9px 11px;cursor:text;transition:border-color .2s var(--ease),box-shadow .2s var(--ease)}
+.ms-box:hover{border-color:#dcdcdc}
+.ms-box.is-open{border-color:var(--acc);box-shadow:0 0 0 3px rgba(var(--acc-rgb),.10)}
+.ms-chip{display:inline-flex;align-items:center;gap:7px;font-size:13px;font-weight:700;color:var(--acc);background:rgba(var(--acc-rgb),.10);border:1px solid var(--acc);padding:6px 8px 6px 12px;border-radius:var(--radius-sm);white-space:nowrap;animation:msPop .2s var(--ease)}
+.ms-chip .ms-ico{font-size:11px;opacity:.85}
+.ms-chip .ms-x{display:grid;place-items:center;width:18px;height:18px;border:none;border-radius:var(--radius-sm);background:rgba(var(--acc-rgb),.14);color:var(--acc);font-size:10px;cursor:pointer;transition:.16s var(--ease)}
+.ms-chip .ms-x:hover{background:var(--acc);color:#fff}
+@keyframes msPop{from{opacity:0;transform:scale(.86)}to{opacity:1;transform:scale(1)}}
+.ms-search{flex:1;min-width:120px;font-family:inherit;font-size:13.5px;font-weight:500;color:var(--slate);background:transparent;border:none;outline:none;padding:6px 2px}
+.ms-search::placeholder{color:#a7a7a7}
+.ms-menu{position:absolute;left:0;right:0;top:calc(100% + 6px);z-index:60;background:#fff;border:1px solid var(--line);border-radius:var(--radius-md);box-shadow:var(--sh-md);padding:6px;max-height:248px;overflow-y:auto;display:none}
+.ms-menu.show{display:block;animation:aiFade .18s var(--ease)}
+.ms-opt{display:flex;align-items:center;gap:10px;width:100%;text-align:left;font-family:inherit;font-size:13.5px;font-weight:500;color:var(--slate);background:none;border:none;border-radius:var(--radius-sm);padding:9px 11px;cursor:pointer;transition:.14s var(--ease)}
+.ms-opt i{width:16px;text-align:center;color:var(--muted);font-size:12px}
+.ms-opt:hover,.ms-opt.kbd-active{background:rgba(var(--acc-rgb),.08);color:var(--acc)}
+.ms-opt:hover i,.ms-opt.kbd-active i{color:var(--acc)}
+.ms-opt .ms-check{margin-left:auto;color:var(--acc);font-size:12px;display:none}
+.ms-opt.is-sel{color:var(--acc);font-weight:700}
+.ms-opt.is-sel .ms-check{display:inline}
+.ms-empty{padding:12px;text-align:center;font-size:12.5px;color:var(--muted);font-weight:500}
+
+/* ---- BESLENME/TİP etiket chip-toggle ---- */
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{font-family:inherit;font-size:12.5px;font-weight:600;color:var(--slate-2);background:var(--paper);border:1px solid var(--line);border-radius:999px;padding:7px 14px;cursor:pointer;transition:.16s var(--ease);user-select:none}
+.chip:hover{border-color:var(--acc);color:var(--acc-deep)}
+.chip.is-on{background:rgba(var(--acc-rgb),.12);border-color:var(--acc);color:var(--acc-deep)}
+
+/* ---- SortableJS sürükle-bırak görsel geri bildirimi ---- */
+.sortable-ghost{opacity:.4}
+.sortable-chosen{box-shadow:0 8px 20px rgba(33,30,22,.14)}
+.is-dragging .ie-drag{cursor:grabbing}
 
 /* yan kart (yayın + kaynak + etiket) */
 .side-card{display:flex;flex-direction:column;gap:16px}
@@ -92,6 +204,15 @@
 @media(max-width:900px){
   .form-layout{grid-template-columns:minmax(0,1fr)}
   .frow.two{grid-template-columns:1fr}
+}
+@media(max-width:560px){
+  /* malzeme satırı: tek kolon yığıt (wizard mobil paritesi) */
+  .ie-row{grid-template-columns:auto 1fr;grid-template-areas:"drag name name del" "drag amt unit del";row-gap:8px}
+  .ie-actions{flex-wrap:wrap}
+  .add-row,.add-row.alt{flex:1 1 100%}
+  .ai-result{flex-wrap:wrap}
+  .ai-result .ai-acts{width:100%}
+  .ai-result .ai-acts button{flex:1}
 }
 </style>
 </head>
@@ -224,40 +345,138 @@
             <span class="fhint" style="display:block;margin-top:10px">Önerilen: 1200×800 px · JPG/PNG · maks. 4 MB</span>
           </div>
 
-          <!-- Malzemeler (repeater) -->
+          <!-- Malzemeler (grup + drag + birim + autocomplete — wizard paritesi) -->
           <div class="form-sec">
             <div class="form-sec-tt"><i class="fa-solid fa-basket-shopping"></i> Malzemeler</div>
-            <div class="rep-list" id="ingrList">
-              <div class="rep-row">
-                <input class="finput" type="text" placeholder="Malzeme (ör. Tavuk göğsü)" />
-                <input class="finput rep-amt" type="text" placeholder="Miktar" />
-                <button class="rep-remove" type="button" title="Kaldır"><i class="fa-solid fa-xmark"></i></button>
+            <span class="fhint" style="display:block;margin-bottom:14px">Kullanım sırasına göre yaz; “Hamur”, “İç Harç” gibi gruplara ayırabilir, sürükleyerek sıralayabilirsin.</span>
+            <div class="ie-list" id="ieList">
+              <div class="ie-group">
+                <span class="ie-drag" title="Sürükleyerek sırala"><i class="fa-solid fa-grip-vertical"></i></span>
+                <input type="text" value="Hamur" placeholder="Grup adı (örn. Hamur)" />
+                <button class="ie-gdel" type="button" title="Grubu kaldır" aria-label="Grubu kaldır"><i class="fa-solid fa-xmark"></i></button>
               </div>
-              <div class="rep-row">
-                <input class="finput" type="text" placeholder="Malzeme (ör. Kabak)" />
-                <input class="finput rep-amt" type="text" placeholder="Miktar" />
-                <button class="rep-remove" type="button" title="Kaldır"><i class="fa-solid fa-xmark"></i></button>
+              <div class="ie-row">
+                <span class="ie-drag" title="Sürükleyerek sırala"><i class="fa-solid fa-grip-vertical"></i></span>
+                <input class="finput ie-amt" type="text" value="3,5" placeholder="Miktar" aria-label="Miktar" />
+                <select class="fselect ie-unit" aria-label="Birim">
+                  <option value="" disabled>Birim</option>
+                  <option selected>Su Bardağı</option><option>Çay Bardağı</option><option>Yemek Kaşığı</option><option>Tatlı Kaşığı</option><option>Çay Kaşığı</option><option>Gram</option><option>Kilogram</option><option>Mililitre</option><option>Litre</option><option>Adet</option><option>Paket</option><option>Dilim</option><option>Tutam</option><option>Diş</option><option>Demet</option>
+                </select>
+                <input class="finput ie-name" type="text" value="Un (elenmiş)" placeholder="Malzeme adı" aria-label="Malzeme adı" />
+                <button class="ie-del" type="button" title="Satırı sil" aria-label="Satırı sil"><i class="fa-solid fa-trash-can"></i></button>
+              </div>
+              <div class="ie-row">
+                <span class="ie-drag" title="Sürükleyerek sırala"><i class="fa-solid fa-grip-vertical"></i></span>
+                <input class="finput ie-amt" type="text" value="1" placeholder="Miktar" aria-label="Miktar" />
+                <select class="fselect ie-unit" aria-label="Birim">
+                  <option value="" disabled>Birim</option>
+                  <option>Su Bardağı</option><option>Çay Bardağı</option><option>Yemek Kaşığı</option><option>Tatlı Kaşığı</option><option>Çay Kaşığı</option><option>Gram</option><option>Kilogram</option><option>Mililitre</option><option>Litre</option><option selected>Adet</option><option>Paket</option><option>Dilim</option><option>Tutam</option><option>Diş</option><option>Demet</option>
+                </select>
+                <input class="finput ie-name" type="text" value="Yumurta" placeholder="Malzeme adı" aria-label="Malzeme adı" />
+                <button class="ie-del" type="button" title="Satırı sil" aria-label="Satırı sil"><i class="fa-solid fa-trash-can"></i></button>
+              </div>
+              <div class="ie-group">
+                <span class="ie-drag" title="Sürükleyerek sırala"><i class="fa-solid fa-grip-vertical"></i></span>
+                <input type="text" value="İç Harç" placeholder="Grup adı (örn. İç Harç)" />
+                <button class="ie-gdel" type="button" title="Grubu kaldır" aria-label="Grubu kaldır"><i class="fa-solid fa-xmark"></i></button>
+              </div>
+              <div class="ie-row">
+                <span class="ie-drag" title="Sürükleyerek sırala"><i class="fa-solid fa-grip-vertical"></i></span>
+                <input class="finput ie-amt" type="text" value="250" placeholder="Miktar" aria-label="Miktar" />
+                <select class="fselect ie-unit" aria-label="Birim">
+                  <option value="" disabled>Birim</option>
+                  <option>Su Bardağı</option><option>Çay Bardağı</option><option>Yemek Kaşığı</option><option>Tatlı Kaşığı</option><option>Çay Kaşığı</option><option selected>Gram</option><option>Kilogram</option><option>Mililitre</option><option>Litre</option><option>Adet</option><option>Paket</option><option>Dilim</option><option>Tutam</option><option>Diş</option><option>Demet</option>
+                </select>
+                <input class="finput ie-name" type="text" value="Dana kıyma (az yağlı)" placeholder="Malzeme adı" aria-label="Malzeme adı" />
+                <button class="ie-del" type="button" title="Satırı sil" aria-label="Satırı sil"><i class="fa-solid fa-trash-can"></i></button>
               </div>
             </div>
-            <button class="rep-add-btn" type="button" id="ingrAdd"><i class="fa-solid fa-plus"></i> Malzeme Ekle</button>
+            <div class="ie-actions">
+              <button class="add-row" type="button" id="addRow"><i class="fa-solid fa-plus"></i> Satır Ekle</button>
+              <button class="add-row alt" type="button" id="addGroup"><i class="fa-solid fa-layer-group"></i> Grup Ekle</button>
+            </div>
           </div>
 
-          <!-- Hazırlanış Adımları (repeater) -->
+          <!-- Hazırlanış Adımları (AI iyileştir + görsel + süre + drag — wizard paritesi) -->
           <div class="form-sec">
             <div class="form-sec-tt"><i class="fa-solid fa-list-ol"></i> Hazırlanış Adımları</div>
-            <div class="rep-list" id="stepList">
-              <div class="rep-row step">
-                <span class="rep-num">1</span>
-                <textarea class="finput ftext" placeholder="Adımı açıklayın…" style="min-height:64px"></textarea>
-                <button class="rep-remove" type="button" title="Kaldır"><i class="fa-solid fa-xmark"></i></button>
+            <span class="fhint" style="display:block;margin-bottom:14px">Her adım tek bir işlemi anlatsın; görsel ve süre eklersen pişirme modunda zamanlayıcıya dönüşür.</span>
+            <div class="st-list" id="stList">
+              <div class="st-card">
+                <span class="st-num">1</span>
+                <div class="st-body">
+                  <div class="st-ai"><button class="ai-btn" type="button" title="Adımı akıcı ve net bir dile dönüştür"><i class="fa-solid fa-wand-magic-sparkles"></i> AI ile İyileştir</button></div>
+                  <textarea class="ftext" placeholder="Bu adımda ne yapılıyor? Tek işlem, net anlatım…">Un, yumurta, tuz ve ılık suyu derin bir kapta birleştirip kulak memesi yumuşaklığında bir hamur yoğurun. Üzerini nemli bezle örtüp 20 dakika dinlendirin.</textarea>
+                  <div class="ai-result" role="status"><span class="ai-badge"><i class="fa-solid fa-wand-magic-sparkles"></i> AI önerisi</span><span class="ai-msg">Adım anlatımı daha akıcı ve net bir dile dönüştürüldü. Beğenmezsen geri alabilirsin.</span><span class="ai-acts"><button class="ai-undo" type="button"><i class="fa-solid fa-rotate-left"></i> Geri Al</button><button class="ai-keep" type="button"><i class="fa-solid fa-check"></i> Kabul Et</button></span></div>
+                  <div class="st-meta">
+                    <div class="st-figs">
+                      <div class="st-shot" style="background-image:url('https://images.unsplash.com/photo-1556910103-1c02745aae4d?w=300&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')">
+                        <button type="button" title="Görseli sil" aria-label="Görseli sil"><i class="fa-solid fa-trash-can"></i></button>
+                      </div>
+                      <button class="st-up" type="button"><i class="fa-regular fa-image"></i> Görsel ekle <small>1/3</small></button>
+                    </div>
+                    <div class="fk-suffix st-time"><input class="finput" type="number" min="0" value="20" placeholder="Süre" aria-label="Adım süresi" /><span>dk</span></div>
+                  </div>
+                </div>
+                <div class="st-side">
+                  <span class="ie-drag" title="Sürükleyerek sırala"><i class="fa-solid fa-grip-vertical"></i></span>
+                  <button class="ie-del st-del" type="button" title="Adımı sil" aria-label="Adımı sil"><i class="fa-solid fa-trash-can"></i></button>
+                </div>
               </div>
-              <div class="rep-row step">
-                <span class="rep-num">2</span>
-                <textarea class="finput ftext" placeholder="Adımı açıklayın…" style="min-height:64px"></textarea>
-                <button class="rep-remove" type="button" title="Kaldır"><i class="fa-solid fa-xmark"></i></button>
+              <div class="st-card">
+                <span class="st-num">2</span>
+                <div class="st-body">
+                  <div class="st-ai"><button class="ai-btn" type="button" title="Adımı akıcı ve net bir dile dönüştür"><i class="fa-solid fa-wand-magic-sparkles"></i> AI ile İyileştir</button></div>
+                  <textarea class="ftext" placeholder="Bu adımda ne yapılıyor? Tek işlem, net anlatım…"></textarea>
+                  <div class="ai-result" role="status"><span class="ai-badge"><i class="fa-solid fa-wand-magic-sparkles"></i> AI önerisi</span><span class="ai-msg">Adım anlatımı daha akıcı ve net bir dile dönüştürüldü. Beğenmezsen geri alabilirsin.</span><span class="ai-acts"><button class="ai-undo" type="button"><i class="fa-solid fa-rotate-left"></i> Geri Al</button><button class="ai-keep" type="button"><i class="fa-solid fa-check"></i> Kabul Et</button></span></div>
+                  <div class="st-meta">
+                    <div class="st-figs"><button class="st-up" type="button"><i class="fa-regular fa-image"></i> Görsel ekle <small>0/3</small></button></div>
+                    <div class="fk-suffix st-time"><input class="finput" type="number" min="0" placeholder="Süre" aria-label="Adım süresi" /><span>dk</span></div>
+                  </div>
+                </div>
+                <div class="st-side">
+                  <span class="ie-drag" title="Sürükleyerek sırala"><i class="fa-solid fa-grip-vertical"></i></span>
+                  <button class="ie-del st-del" type="button" title="Adımı sil" aria-label="Adımı sil"><i class="fa-solid fa-trash-can"></i></button>
+                </div>
               </div>
             </div>
-            <button class="rep-add-btn" type="button" id="stepAdd"><i class="fa-solid fa-plus"></i> Adım Ekle</button>
+            <div class="ie-actions">
+              <button class="add-row" type="button" id="addStep"><i class="fa-solid fa-plus"></i> Adım Ekle</button>
+            </div>
+          </div>
+
+          <!-- Mutfak (searchable token-input çoklu-seçim — wizard msCuisine paritesi) -->
+          <div class="form-sec">
+            <div class="form-sec-tt"><i class="fa-solid fa-utensils"></i> Mutfak</div>
+            <div class="ms-field" id="msCuisine" data-ms="cuisine" data-icon="fa-utensils">
+              <div class="ms-box" id="msCuisineBox">
+                <input class="ms-search" id="msCuisineSearch" type="text" placeholder="Mutfak ara veya seç…" aria-label="Mutfak ara" autocomplete="off" role="combobox" aria-expanded="false" aria-controls="msCuisineMenu" />
+              </div>
+              <div class="ms-menu" id="msCuisineMenu" role="listbox" aria-multiselectable="true"></div>
+            </div>
+            <span class="fhint" style="display:block;margin-top:10px">Birden fazla seçebilirsin; ara ve ekle. Filtre/keşif taksonomisi.</span>
+          </div>
+
+          <!-- Beslenme & Tip Etiketleri (chip-toggle taksonomi) -->
+          <div class="form-sec">
+            <div class="form-sec-tt"><i class="fa-solid fa-leaf"></i> Beslenme &amp; Tip Etiketleri</div>
+            <div class="chips" id="typeChips" role="group" aria-label="Beslenme ve tip etiketleri">
+              <button class="chip" type="button">Vegan</button>
+              <button class="chip" type="button">Vejetaryen</button>
+              <button class="chip" type="button">Glutensiz</button>
+              <button class="chip" type="button">Glutenli</button>
+              <button class="chip" type="button">Laktozsuz</button>
+              <button class="chip" type="button">Süt İçermez</button>
+              <button class="chip" type="button">Yumurta İçermez</button>
+              <button class="chip" type="button">Şeker İlavesiz</button>
+              <button class="chip" type="button">Yüksek Lifli</button>
+              <button class="chip" type="button">Tam Tahıllı</button>
+              <button class="chip" type="button">Protein Ağırlıklı</button>
+              <button class="chip" type="button">Az Yağlı</button>
+              <button class="chip" type="button">Acılı</button>
+              <button class="chip" type="button">Baharatlı</button>
+            </div>
+            <span class="fhint" style="display:block;margin-top:12px">Yapısal taksonomi — filtre/keşif için. Serbest etiketler sağ panelde.</span>
           </div>
 
         </div><!-- /pnl-card -->
@@ -343,47 +562,277 @@
 
 <script src="assets/js/sa-shell.js"></script>
 <script>
-/* sayfa JS — malzeme/adım repeater + kaydet/yayınla toast */
+/* =====================================================================
+   SAYFA JS — ROUND-2 public tarif-ekle-v1 wizard paritesi (admin uyarlaması)
+   Malzeme (grup+drag+birim+autocomplete) · Adım (AI iyileştir+görsel+süre+drag)
+   · Mutfak token-input multi-select · kaydet/yayınla toast.
+   Tüm AI ve upload davranışları MOCK (gerçek çağrı Laravel fazında bağlanır).
+   ===================================================================== */
 (function(){
-  /* Malzeme satırı ekle/kaldır */
-  var ingrList=document.getElementById('ingrList');
-  var ingrAdd=document.getElementById('ingrAdd');
-  function bindRemove(row){
-    var btn=row.querySelector('.rep-remove');
-    if(btn) btn.addEventListener('click',function(){ row.remove(); renumberSteps(); });
-  }
-  if(ingrAdd) ingrAdd.addEventListener('click',function(){
-    var row=document.createElement('div');
-    row.className='rep-row';
-    row.innerHTML='<input class="finput" type="text" placeholder="Malzeme" />'
-      +'<input class="finput rep-amt" type="text" placeholder="Miktar" />'
-      +'<button class="rep-remove" type="button" title="Kaldır"><i class="fa-solid fa-xmark"></i></button>';
-    ingrList.appendChild(row); bindRemove(row);
-  });
-  if(ingrList) ingrList.querySelectorAll('.rep-row').forEach(bindRemove);
+  var UNITS='<option value="" disabled selected>Birim</option><option>Su Bardağı</option><option>Çay Bardağı</option><option>Yemek Kaşığı</option><option>Tatlı Kaşığı</option><option>Çay Kaşığı</option><option>Gram</option><option>Kilogram</option><option>Mililitre</option><option>Litre</option><option>Adet</option><option>Paket</option><option>Dilim</option><option>Tutam</option><option>Diş</option><option>Demet</option>';
 
-  /* Adım satırı ekle/kaldır + numara güncelle */
-  var stepList=document.getElementById('stepList');
-  var stepAdd=document.getElementById('stepAdd');
-  function renumberSteps(){
-    if(!stepList) return;
-    stepList.querySelectorAll('.rep-row.step .rep-num').forEach(function(n,i){ n.textContent=i+1; });
+  /* ---- MALZEME: satır/grup ekle + sil ---- */
+  var ieList=document.getElementById('ieList');
+  function makeRow(){
+    var r=document.createElement('div');
+    r.className='ie-row';
+    r.innerHTML='<span class="ie-drag" title="Sürükleyerek sırala"><i class="fa-solid fa-grip-vertical"></i></span>'+
+      '<input class="finput ie-amt" type="text" placeholder="Miktar" aria-label="Miktar" />'+
+      '<select class="fselect ie-unit" aria-label="Birim">'+UNITS+'</select>'+
+      '<input class="finput ie-name" type="text" placeholder="Malzeme adı" aria-label="Malzeme adı" />'+
+      '<button class="ie-del" type="button" title="Satırı sil" aria-label="Satırı sil"><i class="fa-solid fa-trash-can"></i></button>';
+    return r;
   }
-  function bindStepRemove(row){
-    var btn=row.querySelector('.rep-remove');
-    if(btn) btn.addEventListener('click',function(){ row.remove(); renumberSteps(); });
-  }
-  if(stepAdd) stepAdd.addEventListener('click',function(){
-    var row=document.createElement('div');
-    row.className='rep-row step';
-    row.innerHTML='<span class="rep-num"></span>'
-      +'<textarea class="finput ftext" placeholder="Adımı açıklayın…" style="min-height:64px"></textarea>'
-      +'<button class="rep-remove" type="button" title="Kaldır"><i class="fa-solid fa-xmark"></i></button>';
-    stepList.appendChild(row); bindStepRemove(row); renumberSteps();
+  var addRow=document.getElementById('addRow');
+  if(addRow) addRow.addEventListener('click',function(){
+    var r=makeRow(); ieList.appendChild(r); r.querySelector('.ie-amt').focus();
   });
-  if(stepList) stepList.querySelectorAll('.rep-row.step').forEach(bindStepRemove);
+  var addGroup=document.getElementById('addGroup');
+  if(addGroup) addGroup.addEventListener('click',function(){
+    var g=document.createElement('div');
+    g.className='ie-group';
+    g.innerHTML='<span class="ie-drag" title="Sürükleyerek sırala"><i class="fa-solid fa-grip-vertical"></i></span>'+
+      '<input type="text" placeholder="Grup adı (örn. Sos)" />'+
+      '<button class="ie-gdel" type="button" title="Grubu kaldır" aria-label="Grubu kaldır"><i class="fa-solid fa-xmark"></i></button>';
+    ieList.appendChild(g); ieList.appendChild(makeRow()); g.querySelector('input').focus();
+  });
+  if(ieList) ieList.addEventListener('click',function(e){
+    var del=e.target.closest('.ie-del'), gdel=e.target.closest('.ie-gdel');
+    if(del) del.closest('.ie-row').remove();
+    if(gdel) gdel.closest('.ie-group').remove();  // grup başlığı kalkar, satırlar üst gruba akar
+  });
 
-  /* Kaydet / Yayınla → toast */
+  /* ---- MALZEME ADI autocomplete: havuz + serbest karma (DB ilişkisi) ---- */
+  var ING_POOL=['Un','Tuz','Toz şeker','Yumurta','Süt','Tereyağı','Zeytinyağı','Kuru soğan','Sarımsak','Dana kıyma','Tavuk göğsü','Domates salçası','Karabiber','Süzme yoğurt','Maydanoz'];
+  var sugg=document.createElement('div'); sugg.className='ie-sugg'; document.body.appendChild(sugg);
+  var suggFor=null;
+  function trLower(s){return s.replace(/İ/g,'i').replace(/I/g,'ı').toLowerCase();}
+  function hideSugg(){sugg.classList.remove('show');suggFor=null;}
+  function showSugg(input){
+    var q=input.value.trim(), ql=trLower(q);
+    var hits=ING_POOL.filter(function(m){return !ql||trLower(m).indexOf(ql)>-1;}).slice(0,6);
+    var exact=ING_POOL.some(function(m){return trLower(m)===ql;});
+    var html=hits.map(function(m){return '<button type="button" data-val="'+m+'"><i class="fa-solid fa-carrot"></i> '+m+'</button>';}).join('');
+    if(q&&!exact)html+='<button type="button" class="sg-new" data-val="'+q.replace(/"/g,'&quot;')+'"><i class="fa-solid fa-circle-plus"></i> &ldquo;'+q+'&rdquo; — yeni malzeme öner</button>';
+    if(!html){hideSugg();return;}
+    sugg.innerHTML=html;
+    var r=input.getBoundingClientRect();
+    sugg.style.left=r.left+'px';sugg.style.top=(r.bottom+6)+'px';sugg.style.width=Math.max(r.width,230)+'px';
+    sugg.classList.add('show');suggFor=input;
+  }
+  document.addEventListener('focusin',function(e){if(e.target.classList&&e.target.classList.contains('ie-name'))showSugg(e.target);});
+  document.addEventListener('input',function(e){if(e.target.classList&&e.target.classList.contains('ie-name'))showSugg(e.target);});
+  sugg.addEventListener('mousedown',function(e){
+    var b=e.target.closest('button');if(!b)return;
+    e.preventDefault();                                   // blur'dan önce seçimi işle
+    if(suggFor)suggFor.value=b.getAttribute('data-val');
+    hideSugg();
+  });
+  document.addEventListener('click',function(e){if(!e.target.closest('.ie-sugg')&&!(e.target.classList&&e.target.classList.contains('ie-name')))hideSugg();});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')hideSugg();});
+  window.addEventListener('scroll',hideSugg,{passive:true,capture:true});
+
+  /* ---- ADIM: kart ekle + numara ---- */
+  var stList=document.getElementById('stList');
+  function renumber(){
+    if(!stList) return;
+    stList.querySelectorAll('.st-card .st-num').forEach(function(n,i){n.textContent=i+1;});
+  }
+  var AI_RESULT='<div class="ai-result" role="status"><span class="ai-badge"><i class="fa-solid fa-wand-magic-sparkles"></i> AI önerisi</span><span class="ai-msg">Adım anlatımı daha akıcı ve net bir dile dönüştürüldü. Beğenmezsen geri alabilirsin.</span><span class="ai-acts"><button class="ai-undo" type="button"><i class="fa-solid fa-rotate-left"></i> Geri Al</button><button class="ai-keep" type="button"><i class="fa-solid fa-check"></i> Kabul Et</button></span></div>';
+  var addStep=document.getElementById('addStep');
+  if(addStep) addStep.addEventListener('click',function(){
+    var c=document.createElement('div');
+    c.className='st-card';
+    c.innerHTML='<span class="st-num"></span>'+
+      '<div class="st-body">'+
+      '<div class="st-ai"><button class="ai-btn" type="button" title="Adımı akıcı ve net bir dile dönüştür"><i class="fa-solid fa-wand-magic-sparkles"></i> AI ile İyileştir</button></div>'+
+      '<textarea class="ftext" placeholder="Bu adımda ne yapılıyor? Tek işlem, net anlatım…"></textarea>'+
+      AI_RESULT+
+      '<div class="st-meta">'+
+      '<div class="st-figs"><button class="st-up" type="button"><i class="fa-regular fa-image"></i> Görsel ekle <small>0/3</small></button></div>'+
+      '<div class="fk-suffix st-time"><input class="finput" type="number" min="0" placeholder="Süre" aria-label="Adım süresi" /><span>dk</span></div>'+
+      '</div></div>'+
+      '<div class="st-side">'+
+      '<span class="ie-drag" title="Sürükleyerek sırala"><i class="fa-solid fa-grip-vertical"></i></span>'+
+      '<button class="ie-del st-del" type="button" title="Adımı sil" aria-label="Adımı sil"><i class="fa-solid fa-trash-can"></i></button>'+
+      '</div>';
+    stList.appendChild(c); renumber(); c.querySelector('textarea').focus();
+  });
+
+  /* ---- ADIM GÖRSELİ: max 3 slot (div+bg cover, img DEĞİL) + sil (delege) ---- */
+  var STEP_IMGS=['photo-1466637574441-749b8f19452f','photo-1495521821757-a1efb6729352','photo-1507048331197-7d4ac70811cf'];
+  function syncFigs(figs){
+    var n=figs.querySelectorAll('.st-shot').length;
+    var up=figs.querySelector('.st-up');
+    if(n>=3){if(up)up.style.display='none';}
+    else{
+      if(!up){up=document.createElement('button');up.className='st-up';up.type='button';figs.appendChild(up);}
+      up.style.display='';
+      up.innerHTML='<i class="fa-regular fa-image"></i> Görsel ekle <small>'+n+'/3</small>';
+    }
+  }
+  if(stList) stList.addEventListener('click',function(e){
+    var del=e.target.closest('.st-del');
+    if(del){del.closest('.st-card').remove();renumber();return;}
+    var shotDel=e.target.closest('.st-shot button');
+    if(shotDel){
+      var figs=shotDel.closest('.st-figs');
+      shotDel.closest('.st-shot').remove();
+      syncFigs(figs);
+      return;
+    }
+    var up=e.target.closest('.st-up');
+    if(up){
+      var figs2=up.closest('.st-figs');
+      var n=figs2.querySelectorAll('.st-shot').length;
+      if(n>=3)return;
+      var shot=document.createElement('div');
+      shot.className='st-shot';
+      shot.style.backgroundImage="url('https://images.unsplash.com/"+STEP_IMGS[n]+"?w=300&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')";
+      shot.innerHTML='<button type="button" title="Görseli sil" aria-label="Görseli sil"><i class="fa-solid fa-trash-can"></i></button>';
+      figs2.insertBefore(shot,up);
+      syncFigs(figs2);
+    }
+  });
+
+  /* ---- AI İLE İYİLEŞTİR (MOCK) — önce/sonra + Kabul Et/Geri Al ---- */
+  (function(){
+    if(!stList) return;
+    var ENR={
+      "Un, yumurta":"Un, yumurta, tuz ve ılık suyu derin bir kapta birleştirin; kulak memesi yumuşaklığında, ele yapışmayan pürüzsüz bir hamur elde edene dek 8-10 dakika yoğurun. Üzerini nemli bezle örtüp oda sıcaklığında 20 dakika dinlendirin."
+    };
+    function enrich(v){
+      for(var k in ENR){ if(v.indexOf(k)>-1) return ENR[k]; }
+      var t=(v||'').trim();
+      if(!t) return "Bu adımı net bir cümleyle anlat: hangi malzeme, hangi işlem, ne kadar süre. (Örn. “Soğanları orta ateşte 5 dakika, pembeleşene dek kavur.”)";
+      return t.charAt(0).toUpperCase()+t.slice(1)+" — adım akıcı ve net bir dile getirildi; ölçü ve süre vurgusu belirginleştirildi.";
+    }
+    function btnReset(b){b.disabled=false;b.innerHTML='<i class="fa-solid fa-wand-magic-sparkles"></i> AI ile İyileştir';}
+    function reset(body,restore){
+      if(!body)return;
+      var ta=body.querySelector('textarea'),bar=body.querySelector('.ai-result'),b=body.querySelector('.ai-btn');
+      if(restore&&b&&b.dataset.orig!=null&&b.dataset.orig!=='')ta.value=b.dataset.orig;
+      if(bar)bar.classList.remove('show');if(ta)ta.classList.remove('ai-applied');
+      if(b){b.dataset.orig='';btnReset(b);}
+    }
+    stList.addEventListener('click',function(e){
+      var btn=e.target.closest('.ai-btn');
+      if(btn){
+        if(btn.disabled)return;
+        var body=btn.closest('.st-body');if(!body)return;
+        var ta=body.querySelector('textarea'),bar=body.querySelector('.ai-result');
+        btn.dataset.orig=ta.value;                          // geri alma için sakla
+        btn.disabled=true;btn.innerHTML='<i class="fa-solid fa-spinner ai-spin"></i> İyileştiriliyor…';
+        ta.classList.add('ai-working');
+        setTimeout(function(){                               // mock gecikme = gerçek AI çağrısı simülasyonu
+          ta.classList.remove('ai-working');ta.classList.add('ai-applied');
+          ta.value=enrich(btn.dataset.orig);
+          if(bar)bar.classList.add('show');
+          btn.disabled=false;btn.innerHTML='<i class="fa-solid fa-wand-magic-sparkles"></i> Yeniden Dene';
+        },900);
+        return;
+      }
+      var keep=e.target.closest('.ai-keep');
+      if(keep){reset(keep.closest('.st-body'),false);return;}
+      var undo=e.target.closest('.ai-undo');
+      if(undo){reset(undo.closest('.st-body'),true);return;}
+    });
+  })();
+
+  /* ---- MUTFAK: searchable token-input multi-select (wizard msCuisine paritesi) ---- */
+  var MS_DATA={
+    cuisine:{
+      options:["Türk Mutfağı","Anadolu Mutfağı","Ege Mutfağı","Akdeniz Mutfağı","Karadeniz Mutfağı","Dünya Mutfağı","İtalyan Mutfağı","Fransız Mutfağı","Asya Mutfağı","Uzak Doğu Mutfağı","Orta Doğu Mutfağı","Meksika Mutfağı","Hint Mutfağı"],
+      selected:["Türk Mutfağı","Anadolu Mutfağı"], noun:"mutfak", count:null
+    }
+  };
+  function msTrL(s){return s.replace(/İ/g,'i').replace(/I/g,'ı').toLowerCase();}
+  function msEsc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;');}
+  function msAttr(s){return s.replace(/"/g,'&quot;');}
+  function initMS(fieldId){
+    var field=document.getElementById(fieldId);
+    if(!field)return;
+    var key=field.getAttribute('data-ms');
+    var icon=field.getAttribute('data-icon')||'fa-tag';
+    var data=MS_DATA[key]; if(!data)return;
+    var box=field.querySelector('.ms-box');
+    var input=field.querySelector('.ms-search');
+    var menu=field.querySelector('.ms-menu');
+    var kbdIdx=-1;
+    function renderChips(){
+      field.querySelectorAll('.ms-chip').forEach(function(c){c.remove();});
+      data.selected.forEach(function(v){
+        var chip=document.createElement('span');
+        chip.className='ms-chip';
+        chip.innerHTML='<i class="fa-solid '+icon+' ms-ico"></i>'+msEsc(v)+
+          '<button type="button" class="ms-x" title="Kaldır" aria-label="'+msAttr(v)+' kaldır" data-v="'+msAttr(v)+'"><i class="fa-solid fa-xmark"></i></button>';
+        box.insertBefore(chip,input);
+      });
+    }
+    function add(v){if(data.selected.indexOf(v)<0){data.selected.push(v);renderChips();}}
+    function rem(v){var i=data.selected.indexOf(v);if(i>-1){data.selected.splice(i,1);renderChips();}}
+    function toggle(v){if(data.selected.indexOf(v)>-1)rem(v);else add(v);}
+    function renderMenu(){
+      var q=msTrL(input.value.trim());
+      var avail=data.options.filter(function(o){return !q||msTrL(o).indexOf(q)>-1;});
+      if(!avail.length){menu.innerHTML='<div class="ms-empty">Eşleşen seçenek yok</div>';return;}
+      menu.innerHTML=avail.map(function(o){
+        var sel=data.selected.indexOf(o)>-1;
+        return '<button type="button" class="ms-opt'+(sel?' is-sel':'')+'" role="option" aria-selected="'+sel+'" data-v="'+msAttr(o)+'">'+
+          '<i class="fa-solid '+icon+'"></i>'+msEsc(o)+'<i class="fa-solid fa-check ms-check"></i></button>';
+      }).join('');
+    }
+    function openMenu(){box.classList.add('is-open');menu.classList.add('show');input.setAttribute('aria-expanded','true');renderMenu();}
+    function closeMenu(){box.classList.remove('is-open');menu.classList.remove('show');input.setAttribute('aria-expanded','false');kbdIdx=-1;}
+    function hl(opts){opts.forEach(function(o,i){o.classList.toggle('kbd-active',i===kbdIdx);});if(opts[kbdIdx])opts[kbdIdx].scrollIntoView({block:'nearest'});}
+    box.addEventListener('click',function(e){
+      var x=e.target.closest('.ms-x');
+      if(x){e.stopPropagation();rem(x.getAttribute('data-v'));return;}
+      input.focus();openMenu();
+    });
+    input.addEventListener('focus',openMenu);
+    input.addEventListener('input',function(){openMenu();kbdIdx=-1;});
+    menu.addEventListener('mousedown',function(e){
+      var opt=e.target.closest('.ms-opt');if(!opt)return;
+      e.preventDefault();                                   // blur'dan önce işle
+      toggle(opt.getAttribute('data-v'));
+      input.value='';renderMenu();input.focus();
+    });
+    input.addEventListener('keydown',function(e){
+      var opts=Array.prototype.slice.call(menu.querySelectorAll('.ms-opt'));
+      if(e.key==='ArrowDown'){e.preventDefault();if(!menu.classList.contains('show'))openMenu();kbdIdx=Math.min(kbdIdx+1,opts.length-1);hl(opts);}
+      else if(e.key==='ArrowUp'){e.preventDefault();kbdIdx=Math.max(kbdIdx-1,0);hl(opts);}
+      else if(e.key==='Enter'){e.preventDefault();if(kbdIdx>-1&&opts[kbdIdx]){toggle(opts[kbdIdx].getAttribute('data-v'));input.value='';renderMenu();}}
+      else if(e.key==='Backspace'&&input.value===''&&data.selected.length){rem(data.selected[data.selected.length-1]);}
+      else if(e.key==='Escape'){closeMenu();input.blur();}
+    });
+    document.addEventListener('click',function(e){if(!field.contains(e.target))closeMenu();});
+    renderChips();
+  }
+  initMS('msCuisine');
+
+  /* ---- BESLENME/TİP etiket chip-toggle ---- */
+  var typeChips=document.getElementById('typeChips');
+  if(typeChips) typeChips.addEventListener('click',function(e){
+    var chip=e.target.closest('.chip');
+    if(chip) chip.classList.toggle('is-on');
+  });
+
+  /* ---- SÜRÜKLE-BIRAK (malzeme satır/grup + adım) — SortableJS, handle=.ie-drag ---- */
+  function initSortable(){
+    if(typeof Sortable==='undefined'){console.warn('SortableJS yüklenemedi — sürükle-bırak pasif.');return;}
+    var base={handle:'.ie-drag',animation:170,ghostClass:'sortable-ghost',chosenClass:'sortable-chosen',dragClass:'sortable-drag',
+      onStart:function(){document.body.classList.add('is-dragging');},
+      onEnd:function(){document.body.classList.remove('is-dragging');}};
+    if(ieList)Sortable.create(ieList,base);
+    if(stList)Sortable.create(stList,{handle:'.ie-drag',animation:170,ghostClass:'sortable-ghost',chosenClass:'sortable-chosen',dragClass:'sortable-drag',
+      onStart:function(){document.body.classList.add('is-dragging');},
+      onEnd:function(){document.body.classList.remove('is-dragging');renumber();}});  // sıra değişince yeniden numarala
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',initSortable);
+  else initSortable();
+
+  /* ---- Kaydet / Yayınla → toast ---- */
   var saveDraft=document.getElementById('saveDraft');
   var publish=document.getElementById('publish');
   if(saveDraft) saveDraft.addEventListener('click',function(){

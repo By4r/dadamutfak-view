@@ -1309,9 +1309,41 @@ body:not(.is-auth) .rev-login{display:flex}
 .acct-menu .acct-pro:hover,.acct-menu .acct-pro:hover i{color:#8a6410}
 .vid-pro{display:inline-flex;align-items:center;gap:5px;font-size:10px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:#8a6410;background:linear-gradient(180deg,#fbe6b4,#f3d178);border:1px solid #e0bc63;padding:2px 8px;border-radius:999px;vertical-align:middle;margin-left:9px}
 .vid-pro i{font-size:9px}
+
+/* ===== C2 — işletme sahibi önizleme bandı (?owner=1; sa-gozetim dil deseni) =====
+   Yalnız bant: inline editing AÇILMAZ. body.is-owner ile fixed kabuk 40px aşağı itilir,
+   sticky offset'ler (pf-tabbar 112→152, md-side 130→170) bantın altına kayar. */
+.sa-owner-bar{display:none;position:fixed;top:0;left:0;right:0;z-index:80;height:40px;
+  align-items:center;justify-content:center;gap:16px;padding:0 20px;
+  background:linear-gradient(180deg,#E14827,#c43d1f);color:#fff;
+  box-shadow:0 2px 12px rgba(33,30,22,.18)}
+body.is-owner .sa-owner-bar{display:flex}
+.sa-owner-bar .so-txt{display:inline-flex;align-items:center;gap:8px;font-size:12.5px;font-weight:600;color:rgba(255,255,255,.92)}
+.sa-owner-bar .so-txt i{font-size:11px}
+.sa-owner-bar .so-txt strong{font-weight:800;color:#fff}
+.sa-owner-bar .so-act{display:inline-flex;align-items:center;gap:7px;font-size:12.5px;font-weight:700;
+  color:#fff;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.4);
+  padding:6px 13px;border-radius:var(--radius-sm);text-decoration:none;transition:.2s var(--ease)}
+.sa-owner-bar .so-act:hover{background:#fff;color:#E14827;border-color:#fff}
+.sa-owner-bar .so-act i{font-size:11px}
+body.is-owner .topbar{top:40px}
+body.is-owner .header{top:80px}
+body.is-owner .pf-tabbar{top:152px}
+body.is-owner .md-side{top:170px}
+@media(max-width:560px){
+  .sa-owner-bar{gap:10px;padding:0 12px}
+  .sa-owner-bar .so-txt{font-size:11.5px}
+  .sa-owner-bar .so-txt .so-hide{display:none}
+}
 </style>
 </head>
 <body data-brand="mutfak">
+
+<!-- ===== C2 — işletme sahibi önizleme bandı (?owner=1; salt görsel, inline editing yok) ===== -->
+<div class="sa-owner-bar" role="status">
+  <span class="so-txt"><i class="fa-solid fa-eye"></i> <strong>Ziyaretçi görünümü</strong><span class="so-hide"> · profilini müşterilerinin gördüğü gibi önizliyorsun</span></span>
+  <a class="so-act" href="mekan-panel-v1.html"><i class="fa-solid fa-pen-to-square"></i> Panelden Düzenle</a>
+</div>
 
 <!-- ===== TOP UTILITY BAR ===== -->
 <div class="topbar">
@@ -2567,6 +2599,9 @@ body:not(.is-auth) .rev-login{display:flex}
   var bnAcc = document.getElementById('bnAccount');
   if(bnAcc){ bnAcc.setAttribute('href', authed ? 'mutfak-defteri-v1.html' : 'giris-v1.html'); }
 })();
+
+// C2 — ?owner=1 → sahibe özel önizleme bandı (salt görsel; inline editing açılmaz)
+if(location.search.indexOf('owner=1')>-1){ document.body.classList.add('is-owner'); }
 
 if(location.search.indexOf('dd=1')>-1){document.querySelector('.nav-item').classList.add('open');var _l=document.getElementById('tbLang');if(_l)_l.classList.add('open');}
 if(location.search.indexOf('drawer=1')>-1){window.addEventListener('DOMContentLoaded',function(){document.getElementById('drawer').classList.add('open');document.getElementById('drawerOverlay').classList.add('open');var _s=document.querySelector('.d-has-sub');if(_s)_s.classList.add('open');});}

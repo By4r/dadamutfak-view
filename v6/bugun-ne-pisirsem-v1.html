@@ -1037,9 +1037,28 @@ html,body{overflow-x:hidden}
 .md-back i{font-size:12px}
 .md-head{margin-bottom:20px}
 .md-head .eyebrow{margin-bottom:11px}
-.md-head h2{font-size:27px;letter-spacing:-.02em;outline:none;display:inline-block}
-.md-head h2[contenteditable=true]{border-bottom:2px dashed var(--tomato);padding-bottom:2px}
+.md-head h2{font-size:27px;letter-spacing:-.02em;outline:none;display:inline-flex;align-items:center;gap:11px}
+/* başlık yanında düzenle ipucu — adı tıklanabilir his verir (item-1) */
+.md-head h2 .md-title-pen{flex:none;width:30px;height:30px;border-radius:var(--radius-sm);border:1px solid var(--line);background:var(--paper);color:var(--muted);font-size:12px;cursor:pointer;display:grid;place-items:center;transition:.18s var(--ease)}
+.md-head h2 .md-title-pen:hover{border-color:var(--tomato);color:var(--tomato);background:var(--tomato-tint)}
 .md-sub{font-size:14px;color:var(--muted);font-weight:500;margin-top:8px;max-width:620px}
+/* INLINE RENAME EDİTÖRÜ — contenteditable yerine etiketli alan (item-1) */
+.md-rename{display:none;background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-lg);box-shadow:var(--sh-sm);padding:18px 20px;max-width:520px;animation:fadeUp .2s var(--ease)}
+.md-rename.show{display:block}
+.md-rename .mr-lbl{display:flex;align-items:center;gap:8px;font-size:12px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);margin-bottom:9px}
+.md-rename .mr-lbl i{color:var(--tomato);font-size:12px}
+.md-rename .mr-field{position:relative;display:flex;align-items:center}
+.md-rename .mr-input{flex:1;min-width:0;font-family:inherit;font-size:18px;font-weight:800;color:var(--slate);letter-spacing:-.01em;background:var(--bg);border:1.5px solid var(--line);border-radius:var(--radius-md);padding:12px 14px;outline:none;transition:border-color .16s var(--ease)}
+.md-rename .mr-input:focus{border-color:var(--tomato);background:var(--paper)}
+.md-rename .mr-input::placeholder{color:var(--muted);font-weight:600}
+.md-rename .mr-hint{font-size:12px;color:var(--muted);font-weight:500;margin-top:8px}
+.md-rename .mr-acts{display:flex;gap:10px;margin-top:15px}
+.md-rename .mr-save{display:inline-flex;align-items:center;gap:8px;background:var(--tomato);color:#fff;border:none;border-radius:var(--radius-md);font-family:inherit;font-size:13.5px;font-weight:700;padding:11px 18px;cursor:pointer;transition:.18s var(--ease)}
+.md-rename .mr-save:hover{background:var(--tomato-dark,#c13a1e)}
+.md-rename .mr-cancel{display:inline-flex;align-items:center;gap:8px;background:var(--paper);color:var(--slate);border:1px solid var(--line);border-radius:var(--radius-md);font-family:inherit;font-size:13.5px;font-weight:700;padding:11px 16px;cursor:pointer;transition:.18s var(--ease)}
+.md-rename .mr-cancel:hover{border-color:var(--slate)}
+.md-head.editing h2{display:none}
+.md-head.editing .md-sub{display:none}
 .btn-sm{padding:10px 15px;font-size:13px}
 
 /* kap kartı aksiyon satırı (Değiştir | Çıkar) — mc-swap yerine ikili */
@@ -2059,10 +2078,22 @@ body.is-ramazan .below-header,body.rmz-ask .below-header,body.is-ramazan .rd-top
     <!-- MENÜ DETAYI (koleksiyon mantığı: kap ekle / çıkar / değiştir) -->
     <div class="menu-detail" id="menuDetail" hidden>
       <button class="md-back" id="mdBack" type="button"><i class="fa-solid fa-arrow-left"></i> Menülere dön</button>
-      <div class="md-head">
+      <div class="md-head" id="mdHead">
         <span class="eyebrow"><i class="fa-solid fa-list-check"></i> Menünü Düzenle</span>
-        <h2 id="mdTitle">Menü</h2>
+        <h2 id="mdTitle"><span id="mdTitleText">Menü</span><button class="md-title-pen" id="mdTitlePen" type="button" aria-label="Menü adını değiştir" title="Menü adını değiştir"><i class="fa-solid fa-pen"></i></button></h2>
         <p class="md-sub" id="mdSub">Kapları ekle, çıkar ya da değiştir — bu menü senin koleksiyonun. Hazır olunca adım adım pişir.</p>
+        <!-- INLINE RENAME EDİTÖRÜ (item-1) -->
+        <div class="md-rename" id="mdRenameBox">
+          <label class="mr-lbl" for="mdRenameInput"><i class="fa-solid fa-pen"></i> Menü adı</label>
+          <div class="mr-field">
+            <input class="mr-input" id="mdRenameInput" type="text" maxlength="60" placeholder="Örn. Pazar Kahvaltısı" autocomplete="off" />
+          </div>
+          <p class="mr-hint">Bu menüyü defterinde bu adla bulacaksın.</p>
+          <div class="mr-acts">
+            <button class="mr-save" id="mdRenameSave" type="button"><i class="fa-solid fa-check"></i> Kaydet</button>
+            <button class="mr-cancel" id="mdRenameCancel" type="button">Vazgeç</button>
+          </div>
+        </div>
       </div>
       <div class="menu-bar-sec"><div class="menu-bar">
         <div class="menu-bar-meta" id="mdMeta"></div>
@@ -2761,7 +2792,7 @@ document.addEventListener('click',function(e){
     if(typeof updateTray==='function')updateTray();              // yüzen tepsi: detay açılınca gizle / kapanınca geri getir
   }
   function showDetail(){
-    document.getElementById('mdTitle').textContent=working.title;
+    document.getElementById('mdTitleText').textContent=working.title;
     browseEls(false);
     document.getElementById('mlEmpty').hidden=true;
     detail.hidden=false; renderDetail();
@@ -2911,15 +2942,31 @@ document.addEventListener('click',function(e){
   rpOverlay.addEventListener('click',closePicker);
   document.addEventListener('keydown',function(e){if(e.key==='Escape'&&rpModal.classList.contains('show'))closePicker();});
 
-  // rename (koleksiyon: güncelle)
-  document.getElementById('mdRename').addEventListener('click',function(){
-    var t=document.getElementById('mdTitle');
-    t.setAttribute('contenteditable','true');t.focus();
-    var rg=document.createRange();rg.selectNodeContents(t);var sel=window.getSelection();sel.removeAllRanges();sel.addRange(rg);
-    function done(){t.removeAttribute('contenteditable');working.title=(t.textContent||'').trim()||working.title;t.textContent=working.title;t.removeEventListener('blur',done);}
-    t.addEventListener('blur',done);
-    t.addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();t.blur();}});
-  });
+  // rename (koleksiyon: güncelle) — inline etiketli editör (contenteditable yerine)
+  (function(){
+    var head=document.getElementById('mdHead'), box=document.getElementById('mdRenameBox'),
+        input=document.getElementById('mdRenameInput'), titleText=document.getElementById('mdTitleText');
+    function openRename(){
+      if(!working)return;
+      input.value=working.title||'';
+      head.classList.add('editing'); box.classList.add('show');
+      input.focus(); input.select();
+    }
+    function closeRename(){ head.classList.remove('editing'); box.classList.remove('show'); }
+    function saveRename(){
+      var v=(input.value||'').trim();
+      if(v){ working.title=v; titleText.textContent=v; }
+      closeRename();
+    }
+    document.getElementById('mdRename').addEventListener('click',openRename);
+    document.getElementById('mdTitlePen').addEventListener('click',openRename);
+    document.getElementById('mdRenameSave').addEventListener('click',saveRename);
+    document.getElementById('mdRenameCancel').addEventListener('click',closeRename);
+    input.addEventListener('keydown',function(e){
+      if(e.key==='Enter'){e.preventDefault();saveRename();}
+      else if(e.key==='Escape'){e.preventDefault();closeRename();}
+    });
+  })();
   // Deftere Kaydet köprüsü (İA §4): logged-in → toast + defter menüler linki; logged-out → lg-gate
   document.getElementById('mdSave').addEventListener('click',function(){
     if(!working){return;}                                  // menü seçilmeden tıklanırsa (edge/programatik) — TypeError guard

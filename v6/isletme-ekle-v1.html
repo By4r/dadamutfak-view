@@ -853,6 +853,22 @@ html,body{overflow-x:clip}
 .ol-submit .sub-note{font-size:12.5px;color:var(--muted);font-weight:500;max-width:280px}
 .ol-submit .btn{padding:15px 30px;font-size:15px}
 
+/* ---- İKİ FAZ: temel kayıt → (mock geçiş) → ekstra detay ---- */
+/* faz-2 (ekstra detay alanları) başta GİZLİ; mock "kayıt tamamlandı" ile açılır */
+.ol-phase2{display:none}
+body.reg-done .ol-phase2{display:block}
+/* faz-1 sonu mock kayıt CTA — kayıt tamamlanınca gizlenir */
+.ol-reg-cta{display:flex;flex-direction:column;gap:6px;margin-top:4px}
+body.reg-done .ol-reg-cta{display:none}
+.ol-reg-cta .btn{padding:15px 30px;font-size:15px;align-self:flex-start}
+.ol-reg-cta .sub-note{font-size:12.5px;color:var(--muted);font-weight:500}
+/* kayıt tamamlandı bildirimi (faz-2 başında) — başta gizli */
+.ol-reg-ok{display:none;align-items:center;gap:12px;background:rgba(0,157,79,.07);border:1px solid rgba(0,157,79,.22);border-radius:var(--radius-md);padding:14px 18px;margin-bottom:22px}
+body.reg-done .ol-reg-ok{display:flex}
+.ol-reg-ok i{flex:none;width:34px;height:34px;border-radius:var(--radius-circle);background:var(--c-green);color:#fff;display:grid;place-items:center;font-size:14px}
+.ol-reg-ok b{display:block;font-size:14px;color:var(--slate);font-weight:700}
+.ol-reg-ok span{font-size:12.5px;color:var(--muted);font-weight:500}
+
 /* ---- yan ray: süreç + fayda ---- */
 .ol-side{position:sticky;top:130px;display:flex;flex-direction:column;gap:18px}
 .tips-card{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-lg);box-shadow:var(--sh-sm);padding:22px}
@@ -878,6 +894,15 @@ html,body{overflow-x:clip}
 .sn-item.is-active .sn-n{background:var(--green);color:#fff;border-color:var(--green);box-shadow:0 0 0 4px rgba(59,183,126,.16)}
 .sn-item.is-active .sn-t{color:var(--green);font-weight:700}
 .sn-item.is-active .sn-go{opacity:1;transform:translateX(0)}
+/* — faz grupları (Temel Kayıt / Profil Detayları) + kilit rozeti — */
+.sn-group{display:flex;align-items:center;gap:8px;font-size:10.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:10px 0 4px;padding:0 8px}
+.sn-group:first-child{margin-top:0}
+.sn-lock{display:inline-flex;align-items:center;gap:4px;font-size:9.5px;font-weight:700;letter-spacing:.04em;text-transform:none;color:var(--muted);background:var(--bg-cream);border:1px solid var(--line);padding:2px 7px;border-radius:var(--radius-pill)}
+.sn-lock i{font-size:8.5px}
+/* faz-2 nav öğeleri kayıt öncesi kilitli (soluk + tıklanamaz); kayıt sonrası açılır */
+.sn-extra{opacity:.45;pointer-events:none}
+body.reg-done .sn-extra{opacity:1;pointer-events:auto}
+body.reg-done .sn-group-extra .sn-lock{display:none}
 /* — ayraç — */
 .tips-div{height:1px;background:var(--line);margin:16px 0 14px}
 /* — ZONE 2: PASİF süreç bilgisi (muted, küçük noktalı timeline; tıklanmaz) — */
@@ -1405,22 +1430,22 @@ html,body{overflow-x:clip}
             <h2><i class="fa-solid fa-store"></i> İşletme Bilgileri</h2>
             <span class="fc-step">1 / 4</span>
           </div>
-          <div class="fk-field"><label class="fk-label">İşletme Adı <span class="req">*</span></label><input type="text" class="fk-input" placeholder="Örn. Nalia Karadeniz Mutfağı" required /></div>
+          <div class="fk-field"><label class="fk-label">İşletme Adı <span class="req">*</span></label><input type="text" class="fk-input" placeholder="Örn. Nalia Karadeniz Mutfağı" value="Nalia Karadeniz Mutfağı" required /></div>
           <div class="fk-grid c2">
             <div class="fk-field"><label class="fk-label">Mutfak Türü <span class="req">*</span></label>
-              <select class="fk-select" required><option value="" selected disabled>Mutfak türü seç</option><option>Karadeniz Mutfağı</option><option>Ev Yemekleri</option><option>Et &amp; Kebap</option><option>Deniz Ürünleri</option><option>Kahvaltı &amp; Kafe</option><option>Dünya Mutfağı</option><option>Tatlı &amp; Pastane</option></select>
+              <select class="fk-select" required><option value="" disabled>Mutfak türü seç</option><option selected>Karadeniz Mutfağı</option><option>Ev Yemekleri</option><option>Et &amp; Kebap</option><option>Deniz Ürünleri</option><option>Kahvaltı &amp; Kafe</option><option>Dünya Mutfağı</option><option>Tatlı &amp; Pastane</option></select>
             </div>
             <div class="fk-field"><label class="fk-label">Fiyat Aralığı <span class="req">*</span></label>
-              <select class="fk-select" required><option value="" selected disabled>Seç</option><option>₺ · Ekonomik</option><option>₺₺ · Orta seviye</option><option>₺₺₺ · Üst seviye</option></select>
+              <select class="fk-select" required><option value="" disabled>Seç</option><option>₺ · Ekonomik</option><option selected>₺₺ · Orta seviye</option><option>₺₺₺ · Üst seviye</option></select>
             </div>
           </div>
           <div class="fk-grid c2">
             <div class="fk-field"><label class="fk-label">Şehir <span class="req">*</span></label>
-              <select class="fk-select" required><option value="" selected disabled>Şehir seç</option><option>İstanbul</option><option>Ankara</option><option>İzmir</option><option>Bursa</option><option>Antalya</option><option>Diğer</option></select>
+              <select class="fk-select" required><option value="" disabled>Şehir seç</option><option selected>İstanbul</option><option>Ankara</option><option>İzmir</option><option>Bursa</option><option>Antalya</option><option>Diğer</option></select>
             </div>
-            <div class="fk-field"><label class="fk-label">İlçe / Semt <span class="req">*</span></label><input type="text" class="fk-input" placeholder="Örn. İçerenköy, Ataşehir" required /></div>
+            <div class="fk-field"><label class="fk-label">İlçe / Semt <span class="req">*</span></label><input type="text" class="fk-input" placeholder="Örn. İçerenköy, Ataşehir" value="İçerenköy, Ataşehir" required /></div>
           </div>
-          <div class="fk-field"><label class="fk-label">Açık Adres <span class="req">*</span></label><input type="text" class="fk-input" placeholder="Mahalle, cadde, no" required /></div>
+          <div class="fk-field"><label class="fk-label">Açık Adres <span class="req">*</span></label><input type="text" class="fk-input" placeholder="Mahalle, cadde, no" value="Çayır Cad. No:24, İçerenköy" required /></div>
         </div>
 
         <!-- 2. İletişim & Sahip -->
@@ -1430,29 +1455,48 @@ html,body{overflow-x:clip}
             <span class="fc-step">2 / 4</span>
           </div>
           <div class="fk-grid c2">
-            <div class="fk-field"><label class="fk-label">Yetkili Ad Soyad <span class="req">*</span></label><input type="text" class="fk-input" placeholder="İşletme yetkilisi" required /></div>
-            <div class="fk-field"><label class="fk-label">Yetkili Telefon <span class="req">*</span></label><input type="tel" class="fk-input" placeholder="0(5__) ___ __ __" required /></div>
+            <div class="fk-field"><label class="fk-label">Yetkili Ad Soyad <span class="req">*</span></label><input type="text" class="fk-input" placeholder="İşletme yetkilisi" value="Naciye Yıldız" required /></div>
+            <div class="fk-field"><label class="fk-label">Yetkili Telefon <span class="req">*</span></label><input type="tel" class="fk-input" placeholder="0(5__) ___ __ __" value="0532 184 70 26" required /></div>
           </div>
           <div class="fk-grid c2">
-            <div class="fk-field"><label class="fk-label">E-posta <span class="req">*</span></label><input type="email" class="fk-input" placeholder="rezervasyon@isletmen.com" required /></div>
-            <div class="fk-field"><label class="fk-label">İşletme Telefonu <span class="req">*</span></label><input type="tel" class="fk-input" placeholder="0(2__) ___ __ __" required /></div>
+            <div class="fk-field"><label class="fk-label">E-posta <span class="req">*</span></label><input type="email" class="fk-input" placeholder="rezervasyon@isletmen.com" value="rezervasyon@naliamutfak.com" required /></div>
+            <div class="fk-field"><label class="fk-label">İşletme Telefonu <span class="req">*</span></label><input type="tel" class="fk-input" placeholder="0(2__) ___ __ __" value="0216 472 18 90" required /></div>
           </div>
           <div class="fk-grid c2">
-            <div class="fk-field"><label class="fk-label">Web Sitesi <span class="opt">(opsiyonel)</span></label><input type="url" class="fk-input" placeholder="ornek.com" /></div>
-            <div class="fk-field"><label class="fk-label">Instagram <span class="opt">(opsiyonel)</span></label><input type="text" class="fk-input" placeholder="@isletmen" /></div>
+            <div class="fk-field"><label class="fk-label">Web Sitesi <span class="opt">(opsiyonel)</span></label><input type="url" class="fk-input" placeholder="ornek.com" value="naliamutfak.com" /></div>
+            <div class="fk-field"><label class="fk-label">Instagram <span class="opt">(opsiyonel)</span></label><input type="text" class="fk-input" placeholder="@isletmen" value="@naliakaradenizmutfagi" /></div>
           </div>
           <div class="fk-field">
             <label class="fk-label">Vergi No / İşletme Belgesi No <span class="req">*</span></label>
-            <input type="text" class="fk-input" placeholder="Vergi numaran veya işletme ruhsat no" required />
+            <input type="text" class="fk-input" placeholder="Vergi numaran veya işletme ruhsat no" value="1234567890" required />
             <div class="fk-help green"><i class="fa-solid fa-shield-halved"></i><span>Bu bilgi yalnızca işletme doğrulaması için kullanılır, profilinde <b>gösterilmez</b>. Onaylanınca profiline &ldquo;Doğrulanmış Mekân&rdquo; rozeti eklenir.</span></div>
+          </div>
+        </div>
+
+        <!-- ===== FAZ-1 SONU — mock kayıt geçişi (gerçek auth yok) =====
+             Temel bilgiler tamamlanınca "Mekânı Kaydet" → body.reg-done → ekstra alanlar açılır. -->
+        <div class="ol-reg-cta">
+          <button class="btn btn-primary" id="olRegister" type="button"><i class="fa-solid fa-circle-check"></i> Mekânı Kaydet &amp; Devam Et</button>
+          <span class="sub-note">Önce mekânını kaydet; ardından hizmet, görsel ve tanıtım gibi profil detaylarını ekleyebilirsin.</span>
+        </div>
+
+        <!-- ===== FAZ-2 — EKSTRA DETAYLAR (başta gizli; kayıt sonrası açılır) ===== -->
+        <div class="ol-phase2" id="olPhase2">
+          <div class="ol-reg-ok"><i class="fa-solid fa-check"></i><div><b>Mekânın kaydedildi.</b><span>Şimdi profil detaylarını ekleyerek başvurunu güçlendir.</span></div></div>
+
+          <!-- 3. Hizmetler & Çalışma Saatleri (faz-1'den taşındı) -->
+          <div class="form-card" id="adim-3">
+          <div class="fc-head">
+            <h2><i class="fa-solid fa-list-check"></i> Hizmetler &amp; Saatler</h2>
+            <span class="fc-step">3 / 5</span>
           </div>
           <div class="fk-field">
             <label class="fk-label">Sunulan Hizmetler <span class="req">*</span> <span class="fk-count"><span id="uzCount">0</span> seçildi</span></label>
             <div class="uz-grid" id="uzGrid">
-            <button class="uz-pick" type="button"><i class="fa-solid fa-check"></i> Masada Servis</button>
-            <button class="uz-pick" type="button"><i class="fa-solid fa-check"></i> Rezervasyon</button>
-            <button class="uz-pick" type="button"><i class="fa-solid fa-check"></i> Kahvaltı Servisi</button>
-            <button class="uz-pick" type="button"><i class="fa-solid fa-check"></i> Bahçe / Teras</button>
+            <button class="uz-pick on" type="button"><i class="fa-solid fa-check"></i> Masada Servis</button>
+            <button class="uz-pick on" type="button"><i class="fa-solid fa-check"></i> Rezervasyon</button>
+            <button class="uz-pick on" type="button"><i class="fa-solid fa-check"></i> Kahvaltı Servisi</button>
+            <button class="uz-pick on" type="button"><i class="fa-solid fa-check"></i> Bahçe / Teras</button>
             <button class="uz-pick" type="button"><i class="fa-solid fa-check"></i> Aile Dostu</button>
             <button class="uz-pick" type="button"><i class="fa-solid fa-check"></i> Otopark</button>
             <button class="uz-pick" type="button"><i class="fa-solid fa-check"></i> Kart Geçerli</button>
@@ -1466,14 +1510,14 @@ html,body{overflow-x:clip}
           </div>
           <div class="fk-field">
             <label class="fk-label">Çalışma Saatleri Özeti <span class="opt">(opsiyonel)</span></label>
-            <input type="text" class="fk-input" placeholder="Örn. Her gün 12.00 – 23.00, Pazar kapalı" />
+            <input type="text" class="fk-input" placeholder="Örn. Her gün 12.00 – 23.00, Pazar kapalı" value="Her gün 12.00 – 23.00, Pazartesi kapalı" />
           </div>
         </div>
-        <!-- 3. İşletme Görselleri -->
-        <div class="form-card" id="adim-3">
+        <!-- 4. İşletme Görselleri -->
+        <div class="form-card" id="adim-4">
           <div class="fc-head">
             <h2><i class="fa-solid fa-images"></i> İşletme Görselleri</h2>
-            <span class="fc-step">3 / 4</span>
+            <span class="fc-step">4 / 5</span>
           </div>
           <div class="fk-field">
             <label class="fk-label">Kapak Fotoğrafı <span class="req">*</span></label>
@@ -1492,15 +1536,15 @@ html,body{overflow-x:clip}
           </div>
         </div>
 
-        <!-- 4. Tanıtım & Rezervasyon -->
-        <div class="form-card" id="adim-4">
+        <!-- 5. Tanıtım & Rezervasyon -->
+        <div class="form-card" id="adim-5">
           <div class="fc-head">
             <h2><i class="fa-solid fa-bullhorn"></i> Tanıtım &amp; Rezervasyon</h2>
-            <span class="fc-step">4 / 4</span>
+            <span class="fc-step">5 / 5</span>
           </div>
           <div class="fk-field">
             <label class="fk-label">Kısa Tanıtım <span class="req">*</span> <span class="fk-count"><span id="bioCount">0</span>/600</span></label>
-            <textarea class="fk-textarea" id="bioText" maxlength="600" placeholder="Mekânını, mutfağını ve atmosferini anlat — profilinde gösterilir." required></textarea>
+            <textarea class="fk-textarea" id="bioText" maxlength="600" placeholder="Mekânını, mutfağını ve atmosferini anlat — profilinde gösterilir." required>Karadeniz'in köklü lezzetlerini İstanbul'a taşıyan, hamsili pilavdan kuymağa uzanan menüsüyle samimi bir ev sofrası deneyimi sunuyoruz. İçerenköy'deki bahçeli mekânımızda taze, mevsiminde ve yöresel malzemeyle pişiriyoruz.</textarea>
           </div>
           <div class="fk-field">
             <label class="fk-label">Servis Türü <span class="req">*</span></label>
@@ -1511,7 +1555,7 @@ html,body{overflow-x:clip}
           </div>
           <div class="fk-field">
             <label class="fk-label">Rezervasyon kabul edeceğin saat dilimleri <span class="opt">(opsiyonel)</span></label>
-            <input type="text" class="fk-input" placeholder="Örn. Öğle 12.00–15.00, Akşam 18.30–22.30" />
+            <input type="text" class="fk-input" placeholder="Örn. Öğle 12.00–15.00, Akşam 18.30–22.30" value="Öğle 12.00–15.00, Akşam 18.30–22.30" />
           </div>
           <div class="fk-field">
             <label class="fk-label">Rezervasyon Notu <span class="opt">(opsiyonel)</span></label>
@@ -1520,11 +1564,11 @@ html,body{overflow-x:clip}
 
           <div class="ol-consents">
             <label class="fb-kvkk">
-              <input type="checkbox" required />
+              <input type="checkbox" required checked />
               <span>Verdiğim işletme ve belge bilgilerinin <a href="#">doğrulanması</a> amacıyla işlenmesine açık rıza veriyorum.</span>
             </label>
             <label class="fb-kvkk">
-              <input type="checkbox" required />
+              <input type="checkbox" required checked />
               <span><a href="#">İşletme Sözleşmesi</a>, <a href="yasal-v1.html?metin=aydinlatma">Aydınlatma Metni</a> ve <a href="yasal-v1.html?metin=kvkk">KVKK Metni</a>&apos;ni okudum, onaylıyorum.</span>
             </label>
           </div>
@@ -1535,6 +1579,7 @@ html,body{overflow-x:clip}
             <button class="btn btn-primary" id="olSubmit" type="submit"><i class="fa-solid fa-paper-plane"></i> Başvuruyu Gönder</button>
           </div>
         </div>
+        </div><!-- /.ol-phase2 -->
       </form>
 
       <!-- başarı durumu (form yerine geçer) — aynı sol sütunda, formun yerine geçer -->
@@ -1548,7 +1593,7 @@ html,body{overflow-x:clip}
           <span><i class="fa-solid fa-comments"></i> Ön görüşme</span>
           <span><i class="fa-solid fa-rocket"></i> Yayında</span>
         </div>
-        <a href="hesabim-v1.html?tab=isletmem" class="btn btn-ghost"><i class="fa-solid fa-arrow-left"></i> Hesabıma Dön</a>
+        <a href="mekan-panel-v1.html?business=1" class="btn btn-primary"><i class="fa-solid fa-gauge-high"></i> Mekân Paneline Git</a>
       </div>
       </div><!-- /.ol-main (sol sütun) -->
 
@@ -1558,10 +1603,13 @@ html,body{overflow-x:clip}
           <!-- ZONE 1: interaktif FORM BÖLÜMÜ nav'ı (etiketler fc-head başlıklarıyla bire bir) -->
           <div class="sn-head"><i class="fa-solid fa-list-check"></i> Bölümler</div>
           <nav class="sn-nav" aria-label="Form bölümleri" id="snNav">
+            <div class="sn-group">Temel Kayıt</div>
             <a class="sn-item" href="#adim-1"><span class="sn-n">1</span><span class="sn-t">İşletme Bilgileri</span><i class="fa-solid fa-arrow-right sn-go"></i></a>
             <a class="sn-item" href="#adim-2"><span class="sn-n">2</span><span class="sn-t">İletişim &amp; Yetkili</span><i class="fa-solid fa-arrow-right sn-go"></i></a>
-            <a class="sn-item" href="#adim-3"><span class="sn-n">3</span><span class="sn-t">İşletme Görselleri</span><i class="fa-solid fa-arrow-right sn-go"></i></a>
-            <a class="sn-item" href="#adim-4"><span class="sn-n">4</span><span class="sn-t">Tanıtım &amp; Rezervasyon</span><i class="fa-solid fa-arrow-right sn-go"></i></a>
+            <div class="sn-group sn-group-extra">Profil Detayları <span class="sn-lock"><i class="fa-solid fa-lock"></i> kayıt sonrası</span></div>
+            <a class="sn-item sn-extra" href="#adim-3"><span class="sn-n">3</span><span class="sn-t">Hizmetler &amp; Saatler</span><i class="fa-solid fa-arrow-right sn-go"></i></a>
+            <a class="sn-item sn-extra" href="#adim-4"><span class="sn-n">4</span><span class="sn-t">İşletme Görselleri</span><i class="fa-solid fa-arrow-right sn-go"></i></a>
+            <a class="sn-item sn-extra" href="#adim-5"><span class="sn-n">5</span><span class="sn-t">Tanıtım &amp; Rezervasyon</span><i class="fa-solid fa-arrow-right sn-go"></i></a>
           </nav>
           <div class="tips-div"></div>
           <!-- ZONE 2: PASİF süreç bilgisi (başvuru sonrası; tıklanmaz, copy aynen) -->
@@ -1979,6 +2027,7 @@ document.addEventListener('click',function(e){
   var params=new URLSearchParams(location.search);
   // hizmet çoklu seçim (max 5)
   var uzCount=document.getElementById('uzCount');
+  if(uzCount)uzCount.textContent=document.querySelectorAll('.uz-pick.on').length;   // önceden dolu mock seçimi yansıt
   document.querySelectorAll('.uz-pick').forEach(function(b){
     b.addEventListener('click',function(){
       var on=b.classList.contains('on');
@@ -1990,11 +2039,20 @@ document.addEventListener('click',function(e){
   });
   // biyografi sayaç
   var bio=document.getElementById('bioText'),bioCount=document.getElementById('bioCount');
-  if(bio)bio.addEventListener('input',function(){bioCount.textContent=bio.value.length;});
+  if(bio){bioCount.textContent=bio.value.length;bio.addEventListener('input',function(){bioCount.textContent=bio.value.length;});}
   // up-zone "kaldır"
   document.querySelectorAll('.up-done .x').forEach(function(x){
     x.addEventListener('click',function(){x.closest('.up-done').style.display='none';});
   });
+  // FAZ-1 → FAZ-2 mock geçişi: "Mekânı Kaydet" → body.reg-done → ekstra alanlar açılır (gerçek auth yok)
+  var regBtn=document.getElementById('olRegister'),phase2=document.getElementById('olPhase2');
+  function openPhase2(scroll){
+    document.body.classList.add('reg-done');
+    if(scroll&&phase2){ phase2.scrollIntoView({behavior:'smooth',block:'start'}); }
+  }
+  if(regBtn)regBtn.addEventListener('click',function(){ openPhase2(true); });
+  if(params.get('reg')==='1')openPhase2(false);   // SS/test: ekstra alanları açık başlat
+
   // gönder → başarı (mock)
   var form=document.getElementById('olForm'),success=document.getElementById('olSuccess');
   function showSuccess(){form.style.display='none';success.classList.add('show');window.scrollTo({top:0,behavior:'smooth'});}
