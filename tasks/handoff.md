@@ -1,23 +1,113 @@
-# DadaMutfak — Handoff (MEGA-REVİZE D1 + round2 + ek + ufak fix · ✅ CANLI — PUSH EDİLDİ)
+# DadaMutfak — Handoff (SIRADAKİ: Yol Güzergahım v2 — DALGA 1 COMMIT'Lİ `8a15890`, PUSH YOK · temiz pencere kuyruğu hazır)
 
-> Tarih: 2026-06-22. **Mega-revize Dalga-1 + round-2 + ek revize + ufak fix TAMAM, Beyar görsel onayladı, `origin/main`'e PUSH edildi (son commit `435d3fa`; öncesinde `7fce1c6`). GitHub Pages canlı.** Kanonik kabuk (sa-shell/sa-ui/sa-*.css/js) hiç dokunulmadı. **Klasör `v6/`.** (Alttaki tarihsel bölümler önceki oturum referansı.)
+> ## ⏸️ OTURUM SONU DURUMU (2026-06-24 — Yol Güzergahım v2 REVİZE **DALGA 1 KOMPLE + COMMIT'Lİ** · sıradaki: 2 görünürlük fix → Dalga 3 ön-analiz)
+>
+> **PROJE:** DadaMutfak yol güzergahı **BAŞTAN TASARIM** (Roadtrippers referanslı tam-ekran). Dosya: **`v6/yol-guzergahim-v2.html`** (v1 DOKUNULMUYOR). Revize karar tablosu: `tasks/yol-rev-plan.md` · keşif md'leri: `yol-rev-{renk,header,mobil,spec}.md` · implement plan: `yol-rev-implement-plan.md`.
+>
+> ### ✅ DALGA 1 — MEKANİK + RENK + INPUT-× — COMMIT'Lİ `8a15890` (push YOK — `origin/main` 4 commit önde: `0e3dcda`+`04a1434`+`9e83f5f`+`8a15890`)
+> Tek temiz commit, sadece `v6/yol-guzergahim-v2.html`. Playwright ALL PASS (1440/390, console/mojibake 0). İçerik:
+> - **Dada-soft palet:** domates gradient KALDIRILDI → soft beyaz kart + ince domates sol-aksan + küçük rozet (puf-noktaları ruhu) · **seçili-Dada bug fix** (yeşil kenar + köşe ✓ + Dada aksanı birlikte okunur).
+> - **Mesafe formatı:** tek `proxLabel` — `<0.5km`→**"Tam yol üstü"** ("0 km" gitti) · `<1km`→metre · `≥1km`→km · 4 yüzeyde tutarlı (kadran/detay/tam-liste/harita-preview).
+> - **Seçili harita pini:** Dada pin domates dolgu + **yeşil seçili halka (hover'da korunur)** · sade-seçili yeşil halka/kenar. **Detay "Dada öneriyor" rozeti** artık SADECE `dada:true` (`[hidden]` override — `display:inline-flex` UA'yı eziyordu).
+> - **Seçili hover preview:** ince 1px yeşil kenar + hafif yeşil overlay + köşe ✓ (padding ile metne binmez).
+> - **ROAD_POOL yeniden kuruldu:** **190 mekan / 33 şehir**, dada **~%19.5** (şehir başı 1-2 kuratoryal), İstanbul ağırlığı düştü · **deniz-üstü koordinat fix** (jitter ±0.044°→±0.009° + 11 kıyı şehir bazı karaya nudge; eski 26 deniz-mekanı→0).
+> - **Slider** track yeşil→sarı→domates + 3-kademe thumb · **krem** sadece cam panelde (placeholder/durum→nötr).
+> - **Durak input ×:** input İÇİ **clear ×** (`:placeholder-shown` ile metin varken görünür, input'u daraltmaz) + **AYRI satır-sil (trash)** kompakt (min-2 disabled) · input ferahladı (%81).
+>
+> ### 🎯 TEMİZ PENCERE KUYRUĞU (sıradaki oturumlar)
+> 1. **2 GÖRÜNÜRLÜK FIX (ilk iş):** (a) **alternatif rota görünürlüğü** — kod hazır ama public OSRM tek rota dönüyor; UI'da alternatiflerin nasıl belireceği/iletişimi netleşsin. (b) **Güzergahlarım'da Dada işareti** — kayıtlı liste/checkpoint satırında Dada mekanı görsel ayrımı (yol-rev-renk.md K6: petrol/domates sol-aksan).
+> 2. **DALGA 3 ÖN-ANALİZ (plan-first, KOD YOK):** checkpoint/ziyaret + "Tümü ziyaret edildi" sonrası tamamlama spec (yol-rev-spec.md temel: A+C toast+rozet+özet) · Güzergahlarım erişim (`?tab=saved` deep-link + Hesabım/Portal/Keşfet) · "Yeni rota" CTA. **CC analizine bırakılan açık karar aşağıda.**
+> 3. **DALGA 2 — header** (route-line üst şerit + **"ROTA PLANLAYICI" eyebrow**, K7=A) · **DALGA 4 — mobil** (Faz1 bottom-sheet detay → Faz4 390 breakpoint, yol-rev-mobil.md) · **DALGA 5 — veri** (alternatif rota prod-OSRM · "Troy/Truva" Beyar netleştirecek).
+>
+> ### KARARLAR — CHECKPOINT (4 ONAYLI + 1 açık)
+> ✅ **route-scoped ziyaret** (`visited{routeId:{ad}}`) · ✅ **bulaşma yok** (aynı mekan farklı güzergahta otomatik ziyaret görünmez) · ✅ **yeni rota tertemiz** (yeni güzergah 0 ziyaretle başlar) · ✅ **harita+liste çift sinyal** (pin + satır birlikte). ⏳ **5. KARAR — "Yolculuğu Başlat" ayrı bir mod mu** (planlama ↔ navigasyon/ziyaret modu ayrımı) → **Dalga 3 CC ön-analizine bırakıldı**, kod yok.
+>
+> ### MODÜL-YERLEŞİK SABİT KARARLAR
+> kaydet→toast + Güzergahlarım'a geç · kayıt adı otomatik (kalkış→varış) düzenlenebilir · mekan≠durak · Dada öneriyor elle `dada:true` · eşik oransal+slider · global harita Türkiye merkezli · tek-tip durak seçim sırasıyla (auto-reorder YOK) · mekan kartı sade.
+>
+> ### KURALLAR
+> izole sayfa-içi CSS/JS · kanonik kabuk (sa-shell/sa-ui/sa-*) DOKUNMA · v1 DOKUNMA · domates `#E14827` / yeşil `#009d4f` token (ham hex kaçın) · frontend-design + uiux-review skill · görsel QA tam-sayfa SS self-verify (1440/390) · commit yalnız onayla · **PUSH YOK** (Beyar ayrıca söyleyecek).
+>
+> ### WORKING-TREE (commit dışı, DOKUNMA): `sezon-v1.html` watermark (onaysız) · untracked plan/qa dosyaları (`yol-rev-*.mjs/.md`, `_gen_roadpool.mjs` dahil) · bu `handoff.md` (ayrı chore commit'i).
+>
+> ### ESKİ SIRADAKİLER (Yol v2 revize sonrası): RAPORLAR FAZ-3 (jargon hover tooltip, plan-first) · diğerleri aşağıda.
+>
+> ---
+>
+> Tarih: 2026-06-23. **Bu oturum: Admin-B FAZ-2 (2A içerik-tipi künye grupları + 2B Sofra yapısal gövde-toggle) , FAZ-3 Sözlük modülü ve merkezi Taksonomi konsolu TAMAM — Playwright ile bağımsız doğrulandı, `origin/main`'e PUSH edildi. Son commit `e0419ca` (Taksonomi konsolu); öncesinde `3534aae` (Sözlük A-Z birincil filtre), `c507e22` (Sözlük modülü), `0f92d7f` (FAZ-2A+2B), `1f00455` (faz-1).** GitHub Pages canlı. Kanonik kabuk (sa-shell/sa-ui/sa-*) — TEK izinli dokunuş SECTIONS'a nav satırları (Blog & İçerik · Sözlük · Taksonomi) + dizin linkleri + 3 liste köprüsü (tarifler/icerik/sozluk ph-actions); gerisine dokunulmadı. **Klasör `v6/`.**
 
-## ✅ BU OTURUM — TAMAMLANDI (push edildi · son commit `435d3fa`)
+## ✅ BU OTURUM — TAMAMLANDI (push edildi)
+
+**FAZ-3 — Sözlük yapısal modülü** (commit `c507e22` + A-Z revize `3534aae`). Mutfak Sırları'nın "Sözlük" başlığı makale DEĞİL (terim+tanım, yüzlerce kayıt) → AYRI yapısal CRUD, içerik formuna girmez. Plan `tasks/admin-b-faz3-sozluk-plan.md`.
+- **2 yeni izole sayfa:** `sa-admin-sozluk.html` (liste — `sa-admin-icerik` kardeşi: **A-Z bar [BİRİNCİL] + kategori chip [İKİNCİL] + arama, üçü AND** + ptable + saConfirm sil; 12 mock terim, harf-avatar + gloss alt-satır; **kategori rozeti = TEK `--acc` token-tint + kategoriye özel ikon**) + `sa-admin-sozluk-form.html` (kompakt satır-form — çerçeve `sa-admin-kullanicilar-form`: Terim/Yabancı ad/Kategori[5 vocab]/Harf/Tanım/Örnek/İlgili tarif; sağ panel Yayın Durumu + canlı önizleme, **SEO YOK**).
+- **Harf auto-fill TR-güvenli:** `toLocaleUpperCase('tr')` (İ/I tuzağı); elle düzeltince override korunur.
+- **A-Z birincil filtre (commit `3534aae`):** ilk karar "A-Z YOK" idi → REVİZE. Alfabetik gezinme sözlüğün imza etkileşimi → BİRİNCİL (public `sozluk-v1` azBar mantığı portu: Tümü + mevcut baş harfler aktif, olmayan disabled; harf `.tg-harf`'ten DOM-gerçek). Kategori chip İKİNCİL satıra indi. **Tek-satır yatay slider** (wrap yok, ince scrollbar). Ders → `tasks/lessons.md`.
+- **Nav + dizin (N-onaylı):** `sa-shell.js` SECTIONS.admin.menu +1 satır (`fa-spell-check` Sözlük, Blog & İçerik altına) + `dizin.html` ADMIN_GROUPS +2 link. is-active domates `#E14827` doğrulandı (liste+form).
+- **QA:** liste filtre/arama/boş-durum/saConfirm · form auto-fill/önizleme/override · nav is-active · dizin link 200 (404 yok) · 1440/390 render · UTF-8 0 mojibake · console 0 hata.
+
+**Merkezi Taksonomi konsolu** (commit `e0419ca`). `sa-admin-taksonomi.html` — yeni izole sayfa, iki-pane konsol (sol grup-kartları + sağ seçili-grup satırları), **5 grup: Tarif / Sözlük / İçerik Tipi / Ansiklopedi / Rol**. Sistemik açık (kategori/etiket vocab'ları hardcoded, yönetim yüzü yok) bu ekranla kapandı. Analiz/plan: `tasks/admin-tutarlilik-analiz.md` + `tasks/taksonomi-sema-analiz.md` + `tasks/admin-taksonomi-plan.md`.
+- **Tarif grubu:** gerçek **14 public kategori** (mega-menü ile eşit slug/ikon/sayaç; 8 placeholder atıldı) + **kapak görseli alanı** (div+bg cover/center, FileReader mock + boş placeholder ORTALI) + ikon seçici (foto+ikon birlikte). 10 kategori public foto ile seed, 4 boş (placeholder demosu). Satır chip'i: görselli→kapak thumbnail, görselsiz→ikon.
+- **İçerik Tipi / Rol = schema-driven modal blokları** (grup-koşullu): İçerik Tipi → URL ön-eki + künye grubu + gövde tipi · Rol → erişim bölümleri çoklu-seçim. Diğer 3 grup ad/slug/ikon. Satırda davranış/erişim özeti.
+- **Ekle/Düzenle = sayfa-içi modal** (TR-güvenli slug auto-fill, grup-bilinçli başlık/etiket/sil mesajı), sil = saConfirm. **Mock CRUD (persist etmez).** `--acc` token-tint, ham renk yok.
+- **Kabuk dokunuşu (izinli):** SECTIONS.admin.menu +1 (`fa-sitemap` Taksonomi, Sözlük altına) + `dizin.html` +1 link. **3 liste köprüsü:** tarifler "Kategorileri Yönet" · icerik "Tipleri Yönet" · sozluk "Kategorileri Yönet" (ph-actions `btn-ghost btn-sm + fa-tags`; **sözlük linki `#catChips` selektörü DIŞINDA** — filtre döngüsü güvenli).
+- **QA `tasks/taksonomi-qa.mjs` ALL PASS:** 14 tarif/gerçek slug · davranış+erişim satırları · modal grup-özel alanlar · kapak alanı tarif-only + 4 grupta YOK + placeholder ortalı · köprü 200×3 + sözlük selektör güvenli · 1440/390 render · console/mojibake 0.
+
+**FAZ-2 — İçerik tipi gövde tutarlılığı** (commit `0f92d7f`). `sa-admin-icerik-form.html` + `sa-admin-icerik.html`, kanonik kabuk dokunuşu YOK.
+- **2A:** `#f-tip` yeniden kuruldu (Mutfağa Giriş · Püf · **Ansiklopedi** aktif · **Sofra Düzeni** yeni · Gurme; **Sezon ÇIKARILDI** — Mutfak Sırları menüsünde değil, müstakil tema). Tip-toggle künye grupları: Mutfağa Giriş→Ders Künyesi · Ansiklopedi→Madde Künyesi + Besin Değeri repeater (SortableJS) · Sofra→Sofra Künyesi. Liste: +2 chip/badge/4 mock satır (Tümü 14).
+- **2B:** Gövde-toggle — Sofra Düzeni seçilince blok-editör gizlenir, yapısal gövde (Giriş + Adım repeater + İpucu checklist repeater) açılır; diğer 4 tipte blok-editör. **Kanıt:** gerçek DOM sayımı 4/5 tipte p/h2 makale gövdesi gösterdi (Mutfağa Giriş 14p/5h2 — Püf'ten fazla; Ansiklopedi 7p/4h2; Gurme 8p/2h2) → "sadece Püf blog" tezi çürütüldü, tek istisna Sofra (3p/0h2 + step/tip kartları).
+
+<details><summary>Önceki oturum — besin redirect + sticky 26 ekran (commit a2e9e44)</summary>
+- **Besin 4-rehber redirect:** `besin-kalori-cetveli`/`protein-rehberi`/`karbonhidrat-rehberi`/`yag-rehberi` → erken `location.replace('besin-degerleri-v1.html?tab=<slug>')`. Lead Playwright 4/4.
+- **Sticky sağ-sütun 26 ekran** (DadaFit `.summary-card` paritesi): 13 edit-form (`.side-card`) + 13 operatör/admin detay (yeni `.detail-side`). Her sayfanın kendi bp'si (900/980), `static` fallback base'den SONRA (cascade dersi → `sticky-media-cascade-order`). Lead grep 26/26 + Playwright 11 örnek PASS.
+</details>
+
+<details><summary>Önceki oturum — mega-revize (commit 435d3fa/7fce1c6)</summary>
 - **Mega-revize Dalga-1 + round-2 + ek revize + ufak fix** (commit `7fce1c6` + `435d3fa`). 3 şerit (public/isletme/admin-form) agent-team, lead Playwright/render ile bağımsız doğrulandı; kanonik kabuk 0 dokunuş.
 - **Public içerik (dada-revize 8 madde):** bugun-ne-pisirsem (rename UI), tarif-bulucu (filtre+protein), kesfet (Mekan Öner modal), mutfaga-giris + **YENİ mutfaga-giris-liste** (slider + Tümünü-gör fix), ansiklopedi, olcu-birimleri, sezon. (item-9 TBD.)
 - **İşletme akışı:** giris (rol→panel), hesabim (İşletmem söküldü), isletme-ekle (**faz-bölme**: temel kayıt → mock geçiş → ekstra alanlar), 4 mekan panel (consumer `SA_ACCOUNT_ITEMS`), mekan-detay (**?owner=1 önizleme bandı**), mekan-panel "Public Sayfam" tek-link→owner=1 (fazla CTA'lar söküldü).
 - **Admin tarif formu wizard paritesi:** `sa-admin-tarifler-form` — malzeme grup/drag(Sortable)/autocomplete/birim, adım AI-iyileştir/görsel/süre/drag, searchable mutfak multi-select + 14 etiket chip.
 - **tarif-bulucu ingredient slider:** 2-sütun cat-cols + çift-açma (sol→sağ eş, sik-dahil parite fix — latent çapraz bug çözüldü) + tek-satır slider (~5 görünür, 98px) + **15+ malzemeli kategori 2-row** (Sebzeler 20→2 satır). Filtre+protein korundu.
 - **sezon:** belirgin hilal/yıldız hero motifi + sayfa-geneli soluk watermark (opacity 0.08-0.09).
+</details>
 
-## ⏭️ KALAN İŞLER (öncelik sırası)
-1. **Besin 4-rehber kararı** — `besin-kalori-cetveli`/`protein-rehberi`/`karbonhidrat-rehberi`/`yag-rehberi` şu an **wave-öncesi temiz halde** (round-2 intro + round-1 bd-tab geri alındı, commit dışı). Karar: bd-tab geri al MI yoksa besin-degerleri konu-tab'a yönlendir Mİ. **Ayrı turda ele alınacak.**
-2. **sezon watermark daha belirgin** (ufak iterasyon — şu an 0.08-0.09).
-3. **İşletme login avatar/yönlendirme:** işletme girişinde header dropdown işletme avatarı + otomatik işletme paneli (B3 ile birlikte).
-4. **Sticky-sağ tutarlılık:** operatör edit-formlarında sağ sütun sticky var/yok keşfet, eksiklere (admin tarif form dahil) uygula.
-5. **B3 consumer-header sweep** (~93 public+isletme sayfa, header dropdown "Halka Açık Profilim") — EN SON.
-6. **Dalga 2:** Admin-B içerik modülü (ayrı modül + nav), Admin-C rapor (Yasin C-scope bekliyor), yol-guzergahim Leaflet (ayrı session), dada-revize 9. madde (Beyar dolduracak).
-7. **Yasin'e 2 soru:** A5 (admin eski-panel kapsamı) · C-scope (rapor detay önceliği).
+## ✅ TAMAMLANDI + PUSH'LI (origin/main `e0419ca..5405a9c`, GitHub Pages canlı)
+
+> 5 commit push edildi (bu + önceki turlar). Planlar diskte (untracked): `tasks/yol-guzergahim-research.md` · `tasks/raporlar-analiz-plan.md` · `tasks/raporlar-derin-plan.md` · `tasks/haftalik-menu-plan.md`. Tümü izole sayfa-içi CSS/JS, kanonik kabuk 0 dokunuş.
+
+**1. HAFTALIK MENÜ** (`haftalik-menu-v1.html`) — ✅ **`1e0010f`**: A.1 öğün-bazlı öneri sıralaması (`POOL.tags`+`MEAL_TAG_MAP`, `openTsr` `data-meal` okur) + B.3 öğün kalori özeti (`.mc-sum`). Bug fix: seed tek-tarifli hücreler `ensureStack`'ten geçti → 2. tarif kabul.
+
+**2. YOL GÜZERGAHIM** (`yol-guzergahim-v1.html`) — ⚠️ **`fef6530` (PUSH'LI canlıda) ama Beyar "sevmedim" → REVİZE BEKLİYOR**: gerçek OSRM routing (12s timeout+retry, çok-noktalı) · OpenRouteService şehir-yolu (`ORS_API_KEY=''` placeholder, boşken graceful mock fallback) · şehir ekle/çıkar/sürükle waypoint · şehir baloncuğu→mekan drawer · 2-katman yakınlık (≤5km Yol Üstü yeşil / 5-20km Yola Yakın gri) · "Gerçek yol"/"Tahmini" rozeti. **Beyar neyi sevmediğini netleştirecek → düzeltme.** (Geri alınmak istenirse `git revert fef6530`; iş kaybı yok.)
+
+**3. ADMIN RAPORLAR — DALGA 1+2** (`sa-admin-raporlar.html`) — ✅ **`5083ba8` (D1) + `bdd849c` (D2)**. Multi-brand hub analytics (plan `tasks/raporlar-derin-plan.md`):
+- **D1:** 2-seviyeli nav `Hub Genel`(L1)·`Markalar`(L2) `|` `Kıyas`·`Finansal`·`Kitle & Kohort`·`Operasyon`(L3) · imza metriği "2+ dikeyde aktif üye" hero (2,4× LTV) · marka gelir katkı şeridi · anomali şeridi · 6 derin marka paneli (İçerik/Store/DadaFit kohort/Sağlık/İşletme/Akademi) · `.brand-*` scope (ham hex temizlendi, grep-doğrulandı).
+- **D2 (cross-cutting L3):** Kıyas = dönem-kıyas tablosu + **markalar-arası çapraz-satış matrisi** (saf-CSS ısı-matris, satır=kaynak marka brand-scope) + normalize marka kıyas bullet · Finansal marka-kırılım tablosu + gerçek abonelik kademeleri (Ücretsiz 7.126 / Pro1 ₺79·982 / Pro2 ₺149·304) · Kitle hub kohort heatmap · Operasyon birleşik onay kuyruğu (tarif 31+işletme 18+diyetisyen 4+antrenör 2+şef 3+şikayet 14=72 + SLA pstat).
+- **Donut fix:** 6 donut merkez label hizalama — `::after` occlusion (`z-index:2`) + grid→flex-column-center (place-items satır grubunu dikey ortalamıyordu). Merkez=toplam, conic↔legend renk/oran tutarlı.
+- **Tarih kontrolleri fix:** aralık chip tek-seçim + alt-başlık · **Özel** native date-range popover (TR format, validation, Esc/dış-tık kapanış, "backend'de bağlanacak") · **Kıyas** toggle + kpi-cmp referans pill + alt-başlık suffix. NOT: kontrol şeridi mobilde kanonik kabuk gizliyor (`sa-shell.css:458 .ph-actions{display:none}`) — kabuğa dokunulmadı.
+
+**4. İKON-CHIP MERKEZLEME FIX** (`5405a9c`) — 6 sayfa / ~72 chip: `.bz-ico`/`.badge-ico`/`.ic-ico` grid-center'ı, etiket için yazılmış fazla-geniş `.X-card span{display:block}` kuralı eziyordu (özgüllük 0,1,1>0,1,0 + font-size/color/margin sızıntısı). Fix: etiket kuralı `:not(.<chip-class>)` ile daraltıldı → chip grid-center'ı + intended boyut/renk geri. Sayfalar: admin-rozet-v1 · rozetler-v1 · mutfak-defteri-v1 · hesabim-v1 · diyetisyen-profil-v1 · antrenor-detay-v1. Self-verify: 204 dosya tarama → 0 kayık chip; dx=0/dy=0/grid; 1440+390; console/mojibake 0. (Önceki "boş placeholder ikon sol-üste yapışık" premise'i 3 taramada bulunamamıştı — gerçek bug buydu: dolu chip'in label-CSS çakışması, `admin-*` glob'u dışında kaldığı için kaçmıştı.)
+
+### 🎯 SIRADAKİ İŞLER (öncelik sırasıyla — Beyar belirleyecek)
+1. **RAPORLAR FAZ-3 — best-practice genişletme.** "Daha ne eklenir" araştırması + jargon terimlere **hover tooltip** (dikey / 2+ dikey / kohort / MRR / LTV açıklamaları). **PLAN-FIRST:** araştırma → öneri → onay → implement (implement kuralı: izole sayfa-içi, kabuğa dokunma, saf-CSS, token+`.brand-*`, ham hex yasak, commit onayla).
+2. **YOL GÜZERGAHIM revize.** Beyar "sevmedim" dedi — neyi sevmediği netleşince düzeltme (veya `git revert fef6530`).
+- **GELECEK NOTU (Laravel geçişi):** Raporlar backend-bağlama haritası — her panel hangi tablo/event'ten beslenecek. DAU/retention/kohort/imza-metrik için **kullanıcı aktivite/event loglaması** gerekiyor (şu an tümü mock).
+
+## 📦 COMMIT DIŞI (working-tree'de bekliyor — DOKUNMA)
+- **sezon-v1.html watermark** belirginleştirme (~0.13-0.15 opacity) — Beyar "en sona", **onaysız**. Onaylanınca ayrı commit.
+- **tasks/admin-b-*.md** eski plan dosyaları (untracked, bu işle ilgisiz). · `tasks/handoff.md` da commit dışı (önceki gibi working-tree'de kalır).
+
+## 🔒 DEĞİŞMEYEN (sırada değil / ileride)
+- **Ölçü Birimleri** tablo editörü → **DEFER** (saf tablo, makale değil; yüksek efor). · **Sofra Düzeni indeks kartı** repeater (8'li kategori kartı — opsiyon). Detay: `tasks/admin-b-faz2-plan.md`.
+- **Admin-C rapor genişletme** (büyük, plan gerek): Yasin "çok daha detaylı / hepsi best-practice". Modül kırılımı + finansal + moderasyon + demografi + tarih filtresi/kıyas. Bloke değil.
+- **Gözetim köprü `gz-act` asimetrisi:** `sa-saglik-randevular`/`-receteler`/`-testler` (5'er satır, detay dahil) köprüsüz — bilinçli kapsam-dışı; eklemek = yeni yüzey + semantik eşleştirme. **Yasin Bey'e sorulabilir.**
+- **Ayrı session:** `yol-guzergahim` Leaflet rota modülü (plan `tasks/yol-guzergahim-plan.md` hazır — Leaflet+OSM, statik JSON, İstanbul-Bursa / +Ankara) · **İşletme login avatar + B3 consumer-header sweep** (~93 sayfa header dropdown + işletme girişinde avatar + otomatik panel). **EN SON.**
+
+> Kapandı bu oturum: **Merkezi Taksonomi konsolu** (`e0419ca` — 5 grup, tarif gerçek 14 kategori + kapak görseli, tip/rol schema-driven, 3 liste köprüsü) · **FAZ-3 Sözlük modülü** (liste+form+nav+dizin + A-Z birincil filtre/tek-satır slider) · Admin-B FAZ-2 (künye grupları + Sofra gövde-toggle). Önceki: faz-1 içerik modülü · besin redirect · sticky 26 ekran.
+
+## 📚 DERSLER (bu oturum)
+- **Gövde/içerik tipini KANITLA, algıya güvenme:** "şu sayfa blog/makale mi?" sorusunda gerçek DOM'u say (serbest `<p>`/`<h2>` akışı vs künye/tablo/kart). Beyar "sadece Püf blog" dedi; sayım 4/5 tipte gerçek makale gösterdi (Mutfağa Giriş Püf'ten fazla) → tek gerçek istisna Sofra. Premise yanlışsa açıkça düzelt.
+- **Kategori/etiket rozetinde token kısıtı:** global palette'te 5 ayrışık hue token YOKsa (admin'de yalnız `--acc`/`--green`/nötr), 5 kategori için sahte literal renk uydurma → TEK accent token-tint + kategoriye özel **İKON** ile ayrıştır. Ham renk literali yasak (marka kuralı).
+- **Türkçe büyük harf:** harf türetme/normalize her yerde `toLocaleUpperCase('tr')` / `toLocaleLowerCase('tr')` (İ/I tuzağı) — düz `toUpperCase` mojibake/yanlış harf üretir.
+- **Yapısal CRUD ≠ makale formu:** terim/tanım gibi sabit-şema, gövdesiz, çok-kayıt içerik blok-editöre girmez → ayrı liste+satır-form (kullanicilar/icerik kardeşi), sıfırdan tasarlama, kardeş dili miras al.
 
 > Plan referansları: `tasks/mega-revize-plan.md` (5 batch şerit haritası + çakışma bayrakları) · `tasks/admin-review-yasin-plan.md` (Admin-A/B/C).
 
