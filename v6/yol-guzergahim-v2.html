@@ -283,9 +283,11 @@ input{font:inherit}
 .yg-alts{margin-top:18px}
 .yg-alts[hidden]{display:none}
 .yg-alts-h{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:9px}
-.yg-alt{display:flex;align-items:center;gap:12px;width:100%;text-align:left;border:1px solid var(--line);background:rgba(255,255,255,.7);border-radius:var(--radius-md);padding:10px 13px;margin-bottom:8px;transition:.16s var(--ease)}
-.yg-alt:hover{border-color:var(--line-2)}
-.yg-alt-bar{width:4px;align-self:stretch;border-radius:2px;background:var(--line-2)}
+.yg-alt{display:flex;align-items:center;gap:12px;width:100%;text-align:left;border:1px solid var(--line);background:rgba(255,255,255,.7);border-radius:var(--radius-md);padding:10px 13px;margin-bottom:8px;transition:.16s var(--ease);cursor:pointer}
+/* hover VEYA harita-çizgisi senkron vurgusu (.is-hover JS'ten) — nötr, ana rotayla yarışmaz */
+.yg-alt:hover,.yg-alt.is-hover{border-color:var(--slate-2);background:rgba(255,255,255,.96);box-shadow:var(--sh-sm)}
+.yg-alt.is-hover:not(.is-active) .yg-alt-bar,.yg-alt:hover:not(.is-active) .yg-alt-bar{background:var(--slate-2)}
+.yg-alt-bar{width:4px;align-self:stretch;border-radius:2px;background:var(--route-alt);transition:background .14s var(--ease)}
 .yg-alt-main{flex:1;min-width:0;display:flex;flex-direction:column;gap:1px}
 .yg-alt-km{font-size:15.5px;font-weight:700;color:var(--slate);letter-spacing:-.01em}
 .yg-alt-time{font-size:12px;color:var(--muted)}
@@ -294,6 +296,11 @@ input{font:inherit}
 .yg-alt.is-active .yg-alt-bar{background:var(--tomato)}
 .yg-alt.is-active .yg-alt-km{color:var(--tomato-deep)}
 .yg-alt.is-active .yg-alt-tag{color:var(--tomato)}
+/* harita alternatif-rota hover tooltip'i (km · süre) — sade koyu pill */
+.leaflet-tooltip.yg-alt-tip{background:var(--slate);color:#fff;border:0;border-radius:var(--radius-sm);
+  font-family:"Gilroy",system-ui,sans-serif;font-size:11.5px;font-weight:700;padding:4px 9px;box-shadow:var(--sh-md);white-space:nowrap}
+.leaflet-tooltip.yg-alt-tip.leaflet-tooltip-top::before{border-top-color:var(--slate)}
+.leaflet-tooltip.yg-alt-tip.leaflet-tooltip-bottom::before{border-bottom-color:var(--slate)}
 
 /* eşik slider */
 .yg-corr{margin-top:20px}
@@ -572,11 +579,15 @@ input{font:inherit}
 .yg-sv-vrow.on .yg-sv-cbox{background:var(--green);border-color:var(--green)}
 .yg-sv-vname{flex:1;min-width:0;font-size:13px;font-weight:600;color:var(--slate);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .yg-sv-vrow.on .yg-sv-vname{color:var(--muted);text-decoration:line-through}
-/* Güzergahlarım Dada mekanı — ince domates-gradient sol-kenar aksan (dikey listede taranır) */
+/* Güzergahlarım Dada mekanı — NET: domates "Dada" pill (alt kadran .yd-badge / detay rozetiyle aynı kimlik)
+   + ince domates-gradient sol-kenar aksan (dikey listede soldan da taranır; pill + aksan birlikte ferah) */
 .yg-sv-vrow.dada{position:relative}
 .yg-sv-vrow.dada::before{content:"";position:absolute;left:0;top:5px;bottom:5px;width:3px;border-radius:2px;
   background:linear-gradient(var(--tomato),var(--tomato-dark))}
-.yg-sv-vdada{flex:0 0 auto;color:var(--tomato);font-size:10px}
+.yg-sv-vbadge{flex:0 0 auto;display:inline-flex;align-items:center;gap:4px;height:20px;padding:0 8px;
+  border-radius:var(--radius-pill);background:var(--tomato);color:#fff;font-size:10px;font-weight:700;letter-spacing:.02em}
+.yg-sv-vbadge i{font-size:9px}
+.yg-sv-vrow.on .yg-sv-vbadge{opacity:.5}   /* ziyaret edilince diğer satır içeriğiyle birlikte sönükleşir (kimlik korunur) */
 
 /* ===================== KONUM BUL — sağ-alt FAB + mavi konum noktası + en-yakın-şehir promptu + toast ===================== */
 /* FAB: harita sağ-altı. --locb = alt kadran açıkken yükseklik kadar yukarı kayar (kadranla çakışmaz). */
@@ -1136,7 +1147,7 @@ input{font:inherit}
   var route={poly:null};
   var stopMarkers=[];
   var routeLine=null, routeCasing=null;
-  var currentRoutes=[], activeIdx=0, routeLayers=[];   // alternatif rotalar
+  var currentRoutes=[], activeIdx=0, routeLayers=[], altByIdx={};   // alternatif rotalar (altByIdx: route index → harita çizgisi, liste senkronu için)
   var routeSource='tahmini';
   var buildSeq=0, dragIdx=null;
 
@@ -1259,22 +1270,34 @@ input{font:inherit}
     });
   }
   // aktif=beyaz casing+domates hat (akış net); alternatifler=gri ince, tıkla-seç
+  // alt çizgi temel/hover stilleri — nötr gri, ana rotadan İNCE ama net (silik değil); ana hat hep üstte
+  var ALT_BASE={color:COL_ALT,weight:4.5,opacity:.9}, ALT_HOVER={color:COL_ALT,weight:6.5,opacity:1};
   function drawRoutes(){
-    routeLayers.forEach(function(l){map.removeLayer(l);}); routeLayers=[];
+    routeLayers.forEach(function(l){map.removeLayer(l);}); routeLayers=[]; altByIdx={};
     if(routeCasing){map.removeLayer(routeCasing);routeCasing=null;}
     if(routeLine){map.removeLayer(routeLine);routeLine=null;}
     currentRoutes.forEach(function(r,i){
       if(i===activeIdx)return;
-      var alt=L.polyline(r.poly,{color:COL_ALT,weight:5,opacity:.6,lineJoin:'round',lineCap:'round'}).addTo(map);
+      // ince beyaz casing → alt çizgi harita zemininden ayrışsın (Google deseni; silik kalmaz)
+      var altCase=L.polyline(r.poly,{color:COL_CASE,weight:8,opacity:.7,lineJoin:'round',lineCap:'round'}).addTo(map);
+      var alt=L.polyline(r.poly,Object.assign({lineJoin:'round',lineCap:'round'},ALT_BASE)).addTo(map);
+      alt.bindTooltip(fmtDist(r.km)+' · '+fmtDakika(r.dakika),{sticky:true,direction:'top',className:'yg-alt-tip',opacity:1});
       alt.on('click',function(){selectRoute(i);});
-      alt.on('mouseover',function(){alt.setStyle({weight:7,opacity:.85});});
-      alt.on('mouseout',function(){alt.setStyle({weight:5,opacity:.6});});
-      routeLayers.push(alt);
+      alt.on('mouseover',function(){hoverAlt(i,true);});
+      alt.on('mouseout',function(){hoverAlt(i,false);});
+      routeLayers.push(altCase,alt);
+      altByIdx[i]={line:alt};
     });
     var ap=currentRoutes[activeIdx].poly;
     routeCasing=L.polyline(ap,{color:COL_CASE,weight:9.5,opacity:.95,lineJoin:'round',lineCap:'round'}).addTo(map);
     routeLine =L.polyline(ap,{color:COL_ROUTE,weight:5.5,opacity:1,lineJoin:'round',lineCap:'round'}).addTo(map);
-    routeLine.bringToFront();
+    routeLine.bringToFront();   // ana rota DAİMA üstte (alt hover'da bile ezilmez → "asıl yol bu" net)
+  }
+  // harita↔liste çift-yönlü senkron: alt çizgi/kart hover → ikisi birden belirginleşir (ana hat üstte kalır)
+  function hoverAlt(i,on){
+    var o=altByIdx[i]; if(o&&o.line)o.line.setStyle(on?ALT_HOVER:ALT_BASE);
+    if(routeLine)routeLine.bringToFront();
+    if(altListEl){var btn=altListEl.querySelector('.yg-alt[data-idx="'+i+'"]'); if(btn)btn.classList.toggle('is-hover',on);}
   }
   function selectRoute(i){
     if(i===activeIdx||!currentRoutes[i])return;
@@ -1282,7 +1305,7 @@ input{font:inherit}
     drawRoutes(); updateSummary(); renderAltList(); refreshThreshold(); spawnVenues();
   }
   function clearRoute(){
-    routeLayers.forEach(function(l){map.removeLayer(l);}); routeLayers=[];
+    routeLayers.forEach(function(l){map.removeLayer(l);}); routeLayers=[]; altByIdx={};
     if(routeLine){map.removeLayer(routeLine);routeLine=null;}
     if(routeCasing){map.removeLayer(routeCasing);routeCasing=null;}
     stopMarkers.forEach(function(mk){map.removeLayer(mk);}); stopMarkers=[];
@@ -1349,12 +1372,17 @@ input{font:inherit}
     altsEl.hidden=false; altListEl.innerHTML='';
     currentRoutes.forEach(function(r,i){
       var b=document.createElement('button');
-      b.type='button'; b.className='yg-alt'+(i===activeIdx?' is-active':'');
+      b.type='button'; b.className='yg-alt'+(i===activeIdx?' is-active':''); b.dataset.idx=i;
       b.innerHTML='<span class="yg-alt-bar"></span>'+
         '<span class="yg-alt-main"><b class="yg-alt-km">'+fmtDist(r.km)+'</b>'+
         '<span class="yg-alt-time">'+fmtDakika(r.dakika)+'</span></span>'+
         '<span class="yg-alt-tag">'+(i===0?'En hızlı':'Alternatif '+i)+'</span>';
       b.addEventListener('click',function(){selectRoute(i);});
+      // kart hover → harita alt-çizgisi belirginleşir (çift-yönlü senkron; aktif rotanın haritada karşılığı yok)
+      if(i!==activeIdx){
+        b.addEventListener('mouseenter',function(){hoverAlt(i,true);});
+        b.addEventListener('mouseleave',function(){hoverAlt(i,false);});
+      }
       altListEl.appendChild(b);
     });
   }
@@ -1795,7 +1823,7 @@ input{font:inherit}
           return '<li><button class="yg-sv-vrow'+(on?' on':'')+(v.dada?' dada':'')+'" type="button" data-ad="'+encodeURIComponent(v.ad)+'">'+
             '<span class="yg-sv-cbox"><i class="fa-solid fa-check"></i></span>'+
             '<span class="yg-sv-vname">'+v.ad+'</span>'+
-            (v.dada?'<i class="fa-solid fa-utensils yg-sv-vdada" title="Dada öneriyor"></i>':'')+
+            (v.dada?'<span class="yg-sv-vbadge" title="Dada öneriyor"><i class="fa-solid fa-utensils"></i> Dada</span>':'')+
           '</button></li>';
         }).join('') +'</ul>' : '';
       return '<li class="yg-sv-card" data-id="'+r.id+'">'+
