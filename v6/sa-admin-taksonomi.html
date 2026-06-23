@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Taksonomi — Admin — DadaMutfak</title>
+<link rel="shortcut icon" type="image/x-icon" href="assets/img/favicon.ico" />
+<!-- FontAwesome 6.5.2 (kilitli ikon seti) -->
+<link rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+      integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A=="
+      crossorigin="anonymous" referrerpolicy="no-referrer" />
+<!-- PAYLAŞILAN KABUK (tek kaynak) -->
+<link rel="stylesheet" href="assets/css/sa-shell.css" />
+<link rel="stylesheet" href="assets/css/sa-ui.css" />
+<style>
+/* =====================================================================
+   SA-ADMIN-TAKSONOMI — SAYFA CSS (ekrana özel; kabuk CSS'i sa-shell.css'te).
+   Merkezi kategori/etiket yönetimi: dağınık/hardcoded vocab'ların TEK yüzü.
+   İki-pane konsol: sol grup-kartları (modül kimlikli) · sağ seçili-grup
+   kategori satırları. Rozet/ikon = TEK accent token-tint + kategoriye özel
+   İKON (ham renk literali YOK — sözlük dersi). Ekle/Düzenle = sayfa-içi modal,
+   ayrı -form dosyası YOK (kategori şeması küçük). Mock CRUD (persist etmez). === */
+
+/* açıklama bandı (kademeler kardeşi) */
+.intro-band{display:flex;align-items:flex-start;gap:14px;padding:16px 20px;background:rgba(var(--acc-rgb),.06);border:1px solid rgba(var(--acc-rgb),.16);border-radius:var(--radius-lg);margin-bottom:20px}
+.intro-band i{font-size:20px;color:var(--acc-deep);flex:none;margin-top:1px}
+.intro-band p{font-size:13px;color:var(--slate-2);line-height:1.55;margin:0}
+.intro-band b{color:var(--slate);font-weight:700}
+
+/* iki-pane split (pnl-card içinde) */
+.tx-split{display:grid;grid-template-columns:256px 1fr}
+
+/* SOL — grup listesi */
+.tx-groups{border-right:1px solid var(--line);padding:14px;display:flex;flex-direction:column;gap:5px;background:var(--bg)}
+.tx-groups-lbl{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);padding:6px 12px 8px}
+.tx-group{display:flex;align-items:center;gap:11px;padding:10px 12px;border-radius:var(--radius-md);border:1px solid transparent;cursor:pointer;transition:.18s var(--ease);text-align:left;background:none;width:100%;font-family:inherit}
+.tx-group:hover{background:var(--paper)}
+.tx-group.is-on{background:var(--paper);border-color:rgba(var(--acc-rgb),.30);box-shadow:var(--sh-sm)}
+.tg-chip{width:38px;height:38px;flex:none;border-radius:var(--radius-md);background:rgba(var(--acc-rgb),.10);color:var(--acc-deep);display:grid;place-items:center;font-size:16px;transition:.18s var(--ease)}
+.tx-group.is-on .tg-chip{background:var(--acc);color:#fff}
+.tg-meta{flex:1;min-width:0;display:flex;flex-direction:column}
+.tg-name{font-size:13.5px;font-weight:700;color:var(--slate);line-height:1.25;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tg-sub{font-size:11.5px;color:var(--muted);font-weight:500;margin-top:1px;font-variant-numeric:tabular-nums}
+
+/* SAĞ — seçili grup paneli */
+.tx-panel{display:flex;flex-direction:column;min-width:0}
+.tx-phead{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;padding:18px 22px;border-bottom:1px solid var(--line);flex-wrap:wrap}
+.tx-pinfo{min-width:0}
+.tx-eyebrow{font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--muted)}
+.tx-eyebrow b{color:var(--acc-deep);font-weight:700}
+.tx-ptitle{font-size:16px;font-weight:700;color:var(--slate);margin-top:3px;line-height:1.2}
+.tx-pnote{font-size:12.5px;color:var(--slate-2);margin-top:5px;max-width:56ch;line-height:1.5}
+/* panel-içi arama (sozluk fb-search dili) */
+.tx-search{position:relative;flex:none;width:240px;max-width:100%}
+.tx-search i{position:absolute;left:12px;top:50%;transform:translateY(-50%);font-size:13px;color:var(--muted);pointer-events:none}
+.tx-search input{width:100%;height:38px;padding:0 12px 0 34px;font-family:inherit;font-size:13px;font-weight:500;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:var(--radius-sm);outline:none;transition:.2s var(--ease)}
+.tx-search input::placeholder{color:var(--muted)}
+.tx-search input:focus{border-color:var(--acc);background:var(--paper);box-shadow:0 0 0 3px rgba(var(--acc-rgb),.11)}
+
+/* kategori satırları */
+.tx-list{display:flex;flex-direction:column}
+.tx-row{display:flex;align-items:center;gap:13px;padding:13px 22px;border-bottom:1px solid var(--line);transition:.15s var(--ease)}
+.tx-row:last-child{border-bottom:none}
+.tx-row:hover{background:var(--bg)}
+.tx-ico{width:38px;height:38px;flex:none;border-radius:var(--radius-md);background:rgba(var(--acc-rgb),.10);color:var(--acc-deep);display:grid;place-items:center;font-size:15px}
+.tx-ico.has-cover{background-color:var(--line);background-size:cover;background-position:center}
+.tx-rid{flex:1;min-width:0;display:flex;flex-direction:column}
+.tx-rname{font-size:13.5px;font-weight:700;color:var(--slate);line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tx-slug{font-size:11.5px;color:var(--muted);font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;margin-top:2px}
+/* grup-özel davranış/erişim özeti (içerik tipi · rol) */
+.tx-extra{font-size:11.5px;color:var(--slate-2);margin-top:4px;display:inline-flex;align-items:center;gap:5px;font-weight:600}
+.tx-extra i{font-size:10px;opacity:.75;color:var(--acc-deep)}
+.tx-use{font-size:12px;color:var(--slate-2);white-space:nowrap;font-variant-numeric:tabular-nums;flex:none}
+.tx-use b{color:var(--slate);font-weight:700}
+.row-acts{display:flex;align-items:center;gap:6px;flex:none}
+.ia-btn{width:32px;height:32px;border-radius:var(--radius-sm);border:1px solid var(--line);background:var(--paper);color:var(--muted);font-size:13px;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;transition:.18s var(--ease)}
+.ia-btn:hover{border-color:var(--acc);color:var(--acc-deep);background:rgba(var(--acc-rgb),.07)}
+.ia-btn.danger:hover{border-color:var(--tomato);color:var(--tomato);background:var(--tomato-tint)}
+
+/* modal (ekle/düzenle) */
+.tx-modal-bd{position:fixed;inset:0;background:rgba(33,30,22,.5);display:none;align-items:center;justify-content:center;z-index:200;padding:20px}
+.tx-modal-bd.open{display:flex}
+.tx-modal{background:var(--paper);border-radius:var(--radius-lg);box-shadow:var(--sh-md);width:100%;max-width:460px;overflow:hidden;animation:txpop .2s var(--ease)}
+@keyframes txpop{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.txm-head{padding:18px 22px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:12px}
+.txm-head h3{font-size:16px;font-weight:700;color:var(--slate);margin:0}
+.txm-head .txm-grp{font-size:11.5px;font-weight:700;color:var(--acc-deep);text-transform:uppercase;letter-spacing:.05em;margin-top:2px}
+.txm-x{width:32px;height:32px;flex:none;border-radius:var(--radius-sm);border:1px solid var(--line);background:var(--paper);color:var(--muted);font-size:14px;cursor:pointer;display:grid;place-items:center;transition:.18s var(--ease)}
+.txm-x:hover{border-color:var(--tomato);color:var(--tomato)}
+.txm-body{padding:20px 22px;display:flex;flex-direction:column;gap:16px}
+.txf label{display:block;font-size:12px;font-weight:700;color:var(--slate-2);margin-bottom:7px}
+.txf label .req{color:var(--tomato)}
+.txf input[type=text]{width:100%;height:40px;padding:0 13px;font-family:inherit;font-size:13.5px;font-weight:500;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:var(--radius-sm);outline:none;transition:.2s var(--ease)}
+.txf input[type=text]:focus{border-color:var(--acc);background:var(--paper);box-shadow:0 0 0 3px rgba(var(--acc-rgb),.11)}
+.txf .txf-mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:12.5px;color:var(--slate-2)}
+.txf select{width:100%;height:40px;padding:0 12px;font-family:inherit;font-size:13.5px;font-weight:500;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:var(--radius-sm);outline:none;transition:.2s var(--ease);cursor:pointer}
+.txf select:focus{border-color:var(--acc);background:var(--paper);box-shadow:0 0 0 3px rgba(var(--acc-rgb),.11)}
+.tx-access{display:flex;flex-wrap:wrap;gap:8px}
+.tx-access label{display:inline-flex;align-items:center;gap:7px;font-size:12.5px;font-weight:600;color:var(--slate-2);background:var(--bg);border:1px solid var(--line);border-radius:var(--radius-sm);padding:7px 11px;cursor:pointer;transition:.16s var(--ease)}
+.tx-access label:hover{border-color:var(--acc);color:var(--acc-deep)}
+.tx-access input{accent-color:var(--acc);width:15px;height:15px;cursor:pointer;flex:none}
+.txf-hint{font-size:11.5px;color:var(--muted);margin-top:6px;line-height:1.45}
+.tx-ico-grid{display:flex;flex-wrap:wrap;gap:8px}
+.tx-ico-opt{width:40px;height:40px;border-radius:var(--radius-sm);border:1px solid var(--line);background:var(--paper);color:var(--slate-2);display:grid;place-items:center;cursor:pointer;font-size:15px;transition:.16s var(--ease)}
+.tx-ico-opt:hover{border-color:var(--acc);color:var(--acc-deep)}
+.tx-ico-opt.sel{background:var(--acc);border-color:var(--acc);color:#fff}
+/* tarif grubu — kapak görseli (div+bg cover, img tag DEĞİL — proje kuralı) */
+.tx-cover{width:100%;height:148px;border-radius:var(--radius-md);border:1px solid var(--line);background:var(--bg);background-size:cover;background-position:center;overflow:hidden}
+.tx-cover.is-empty{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;border-style:dashed;color:var(--muted)}
+.tx-cover.is-empty i{font-size:24px;color:var(--acc-deep);opacity:.5}
+.tx-cover.is-empty span{font-size:12px;font-weight:600}
+.tx-cover-acts{display:flex;gap:8px;margin-top:10px}
+.txm-foot{padding:16px 22px;border-top:1px solid var(--line);display:flex;justify-content:flex-end;gap:10px;background:var(--bg)}
+
+@media(max-width:860px){
+  .tx-split{grid-template-columns:minmax(0,1fr)}
+  /* sol grup listesi → üstte yatay kaydırmalı şerit */
+  .tx-groups{flex-direction:row;overflow-x:auto;border-right:none;border-bottom:1px solid var(--line);gap:8px;padding:12px 14px;scrollbar-width:thin}
+  .tx-groups-lbl{display:none}
+  .tx-group{flex:0 0 auto;width:auto}
+  .tg-sub{white-space:nowrap}
+  .tx-phead{padding:14px 16px}
+  .tx-search{width:100%}
+  .tx-row{padding-left:16px;padding-right:16px}
+}
+</style>
+</head>
+<body data-brand="mutfak" data-sec="admin" data-screen="taksonomi">
+
+<div class="sa-app">
+
+  <!-- §1 İKON-RAIL -->
+  <aside class="sa-rail" id="saRail">
+    <a class="sa-rail-logo" href="sa-giris-v1.html" title="Yönetim Girişi"><img src="assets/img/logo-mark.png" alt="DadaMutfak" /></a>
+    <a class="sa-rail-ico" data-sec="genel" href="sa-shell.html?sec=genel" title="Genel Bakış"><i class="fa-solid fa-gauge-high"></i></a>
+    <span class="sa-rail-div"></span>
+    <a class="sa-rail-ico" data-sec="admin"   href="sa-admin.html"   title="Admin"><i class="fa-solid fa-shield-halved"></i></a>
+    <a class="sa-rail-ico" data-sec="saglik"  href="sa-saglik.html"  title="Sağlık &amp; Diyet"><i class="fa-solid fa-heart-pulse"></i></a>
+    <a class="sa-rail-ico" data-sec="store"   href="sa-store.html"   title="DadaStore"><i class="fa-solid fa-bag-shopping"></i></a>
+    <a class="sa-rail-ico" data-sec="dadafit" href="sa-dadafit.html" title="DadaFit"><i class="fa-solid fa-dumbbell"></i></a>
+    <a class="sa-rail-ico" data-sec="isletme" href="sa-isletme.html" title="İşletmeler"><i class="fa-solid fa-store"></i></a>
+    <a class="sa-rail-ico is-locked" data-sec="akademi" href="#" title="DadaAkademi — Yakında"><i class="fa-solid fa-graduation-cap"></i><i class="fa-solid fa-lock sr-lock"></i></a>
+    <div class="sa-rail-foot"><a class="sa-rail-ico" href="sa-giris-v1.html" title="Siteye Dön"><i class="fa-solid fa-arrow-left"></i></a></div>
+  </aside>
+
+  <!-- §2 BÖLÜM MENÜSÜ (JS render) -->
+  <nav class="sa-menu" id="saMenu"></nav>
+  <div class="sa-divider" id="saDivider" role="separator" aria-label="Menüyü daralt/genişlet" title="Sürükle veya tıkla — menüyü daralt/genişlet"><span class="sa-grip"><i class="fa-solid fa-grip-lines-vertical"></i></span></div>
+  <div class="pnl-overlay" id="pnlOverlay"></div>
+
+  <!-- §3 ÜST BAR -->
+  <header class="pnl-top">
+    <button class="pnl-burger" id="pnlBurger" aria-label="Menü"><i class="fa-solid fa-bars"></i></button>
+    <div class="pnl-search"><i class="fa-solid fa-magnifying-glass"></i><input type="text" placeholder="Kullanıcı, içerik ara…" /></div>
+    <div class="pnl-top-tools">
+      <button class="pnl-bell" aria-label="Bildirimler"><i class="fa-regular fa-bell"></i><span class="pb-dot"></span></button>
+      <div class="pnl-me">
+        <div class="pm-ava" style="background-image:url('https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=240&q=80&auto=format&fit=crop')"></div>
+        <div class="pm-id"><div class="pm-name" id="pmName">Süper Admin</div><div class="pm-role" id="pmRole">Tüm yetki</div></div>
+        <i class="fa-solid fa-chevron-down"></i>
+      </div>
+    </div>
+  </header>
+
+  <!-- §4 İÇERİK — Taksonomi konsolu -->
+  <main class="pnl-main" id="saMain">
+
+    <div class="pnl-page-head">
+      <div>
+        <h1>Taksonomi</h1>
+        <div class="ph-sub">Kategori ve etiket sözlükleri · <strong id="grpCount">5</strong> grup · <strong id="catCount">47</strong> kategori</div>
+      </div>
+      <div class="ph-actions">
+        <button class="btn btn-acc btn-sm" type="button" id="addBtn"><i class="fa-solid fa-plus"></i> Yeni Kategori</button>
+      </div>
+    </div>
+
+    <div class="intro-band">
+      <i class="fa-solid fa-tags"></i>
+      <p>Bu ekran sistemdeki tüm <b>kategori ve etiket sözlüklerini tek yerden</b> yönetir. Buradaki her grup, ilgili modülün <b>filtre çubuğunda ve içerik formunda</b> seçenek olarak kullanılır — bir grubu burada düzenlemek, o modülün her yerinde geçerli olur.</p>
+    </div>
+
+    <div class="pnl-card">
+      <div class="tx-split">
+
+        <!-- SOL — grup listesi (JS render) -->
+        <div class="tx-groups" id="grpList" role="tablist" aria-label="Taksonomi grupları">
+          <span class="tx-groups-lbl">Gruplar</span>
+        </div>
+
+        <!-- SAĞ — seçili grup paneli -->
+        <div class="tx-panel">
+          <div class="tx-phead">
+            <div class="tx-pinfo">
+              <div class="tx-eyebrow">Bağlı modül · <b id="pModule">—</b></div>
+              <div class="tx-ptitle" id="pTitle">—</div>
+              <div class="tx-pnote" id="pNote">—</div>
+            </div>
+            <div class="tx-search">
+              <i class="fa-solid fa-magnifying-glass"></i>
+              <input type="text" id="catSearch" placeholder="Kategori ara…" aria-label="Kategori ara" />
+            </div>
+          </div>
+
+          <div class="tx-list" id="catList"></div>
+
+          <div class="pnl-empty" id="emptyState" style="display:none">
+            <div class="pe-ico"><i class="fa-solid fa-tags"></i></div>
+            <h4>Kategori bulunamadı</h4>
+            <p>Aramaya uyan kategori yok. Aramayı temizleyin ya da bu gruba yeni bir kategori ekleyin.</p>
+            <button class="pe-tag" type="button" id="emptyAdd"><i class="fa-solid fa-plus"></i> Yeni Kategori Ekle</button>
+          </div>
+        </div>
+
+      </div><!-- /tx-split -->
+    </div><!-- /pnl-card -->
+
+  </main>
+
+</div><!-- /sa-app -->
+
+<!-- ekle/düzenle modal -->
+<div class="tx-modal-bd" id="modalBd" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+  <div class="tx-modal">
+    <div class="txm-head">
+      <div>
+        <h3 id="modalTitle">Yeni Kategori</h3>
+        <div class="txm-grp" id="modalGrp">—</div>
+      </div>
+      <button class="txm-x" type="button" id="modalX" aria-label="Kapat"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="txm-body">
+      <div class="txf">
+        <label for="fName">Kategori adı <span class="req">*</span></label>
+        <input type="text" id="fName" placeholder="örn. Ana Yemek" autocomplete="off" />
+      </div>
+      <div class="txf">
+        <label for="fSlug">Anahtar (slug)</label>
+        <input type="text" id="fSlug" class="txf-mono" placeholder="ana-yemek" autocomplete="off" />
+        <div class="txf-hint">Addan otomatik üretilir; elle de düzenleyebilirsiniz. Modülün filtre/form kodunda bu anahtar kullanılır.</div>
+      </div>
+      <div class="txf">
+        <label>İkon</label>
+        <div class="tx-ico-grid" id="iconGrid"></div>
+      </div>
+      <!-- grup-özel ek alanlar (İçerik Tipi davranışı · Rol erişimi) — JS render -->
+      <div id="modalExtra"></div>
+    </div>
+    <div class="txm-foot">
+      <button class="btn btn-ghost btn-sm" type="button" id="modalCancel">Vazgeç</button>
+      <button class="btn btn-acc btn-sm" type="button" id="modalSave">Kaydet</button>
+    </div>
+  </div>
+</div>
+
+<script src="assets/js/sa-ui.js"></script>
+<script src="assets/js/sa-shell.js"></script>
+<script>
+/* =====================================================================
+   Taksonomi konsolu — mock CRUD (persist etmez). Veri-odaklı: sol grup
+   listesi + sağ seçili-grup kategorileri DATA'dan render edilir. Ekle/
+   Düzenle = modal · Sil = saConfirm. Slug TR-güvenli (toLocaleLowerCase tr).
+   ===================================================================== */
+(function(){
+  /* --- veri: 5 grup. Slug'lar gerçek modül anahtarlarını yansıtır
+         (analizde tespit edilen hardcoded vocab'lar). --- */
+  var DATA=[
+    {id:'tarif', label:'Tarif Kategorileri', icon:'fa-utensils', unit:'tarif',
+     module:'Tarifler', note:'Tarifler modülünün keşif filtresinde, mega-menüde ve tarif formunun "Kategori" alanında seçenek olarak kullanılır. Değerler public tarif taksonomisiyle eşittir.',
+     items:[
+       {name:'Çorba', slug:'corba-tarifleri', icon:'fa-bowl-food', use:1240, img:'https://images.unsplash.com/photo-1547592166-23ac45744acd?w=240&q=80&auto=format&fit=crop'},
+       {name:'Kırmızı Et', slug:'kirmizi-et-tarifleri', icon:'fa-bacon', use:1480, img:'https://images.unsplash.com/photo-1565557623262-b51c2513a641?w=240&q=80&auto=format&fit=crop'},
+       {name:'Beyaz Et', slug:'beyaz-et-tarifleri', icon:'fa-drumstick-bite', use:1180, img:'https://images.unsplash.com/photo-1432139555190-58524dae6a55?w=240&q=80&auto=format&fit=crop'},
+       {name:'Tatlı', slug:'tatli-tarifleri', icon:'fa-ice-cream', use:2105, img:'https://images.unsplash.com/photo-1488477181946-6428a0291777?w=240&q=80&auto=format&fit=crop'},
+       {name:'Hamur İşi', slug:'hamur-isi-tarifleri', icon:'fa-bread-slice', use:1560, img:'https://images.unsplash.com/photo-1509440159596-0249088772ff?w=240&q=80&auto=format&fit=crop'},
+       {name:'Kek', slug:'kek-tarifleri', icon:'fa-stroopwafel', use:740, img:'https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=240&q=80&auto=format&fit=crop'},
+       {name:'Salata', slug:'salata-tarifleri', icon:'fa-leaf', use:980, img:'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=240&q=80&auto=format&fit=crop'},
+       {name:'Kahvaltılık', slug:'kahvaltilik-tarifler', icon:'fa-egg', use:860, img:'https://images.unsplash.com/photo-1533777324565-a040eb52facd?w=240&q=80&auto=format&fit=crop'},
+       {name:'Zeytinyağlı', slug:'zeytinyagli-tarifler', icon:'fa-bottle-droplet', use:520},
+       {name:'İçecek', slug:'icecek-tarifleri', icon:'fa-mug-hot', use:430, img:'https://images.unsplash.com/photo-1455619452474-d2be8b1e70cd?w=240&q=80&auto=format&fit=crop'},
+       {name:'Vegan ve Vejetaryen', slug:'vegan-ve-vejetaryen-tarifler', icon:'fa-seedling', use:1120, img:'https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?w=240&q=80&auto=format&fit=crop'},
+       {name:'Makarna', slug:'makarna-tarifleri', icon:'fa-plate-wheat', use:670},
+       {name:'Pilav', slug:'pilav-tarifleri', icon:'fa-bowl-rice', use:410},
+       {name:'Meze & Aperatif', slug:'meze-aperatif', icon:'fa-shrimp', use:540}
+     ]},
+    {id:'sozluk', label:'Sözlük Kategorileri', icon:'fa-spell-check', unit:'terim',
+     module:'Sözlük', note:'Sözlük listesinin kategori chip filtresinde ve terim formunun kategori seçiminde kullanılır.',
+     items:[
+       {name:'Pişirme Teknikleri', slug:'teknik', icon:'fa-fire-flame-curved', use:6},
+       {name:'Hamur & Fırın', slug:'hamur', icon:'fa-bread-slice', use:1},
+       {name:'Malzeme & Baharat', slug:'malzeme', icon:'fa-mortar-pestle', use:1},
+       {name:'Araç-Gereç', slug:'arac', icon:'fa-utensils', use:2},
+       {name:'Dünya Mutfağı', slug:'dunya', icon:'fa-earth-americas', use:2}
+     ]},
+    {id:'icerik', label:'İçerik Tipleri', icon:'fa-newspaper', unit:'içerik',
+     module:'Blog & İçerik', note:'Blog & İçerik listesinin tip filtresinde ve içerik formunun "İçerik tipi" seçiminde kullanılır. Tip seçimi formdaki künye gruplarını belirler.',
+     items:[
+       {name:'Mutfağa Giriş', slug:'giris', icon:'fa-graduation-cap', use:8, prefix:'/mutfaga-giris/', kunye:'ders', body:'serbest'},
+       {name:'Püf Noktası', slug:'puf', icon:'fa-lightbulb', use:24, prefix:'/puf-noktasi/', kunye:'yok', body:'serbest'},
+       {name:'Ansiklopedi', slug:'ansiklopedi', icon:'fa-book-open', use:56, prefix:'/ansiklopedi/', kunye:'madde', body:'serbest'},
+       {name:'Sofra Düzeni', slug:'sofra', icon:'fa-utensils', use:6, prefix:'/sofra-duzeni/', kunye:'sofra', body:'yapisal'},
+       {name:'Blog', slug:'blog', icon:'fa-newspaper', use:38, prefix:'/blog/', kunye:'yok', body:'serbest'}
+     ]},
+    {id:'ansiklopedi', label:'Ansiklopedi Kategorileri', icon:'fa-book', unit:'madde',
+     module:'Blog & İçerik · Ansiklopedi', note:'Ansiklopedi tipi içerik formundaki "Madde kategorisi" seçiminde kullanılır.',
+     items:[
+       {name:'Baharatlar', slug:'baharatlar', icon:'fa-mortar-pestle', use:32},
+       {name:'Otlar', slug:'otlar', icon:'fa-leaf', use:18},
+       {name:'Sebzeler', slug:'sebzeler', icon:'fa-carrot', use:44},
+       {name:'Meyveler', slug:'meyveler', icon:'fa-apple-whole', use:36},
+       {name:'Etler', slug:'etler', icon:'fa-drumstick-bite', use:21},
+       {name:'Deniz Ürünleri', slug:'deniz-urunleri', icon:'fa-fish', use:19},
+       {name:'Süt Ürünleri', slug:'sut-urunleri', icon:'fa-cheese', use:15},
+       {name:'Tahıllar', slug:'tahillar', icon:'fa-wheat-awn', use:22},
+       {name:'Baklagiller', slug:'baklagiller', icon:'fa-seedling', use:12},
+       {name:'Yağlar', slug:'yaglar', icon:'fa-bottle-droplet', use:9},
+       {name:'Kuruyemişler', slug:'kuruyemisler', icon:'fa-bowl-food', use:11},
+       {name:'Soslar', slug:'soslar', icon:'fa-jar', use:14},
+       {name:'Peynirler', slug:'peynirler', icon:'fa-cheese', use:17},
+       {name:'Hamurlar', slug:'hamurlar', icon:'fa-bread-slice', use:13},
+       {name:'Tatlandırıcılar', slug:'tatlandiricilar', icon:'fa-cube', use:8},
+       {name:'İçecekler', slug:'icecekler', icon:'fa-mug-hot', use:16},
+       {name:'Konserveler', slug:'konserveler', icon:'fa-jar', use:7},
+       {name:'Yumurtalar', slug:'yumurtalar', icon:'fa-egg', use:6}
+     ]},
+    {id:'rol', label:'Kullanıcı Rolleri', icon:'fa-user-shield', unit:'kullanıcı',
+     module:'Kullanıcılar', note:'Kullanıcılar listesinin rol filtresinde ve kullanıcı formunun "Rol" seçiminde kullanılır. Rol, hangi yönetim paneline erişileceğini belirler.',
+     items:[
+       {name:'Süper Admin', slug:'super', icon:'fa-shield-halved', use:3, access:['admin','saglik','store','dadafit','isletme','akademi']},
+       {name:'Sağlık Yöneticisi', slug:'saglik', icon:'fa-heart-pulse', use:5, access:['saglik']},
+       {name:'Mağaza Yöneticisi', slug:'store', icon:'fa-bag-shopping', use:4, access:['store']},
+       {name:'DadaFit Yöneticisi', slug:'dadafit', icon:'fa-dumbbell', use:2, access:['dadafit']},
+       {name:'İşletme Sahibi', slug:'isletme', icon:'fa-store', use:47, access:['isletme']}
+     ]}
+  ];
+
+  /* modalda seçilebilir ikon havuzu (yemek/mutfak temalı, kilitli FA set) */
+  var ICON_POOL=['fa-utensils','fa-drumstick-bite','fa-bowl-food','fa-egg','fa-ice-cream',
+    'fa-bread-slice','fa-wheat-awn','fa-cake-candles','fa-mug-hot','fa-fire-flame-curved',
+    'fa-mortar-pestle','fa-earth-americas','fa-leaf','fa-carrot','fa-apple-whole','fa-fish',
+    'fa-cheese','fa-seedling','fa-bottle-droplet','fa-jar','fa-cube','fa-lightbulb',
+    'fa-book-open','fa-newspaper','fa-graduation-cap','fa-pepper-hot','fa-lemon','fa-tag'];
+
+  /* grup-özel şema etiketleri (icerik tipi davranışı · rol erişimi) */
+  var KUNYE_LBL={yok:'Künye yok', ders:'Ders Künyesi', madde:'Madde Künyesi + Besin', sofra:'Sofra Künyesi'};
+  var BODY_LBL={serbest:'serbest blok-editör', yapisal:'yapısal gövde'};
+  var ACCESS=[['admin','Admin'],['saglik','Sağlık'],['store','Store'],['dadafit','DadaFit'],['isletme','İşletme'],['akademi','Akademi']];
+  function accessLbl(k){for(var i=0;i<ACCESS.length;i++){if(ACCESS[i][0]===k)return ACCESS[i][1];}return k;}
+
+  var $=function(s){return document.querySelector(s);};
+  var grpList=$('#grpList'), catList=$('#catList'), emptyState=$('#emptyState');
+  var pModule=$('#pModule'), pTitle=$('#pTitle'), pNote=$('#pNote');
+  var grpCountEl=$('#grpCount'), catCountEl=$('#catCount'), catSearch=$('#catSearch');
+  var sel=0, query='', modalState=null, modalIcon='', modalImg='';
+
+  /* TR-güvenli slugify */
+  function slugify(s){
+    return (s||'').toString().toLocaleLowerCase('tr')
+      .replace(/ğ/g,'g').replace(/ü/g,'u').replace(/ş/g,'s').replace(/ı/g,'i')
+      .replace(/ö/g,'o').replace(/ç/g,'c')
+      .replace(/&/g,' ve ')
+      .replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'');
+  }
+  function esc(s){return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+  function totalCats(){return DATA.reduce(function(n,g){return n+g.items.length;},0);}
+
+  /* --- sol grup listesi --- */
+  function renderGroups(){
+    grpList.querySelectorAll('.tx-group').forEach(function(n){n.remove();});
+    DATA.forEach(function(g,i){
+      var b=document.createElement('button');
+      b.className='tx-group'+(i===sel?' is-on':'');
+      b.type='button';b.setAttribute('role','tab');b.setAttribute('aria-selected',i===sel?'true':'false');
+      b.dataset.idx=i;
+      b.innerHTML='<span class="tg-chip"><i class="fa-solid '+g.icon+'"></i></span>'+
+        '<span class="tg-meta"><span class="tg-name">'+esc(g.label)+'</span>'+
+        '<span class="tg-sub">'+g.items.length+' kategori</span></span>';
+      grpList.appendChild(b);
+    });
+    grpCountEl.textContent=DATA.length;
+    catCountEl.textContent=totalCats();
+  }
+
+  /* --- sağ panel --- */
+  function renderPanel(){
+    var g=DATA[sel];
+    pModule.textContent=g.module;
+    pTitle.textContent=g.label;
+    pNote.textContent=g.note;
+    catList.innerHTML='';
+    var q=query.toLocaleLowerCase('tr'), visible=0;
+    g.items.forEach(function(it,idx){
+      var match=q===''||it.name.toLocaleLowerCase('tr').indexOf(q)>-1||(it.slug||'').indexOf(q)>-1;
+      if(!match)return;
+      visible++;
+      /* grup-özel davranış/erişim özeti satırı */
+      var extraHtml='';
+      if(g.id==='icerik'){
+        extraHtml='<span class="tx-extra"><i class="fa-solid fa-layer-group"></i> '+KUNYE_LBL[it.kunye||'yok']+' · '+BODY_LBL[it.body||'serbest']+'</span>';
+      }else if(g.id==='rol'){
+        var acc=it.access||[];
+        extraHtml='<span class="tx-extra"><i class="fa-solid fa-shield-halved"></i> '+(acc.length>=ACCESS.length?'Tüm paneller':(acc.length?acc.map(accessLbl).join(', '):'Erişim yok'))+'</span>';
+      }
+      var row=document.createElement('div');
+      row.className='tx-row';row.dataset.idx=idx;
+      row.innerHTML=
+        (it.img?'<span class="tx-ico has-cover" style="background-image:url(\''+it.img+'\')"></span>':'<span class="tx-ico"><i class="fa-solid '+it.icon+'"></i></span>')+
+        '<span class="tx-rid"><span class="tx-rname">'+esc(it.name)+'</span>'+
+          '<span class="tx-slug">'+esc(it.slug)+'</span>'+extraHtml+'</span>'+
+        '<span class="tx-use"><b>'+it.use.toLocaleString('tr-TR')+'</b> '+g.unit+'</span>'+
+        '<span class="row-acts">'+
+          '<button class="ia-btn" type="button" data-edit="'+idx+'" title="Düzenle"><i class="fa-solid fa-pen"></i></button>'+
+          '<button class="ia-btn danger" type="button" data-del="'+idx+'" title="Sil"><i class="fa-solid fa-trash"></i></button>'+
+        '</span>';
+      catList.appendChild(row);
+    });
+    emptyState.style.display=visible===0?'block':'none';
+  }
+
+  function render(){renderGroups();renderPanel();}
+
+  /* --- grup seçimi --- */
+  grpList.addEventListener('click',function(e){
+    var b=e.target.closest('.tx-group');if(!b)return;
+    sel=+b.dataset.idx;query='';catSearch.value='';render();
+  });
+  catSearch.addEventListener('input',function(){query=(catSearch.value||'').trim();renderPanel();});
+
+  /* --- satır aksiyonları (delege) --- */
+  catList.addEventListener('click',function(e){
+    var ed=e.target.closest('[data-edit]'), dl=e.target.closest('[data-del]');
+    if(ed){openModal('edit',+ed.getAttribute('data-edit'));return;}
+    if(dl){
+      var idx=+dl.getAttribute('data-del'), g=DATA[sel], it=g.items[idx], nl=noun(g.id).toLocaleLowerCase('tr');
+      if(!window.saConfirm)return;
+      saConfirm({
+        danger:true,title:noun(g.id)+' sil',
+        message:'Bu '+nl+' silinecek: "'+it.name+'". Buna bağlı '+it.use.toLocaleString('tr-TR')+' '+g.unit+' bağlantısız kalır. İşlem geri alınamaz.',
+        ok:'Sil',cancel:'Vazgeç',
+        onConfirm:function(){
+          g.items.splice(idx,1);render();
+          if(window.saToast)saToast('"'+it.name+'" silindi',{type:'danger'});
+        }
+      });
+    }
+  });
+
+  /* --- modal --- */
+  var modalBd=$('#modalBd'), fName=$('#fName'), fSlug=$('#fSlug'), iconGrid=$('#iconGrid');
+  var slugTouched=false;
+
+  function buildIconGrid(){
+    iconGrid.innerHTML='';
+    ICON_POOL.forEach(function(ic){
+      var b=document.createElement('button');
+      b.className='tx-ico-opt'+(ic===modalIcon?' sel':'');
+      b.type='button';b.dataset.icon=ic;
+      b.innerHTML='<i class="fa-solid '+ic+'"></i>';
+      iconGrid.appendChild(b);
+    });
+  }
+  iconGrid.addEventListener('click',function(e){
+    var b=e.target.closest('.tx-ico-opt');if(!b)return;
+    modalIcon=b.dataset.icon;
+    iconGrid.querySelectorAll('.tx-ico-opt').forEach(function(x){x.classList.remove('sel');});
+    b.classList.add('sel');
+  });
+
+  /* grup-özel terim: kategori / içerik tipi / rol */
+  function noun(id){return id==='icerik'?'İçerik Tipi':id==='rol'?'Rol':'Kategori';}
+
+  /* grup-koşullu ek alanları modala render et (schema-driven) */
+  function renderExtra(g,it){
+    var box=$('#modalExtra'), x=it||{};
+    if(g.id==='tarif'){
+      /* kapak görseli (div+bg cover) + placeholder; ikon seçici ayrıca kalır */
+      box.innerHTML=
+        '<div class="txf"><label>Kategori görseli</label>'+
+        '<div class="tx-cover'+(x.img?'':' is-empty')+'" id="coverBox"'+(x.img?(' style="background-image:url(\''+x.img+'\')"'):'')+'>'+
+          (x.img?'':'<i class="fa-solid fa-image"></i><span>Görsel seçilmedi</span>')+
+        '</div>'+
+        '<input type="file" accept="image/*" id="fImg" hidden />'+
+        '<div class="tx-cover-acts">'+
+          '<button class="btn btn-ghost btn-sm" type="button" id="coverPick"><i class="fa-solid fa-arrow-up-from-bracket"></i> Görsel Yükle</button>'+
+          '<button class="btn btn-ghost btn-sm" type="button" id="coverClear"'+(x.img?'':' style="display:none"')+'><i class="fa-solid fa-xmark"></i> Kaldır</button>'+
+        '</div>'+
+        '<div class="txf-hint">Public kategori kartında kapak fotoğrafı olarak kullanılır. İkon ayrıca facet/menü gibi küçük gösterimlerde kullanılır — ikisi birlikte tutulur.</div></div>';
+      modalImg=x.img||'';
+      var cBox=$('#coverBox'), fImg=$('#fImg'), cClr=$('#coverClear');
+      $('#coverPick').addEventListener('click',function(){fImg.click();});
+      fImg.addEventListener('change',function(){
+        var f=fImg.files&&fImg.files[0];if(!f)return;
+        var rd=new FileReader();
+        rd.onload=function(ev){
+          modalImg=ev.target.result;
+          cBox.style.backgroundImage='url("'+modalImg+'")';
+          cBox.classList.remove('is-empty');cBox.innerHTML='';
+          cClr.style.display='';
+        };
+        rd.readAsDataURL(f);
+      });
+      cClr.addEventListener('click',function(){
+        modalImg='';
+        cBox.style.backgroundImage='';
+        cBox.classList.add('is-empty');
+        cBox.innerHTML='<i class="fa-solid fa-image"></i><span>Görsel seçilmedi</span>';
+        cClr.style.display='none';
+      });
+    }else if(g.id==='icerik'){
+      box.innerHTML=
+        '<div class="txf"><label for="fPrefix">URL ön-eki</label>'+
+        '<input type="text" id="fPrefix" class="txf-mono" placeholder="/blog/" autocomplete="off" />'+
+        '<div class="txf-hint">Bu tipte yayınlanan içeriğin URL\'i bu ön-ekle başlar.</div></div>'+
+        '<div class="txf"><label for="fKunye">Künye grubu</label>'+
+        '<select id="fKunye"><option value="yok">Künye yok</option><option value="ders">Ders Künyesi</option><option value="madde">Madde Künyesi + Besin Değeri</option><option value="sofra">Sofra Künyesi</option></select>'+
+        '<div class="txf-hint">Formda bu tip seçilince açılan künye alanlarını belirler.</div></div>'+
+        '<div class="txf"><label for="fBody">Gövde tipi</label>'+
+        '<select id="fBody"><option value="serbest">Serbest blok-editör</option><option value="yapisal">Yapısal gövde (adım/ipucu)</option></select></div>';
+      $('#fPrefix').value=x.prefix||'';$('#fKunye').value=x.kunye||'yok';$('#fBody').value=x.body||'serbest';
+    }else if(g.id==='rol'){
+      var acc=x.access||[];
+      box.innerHTML='<div class="txf"><label>Erişim bölümleri</label><div class="tx-access" id="fAccess">'+
+        ACCESS.map(function(a){return '<label><input type="checkbox" value="'+a[0]+'"'+(acc.indexOf(a[0])>-1?' checked':'')+' /> '+a[1]+'</label>';}).join('')+
+        '</div><div class="txf-hint">Bu rolün erişebileceği yönetim panellerini belirler.</div></div>';
+    }else{
+      box.innerHTML='';
+    }
+  }
+
+  function openModal(mode,idx){
+    modalState={mode:mode,idx:idx};
+    var g=DATA[sel], n=noun(g.id);
+    $('#modalGrp').textContent=g.label;
+    document.querySelector('label[for="fName"]').innerHTML=n+' adı <span class="req">*</span>';
+    if(mode==='edit'){
+      var it=g.items[idx];
+      $('#modalTitle').textContent=n+' Düzenle';
+      fName.value=it.name;fSlug.value=it.slug;modalIcon=it.icon;slugTouched=true;
+      renderExtra(g,it);
+    }else{
+      $('#modalTitle').textContent='Yeni '+n;
+      fName.value='';fSlug.value='';modalIcon=ICON_POOL[0];slugTouched=false;
+      renderExtra(g,null);
+    }
+    buildIconGrid();
+    modalBd.classList.add('open');
+    setTimeout(function(){fName.focus();},30);
+  }
+  function closeModal(){modalBd.classList.remove('open');modalState=null;}
+
+  fName.addEventListener('input',function(){
+    if(!slugTouched)fSlug.value=slugify(fName.value);
+  });
+  fSlug.addEventListener('input',function(){slugTouched=true;});
+
+  /* aktif gruba göre modaldan ek alanları topla */
+  function gatherExtra(g){
+    var x={};
+    if(g.id==='tarif'){
+      x.img=modalImg;
+    }else if(g.id==='icerik'){
+      x.prefix=(($('#fPrefix')||{}).value||'').trim();
+      x.kunye=(($('#fKunye')||{}).value)||'yok';
+      x.body=(($('#fBody')||{}).value)||'serbest';
+    }else if(g.id==='rol'){
+      x.access=[].slice.call(document.querySelectorAll('#fAccess input:checked')).map(function(c){return c.value;});
+    }
+    return x;
+  }
+
+  $('#modalSave').addEventListener('click',function(){
+    var g=DATA[sel], n=noun(g.id);
+    var name=(fName.value||'').trim();
+    if(!name){fName.focus();if(window.saToast)saToast(n+' adı gerekli',{type:'danger'});return;}
+    var slug=(fSlug.value||'').trim()||slugify(name);
+    var extra=gatherExtra(g);
+    if(modalState.mode==='edit'){
+      var it=g.items[modalState.idx];
+      it.name=name;it.slug=slug;it.icon=modalIcon;
+      for(var k in extra){it[k]=extra[k];}
+      if(window.saToast)saToast('"'+name+'" güncellendi');
+    }else{
+      var rec={name:name,slug:slug,icon:modalIcon,use:0};
+      for(var k2 in extra){rec[k2]=extra[k2];}
+      g.items.push(rec);
+      if(window.saToast)saToast('"'+name+'" eklendi');
+    }
+    closeModal();render();
+  });
+  $('#modalCancel').addEventListener('click',closeModal);
+  $('#modalX').addEventListener('click',closeModal);
+  modalBd.addEventListener('click',function(e){if(e.target===modalBd)closeModal();});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape'&&modalBd.classList.contains('open'))closeModal();});
+
+  $('#addBtn').addEventListener('click',function(){openModal('add');});
+  $('#emptyAdd').addEventListener('click',function(){openModal('add');});
+
+  render();
+})();
+</script>
+</body>
+</html>
