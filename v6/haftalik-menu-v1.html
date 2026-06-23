@@ -845,6 +845,8 @@ html,body{overflow-x:clip}
 .tsr-none{padding:18px 12px;text-align:center;font-size:12.5px;color:var(--muted)}
 .tsr-foot{flex:none;border-top:1px solid var(--line);padding:8px 12px;font-size:11px;color:var(--muted);font-weight:500;display:flex;align-items:center;gap:7px}
 .tsr-foot i{color:var(--tomato)}
+/* öğün kalori toplamı — stack altında, tomato ton */
+.mc-sum{display:flex;align-items:center;gap:5px;font-size:10.5px;font-weight:700;color:var(--tomato);padding:4px 2px 2px;flex:none}
 
 /* gün kalori özeti satırı (mobil günde gösterilir, desktop gizli) */
 .wk-daysum{display:none}
@@ -2094,33 +2096,37 @@ document.addEventListener('click',function(e){
   function uImg(id){return 'https://images.unsplash.com/'+id+'?w=300&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5';}
   // site tarif havuzu (mock) — picker tüm havuzda arar; öğünden bağımsız
   var POOL=[
-    {n:'Domatesli Menemen',img:uImg('photo-1525755662778-989d0524087e'),k:320},
-    {n:'Peynirli Omlet',img:uImg('photo-1612240498936-65f5101365d2'),k:290},
-    {n:'Sucuklu Yumurta',img:uImg('photo-1482049016688-2d3e1b311543'),k:340},
-    {n:'Sebzeli Omlet',img:uImg('photo-1467003909585-2f8a72700288'),k:250},
-    {n:'Meyveli Yulaf Kâsesi',img:uImg('photo-1517673400267-0251440c45dc'),k:260},
-    {n:'Serpme Kahvaltı Tabağı',img:uImg('photo-1533089860892-a7c6f0a88666'),k:410},
-    {n:'Bal-Kaymak Tabağı',img:uImg('photo-1525351484163-7529414344d8'),k:300},
-    {n:'Ezogelin Çorbası',img:uImg('photo-1547592180-85f173990554'),k:220},
-    {n:'Mercimek Çorbası',img:uImg('photo-1543339308-43e59d6b73a6'),k:240},
-    {n:'Tavuklu Sezar Salata',img:uImg('photo-1546069901-ba9599a7e63c'),k:380},
-    {n:'Sebzeli Bulgur Pilavı',img:uImg('photo-1596797038530-2c107229654b'),k:340},
-    {n:'Izgara Köfte',img:uImg('photo-1529692236671-f1f6cf9683ba'),k:450},
-    {n:'Mercimek Köftesi',img:uImg('photo-1512621776951-a57141f2eefd'),k:310},
-    {n:'Fırında Sebzeli Tavuk',img:uImg('photo-1604908176997-125f25cc6f3d'),k:520},
-    {n:'Buğulama Levrek',img:uImg('photo-1485921325833-c519f76c4927'),k:360},
-    {n:'Karnıyarık',img:uImg('photo-1565299624946-b28f40a0ae38'),k:480},
-    {n:'Sebzeli Güveç',img:uImg('photo-1547592166-23ac45744acd'),k:380},
-    {n:'Yoğurtlu Makarna',img:uImg('photo-1621996346565-e3dbc646d9a9'),k:390},
-    {n:'Izgara Tavuk & Salata',img:uImg('photo-1598103442097-8b74394b95c6'),k:400},
-    {n:'Etli Nohut Yemeği',img:uImg('photo-1455619452474-d2be8b1e70cd'),k:540}
+    {n:'Domatesli Menemen',img:uImg('photo-1525755662778-989d0524087e'),k:320,tags:['kahvalti']},
+    {n:'Peynirli Omlet',img:uImg('photo-1612240498936-65f5101365d2'),k:290,tags:['kahvalti']},
+    {n:'Sucuklu Yumurta',img:uImg('photo-1482049016688-2d3e1b311543'),k:340,tags:['kahvalti']},
+    {n:'Sebzeli Omlet',img:uImg('photo-1467003909585-2f8a72700288'),k:250,tags:['kahvalti']},
+    {n:'Meyveli Yulaf Kâsesi',img:uImg('photo-1517673400267-0251440c45dc'),k:260,tags:['kahvalti','atistirmalik']},
+    {n:'Serpme Kahvaltı Tabağı',img:uImg('photo-1533089860892-a7c6f0a88666'),k:410,tags:['kahvalti']},
+    {n:'Bal-Kaymak Tabağı',img:uImg('photo-1525351484163-7529414344d8'),k:300,tags:['kahvalti']},
+    {n:'Ezogelin Çorbası',img:uImg('photo-1547592180-85f173990554'),k:220,tags:['corba','ogle']},
+    {n:'Mercimek Çorbası',img:uImg('photo-1543339308-43e59d6b73a6'),k:240,tags:['corba','ogle']},
+    {n:'Tavuklu Sezar Salata',img:uImg('photo-1546069901-ba9599a7e63c'),k:380,tags:['ogle','ana-yemek']},
+    {n:'Sebzeli Bulgur Pilavı',img:uImg('photo-1596797038530-2c107229654b'),k:340,tags:['ogle','ana-yemek','aksam']},
+    {n:'Izgara Köfte',img:uImg('photo-1529692236671-f1f6cf9683ba'),k:450,tags:['ogle','ana-yemek','aksam']},
+    {n:'Mercimek Köftesi',img:uImg('photo-1512621776951-a57141f2eefd'),k:310,tags:['ogle','atistirmalik']},
+    {n:'Fırında Sebzeli Tavuk',img:uImg('photo-1604908176997-125f25cc6f3d'),k:520,tags:['aksam','ana-yemek']},
+    {n:'Buğulama Levrek',img:uImg('photo-1485921325833-c519f76c4927'),k:360,tags:['aksam','ana-yemek']},
+    {n:'Karnıyarık',img:uImg('photo-1565299624946-b28f40a0ae38'),k:480,tags:['aksam','ana-yemek']},
+    {n:'Sebzeli Güveç',img:uImg('photo-1547592166-23ac45744acd'),k:380,tags:['aksam','ana-yemek']},
+    {n:'Yoğurtlu Makarna',img:uImg('photo-1621996346565-e3dbc646d9a9'),k:390,tags:['ogle','aksam','ana-yemek']},
+    {n:'Izgara Tavuk & Salata',img:uImg('photo-1598103442097-8b74394b95c6'),k:400,tags:['ogle','aksam','ana-yemek']},
+    {n:'Etli Nohut Yemeği',img:uImg('photo-1455619452474-d2be8b1e70cd'),k:540,tags:['aksam','ana-yemek']}
   ];
+
+  // data-meal değerini öğün tag anahtarına çevirir
+  var MEAL_TAG_MAP={'Kahvaltı':'kahvalti','Öğle':'ogle','Akşam':'aksam'};
 
   var tsr=document.getElementById('tsr'),
       tsrInput=document.getElementById('tsrInput'),
       tsrList=document.getElementById('tsrList'),
       board=document.querySelector('.wk-board'),
-      actCell=null;  // popover açıkken hedef hücre
+      actCell=null,   // popover açıkken hedef hücre
+      actMeal=null;   // aktif hücrenin öğün tag'i (öneri sıralama için)
 
   // legacy tek-kartlı hücreyi çoklu-yığın modeline çevir (ilk etkileşimde)
   function ensureStack(cell){
@@ -2147,11 +2153,28 @@ document.addEventListener('click',function(e){
       '<div class="mc-name">'+name+'</div><div class="mc-meta"><i class="fa-solid fa-fire-flame-curved"></i> '+kcal+' kcal</div></div>';
     return w;
   }
+  // stack içindeki tüm kartların kalorisini toplayıp .mc-sum'u yazar/günceller/kaldırır
+  function updateMcSum(stack){
+    var cards=stack?stack.querySelectorAll('.mc-cardwrap'):[];
+    var sum=0;
+    for(var i=0;i<cards.length;i++){
+      var meta=cards[i].querySelector('.mc-meta');
+      if(meta){var m=meta.textContent.match(/(\d+)/);if(m)sum+=parseInt(m[1],10);}
+    }
+    var existing=stack?stack.querySelector('.mc-sum'):null;
+    if(!stack||cards.length<2){if(existing)existing.remove();return;}
+    if(!existing){
+      existing=document.createElement('div');existing.className='mc-sum';
+      stack.appendChild(existing);
+    }
+    existing.innerHTML='<i class="fa-solid fa-fire-flame-curved" style="font-size:9.5px"></i> Öğün: '+sum+' kcal';
+  }
   function addRecipe(cell,r){
     ensureStack(cell);
     var stack=cell.querySelector('.mc-stack'),
         mini=stack.querySelector('.mc-addmini');
     stack.insertBefore(makeCardWrap(r.n,r.img,r.k),mini);
+    updateMcSum(stack);
     rebuildShop();
   }
   function removeCard(x){
@@ -2162,6 +2185,8 @@ document.addEventListener('click',function(e){
       if(stack&&!stack.querySelector('.mc-cardwrap')){          // yığında son kart çıktı → boş slot
         cell.classList.add('empty');
         cell.innerHTML='<button class="mc-add" type="button"><i class="fa-solid fa-plus"></i> Ekle</button>';
+      }else{
+        updateMcSum(stack);
       }
     }else{                                                       // legacy tek-kartlı hücre → boş slot
       cell.classList.add('empty');
@@ -2171,11 +2196,21 @@ document.addEventListener('click',function(e){
   }
 
   // ---- popover ----
-  function renderResults(q){
+  // mealType: öğün tag'i (ör. 'kahvalti'); eşleşen tarifler önce sıralanır, gizlenmez
+  function renderResults(q,mealType){
     q=(q||'').toLocaleLowerCase('tr');
-    var hits=POOL.map(function(r,i){return{r:r,i:i};})
-      .filter(function(o){return !q||o.r.n.toLocaleLowerCase('tr').indexOf(q)>-1;}).slice(0,8);
-    if(!hits.length){tsrList.innerHTML='<div class="tsr-none">“'+q+'” için sonuç yok</div>';return;}
+    var all=POOL.map(function(r,i){return{r:r,i:i};})
+      .filter(function(o){return !q||o.r.n.toLocaleLowerCase('tr').indexOf(q)>-1;});
+    if(mealType){
+      // eşleşen tag'ler önce (stable sort)
+      all.sort(function(a,b){
+        var am=a.r.tags&&a.r.tags.indexOf(mealType)>-1?0:1;
+        var bm=b.r.tags&&b.r.tags.indexOf(mealType)>-1?0:1;
+        return am-bm;
+      });
+    }
+    var hits=all.slice(0,8);
+    if(!hits.length){tsrList.innerHTML='<div class="tsr-none">"'+q+'" için sonuç yok</div>';return;}
     tsrList.innerHTML=hits.map(function(o){
       return '<button class="tsr-row" type="button" data-id="'+o.i+'">'
         +'<div class="tsr-th" style="background-image:url(\''+o.r.img+'\')"></div>'
@@ -2185,6 +2220,7 @@ document.addEventListener('click',function(e){
   }
   function openTsr(btn,cell){
     actCell=cell;
+    actMeal=MEAL_TAG_MAP[cell.getAttribute('data-meal')]||null;
     var rc=btn.getBoundingClientRect(),vw=window.innerWidth,vh=window.innerHeight,
         w=294,hh=320,
         left=Math.max(8,Math.min(rc.left,vw-w-8)),
@@ -2192,9 +2228,9 @@ document.addEventListener('click',function(e){
     if(top+hh>vh-8)top=Math.max(8,rc.top-hh-8);
     tsr.style.left=left+'px';tsr.style.top=top+'px';
     tsr.classList.add('show');
-    tsrInput.value='';renderResults('');tsrInput.focus();
+    tsrInput.value='';renderResults('',actMeal);tsrInput.focus();
   }
-  function closeTsr(){tsr.classList.remove('show');actCell=null;}
+  function closeTsr(){tsr.classList.remove('show');actCell=null;actMeal=null;}
 
   // event delegation — DOM yeniden yazımı sonrası rebind gerekmez
   board.addEventListener('click',function(e){
@@ -2203,7 +2239,7 @@ document.addEventListener('click',function(e){
     var add=e.target.closest('.mc-add,.mc-addmini');
     if(add){e.stopPropagation();openTsr(add,add.closest('.mcell'));}
   });
-  tsrInput.addEventListener('input',function(){renderResults(tsrInput.value);});
+  tsrInput.addEventListener('input',function(){renderResults(tsrInput.value,actMeal);});
   tsrList.addEventListener('click',function(e){
     var row=e.target.closest('.tsr-row');if(!row||!actCell)return;
     addRecipe(actCell,POOL[+row.getAttribute('data-id')]);
@@ -2213,6 +2249,9 @@ document.addEventListener('click',function(e){
     if(tsr.classList.contains('show')&&!e.target.closest('.tsr')&&!e.target.closest('.mc-add')&&!e.target.closest('.mc-addmini'))closeTsr();
   });
   document.addEventListener('keydown',function(e){if(e.key==='Escape')closeTsr();});
+
+  // sayfa açılışında seed tek-kartlı hücreleri stack moduna al → ".mc-addmini" görünür
+  board.querySelectorAll('.mcell:not(.empty)').forEach(function(cell){ensureStack(cell);});
 
   scale(); rebuildShop();
 })();
