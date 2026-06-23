@@ -547,3 +547,7 @@ bloğun KAPANIŞINDAN sonrasına dokunma. (3) Pilot-first: 1 sayfa → lead doğ
 commit'ten önce çalıştır. (5) Doğrulama hand-rolled parser'a güvenme (CSS selector/title false-match
 verir); gerçek nav HTML'i div-depth ile çıkar, nav-div == öğe−1 say. (6) Kurtarmada iş commit'siz ise
 `git checkout HEAD -- <dosya>` = temiz, tam-recoverable baz.
+
+## Sözlük/dizin tipi modüllerde alfabetik (A-Z) gezinme imza etkileşimdir — kesilmez (2026-06-23, faz3-sozluk)
+
+**Kural:** Sözlük/dizin/ansiklopedi gibi A-Z'ye doğal yatkın modüllerde alfabetik (A-Z) gezinme BİRİNCİL/imza etkileşimdir; efor tasarrufu için "arama+kategori yeter" diye kesilmez. Kategori filtresi İKİNCİL kalır. Filtreler AND birleşir (A-Z + kategori + arama birlikte daraltır).

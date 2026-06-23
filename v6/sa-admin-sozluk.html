@@ -21,20 +21,38 @@
    Terimler tek /sozluk sayfasında yaşar — detay/SEO yok. Kategori rozeti =
    TEK accent token-tint + kategoriye özel İKON (ham renk literali YOK). ======== */
 
-/* filtre çubuğu (icerik pattern; chip = radius-sm KÖŞELİ) */
-.filter-bar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:16px 22px;border-bottom:1px solid var(--line)}
-.filter-bar .fb-search{flex:1;min-width:200px;max-width:320px;position:relative}
+/* filtre çubuğu — DİKEY istif: arama (üst) · A-Z bar (BİRİNCİL) · kategori (İKİNCİL).
+   Karar: alfabetik gezinme sözlüğün imza etkileşimi → birincil; kategori ikincil/sade. */
+.filter-bar{display:flex;flex-direction:column;align-items:stretch;gap:14px;padding:16px 22px;border-bottom:1px solid var(--line)}
+.filter-bar .fb-search{width:100%;max-width:340px;position:relative}
 .filter-bar .fb-search i{position:absolute;left:12px;top:50%;transform:translateY(-50%);font-size:13px;color:var(--muted);pointer-events:none}
 .filter-bar .fb-search input{width:100%;height:38px;padding:0 12px 0 34px;font-family:inherit;font-size:13px;font-weight:500;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:var(--radius-sm);outline:none;transition:.2s var(--ease)}
 .filter-bar .fb-search input::placeholder{color:var(--muted)}
 .filter-bar .fb-search input:focus{border-color:var(--acc);background:var(--paper);box-shadow:0 0 0 3px rgba(var(--acc-rgb),.11)}
 
-.chips{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
-.chip{font-size:12.5px;font-weight:500;color:var(--slate-2);background:var(--paper);border:1px solid var(--line);padding:7px 14px;border-radius:var(--radius-sm);cursor:pointer;transition:.18s var(--ease);display:inline-flex;align-items:center;gap:6px}
+/* A-Z bar — BİRİNCİL (public sozluk-v1 azBar mantığı; --tomato yerine --acc token).
+   TEK SATIR: wrap YOK → sığmazsa yatay kayar, harfler ezilmez, ince scrollbar. */
+.az-bar{display:flex;flex-wrap:nowrap;overflow-x:auto;gap:6px;padding-bottom:5px;scrollbar-width:thin;scrollbar-color:var(--line) transparent}
+.az-bar::-webkit-scrollbar{height:6px}
+.az-bar::-webkit-scrollbar-track{background:transparent}
+.az-bar::-webkit-scrollbar-thumb{background:var(--line);border-radius:999px}
+.az-bar::-webkit-scrollbar-thumb:hover{background:var(--muted)}
+.az{flex:0 0 auto;min-width:34px;height:34px;padding:0 6px;display:inline-flex;align-items:center;justify-content:center;font-family:inherit;font-size:13px;font-weight:700;color:var(--slate);background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-sm);cursor:pointer;transition:.18s var(--ease)}
+.az:hover{border-color:var(--acc);color:var(--acc-deep)}
+.az.active{background:var(--acc);border-color:var(--acc);color:#fff}
+.az[disabled]{opacity:.32;pointer-events:none}
+.az-all{min-width:auto;padding:0 13px}
+
+/* kategori — İKİNCİL (etiketli, daha küçük chip) */
+.fb-cats{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.fb-cats-lbl{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);flex:none}
+.chips{display:flex;flex-wrap:wrap;gap:7px;align-items:center}
+.chip{font-size:12px;font-weight:500;color:var(--slate-2);background:var(--paper);border:1px solid var(--line);padding:5px 11px;border-radius:var(--radius-sm);cursor:pointer;transition:.18s var(--ease);display:inline-flex;align-items:center;gap:6px}
 .chip:hover{border-color:var(--acc);color:var(--acc-deep)}
-.chip .ch-cnt{white-space:nowrap;font-size:10.5px;font-weight:700;background:rgba(var(--acc-rgb),.15);color:var(--acc-deep);min-width:18px;height:17px;display:inline-flex;align-items:center;justify-content:center;padding:0 5px;border-radius:var(--radius-sm)}
+.chip .ch-cnt{white-space:nowrap;font-size:10px;font-weight:700;background:rgba(var(--acc-rgb),.15);color:var(--acc-deep);min-width:17px;height:16px;display:inline-flex;align-items:center;justify-content:center;padding:0 5px;border-radius:var(--radius-sm)}
 .chip.is-on .ch-cnt{background:rgba(var(--acc-rgb),.22)}
 .chip.is-on{border-color:var(--acc);color:var(--acc-deep);background:rgba(var(--acc-rgb),.10);font-weight:700}
+
 
 /* tablo */
 .ptable{width:100%;border-collapse:collapse}
@@ -134,13 +152,21 @@
 
       <div class="filter-bar">
         <div class="fb-search"><i class="fa-solid fa-magnifying-glass"></i><input type="text" placeholder="Terim ara — örn. benmari, jülyen…" id="cSearch" /></div>
-        <div class="chips" id="catChips">
-          <button class="chip is-on" data-cat="all">Tümü <span class="ch-cnt">12</span></button>
-          <button class="chip" data-cat="teknik">Pişirme Teknikleri <span class="ch-cnt">6</span></button>
-          <button class="chip" data-cat="hamur">Hamur &amp; Fırın <span class="ch-cnt">1</span></button>
-          <button class="chip" data-cat="malzeme">Malzeme &amp; Baharat <span class="ch-cnt">1</span></button>
-          <button class="chip" data-cat="arac">Araç-Gereç <span class="ch-cnt">2</span></button>
-          <button class="chip" data-cat="dunya">Dünya Mutfağı <span class="ch-cnt">2</span></button>
+        <!-- A-Z bar (BİRİNCİL) — harfler JS ile terimlerden enjekte edilir; yoksa disabled -->
+        <div class="az-bar" id="azBar" role="group" aria-label="Harfe göre filtrele">
+          <button class="az az-all active" type="button" data-ltr="*">Tümü</button>
+        </div>
+        <!-- kategori (İKİNCİL) -->
+        <div class="fb-cats">
+          <span class="fb-cats-lbl">Kategori</span>
+          <div class="chips" id="catChips">
+            <button class="chip is-on" data-cat="all">Tümü <span class="ch-cnt">12</span></button>
+            <button class="chip" data-cat="teknik">Pişirme Teknikleri <span class="ch-cnt">6</span></button>
+            <button class="chip" data-cat="hamur">Hamur &amp; Fırın <span class="ch-cnt">1</span></button>
+            <button class="chip" data-cat="malzeme">Malzeme &amp; Baharat <span class="ch-cnt">1</span></button>
+            <button class="chip" data-cat="arac">Araç-Gereç <span class="ch-cnt">2</span></button>
+            <button class="chip" data-cat="dunya">Dünya Mutfağı <span class="ch-cnt">2</span></button>
+          </div>
         </div>
       </div>
 
@@ -370,38 +396,63 @@
 <script src="assets/js/sa-shell.js"></script>
 <script src="assets/js/sa-chcnt.js"></script>
 <script>
-/* sayfa JS — kategori chip filtre + arama + sil onayı (sa-admin-icerik kardeşi) */
+/* sayfa JS — A-Z (BİRİNCİL) + kategori (İKİNCİL) + arama = AND · sil onayı.
+   azBar mantığı public sozluk-v1'den birebir; harf .tg-harf hücresinden DOM-gerçek. */
 (function(){
+  var LETTERS='A B C Ç D E F G Ğ H I İ J K L M N O Ö P R S Ş T U Ü V Y Z'.split(' ');
+  var bar=document.getElementById('azBar');
   var chips=document.querySelectorAll('#catChips .chip');
-  var rows=document.querySelectorAll('#cTable tbody tr');
+  var rows=Array.prototype.slice.call(document.querySelectorAll('#cTable tbody tr'));
   var searchInput=document.getElementById('cSearch');
   var emptyState=document.getElementById('emptyState');
-  var activeCat='all';
 
+  /* satırın harfi — .tg-harf hücresinden (DOM-gerçek), tr büyük harf */
+  function rowLtr(row){var h=(row.querySelector('.tg-harf')||{}).textContent||'';return h.trim().toLocaleUpperCase('tr');}
+
+  /* mevcut baş harfleri enjekte et; olmayan harf disabled */
+  var present={};
+  rows.forEach(function(r){present[rowLtr(r)]=true;});
+  LETTERS.forEach(function(L){
+    var b=document.createElement('button');
+    b.className='az';b.type='button';b.textContent=L;b.setAttribute('data-ltr',L);
+    if(!present[L])b.disabled=true;
+    bar.appendChild(b);
+  });
+
+  var state={ltr:'*',cat:'all',q:''};
   function applyFilters(){
-    var q=(searchInput.value||'').toLocaleLowerCase('tr').trim();
     var visible=0;
     rows.forEach(function(row){
-      var catMatch=(activeCat==='all'||row.dataset.cat===activeCat);
       var term=(row.querySelector('.pg-title')||{}).textContent||'';
       var gloss=(row.querySelector('.tg-gloss')||{}).textContent||'';
-      var textMatch=!q||(term.toLocaleLowerCase('tr').indexOf(q)>-1)||(gloss.toLocaleLowerCase('tr').indexOf(q)>-1);
-      var show=catMatch&&textMatch;
+      var show=(state.ltr==='*'||rowLtr(row)===state.ltr)
+        && (state.cat==='all'||row.dataset.cat===state.cat)
+        && (state.q===''||term.toLocaleLowerCase('tr').indexOf(state.q)>-1||gloss.toLocaleLowerCase('tr').indexOf(state.q)>-1);
       row.style.display=show?'':'none';
       if(show)visible++;
     });
     emptyState.style.display=visible===0?'block':'none';
   }
 
+  bar.addEventListener('click',function(e){
+    var b=e.target.closest('.az');if(!b||b.disabled)return;
+    bar.querySelectorAll('.az').forEach(function(x){x.classList.remove('active')});
+    b.classList.add('active');
+    state.ltr=b.getAttribute('data-ltr');applyFilters();
+  });
   chips.forEach(function(chip){
     chip.addEventListener('click',function(){
       chips.forEach(function(c){c.classList.remove('is-on')});
       chip.classList.add('is-on');
-      activeCat=chip.dataset.cat;
+      state.cat=chip.dataset.cat;
       applyFilters();
     });
   });
-  searchInput.addEventListener('input',applyFilters);
+  searchInput.addEventListener('input',function(){
+    state.q=(searchInput.value||'').trim().toLocaleLowerCase('tr');
+    applyFilters();
+  });
+  applyFilters();
 
   /* sil — saConfirm (yıkıcı) */
   document.querySelectorAll('[data-del]').forEach(function(btn){
