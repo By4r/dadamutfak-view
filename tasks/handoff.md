@@ -1,10 +1,17 @@
-# DadaMutfak — Handoff (SIRADAKİ: Yol Güzergahım v2 — DALGA 1 COMMIT'Lİ `8a15890`, PUSH YOK · temiz pencere kuyruğu hazır)
+# DadaMutfak — Handoff (SIRADAKİ: Yol Güzergahım v2 — DALGA 1 + 3 GÖRSEL FIX COMMIT'Lİ, PUSH YOK · sıradaki: Dalga 3 ön-analiz)
 
-> ## ⏸️ OTURUM SONU DURUMU (2026-06-24 — Yol Güzergahım v2 REVİZE **DALGA 1 KOMPLE + COMMIT'Lİ** · sıradaki: 2 görünürlük fix → Dalga 3 ön-analiz)
+> ## ⏸️ OTURUM SONU DURUMU (2026-06-24 — Yol Güzergahım v2 REVİZE **DALGA 1 + 3 GÖRSEL FIX KOMPLE + COMMIT'Lİ** · sıradaki: Dalga 3 checkpoint ön-analiz)
 >
 > **PROJE:** DadaMutfak yol güzergahı **BAŞTAN TASARIM** (Roadtrippers referanslı tam-ekran). Dosya: **`v6/yol-guzergahim-v2.html`** (v1 DOKUNULMUYOR). Revize karar tablosu: `tasks/yol-rev-plan.md` · keşif md'leri: `yol-rev-{renk,header,mobil,spec}.md` · implement plan: `yol-rev-implement-plan.md`.
 >
-> ### ✅ DALGA 1 — MEKANİK + RENK + INPUT-× — COMMIT'Lİ `8a15890` (push YOK — `origin/main` 4 commit önde: `0e3dcda`+`04a1434`+`9e83f5f`+`8a15890`)
+> ### ✅ BU OTURUM — 3 GÖRSEL FIX COMMIT'Lİ (push YOK — `origin/main`'den **8 commit önde**)
+> Hepsi yalnız `v6/yol-guzergahim-v2.html`, hunk-ayrı 3 commit. Playwright ALL PASS (1440/390, console/mojibake 0).
+> - **`a26e9a1`** — Alternatif rota görünürlüğü (beyaz casing + nötr gri `--route-alt`, ana hattan ince + alt z-index, hover belirginleşir + km·süre tooltip, sol panel liste↔harita çift-yönlü senkron) + **Güzergahlarım Dada pill** (domates pill + çatal ikon + sol-aksan, ziyaret edilince sönük; alt-kadran `.yd-badge` diliyle tutarlı).
+> - **`e225b89`** — Leaflet **box-zoom kapatıldı** (`boxZoom:false`) — shift+drag mavi seçim kutusu gitti; normal zoom (scroll/+−/çift-tık/pinch) korundu.
+> - **`fcef076`** — **Focus-outline fix:** alternatif rota path'ine mouse-tıkta beliren lacivert UA dikdörtgeni (`outline:auto #005FCC`, path bbox'ı). `.leaflet-interactive:focus{outline:none}` + `:focus-visible` tomato ring (klavye erişilebilirliği korundu).
+> - **Teşhis dersi:** "mavi/lacivert dikdörtgen" 2 yanlış teşhisten sonra çözüldü — box-zoom DEĞİL, asıl kaynak focusable SVG path'in UA outline'ıydı (mouse `:focus` `:focus-visible`'a düşmediği için tomato kural devreye girmiyordu). Headless Chromium mouse-tıkta path'i focus'lamadığı için repro `.focus()` ile yakalandı.
+>
+> ### ✅ DALGA 1 — MEKANİK + RENK + INPUT-× — COMMIT'Lİ `8a15890`
 > Tek temiz commit, sadece `v6/yol-guzergahim-v2.html`. Playwright ALL PASS (1440/390, console/mojibake 0). İçerik:
 > - **Dada-soft palet:** domates gradient KALDIRILDI → soft beyaz kart + ince domates sol-aksan + küçük rozet (puf-noktaları ruhu) · **seçili-Dada bug fix** (yeşil kenar + köşe ✓ + Dada aksanı birlikte okunur).
 > - **Mesafe formatı:** tek `proxLabel` — `<0.5km`→**"Tam yol üstü"** ("0 km" gitti) · `<1km`→metre · `≥1km`→km · 4 yüzeyde tutarlı (kadran/detay/tam-liste/harita-preview).
@@ -14,10 +21,15 @@
 > - **Slider** track yeşil→sarı→domates + 3-kademe thumb · **krem** sadece cam panelde (placeholder/durum→nötr).
 > - **Durak input ×:** input İÇİ **clear ×** (`:placeholder-shown` ile metin varken görünür, input'u daraltmaz) + **AYRI satır-sil (trash)** kompakt (min-2 disabled) · input ferahladı (%81).
 >
-> ### 🎯 TEMİZ PENCERE KUYRUĞU (sıradaki oturumlar)
-> 1. **2 GÖRÜNÜRLÜK FIX (ilk iş):** (a) **alternatif rota görünürlüğü** — kod hazır ama public OSRM tek rota dönüyor; UI'da alternatiflerin nasıl belireceği/iletişimi netleşsin. (b) **Güzergahlarım'da Dada işareti** — kayıtlı liste/checkpoint satırında Dada mekanı görsel ayrımı (yol-rev-renk.md K6: petrol/domates sol-aksan).
-> 2. **DALGA 3 ÖN-ANALİZ (plan-first, KOD YOK):** checkpoint/ziyaret + "Tümü ziyaret edildi" sonrası tamamlama spec (yol-rev-spec.md temel: A+C toast+rozet+özet) · Güzergahlarım erişim (`?tab=saved` deep-link + Hesabım/Portal/Keşfet) · "Yeni rota" CTA. **CC analizine bırakılan açık karar aşağıda.**
-> 3. **DALGA 2 — header** (route-line üst şerit + **"ROTA PLANLAYICI" eyebrow**, K7=A) · **DALGA 4 — mobil** (Faz1 bottom-sheet detay → Faz4 390 breakpoint, yol-rev-mobil.md) · **DALGA 5 — veri** (alternatif rota prod-OSRM · "Troy/Truva" Beyar netleştirecek).
+> ### 🎯 TEMİZ PENCERE KUYRUĞU (sıradaki oturumlar) — *2 görünürlük fix ✅ bitti (bu oturum)*
+> 1. **DALGA 3 ÖN-ANALİZ (ilk iş; plan-first, KOD YOK):** checkpoint/ziyaret + "Tümü ziyaret edildi" sonrası tamamlama spec (yol-rev-spec.md temel: A+C toast+rozet+özet) · Güzergahlarım erişim (`?tab=saved` deep-link + Hesabım/Portal/Keşfet) · "Yeni rota" CTA. **CC analizine bırakılan açık karar: 5. KARAR aşağıda.**
+> 2. **DALGA 2 — header** (route-line üst şerit + **"ROTA PLANLAYICI" eyebrow**, K7=A).
+> 3. **DALGA 4 — mobil** (Faz1 bottom-sheet detay → Faz4 390 breakpoint, yol-rev-mobil.md).
+> 4. **DALGA 5 — veri** (alternatif rota prod-OSRM · "Troy/Truva" Beyar netleştirecek). NOT: alt-rota görsel/sync kodu hazır ve doğrulandı (mock 2-rota); public OSRM bazen tek rota dönüyor → graceful, prod-OSRM ile çok-rota beslenince otomatik çalışır.
+>
+> ### ⏳ AÇIK CONCERN'LER (Yol Güzergahım DIŞI, commit bekliyor)
+> - **`sezon-v1.html` watermark** — working tree'de commit'siz (` M`, onaysız belirginleştirme); ayrı concern, ayrı commit. DOKUNMA.
+> - **PUSH bekleyen: 8 commit** (`origin/main`'den önde). Beyar ayrıca "push" diyecek.
 >
 > ### KARARLAR — CHECKPOINT (4 ONAYLI + 1 açık)
 > ✅ **route-scoped ziyaret** (`visited{routeId:{ad}}`) · ✅ **bulaşma yok** (aynı mekan farklı güzergahta otomatik ziyaret görünmez) · ✅ **yeni rota tertemiz** (yeni güzergah 0 ziyaretle başlar) · ✅ **harita+liste çift sinyal** (pin + satır birlikte). ⏳ **5. KARAR — "Yolculuğu Başlat" ayrı bir mod mu** (planlama ↔ navigasyon/ziyaret modu ayrımı) → **Dalga 3 CC ön-analizine bırakıldı**, kod yok.
