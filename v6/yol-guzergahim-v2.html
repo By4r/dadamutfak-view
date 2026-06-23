@@ -30,6 +30,7 @@
   --slate:#211E16; --slate-2:#56514a;
   --green:#009d4f;            /* DadaFit kurumsal yeşil — "Yol Üstü" olumlu sinyali (Dalga 2) */
   --green-soft:#3BB77E;
+  --green-tint:rgba(0,157,79,.08);  /* "eklendi" hover zemini — krem yerine (revize D1: krem azalt) */
   --muted:#7E7E7E; --line:#ECECEC; --line-2:#E2DDD3;
   --cream:#EFE5D3; --cream-2:#F7F1E6; --paper:#ffffff; --bg:#f9f9f9;
   --route-alt:#A8A29A;        /* alternatif rota çizgisi (nötr) */
@@ -114,7 +115,7 @@ input{font:inherit}
 .yg-sec-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:16px}
 .yg-reverse{
   display:inline-flex;align-items:center;gap:7px;height:32px;padding:0 11px;
-  border:1px solid var(--line);background:var(--paper);border-radius:var(--radius-pill);
+  border:1px solid var(--line);background:var(--paper);border-radius:var(--radius-md);
   font-size:12px;font-weight:600;color:var(--slate-2);transition:.16s var(--ease)
 }
 .yg-reverse i{font-size:12px}
@@ -189,16 +190,27 @@ input{font:inherit}
 .yg-stop.dragging{opacity:.5}
 .yg-stop.drop-into .yg-stop-body{box-shadow:0 -3px 0 var(--tomato)}
 .yg-stop .yg-marker{margin-top:9px}
-.yg-stop-body{flex:1;min-width:0;display:flex;align-items:center;gap:5px;position:relative;z-index:1}
-.yg-stop-body .yg-field{flex:1;min-width:0}
-.yg-stop-input{width:100%;height:46px;padding:0 13px;border:1px solid var(--line-2);border-radius:var(--radius-md);
+.yg-stop-body{flex:1;min-width:0;display:flex;align-items:center;gap:4px;position:relative;z-index:1}
+.yg-stop-body .yg-field{flex:1;min-width:0;position:relative}   /* input içi clear için relative */
+/* input ferah: padding-right içteki clear × için (dıştan daralmaz) */
+.yg-stop-input{width:100%;height:46px;padding:0 38px 0 13px;border:1px solid var(--line-2);border-radius:var(--radius-md);
   background:var(--bg);color:var(--slate);font-size:14.5px;font-weight:600;transition:.16s var(--ease)}
 .yg-stop-input::placeholder{color:var(--muted);font-weight:500}
 .yg-stop-input:focus{outline:none;border-color:var(--tomato);background:var(--paper);box-shadow:0 0 0 3px var(--tomato-tint)}
-.yg-stop .yg-grip{flex:0 0 auto;width:28px;height:38px;display:inline-flex;align-items:center;justify-content:center;color:var(--muted);cursor:grab;font-size:13px}
+/* CLEAR × — input İÇİNDE sağda, SADECE metin varken (Google Maps deseni; :placeholder-shown = boş) */
+.yg-stop-clear{position:absolute;right:6px;top:50%;transform:translateY(-50%);width:28px;height:28px;
+  display:none;align-items:center;justify-content:center;border:0;background:none;color:var(--muted);
+  border-radius:50%;cursor:pointer;font-size:12px;transition:.14s var(--ease);z-index:3}
+.yg-stop-input:not(:placeholder-shown) ~ .yg-stop-clear{display:inline-flex}
+.yg-stop-clear:hover{color:var(--tomato);background:var(--tomato-tint)}
+/* drag-grip — kompakt (dış kontroller input'u sıkıştırmasın) */
+.yg-stop .yg-grip{flex:0 0 auto;width:22px;height:42px;display:inline-flex;align-items:center;justify-content:center;color:var(--muted);cursor:grab;font-size:13px}
 .yg-stop .yg-grip:active{cursor:grabbing}
-.yg-stop-x{flex:0 0 auto;width:32px;height:38px;display:inline-flex;align-items:center;justify-content:center;border:0;background:none;color:var(--muted);border-radius:var(--radius-sm);transition:.14s var(--ease)}
-.yg-stop-x:hover{color:var(--tomato);background:var(--tomato-tint)}
+/* SATIR-SİL — durağı komple kaldır (trash, clear ×'ten ayrı; min 2'de pasif) */
+.yg-stop-x{flex:0 0 auto;width:30px;height:42px;display:inline-flex;align-items:center;justify-content:center;border:0;background:none;color:var(--muted);border-radius:var(--radius-sm);transition:.14s var(--ease)}
+.yg-stop-x i{font-size:12.5px}
+.yg-stop-x:hover:not(:disabled){color:var(--tomato);background:var(--tomato-tint)}
+.yg-stop-x:disabled{opacity:.28;cursor:not-allowed}   /* min 2 durak — son 2'de pasif (silinemez) */
 /* harita durak pini numarası */
 .yg-pin.stop .yg-pin-b{font-weight:700;font-size:12.5px}
 
@@ -249,8 +261,8 @@ input{font:inherit}
 .yg-empty-cta button:hover{background:var(--tomato-dark);border-color:var(--tomato-dark)}
 
 /* --- HARİTA (kalan alan, tam etkileşimli) --- */
-.yg-map-wrap{position:absolute;inset:0;z-index:0;background:var(--cream-2)}
-#routeMap{position:absolute;inset:0;width:100%;height:100%;background:var(--cream-2)}
+.yg-map-wrap{position:absolute;inset:0;z-index:0;background:var(--bg)}
+#routeMap{position:absolute;inset:0;width:100%;height:100%;background:var(--bg)}
 /* leaflet kontrollerini header'ın altına + panelin sağına kaydır (cam yüzeylerin altında kalmasın) */
 .leaflet-top{top:68px}
 .leaflet-top.leaflet-left{left:calc(var(--panel-w) + 8px)}
@@ -289,7 +301,18 @@ input{font:inherit}
 .yg-corr-top{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:8px}
 .yg-corr-h{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
 .yg-corr-val{font-size:13px;font-weight:700;color:var(--slate)}
-.yg-corr input[type=range]{width:100%;accent-color:var(--tomato);height:22px;cursor:pointer}
+/* yakınlığa göre renk: track statik gradient (yakın=yeşil → uzak=domates); thumb 3 banda (--thumb, JS) */
+.yg-corr input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:22px;cursor:pointer;background:transparent}
+.yg-corr input[type=range]::-webkit-slider-runnable-track{height:6px;border-radius:99px;
+  background:linear-gradient(90deg,var(--green) 0%,var(--yellow) 50%,var(--tomato) 100%)}
+.yg-corr input[type=range]::-moz-range-track{height:6px;border-radius:99px;
+  background:linear-gradient(90deg,var(--green) 0%,var(--yellow) 50%,var(--tomato) 100%)}
+.yg-corr input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:18px;height:18px;border-radius:50%;
+  background:var(--thumb,var(--tomato));border:3px solid #fff;box-shadow:0 1px 4px rgba(33,30,22,.3);margin-top:-6px;transition:background .15s var(--ease)}
+.yg-corr input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;
+  background:var(--thumb,var(--tomato));border:3px solid #fff;box-shadow:0 1px 4px rgba(33,30,22,.3)}
+.yg-corr input[type=range]:focus-visible{outline:none}
+.yg-corr input[type=range]:focus-visible::-webkit-slider-thumb{box-shadow:0 0 0 3px var(--tomato-tint),0 1px 4px rgba(33,30,22,.3)}
 .yg-corr-counts{margin-top:11px;display:flex;gap:9px}
 .yg-cc{flex:1;text-align:center;border:1px solid var(--line);background:rgba(255,255,255,.6);border-radius:var(--radius-md);padding:9px 6px}
 .yg-cc b{display:block;font-size:18px;font-weight:800;line-height:1.1}
@@ -305,7 +328,7 @@ input{font:inherit}
 .yg-dash-title{display:flex;align-items:center;gap:8px;font-size:12px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--slate)}
 .yg-dash-title>i{color:var(--tomato);font-size:13px}
 .yg-dash-cnt{display:inline-flex;align-items:center;justify-content:center;min-width:20px;height:20px;padding:0 6px;border-radius:999px;background:var(--tomato);color:#fff;font-size:11px;font-weight:700}
-.yg-dash-all{display:inline-flex;align-items:center;gap:6px;height:30px;padding:0 12px;border:1px solid var(--line-2);background:var(--paper);border-radius:var(--radius-pill);font-size:12px;font-weight:700;color:var(--tomato);white-space:nowrap;transition:.16s var(--ease)}
+.yg-dash-all{display:inline-flex;align-items:center;gap:6px;height:30px;padding:0 12px;border:1px solid var(--line-2);background:var(--paper);border-radius:var(--radius-md);font-size:12px;font-weight:700;color:var(--tomato);white-space:nowrap;transition:.16s var(--ease)}
 .yg-dash-all i{font-size:11px}
 .yg-dash-all:hover{border-color:var(--tomato);background:var(--tomato-tint)}
 /* "tümünü gör" hayalet kart (scroll sonu — vitrinde gizli kalan mekan varsa) */
@@ -318,13 +341,19 @@ input{font:inherit}
 .yg-dash-scroll{display:flex;align-items:stretch;gap:11px;overflow-x:auto;overflow-y:visible;padding:2px 0 8px;scrollbar-width:thin}
 .yg-dash-scroll::-webkit-scrollbar{height:7px}
 .yg-dash-scroll::-webkit-scrollbar-thumb{background:var(--line-2);border-radius:99px}
-.yg-dcard{flex:0 0 232px;min-height:88px;display:flex;gap:10px;text-align:left;background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-md);overflow:hidden;padding:0;cursor:pointer;transition:border-color .15s var(--ease),box-shadow .15s var(--ease)}
+.yg-dcard{position:relative;flex:0 0 232px;min-height:88px;display:flex;gap:10px;text-align:left;background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-md);overflow:hidden;padding:0;cursor:pointer;transition:border-color .15s var(--ease),box-shadow .15s var(--ease)}
 /* hover: yalnız kenar + gölge — translateY KALDIRILDI (üstte beliren kırpık çizgi nedeniydi) */
 .yg-dcard:hover{border-color:var(--tomato);box-shadow:var(--sh-md)}
-.yg-dcard.sel{border-color:var(--green);background:var(--cream-2)}
-.yg-dcard.sel.dada{background:var(--tomato-tint)}
-.yg-dcard.dada{border-color:rgba(225,72,39,.4);background:var(--tomato-tint)}
-.yd-media{flex:0 0 74px;align-self:stretch;background-size:cover;background-position:center;background-color:var(--cream-2);position:relative}
+/* DADA ÖNERİYOR — SOFT premium (beyaz kart + ince domates sol-aksan + küçük rozet; puf-noktaları ruhu, gradient YOK) */
+.yg-dcard.dada{border-color:rgba(225,72,39,.28);box-shadow:0 2px 12px rgba(225,72,39,.10)}
+.yg-dcard.dada:hover{border-color:var(--tomato);box-shadow:0 6px 18px rgba(225,72,39,.16)}
+.yg-dcard.dada::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;z-index:4;background:linear-gradient(var(--tomato),var(--tomato-dark))}  /* ince domates sol-kenar aksan */
+/* SEÇİLİ (Eklendi) — soft yeşil vurgu + köşe ✓; tik metne BİNMEZ (body sağ-pad). Dada ise sol-aksan korunur → seçili+Dada birlikte okunur */
+.yg-dcard.sel{border-color:var(--green);background:var(--green-tint);box-shadow:0 2px 12px rgba(0,157,79,.12)}
+.yg-dcard.sel:hover{border-color:var(--green);box-shadow:0 6px 18px rgba(0,157,79,.16)}
+.yg-dcard.sel .yd-body{padding-right:28px}      /* ✓ rozetine yer aç → tik-metin çakışması 0 */
+.yg-dcard.sel::after{content:"\f00c";font-family:"Font Awesome 6 Free";font-weight:900;position:absolute;top:8px;right:8px;width:19px;height:19px;border-radius:50%;background:var(--green);color:#fff;font-size:9.5px;display:flex;align-items:center;justify-content:center;z-index:6;box-shadow:var(--sh-sm)}
+.yd-media{flex:0 0 74px;align-self:stretch;background-size:cover;background-position:center;background-color:var(--line);position:relative}
 .yd-badge{position:absolute;left:5px;top:5px;display:inline-flex;align-items:center;gap:4px;font-size:9px;font-weight:700;background:var(--tomato);color:#fff;padding:3px 6px;border-radius:999px}
 .yd-body{flex:1;min-width:0;padding:9px 11px 9px 2px;display:flex;flex-direction:column;gap:3px;justify-content:center}
 .yd-name{font-size:13px;font-weight:700;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -334,23 +363,52 @@ input{font:inherit}
 
 /* harita venue pini — temiz daire (teardrop yerine) */
 .yg-vpin .vp{display:flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:50%;
-  background:#fff;border:2.5px solid var(--muted);color:var(--muted);box-shadow:var(--sh-md);font-size:11px}
-.yg-vpin.dada .vp{border-color:var(--tomato);color:var(--tomato)}
-/* seçili mekan pini — dolu domates daire (güzergaha eklendi sinyali) */
-.yg-vpin.sel .vp{background:var(--tomato);border-color:var(--tomato);color:#fff}
-.yg-vpin.sel.dada .vp{background:var(--tomato);border-color:var(--tomato);color:#fff}
+  background:#fff;border:2.5px solid var(--muted);color:var(--muted);box-shadow:var(--sh-md);font-size:11px;
+  transition:transform .14s var(--ease),box-shadow .14s var(--ease);transform-origin:center bottom}
+/* DADA pini = dolu domates daire + beyaz çatal → harita üstünde NET ayrışır
+   ("sade balon tıklayınca Dada öneriyor diyor" tutarsızlığı biter: Dada pin'i artık sade değil) */
+.yg-vpin.dada .vp{background:var(--tomato);border-color:#fff;color:#fff}
+/* seçili (güzergaha eklendi) = yeşil halka — dada/normal her ikisinde de "eklendi" sinyali
+   (Dada-seçili: domates dolgu KORUNUR + üstüne yeşil halka birlikte) */
+.yg-vpin.sel .vp{box-shadow:0 0 0 3px var(--green),var(--sh-md)}
+.yg-vpin.sel:not(.dada) .vp{border-color:var(--green);color:var(--green)}
+/* PİN HOVER — büyü + öne gel (görsel önizleme tooltip ile birlikte) */
+.yg-vpin:hover{z-index:1000!important}
+.yg-vpin:hover .vp{transform:scale(1.22);box-shadow:var(--sh-pop)}
+/* seçili pin HOVER → yeşil halka KORUNUR (sade hover sh-pop'u halkayı ezmesin; Dada-seçili dahil) */
+.yg-vpin.sel:hover .vp{box-shadow:0 0 0 3px var(--green),var(--sh-pop)}
+/* venue önizleme tooltip (hover'da foto + ad + konum) */
+.leaflet-tooltip.yg-vtip{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-md);
+  box-shadow:var(--sh-pop);padding:0;overflow:hidden;display:flex;width:188px;white-space:normal}
+.leaflet-tooltip.yg-vtip.leaflet-tooltip-top::before{border-top-color:var(--paper)}
+.yg-vtip-img{flex:0 0 56px;align-self:stretch;min-height:56px;background-size:cover;background-position:center;background-color:var(--line)}
+.yg-vtip-b{flex:1;min-width:0;padding:8px 10px;display:flex;flex-direction:column;gap:2px;justify-content:center}
+.yg-vtip-name{font-size:12.5px;font-weight:700;color:var(--slate);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.yg-vtip-loc{font-size:11px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.yg-vtip-tier{font-size:10.5px;font-weight:700;margin-top:1px}  /* preview yakınlık etiketi — kadran/detayla tutarlı */
+.yg-vtip-tier.on{color:var(--green)} .yg-vtip-tier.near{color:var(--muted)}
+.yg-vtip.dada .yg-vtip-name{color:var(--tomato)}
+/* seçili mekan (selectedVenues) → preview: İNCE yeşil kenar (1px, kalın halka kaldırıldı) + hafif yeşil overlay + köşe ✓
+   (alt kadran seçili kartla aynı dil — soft) */
+.leaflet-tooltip.yg-vtip.sel{border-color:var(--green);background:linear-gradient(var(--green-tint),var(--green-tint)),var(--paper);box-shadow:var(--sh-pop)}
+.leaflet-tooltip.yg-vtip.sel.leaflet-tooltip-top::before{border-top-color:var(--green)}
+.leaflet-tooltip.yg-vtip.sel .yg-vtip-b{padding-right:24px}   /* ✓ için yer aç → ad metnine binmez (çakışma 0) */
+.leaflet-tooltip.yg-vtip.sel::after{content:"\f00c";font-family:"Font Awesome 6 Free";font-weight:900;position:absolute;
+  top:5px;right:5px;width:17px;height:17px;border-radius:50%;background:var(--green);color:#fff;font-size:8.5px;
+  display:flex;align-items:center;justify-content:center;z-index:3;box-shadow:var(--sh-sm)}
 
 /* ===================== K1: MEKAN DETAY KARTI (tıkla → harita uçar + bu kart) ===================== */
 .yg-detail{position:absolute;top:74px;right:16px;width:286px;z-index:25;
   background:rgba(255,255,255,.94);-webkit-backdrop-filter:blur(20px) saturate(150%);backdrop-filter:blur(20px) saturate(150%);
   border:1px solid rgba(255,255,255,.7);border-radius:var(--radius-lg);box-shadow:0 16px 44px rgba(33,30,22,.22);overflow:hidden}
 .yg-detail[hidden]{display:none}
-.yg-detail-media{height:128px;background-size:cover;background-position:center;background-color:var(--cream-2);position:relative}
+.yg-detail-media{height:128px;background-size:cover;background-position:center;background-color:var(--line);position:relative}
 .yg-detail-x{position:absolute;top:9px;right:9px;width:32px;height:32px;display:inline-flex;align-items:center;justify-content:center;
   border:0;border-radius:50%;background:rgba(33,30,22,.55);color:#fff;font-size:13px;-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);transition:.16s var(--ease)}
 .yg-detail-x:hover{background:rgba(33,30,22,.78)}
 .yg-detail-badge{position:absolute;left:10px;top:10px;display:inline-flex;align-items:center;gap:5px;font-size:10.5px;font-weight:700;
   background:var(--tomato);color:#fff;padding:4px 9px;border-radius:var(--radius-pill);box-shadow:var(--sh-sm)}
+.yg-detail-badge[hidden]{display:none}   /* display:inline-flex UA [hidden]'ı eziyordu → dada:false mekanda rozet sızıyordu (bug fix) */
 .yg-detail-body{padding:13px 15px 15px}
 .yg-detail-name{font-size:16px;font-weight:700;letter-spacing:-.01em;line-height:1.25;margin-bottom:4px}
 .yg-detail-loc{display:flex;align-items:center;gap:6px;font-size:12.5px;color:var(--muted);font-weight:500}
@@ -365,7 +423,13 @@ input{font:inherit}
 .yg-detail-add i{font-size:13px}
 .yg-detail-add:hover{background:var(--tomato-dark);border-color:var(--tomato-dark)}
 .yg-detail-add.is-added{background:var(--paper);color:var(--green);border-color:var(--green)}
-.yg-detail-add.is-added:hover{background:var(--cream-2)}
+.yg-detail-add.is-added:hover{background:var(--green-tint)}
+/* ikincil: mekan sayfasına git (sade ghost text-link) */
+.yg-detail-more{margin-top:9px;width:100%;height:38px;display:inline-flex;align-items:center;justify-content:center;gap:7px;
+  border:1px solid var(--line-2);background:var(--paper);color:var(--slate-2);border-radius:var(--radius-md);
+  font-weight:600;font-size:12.5px;text-decoration:none;transition:.16s var(--ease)}
+.yg-detail-more i{font-size:11px;color:var(--tomato)}
+.yg-detail-more:hover{border-color:var(--tomato);color:var(--tomato);background:var(--tomato-tint)}
 
 /* ===================== K3: SOL PANEL — GÜZERGAHIMDAKİ MEKANLAR ===================== */
 .yg-mine{margin-top:22px}
@@ -382,7 +446,7 @@ input{font:inherit}
 .yg-mine-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
 .yg-mine-card{display:flex;align-items:center;gap:11px;background:var(--paper);border:1px solid var(--line);
   border-radius:var(--radius-md);padding:7px 7px 7px 8px}
-.yg-mine-media{flex:0 0 42px;width:42px;height:42px;border-radius:var(--radius-sm);background-size:cover;background-position:center;background-color:var(--cream-2)}
+.yg-mine-media{flex:0 0 42px;width:42px;height:42px;border-radius:var(--radius-sm);background-size:cover;background-position:center;background-color:var(--line)}
 .yg-mine-info{flex:1;min-width:0;display:flex;flex-direction:column;gap:1px}
 .yg-mine-name{font-size:13px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .yg-mine-loc{font-size:11px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -393,7 +457,7 @@ input{font:inherit}
 /* ===================== K9: TÜM ROTA MEKANLARI (Tümünü Gör push view) ===================== */
 .yg-bc{display:flex;align-items:center;gap:9px;margin-bottom:16px}
 .yg-bc-back{display:inline-flex;align-items:center;gap:7px;height:36px;padding:0 13px 0 10px;border:1px solid var(--line-2);
-  background:var(--paper);border-radius:var(--radius-pill);font-size:13px;font-weight:700;color:var(--slate);transition:.16s var(--ease)}
+  background:var(--paper);border-radius:var(--radius-md);font-size:13px;font-weight:700;color:var(--slate);transition:.16s var(--ease)}
 .yg-bc-back i{font-size:12px;color:var(--tomato)}
 .yg-bc-back:hover{border-color:var(--tomato);color:var(--tomato);background:var(--tomato-tint)}
 .yg-bc-cur{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
@@ -414,7 +478,7 @@ input{font:inherit}
   overflow:hidden;margin-bottom:9px;transition:border-color .15s var(--ease),box-shadow .15s var(--ease)}
 .yg-fl-card:hover{border-color:var(--tomato);box-shadow:var(--sh-sm)}
 .yg-fl-main{flex:1;min-width:0;display:flex;gap:12px;text-align:left;border:0;background:none;padding:0;cursor:pointer}
-.yg-fl-media{flex:0 0 80px;align-self:stretch;min-height:80px;background-size:cover;background-position:center;background-color:var(--cream-2);position:relative}
+.yg-fl-media{flex:0 0 80px;align-self:stretch;min-height:80px;background-size:cover;background-position:center;background-color:var(--line);position:relative}
 .yg-fl-badge{position:absolute;left:5px;top:5px;display:inline-flex;align-items:center;gap:4px;font-size:9px;font-weight:700;
   background:var(--tomato);color:#fff;padding:3px 6px;border-radius:999px}
 .yg-fl-body{flex:1;min-width:0;padding:10px 2px 10px 0;display:flex;flex-direction:column;gap:3px;justify-content:center}
@@ -423,12 +487,12 @@ input{font:inherit}
 .yg-fl-tag{font-size:11px;font-weight:700}
 .yg-fl-tag.on{color:var(--green)} .yg-fl-tag.near{color:var(--muted)}
 .yg-fl-add{flex:0 0 auto;align-self:center;margin-right:9px;display:inline-flex;align-items:center;gap:6px;height:40px;padding:0 13px;
-  border:1px solid var(--tomato);background:var(--paper);color:var(--tomato);border-radius:var(--radius-pill);
+  border:1px solid var(--tomato);background:var(--paper);color:var(--tomato);border-radius:var(--radius-md);
   font-size:12.5px;font-weight:700;white-space:nowrap;transition:.15s var(--ease)}
 .yg-fl-add i{font-size:12px}
 .yg-fl-add:hover{background:var(--tomato);color:#fff}
 .yg-fl-add.is-added{border-color:var(--green);color:var(--green);background:var(--paper)}
-.yg-fl-add.is-added:hover{background:var(--cream-2);color:var(--green)}
+.yg-fl-add.is-added:hover{background:var(--green-tint);color:var(--green)}
 .yg-fl-empty{text-align:center;padding:34px 16px}
 .yg-fl-empty[hidden]{display:none}
 .yg-fl-empty-ico{width:54px;height:54px;margin:0 auto 13px;border-radius:50%;display:flex;align-items:center;justify-content:center;
@@ -484,7 +548,7 @@ input{font:inherit}
 .yg-sv-load:hover{background:var(--tomato);color:#fff}
 .yg-sv-check{flex:0 0 auto}
 .yg-sv-check:hover{border-color:var(--slate-2);color:var(--slate)}
-.yg-sv-check.open{background:var(--cream-2);border-color:var(--line-2);color:var(--slate)}
+.yg-sv-check.open{background:var(--bg);border-color:var(--line-2);color:var(--slate)}
 .yg-sv-del{flex:0 0 auto;width:40px;padding:0;color:var(--muted)}
 .yg-sv-del:hover{border-color:var(--tomato);color:var(--tomato);background:var(--tomato-tint)}
 /* sil onayı (inline mini-state — bu sayfada saConfirm yok) */
@@ -508,6 +572,10 @@ input{font:inherit}
 .yg-sv-vrow.on .yg-sv-cbox{background:var(--green);border-color:var(--green)}
 .yg-sv-vname{flex:1;min-width:0;font-size:13px;font-weight:600;color:var(--slate);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .yg-sv-vrow.on .yg-sv-vname{color:var(--muted);text-decoration:line-through}
+/* Güzergahlarım Dada mekanı — ince domates-gradient sol-kenar aksan (dikey listede taranır) */
+.yg-sv-vrow.dada{position:relative}
+.yg-sv-vrow.dada::before{content:"";position:absolute;left:0;top:5px;bottom:5px;width:3px;border-radius:2px;
+  background:linear-gradient(var(--tomato),var(--tomato-dark))}
 .yg-sv-vdada{flex:0 0 auto;color:var(--tomato);font-size:10px}
 
 /* ===================== KONUM BUL — sağ-alt FAB + mavi konum noktası + en-yakın-şehir promptu + toast ===================== */
@@ -541,7 +609,7 @@ input{font:inherit}
 .yg-geo-prompt-lbl{font-size:10.5px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
 .yg-geo-prompt-city{font-size:14px;font-weight:700;color:var(--slate);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .yg-geo-start{flex:0 0 auto;display:inline-flex;align-items:center;gap:7px;height:38px;padding:0 14px;
-  border:1px solid var(--tomato);background:var(--tomato);color:#fff;border-radius:var(--radius-pill);font-size:12.5px;font-weight:700;transition:.16s var(--ease)}
+  border:1px solid var(--tomato);background:var(--tomato);color:#fff;border-radius:var(--radius-md);font-size:12.5px;font-weight:700;transition:.16s var(--ease)}
 .yg-geo-start i{font-size:12px}
 .yg-geo-start:hover{background:var(--tomato-dark);border-color:var(--tomato-dark)}
 .yg-geo-x{flex:0 0 auto;width:30px;height:30px;display:inline-flex;align-items:center;justify-content:center;border:0;background:none;
@@ -633,7 +701,7 @@ input{font:inherit}
         <div class="yg-summary" id="ygSummary" hidden>
           <div class="yg-divider"></div>
           <div class="yg-sum-card">
-            <div class="yg-sum-figs"><b id="ygKm">—</b><span>km</span></div>
+            <div class="yg-sum-figs"><b id="ygKm">—</b><span id="ygKmUnit">km</span></div>
             <div class="yg-sum-note" id="ygNote"></div>
           </div>
         </div>
@@ -689,7 +757,7 @@ input{font:inherit}
       <!-- VIEW B: TÜM ROTA MEKANLARI (K9 — "Tümünü Gör" push view; breadcrumb ile döner) -->
       <section class="yg-view" id="viewAll" role="tabpanel" hidden>
         <div class="yg-bc">
-          <button class="yg-bc-back" id="ygAllBack" type="button"><i class="fa-solid fa-chevron-left"></i> Rota Kur</button>
+          <button class="yg-bc-back" id="ygAllBack" type="button"><i class="fa-solid fa-chevron-left"></i> Geri</button>
           <span class="yg-bc-cur">Tüm Mekanlar</span>
         </div>
         <div class="yg-search">
@@ -756,6 +824,7 @@ input{font:inherit}
         <span class="yg-detail-star" id="ygDetailStar" hidden><i class="fa-solid fa-star"></i> <span id="ygDetailStarVal">—</span></span>
       </div>
       <button class="yg-detail-add" id="ygDetailAdd" type="button"><i class="fa-solid fa-plus"></i> <span id="ygDetailAddTxt">Güzergaha Ekle</span></button>
+      <a class="yg-detail-more" id="ygDetailMore" href="mekan-detay-v1.html" target="_blank" rel="noopener"><i class="fa-solid fa-arrow-up-right-from-square"></i> Mekan sayfasını aç</a>
     </div>
   </div>
 
@@ -871,120 +940,196 @@ input{font:inherit}
   // ---- ROAD_POOL: yol üstü mekanlar (sayım + Dalga 2 şehir-mekan listesi) ----
   // dada:true → "Dada öneriyor" (elle kuratoryal, otomatik puan YOK). img → Unsplash id (venue kartı).
   var ROAD_POOL=[
-    {ad:'Gebze Köfte Durağı',       lat:40.7990,lng:29.4350,cat:'Köfte & Izgara',   puan:4.5,konum:'Gebze · Kocaeli',     sehir:'Gebze',                dada:false,img:'photo-1565958011703-44f9829ba187'},
-    {ad:'İzmit Pişmaniye Evi',      lat:40.7700,lng:29.9200,cat:'Tatlı & Kafe',     puan:4.6,konum:'İzmit · Kocaeli',     sehir:'Kocaeli (İzmit)',      dada:true ,img:'photo-1525351484163-7529414344d8'},
-    {ad:'Sapanca Göl Kahvaltı',     lat:40.6920,lng:30.2640,cat:'Kahvaltı & Serpme',puan:4.8,konum:'Sapanca · Sakarya',   sehir:'Sakarya (Adapazarı)',  dada:true ,img:'photo-1509440159596-0249088772ff'},
-    {ad:'Adapazarı Islama Köfte',   lat:40.7800,lng:30.4000,cat:'Köfte & Izgara',   puan:4.7,konum:'Adapazarı · Sakarya', sehir:'Sakarya (Adapazarı)',  dada:false,img:'photo-1529692236671-f1f6cf9683ba'},
-    {ad:'Bolu Dağı Et Mangal',      lat:40.7300,lng:31.5500,cat:'Kebap & Ocakbaşı', puan:4.6,konum:'Bolu Dağı · Bolu',    sehir:'Bolu',                 dada:true ,img:'photo-1504674900247-0877df9cc836'},
-    {ad:'Bilecik Köy Sofrası',      lat:40.0600,lng:30.0100,cat:'Esnaf Lokantası',  puan:4.4,konum:'Merkez · Bilecik',    sehir:'Bilecik',              dada:false,img:'photo-1517248135467-4c7edcad34c4'},
-    {ad:'Bozüyük Dinlenme Tesisi',  lat:39.9070,lng:30.0360,cat:'Esnaf Lokantası',  puan:4.3,konum:'Bozüyük · Bilecik',   sehir:'Bozüyük',              dada:false,img:'photo-1466978913421-dad2ebd01d17'},
-    {ad:'Eskişehir Çibörek Evi',    lat:39.7800,lng:30.5100,cat:'Dünya Mutfağı',    puan:4.7,konum:'Odunpazarı · Eskişehir',sehir:'Eskişehir',          dada:true ,img:'photo-1596040033229-a9821ebd058d'},
-    {ad:'Gemlik Su Böreği',         lat:40.2300,lng:29.1600,cat:'Kahvaltı & Serpme',puan:4.5,konum:'Gemlik · Bursa',      sehir:'Bursa',                dada:false,img:'photo-1565299507177-b0ac66763828'},
-    {ad:'Gerede Yolu Kebapçısı',    lat:40.4500,lng:31.9000,cat:'Kebap & Ocakbaşı', puan:4.5,konum:'Gerede · Bolu',       sehir:'Bolu',                 dada:false,img:'photo-1555992336-fb0d29498b13'},
-    {ad:"Çamlıca Tepesi Köfte Salonu",lat:41.0234,lng:29.0696,cat:"Köfte & Izgara",puan:4.6,konum:"Üsküdar · İstanbul",sehir:"İstanbul",dada:true,img:'photo-1565958011703-44f9829ba187'},
-    {ad:"Kadıköy Çiya Sofrası",lat:40.9897,lng:29.0257,cat:"Esnaf Lokantası",puan:4.8,konum:"Kadıköy · İstanbul",sehir:"İstanbul",dada:true,img:'photo-1525351484163-7529414344d8'},
-    {ad:"Pendik Sahil Balıkçısı",lat:40.8776,lng:29.2588,cat:"Balık & Meyhane",puan:4.5,konum:"Pendik · İstanbul",sehir:"İstanbul",dada:false,img:'photo-1509440159596-0249088772ff'},
-    {ad:"Kartal Meşhur Köftecisi",lat:40.888,lng:29.1758,cat:"Köfte & Izgara",puan:4.4,konum:"Kartal · İstanbul",sehir:"İstanbul",dada:false,img:'photo-1529692236671-f1f6cf9683ba'},
-    {ad:"Tuzla Sahil Balık Evi",lat:40.816,lng:29.3,cat:"Balık & Meyhane",puan:4.3,konum:"Tuzla · İstanbul",sehir:"İstanbul",dada:false,img:'photo-1504674900247-0877df9cc836'},
-    {ad:"Üsküdar Kanaat Lokantası",lat:41.026,lng:29.015,cat:"Esnaf Lokantası",puan:4.7,konum:"Üsküdar · İstanbul",sehir:"İstanbul",dada:false,img:'photo-1517248135467-4c7edcad34c4'},
-    {ad:"Maltepe Sahil Kokoreççisi",lat:40.922,lng:29.131,cat:"Sokak Lezzeti",puan:4.2,konum:"Maltepe · İstanbul",sehir:"İstanbul",dada:false,img:'photo-1466978913421-dad2ebd01d17'},
-    {ad:"Beykoz Çubuklu Köftecisi",lat:41.105,lng:29.09,cat:"Köfte & Izgara",puan:4.5,konum:"Beykoz · İstanbul",sehir:"İstanbul",dada:false,img:'photo-1596040033229-a9821ebd058d'},
-    {ad:"Sultanbeyli Ocakbaşı",lat:40.969,lng:29.267,cat:"Kebap & Ocakbaşı",puan:4.3,konum:"Sultanbeyli · İstanbul",sehir:"İstanbul",dada:false,img:'photo-1565299507177-b0ac66763828'},
-    {ad:"Çekmeköy Köy Kahvaltısı",lat:41.042,lng:29.188,cat:"Kahvaltı & Serpme",puan:4.7,konum:"Çekmeköy · İstanbul",sehir:"İstanbul",dada:true,img:'photo-1555992336-fb0d29498b13'},
-    {ad:"Gebze Çınarlı Köftecisi",lat:40.795,lng:29.44,cat:"Köfte & Izgara",puan:4.4,konum:"Gebze · Kocaeli",sehir:"Gebze",dada:false,img:'photo-1565958011703-44f9829ba187'},
-    {ad:"Darıca Sahil Balıkçısı",lat:40.76,lng:29.38,cat:"Balık & Meyhane",puan:4.6,konum:"Darıca · Kocaeli",sehir:"Gebze",dada:true,img:'photo-1525351484163-7529414344d8'},
-    {ad:"Gebze Tarihi Pişmaniyeci",lat:40.8,lng:29.43,cat:"Tatlı & Kafe",puan:4.3,konum:"Gebze · Kocaeli",sehir:"Gebze",dada:false,img:'photo-1509440159596-0249088772ff'},
-    {ad:"İzmit Köfteci Ramiz",lat:40.766,lng:29.93,cat:"Köfte & Izgara",puan:4.5,konum:"İzmit · Kocaeli",sehir:"Kocaeli (İzmit)",dada:false,img:'photo-1529692236671-f1f6cf9683ba'},
-    {ad:"Karamürsel Pişmaniyecisi",lat:40.69,lng:29.61,cat:"Tatlı & Kafe",puan:4.4,konum:"Karamürsel · Kocaeli",sehir:"Kocaeli (İzmit)",dada:false,img:'photo-1504674900247-0877df9cc836'},
-    {ad:"Gölcük Sahil Balık Evi",lat:40.718,lng:29.82,cat:"Balık & Meyhane",puan:4.6,konum:"Gölcük · Kocaeli",sehir:"Kocaeli (İzmit)",dada:true,img:'photo-1517248135467-4c7edcad34c4'},
-    {ad:"İzmit Sekapark Kahvaltı",lat:40.77,lng:29.95,cat:"Kahvaltı & Serpme",puan:4.5,konum:"İzmit · Kocaeli",sehir:"Kocaeli (İzmit)",dada:false,img:'photo-1466978913421-dad2ebd01d17'},
-    {ad:"Derince Etli Ekmek Fırını",lat:40.757,lng:29.83,cat:"Pide & Lahmacun",puan:4.3,konum:"Derince · Kocaeli",sehir:"Kocaeli (İzmit)",dada:false,img:'photo-1596040033229-a9821ebd058d'},
-    {ad:"Kandıra Köy Sofrası",lat:41.07,lng:30.15,cat:"Esnaf Lokantası",puan:4.4,konum:"Kandıra · Kocaeli",sehir:"Kocaeli (İzmit)",dada:false,img:'photo-1565299507177-b0ac66763828'},
-    {ad:"Başiskele Göl Ocakbaşı",lat:40.67,lng:29.94,cat:"Kebap & Ocakbaşı",puan:4.5,konum:"Başiskele · Kocaeli",sehir:"Kocaeli (İzmit)",dada:false,img:'photo-1555992336-fb0d29498b13'},
-    {ad:"Adapazarı Ünal Islama Köfte",lat:40.78,lng:30.4,cat:"Köfte & Izgara",puan:4.7,konum:"Adapazarı · Sakarya",sehir:"Sakarya (Adapazarı)",dada:true,img:'photo-1565958011703-44f9829ba187'},
-    {ad:"Sapanca Gölkıyısı Balık",lat:40.69,lng:30.26,cat:"Balık & Meyhane",puan:4.6,konum:"Sapanca · Sakarya",sehir:"Sakarya (Adapazarı)",dada:false,img:'photo-1525351484163-7529414344d8'},
-    {ad:"Akyazı Meşhur Köftecisi",lat:40.685,lng:30.62,cat:"Köfte & Izgara",puan:4.4,konum:"Akyazı · Sakarya",sehir:"Sakarya (Adapazarı)",dada:false,img:'photo-1509440159596-0249088772ff'},
-    {ad:"Hendek Köy Et Mangal",lat:40.8,lng:30.75,cat:"Kebap & Ocakbaşı",puan:4.3,konum:"Hendek · Sakarya",sehir:"Sakarya (Adapazarı)",dada:false,img:'photo-1529692236671-f1f6cf9683ba'},
-    {ad:"Serdivan Künefecisi",lat:40.77,lng:30.35,cat:"Tatlı & Kafe",puan:4.5,konum:"Serdivan · Sakarya",sehir:"Sakarya (Adapazarı)",dada:false,img:'photo-1504674900247-0877df9cc836'},
-    {ad:"Sakarya Tarihi Pide Salonu",lat:40.78,lng:30.41,cat:"Pide & Lahmacun",puan:4.4,konum:"Adapazarı · Sakarya",sehir:"Sakarya (Adapazarı)",dada:false,img:'photo-1517248135467-4c7edcad34c4'},
-    {ad:"Karasu Sahil Balıkçısı",lat:41.1,lng:30.69,cat:"Balık & Meyhane",puan:4.6,konum:"Karasu · Sakarya",sehir:"Sakarya (Adapazarı)",dada:true,img:'photo-1466978913421-dad2ebd01d17'},
-    {ad:"Düzce Pideli Köfte Salonu",lat:40.84,lng:31.16,cat:"Köfte & Izgara",puan:4.5,konum:"Merkez · Düzce",sehir:"Düzce",dada:false,img:'photo-1596040033229-a9821ebd058d'},
-    {ad:"Akçakoca Karadeniz Balıkçısı",lat:41.085,lng:31.12,cat:"Balık & Meyhane",puan:4.7,konum:"Akçakoca · Düzce",sehir:"Düzce",dada:true,img:'photo-1565299507177-b0ac66763828'},
-    {ad:"Düzce Mantı Evi",lat:40.845,lng:31.15,cat:"Dünya Mutfağı",puan:4.4,konum:"Merkez · Düzce",sehir:"Düzce",dada:false,img:'photo-1555992336-fb0d29498b13'},
-    {ad:"Kaynaşlı Dağ Restoranı",lat:40.78,lng:31.31,cat:"Kebap & Ocakbaşı",puan:4.3,konum:"Kaynaşlı · Düzce",sehir:"Düzce",dada:false,img:'photo-1565958011703-44f9829ba187'},
-    {ad:"Konuralp Köy Kahvaltısı",lat:40.86,lng:31.19,cat:"Kahvaltı & Serpme",puan:4.6,konum:"Konuralp · Düzce",sehir:"Düzce",dada:false,img:'photo-1525351484163-7529414344d8'},
-    {ad:"Cumayeri Köy Sofrası",lat:40.88,lng:31.02,cat:"Esnaf Lokantası",puan:4.3,konum:"Cumayeri · Düzce",sehir:"Düzce",dada:false,img:'photo-1509440159596-0249088772ff'},
-    {ad:"Gölyaka Alabalık Tesisi",lat:40.78,lng:31,cat:"Balık & Meyhane",puan:4.6,konum:"Gölyaka · Düzce",sehir:"Düzce",dada:true,img:'photo-1529692236671-f1f6cf9683ba'},
-    {ad:"Düzce Çiğ Köftecisi",lat:40.842,lng:31.162,cat:"Sokak Lezzeti",puan:4.2,konum:"Merkez · Düzce",sehir:"Düzce",dada:false,img:'photo-1504674900247-0877df9cc836'},
-    {ad:"Bolu Köroğlu Et Lokantası",lat:40.74,lng:31.6,cat:"Kebap & Ocakbaşı",puan:4.7,konum:"Merkez · Bolu",sehir:"Bolu",dada:true,img:'photo-1517248135467-4c7edcad34c4'},
-    {ad:"Mengen Aşçılar Sofrası",lat:40.93,lng:32.07,cat:"Esnaf Lokantası",puan:4.8,konum:"Mengen · Bolu",sehir:"Bolu",dada:true,img:'photo-1466978913421-dad2ebd01d17'},
-    {ad:"Bolu Dağı Mola Kahvaltı",lat:40.73,lng:31.54,cat:"Kahvaltı & Serpme",puan:4.5,konum:"Bolu Dağı · Bolu",sehir:"Bolu",dada:false,img:'photo-1596040033229-a9821ebd058d'},
-    {ad:"Gerede Kuzu Çevirme",lat:40.8,lng:31.9,cat:"Kebap & Ocakbaşı",puan:4.4,konum:"Gerede · Bolu",sehir:"Bolu",dada:false,img:'photo-1565299507177-b0ac66763828'},
-    {ad:"Mudurnu Tarihi Köftecisi",lat:40.47,lng:31.207,cat:"Köfte & Izgara",puan:4.5,konum:"Mudurnu · Bolu",sehir:"Bolu",dada:false,img:'photo-1555992336-fb0d29498b13'},
-    {ad:"Yedigöller Alabalık Evi",lat:40.94,lng:31.75,cat:"Balık & Meyhane",puan:4.6,konum:"Merkez · Bolu",sehir:"Bolu",dada:false,img:'photo-1565958011703-44f9829ba187'},
-    {ad:"Bolu Gölcük Orman Restoran",lat:40.67,lng:31.58,cat:"Esnaf Lokantası",puan:4.4,konum:"Merkez · Bolu",sehir:"Bolu",dada:false,img:'photo-1525351484163-7529414344d8'},
-    {ad:"Eskişehir Tarihi Çibörek Evi",lat:39.778,lng:30.518,cat:"Dünya Mutfağı",puan:4.8,konum:"Odunpazarı · Eskişehir",sehir:"Eskişehir",dada:true,img:'photo-1509440159596-0249088772ff'},
-    {ad:"Odunpazarı Balaban Tava",lat:39.765,lng:30.53,cat:"Esnaf Lokantası",puan:4.6,konum:"Odunpazarı · Eskişehir",sehir:"Eskişehir",dada:false,img:'photo-1529692236671-f1f6cf9683ba'},
-    {ad:"Eskişehir Met Helvacısı",lat:39.78,lng:30.52,cat:"Tatlı & Kafe",puan:4.4,konum:"Merkez · Eskişehir",sehir:"Eskişehir",dada:false,img:'photo-1504674900247-0877df9cc836'},
-    {ad:"Porsuk Kıyısı Kahvaltı Bahçesi",lat:39.772,lng:30.51,cat:"Kahvaltı & Serpme",puan:4.5,konum:"Tepebaşı · Eskişehir",sehir:"Eskişehir",dada:false,img:'photo-1517248135467-4c7edcad34c4'},
-    {ad:"Sivrihisar Höşmerim Evi",lat:39.45,lng:31.536,cat:"Tatlı & Kafe",puan:4.3,konum:"Sivrihisar · Eskişehir",sehir:"Eskişehir",dada:false,img:'photo-1466978913421-dad2ebd01d17'},
-    {ad:"Eskişehir Çiğ Köftecisi",lat:39.776,lng:30.525,cat:"Sokak Lezzeti",puan:4.2,konum:"Merkez · Eskişehir",sehir:"Eskişehir",dada:false,img:'photo-1596040033229-a9821ebd058d'},
-    {ad:"Tepebaşı Ocakbaşı Kebap",lat:39.79,lng:30.49,cat:"Kebap & Ocakbaşı",puan:4.5,konum:"Tepebaşı · Eskişehir",sehir:"Eskişehir",dada:false,img:'photo-1565299507177-b0ac66763828'},
-    {ad:"İnegöl Meşhur Köftecisi",lat:40.078,lng:29.513,cat:"Köfte & Izgara",puan:4.7,konum:"İnegöl · Bursa",sehir:"Bursa",dada:true,img:'photo-1555992336-fb0d29498b13'},
-    {ad:"Bursa Tarihi İskender Kebap",lat:40.185,lng:29.061,cat:"Kebap & Ocakbaşı",puan:4.8,konum:"Osmangazi · Bursa",sehir:"Bursa",dada:true,img:'photo-1565958011703-44f9829ba187'},
-    {ad:"Kemalpaşa Tatlıcısı",lat:40.04,lng:28.406,cat:"Tatlı & Kafe",puan:4.4,konum:"Mustafakemalpaşa · Bursa",sehir:"Bursa",dada:false,img:'photo-1525351484163-7529414344d8'},
-    {ad:"Mudanya Sahil Balıkçısı",lat:40.376,lng:28.884,cat:"Balık & Meyhane",puan:4.6,konum:"Mudanya · Bursa",sehir:"Bursa",dada:false,img:'photo-1509440159596-0249088772ff'},
-    {ad:"Bursa Pideli Köfte Salonu",lat:40.19,lng:29.06,cat:"Köfte & Izgara",puan:4.5,konum:"Osmangazi · Bursa",sehir:"Bursa",dada:false,img:'photo-1529692236671-f1f6cf9683ba'},
-    {ad:"Cumalıkızık Köy Kahvaltısı",lat:40.19,lng:29.17,cat:"Kahvaltı & Serpme",puan:4.7,konum:"Yıldırım · Bursa",sehir:"Bursa",dada:true,img:'photo-1504674900247-0877df9cc836'},
-    {ad:"Uludağ Et Restoranı",lat:40.09,lng:29.13,cat:"Kebap & Ocakbaşı",puan:4.4,konum:"Osmangazi · Bursa",sehir:"Bursa",dada:false,img:'photo-1517248135467-4c7edcad34c4'},
-    {ad:"Gemlik Zeytin Kahvaltı Evi",lat:40.43,lng:29.15,cat:"Kahvaltı & Serpme",puan:4.5,konum:"Gemlik · Bursa",sehir:"Bursa",dada:false,img:'photo-1466978913421-dad2ebd01d17'},
-    {ad:"Ankara Tava & Kebap Evi",lat:39.93,lng:32.85,cat:"Kebap & Ocakbaşı",puan:4.6,konum:"Çankaya · Ankara",sehir:"Ankara",dada:true,img:'photo-1596040033229-a9821ebd058d'},
-    {ad:"Kızılay Tarihi Döner Salonu",lat:39.92,lng:32.854,cat:"Sokak Lezzeti",puan:4.4,konum:"Çankaya · Ankara",sehir:"Ankara",dada:false,img:'photo-1565299507177-b0ac66763828'},
-    {ad:"Beypazarı Kuru Baklavacısı",lat:40.167,lng:31.92,cat:"Tatlı & Kafe",puan:4.7,konum:"Beypazarı · Ankara",sehir:"Ankara",dada:true,img:'photo-1555992336-fb0d29498b13'},
-    {ad:"Çubuk Turşu & Kahvaltı",lat:40.238,lng:33.033,cat:"Kahvaltı & Serpme",puan:4.5,konum:"Çubuk · Ankara",sehir:"Ankara",dada:false,img:'photo-1565958011703-44f9829ba187'},
-    {ad:"Ulus Tarihi Köftecisi",lat:39.943,lng:32.856,cat:"Köfte & Izgara",puan:4.5,konum:"Altındağ · Ankara",sehir:"Ankara",dada:false,img:'photo-1525351484163-7529414344d8'},
-    {ad:"Ankara Simit & Fırın Evi",lat:39.91,lng:32.862,cat:"Tatlı & Kafe",puan:4.2,konum:"Çankaya · Ankara",sehir:"Ankara",dada:false,img:'photo-1509440159596-0249088772ff'},
-    {ad:"Gölbaşı Göl Balık Restoran",lat:39.79,lng:32.81,cat:"Balık & Meyhane",puan:4.4,konum:"Gölbaşı · Ankara",sehir:"Ankara",dada:false,img:'photo-1529692236671-f1f6cf9683ba'},
-    {ad:"Polatlı Etli Ekmek Fırını",lat:39.584,lng:32.147,cat:"Pide & Lahmacun",puan:4.6,konum:"Polatlı · Ankara",sehir:"Ankara",dada:true,img:'photo-1504674900247-0877df9cc836'},
-    {ad:"Sincan Ocakbaşı Kebap",lat:39.97,lng:32.58,cat:"Kebap & Ocakbaşı",puan:4.3,konum:"Sincan · Ankara",sehir:"Ankara",dada:false,img:'photo-1517248135467-4c7edcad34c4'},
-    {ad:"Konya Tarihi Fırın Kebabı",lat:37.87,lng:32.49,cat:"Kebap & Ocakbaşı",puan:4.7,konum:"Karatay · Konya",sehir:"Konya",dada:true,img:'photo-1466978913421-dad2ebd01d17'},
-    {ad:"Mevlana Etli Ekmek Salonu",lat:37.871,lng:32.51,cat:"Pide & Lahmacun",puan:4.8,konum:"Karatay · Konya",sehir:"Konya",dada:true,img:'photo-1596040033229-a9821ebd058d'},
-    {ad:"Konya Bamya Çorbası Evi",lat:37.865,lng:32.48,cat:"Esnaf Lokantası",puan:4.4,konum:"Selçuklu · Konya",sehir:"Konya",dada:false,img:'photo-1565299507177-b0ac66763828'},
-    {ad:"Sille Köy Kahvaltısı",lat:37.93,lng:32.43,cat:"Kahvaltı & Serpme",puan:4.6,konum:"Selçuklu · Konya",sehir:"Konya",dada:false,img:'photo-1555992336-fb0d29498b13'},
-    {ad:"Konya Sac Arası Dürümcü",lat:37.872,lng:32.485,cat:"Sokak Lezzeti",puan:4.3,konum:"Meram · Konya",sehir:"Konya",dada:false,img:'photo-1565958011703-44f9829ba187'},
-    {ad:"Meram Bağ Restoranı",lat:37.85,lng:32.45,cat:"Kebap & Ocakbaşı",puan:4.6,konum:"Meram · Konya",sehir:"Konya",dada:true,img:'photo-1525351484163-7529414344d8'},
-    {ad:"Konya Höşmerim Tatlıcısı",lat:37.873,lng:32.487,cat:"Tatlı & Kafe",puan:4.4,konum:"Karatay · Konya",sehir:"Konya",dada:false,img:'photo-1509440159596-0249088772ff'},
-    {ad:"Adana Kebapçı Mestan Usta",lat:37.001,lng:35.32,cat:"Kebap & Ocakbaşı",puan:4.8,konum:"Seyhan · Adana",sehir:"Adana",dada:true,img:'photo-1529692236671-f1f6cf9683ba'},
-    {ad:"Kazancılar Bakırcı Şırdancı",lat:36.989,lng:35.338,cat:"Sokak Lezzeti",puan:4.6,konum:"Seyhan · Adana",sehir:"Adana",dada:true,img:'photo-1504674900247-0877df9cc836'},
-    {ad:"Adana Ciğerci Apo",lat:37.005,lng:35.325,cat:"Kebap & Ocakbaşı",puan:4.5,konum:"Seyhan · Adana",sehir:"Adana",dada:false,img:'photo-1517248135467-4c7edcad34c4'},
-    {ad:"Bici Bici & Şalgam Evi",lat:37,lng:35.33,cat:"Tatlı & Kafe",puan:4.3,konum:"Seyhan · Adana",sehir:"Adana",dada:false,img:'photo-1466978913421-dad2ebd01d17'},
-    {ad:"Analı Kızlı Sofrası",lat:37.003,lng:35.315,cat:"Esnaf Lokantası",puan:4.5,konum:"Çukurova · Adana",sehir:"Adana",dada:false,img:'photo-1596040033229-a9821ebd058d'},
-    {ad:"Seyhan Sahil Kebap Bahçesi",lat:36.98,lng:35.34,cat:"Kebap & Ocakbaşı",puan:4.4,konum:"Seyhan · Adana",sehir:"Adana",dada:false,img:'photo-1565299507177-b0ac66763828'},
-    {ad:"Adana Kabasakal Kebapçısı",lat:37.002,lng:35.322,cat:"Kebap & Ocakbaşı",puan:4.7,konum:"Çukurova · Adana",sehir:"Adana",dada:true,img:'photo-1555992336-fb0d29498b13'},
-    {ad:"Çukurova Kahvaltı Bahçesi",lat:37.05,lng:35.3,cat:"Kahvaltı & Serpme",puan:4.4,konum:"Çukurova · Adana",sehir:"Adana",dada:false,img:'photo-1565958011703-44f9829ba187'},
-    {ad:"İmam Çağdaş Baklava & Kebap",lat:37.064,lng:37.379,cat:"Tatlı & Kafe",puan:4.9,konum:"Şahinbey · Gaziantep",sehir:"Gaziantep",dada:true,img:'photo-1525351484163-7529414344d8'},
-    {ad:"Antep Tarihi Beyran Salonu",lat:37.067,lng:37.385,cat:"Esnaf Lokantası",puan:4.7,konum:"Şahinbey · Gaziantep",sehir:"Gaziantep",dada:true,img:'photo-1509440159596-0249088772ff'},
-    {ad:"Katmerci Zekeriya Usta",lat:37.065,lng:37.382,cat:"Tatlı & Kafe",puan:4.8,konum:"Şahinbey · Gaziantep",sehir:"Gaziantep",dada:true,img:'photo-1529692236671-f1f6cf9683ba'},
-    {ad:"Gaziantep Lahmacun Fırını",lat:37.068,lng:37.38,cat:"Pide & Lahmacun",puan:4.5,konum:"Şehitkamil · Gaziantep",sehir:"Gaziantep",dada:false,img:'photo-1504674900247-0877df9cc836'},
-    {ad:"Yuvalama & Ali Nazik Evi",lat:37.062,lng:37.387,cat:"Kebap & Ocakbaşı",puan:4.6,konum:"Şahinbey · Gaziantep",sehir:"Gaziantep",dada:false,img:'photo-1517248135467-4c7edcad34c4'},
-    {ad:"Bakırcılar Çarşısı Künefe",lat:37.066,lng:37.381,cat:"Tatlı & Kafe",puan:4.5,konum:"Şahinbey · Gaziantep",sehir:"Gaziantep",dada:false,img:'photo-1466978913421-dad2ebd01d17'},
-    {ad:"Menengiç Kahve Konağı",lat:37.063,lng:37.39,cat:"Tatlı & Kafe",puan:4.4,konum:"Şahinbey · Gaziantep",sehir:"Gaziantep",dada:false,img:'photo-1596040033229-a9821ebd058d'},
-    {ad:"Antep Söğürme Kebapçısı",lat:37.07,lng:37.375,cat:"Kebap & Ocakbaşı",puan:4.5,konum:"Şehitkamil · Gaziantep",sehir:"Gaziantep",dada:false,img:'photo-1565299507177-b0ac66763828'},
-    {ad:"Urfa Tarihi Çiğ Köftecisi",lat:37.158,lng:38.795,cat:"Sokak Lezzeti",puan:4.7,konum:"Haliliye · Şanlıurfa",sehir:"Şanlıurfa",dada:true,img:'photo-1555992336-fb0d29498b13'},
-    {ad:"Cevahir Konuk Evi Kebap",lat:37.16,lng:38.79,cat:"Kebap & Ocakbaşı",puan:4.8,konum:"Eyyübiye · Şanlıurfa",sehir:"Şanlıurfa",dada:true,img:'photo-1565958011703-44f9829ba187'},
-    {ad:"Urfa İçli Köfte Sofrası",lat:37.157,lng:38.8,cat:"Esnaf Lokantası",puan:4.5,konum:"Haliliye · Şanlıurfa",sehir:"Şanlıurfa",dada:false,img:'photo-1525351484163-7529414344d8'},
-    {ad:"Balıklıgöl Künefecisi",lat:37.15,lng:38.787,cat:"Tatlı & Kafe",puan:4.6,konum:"Eyyübiye · Şanlıurfa",sehir:"Şanlıurfa",dada:false,img:'photo-1509440159596-0249088772ff'},
-    {ad:"Şıllık Tatlısı Evi",lat:37.161,lng:38.798,cat:"Tatlı & Kafe",puan:4.4,konum:"Haliliye · Şanlıurfa",sehir:"Şanlıurfa",dada:false,img:'photo-1529692236671-f1f6cf9683ba'},
-    {ad:"Mırra & Kahvaltı Konağı",lat:37.162,lng:38.792,cat:"Kahvaltı & Serpme",puan:4.6,konum:"Haliliye · Şanlıurfa",sehir:"Şanlıurfa",dada:true,img:'photo-1504674900247-0877df9cc836'},
-    {ad:"Urfa Tandır Kebapçısı",lat:37.155,lng:38.805,cat:"Kebap & Ocakbaşı",puan:4.5,konum:"Eyyübiye · Şanlıurfa",sehir:"Şanlıurfa",dada:false,img:'photo-1517248135467-4c7edcad34c4'},
-    {ad:"İzmir Boyoz & Gevrek Fırını",lat:38.425,lng:27.14,cat:"Tatlı & Kafe",puan:4.6,konum:"Konak · İzmir",sehir:"İzmir",dada:true,img:'photo-1466978913421-dad2ebd01d17'},
-    {ad:"Kemeraltı Tarihi Söğüşçü",lat:38.418,lng:27.132,cat:"Sokak Lezzeti",puan:4.7,konum:"Konak · İzmir",sehir:"İzmir",dada:true,img:'photo-1596040033229-a9821ebd058d'},
-    {ad:"Kumru Sandviç Evi",lat:38.43,lng:27.145,cat:"Sokak Lezzeti",puan:4.4,konum:"Konak · İzmir",sehir:"İzmir",dada:false,img:'photo-1565299507177-b0ac66763828'},
-    {ad:"Çeşme Kumru & Balık",lat:38.323,lng:26.306,cat:"Balık & Meyhane",puan:4.5,konum:"Çeşme · İzmir",sehir:"İzmir",dada:false,img:'photo-1555992336-fb0d29498b13'},
-    {ad:"İzmir Köfte Lokantası",lat:38.424,lng:27.143,cat:"Köfte & Izgara",puan:4.4,konum:"Konak · İzmir",sehir:"İzmir",dada:false,img:'photo-1565958011703-44f9829ba187'},
-    {ad:"Alsancak Midyeci & Lokma",lat:38.438,lng:27.143,cat:"Sokak Lezzeti",puan:4.3,konum:"Konak · İzmir",sehir:"İzmir",dada:false,img:'photo-1525351484163-7529414344d8'},
-    {ad:"Bornova Lokma Tatlıcısı",lat:38.47,lng:27.22,cat:"Tatlı & Kafe",puan:4.5,konum:"Bornova · İzmir",sehir:"İzmir",dada:true,img:'photo-1509440159596-0249088772ff'},
-    {ad:"Şambali Tatlı Evi",lat:38.422,lng:27.141,cat:"Tatlı & Kafe",puan:4.2,konum:"Konak · İzmir",sehir:"İzmir",dada:false,img:'photo-1529692236671-f1f6cf9683ba'}
+    {ad:"Çiya Sofrası Kadıköy",lat:41.026,lng:29.056,cat:"Esnaf Lokantası",puan:4.8,konum:"Kadıköy · İstanbul",sehir:"İstanbul",dada:true,img:'photo-1565958011703-44f9829ba187'},
+    {ad:"Tarihi Sultanahmet Köftecisi",lat:41.032,lng:29.041,cat:"Köfte & Izgara",puan:4.7,konum:"Fatih · İstanbul",sehir:"İstanbul",dada:true,img:'photo-1525351484163-7529414344d8'},
+    {ad:"Üsküdar Kanaat Lokantası",lat:41.038,lng:29.047,cat:"Esnaf Lokantası",puan:4.6,konum:"Üsküdar · İstanbul",sehir:"İstanbul",dada:false,img:'photo-1509440159596-0249088772ff'},
+    {ad:"Pendik Sahil Balıkçısı",lat:41.044,lng:29.053,cat:"Balık & Meyhane",puan:4.4,konum:"Pendik · İstanbul",sehir:"İstanbul",dada:false,img:'photo-1529692236671-f1f6cf9683ba'},
+    {ad:"Beykoz Çubuklu Köftecisi",lat:41.029,lng:29.059,cat:"Köfte & Izgara",puan:4.7,konum:"Beykoz · İstanbul",sehir:"İstanbul",dada:false,img:'photo-1504674900247-0877df9cc836'},
+    {ad:"Çekmeköy Köy Kahvaltısı",lat:41.035,lng:29.044,cat:"Kahvaltı & Serpme",puan:4.2,konum:"Çekmeköy · İstanbul",sehir:"İstanbul",dada:false,img:'photo-1517248135467-4c7edcad34c4'},
+    {ad:"Eminönü Balık Ekmek",lat:41.041,lng:29.05,cat:"Sokak Lezzeti",puan:4.5,konum:"Fatih · İstanbul",sehir:"İstanbul",dada:false,img:'photo-1466978913421-dad2ebd01d17'},
+    {ad:"Gebze Köfte Durağı",lat:40.797,lng:29.4367,cat:"Köfte & Izgara",puan:4.8,konum:"Gebze · Kocaeli",sehir:"Gebze",dada:true,img:'photo-1596040033229-a9821ebd058d'},
+    {ad:"Darıca Sahil Balıkçısı",lat:40.803,lng:29.4217,cat:"Balık & Meyhane",puan:4.6,konum:"Darıca · Kocaeli",sehir:"Gebze",dada:false,img:'photo-1565299507177-b0ac66763828'},
+    {ad:"Gebze Tarihi Pişmaniyeci",lat:40.809,lng:29.4277,cat:"Tatlı & Kafe",puan:4.3,konum:"Gebze · Kocaeli",sehir:"Gebze",dada:false,img:'photo-1555992336-fb0d29498b13'},
+    {ad:"Çayırova Ocakbaşı",lat:40.815,lng:29.4337,cat:"Kebap & Ocakbaşı",puan:4.5,konum:"Çayırova · Kocaeli",sehir:"Gebze",dada:false,img:'photo-1565958011703-44f9829ba187'},
+    {ad:"Dilovası Esnaf Lokantası",lat:40.8,lng:29.4397,cat:"Esnaf Lokantası",puan:4.4,konum:"Dilovası · Kocaeli",sehir:"Gebze",dada:false,img:'photo-1525351484163-7529414344d8'},
+    {ad:"İzmit Pişmaniye Evi",lat:40.781,lng:29.9438,cat:"Tatlı & Kafe",puan:4.8,konum:"İzmit · Kocaeli",sehir:"Kocaeli (İzmit)",dada:true,img:'photo-1509440159596-0249088772ff'},
+    {ad:"Gölcük Sahil Balık Evi",lat:40.766,lng:29.9498,cat:"Balık & Meyhane",puan:4.3,konum:"Gölcük · Kocaeli",sehir:"Kocaeli (İzmit)",dada:false,img:'photo-1529692236671-f1f6cf9683ba'},
+    {ad:"İzmit Köfteci Ramiz",lat:40.772,lng:29.9348,cat:"Köfte & Izgara",puan:4.5,konum:"İzmit · Kocaeli",sehir:"Kocaeli (İzmit)",dada:false,img:'photo-1504674900247-0877df9cc836'},
+    {ad:"Derince Etli Ekmek Fırını",lat:40.778,lng:29.9408,cat:"Pide & Lahmacun",puan:4.3,konum:"Derince · Kocaeli",sehir:"Kocaeli (İzmit)",dada:false,img:'photo-1517248135467-4c7edcad34c4'},
+    {ad:"Kandıra Köy Sofrası",lat:40.763,lng:29.9468,cat:"Esnaf Lokantası",puan:4.6,konum:"Kandıra · Kocaeli",sehir:"Kocaeli (İzmit)",dada:false,img:'photo-1466978913421-dad2ebd01d17'},
+    {ad:"Karamürsel Pişmaniyecisi",lat:40.769,lng:29.9318,cat:"Tatlı & Kafe",puan:4.4,konum:"Karamürsel · Kocaeli",sehir:"Kocaeli (İzmit)",dada:false,img:'photo-1596040033229-a9821ebd058d'},
+    {ad:"İzmit Sekapark Kahvaltı",lat:40.775,lng:29.9378,cat:"Kahvaltı & Serpme",puan:4.7,konum:"İzmit · Kocaeli",sehir:"Kocaeli (İzmit)",dada:false,img:'photo-1565299507177-b0ac66763828'},
+    {ad:"Adapazarı Islama Köfte",lat:40.7659,lng:30.3813,cat:"Köfte & Izgara",puan:4.8,konum:"Adapazarı · Sakarya",sehir:"Sakarya (Adapazarı)",dada:true,img:'photo-1555992336-fb0d29498b13'},
+    {ad:"Sapanca Göl Kahvaltı",lat:40.7509,lng:30.3873,cat:"Kahvaltı & Serpme",puan:4.5,konum:"Sapanca · Sakarya",sehir:"Sakarya (Adapazarı)",dada:false,img:'photo-1565958011703-44f9829ba187'},
+    {ad:"Karasu Sahil Balıkçısı",lat:40.7569,lng:30.3723,cat:"Balık & Meyhane",puan:4.4,konum:"Karasu · Sakarya",sehir:"Sakarya (Adapazarı)",dada:false,img:'photo-1525351484163-7529414344d8'},
+    {ad:"Serdivan Künefecisi",lat:40.7629,lng:30.3783,cat:"Tatlı & Kafe",puan:4.6,konum:"Serdivan · Sakarya",sehir:"Sakarya (Adapazarı)",dada:false,img:'photo-1509440159596-0249088772ff'},
+    {ad:"Akyazı Meşhur Köftecisi",lat:40.7479,lng:30.3843,cat:"Köfte & Izgara",puan:4.3,konum:"Akyazı · Sakarya",sehir:"Sakarya (Adapazarı)",dada:false,img:'photo-1529692236671-f1f6cf9683ba'},
+    {ad:"Hendek Köy Et Mangal",lat:40.7539,lng:30.3693,cat:"Kebap & Ocakbaşı",puan:4.5,konum:"Hendek · Sakarya",sehir:"Sakarya (Adapazarı)",dada:false,img:'photo-1504674900247-0877df9cc836'},
+    {ad:"Akçakoca Karadeniz Balıkçısı",lat:40.8408,lng:31.1475,cat:"Balık & Meyhane",puan:4.8,konum:"Akçakoca · Düzce",sehir:"Düzce",dada:true,img:'photo-1517248135467-4c7edcad34c4'},
+    {ad:"Düzce Pideli Köfte Salonu",lat:40.8468,lng:31.1535,cat:"Köfte & Izgara",puan:4.7,konum:"Merkez · Düzce",sehir:"Düzce",dada:false,img:'photo-1466978913421-dad2ebd01d17'},
+    {ad:"Konuralp Köy Kahvaltısı",lat:40.8528,lng:31.1595,cat:"Kahvaltı & Serpme",puan:4.3,konum:"Konuralp · Düzce",sehir:"Düzce",dada:false,img:'photo-1596040033229-a9821ebd058d'},
+    {ad:"Gölyaka Alabalık Tesisi",lat:40.8378,lng:31.1655,cat:"Balık & Meyhane",puan:4.5,konum:"Gölyaka · Düzce",sehir:"Düzce",dada:false,img:'photo-1565299507177-b0ac66763828'},
+    {ad:"Kaynaşlı Dağ Restoranı",lat:40.8438,lng:31.1505,cat:"Kebap & Ocakbaşı",puan:4.3,konum:"Kaynaşlı · Düzce",sehir:"Düzce",dada:false,img:'photo-1555992336-fb0d29498b13'},
+    {ad:"Mengen Aşçılar Sofrası",lat:40.7332,lng:31.6179,cat:"Esnaf Lokantası",puan:4.8,konum:"Mengen · Bolu",sehir:"Bolu",dada:true,img:'photo-1565958011703-44f9829ba187'},
+    {ad:"Bolu Dağı Et Mangal",lat:40.7392,lng:31.6029,cat:"Kebap & Ocakbaşı",puan:4.4,konum:"Bolu Dağı · Bolu",sehir:"Bolu",dada:false,img:'photo-1525351484163-7529414344d8'},
+    {ad:"Köroğlu Et Lokantası",lat:40.7452,lng:31.6089,cat:"Kebap & Ocakbaşı",puan:4.7,konum:"Merkez · Bolu",sehir:"Bolu",dada:false,img:'photo-1509440159596-0249088772ff'},
+    {ad:"Bolu Dağı Mola Kahvaltı",lat:40.7302,lng:31.6149,cat:"Kahvaltı & Serpme",puan:4.2,konum:"Bolu Dağı · Bolu",sehir:"Bolu",dada:false,img:'photo-1529692236671-f1f6cf9683ba'},
+    {ad:"Mudurnu Tarihi Köftecisi",lat:40.7362,lng:31.5999,cat:"Köfte & Izgara",puan:4.5,konum:"Mudurnu · Bolu",sehir:"Bolu",dada:false,img:'photo-1504674900247-0877df9cc836'},
+    {ad:"Yedigöller Alabalık Evi",lat:40.7422,lng:31.6059,cat:"Balık & Meyhane",puan:4.4,konum:"Merkez · Bolu",sehir:"Bolu",dada:false,img:'photo-1517248135467-4c7edcad34c4'},
+    {ad:"Gerede Kuzu Çevirme",lat:40.7482,lng:31.6119,cat:"Kebap & Ocakbaşı",puan:4.6,konum:"Gerede · Bolu",sehir:"Bolu",dada:false,img:'photo-1466978913421-dad2ebd01d17'},
+    {ad:"Bilecik Köy Sofrası",lat:40.1366,lng:29.9883,cat:"Esnaf Lokantası",puan:4.8,konum:"Merkez · Bilecik",sehir:"Bilecik",dada:true,img:'photo-1596040033229-a9821ebd058d'},
+    {ad:"Bozüyük Dinlenme Tesisi",lat:40.1426,lng:29.9733,cat:"Esnaf Lokantası",puan:4.5,konum:"Bozüyük · Bilecik",sehir:"Bilecik",dada:false,img:'photo-1565299507177-b0ac66763828'},
+    {ad:"Söğüt Tarihi Lokantası",lat:40.1486,lng:29.9793,cat:"Esnaf Lokantası",puan:4.4,konum:"Söğüt · Bilecik",sehir:"Bilecik",dada:false,img:'photo-1555992336-fb0d29498b13'},
+    {ad:"Osmaneli Köfte Salonu",lat:40.1336,lng:29.9853,cat:"Köfte & Izgara",puan:4.7,konum:"Osmaneli · Bilecik",sehir:"Bilecik",dada:false,img:'photo-1565958011703-44f9829ba187'},
+    {ad:"Pazaryeri Köy Kahvaltısı",lat:40.1396,lng:29.9703,cat:"Kahvaltı & Serpme",puan:4.3,konum:"Pazaryeri · Bilecik",sehir:"Bilecik",dada:false,img:'photo-1525351484163-7529414344d8'},
+    {ad:"Tarihi Çibörek Evi",lat:39.7677,lng:30.5266,cat:"Dünya Mutfağı",puan:4.8,konum:"Odunpazarı · Eskişehir",sehir:"Eskişehir",dada:true,img:'photo-1509440159596-0249088772ff'},
+    {ad:"Odunpazarı Balaban Tava",lat:39.7737,lng:30.5116,cat:"Esnaf Lokantası",puan:4.3,konum:"Odunpazarı · Eskişehir",sehir:"Eskişehir",dada:false,img:'photo-1529692236671-f1f6cf9683ba'},
+    {ad:"Met Helvacısı",lat:39.7797,lng:30.5176,cat:"Tatlı & Kafe",puan:4.6,konum:"Merkez · Eskişehir",sehir:"Eskişehir",dada:false,img:'photo-1504674900247-0877df9cc836'},
+    {ad:"Porsuk Kıyısı Kahvaltı Bahçesi",lat:39.7857,lng:30.5236,cat:"Kahvaltı & Serpme",puan:4.4,konum:"Tepebaşı · Eskişehir",sehir:"Eskişehir",dada:false,img:'photo-1517248135467-4c7edcad34c4'},
+    {ad:"Sivrihisar Höşmerim Evi",lat:39.7707,lng:30.5296,cat:"Tatlı & Kafe",puan:4.7,konum:"Sivrihisar · Eskişehir",sehir:"Eskişehir",dada:false,img:'photo-1466978913421-dad2ebd01d17'},
+    {ad:"Tepebaşı Ocakbaşı Kebap",lat:39.7767,lng:30.5146,cat:"Kebap & Ocakbaşı",puan:4.2,konum:"Tepebaşı · Eskişehir",sehir:"Eskişehir",dada:false,img:'photo-1596040033229-a9821ebd058d'},
+    {ad:"Tarihi İskender Kebap",lat:40.1885,lng:29.055,cat:"Kebap & Ocakbaşı",puan:4.8,konum:"Osmangazi · Bursa",sehir:"Bursa",dada:true,img:'photo-1565299507177-b0ac66763828'},
+    {ad:"İnegöl Meşhur Köftecisi",lat:40.1945,lng:29.061,cat:"Köfte & Izgara",puan:4.4,konum:"İnegöl · Bursa",sehir:"Bursa",dada:false,img:'photo-1555992336-fb0d29498b13'},
+    {ad:"Cumalıkızık Köy Kahvaltısı",lat:40.1795,lng:29.067,cat:"Kahvaltı & Serpme",puan:4.6,konum:"Yıldırım · Bursa",sehir:"Bursa",dada:false,img:'photo-1565958011703-44f9829ba187'},
+    {ad:"Mudanya Sahil Balıkçısı",lat:40.1855,lng:29.052,cat:"Balık & Meyhane",puan:4.3,konum:"Mudanya · Bursa",sehir:"Bursa",dada:false,img:'photo-1525351484163-7529414344d8'},
+    {ad:"Kemalpaşa Tatlıcısı",lat:40.1915,lng:29.058,cat:"Tatlı & Kafe",puan:4.5,konum:"M.Kemalpaşa · Bursa",sehir:"Bursa",dada:false,img:'photo-1509440159596-0249088772ff'},
+    {ad:"Uludağ Et Restoranı",lat:40.1975,lng:29.064,cat:"Kebap & Ocakbaşı",puan:4.4,konum:"Osmangazi · Bursa",sehir:"Bursa",dada:false,img:'photo-1529692236671-f1f6cf9683ba'},
+    {ad:"Gemlik Zeytin Kahvaltı Evi",lat:40.1825,lng:29.07,cat:"Kahvaltı & Serpme",puan:4.7,konum:"Gemlik · Bursa",sehir:"Bursa",dada:false,img:'photo-1504674900247-0877df9cc836'},
+    {ad:"Yalova Sahil Balık Evi",lat:40.638,lng:29.2607,cat:"Balık & Meyhane",puan:4.8,konum:"Merkez · Yalova",sehir:"Yalova",dada:true,img:'photo-1517248135467-4c7edcad34c4'},
+    {ad:"Termal Kahvaltı Bahçesi",lat:40.644,lng:29.2667,cat:"Kahvaltı & Serpme",puan:4.5,konum:"Termal · Yalova",sehir:"Yalova",dada:false,img:'photo-1466978913421-dad2ebd01d17'},
+    {ad:"Çınarcık Ocakbaşı",lat:40.629,lng:29.2727,cat:"Kebap & Ocakbaşı",puan:4.3,konum:"Çınarcık · Yalova",sehir:"Yalova",dada:false,img:'photo-1596040033229-a9821ebd058d'},
+    {ad:"Armutlu Köy Sofrası",lat:40.635,lng:29.2577,cat:"Esnaf Lokantası",puan:4.6,konum:"Armutlu · Yalova",sehir:"Yalova",dada:false,img:'photo-1565299507177-b0ac66763828'},
+    {ad:"Beypazarı Kuru Baklavacısı",lat:39.9394,lng:32.8597,cat:"Tatlı & Kafe",puan:4.8,konum:"Beypazarı · Ankara",sehir:"Ankara",dada:true,img:'photo-1555992336-fb0d29498b13'},
+    {ad:"Ankara Tava & Kebap Evi",lat:39.9244,lng:32.8657,cat:"Kebap & Ocakbaşı",puan:4.7,konum:"Çankaya · Ankara",sehir:"Ankara",dada:false,img:'photo-1565958011703-44f9829ba187'},
+    {ad:"Kızılay Tarihi Döner Salonu",lat:39.9304,lng:32.8507,cat:"Sokak Lezzeti",puan:4.2,konum:"Çankaya · Ankara",sehir:"Ankara",dada:false,img:'photo-1525351484163-7529414344d8'},
+    {ad:"Ulus Tarihi Köftecisi",lat:39.9364,lng:32.8567,cat:"Köfte & Izgara",puan:4.5,konum:"Altındağ · Ankara",sehir:"Ankara",dada:false,img:'photo-1509440159596-0249088772ff'},
+    {ad:"Çubuk Turşu & Kahvaltı",lat:39.9424,lng:32.8627,cat:"Kahvaltı & Serpme",puan:4.4,konum:"Çubuk · Ankara",sehir:"Ankara",dada:false,img:'photo-1529692236671-f1f6cf9683ba'},
+    {ad:"Polatlı Etli Ekmek Fırını",lat:39.9274,lng:32.8687,cat:"Pide & Lahmacun",puan:4.6,konum:"Polatlı · Ankara",sehir:"Ankara",dada:false,img:'photo-1504674900247-0877df9cc836'},
+    {ad:"Gölbaşı Göl Balık Restoran",lat:39.9334,lng:32.8537,cat:"Balık & Meyhane",puan:4.3,konum:"Gölbaşı · Ankara",sehir:"Ankara",dada:false,img:'photo-1517248135467-4c7edcad34c4'},
+    {ad:"Kemeraltı Tarihi Söğüşçü",lat:38.4297,lng:27.175,cat:"Sokak Lezzeti",puan:4.8,konum:"Konak · İzmir",sehir:"İzmir",dada:true,img:'photo-1466978913421-dad2ebd01d17'},
+    {ad:"Boyoz & Gevrek Fırını",lat:38.4147,lng:27.181,cat:"Tatlı & Kafe",puan:4.4,konum:"Konak · İzmir",sehir:"İzmir",dada:false,img:'photo-1596040033229-a9821ebd058d'},
+    {ad:"Çeşme Kumru & Balık",lat:38.4207,lng:27.166,cat:"Balık & Meyhane",puan:4.7,konum:"Çeşme · İzmir",sehir:"İzmir",dada:false,img:'photo-1565299507177-b0ac66763828'},
+    {ad:"Bornova Lokma Tatlıcısı",lat:38.4267,lng:27.172,cat:"Tatlı & Kafe",puan:4.3,konum:"Bornova · İzmir",sehir:"İzmir",dada:false,img:'photo-1555992336-fb0d29498b13'},
+    {ad:"İzmir Köfte Lokantası",lat:38.4327,lng:27.178,cat:"Köfte & Izgara",puan:4.5,konum:"Konak · İzmir",sehir:"İzmir",dada:false,img:'photo-1565958011703-44f9829ba187'},
+    {ad:"Alsancak Midyeci & Lokma",lat:38.4177,lng:27.184,cat:"Sokak Lezzeti",puan:4.3,konum:"Konak · İzmir",sehir:"İzmir",dada:false,img:'photo-1525351484163-7529414344d8'},
+    {ad:"Urla Sahil Meyhanesi",lat:38.4237,lng:27.169,cat:"Balık & Meyhane",puan:4.6,konum:"Urla · İzmir",sehir:"İzmir",dada:false,img:'photo-1509440159596-0249088772ff'},
+    {ad:"Kaleiçi Balık & Meze Evi",lat:36.914,lng:30.7133,cat:"Balık & Meyhane",puan:4.8,konum:"Muratpaşa · Antalya",sehir:"Antalya",dada:true,img:'photo-1529692236671-f1f6cf9683ba'},
+    {ad:"Antalya Şiş Köfte Salonu",lat:36.899,lng:30.7193,cat:"Köfte & Izgara",puan:4.7,konum:"Kepez · Antalya",sehir:"Antalya",dada:false,img:'photo-1504674900247-0877df9cc836'},
+    {ad:"Serik Tahinli Piyaz Evi",lat:36.905,lng:30.7043,cat:"Esnaf Lokantası",puan:4.2,konum:"Serik · Antalya",sehir:"Antalya",dada:false,img:'photo-1517248135467-4c7edcad34c4'},
+    {ad:"Side Antik Kahvaltı Bahçesi",lat:36.911,lng:30.7103,cat:"Kahvaltı & Serpme",puan:4.5,konum:"Manavgat · Antalya",sehir:"Antalya",dada:false,img:'photo-1466978913421-dad2ebd01d17'},
+    {ad:"Döşemealtı Hibeş Ocakbaşı",lat:36.917,lng:30.7163,cat:"Kebap & Ocakbaşı",puan:4.4,konum:"Döşemealtı · Antalya",sehir:"Antalya",dada:false,img:'photo-1596040033229-a9821ebd058d'},
+    {ad:"Kaş Sahil Meyhanesi",lat:36.902,lng:30.7223,cat:"Balık & Meyhane",puan:4.6,konum:"Kaş · Antalya",sehir:"Antalya",dada:false,img:'photo-1565299507177-b0ac66763828'},
+    {ad:"Antalya Piyaz & Şalgam",lat:36.908,lng:30.7073,cat:"Esnaf Lokantası",puan:4.3,konum:"Muratpaşa · Antalya",sehir:"Antalya",dada:false,img:'photo-1555992336-fb0d29498b13'},
+    {ad:"Mevlana Etli Ekmek Salonu",lat:37.8774,lng:32.4846,cat:"Pide & Lahmacun",puan:4.8,konum:"Karatay · Konya",sehir:"Konya",dada:true,img:'photo-1565958011703-44f9829ba187'},
+    {ad:"Tarihi Fırın Kebabı",lat:37.8624,lng:32.4906,cat:"Kebap & Ocakbaşı",puan:4.4,konum:"Karatay · Konya",sehir:"Konya",dada:false,img:'photo-1525351484163-7529414344d8'},
+    {ad:"Sille Köy Kahvaltısı",lat:37.8684,lng:32.4756,cat:"Kahvaltı & Serpme",puan:4.7,konum:"Selçuklu · Konya",sehir:"Konya",dada:false,img:'photo-1509440159596-0249088772ff'},
+    {ad:"Konya Bamya Çorbası Evi",lat:37.8744,lng:32.4816,cat:"Esnaf Lokantası",puan:4.3,konum:"Selçuklu · Konya",sehir:"Konya",dada:false,img:'photo-1529692236671-f1f6cf9683ba'},
+    {ad:"Meram Bağ Restoranı",lat:37.8804,lng:32.4876,cat:"Kebap & Ocakbaşı",puan:4.5,konum:"Meram · Konya",sehir:"Konya",dada:false,img:'photo-1504674900247-0877df9cc836'},
+    {ad:"Höşmerim & Sac Arası",lat:37.8654,lng:32.4936,cat:"Tatlı & Kafe",puan:4.3,konum:"Karatay · Konya",sehir:"Konya",dada:false,img:'photo-1517248135467-4c7edcad34c4'},
+    {ad:"Çumra Köy Sofrası",lat:37.8714,lng:32.4786,cat:"Esnaf Lokantası",puan:4.6,konum:"Çumra · Konya",sehir:"Konya",dada:false,img:'photo-1466978913421-dad2ebd01d17'},
+    {ad:"Afyon Sucuk & Kaymak Evi",lat:38.7567,lng:30.5567,cat:"Kahvaltı & Serpme",puan:4.8,konum:"Merkez · Afyon",sehir:"Afyonkarahisar",dada:true,img:'photo-1596040033229-a9821ebd058d'},
+    {ad:"İhsaniye Lokum & Kaymak",lat:38.7417,lng:30.5627,cat:"Tatlı & Kafe",puan:4.7,konum:"İhsaniye · Afyon",sehir:"Afyonkarahisar",dada:false,img:'photo-1565299507177-b0ac66763828'},
+    {ad:"Afyon Tava Ciğer Salonu",lat:38.7477,lng:30.5477,cat:"Kebap & Ocakbaşı",puan:4.2,konum:"Merkez · Afyon",sehir:"Afyonkarahisar",dada:false,img:'photo-1555992336-fb0d29498b13'},
+    {ad:"Sandıklı Termal Kahvaltı",lat:38.7537,lng:30.5537,cat:"Kahvaltı & Serpme",puan:4.5,konum:"Sandıklı · Afyon",sehir:"Afyonkarahisar",dada:false,img:'photo-1565958011703-44f9829ba187'},
+    {ad:"Dinar Köy Lokantası",lat:38.7597,lng:30.5597,cat:"Esnaf Lokantası",puan:4.4,konum:"Dinar · Afyon",sehir:"Afyonkarahisar",dada:false,img:'photo-1525351484163-7529414344d8'},
+    {ad:"Bolvadin Patlıcanlı Kebap",lat:38.7447,lng:30.5657,cat:"Kebap & Ocakbaşı",puan:4.6,konum:"Bolvadin · Afyon",sehir:"Afyonkarahisar",dada:false,img:'photo-1509440159596-0249088772ff'},
+    {ad:"Tarihi Mantı Evi",lat:38.7252,lng:35.4877,cat:"Dünya Mutfağı",puan:4.8,konum:"Melikgazi · Kayseri",sehir:"Kayseri",dada:true,img:'photo-1529692236671-f1f6cf9683ba'},
+    {ad:"Kayseri Pastırma & Sucuk",lat:38.7312,lng:35.4727,cat:"Esnaf Lokantası",puan:4.5,konum:"Kocasinan · Kayseri",sehir:"Kayseri",dada:false,img:'photo-1504674900247-0877df9cc836'},
+    {ad:"Talas Bağ Restoranı",lat:38.7372,lng:35.4787,cat:"Kebap & Ocakbaşı",puan:4.4,konum:"Talas · Kayseri",sehir:"Kayseri",dada:false,img:'photo-1517248135467-4c7edcad34c4'},
+    {ad:"Develi Cıvıklı Pide Salonu",lat:38.7222,lng:35.4847,cat:"Pide & Lahmacun",puan:4.7,konum:"Develi · Kayseri",sehir:"Kayseri",dada:false,img:'photo-1466978913421-dad2ebd01d17'},
+    {ad:"Yağlama & Nevzine Tatlıcısı",lat:38.7282,lng:35.4697,cat:"Tatlı & Kafe",puan:4.3,konum:"Melikgazi · Kayseri",sehir:"Kayseri",dada:false,img:'photo-1596040033229-a9821ebd058d'},
+    {ad:"Erciyes Kahvaltı Bahçesi",lat:38.7342,lng:35.4757,cat:"Kahvaltı & Serpme",puan:4.5,konum:"Talas · Kayseri",sehir:"Kayseri",dada:false,img:'photo-1565299507177-b0ac66763828'},
+    {ad:"Avanos Testi Kebabı Evi",lat:38.6969,lng:34.6827,cat:"Kebap & Ocakbaşı",puan:4.8,konum:"Avanos · Nevşehir",sehir:"Nevşehir",dada:true,img:'photo-1555992336-fb0d29498b13'},
+    {ad:"Ürgüp Bağ Restoranı",lat:38.7029,lng:34.6887,cat:"Kebap & Ocakbaşı",puan:4.6,konum:"Ürgüp · Nevşehir",sehir:"Nevşehir",dada:false,img:'photo-1565958011703-44f9829ba187'},
+    {ad:"Göreme Kahvaltı Terası",lat:38.6879,lng:34.6947,cat:"Kahvaltı & Serpme",puan:4.4,konum:"Göreme · Nevşehir",sehir:"Nevşehir",dada:false,img:'photo-1525351484163-7529414344d8'},
+    {ad:"Nevşehir Mantı & Erişte",lat:38.6939,lng:34.6797,cat:"Dünya Mutfağı",puan:4.7,konum:"Merkez · Nevşehir",sehir:"Nevşehir",dada:false,img:'photo-1509440159596-0249088772ff'},
+    {ad:"Kapadokya Köy Sofrası",lat:38.6999,lng:34.6857,cat:"Esnaf Lokantası",puan:4.2,konum:"Uçhisar · Nevşehir",sehir:"Nevşehir",dada:false,img:'photo-1529692236671-f1f6cf9683ba'},
+    {ad:"Sivas Tarihi Köfte Salonu",lat:39.7477,lng:37.0119,cat:"Köfte & Izgara",puan:4.8,konum:"Merkez · Sivas",sehir:"Sivas",dada:true,img:'photo-1504674900247-0877df9cc836'},
+    {ad:"Sıcak Çörek & Katmer Evi",lat:39.7537,lng:37.0179,cat:"Tatlı & Kafe",puan:4.4,konum:"Merkez · Sivas",sehir:"Sivas",dada:false,img:'photo-1517248135467-4c7edcad34c4'},
+    {ad:"Divriği Köy Lokantası",lat:39.7387,lng:37.0239,cat:"Esnaf Lokantası",puan:4.6,konum:"Divriği · Sivas",sehir:"Sivas",dada:false,img:'photo-1466978913421-dad2ebd01d17'},
+    {ad:"Sivas Pancar Çorbası Evi",lat:39.7447,lng:37.0089,cat:"Esnaf Lokantası",puan:4.3,konum:"Merkez · Sivas",sehir:"Sivas",dada:false,img:'photo-1596040033229-a9821ebd058d'},
+    {ad:"Madımak & Et Sofrası",lat:39.7507,lng:37.0149,cat:"Kebap & Ocakbaşı",puan:4.5,konum:"Merkez · Sivas",sehir:"Sivas",dada:false,img:'photo-1565299507177-b0ac66763828'},
+    {ad:"Malatya Kayısılı Kebap Evi",lat:38.3522,lng:38.3005,cat:"Kebap & Ocakbaşı",puan:4.8,konum:"Battalgazi · Malatya",sehir:"Malatya",dada:true,img:'photo-1555992336-fb0d29498b13'},
+    {ad:"Tarihi Kağıt Kebabı Salonu",lat:38.3582,lng:38.3065,cat:"Kebap & Ocakbaşı",puan:4.7,konum:"Yeşilyurt · Malatya",sehir:"Malatya",dada:false,img:'photo-1565958011703-44f9829ba187'},
+    {ad:"Analı Kızlı Köfte Sofrası",lat:38.3642,lng:38.3125,cat:"Köfte & Izgara",puan:4.3,konum:"Battalgazi · Malatya",sehir:"Malatya",dada:false,img:'photo-1525351484163-7529414344d8'},
+    {ad:"Malatya Kayısı & Kaymak",lat:38.3492,lng:38.3185,cat:"Tatlı & Kafe",puan:4.5,konum:"Merkez · Malatya",sehir:"Malatya",dada:false,img:'photo-1509440159596-0249088772ff'},
+    {ad:"Beşkonaklar Kahvaltı Evi",lat:38.3552,lng:38.3035,cat:"Kahvaltı & Serpme",puan:4.3,konum:"Yeşilyurt · Malatya",sehir:"Malatya",dada:false,img:'photo-1529692236671-f1f6cf9683ba'},
+    {ad:"İmam Çağdaş Baklava & Kebap",lat:37.0602,lng:37.3923,cat:"Tatlı & Kafe",puan:4.8,konum:"Şahinbey · Gaziantep",sehir:"Gaziantep",dada:true,img:'photo-1504674900247-0877df9cc836'},
+    {ad:"Tarihi Beyran Salonu",lat:37.0662,lng:37.3773,cat:"Esnaf Lokantası",puan:4.7,konum:"Şahinbey · Gaziantep",sehir:"Gaziantep",dada:true,img:'photo-1517248135467-4c7edcad34c4'},
+    {ad:"Katmerci Zekeriya Usta",lat:37.0722,lng:37.3833,cat:"Tatlı & Kafe",puan:4.7,konum:"Şahinbey · Gaziantep",sehir:"Gaziantep",dada:false,img:'photo-1466978913421-dad2ebd01d17'},
+    {ad:"Gaziantep Lahmacun Fırını",lat:37.0572,lng:37.3893,cat:"Pide & Lahmacun",puan:4.2,konum:"Şehitkamil · Gaziantep",sehir:"Gaziantep",dada:false,img:'photo-1596040033229-a9821ebd058d'},
+    {ad:"Yuvalama & Ali Nazik Evi",lat:37.0632,lng:37.3743,cat:"Kebap & Ocakbaşı",puan:4.5,konum:"Şahinbey · Gaziantep",sehir:"Gaziantep",dada:false,img:'photo-1565299507177-b0ac66763828'},
+    {ad:"Bakırcılar Çarşısı Künefe",lat:37.0692,lng:37.3803,cat:"Tatlı & Kafe",puan:4.4,konum:"Şahinbey · Gaziantep",sehir:"Gaziantep",dada:false,img:'photo-1555992336-fb0d29498b13'},
+    {ad:"Menengiç Kahve Konağı",lat:37.0752,lng:37.3863,cat:"Tatlı & Kafe",puan:4.6,konum:"Şahinbey · Gaziantep",sehir:"Gaziantep",dada:false,img:'photo-1565958011703-44f9829ba187'},
+    {ad:"Cevahir Konuk Evi Kebap",lat:37.1531,lng:38.8059,cat:"Kebap & Ocakbaşı",puan:4.8,konum:"Eyyübiye · Şanlıurfa",sehir:"Şanlıurfa",dada:true,img:'photo-1525351484163-7529414344d8'},
+    {ad:"Tarihi Çiğ Köftecisi",lat:37.1591,lng:38.7909,cat:"Sokak Lezzeti",puan:4.7,konum:"Haliliye · Şanlıurfa",sehir:"Şanlıurfa",dada:true,img:'photo-1509440159596-0249088772ff'},
+    {ad:"Balıklıgöl Künefecisi",lat:37.1651,lng:38.7969,cat:"Tatlı & Kafe",puan:4.4,konum:"Eyyübiye · Şanlıurfa",sehir:"Şanlıurfa",dada:false,img:'photo-1529692236671-f1f6cf9683ba'},
+    {ad:"Urfa İçli Köfte Sofrası",lat:37.1501,lng:38.8029,cat:"Esnaf Lokantası",puan:4.7,konum:"Haliliye · Şanlıurfa",sehir:"Şanlıurfa",dada:false,img:'photo-1504674900247-0877df9cc836'},
+    {ad:"Mırra & Kahvaltı Konağı",lat:37.1561,lng:38.7879,cat:"Kahvaltı & Serpme",puan:4.3,konum:"Haliliye · Şanlıurfa",sehir:"Şanlıurfa",dada:false,img:'photo-1517248135467-4c7edcad34c4'},
+    {ad:"Urfa Tandır Kebapçısı",lat:37.1621,lng:38.7939,cat:"Kebap & Ocakbaşı",puan:4.5,konum:"Eyyübiye · Şanlıurfa",sehir:"Şanlıurfa",dada:false,img:'photo-1466978913421-dad2ebd01d17'},
+    {ad:"Tarihi Kaburga Dolması Evi",lat:37.9174,lng:40.2276,cat:"Kebap & Ocakbaşı",puan:4.8,konum:"Sur · Diyarbakır",sehir:"Diyarbakır",dada:true,img:'photo-1596040033229-a9821ebd058d'},
+    {ad:"Diyarbakır Ciğer Kebabı",lat:37.9234,lng:40.2336,cat:"Kebap & Ocakbaşı",puan:4.6,konum:"Yenişehir · Diyarbakır",sehir:"Diyarbakır",dada:false,img:'photo-1565299507177-b0ac66763828'},
+    {ad:"Sur İçi Meftune Sofrası",lat:37.9084,lng:40.2396,cat:"Esnaf Lokantası",puan:4.4,konum:"Sur · Diyarbakır",sehir:"Diyarbakır",dada:false,img:'photo-1555992336-fb0d29498b13'},
+    {ad:"Künefe & Burma Tatlıcısı",lat:37.9144,lng:40.2246,cat:"Tatlı & Kafe",puan:4.7,konum:"Bağlar · Diyarbakır",sehir:"Diyarbakır",dada:false,img:'photo-1565958011703-44f9829ba187'},
+    {ad:"Hevsel Kahvaltı Bahçesi",lat:37.9204,lng:40.2306,cat:"Kahvaltı & Serpme",puan:4.2,konum:"Sur · Diyarbakır",sehir:"Diyarbakır",dada:false,img:'photo-1525351484163-7529414344d8'},
+    {ad:"Antakya Künefecisi",lat:36.2025,lng:36.1546,cat:"Tatlı & Kafe",puan:4.8,konum:"Antakya · Hatay",sehir:"Hatay (Antakya)",dada:true,img:'photo-1509440159596-0249088772ff'},
+    {ad:"Tarihi Kağıt Kebabı",lat:36.2085,lng:36.1606,cat:"Kebap & Ocakbaşı",puan:4.4,konum:"Antakya · Hatay",sehir:"Hatay (Antakya)",dada:false,img:'photo-1529692236671-f1f6cf9683ba'},
+    {ad:"Oruç & Humus Sofrası",lat:36.1935,lng:36.1666,cat:"Esnaf Lokantası",puan:4.6,konum:"Antakya · Hatay",sehir:"Hatay (Antakya)",dada:false,img:'photo-1504674900247-0877df9cc836'},
+    {ad:"Defne Zahter Kahvaltı Evi",lat:36.1995,lng:36.1516,cat:"Kahvaltı & Serpme",puan:4.3,konum:"Defne · Hatay",sehir:"Hatay (Antakya)",dada:false,img:'photo-1517248135467-4c7edcad34c4'},
+    {ad:"Samandağ Sahil Meyhanesi",lat:36.2055,lng:36.1576,cat:"Balık & Meyhane",puan:4.5,konum:"Samandağ · Hatay",sehir:"Hatay (Antakya)",dada:false,img:'photo-1466978913421-dad2ebd01d17'},
+    {ad:"Antakya Sürk & Cevizli Biber",lat:36.2115,lng:36.1636,cat:"Esnaf Lokantası",puan:4.4,konum:"Antakya · Hatay",sehir:"Hatay (Antakya)",dada:false,img:'photo-1596040033229-a9821ebd058d'},
+    {ad:"Maraş Dondurması & Künefe",lat:37.5948,lng:36.9401,cat:"Tatlı & Kafe",puan:4.8,konum:"Onikişubat · K.Maraş",sehir:"Kahramanmaraş",dada:true,img:'photo-1565299507177-b0ac66763828'},
+    {ad:"Tarihi Maraş Tava",lat:37.5798,lng:36.9461,cat:"Kebap & Ocakbaşı",puan:4.3,konum:"Dulkadiroğlu · K.Maraş",sehir:"Kahramanmaraş",dada:false,img:'photo-1555992336-fb0d29498b13'},
+    {ad:"Acı Biber & Kebap Salonu",lat:37.5858,lng:36.9311,cat:"Kebap & Ocakbaşı",puan:4.5,konum:"Onikişubat · K.Maraş",sehir:"Kahramanmaraş",dada:false,img:'photo-1565958011703-44f9829ba187'},
+    {ad:"Maraş Çöreği & Simit Fırını",lat:37.5918,lng:36.9371,cat:"Tatlı & Kafe",puan:4.3,konum:"Merkez · K.Maraş",sehir:"Kahramanmaraş",dada:false,img:'photo-1525351484163-7529414344d8'},
+    {ad:"Elbistan Köy Sofrası",lat:37.5768,lng:36.9431,cat:"Esnaf Lokantası",puan:4.6,konum:"Elbistan · K.Maraş",sehir:"Kahramanmaraş",dada:false,img:'photo-1509440159596-0249088772ff'},
+    {ad:"Tarsus Tantuni & Şalgam",lat:36.831,lng:34.6415,cat:"Sokak Lezzeti",puan:4.8,konum:"Tarsus · Mersin",sehir:"Mersin",dada:true,img:'photo-1529692236671-f1f6cf9683ba'},
+    {ad:"Mersin Cezerye & Kerebiç",lat:36.816,lng:34.6475,cat:"Tatlı & Kafe",puan:4.7,konum:"Akdeniz · Mersin",sehir:"Mersin",dada:false,img:'photo-1504674900247-0877df9cc836'},
+    {ad:"Sahil Balık & Meyhane",lat:36.822,lng:34.6325,cat:"Balık & Meyhane",puan:4.2,konum:"Yenişehir · Mersin",sehir:"Mersin",dada:false,img:'photo-1517248135467-4c7edcad34c4'},
+    {ad:"Mezitli Künefe Salonu",lat:36.828,lng:34.6385,cat:"Tatlı & Kafe",puan:4.5,konum:"Mezitli · Mersin",sehir:"Mersin",dada:false,img:'photo-1466978913421-dad2ebd01d17'},
+    {ad:"Tarsus Humus & Kebap Evi",lat:36.834,lng:34.6445,cat:"Kebap & Ocakbaşı",puan:4.4,konum:"Tarsus · Mersin",sehir:"Mersin",dada:false,img:'photo-1596040033229-a9821ebd058d'},
+    {ad:"Kebapçı Mestan Usta",lat:37.003,lng:35.3183,cat:"Kebap & Ocakbaşı",puan:4.8,konum:"Seyhan · Adana",sehir:"Adana",dada:true,img:'photo-1565299507177-b0ac66763828'},
+    {ad:"Kazancılar Şırdancı",lat:37.009,lng:35.3243,cat:"Sokak Lezzeti",puan:4.7,konum:"Seyhan · Adana",sehir:"Adana",dada:true,img:'photo-1555992336-fb0d29498b13'},
+    {ad:"Ciğerci Apo",lat:36.994,lng:35.3303,cat:"Kebap & Ocakbaşı",puan:4.5,konum:"Seyhan · Adana",sehir:"Adana",dada:false,img:'photo-1565958011703-44f9829ba187'},
+    {ad:"Bici Bici & Şalgam Evi",lat:37,lng:35.3153,cat:"Tatlı & Kafe",puan:4.4,konum:"Seyhan · Adana",sehir:"Adana",dada:false,img:'photo-1525351484163-7529414344d8'},
+    {ad:"Analı Kızlı Sofrası",lat:37.006,lng:35.3213,cat:"Esnaf Lokantası",puan:4.7,konum:"Çukurova · Adana",sehir:"Adana",dada:false,img:'photo-1509440159596-0249088772ff'},
+    {ad:"Çukurova Kahvaltı Bahçesi",lat:36.991,lng:35.3273,cat:"Kahvaltı & Serpme",puan:4.3,konum:"Çukurova · Adana",sehir:"Adana",dada:false,img:'photo-1529692236671-f1f6cf9683ba'},
+    {ad:"Samsun Tarihi Pidecisi",lat:41.256,lng:36.336,cat:"Pide & Lahmacun",puan:4.8,konum:"İlkadım · Samsun",sehir:"Samsun",dada:true,img:'photo-1504674900247-0877df9cc836'},
+    {ad:"Bafra Pidesi & Nokul Evi",lat:41.262,lng:36.321,cat:"Pide & Lahmacun",puan:4.3,konum:"Bafra · Samsun",sehir:"Samsun",dada:false,img:'photo-1517248135467-4c7edcad34c4'},
+    {ad:"Sahil Hamsi & Balık Evi",lat:41.268,lng:36.327,cat:"Balık & Meyhane",puan:4.6,konum:"Atakum · Samsun",sehir:"Samsun",dada:false,img:'photo-1466978913421-dad2ebd01d17'},
+    {ad:"Çarşamba Karadeniz Sofrası",lat:41.274,lng:36.333,cat:"Esnaf Lokantası",puan:4.4,konum:"Çarşamba · Samsun",sehir:"Samsun",dada:false,img:'photo-1596040033229-a9821ebd058d'},
+    {ad:"Samsun Kaz Tiridi Lokantası",lat:41.259,lng:36.339,cat:"Esnaf Lokantası",puan:4.7,konum:"İlkadım · Samsun",sehir:"Samsun",dada:false,img:'photo-1565299507177-b0ac66763828'},
+    {ad:"Akçaabat Köftecisi",lat:40.994,lng:39.7198,cat:"Köfte & Izgara",puan:4.8,konum:"Akçaabat · Trabzon",sehir:"Trabzon",dada:true,img:'photo-1555992336-fb0d29498b13'},
+    {ad:"Hamsiköy Sütlaç Evi",lat:40.979,lng:39.7258,cat:"Tatlı & Kafe",puan:4.5,konum:"Maçka · Trabzon",sehir:"Trabzon",dada:false,img:'photo-1565958011703-44f9829ba187'},
+    {ad:"Trabzon Kuymak & Kahvaltı",lat:40.985,lng:39.7108,cat:"Kahvaltı & Serpme",puan:4.4,konum:"Ortahisar · Trabzon",sehir:"Trabzon",dada:false,img:'photo-1525351484163-7529414344d8'},
+    {ad:"Karadeniz Hamsi Balık Evi",lat:40.991,lng:39.7168,cat:"Balık & Meyhane",puan:4.6,konum:"Ortahisar · Trabzon",sehir:"Trabzon",dada:false,img:'photo-1509440159596-0249088772ff'},
+    {ad:"Vakfıkebir Ekmek & Tereyağ",lat:40.976,lng:39.7228,cat:"Esnaf Lokantası",puan:4.3,konum:"Vakfıkebir · Trabzon",sehir:"Trabzon",dada:false,img:'photo-1529692236671-f1f6cf9683ba'},
+    {ad:"Sürmene Pide Salonu",lat:40.982,lng:39.7078,cat:"Pide & Lahmacun",puan:4.5,konum:"Sürmene · Trabzon",sehir:"Trabzon",dada:false,img:'photo-1504674900247-0877df9cc836'},
+    {ad:"Denizli Tava Ciğer Salonu",lat:37.7735,lng:29.0774,cat:"Kebap & Ocakbaşı",puan:4.8,konum:"Pamukkale · Denizli",sehir:"Denizli",dada:true,img:'photo-1517248135467-4c7edcad34c4'},
+    {ad:"Pamukkale Kahvaltı Terası",lat:37.7795,lng:29.0834,cat:"Kahvaltı & Serpme",puan:4.7,konum:"Pamukkale · Denizli",sehir:"Denizli",dada:false,img:'photo-1466978913421-dad2ebd01d17'},
+    {ad:"Denizli Kebabı & Şiş Evi",lat:37.7855,lng:29.0894,cat:"Kebap & Ocakbaşı",puan:4.3,konum:"Merkezefendi · Denizli",sehir:"Denizli",dada:false,img:'photo-1596040033229-a9821ebd058d'},
+    {ad:"Çal Köy Sofrası",lat:37.7705,lng:29.0954,cat:"Esnaf Lokantası",puan:4.5,konum:"Çal · Denizli",sehir:"Denizli",dada:false,img:'photo-1565299507177-b0ac66763828'},
+    {ad:"Tavas Bükmesi Tatlıcısı",lat:37.7765,lng:29.0804,cat:"Tatlı & Kafe",puan:4.3,konum:"Tavas · Denizli",sehir:"Denizli",dada:false,img:'photo-1555992336-fb0d29498b13'},
+    {ad:"Balıkesir Höşmerim Evi",lat:39.6424,lng:27.8916,cat:"Tatlı & Kafe",puan:4.8,konum:"Karesi · Balıkesir",sehir:"Balıkesir",dada:true,img:'photo-1565958011703-44f9829ba187'},
+    {ad:"Tarihi Kuzu Çevirme",lat:39.6484,lng:27.8766,cat:"Kebap & Ocakbaşı",puan:4.4,konum:"Altıeylül · Balıkesir",sehir:"Balıkesir",dada:false,img:'photo-1525351484163-7529414344d8'},
+    {ad:"Ayvalık Tost & Sahil",lat:39.6544,lng:27.8826,cat:"Sokak Lezzeti",puan:4.7,konum:"Ayvalık · Balıkesir",sehir:"Balıkesir",dada:false,img:'photo-1509440159596-0249088772ff'},
+    {ad:"Cunda Sahil Meyhanesi",lat:39.6394,lng:27.8886,cat:"Balık & Meyhane",puan:4.2,konum:"Ayvalık · Balıkesir",sehir:"Balıkesir",dada:false,img:'photo-1529692236671-f1f6cf9683ba'},
+    {ad:"Susurluk Ayran & Tokat",lat:39.6454,lng:27.8736,cat:"Esnaf Lokantası",puan:4.5,konum:"Susurluk · Balıkesir",sehir:"Balıkesir",dada:false,img:'photo-1504674900247-0877df9cc836'},
+    {ad:"Çanakkale Peyniri & Kahvaltı",lat:40.1463,lng:26.446,cat:"Kahvaltı & Serpme",puan:4.8,konum:"Merkez · Çanakkale",sehir:"Çanakkale",dada:true,img:'photo-1517248135467-4c7edcad34c4'},
+    {ad:"Gelibolu Sardalye Balıkçısı",lat:40.1523,lng:26.431,cat:"Balık & Meyhane",puan:4.6,konum:"Gelibolu · Çanakkale",sehir:"Çanakkale",dada:false,img:'photo-1466978913421-dad2ebd01d17'},
+    {ad:"Ezine Peynir & Tost Evi",lat:40.1583,lng:26.437,cat:"Sokak Lezzeti",puan:4.3,konum:"Ezine · Çanakkale",sehir:"Çanakkale",dada:false,img:'photo-1596040033229-a9821ebd058d'},
+    {ad:"Bozcaada Meyhanesi",lat:40.1643,lng:26.443,cat:"Balık & Meyhane",puan:4.5,konum:"Bozcaada · Çanakkale",sehir:"Çanakkale",dada:false,img:'photo-1565299507177-b0ac66763828'},
+    {ad:"Çanakkale Helva & Lokma",lat:40.1493,lng:26.449,cat:"Tatlı & Kafe",puan:4.4,konum:"Merkez · Çanakkale",sehir:"Çanakkale",dada:false,img:'photo-1555992336-fb0d29498b13'},
+    {ad:"Tekirdağ Köftecisi",lat:41.004,lng:27.5197,cat:"Köfte & Izgara",puan:4.8,konum:"Süleymanpaşa · Tekirdağ",sehir:"Tekirdağ",dada:true,img:'photo-1565958011703-44f9829ba187'},
+    {ad:"Rakı & Balık Sahil Evi",lat:40.989,lng:27.5257,cat:"Balık & Meyhane",puan:4.3,konum:"Süleymanpaşa · Tekirdağ",sehir:"Tekirdağ",dada:false,img:'photo-1525351484163-7529414344d8'},
+    {ad:"Malkara Köy Lokantası",lat:40.995,lng:27.5107,cat:"Esnaf Lokantası",puan:4.5,konum:"Malkara · Tekirdağ",sehir:"Tekirdağ",dada:false,img:'photo-1509440159596-0249088772ff'},
+    {ad:"Tekirdağ Peynir Helvacısı",lat:41.001,lng:27.5167,cat:"Tatlı & Kafe",puan:4.3,konum:"Süleymanpaşa · Tekirdağ",sehir:"Tekirdağ",dada:false,img:'photo-1529692236671-f1f6cf9683ba'},
+    {ad:"Şarköy Bağ Meyhanesi",lat:40.986,lng:27.5227,cat:"Balık & Meyhane",puan:4.6,konum:"Şarköy · Tekirdağ",sehir:"Tekirdağ",dada:false,img:'photo-1504674900247-0877df9cc836'},
+    {ad:"Tarihi Ciğerci",lat:41.6831,lng:26.5557,cat:"Kebap & Ocakbaşı",puan:4.8,konum:"Merkez · Edirne",sehir:"Edirne",dada:true,img:'photo-1517248135467-4c7edcad34c4'},
+    {ad:"Edirne Tava Ciğer Salonu",lat:41.6681,lng:26.5617,cat:"Kebap & Ocakbaşı",puan:4.7,konum:"Merkez · Edirne",sehir:"Edirne",dada:false,img:'photo-1466978913421-dad2ebd01d17'},
+    {ad:"Badem Ezmesi & Deva-i Misk",lat:41.6741,lng:26.5467,cat:"Tatlı & Kafe",puan:4.2,konum:"Merkez · Edirne",sehir:"Edirne",dada:false,img:'photo-1596040033229-a9821ebd058d'},
+    {ad:"Keşan Satır Et Lokantası",lat:41.6801,lng:26.5527,cat:"Kebap & Ocakbaşı",puan:4.5,konum:"Keşan · Edirne",sehir:"Edirne",dada:false,img:'photo-1565299507177-b0ac66763828'},
+    {ad:"Uzunköprü Köy Kahvaltısı",lat:41.6861,lng:26.5587,cat:"Kahvaltı & Serpme",puan:4.4,konum:"Uzunköprü · Edirne",sehir:"Edirne",dada:false,img:'photo-1555992336-fb0d29498b13'}
   ];
 
   var stops=[null,null];            // TEK TİP durak listesi (sıra = seçim sırası; ilk≈başlangıç, son≈varış ama hepsi "durak")
@@ -1000,7 +1145,7 @@ input{font:inherit}
       reverseBtn=document.getElementById('ygReverse'),
       startEmpty=document.getElementById('ygStart'),
       summaryEl=document.getElementById('ygSummary'),
-      kmEl=document.getElementById('ygKm'), noteEl=document.getElementById('ygNote');
+      kmEl=document.getElementById('ygKm'), kmUnitEl=document.getElementById('ygKmUnit'), noteEl=document.getElementById('ygNote');
 
   // ---- harita durak pini (TEK TİP, numaralı — Kalkış/Varış ayrımı YOK) ----
   function stopIcon(n){return L.divIcon({className:'yg-pin stop',html:'<span class="yg-pin-b">'+n+'</span>',iconSize:[28,28],iconAnchor:[14,14],popupAnchor:[0,-14]});}
@@ -1027,12 +1172,18 @@ input{font:inherit}
       li.className='yg-stop'; li.setAttribute('draggable','true'); li.setAttribute('data-i',i);
       li.innerHTML='<span class="yg-marker station" aria-hidden="true">'+(i+1)+'</span>'+
         '<div class="yg-stop-body">'+
-          '<div class="yg-field"><input type="text" class="yg-stop-input" data-i="'+i+'" autocomplete="off" placeholder="Şehir yaz…" aria-label="'+(i+1)+'. durak"><div class="yg-ac" hidden></div></div>'+
+          '<div class="yg-field"><input type="text" class="yg-stop-input" data-i="'+i+'" autocomplete="off" placeholder="Şehir yaz…" aria-label="'+(i+1)+'. durak"><button class="yg-stop-clear" type="button" tabindex="-1" aria-label="Şehri temizle"><i class="fa-solid fa-xmark"></i></button><div class="yg-ac" hidden></div></div>'+
           '<span class="yg-grip" aria-hidden="true" title="Sürükle"><i class="fa-solid fa-grip-vertical"></i></span>'+
-          (stops.length>2?'<button class="yg-stop-x" type="button" aria-label="Durağı çıkar"><i class="fa-solid fa-xmark"></i></button>':'')+
+          '<button class="yg-stop-x" type="button" aria-label="Durağı kaldır" title="Durağı kaldır"'+(stops.length<=2?' disabled':'')+'><i class="fa-solid fa-trash-can"></i></button>'+
         '</div>';
       li.querySelector('.yg-stop-input').value=c?c.ad:'';
-      var xb=li.querySelector('.yg-stop-x'); if(xb)xb.addEventListener('click',function(){stops.splice(i,1);renderStops();placeStopMarkers();maybeBuild();});
+      var xb=li.querySelector('.yg-stop-x'); if(xb)xb.addEventListener('click',function(){if(stops.length<=2)return;stops.splice(i,1);renderStops();placeStopMarkers();maybeBuild();});
+      // CLEAR × (input içi) — sadece metni temizler, durak satırı kalır (kullanıcı yeni şehir yazar)
+      var cb=li.querySelector('.yg-stop-clear'); if(cb)cb.addEventListener('click',function(){
+        var inp=li.querySelector('.yg-stop-input'); inp.value=''; stops[i]=null;
+        var box=li.querySelector('.yg-ac'); if(box){box.hidden=true;box.innerHTML='';}
+        inp.focus(); placeStopMarkers(); maybeBuild();
+      });
       li.addEventListener('dragstart',function(e){dragIdx=i;li.classList.add('dragging');try{e.dataTransfer.effectAllowed='move';}catch(_){}});
       li.addEventListener('dragend',function(){dragIdx=null;li.classList.remove('dragging');});
       li.addEventListener('dragover',function(e){e.preventDefault();li.classList.add('drop-into');});
@@ -1168,6 +1319,9 @@ input{font:inherit}
 
   // ---- özet: SADE (km + durum notu; süre/rozet YOK — kullanıcı tercihi) ----
   function fmtDakika(d){ if(d==null)return '—'; var h=Math.floor(d/60),m=d%60; return h? h+'sa '+m+'dk':m+' dk'; }
+  // mesafe: km<1 → metre (10m'e yuvarlı, "0 km" yerine "850 m"); aksi km
+  function fmtDistParts(km){ if(km==null)return {v:'—',u:''}; if(km<1){ return {v:String(Math.round(km*1000/10)*10),u:'m'}; } return {v:String(Math.round(km)),u:'km'}; }
+  function fmtDist(km){ var p=fmtDistParts(km); return p.u?p.v+' '+p.u:p.v; }
   function setComputing(){
     summaryEl.hidden=false; kmEl.textContent='…';
     noteEl.className='yg-sum-note';
@@ -1185,7 +1339,8 @@ input{font:inherit}
   function updateSummary(){
     summaryEl.hidden=false;
     var r=currentRoutes[activeIdx];
-    kmEl.textContent=(r&&r.km!=null)?Math.round(r.km):'—';
+    var dp=fmtDistParts(r&&r.km!=null?r.km:null);
+    kmEl.textContent=dp.v; if(kmUnitEl)kmUnitEl.textContent=dp.u;
     if(corrEl)corrEl.hidden=false;
   }
   function renderAltList(){
@@ -1196,7 +1351,7 @@ input{font:inherit}
       var b=document.createElement('button');
       b.type='button'; b.className='yg-alt'+(i===activeIdx?' is-active':'');
       b.innerHTML='<span class="yg-alt-bar"></span>'+
-        '<span class="yg-alt-main"><b class="yg-alt-km">'+Math.round(r.km)+' km</b>'+
+        '<span class="yg-alt-main"><b class="yg-alt-km">'+fmtDist(r.km)+'</b>'+
         '<span class="yg-alt-time">'+fmtDakika(r.dakika)+'</span></span>'+
         '<span class="yg-alt-tag">'+(i===0?'En hızlı':'Alternatif '+i)+'</span>';
       b.addEventListener('click',function(){selectRoute(i);});
@@ -1206,6 +1361,8 @@ input{font:inherit}
   function refreshThreshold(){
     onRoad=Math.max(2,corridor*0.4);
     if(corrValEl)corrValEl.textContent=corridor+' km';
+    // thumb rengi yakınlık bandına göre: ≤8 yeşil (sıkı/uygun) · 9-20 sarı · >20 domates (gevşek/uzak)
+    if(corrSlider)corrSlider.style.setProperty('--thumb', corridor<=8?'var(--green)':(corridor<=20?'var(--yellow)':'var(--tomato)'));
     var c=computeCounts();
     if(cntOnEl)cntOnEl.textContent=c.on;
     if(cntNearEl)cntNearEl.textContent=c.near;
@@ -1235,6 +1392,17 @@ input{font:inherit}
   var detailVenue=null;            // açık detay kartının mekanı
   function imgUrl(id){return 'https://images.unsplash.com/'+id+VIMG;}
   function isSel(m){return selectedVenues.some(function(v){return v.ad===m.ad;});}
+  // harita preview tooltip — sel state dahil; seçim değişince syncVenuePin yeniden bağlar (yeşil çerçeve)
+  function venueTipHtml(m){
+    var off=route.poly?distToRoute(m):null;
+    var tier=(off!=null&&isFinite(off))?'<span class="yg-vtip-tier '+proxTier(off)+'">'+proxLabel(off)+'</span>':'';
+    return '<span class="yg-vtip-img" style="background-image:url(\''+imgUrl(m.img)+'\')"></span>'+
+    '<span class="yg-vtip-b"><span class="yg-vtip-name">'+m.ad+'</span><span class="yg-vtip-loc">'+m.konum+'</span>'+tier+'</span>';}
+  function bindVenueTooltip(mk,m){
+    if(mk.getTooltip())mk.unbindTooltip();
+    mk.bindTooltip(venueTipHtml(m),{direction:'top',offset:[0,-14],opacity:1,
+      className:'yg-vtip'+(m.dada?' dada':'')+(isSel(m)?' sel':'')});
+  }
   function clearVenuePins(){venuePins.forEach(function(p){map.removeLayer(p.mk);});venuePins=[];}
   function venueIcon(m){return L.divIcon({className:'yg-vpin'+(m.dada?' dada':'')+(isSel(m)?' sel':''),
     html:'<span class="vp"><i class="fa-solid '+(m.dada?'fa-utensils':'fa-location-dot')+'"></i></span>',
@@ -1249,7 +1417,8 @@ input{font:inherit}
       .sort(function(a,b){ if(a.m.dada!==b.m.dada)return a.m.dada?-1:1; return a.off-b.off; });
     currentVenueList.forEach(function(x){
       var m=x.m, off=x.off;
-      var mk=L.marker([m.lat,m.lng],{icon:venueIcon(m)}).addTo(map);
+      var mk=L.marker([m.lat,m.lng],{icon:venueIcon(m),riseOnHover:true}).addTo(map);
+      bindVenueTooltip(mk,m);   // hover önizleme: foto + ad + konum (+ seçili ise yeşil çerçeve)
       mk.on('click',function(){ openDetail(m,off); });
       venuePins.push({mk:mk,m:m});
     });
@@ -1275,7 +1444,7 @@ input{font:inherit}
         '<span class="yd-body">'+
           '<span class="yd-name">'+m.ad+'</span>'+
           '<span class="yd-loc">'+m.konum+'</span>'+
-          '<span class="yd-tag '+tier+'">'+(tier==='on'?'Yol üstü':'Yola yakın')+' · '+Math.round(x.off)+' km</span>'+
+          '<span class="yd-tag '+tier+'">'+proxLabel(x.off)+'</span>'+
         '</span></button>';
     }).join('');
     if(list.length>SHOWCASE){
@@ -1297,6 +1466,13 @@ input{font:inherit}
 
   // ---- K1: mekan detay kartı (tıkla → harita uçar + kart) ----
   function tierLabel(off){return proxTier(off)==='on'?'Yol üstü':'Yola yakın';}
+  // yakınlık etiketi metni — TÜM yüzeylerde tutarlı (kadran/detay/tam liste):
+  //   ~0 (<0.5km) → "Tam yol üstü" (mesafesiz; "0 km" garipliği gider) · <1km → metre · ≥1km → km
+  function proxLabel(off){
+    if(off<0.5)return 'Tam yol üstü';
+    var dist = off<1 ? (Math.round(off*1000/10)*10)+' m' : Math.round(off)+' km';
+    return tierLabel(off)+' · '+dist;
+  }
   function openDetail(m,off){
     hideGeoPrompt();              // mekan detayına geçince en-yakın-şehir promptunu kapat (mobil çakışma + temiz odak)
     detailVenue=m;
@@ -1306,7 +1482,7 @@ input{font:inherit}
     detailLocEl.textContent=m.konum;
     var tier=proxTier(off);
     detailTagEl.className='yg-detail-tag '+tier;
-    detailTagEl.textContent=tierLabel(off)+' · '+Math.round(off)+' km';
+    detailTagEl.textContent=proxLabel(off);
     if(m.dada && m.puan!=null){ detailStarEl.hidden=false; detailStarValEl.textContent=m.puan.toFixed(1); }
     else detailStarEl.hidden=true;
     updateDetailBtn(m);
@@ -1323,7 +1499,7 @@ input{font:inherit}
   if(detailAddEl)detailAddEl.addEventListener('click',function(){ if(detailVenue)toggleSelected(detailVenue); });
 
   // ---- K2: "Güzergaha Ekle" toggle + pin/kart senkron (durağa EKLEMEZ) ----
-  function syncVenuePin(m){ var e=venuePins.filter(function(p){return p.m.ad===m.ad;})[0]; if(e)e.mk.setIcon(venueIcon(m)); }
+  function syncVenuePin(m){ var e=venuePins.filter(function(p){return p.m.ad===m.ad;})[0]; if(e){ e.mk.setIcon(venueIcon(m)); bindVenueTooltip(e.mk,m); } }
   function syncVenueCard(m){
     var idx=currentVenueList.map(function(x){return x.m.ad;}).indexOf(m.ad);
     if(idx<0||!dashScrollEl)return;
@@ -1393,7 +1569,7 @@ input{font:inherit}
           '<span class="yg-fl-body">'+
             '<span class="yg-fl-name">'+m.ad+'</span>'+
             '<span class="yg-fl-loc">'+m.konum+'</span>'+
-            '<span class="yg-fl-tag '+tier+'">'+(tier==='on'?'Yol üstü':'Yola yakın')+' · '+Math.round(x.off)+' km</span>'+
+            '<span class="yg-fl-tag '+tier+'">'+proxLabel(x.off)+'</span>'+
           '</span>'+
         '</button>'+
         '<button class="yg-fl-add'+(added?' is-added':'')+'" type="button" data-i="'+i+'" aria-label="Güzergaha Ekle">'+
@@ -1572,7 +1748,7 @@ input{font:inherit}
       ad:name||autoRouteName()||'Güzergahım',
       stops:f.map(function(c){return {ad:c.ad,lat:c.lat,lng:c.lng};}),
       venues:selectedVenues.map(function(v){return {ad:v.ad,konum:v.konum,lat:v.lat,lng:v.lng,dada:!!v.dada,img:v.img,cat:v.cat,puan:v.puan};}),
-      km:(currentRoutes[activeIdx]?Math.round(currentRoutes[activeIdx].km):null),
+      km:(currentRoutes[activeIdx]?currentRoutes[activeIdx].km:null),
       corridor:corridor,
       ts:Date.now()
     };
@@ -1616,7 +1792,7 @@ input{font:inherit}
           '<span class="yg-sv-prog-txt'+(done?' done':'')+'">'+(done?'<i class="fa-solid fa-circle-check"></i> Tümü ziyaret edildi ('+nv+'/'+nv+')':vc+'/'+nv+' ziyaret edildi')+'</span></div>' : '';
       var checklist = nv>0 ? '<ul class="yg-sv-venues" hidden>'+ (r.venues||[]).map(function(v){
           var on=!!(visited[r.id]&&visited[r.id][v.ad]);
-          return '<li><button class="yg-sv-vrow'+(on?' on':'')+'" type="button" data-ad="'+encodeURIComponent(v.ad)+'">'+
+          return '<li><button class="yg-sv-vrow'+(on?' on':'')+(v.dada?' dada':'')+'" type="button" data-ad="'+encodeURIComponent(v.ad)+'">'+
             '<span class="yg-sv-cbox"><i class="fa-solid fa-check"></i></span>'+
             '<span class="yg-sv-vname">'+v.ad+'</span>'+
             (v.dada?'<i class="fa-solid fa-utensils yg-sv-vdada" title="Dada öneriyor"></i>':'')+
@@ -1624,7 +1800,7 @@ input{font:inherit}
         }).join('') +'</ul>' : '';
       return '<li class="yg-sv-card" data-id="'+r.id+'">'+
         '<div class="yg-sv-name"><i class="fa-solid fa-route"></i><span>'+r.ad+'</span></div>'+
-        '<div class="yg-sv-meta">'+(r.stops||[]).length+' durak<span class="dot"></span>'+nv+' mekan'+(r.km!=null?'<span class="dot"></span>'+r.km+' km':'')+'</div>'+
+        '<div class="yg-sv-meta">'+(r.stops||[]).length+' durak<span class="dot"></span>'+nv+' mekan'+(r.km!=null?'<span class="dot"></span>'+fmtDist(r.km):'')+'</div>'+
         '<div class="yg-sv-date"><i class="fa-regular fa-clock"></i> '+fmtDate(r.ts)+'</div>'+
         prog+
         '<div class="yg-sv-acts">'+
