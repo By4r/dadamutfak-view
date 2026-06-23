@@ -10,6 +10,8 @@
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
       integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A=="
       crossorigin="anonymous" referrerpolicy="no-referrer" />
+<!-- SortableJS — besin değeri satır sürükle (tarifler-form paritesi; defer) -->
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js" defer></script>
 <!-- PAYLAŞILAN KABUK (tek kaynak) -->
 <link rel="stylesheet" href="assets/css/sa-shell.css" />
 <link rel="stylesheet" href="assets/css/sa-ui.css" />
@@ -206,6 +208,50 @@
   .side-card{position:static}
   .frow.two{grid-template-columns:1fr}
 }
+
+/* ============================================================
+   FAZ-2A — TİP-ÖZEL KÜNYE GRUPLARI (tip-toggle).
+   data-tip-group blokları varsayılan gizli; JS seçili tipi açar.
+   Etiket chip = tarifler-form .chips dili. Besin satırı = ie-drag/
+   ie-del miras + SortableJS sürükle. ============================ */
+[data-tip-group]{display:none}
+[data-tip-group].is-active{display:block}
+
+/* etiket chip toggle (sa-admin-tarifler-form VERBATIM) */
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{font-family:inherit;font-size:12.5px;font-weight:600;color:var(--slate-2);background:var(--paper);border:1px solid var(--line);border-radius:999px;padding:7px 14px;cursor:pointer;transition:.16s var(--ease);user-select:none}
+.chip:hover{border-color:var(--acc);color:var(--acc-deep)}
+.chip.is-on{background:rgba(var(--acc-rgb),.12);border-color:var(--acc);color:var(--acc-deep)}
+
+/* besin değeri satır repeater (etiket+değer; ie-drag/ie-del zaten tanımlı) */
+.bd-list{display:flex;flex-direction:column;gap:10px}
+.bd-row{display:flex;align-items:center;gap:10px}
+.bd-row .bd-lbl{flex:0 0 42%}
+.bd-row .bd-val{flex:1}
+.bd-row .ie-drag{font-size:13px}
+.bd-add{margin-top:12px}
+.sortable-ghost{opacity:.45}
+.sortable-chosen{box-shadow:0 0 0 2px var(--acc) inset;border-radius:var(--radius-md)}
+
+/* ---- GÖVDE-TOGGLE (FAZ-2B): Sofra Düzeni yapısal gövde ----
+   data-tip-body varsayılan gizli; sofra-duzeni seçilince blok-editör
+   (#bodyArticle) gizlenip bu açılır. Adım/ipucu satır repeater'ı besin
+   satırı dilinden miras (ie-drag/ie-del + xmark hafif sil). */
+[data-tip-body]{display:none}
+[data-tip-body].is-active{display:block}
+.sd-sub{font-size:12.5px;color:var(--muted);font-weight:500;line-height:1.5;margin:-4px 0 14px}
+.sd-list{display:flex;flex-direction:column;gap:10px}
+.sd-srow,.sd-trow{display:flex;align-items:center;gap:10px}
+.sd-srow .sd-stitle{flex:0 0 34%}
+.sd-srow .sd-sdesc{flex:1}
+.sd-trow .sd-tip{flex:1}
+.sd-num{flex:none;width:28px;height:28px;border-radius:var(--radius-circle);background:var(--acc);color:#fff;font-size:12px;font-weight:700;display:grid;place-items:center}
+.sd-check{flex:none;width:26px;height:26px;border-radius:var(--radius-sm);background:rgba(var(--acc-rgb),.12);color:var(--acc-deep);display:grid;place-items:center;font-size:11px}
+.sd-add{margin-top:12px}
+@media(max-width:560px){
+  .sd-srow{flex-wrap:wrap}
+  .sd-srow .sd-stitle,.sd-srow .sd-sdesc{flex:1 1 100%}
+}
 </style>
 </head>
 <body data-brand="mutfak" data-sec="admin" data-screen="icerik">
@@ -283,9 +329,9 @@
                 <select class="fselect" id="f-tip">
                   <option value="mutfaga-giris">Mutfağa Giriş</option>
                   <option value="puf-noktalari" selected>Püf Noktaları</option>
+                  <option value="ansiklopedi">Mutfak Ansiklopedisi</option>
+                  <option value="sofra-duzeni">Sofra Düzeni</option>
                   <option value="gurme">Gurme Lezzetler</option>
-                  <option value="ansiklopedi" disabled>Mutfak Ansiklopedisi (yakında)</option>
-                  <option value="sezon" disabled>Sezon Mutfağı (yakında)</option>
                 </select>
                 <span class="fhint">Tip, makalenin yayınlanacağı bölümü ve URL ön-ekini belirler.</span>
               </div>
@@ -308,6 +354,178 @@
           </div>
         </div>
 
+        <!-- ============================================================
+             TİP-ÖZEL KÜNYE GRUPLARI (FAZ-2A) — künyenin altı, gövdenin üstü.
+             Varsayılan gizli; #f-tip seçimine göre JS biri açılır.
+             (Püf Noktaları → ek grup YOK; Gurme → blog, ek grup YOK.)
+             ============================================================ -->
+
+        <!-- TİP: Mutfağa Giriş → Ders Künyesi -->
+        <div class="form-sec" data-tip-group="mutfaga-giris">
+          <div class="form-sec-tt"><i class="fa-solid fa-graduation-cap"></i> Ders Künyesi</div>
+          <div class="form-grid">
+            <div class="frow two">
+              <div class="frow">
+                <label for="dg-seviye">Seviye</label>
+                <select class="fselect" id="dg-seviye">
+                  <option>Başlangıç</option>
+                  <option>Orta</option>
+                  <option>İleri</option>
+                </select>
+              </div>
+              <div class="frow">
+                <label for="dg-sure">Süre</label>
+                <input class="finput" id="dg-sure" type="text" value="12 dk video" placeholder="örn. 12 dk video" />
+              </div>
+            </div>
+            <div class="frow two">
+              <div class="frow">
+                <label for="dg-icerik">İçerik</label>
+                <input class="finput" id="dg-icerik" type="text" value="5 bölüm + sınav" placeholder="örn. 5 bölüm + sınav" />
+              </div>
+              <div class="frow">
+                <label for="dg-egitmen">Eğitmen</label>
+                <input class="finput" id="dg-egitmen" type="text" value="Şef Aylin Demir" placeholder="Eğitmen adı" />
+              </div>
+            </div>
+            <div class="frow">
+              <label for="dg-video">Video URL <span style="font-weight:500;color:var(--muted)">(opsiyonel)</span></label>
+              <input class="finput" id="dg-video" type="url" value="" placeholder="https://youtube.com/watch?v=..." />
+            </div>
+            <div class="frow">
+              <label>Etiketler</label>
+              <div class="chips" id="dgTags" role="group" aria-label="Ders etiketleri">
+                <button class="chip is-on" type="button">Haşlama</button>
+                <button class="chip is-on" type="button">Şoklama</button>
+                <button class="chip" type="button">Sebze</button>
+                <button class="chip" type="button">Tuz dengesi</button>
+                <button class="chip" type="button">Temel Teknik</button>
+              </div>
+              <span class="fhint">Ders kartında ve içerik başında rozet olarak çıkar.</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- TİP: Mutfak Ansiklopedisi → Madde Künyesi + Besin Değeri -->
+        <div class="form-sec" data-tip-group="ansiklopedi">
+          <div class="form-sec-tt"><i class="fa-solid fa-seedling"></i> Madde Künyesi</div>
+          <div class="form-grid">
+            <div class="frow two">
+              <div class="frow">
+                <label for="ak-latin">Latin ad</label>
+                <input class="finput" id="ak-latin" type="text" value="Phaseolus vulgaris" placeholder="örn. Phaseolus vulgaris" />
+              </div>
+              <div class="frow">
+                <label for="ak-kategori">Kategori</label>
+                <select class="fselect" id="ak-kategori">
+                  <option>Baharatlar</option>
+                  <option selected>Bakliyatlar</option>
+                  <option>Balıklar</option>
+                  <option>Çaylar</option>
+                  <option>Çikolatalar</option>
+                  <option>Domatesler</option>
+                  <option>Etler</option>
+                  <option>Kahveler</option>
+                  <option>Kuruyemişler</option>
+                  <option>Mantarlar</option>
+                  <option>Meyveler</option>
+                  <option>Otlar</option>
+                  <option>Peynirler</option>
+                  <option>Pirinçler</option>
+                  <option>Sebzeler</option>
+                  <option>Sirkeler</option>
+                  <option>Tuzlar</option>
+                  <option>Yağlar</option>
+                  <option>Yumurtalar</option>
+                </select>
+              </div>
+            </div>
+            <div class="frow two">
+              <div class="frow">
+                <label for="ak-mevsim">Mevsim</label>
+                <input class="finput" id="ak-mevsim" type="text" value="Yaz–Sonbahar" placeholder="örn. Yaz–Sonbahar" />
+              </div>
+              <div class="frow">
+                <label for="ak-kalori">Kalori</label>
+                <input class="finput" id="ak-kalori" type="text" value="127 kcal / 100g" placeholder="örn. 127 kcal / 100g" />
+              </div>
+            </div>
+            <div class="frow">
+              <label for="ak-saklama">Saklama</label>
+              <input class="finput" id="ak-saklama" type="text" value="12 ay, serin kuru yer" placeholder="örn. 12 ay, serin kuru yer" />
+            </div>
+            <div class="frow">
+              <label>Besin Değeri <span style="font-weight:500;color:var(--muted)">(100 g — etiket + değer)</span></label>
+              <div class="bd-list" id="bdList">
+                <div class="bd-row">
+                  <input class="finput bd-lbl" type="text" value="Enerji" placeholder="Besin" />
+                  <input class="finput bd-val" type="text" value="127 kcal" placeholder="Değer" />
+                  <span class="ie-drag" title="Sürükleyerek sırala"><i class="fa-solid fa-grip-vertical"></i></span>
+                  <button class="ie-del" type="button" title="Satırı sil" aria-label="Satırı sil"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+                <div class="bd-row">
+                  <input class="finput bd-lbl" type="text" value="Protein" placeholder="Besin" />
+                  <input class="finput bd-val" type="text" value="9 g" placeholder="Değer" />
+                  <span class="ie-drag" title="Sürükleyerek sırala"><i class="fa-solid fa-grip-vertical"></i></span>
+                  <button class="ie-del" type="button" title="Satırı sil" aria-label="Satırı sil"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+                <div class="bd-row">
+                  <input class="finput bd-lbl" type="text" value="Karbonhidrat" placeholder="Besin" />
+                  <input class="finput bd-val" type="text" value="23 g" placeholder="Değer" />
+                  <span class="ie-drag" title="Sürükleyerek sırala"><i class="fa-solid fa-grip-vertical"></i></span>
+                  <button class="ie-del" type="button" title="Satırı sil" aria-label="Satırı sil"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+                <div class="bd-row">
+                  <input class="finput bd-lbl" type="text" value="Lif" placeholder="Besin" />
+                  <input class="finput bd-val" type="text" value="6 g" placeholder="Değer" />
+                  <span class="ie-drag" title="Sürükleyerek sırala"><i class="fa-solid fa-grip-vertical"></i></span>
+                  <button class="ie-del" type="button" title="Satırı sil" aria-label="Satırı sil"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+                <div class="bd-row">
+                  <input class="finput bd-lbl" type="text" value="Yağ" placeholder="Besin" />
+                  <input class="finput bd-val" type="text" value="0,5 g" placeholder="Değer" />
+                  <span class="ie-drag" title="Sürükleyerek sırala"><i class="fa-solid fa-grip-vertical"></i></span>
+                  <button class="ie-del" type="button" title="Satırı sil" aria-label="Satırı sil"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+                <div class="bd-row">
+                  <input class="finput bd-lbl" type="text" value="Demir" placeholder="Besin" />
+                  <input class="finput bd-val" type="text" value="2 mg" placeholder="Değer" />
+                  <span class="ie-drag" title="Sürükleyerek sırala"><i class="fa-solid fa-grip-vertical"></i></span>
+                  <button class="ie-del" type="button" title="Satırı sil" aria-label="Satırı sil"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+              </div>
+              <button class="add-row bd-add" type="button" id="bdAdd"><i class="fa-solid fa-plus"></i> Satır Ekle</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- TİP: Sofra Düzeni → Sofra Künyesi (mini) -->
+        <div class="form-sec" data-tip-group="sofra-duzeni">
+          <div class="form-sec-tt"><i class="fa-solid fa-utensils"></i> Sofra Künyesi</div>
+          <div class="form-grid">
+            <div class="frow two">
+              <div class="frow">
+                <label for="sd-tur">Sofra türü</label>
+                <select class="fselect" id="sd-tur">
+                  <option>Günlük Sofra</option>
+                  <option>Misafir Sofrası</option>
+                  <option>Kahvaltı Sofrası</option>
+                  <option>Resmî Sofra</option>
+                  <option>Ramazan Sofrası</option>
+                  <option>Bayram Sofrası</option>
+                  <option>Çocuklu Sofra</option>
+                  <option>Açık Büfe</option>
+                </select>
+              </div>
+              <div class="frow">
+                <label for="sd-ipucu">İpucu sayısı</label>
+                <input class="finput" id="sd-ipucu" type="number" value="4" min="0" placeholder="örn. 4" />
+              </div>
+            </div>
+            <span class="fhint">Sofra Düzeni indeks kartında “N ipucu” rozetini ve kategori etiketini besler.</span>
+          </div>
+        </div>
+
         <!-- Kapak görseli -->
         <div class="form-sec">
           <div class="form-sec-tt"><i class="fa-regular fa-image"></i> Kapak Görseli</div>
@@ -323,8 +541,10 @@
           </div>
         </div>
 
-        <!-- Gövde = blok editör (puf-noktasi-ekle-v1 mirası) -->
-        <div class="form-sec">
+        <!-- Gövde = blok editör (puf-noktasi-ekle-v1 mirası).
+             FAZ-2B: 4 makale tipinde (Püf/Gurme/Mutfağa Giriş/Ansiklopedi)
+             görünür; Sofra Düzeni seçilince JS gizler, yapısal gövde açılır. -->
+        <div class="form-sec" id="bodyArticle">
           <div class="form-sec-tt"><i class="fa-solid fa-align-left"></i> İçerik Gövdesi</div>
           <div class="bloks-head">
             <p>Makaleyi paragraf, görsel ve videolarla blok blok yaz. Blokları sağdaki tutamaçtan sürükleyerek yeniden sırala.</p>
@@ -381,6 +601,73 @@
             <button class="add-row" type="button" id="addPara"><i class="fa-solid fa-align-left"></i> Paragraf Ekle</button>
             <button class="add-row" type="button" id="addImg"><i class="fa-regular fa-image"></i> Görsel Ekle</button>
             <button class="add-row" type="button" id="addVideo"><i class="fa-brands fa-youtube"></i> Video Ekle</button>
+          </div>
+        </div>
+
+        <!-- TİP GÖVDE: Sofra Düzeni → yapısal gövde (blok-editör yerine) -->
+        <div class="form-sec" data-tip-body="sofra-duzeni">
+          <div class="form-sec-tt"><i class="fa-solid fa-utensils"></i> Sofra İçeriği</div>
+          <p class="sd-sub">Sofra düzeni sayfası serbest makale değil — kısa bir giriş, sıralı kurulum adımları ve pratik ipuçlarından oluşur.</p>
+
+          <div class="form-grid">
+            <div class="frow">
+              <label for="sd-giris">Giriş</label>
+              <textarea class="ftext" id="sd-giris" placeholder="Bu sofranın mantığını 2-3 kısa paragrafla anlat...">Misafir sofrası, sıcak bir karşılamanın ilk işareti. Amacımız gösterişten çok, herkesin rahatça uzanabileceği dengeli ve ferah bir düzen kurmak. Tabaklar arası boşluk, ortak kapların erişilebilirliği ve servis kaşıklarının önceden yerleştirilmesi konforun temelidir.</textarea>
+              <span class="fhint">Sayfanın başındaki kısa açıklama. Paragrafları boş satırla ayır.</span>
+            </div>
+
+            <div class="frow">
+              <label>Adımlar <span style="font-weight:500;color:var(--muted)">(başlık + tek cümle; sıra otomatik)</span></label>
+              <div class="sd-list" id="sdSteps">
+                <div class="sd-srow">
+                  <span class="sd-num">1</span>
+                  <input class="finput sd-stitle" type="text" value="Masa örtüsü ve ana hat" placeholder="Adım başlığı" />
+                  <input class="finput sd-sdesc" type="text" value="Düz, ütülü bir örtüyle başla; merkez hattını belirle." placeholder="Tek cümlelik açıklama" />
+                  <span class="ie-drag" title="Sürükleyerek sırala"><i class="fa-solid fa-grip-vertical"></i></span>
+                  <button class="ie-del" type="button" title="Adımı sil" aria-label="Adımı sil"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+                <div class="sd-srow">
+                  <span class="sd-num">2</span>
+                  <input class="finput sd-stitle" type="text" value="Tabak ve kişilik aralık" placeholder="Adım başlığı" />
+                  <input class="finput sd-sdesc" type="text" value="Her kişilik için ~60 cm bırak; tabakları hizala." placeholder="Tek cümlelik açıklama" />
+                  <span class="ie-drag" title="Sürükleyerek sırala"><i class="fa-solid fa-grip-vertical"></i></span>
+                  <button class="ie-del" type="button" title="Adımı sil" aria-label="Adımı sil"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+                <div class="sd-srow">
+                  <span class="sd-num">3</span>
+                  <input class="finput sd-stitle" type="text" value="Ortak kaplar ve servis" placeholder="Adım başlığı" />
+                  <input class="finput sd-sdesc" type="text" value="Ortak kapları merkeze koy, servis kaşıklarını önceden yerleştir." placeholder="Tek cümlelik açıklama" />
+                  <span class="ie-drag" title="Sürükleyerek sırala"><i class="fa-solid fa-grip-vertical"></i></span>
+                  <button class="ie-del" type="button" title="Adımı sil" aria-label="Adımı sil"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+              </div>
+              <button class="add-row sd-add" type="button" id="sdStepAdd"><i class="fa-solid fa-plus"></i> Adım Ekle</button>
+            </div>
+
+            <div class="frow">
+              <label>İpucu Listesi <span style="font-weight:500;color:var(--muted)">(tek cümlelik pratik notlar)</span></label>
+              <div class="sd-list" id="sdTips">
+                <div class="sd-trow">
+                  <span class="sd-check"><i class="fa-solid fa-check"></i></span>
+                  <input class="finput sd-tip" type="text" value="Peçeteleri tabağın soluna katlayarak yerleştir." placeholder="Tek cümlelik ipucu" />
+                  <span class="ie-drag" title="Sürükleyerek sırala"><i class="fa-solid fa-grip-vertical"></i></span>
+                  <button class="ie-del" type="button" title="İpucunu sil" aria-label="İpucunu sil"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+                <div class="sd-trow">
+                  <span class="sd-check"><i class="fa-solid fa-check"></i></span>
+                  <input class="finput sd-tip" type="text" value="Su bardaklarını sağ üst köşeye hizala." placeholder="Tek cümlelik ipucu" />
+                  <span class="ie-drag" title="Sürükleyerek sırala"><i class="fa-solid fa-grip-vertical"></i></span>
+                  <button class="ie-del" type="button" title="İpucunu sil" aria-label="İpucunu sil"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+                <div class="sd-trow">
+                  <span class="sd-check"><i class="fa-solid fa-check"></i></span>
+                  <input class="finput sd-tip" type="text" value="Servisi merkezden dışa doğru planla." placeholder="Tek cümlelik ipucu" />
+                  <span class="ie-drag" title="Sürükleyerek sırala"><i class="fa-solid fa-grip-vertical"></i></span>
+                  <button class="ie-del" type="button" title="İpucunu sil" aria-label="İpucunu sil"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+              </div>
+              <button class="add-row sd-add" type="button" id="sdTipAdd"><i class="fa-solid fa-plus"></i> İpucu Ekle</button>
+            </div>
           </div>
         </div>
 
@@ -498,9 +785,9 @@
   var TIP_PRE={
     'mutfaga-giris':'mutfaga-giris/',
     'puf-noktalari':'puf-noktalari/',
-    'gurme':'kesfet/',
     'ansiklopedi':'ansiklopedi/',
-    'sezon':'sezon/'
+    'sofra-duzeni':'sofra-duzeni/',
+    'gurme':'kesfet/'
   };
 
   var baslik=document.getElementById('f-baslik');
@@ -575,14 +862,133 @@
 
   [baslik,slug,mTitle,mDesc,kw].forEach(function(el){el.addEventListener('input',render)});
 
-  /* ---- tip select → ön-ek + alan göster/gizle (mockup) ---- */
+  /* ---- tip-özel künye grupları (FAZ-2A) → seçili tipe göre göster/gizle ----
+     Püf Noktaları + Gurme → ek grup yok (hepsi gizli kalır). Gizli gruptaki
+     alanlarda `required` YOK → validation tetiklenmez (mockup, salt görsel). */
+  var tipGroups=document.querySelectorAll('[data-tip-group]');
+  /* FAZ-2B: gövde katmanı — 4 makale tipinde blok-editör (#bodyArticle) görünür;
+     Sofra Düzeni'nde gizlenir, yapısal gövde (data-tip-body) açılır. */
+  var bodyArticle=document.getElementById('bodyArticle');
+  var tipBodies=document.querySelectorAll('[data-tip-body]');
+  function syncTipGroups(){
+    tipGroups.forEach(function(g){
+      g.classList.toggle('is-active',g.getAttribute('data-tip-group')===tip.value);
+    });
+    /* gövde toggle: yapısal gövde tanımlı tip mi? (şimdilik sadece sofra-duzeni) */
+    var hasStructBody=false;
+    tipBodies.forEach(function(g){
+      var on=g.getAttribute('data-tip-body')===tip.value;
+      g.classList.toggle('is-active',on);
+      if(on)hasStructBody=true;
+    });
+    if(bodyArticle)bodyArticle.style.display=hasStructBody?'none':'';
+  }
+
+  /* ---- tip select → ön-ek + künye grubu göster/gizle (mockup) ---- */
   tip.addEventListener('change',function(){
-    /* Blog/Keşfet'te kategori opsiyonel hissi: etiket her tipte var; ansiklopedi/sezon pasif
-       (disabled option) zaten seçilemez. Mockup'ta etiket satırını sade tipte gizleyebiliriz —
-       şimdilik 3 aktif tipte de etiket gösteriliyor (hepsi teaser/etiket kullanır). */
+    /* Etiket satırı (genel teaser etiketi) her tipte görünür. Tip-özel künye
+       grupları syncTipGroups ile yönetilir. */
     rowEtiket.style.display='';
+    syncTipGroups();
     render();
   });
+
+  /* ---- etiket chip toggle (tüm .chips kutuları; ders künyesi vb.) ---- */
+  document.querySelectorAll('.chips').forEach(function(box){
+    box.addEventListener('click',function(e){
+      var c=e.target.closest('.chip');if(!c)return;
+      c.classList.toggle('is-on');
+    });
+  });
+
+  /* ---- BESİN DEĞERİ satır repeater (ansiklopedi künyesi) ----
+     Ekle: yeni etiket+değer satırı. Sil: fa-xmark ikonu (sa-ui TRASH değil →
+     onay modalı açılmaz, hafif satır silme). Sürükle: SortableJS (.ie-drag). */
+  var bdList=document.getElementById('bdList');
+  var bdAdd=document.getElementById('bdAdd');
+  function bdRow(){
+    var r=document.createElement('div');r.className='bd-row';
+    r.innerHTML='<input class="finput bd-lbl" type="text" placeholder="Besin" />'+
+      '<input class="finput bd-val" type="text" placeholder="Değer" />'+
+      '<span class="ie-drag" title="Sürükleyerek sırala"><i class="fa-solid fa-grip-vertical"></i></span>'+
+      '<button class="ie-del" type="button" title="Satırı sil" aria-label="Satırı sil"><i class="fa-solid fa-xmark"></i></button>';
+    return r;
+  }
+  if(bdAdd&&bdList){
+    bdAdd.addEventListener('click',function(){
+      var r=bdRow();bdList.appendChild(r);
+      var f=r.querySelector('.bd-lbl');if(f)f.focus();
+    });
+    bdList.addEventListener('click',function(e){
+      var del=e.target.closest('.ie-del');if(!del)return;
+      var row=del.closest('.bd-row');if(row)row.remove();
+    });
+  }
+  /* ---- SOFRA DÜZENİ yapısal gövde: Adımlar + İpucu satır repeater'ı ----
+     Besin satırı dilinin aynısı: ekle/sil (fa-xmark, modalsız) + SortableJS.
+     Adımlar otomatik numaralı → ekle/sil/sürükle sonrası renumber. */
+  var sdSteps=document.getElementById('sdSteps');
+  var sdStepAdd=document.getElementById('sdStepAdd');
+  function sdRenumber(){if(sdSteps)sdSteps.querySelectorAll('.sd-num').forEach(function(n,i){n.textContent=i+1;});}
+  function sdStepRow(){
+    var r=document.createElement('div');r.className='sd-srow';
+    r.innerHTML='<span class="sd-num"></span>'+
+      '<input class="finput sd-stitle" type="text" placeholder="Adım başlığı" />'+
+      '<input class="finput sd-sdesc" type="text" placeholder="Tek cümlelik açıklama" />'+
+      '<span class="ie-drag" title="Sürükleyerek sırala"><i class="fa-solid fa-grip-vertical"></i></span>'+
+      '<button class="ie-del" type="button" title="Adımı sil" aria-label="Adımı sil"><i class="fa-solid fa-xmark"></i></button>';
+    return r;
+  }
+  if(sdStepAdd&&sdSteps){
+    sdStepAdd.addEventListener('click',function(){
+      var r=sdStepRow();sdSteps.appendChild(r);sdRenumber();
+      var f=r.querySelector('.sd-stitle');if(f)f.focus();
+    });
+    sdSteps.addEventListener('click',function(e){
+      var del=e.target.closest('.ie-del');if(!del)return;
+      var row=del.closest('.sd-srow');if(row){row.remove();sdRenumber();}
+    });
+  }
+  var sdTips=document.getElementById('sdTips');
+  var sdTipAdd=document.getElementById('sdTipAdd');
+  function sdTipRow(){
+    var r=document.createElement('div');r.className='sd-trow';
+    r.innerHTML='<span class="sd-check"><i class="fa-solid fa-check"></i></span>'+
+      '<input class="finput sd-tip" type="text" placeholder="Tek cümlelik ipucu" />'+
+      '<span class="ie-drag" title="Sürükleyerek sırala"><i class="fa-solid fa-grip-vertical"></i></span>'+
+      '<button class="ie-del" type="button" title="İpucunu sil" aria-label="İpucunu sil"><i class="fa-solid fa-xmark"></i></button>';
+    return r;
+  }
+  if(sdTipAdd&&sdTips){
+    sdTipAdd.addEventListener('click',function(){
+      var r=sdTipRow();sdTips.appendChild(r);
+      var f=r.querySelector('.sd-tip');if(f)f.focus();
+    });
+    sdTips.addEventListener('click',function(e){
+      var del=e.target.closest('.ie-del');if(!del)return;
+      var row=del.closest('.sd-trow');if(row)row.remove();
+    });
+  }
+
+  /* SortableJS — defer ile yüklenir; DOMContentLoaded'da init (çift-init flag korumalı).
+     3 liste: besin (ansiklopedi) + adımlar + ipuçları (sofra). */
+  function initBesinSortable(){
+    if(typeof Sortable==='undefined')return;
+    if(bdList&&!bdList.dataset.sortable){
+      Sortable.create(bdList,{handle:'.ie-drag',animation:160,ghostClass:'sortable-ghost',chosenClass:'sortable-chosen'});
+      bdList.dataset.sortable='1';
+    }
+    if(sdSteps&&!sdSteps.dataset.sortable){
+      Sortable.create(sdSteps,{handle:'.ie-drag',animation:160,ghostClass:'sortable-ghost',chosenClass:'sortable-chosen',onEnd:sdRenumber});
+      sdSteps.dataset.sortable='1';
+    }
+    if(sdTips&&!sdTips.dataset.sortable){
+      Sortable.create(sdTips,{handle:'.ie-drag',animation:160,ghostClass:'sortable-ghost',chosenClass:'sortable-chosen'});
+      sdTips.dataset.sortable='1';
+    }
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',initBesinSortable);
+  else initBesinSortable();
 
   /* ---- kapak görseli değiştir / kaldır (mockup) ---- */
   var SPARE_COVERS=[
@@ -760,6 +1166,7 @@
 
   /* ---- ilk render + kaydet ---- */
   syncStatus();
+  syncTipGroups();
   render();
   document.getElementById('saveBtn').addEventListener('click',function(){
     if(window.saToast)saToast('İçerik kaydedildi',{type:'ok'});
