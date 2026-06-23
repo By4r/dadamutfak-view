@@ -1309,8 +1309,9 @@ html,body{overflow-x:hidden}
 /* başlık sayaç çipi — "N mekan" net okunsun (yalnız ara duraklar sayılır) */
 .rt-count{display:inline-flex;align-items:center;gap:5px;margin-left:7px;font-size:11px;font-weight:700;color:var(--tomato);background:var(--tomato-tint);padding:2px 9px;border-radius:var(--radius-pill);letter-spacing:0;text-transform:none;vertical-align:middle}
 .rt-count i{font-size:9.5px}
-/* ALT RAİL — yol üstü öneriler; sağ panel sütununu YATAYDA girmez (right:352 = 320 plan + 16 gap + 16) → çakışma yok */
-.yg-rail{position:absolute;left:16px;right:352px;bottom:16px;z-index:5;border-radius:var(--radius-lg);padding:12px 14px 13px}
+/* ALT RAİL — yol üstü öneriler; sağ panel sütununu YATAYDA girmez (right:360 = 320 plan + 16 gap + 24 nefes) → çakışma yok.
+   z-index rail(5) < plan(6): teorik üst-üste binmede panel üstte kalır; ama right:360 + scroll clip ile zaten binmez. */
+.yg-rail{position:absolute;left:16px;right:360px;bottom:16px;z-index:5;border-radius:var(--radius-lg);padding:12px 14px 13px;overflow:hidden}
 .yg-rail-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:10px;padding:0 2px}
 .yg-rail-head h2{font-size:14.5px;display:flex;align-items:center;gap:8px}
 .yg-rail-head .q{color:var(--tomato);font-weight:800}
@@ -1326,7 +1327,7 @@ html,body{overflow-x:hidden}
 .yg-rail.collapsed .yg-rail-scroll{display:none}
 .yg-rail.collapsed{right:auto;width:auto;max-width:calc(100% - 32px)}
 .yg-rail.collapsed::after{display:none}
-.yg-rail-scroll{position:relative;overflow-x:auto;overflow-y:hidden;scrollbar-width:thin;-webkit-overflow-scrolling:touch}
+.yg-rail-scroll{position:relative;width:100%;max-width:100%;overflow-x:auto;overflow-y:hidden;scrollbar-width:thin;-webkit-overflow-scrolling:touch}
 .yg-rail-scroll::-webkit-scrollbar{height:7px} .yg-rail-scroll::-webkit-scrollbar-thumb{background:var(--line);border-radius:99px}
 .yg-grid{display:flex;gap:11px;width:max-content;padding:0 2px 4px}
 .yg-rail::after{content:"";position:absolute;top:42px;right:0;width:44px;bottom:18px;border-radius:0 var(--radius-lg) var(--radius-lg) 0;background:linear-gradient(90deg,rgba(255,255,255,0),rgba(255,255,255,.85));pointer-events:none}
@@ -1413,6 +1414,104 @@ html,body{overflow-x:hidden}
 .cp-toggle:hover{border-color:var(--tomato);color:var(--tomato)}
 .cp-row.on .cp-toggle,.cp-row.on .cp-toggle:hover{background:var(--green-deep);border-color:var(--green-deep);color:#fff}
 .ysc-cp-empty{font-size:12.5px;color:var(--muted);margin:0}
+/* GÜZERGAHIM itinerary'de güzergah şehri satırı (mekan durağından ayrı; petrol kimliği) */
+.rt-stop.rt-city{background:rgba(0,96,114,.05);border-color:rgba(0,96,114,.28)}
+.rs-city-dot{flex:0 0 22px;width:22px;height:22px;display:grid;place-items:center;color:var(--c-petrol);font-size:12px;background:var(--paper);border-radius:var(--radius-circle);box-shadow:0 0 0 3px var(--paper)}
+.rt-stop.rt-city .rs-txt small{color:var(--c-petrol);font-weight:600}
+
+/* ===== GÜZERGAH ŞEHRİ WAYPOINT (ekle/çıkar/sürükle-sırala) ===== */
+.yg-wp-wrap{margin-top:14px;border-top:1px solid var(--line);padding-top:13px}
+.yg-wp-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:9px}
+.yg-wp-head>span{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--slate);display:inline-flex;align-items:center;gap:7px}
+.yg-wp-head>span i{color:var(--c-petrol);font-size:11px}
+.yg-wp-add{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:var(--paper);cursor:pointer;font:inherit;font-weight:700;font-size:11.5px;color:var(--slate);padding:6px 11px;border-radius:var(--radius-pill);transition:.18s var(--ease)}
+.yg-wp-add:hover{border-color:var(--c-petrol);color:var(--c-petrol)}
+.yg-wp-ac-wrap{position:relative;margin-bottom:9px}
+.yg-wp-ac-wrap input{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:var(--radius-md);font:inherit;background:rgba(255,255,255,.8);color:var(--ink)}
+.yg-wp-ac-wrap input:focus{outline:0;border-color:var(--c-petrol);background:#fff}
+.yg-wp-list{list-style:none;display:flex;flex-direction:column;gap:6px}
+.yg-wp{list-style:none;display:flex;align-items:center;gap:8px;padding:8px 9px;background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-md);cursor:grab;transition:border-color .15s var(--ease),box-shadow .15s var(--ease),opacity .15s}
+.yg-wp.dragging{opacity:.5;cursor:grabbing}
+.yg-wp.drop-into{border-color:var(--c-petrol);box-shadow:0 0 0 2px rgba(0,96,114,.16)}
+.ywp-grip{flex:0 0 auto;color:var(--muted);font-size:12px}
+.ywp-name{flex:1;min-width:0;font-size:12.5px;font-weight:600;color:var(--slate);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:flex;align-items:center;gap:7px}
+.ywp-name i{color:var(--c-petrol);font-size:9px;flex:0 0 auto}
+.ywp-x{flex:0 0 auto;border:0;background:transparent;color:var(--muted);cursor:pointer;font-size:13px;padding:3px}
+.ywp-x:hover{color:var(--tomato)}
+
+/* ===== OTOBAN vs ŞEHİR-YOLU MOD BAR + gerçek/tahmini rozeti ===== */
+.yg-mode-bar{margin-top:13px;border-top:1px solid var(--line);padding-top:13px}
+.ymb-opts{display:flex;gap:8px;margin-bottom:9px}
+.ymb-opt{flex:1;display:flex;flex-direction:column;align-items:flex-start;gap:3px;border:1px solid var(--line);background:var(--paper);cursor:pointer;font:inherit;padding:9px 11px;border-radius:var(--radius-md);transition:.18s var(--ease);text-align:left}
+.ymb-opt:hover{border-color:var(--tomato)}
+.ymb-opt.on{border-color:var(--tomato);background:var(--tomato-tint)}
+.ymb-lbl{font-size:11.5px;font-weight:700;color:var(--slate);display:inline-flex;align-items:center;gap:6px}
+.ymb-lbl i{color:var(--tomato);font-size:11px}
+.ymb-opt.on .ymb-lbl,.ymb-opt.on .ymb-lbl i{color:var(--tomato)}
+.ymb-km{font-size:14px;font-weight:800;color:var(--ink);line-height:1.1}
+.ymb-opt.on .ymb-km{color:var(--tomato)}
+.ymb-min{font-size:11px;font-weight:600;color:var(--muted)}
+.ymb-src{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:700;padding:4px 10px;border-radius:var(--radius-pill)}
+.ymb-src.real{color:var(--green-deep);background:rgba(0,157,79,.10)}
+.ymb-src.est{color:var(--slate-2);background:var(--cream-2)}
+.ymb-src i{font-size:10px}
+
+/* ===== RAIL ALT SAYAÇ (2-katman: yol üstü / yola yakın) ===== */
+.yg-rail-headtxt{display:flex;flex-direction:column;gap:3px;min-width:0}
+.yg-rail-sub{display:flex;gap:12px;flex-wrap:wrap}
+.rs-tier{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:700}
+.rs-tier i{font-size:7px}
+.rs-tier.on{color:var(--green-deep)}
+.rs-tier.near{color:var(--muted)}
+.yg-rail.collapsed .yg-rail-sub{display:none}
+
+/* ===== KART YAKINLIK + DADA ROZETİ ===== */
+.yc-tier{position:absolute;top:7px;left:7px;display:inline-flex;align-items:center;gap:4px;font-size:9.5px;font-weight:700;color:#fff;padding:3px 8px;border-radius:var(--radius-pill);z-index:2}
+.yc-tier i{font-size:8px}
+.yc-tier.on{background:var(--green-deep)}
+.yc-tier.near{background:rgba(33,30,22,.62)}
+.yc-dada{display:inline-flex;align-items:center;gap:5px;font-size:9.5px;font-weight:700;color:var(--tomato);background:var(--tomato-tint);padding:3px 8px;border-radius:var(--radius-pill);margin-bottom:6px}
+.yc-dada i{font-size:8px}
+
+/* ===== BALONCUK PIN tier renkleri ===== */
+.yg-pin.tier-on .yg-pin-b{background:var(--green-deep)}
+.yg-pin.tier-near .yg-pin-b{background:var(--slate-2)}
+.yg-pin.added .yg-pin-b{background:var(--green-deep)}
+.yg-pin.wp .yg-pin-b{width:24px;height:24px;border-radius:var(--radius-circle);transform:none;background:var(--c-petrol)}
+.yg-pin.wp .yg-pin-b i{transform:none;font-size:11px}
+/* ŞEHİR baloncuğu (tıkla → drawer) */
+.yg-city-pin .ycp-b{display:grid;place-items:center;width:30px;height:30px;border-radius:var(--radius-circle);background:#fff;color:var(--c-petrol);border:2px solid var(--c-petrol);box-shadow:var(--sh-md);font-size:12px;cursor:pointer;transition:.15s var(--ease)}
+.yg-city-pin .ycp-b:hover{background:var(--c-petrol);color:#fff}
+
+/* ===== ŞEHİR MEKAN DRAWER (harita üstü yan panel) ===== */
+.yg-city-drawer{position:absolute;top:16px;left:16px;bottom:16px;width:320px;max-width:calc(100% - 32px);z-index:9;
+  background:rgba(255,255,255,.92);-webkit-backdrop-filter:saturate(150%) blur(16px);backdrop-filter:saturate(150%) blur(16px);
+  border:1px solid rgba(255,255,255,.65);box-shadow:var(--sh-lg);border-radius:var(--radius-lg);
+  display:flex;flex-direction:column;overflow:hidden;
+  opacity:0;visibility:hidden;transform:translateX(-12px);transition:opacity .22s var(--ease),transform .22s var(--ease),visibility .22s}
+.yg-city-drawer.open{opacity:1;visibility:visible;transform:translateX(0)}
+.ycd-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;padding:14px 15px 12px;border-bottom:1px solid var(--line);flex:none}
+.ycd-eyebrow{font-size:10px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--c-petrol);display:flex;align-items:center;gap:6px}
+.ycd-htxt h3{font-size:17px;margin-top:3px}
+.ycd-close{flex:0 0 auto;width:34px;height:34px;border-radius:var(--radius-md);border:1px solid var(--line);background:var(--paper);color:var(--slate);font-size:14px;cursor:pointer;display:grid;place-items:center;transition:.18s var(--ease)}
+.ycd-close:hover{border-color:var(--tomato);color:var(--tomato)}
+.ycd-body{flex:1;min-height:0;overflow-y:auto;padding:13px 14px;display:flex;flex-direction:column;gap:14px}
+.ycd-empty{font-size:12.5px;color:var(--muted);margin:0}
+.ycd-group{display:flex;flex-direction:column;gap:8px}
+.ycd-gh{font-size:11px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;color:var(--tomato);display:flex;align-items:center;gap:7px}
+.ycd-gh i{font-size:10px}
+.ycd-gh.ghd{color:var(--muted)}
+.ycd-row{display:flex;align-items:center;gap:10px;padding:8px;background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-md);cursor:pointer;transition:border-color .15s var(--ease),box-shadow .15s var(--ease)}
+.ycd-row:hover{border-color:var(--tomato);box-shadow:var(--sh-sm)}
+.ycd-thumb{flex:0 0 48px;width:48px;height:48px;border-radius:var(--radius-sm);background-size:cover;background-position:center}
+.ycd-info{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+.ycd-info b{font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ycd-meta{font-size:11px;color:var(--muted)}
+.ycd-meta i{color:var(--yellow);font-size:10px}
+.ycd-add{flex:0 0 auto;width:34px;height:34px;border-radius:var(--radius-md);border:1px solid var(--tomato);background:var(--tomato);color:#fff;cursor:pointer;display:grid;place-items:center;font-size:13px;transition:.15s var(--ease)}
+.ycd-add:hover{background:var(--tomato-dark)}
+.ycd-add.on{background:var(--green-deep);border-color:var(--green-deep)}
+
 /* MOBİL: harita kullanılır kalsın (~50vh); cam paneller alt-sheet'e iner, haritayı yutmaz */
 @media(max-width:900px){
   .wrap-wide{padding:0 16px}
@@ -1420,6 +1519,10 @@ html,body{overflow-x:hidden}
   #routeMap{height:50vh;min-height:340px;border-radius:var(--radius-lg)}
   .yg-plan,.yg-rail,.yg-result{position:static;width:auto;max-width:none;max-height:none;left:auto;right:auto;top:auto;bottom:auto;margin-top:12px;background:var(--paper);-webkit-backdrop-filter:none;backdrop-filter:none;border:1px solid var(--line)}
   .yg-rail::after{display:none}
+  /* şehir drawer mobilde alt-sheet (fixed) — stacked stage'i kaplamaz */
+  .yg-city-drawer{position:fixed;top:auto;left:0;right:0;bottom:0;width:auto;max-width:none;max-height:70vh;
+    border-radius:var(--radius-lg) var(--radius-lg) 0 0;transform:translateY(14px)}
+  .yg-city-drawer.open{transform:translateY(0)}
 }
 </style>
 </head>
@@ -1841,6 +1944,23 @@ html,body{overflow-x:hidden}
           </div>
         </div>
         <p class="yg-hint" id="ygHint"><i class="fa-solid fa-circle-info"></i> İki ucu da yaz — güzergahı çizip yol üstü mekanları gösterelim.</p>
+
+        <!-- GÜZERGAH ŞEHİRLERİ — sıradaki şehri ekle / çıkar / sürükle-sırala (rota çizilince görünür) -->
+        <div class="yg-wp-wrap" id="ygWpWrap" hidden>
+          <div class="yg-wp-head">
+            <span><i class="fa-solid fa-route"></i> Güzergah şehirleri</span>
+            <button class="yg-wp-add" id="ygWpAdd" type="button"><i class="fa-solid fa-plus"></i> Şehir Ekle</button>
+          </div>
+          <div class="yg-wp-ac-wrap" id="ygWpAcWrap" hidden>
+            <input type="text" id="ygWpInput" autocomplete="off" placeholder="Şehir ekle (örn. Bursa)…">
+            <div class="yg-ac" id="ygWpAc" hidden></div>
+          </div>
+          <ul class="yg-wp-list" id="ygWpList"></ul>
+        </div>
+
+        <!-- OTOBAN vs ŞEHİR-YOLU + gerçek/tahmini rozeti (rota çizilince görünür) -->
+        <div class="yg-mode-bar" id="ygModeBar" hidden></div>
+
         <!-- boş-durum (rota çizilince kalkar) -->
         <div class="yg-empty" id="ygPanelEmpty">
           <div class="re-ico"><i class="fa-solid fa-map-location-dot"></i></div>
@@ -1858,7 +1978,10 @@ html,body{overflow-x:hidden}
       <!-- ALT RAİL CAM — yol üstü öneriler (collapsed pill başlar; açılınca yatay kaydırma) -->
       <div class="yg-glass yg-rail collapsed" id="ygSuggestWrap" hidden>
         <div class="yg-rail-head">
-          <h2><span class="q" id="ygCount">0</span> mekan yol üstünde</h2>
+          <div class="yg-rail-headtxt">
+            <h2><span class="q" id="ygCount">0</span> mekan yol üstünde</h2>
+            <div class="yg-rail-sub" id="ygRailSub"></div>
+          </div>
           <button class="yg-rail-toggle" id="ygRailToggle" type="button" aria-expanded="false" aria-label="Öneri listesini aç ya da gizle">
             <i class="fa-solid fa-chevron-up yg-rail-chev"></i>
             <span class="rt-lbl rt-lbl-open">Listeyi gizle</span>
@@ -1878,6 +2001,15 @@ html,body{overflow-x:hidden}
         <p class="yr-note">Bu bir demo özetidir — gerçek kayıt yapılmadı.</p>
         <button class="btn btn-line" data-yg-back type="button"><i class="fa-solid fa-arrow-left"></i> Güzergahı düzenle</button>
       </div>
+
+      <!-- ŞEHİR MEKAN DRAWER — şehir baloncuğu tıklanınca açılır (harita görünür kalır, popup DEĞİL) -->
+      <aside class="yg-city-drawer" id="ygCityDrawer" aria-hidden="true">
+        <div class="ycd-head">
+          <div class="ycd-htxt"><span class="ycd-eyebrow"><i class="fa-solid fa-city"></i> Şehir mekanları</span><h3 id="ygCityTitle">—</h3></div>
+          <button class="ycd-close" id="ygCityClose" type="button" aria-label="Kapat"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="ycd-body" id="ygCityBody"></div>
+      </aside>
     </div>
   </div></section>
 
@@ -2305,33 +2437,56 @@ document.addEventListener('click',function(e){
     {ad:'İzmir',lat:38.4237,lng:27.1428}
   ];
 
-  var trip={from:null,to:null};
+  var trip={from:null,to:null,waypoints:[]};   // waypoints: ara şehir (CITY) dizisi — Kalkış→ara→Varış zinciri
   var route={poly:null,stops:[]};
   var endMarkers={from:null,to:null};
+  var wpMarkers=[];     // ara şehir terminal marker'ları
   var routeLine=null;
   var stopLine=null;
   var balloons={};      // ad -> {marker, off, data}
+  // ---- Gerçek-routing yapılandırması + mod durumu ----
+  // "En Hızlı" = OSRM (otoban serbest, key'siz demo). "Şehir Yolu" = OpenRouteService (otoban-hariç, gerçek).
+  var OSRM_BASE='https://router.project-osrm.org/route/v1/driving/';
+  // TODO: prod'da .env/backend proxy'ye taşınacak — public repo'da key açıkta kalmamalı.
+  // BOŞ ise ORS atlanır → "Şehir Yolu" mock'a (tahmini) düşer; sayfa kırılmaz.
+  var ORS_API_KEY='';
+  var ORS_URL='https://api.openrouteservice.org/v2/directions/driving-car/geojson';
+  var routeMode='hizli';        // 'hizli' (en hızlı; otoban serbest) | 'sehir' (otoban hariç)
+  var routeSource='tahmini';    // 'gercek' (OSRM/ORS) | 'tahmini' (mock fallback)
+  var routeStats={hizli:null,sehir:null};  // mod başına {km, dakika, source}
+  var buildSeq=0;               // yarış-koşulu kilidi: yalnız en son buildRoute sonucu uygulanır
   var hint=document.getElementById('ygHint');
   var panelEmpty=document.getElementById('ygPanelEmpty'),
       stopsWrap=document.getElementById('ygStopsWrap'), stopsEl=document.getElementById('ygStops'),
       suggestWrap=document.getElementById('ygSuggestWrap'), gridEl=document.getElementById('ygGrid'),
       countEl=document.getElementById('ygCount'),
       planEl=document.querySelector('.yg-plan'),
-      railToggle=document.getElementById('ygRailToggle');
+      railToggle=document.getElementById('ygRailToggle'),
+      railSubEl=document.getElementById('ygRailSub'),
+      wpWrap=document.getElementById('ygWpWrap'), wpListEl=document.getElementById('ygWpList'),
+      wpAddBtn=document.getElementById('ygWpAdd'), wpAcWrap=document.getElementById('ygWpAcWrap'),
+      wpInput=document.getElementById('ygWpInput'), wpAcBox=document.getElementById('ygWpAc'),
+      modeBar=document.getElementById('ygModeBar'),
+      drawerEl=document.getElementById('ygCityDrawer'), drawerBody=document.getElementById('ygCityBody'),
+      drawerTitle=document.getElementById('ygCityTitle'), drawerClose=document.getElementById('ygCityClose'),
+      cityMarkers={};
   var IMG='?w=700&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5';
 
   // ---- ROAD_POOL: şehirlerarası yol üstü mekanlar (POOL'dan bağımsız; lat/lng bazlı) ----
+  // sehir: CITY.ad ile ELLE eşlenir (research §4.1 öneri A) — şehir baloncuğu tıklanınca filtre anahtarı.
+  // dada: kuratoryal "Dada öneriyor" işareti (drawer'da üstte sıralanır + rozet).
+  // tip: 'otoban'|'sehir'|'her' — otoban/şehir-yolu toggle'ında rota tipine göre öne çıkar.
   var ROAD_POOL=[
-    {ad:'Gebze Köfte Durağı',       lat:40.7990,lng:29.4350,cat:'Köfte & Izgara',   puan:4.5,konum:'Gebze / Kocaeli',     fiyat:'Ekonomik',durum:'open',   medya:9, img:'photo-1565958011703-44f9829ba187',desc:'Otoyol çıkışında ızgara köfte ve piyaz; hızlı mola.'},
-    {ad:'İzmit Pişmaniye Evi',      lat:40.7700,lng:29.9200,cat:'Tatlı & Kafe',     puan:4.6,konum:'İzmit / Kocaeli',     fiyat:'Ekonomik',durum:'open',   medya:12,img:'photo-1525351484163-7529414344d8',desc:'Asırlık pişmaniye ve sıcak salep; yol üstü ikram.'},
-    {ad:'Sapanca Göl Kahvaltı',     lat:40.6920,lng:30.2640,cat:'Kahvaltı & Serpme',puan:4.8,konum:'Sapanca / Sakarya',   fiyat:'Orta',    durum:'open',   medya:18,img:'photo-1509440159596-0249088772ff',desc:'Göl kıyısında serpme kahvaltı; sınırsız çay, temiz hava.'},
-    {ad:'Adapazarı Islama Köfte',   lat:40.7800,lng:30.4000,cat:'Köfte & Izgara',   puan:4.7,konum:'Adapazarı / Sakarya', fiyat:'Orta',    durum:'open',   medya:11,img:'photo-1529692236671-f1f6cf9683ba',desc:'Yöreye özgü ıslama köfte; közde ekmek, soğan salata.'},
-    {ad:'Bolu Dağı Et Mangal',      lat:40.7300,lng:31.5500,cat:'Kebap & Ocakbaşı', puan:4.6,konum:'Bolu Dağı / Bolu',    fiyat:'Orta',    durum:'closing',medya:14,img:'photo-1504674900247-0877df9cc836',desc:'Dağ yolunda mangal başı; orman manzaralı geniş teras.'},
-    {ad:'Bilecik Köy Sofrası',      lat:40.0600,lng:30.0100,cat:'Esnaf Lokantası',  puan:4.4,konum:'Bilecik',             fiyat:'Ekonomik',durum:'open',   medya:8, img:'photo-1517248135467-4c7edcad34c4',desc:'Ev usulü tencere yemekleri; gözleme ve ayran.'},
-    {ad:'Bozüyük Dinlenme Lokantası',lat:39.9070,lng:30.0360,cat:'Esnaf Lokantası', puan:4.3,konum:'Bozüyük / Bilecik',   fiyat:'Ekonomik',durum:'open',   medya:7, img:'photo-1466978913421-dad2ebd01d17',desc:'Otoyol dinlenme tesisi; sıcak yemek 7/24.'},
-    {ad:'Eskişehir Çibörek Evi',    lat:39.7800,lng:30.5100,cat:'Dünya Mutfağı',    puan:4.7,konum:'Odunpazarı / Eskişehir',fiyat:'Ekonomik',durum:'open', medya:16,img:'photo-1596040033229-a9821ebd058d',desc:'Tatar çiböreği ve kaşıklı; tarihi Odunpazarı dokusunda.'},
-    {ad:'Gemlik Su Böreği',         lat:40.2300,lng:29.1600,cat:'Kahvaltı & Serpme',puan:4.5,konum:'Gemlik / Bursa',      fiyat:'Ekonomik',durum:'open',   medya:10,img:'photo-1565299507177-b0ac66763828',desc:'Su böreği ve menemen; Bursa kolu sapağında.'},
-    {ad:'Gerede Yolu Kebapçısı',    lat:40.4500,lng:31.9000,cat:'Kebap & Ocakbaşı', puan:4.5,konum:'Gerede / Bolu',       fiyat:'Orta',    durum:'open',   medya:13,img:'photo-1555992336-fb0d29498b13',desc:'Ankara istikametinde Adana-Urfa; közde acılı ezme.'}
+    {ad:'Gebze Köfte Durağı',       lat:40.7990,lng:29.4350,cat:'Köfte & Izgara',   puan:4.5,konum:'Gebze / Kocaeli',     fiyat:'Ekonomik',durum:'open',   medya:9, img:'photo-1565958011703-44f9829ba187',desc:'Otoyol çıkışında ızgara köfte ve piyaz; hızlı mola.',          sehir:'Gebze',                dada:false,tip:'otoban'},
+    {ad:'İzmit Pişmaniye Evi',      lat:40.7700,lng:29.9200,cat:'Tatlı & Kafe',     puan:4.6,konum:'İzmit / Kocaeli',     fiyat:'Ekonomik',durum:'open',   medya:12,img:'photo-1525351484163-7529414344d8',desc:'Asırlık pişmaniye ve sıcak salep; yol üstü ikram.',           sehir:'Kocaeli (İzmit)',      dada:true, tip:'her'},
+    {ad:'Sapanca Göl Kahvaltı',     lat:40.6920,lng:30.2640,cat:'Kahvaltı & Serpme',puan:4.8,konum:'Sapanca / Sakarya',   fiyat:'Orta',    durum:'open',   medya:18,img:'photo-1509440159596-0249088772ff',desc:'Göl kıyısında serpme kahvaltı; sınırsız çay, temiz hava.',     sehir:'Sakarya (Adapazarı)',  dada:true, tip:'sehir'},
+    {ad:'Adapazarı Islama Köfte',   lat:40.7800,lng:30.4000,cat:'Köfte & Izgara',   puan:4.7,konum:'Adapazarı / Sakarya', fiyat:'Orta',    durum:'open',   medya:11,img:'photo-1529692236671-f1f6cf9683ba',desc:'Yöreye özgü ıslama köfte; közde ekmek, soğan salata.',         sehir:'Sakarya (Adapazarı)',  dada:false,tip:'her'},
+    {ad:'Bolu Dağı Et Mangal',      lat:40.7300,lng:31.5500,cat:'Kebap & Ocakbaşı', puan:4.6,konum:'Bolu Dağı / Bolu',    fiyat:'Orta',    durum:'closing',medya:14,img:'photo-1504674900247-0877df9cc836',desc:'Dağ yolunda mangal başı; orman manzaralı geniş teras.',        sehir:'Bolu',                 dada:true, tip:'otoban'},
+    {ad:'Bilecik Köy Sofrası',      lat:40.0600,lng:30.0100,cat:'Esnaf Lokantası',  puan:4.4,konum:'Bilecik',             fiyat:'Ekonomik',durum:'open',   medya:8, img:'photo-1517248135467-4c7edcad34c4',desc:'Ev usulü tencere yemekleri; gözleme ve ayran.',               sehir:'Bilecik',              dada:false,tip:'sehir'},
+    {ad:'Bozüyük Dinlenme Lokantası',lat:39.9070,lng:30.0360,cat:'Esnaf Lokantası', puan:4.3,konum:'Bozüyük / Bilecik',   fiyat:'Ekonomik',durum:'open',   medya:7, img:'photo-1466978913421-dad2ebd01d17',desc:'Otoyol dinlenme tesisi; sıcak yemek 7/24.',                   sehir:'Bozüyük',              dada:false,tip:'otoban'},
+    {ad:'Eskişehir Çibörek Evi',    lat:39.7800,lng:30.5100,cat:'Dünya Mutfağı',    puan:4.7,konum:'Odunpazarı / Eskişehir',fiyat:'Ekonomik',durum:'open', medya:16,img:'photo-1596040033229-a9821ebd058d',desc:'Tatar çiböreği ve kaşıklı; tarihi Odunpazarı dokusunda.',      sehir:'Eskişehir',            dada:true, tip:'sehir'},
+    {ad:'Gemlik Su Böreği',         lat:40.2300,lng:29.1600,cat:'Kahvaltı & Serpme',puan:4.5,konum:'Gemlik / Bursa',      fiyat:'Ekonomik',durum:'open',   medya:10,img:'photo-1565299507177-b0ac66763828',desc:'Su böreği ve menemen; Bursa kolu sapağında.',                 sehir:'Bursa',                dada:false,tip:'her'},
+    {ad:'Gerede Yolu Kebapçısı',    lat:40.4500,lng:31.9000,cat:'Kebap & Ocakbaşı', puan:4.5,konum:'Gerede / Bolu',       fiyat:'Orta',    durum:'open',   medya:13,img:'photo-1555992336-fb0d29498b13',desc:'Ankara istikametinde Adana-Urfa; közde acılı ezme.',          sehir:'Bolu',                 dada:false,tip:'otoban'}
   ];
 
   function endIcon(kind){       // terminal = yuvarlak (26px), şehir noktasına merkezden oturur
@@ -2401,18 +2556,137 @@ document.addEventListener('click',function(e){
     });
     return arr.map(function(x){return x.m;});
   }
+  // Kalkış→ara şehir(ler)→Varış zinciri (CITY nesneleri). Hem OSRM hem mock bunu kullanır.
+  function chainPoints(){
+    return [trip.from].concat(trip.waypoints||[]).concat([trip.to]);
+  }
+  // MOCK rota: zincirin her ardışık çifti için routeWaypoints/dummyRoute → birleştir (segment-zincir).
+  function mockChainPoly(){
+    var ch=chainPoints(), poly=[];
+    for(var i=0;i<ch.length-1;i++){
+      var o=ch[i],d=ch[i+1], wps=routeWaypoints(o,d);
+      var seg = wps.length
+        ? [[o.lat,o.lng]].concat(wps.map(function(m){return [m.lat,m.lng];})).concat([[d.lat,d.lng]])
+        : dummyRoute(o,d);
+      if(i>0)seg=seg.slice(1);                       // ardışık segment başını yinele-me
+      poly=poly.concat(seg);
+    }
+    return poly;
+  }
+  // poly toplam haversine uzunluğu (km)
+  function polyKm(poly){var km=0;for(var i=0;i<poly.length-1;i++)km+=hav(poly[i][0],poly[i][1],poly[i+1][0],poly[i+1][1]);return km;}
+  // MOCK km/süre tahmini. 'hizli' poly uzunluğundan; 'sehir' HER ZAMAN hizli'nin ÜZERİNE penaltı
+  // (otoban hariç → daha uzun mesafe + daha yavaş hız) → sehir asla hizli'dan kısa görünmez (tutarlılık).
+  function mockStats(poly,mode,baseKm){
+    if(mode==='sehir'){
+      var bk=(baseKm!=null?baseKm:polyKm(poly))*1.12;   // +%12 mesafe (şehir içi geçiş, otoban yok)
+      return {km:bk, dakika:Math.round(bk/64*60), source:'tahmini'};   // 64 km/sa (şehir yolu yavaş)
+    }
+    var km=polyKm(poly);
+    return {km:km, dakika:Math.round(km/96*60), source:'tahmini'};     // 96 km/sa (otoban serbest)
+  }
+  // OSRM tek çağrı (lon,lat sırası — OSRM lon-first ister). exclude=motorway → şehir-yolu.
+  function osrmFetchOnce(mode){
+    var ch=chainPoints();
+    var coords=ch.map(function(c){return c.lng+','+c.lat;}).join(';');   // KOORDİNAT: lon,lat (OSRM zorunlu)
+    var url=OSRM_BASE+coords+'?overview=full&geometries=geojson&alternatives=false&steps=false'
+            +(mode==='sehir'?'&exclude=motorway':'');
+    var ctrl=(typeof AbortController!=='undefined')?new AbortController():null;
+    var to=setTimeout(function(){if(ctrl)ctrl.abort();},12000);  // 12sn timeout (demo API yavaş olabilir)
+    return fetch(url,ctrl?{signal:ctrl.signal}:undefined).then(function(r){
+      clearTimeout(to);
+      if(!r.ok)throw new Error('osrm '+r.status);
+      return r.json();
+    }).then(function(j){
+      if(!j||j.code!=='Ok'||!j.routes||!j.routes.length)throw new Error('osrm no route');
+      var rt=j.routes[0];
+      var poly=rt.geometry.coordinates.map(function(c){return [c[1],c[0]];});  // [lng,lat]→[lat,lng]
+      return {poly:poly, km:rt.distance/1000, dakika:Math.round(rt.duration/60), source:'gercek'};
+    });
+  }
+  // OSRM çağrısı + tek tekrar (demo API zaman zaman 429/timeout/çok-noktada yavaş → 1 retry ile güvenilirlik).
+  function osrmRoute(){
+    return osrmFetchOnce('hizli').catch(function(){
+      return new Promise(function(res){setTimeout(res,900);}).then(function(){return osrmFetchOnce('hizli');});
+    });
+  }
+  // OpenRouteService — "Şehir Yolu" GERÇEK rota (otoban-hariç). Çok-noktalı: coordinates dizisine
+  // tüm şehirler [lon,lat] sırasıyla. Key BOŞ ise reject → mock fallback. POST geojson.
+  function orsRoute(){
+    if(!ORS_API_KEY)return Promise.reject(new Error('ors no key'));   // key yok → ORS atla
+    var ch=chainPoints();
+    var coords=ch.map(function(c){return [c.lng,c.lat];});             // [lon,lat] (ORS de lon-first)
+    var ctrl=(typeof AbortController!=='undefined')?new AbortController():null;
+    var to=setTimeout(function(){if(ctrl)ctrl.abort();},12000);
+    return fetch(ORS_URL,{
+      method:'POST',
+      headers:{'Authorization':ORS_API_KEY,'Content-Type':'application/json'},
+      body:JSON.stringify({coordinates:coords,options:{avoid_features:['highways']}}),
+      signal:ctrl?ctrl.signal:undefined
+    }).then(function(r){
+      clearTimeout(to);
+      if(!r.ok)throw new Error('ors '+r.status);
+      return r.json();
+    }).then(function(j){
+      var f=j&&j.features&&j.features[0]; if(!f||!f.geometry||!f.geometry.coordinates.length)throw new Error('ors no route');
+      var poly=f.geometry.coordinates.map(function(c){return [c[1],c[0]];});   // [lon,lat]→[lat,lng]
+      var sm=f.properties&&f.properties.summary||{};
+      return {poly:poly, km:(sm.distance||0)/1000, dakika:Math.round((sm.duration||0)/60), source:'gercek'};
+    });
+  }
+  // Mod → gerçek servis yönlendirici. hizli=OSRM, sehir=ORS. Başarısız → reject (çağıran mock'a düşer).
+  function realRoute(mode){ return mode==='sehir' ? orsRoute() : osrmRoute(); }
+  // buildRoute: GERÇEK OSRM dener (her iki mod), erişilemezse MOCK'a graceful düşer. SAYFA ASLA KIRILMAZ.
   function buildRoute(){
     if(!trip.from||!trip.to)return;
-    var o=trip.from,d=trip.to, wps=routeWaypoints(o,d);
-    route.poly = wps.length
-      ? [[o.lat,o.lng]].concat(wps.map(function(m){return [m.lat,m.lng];})).concat([[d.lat,d.lng]])
-      : dummyRoute(o,d);                            // aradaki kasaba yoksa yumuşak yay
+    if(panelEmpty)panelEmpty.hidden=true;            // "Güzergah bekleniyor" kalkar
+    var seq=++buildSeq;                              // bu çağrının kimliği (yarış-koşulu kilidi)
+    // önce MOCK ile anında çiz (OSRM beklerken boş ekran olmasın) — sonra gerçek gelirse üzerine yaz
+    var mPoly=mockChainPoly();
+    var baseKm=polyKm(mPoly);
+    routeStats.hizli=mockStats(mPoly,'hizli',baseKm);
+    routeStats.sehir=mockStats(mPoly,'sehir',baseKm);   // sehir = hizli baseline +penaltı (tutarlı)
+    routeSource='tahmini';
+    applyRoute(mPoly, seq);
+    // GERÇEK rota: iki modu paralel dene (hizli=OSRM, sehir=ORS). Başarılıysa stat + (aktif modsa) poly güncelle.
+    // Hata/key-yok → sessiz mock fallback (mock zaten çizili). SAYFA ASLA KIRILMAZ.
+    if(typeof fetch==='function'){
+      ['hizli','sehir'].forEach(function(mode){
+        realRoute(mode).then(function(res){
+          if(seq!==buildSeq)return;                  // bu arada yeni rota kuruldu → bayat sonucu yoksay
+          routeStats[mode]={km:res.km,dakika:res.dakika,source:'gercek'};
+          // hizli gerçek geldi + sehir hâlâ mock ise → sehir baseline'ını GERÇEK hizli km'den türet
+          if(mode==='hizli'&&routeStats.sehir&&routeStats.sehir.source==='tahmini'){
+            routeStats.sehir=mockStats(null,'sehir',res.km);
+          }
+          if(mode===routeMode){ routeSource='gercek'; applyRoute(res.poly, seq); }
+          else updateModeBar();
+        }).catch(function(){                          // sessiz fallback: mock zaten çizili
+          if(seq!==buildSeq)return;
+          // sehir gerçek (ORS) GELEMEDİyse ve hizli gerçek (OSRM) geldiyse → sehir mock baseline'ını
+          // GERÇEK hizli km'den türet (sehir asla hizli'dan kısa görünmesin; tutarlılık).
+          if(mode==='sehir'&&routeStats.hizli&&routeStats.hizli.source==='gercek'&&routeStats.sehir.source==='tahmini'){
+            routeStats.sehir=mockStats(null,'sehir',routeStats.hizli.km);
+          }
+          updateModeBar();
+        });
+      });
+    }
+  }
+  // poly'yi haritaya uygula + bağımlı görünümleri tazele (mock ya da gerçek, tek kapı)
+  function applyRoute(poly, seq){
+    if(seq!=null&&seq!==buildSeq)return;
+    route.poly=poly;
     if(routeLine)map.removeLayer(routeLine);
-    routeLine=L.polyline(route.poly,{color:'#211E16',weight:4,opacity:.55,dashArray:'2 8'}).addTo(map);
-    if(panelEmpty)panelEmpty.hidden=true;          // "Güzergah bekleniyor" kalkar
-    spawnBalloons();                                // yol üstü mekanlar baloncuk + kart
+    var col=(routeMode==='sehir')?'#A8331A':'#211E16';        // şehir-yolu domates-deep, hızlı koyu
+    routeLine=L.polyline(route.poly,{color:col,weight:4,opacity:.55,dashArray:'2 8'}).addTo(map);
+    spawnBalloons();                                // yol üstü mekanlar baloncuk + kart (2-katman)
     renderStops();                                  // Güzergahım (varsa eklenenler) çizilir
-    fitRoute();                                     // rota+baloncuklar panellerin ÖRTMEDİĞİ alana sığsın
+    drawStopLine();
+    renderWaypointMarkers();                         // ara şehir terminal marker'ları
+    renderWaypointList();                            // ara şehir ekle/çıkar/sırala listesi
+    updateModeBar();                                 // mod toggle km/süre + gerçek/tahmini rozeti
+    fitRoute();                                      // rota+baloncuklar panellerin ÖRTMEDİĞİ alana sığsın
   }
   /* Rota'yı cam panellerin örtmediği görünür alana sığdır — padding panel/rail GERÇEK ölçüsünden
      (offsetWidth/offsetHeight). Mobilde paneller harita dışında (static) → alt/sağ padding ~0. */
@@ -2441,26 +2715,38 @@ document.addEventListener('click',function(e){
     return Math.hypot(px-(ax+t*dx),py-(ay+t*dy));
   }
   function distToRoute(m){var min=Infinity,r=route.poly;for(var i=0;i<r.length-1;i++)min=Math.min(min,distToSeg({lat:m.lat,lng:m.lng},r[i],r[i+1]));return min;}
-  var CORRIDOR_KM=20;
+  var CORRIDOR_KM=20;     // koridor üst sınırı (bunun ötesi listede yok)
+  var ON_ROAD_KM=5;       // ≤5km = "Yol Üstü" (yeşil, önce); 5–20km = "Yola Yakın" (muted, sonra)
+  function proxTier(off){return off<=ON_ROAD_KM?'on':'near';}
 
-  // ---- yol üstü baloncuklar + öneri kartları ----
+  // ---- yol üstü baloncuklar + öneri kartları (2-katman yakınlık: Yol Üstü / Yola Yakın) ----
   function venueIcon(extra){return L.divIcon({className:'yg-pin '+extra,
     html:'<span class="yg-pin-b"><i class="fa-solid fa-utensils"></i></span>',
     iconSize:[34,34],iconAnchor:[17,34],popupAnchor:[0,-30]});}
   function spawnBalloons(){
     Object.keys(balloons).forEach(function(k){map.removeLayer(balloons[k].marker);});
     balloons={};
-    var hits=ROAD_POOL.map(function(m){return {m:m,off:distToRoute(m)};})
+    // ≤20km koridor; tier'a göre (yol üstü önce) sonra mesafeye göre sırala
+    var hits=ROAD_POOL.map(function(m){var off=distToRoute(m);return {m:m,off:off,tier:proxTier(off)};})
                       .filter(function(x){return x.off<=CORRIDOR_KM;})
-                      .sort(function(a,b){return a.off-b.off;});
+                      .sort(function(a,b){
+                        if(a.tier!==b.tier)return a.tier==='on'?-1:1;   // Yol Üstü grubu önce
+                        return a.off-b.off;
+                      });
     suggestWrap.hidden=false; countEl.textContent=hits.length; gridEl.innerHTML='';
+    var onN=hits.filter(function(x){return x.tier==='on';}).length;
+    var nearN=hits.length-onN;
+    if(railSubEl)railSubEl.innerHTML=hits.length
+      ? '<span class="rs-tier on"><i class="fa-solid fa-circle"></i> '+onN+' yol üstü</span>'
+        +'<span class="rs-tier near"><i class="fa-solid fa-circle"></i> '+nearN+' yola yakın</span>'
+      : '';
     hits.forEach(function(x){
-      var mk=L.marker([x.m.lat,x.m.lng],{icon:venueIcon('')}).addTo(map);
+      var mk=L.marker([x.m.lat,x.m.lng],{icon:venueIcon('tier-'+x.tier)}).addTo(map);
       mk.bindPopup(popupHtml(x.m,x.off));
       mk.on('popupopen',function(){bindPopupAdd(x.m);});
       mk.on('click',function(){highlightCard(x.m);});
       balloons[x.m.ad]={marker:mk,off:x.off,data:x.m};
-      gridEl.appendChild(cardEl(x.m,x.off));
+      gridEl.appendChild(cardEl(x.m,x.off,x.tier));
     });
     syncStates();
   }
@@ -2469,12 +2755,18 @@ document.addEventListener('click',function(e){
     ?'<div class="disc-status tr"><span class="mt st-closing"><i class="fa-solid fa-clock"></i> Az sonra kapanıyor</span></div>'
     :'<div class="disc-status tr"><span class="mt st-open"><i class="fa-solid fa-circle-check"></i> Açık</span></div>';}
   // KOMPAKT kart (dikey mini): thumb + km rozeti + ad + ★puan·tür + Ekle. Class hook'ları korunur.
-  function cardEl(m,offKm){
+  function cardEl(m,offKm,tier){
     var a=document.createElement('article'); a.className='yg-card'; a.setAttribute('data-id',m.ad);
+    var tBadge=(tier==='on')
+      ? '<span class="yc-tier on"><i class="fa-solid fa-location-crosshairs"></i> Yol üstü</span>'
+      : '<span class="yc-tier near"><i class="fa-solid fa-route"></i> Yola yakın</span>';
+    var dada=m.dada?'<span class="yc-dada"><i class="fa-solid fa-star"></i> Dada öneriyor</span>':'';
     a.innerHTML=
       '<div class="yc-fig"><div class="bg" style="background-image:url(\'https://images.unsplash.com/'+m.img+IMG+'\')"></div>'+
+        tBadge+
         '<span class="yc-km"><i class="fa-solid fa-route"></i> '+offKm.toFixed(1).replace('.',',')+' km</span></div>'+
       '<div class="yc-body">'+
+        dada+
         '<h4>'+m.ad+'</h4>'+
         '<div class="yc-meta"><span class="yc-rate"><i class="fa-solid fa-star"></i> '+m.puan+'</span>'+
           '<span class="yc-cat">'+m.cat+'</span></div>'+
@@ -2509,6 +2801,17 @@ document.addEventListener('click',function(e){
     stopsWrap.hidden=false;
     stopsEl.innerHTML='';
     stopsEl.appendChild(endRow('o',trip.from,'Kalkış'));
+    // GÜZERGAH ŞEHİRLERİ — eklenen ara şehirler (rotanın geçtiği şehir; mekan/durak DEĞİL)
+    (trip.waypoints||[]).forEach(function(c,i){
+      var li=document.createElement('li'); li.className='rt-stop rt-city';
+      li.innerHTML='<span class="rs-city-dot"><i class="fa-solid fa-circle-dot"></i></span>'+
+        '<span class="rs-txt"><b>'+c.ad+'</b><small>Güzergah şehri</small></span>'+
+        '<button class="rs-x" type="button" aria-label="Şehri çıkar"><i class="fa-solid fa-xmark"></i></button>';
+      li.querySelector('.rs-x').addEventListener('click',function(){removeWaypoint(i);});
+      li.addEventListener('mouseenter',function(){map.panTo([c.lat,c.lng]);});
+      stopsEl.appendChild(li);
+    });
+    // MEKAN DURAKLARI — kartlardan eklenen yol üstü mekanlar (numaralı istasyon)
     route.stops.forEach(function(m,i){
       var li=document.createElement('li'); li.className='rt-stop'; li.setAttribute('data-id',m.ad);
       li.innerHTML='<span class="rs-n">'+(i+1)+'</span>'+
@@ -2519,8 +2822,14 @@ document.addEventListener('click',function(e){
       stopsEl.appendChild(li);
     });
     stopsEl.appendChild(endRow('d',trip.to,'Varış'));
-    var cntEl=document.getElementById('ygStopCount');   // başlık "N mekan" çipi (yalnız ara duraklar)
-    if(cntEl){ if(route.stops.length){ cntEl.hidden=false; cntEl.innerHTML='<i class="fa-solid fa-location-dot"></i> '+route.stops.length+' mekan'; } else cntEl.hidden=true; }
+    var cntEl=document.getElementById('ygStopCount');   // başlık çipi: şehir + mekan sayısı
+    if(cntEl){
+      var wc=(trip.waypoints||[]).length, sc=route.stops.length;
+      if(wc||sc){ cntEl.hidden=false;
+        cntEl.innerHTML=(wc?'<i class="fa-solid fa-route"></i> '+wc+' şehir':'')
+          +(wc&&sc?' · ':'')+(sc?'<i class="fa-solid fa-location-dot"></i> '+sc+' mekan':''); }
+      else cntEl.hidden=true;
+    }
   }
 
   // ---- çift yönlü senkron (toggleStop tek kapı) ----
@@ -2550,6 +2859,12 @@ document.addEventListener('click',function(e){
       b.classList.toggle('on',on);
       b.innerHTML=on?'<i class="fa-solid fa-check"></i> Eklendi':'<i class="fa-solid fa-plus"></i> Ekle';
     });
+    // şehir drawer'ı açıksa ekle butonları senkron
+    document.querySelectorAll('.ycd-add').forEach(function(b){
+      var on=route.stops.some(function(s){return s.ad===b.getAttribute('data-ad');});
+      b.classList.toggle('on',on);
+      b.innerHTML=on?'<i class="fa-solid fa-check"></i>':'<i class="fa-solid fa-plus"></i>';
+    });
     if(hint)hint.innerHTML=stopCount
       ?'<i class="fa-solid fa-circle-check"></i> Güzergahında <b>'+stopCount+'</b> durak var — listeden ya da haritadan düzenleyebilirsin.'
       :'<i class="fa-solid fa-circle-check"></i> Güzergah çizildi — baloncuklara ya da kartlara tıklayıp durak ekle.';
@@ -2560,6 +2875,179 @@ document.addEventListener('click',function(e){
     c.classList.add('flash'); c.scrollIntoView({behavior:'smooth',block:'center'});
     setTimeout(function(){c.classList.remove('flash');},1200);
   }
+
+  // ============ GÜZERGAH ŞEHİRLERİ (sıradaki şehri ekle / çıkar / sürükle-sırala) ============
+  function wpIcon(){return L.divIcon({className:'yg-pin wp',
+    html:'<span class="yg-pin-b"><i class="fa-solid fa-circle-dot"></i></span>',
+    iconSize:[24,24],iconAnchor:[12,12],popupAnchor:[0,-12]});}
+  function renderWaypointMarkers(){
+    wpMarkers.forEach(function(mk){map.removeLayer(mk);});
+    wpMarkers=[];
+    (trip.waypoints||[]).forEach(function(c){
+      var mk=L.marker([c.lat,c.lng],{icon:wpIcon()}).addTo(map).bindPopup('<b>Ara durak</b><br>'+c.ad);
+      wpMarkers.push(mk);
+    });
+  }
+  function addWaypoint(c){
+    if(trip.waypoints.some(function(w){return w.ad===c.ad;}))return;   // yinele yok
+    if(c.ad===(trip.from&&trip.from.ad)||c.ad===(trip.to&&trip.to.ad))return;  // uçla çakışma yok
+    trip.waypoints.push(c); renderWaypointList();
+    if(trip.from&&trip.to)buildRoute();
+  }
+  function removeWaypoint(i){ trip.waypoints.splice(i,1); renderWaypointList(); if(trip.from&&trip.to)buildRoute(); }
+  function moveWaypoint(from,to){
+    if(to<0||to>=trip.waypoints.length)return;
+    var it=trip.waypoints.splice(from,1)[0]; trip.waypoints.splice(to,0,it);
+    renderWaypointList(); if(trip.from&&trip.to)buildRoute();
+  }
+  var dragIdx=null;
+  function renderWaypointList(){
+    if(!wpListEl)return;
+    wpListEl.innerHTML='';
+    (trip.waypoints||[]).forEach(function(c,i){
+      var li=document.createElement('li'); li.className='yg-wp'; li.setAttribute('draggable','true'); li.setAttribute('data-i',i);
+      li.innerHTML='<span class="ywp-grip" aria-hidden="true"><i class="fa-solid fa-grip-vertical"></i></span>'+
+        '<span class="ywp-name"><i class="fa-solid fa-circle-dot"></i> '+c.ad+'</span>'+
+        '<button class="ywp-x" type="button" aria-label="Ara durağı çıkar"><i class="fa-solid fa-xmark"></i></button>';
+      li.querySelector('.ywp-x').addEventListener('click',function(){removeWaypoint(i);});
+      // HTML5 native drag-reorder (dış lib YOK)
+      li.addEventListener('dragstart',function(e){dragIdx=i;li.classList.add('dragging');try{e.dataTransfer.effectAllowed='move';e.dataTransfer.setData('text/plain',String(i));}catch(_){}});
+      li.addEventListener('dragend',function(){dragIdx=null;li.classList.remove('dragging');});
+      li.addEventListener('dragover',function(e){e.preventDefault();li.classList.add('drop-into');});
+      li.addEventListener('dragleave',function(){li.classList.remove('drop-into');});
+      li.addEventListener('drop',function(e){e.preventDefault();li.classList.remove('drop-into');if(dragIdx!=null&&dragIdx!==i)moveWaypoint(dragIdx,i);});
+      wpListEl.appendChild(li);
+    });
+    if(wpWrap)wpWrap.hidden=false;   // başlık + ekle butonu rota varken görünür (aşağıda kontrol)
+  }
+  // ara şehir arama kutusu (CITY autocomplete) — Nereden/Nereye ile aynı desen
+  function bindWpAc(){
+    if(!wpInput||!wpAcBox)return;
+    wpInput.addEventListener('input',function(){
+      var q=wpInput.value.trim().toLocaleLowerCase('tr');
+      if(!q){wpAcBox.hidden=true;return;}
+      var hits=CITY.filter(function(c){
+        return c.ad.toLocaleLowerCase('tr').indexOf(q)>=0
+          && c.ad!==(trip.from&&trip.from.ad) && c.ad!==(trip.to&&trip.to.ad)
+          && !trip.waypoints.some(function(w){return w.ad===c.ad;});
+      }).slice(0,6);
+      wpAcBox.innerHTML=hits.map(function(c){return '<button type="button" data-ad="'+c.ad+'"><i class="fa-solid fa-circle-dot"></i> '+c.ad+'</button>';}).join('');
+      wpAcBox.hidden=!hits.length;
+    });
+    wpAcBox.addEventListener('click',function(e){
+      var b=e.target.closest('button'); if(!b)return;
+      var c=CITY.filter(function(x){return x.ad===b.getAttribute('data-ad');})[0];
+      if(c)addWaypoint(c);
+      wpInput.value=''; wpAcBox.hidden=true; if(wpAcWrap)wpAcWrap.hidden=true;  // ekledikten sonra arama kutusunu kapat
+    });
+    document.addEventListener('click',function(e){ if(wpAcWrap&&!wpAcWrap.contains(e.target)&&e.target!==wpAddBtn&&!wpAddBtn.contains(e.target))wpAcBox.hidden=true; });
+  }
+  if(wpAddBtn&&wpAcWrap){
+    wpAddBtn.addEventListener('click',function(){
+      var show=wpAcWrap.hidden; wpAcWrap.hidden=!show;
+      if(show){wpInput.focus();} else {wpAcBox.hidden=true;}
+    });
+  }
+  bindWpAc();
+
+  // ============ OTOBAN vs ŞEHİR-YOLU TOGGLE (mod bar: km/süre + gerçek/tahmini rozeti) ============
+  function fmtDakika(d){ if(d==null)return '—'; var h=Math.floor(d/60),m=d%60; return h? h+' sa '+m+' dk':m+' dk'; }
+  function updateModeBar(){
+    if(!modeBar)return;
+    modeBar.hidden=!(trip.from&&trip.to);
+    var src=routeSource;   // aktif modun kaynağı (applyRoute günceller)
+    var rows=[['hizli','En Hızlı','fa-gauge-high'],['sehir','Şehir Yolu','fa-road']];
+    var btns=rows.map(function(r){
+      var key=r[0], st=routeStats[key];
+      var on=(routeMode===key);
+      var stat=st? '<span class="ymb-km">'+st.km.toFixed(0)+' km</span><span class="ymb-min">'+fmtDakika(st.dakika)+'</span>'
+                 : '<span class="ymb-km">—</span>';
+      return '<button class="ymb-opt'+(on?' on':'')+'" type="button" data-mode="'+key+'">'+
+        '<span class="ymb-lbl"><i class="fa-solid '+r[2]+'"></i> '+r[1]+'</span>'+stat+'</button>';
+    }).join('');
+    var badge=(src==='gercek')
+      ? '<span class="ymb-src real"><i class="fa-solid fa-circle-check"></i> Gerçek yol</span>'
+      : '<span class="ymb-src est"><i class="fa-solid fa-wave-square"></i> Tahmini</span>';
+    modeBar.innerHTML='<div class="ymb-opts">'+btns+'</div>'+badge;
+    modeBar.querySelectorAll('.ymb-opt').forEach(function(b){
+      b.addEventListener('click',function(){
+        var nm=b.getAttribute('data-mode'); if(nm===routeMode)return;
+        routeMode=nm;
+        var st=routeStats[nm]; routeSource=(st&&st.source)||'tahmini';
+        // o modun poly'si gerçek gelmişse o servisten (hizli=OSRM, sehir=ORS) yeniden çek; değilse mock çiz.
+        if(st&&st.source==='gercek'&&typeof fetch==='function'){
+          var seq=++buildSeq;
+          realRoute(nm).then(function(res){ if(seq!==buildSeq)return; routeStats[nm]={km:res.km,dakika:res.dakika,source:'gercek'}; routeSource='gercek'; applyRoute(res.poly,seq); })
+                       .catch(function(){ if(seq===buildSeq){ routeSource='tahmini'; applyRoute(mockChainPoly(),seq);} });
+        } else { routeSource='tahmini'; applyRoute(mockChainPoly()); }
+      });
+    });
+  }
+
+  // ============ ŞEHİR BALONCUĞU TIKLA → MEKAN LİSTESİ (yan drawer; harita görünür kalır) ============
+  function cityIcon(){return L.divIcon({className:'yg-city-pin',
+    html:'<span class="ycp-b"><i class="fa-solid fa-city"></i></span>',iconSize:[30,30],iconAnchor:[15,15]});}
+  function spawnCityMarkers(){
+    Object.keys(cityMarkers).forEach(function(k){map.removeLayer(cityMarkers[k]);});
+    cityMarkers={};
+    // yalnız mekanı olan şehirler baloncuk olsun
+    var withVenue={};
+    ROAD_POOL.forEach(function(m){ if(m.sehir)withVenue[m.sehir]=true; });
+    CITY.forEach(function(c){
+      if(!withVenue[c.ad])return;
+      var mk=L.marker([c.lat,c.lng],{icon:cityIcon()}).addTo(map);
+      mk.on('click',function(){openCityDrawer(c);});
+      cityMarkers[c.ad]=mk;
+    });
+  }
+  function venuesOfCity(ad){
+    return ROAD_POOL.filter(function(m){return m.sehir===ad;})
+      .sort(function(a,b){ if(a.dada!==b.dada)return a.dada?-1:1; return b.puan-a.puan; });  // Dada önce, sonra puan
+  }
+  function openCityDrawer(c){
+    if(!drawerEl)return;
+    var list=venuesOfCity(c.ad);
+    drawerTitle.textContent=c.ad;
+    if(!list.length){ drawerBody.innerHTML='<p class="ycd-empty">Bu şehir için kayıtlı yol üstü mekan yok.</p>'; }
+    else {
+      var dadaList=list.filter(function(m){return m.dada;}), restList=list.filter(function(m){return !m.dada;});
+      var html='';
+      if(dadaList.length){
+        html+='<div class="ycd-group"><div class="ycd-gh"><i class="fa-solid fa-star"></i> Dada öneriyor</div>'+
+          dadaList.map(cityVenueRow).join('')+'</div>';
+      }
+      if(restList.length){
+        html+='<div class="ycd-group"><div class="ycd-gh ghd"><i class="fa-solid fa-utensils"></i> Diğer mekanlar</div>'+
+          restList.map(cityVenueRow).join('')+'</div>';
+      }
+      drawerBody.innerHTML=html;
+    }
+    drawerEl.classList.add('open'); drawerEl.setAttribute('aria-hidden','false');
+    drawerBody.querySelectorAll('.ycd-add').forEach(function(btn){
+      btn.addEventListener('click',function(){
+        var m=ROAD_POOL.filter(function(x){return x.ad===btn.getAttribute('data-ad');})[0];
+        if(m)toggleStop(m);
+      });
+    });
+    drawerBody.querySelectorAll('.ycd-row').forEach(function(row){
+      row.addEventListener('click',function(e){ if(e.target.closest('.ycd-add'))return;
+        var m=ROAD_POOL.filter(function(x){return x.ad===row.getAttribute('data-ad');})[0];
+        if(m){map.panTo([m.lat,m.lng]);highlightCard(m);} });
+    });
+    syncStates();
+  }
+  function cityVenueRow(m){
+    var on=isStop(m);
+    return '<article class="ycd-row" data-ad="'+m.ad+'">'+
+      '<div class="ycd-thumb" style="background-image:url(\'https://images.unsplash.com/'+m.img+IMG+'\')"></div>'+
+      '<div class="ycd-info"><b>'+m.ad+'</b>'+
+        '<span class="ycd-meta"><i class="fa-solid fa-star"></i> '+m.puan+' · '+m.cat+'</span></div>'+
+      '<button class="ycd-add'+(on?' on':'')+'" type="button" data-ad="'+m.ad+'">'+
+        (on?'<i class="fa-solid fa-check"></i>':'<i class="fa-solid fa-plus"></i>')+'</button></article>';
+  }
+  function closeCityDrawer(){ if(drawerEl){drawerEl.classList.remove('open');drawerEl.setAttribute('aria-hidden','true');} }
+  if(drawerClose)drawerClose.addEventListener('click',closeCityDrawer);
+  spawnCityMarkers();
 
   bindAc(document.getElementById('ygFrom'),document.getElementById('ygFromAc'),'from');
   bindAc(document.getElementById('ygTo'),document.getElementById('ygToAc'),'to');
@@ -2667,6 +3155,7 @@ document.addEventListener('click',function(e){
   }
   function openSavedRoute(r){
     route.stops.slice().forEach(function(m){toggleStop(m);});            // mevcut durakları temizle (toggleStop kapısı)
+    trip.waypoints=[]; renderWaypointList();                            // ara şehirleri sıfırla (kayıtlı güzergah uçtan uca)
     var fi=document.getElementById('ygFrom'), ti=document.getElementById('ygTo');
     if(fi)fi.value=r.from.ad; setEndpoint('from',r.from);
     if(ti)ti.value=r.to.ad;   setEndpoint('to',r.to);                    // ikisi set → buildRoute() motorda çalışır
