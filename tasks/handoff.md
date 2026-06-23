@@ -1,46 +1,43 @@
-# DadaMutfak — Handoff (SIRADAKİ: Yol Güzergahım v2 — DALGA 1 + 3 GÖRSEL FIX COMMIT'Lİ, PUSH YOK · sıradaki: Dalga 3 ön-analiz)
+# DadaMutfak — Handoff (SIRADAKİ: Yol Güzergahım v2 — Dalga 1 + görsel fix + CHECKPOINT + SAVED-FLOW COMMIT'Lİ, PUSH YOK · sıradaki: revize-mock ikilisi)
 
-> ## ⏸️ OTURUM SONU DURUMU (2026-06-24 — Yol Güzergahım v2 REVİZE **DALGA 1 + 3 GÖRSEL FIX KOMPLE + COMMIT'Lİ** · sıradaki: Dalga 3 checkpoint ön-analiz)
+> ## ⏸️ OTURUM SONU DURUMU (2026-06-24 — Yol Güzergahım v2 **CHECKPOINT (b) + GÜZERGAHLARIM→AÇ FIX (Seçenek 2) KOMPLE + COMMIT'Lİ** · sıradaki: revize-mock ikilisi)
 >
-> **PROJE:** DadaMutfak yol güzergahı **BAŞTAN TASARIM** (Roadtrippers referanslı tam-ekran). Dosya: **`v6/yol-guzergahim-v2.html`** (v1 DOKUNULMUYOR). Revize karar tablosu: `tasks/yol-rev-plan.md` · keşif md'leri: `yol-rev-{renk,header,mobil,spec}.md` · implement plan: `yol-rev-implement-plan.md`.
+> **PROJE:** DadaMutfak yol güzergahı **BAŞTAN TASARIM** (Roadtrippers referanslı tam-ekran). Dosya: **`v6/yol-guzergahim-v2.html`** (v1 DOKUNULMUYOR). Revize karar tablosu: `tasks/yol-rev-plan.md` · keşif md'leri: `yol-rev-{renk,header,mobil,spec}.md` · analizler: `yol-rev-checkpoint-analiz.md` · `yol-rev-savedflow-analiz.md`.
 >
-> ### ✅ BU OTURUM — 3 GÖRSEL FIX COMMIT'Lİ (push YOK — `origin/main`'den **8 commit önde**)
-> Hepsi yalnız `v6/yol-guzergahim-v2.html`, hunk-ayrı 3 commit. Playwright ALL PASS (1440/390, console/mojibake 0).
-> - **`a26e9a1`** — Alternatif rota görünürlüğü (beyaz casing + nötr gri `--route-alt`, ana hattan ince + alt z-index, hover belirginleşir + km·süre tooltip, sol panel liste↔harita çift-yönlü senkron) + **Güzergahlarım Dada pill** (domates pill + çatal ikon + sol-aksan, ziyaret edilince sönük; alt-kadran `.yd-badge` diliyle tutarlı).
-> - **`e225b89`** — Leaflet **box-zoom kapatıldı** (`boxZoom:false`) — shift+drag mavi seçim kutusu gitti; normal zoom (scroll/+−/çift-tık/pinch) korundu.
-> - **`fcef076`** — **Focus-outline fix:** alternatif rota path'ine mouse-tıkta beliren lacivert UA dikdörtgeni (`outline:auto #005FCC`, path bbox'ı). `.leaflet-interactive:focus{outline:none}` + `:focus-visible` tomato ring (klavye erişilebilirliği korundu).
-> - **Teşhis dersi:** "mavi/lacivert dikdörtgen" 2 yanlış teşhisten sonra çözüldü — box-zoom DEĞİL, asıl kaynak focusable SVG path'in UA outline'ıydı (mouse `:focus` `:focus-visible`'a düşmediği için tomato kural devreye girmiyordu). Headless Chromium mouse-tıkta path'i focus'lamadığı için repro `.focus()` ile yakalandı.
+> ### ✅ BU OTURUM — CHECKPOINT + SAVED-FLOW COMMIT'Lİ `17d323f` (push YOK — `origin/main`'den **9 commit önde**)
+> Tek dosya `v6/yol-guzergahim-v2.html`. Playwright ALL PASS (1440/390, console/mojibake 0). İki iş aynı feature ailesi (loadRoute/activeRouteId/route-scoped visited) → tek commit. QA: `tasks/yol-v2-{checkpoint,savedflow}-qa.mjs` (untracked).
+> - **CHECKPOINT (b) — "Yükle"yince ziyaret bağlamı:** `activeRouteId` state (loadRoute'ta `rec.id`, divergence'ta `maybeBuild`/ters-çevir → null). **Çift sinyal:** harita pini ziyaret = yeşil dolgu + ✓ + sönük (Dada-ziyaret domates kimliğini korur) + sol "Güzergahımdaki mekanlar" üstü-çizik + medya köşesi ✓. Detay kartında **"Ziyaret ettim/Ziyaret edildi" toggle** (yalnız `activeRouteId && isSel` → serbest planlamada gizli = karar 1 gate). Ziyaret HER ZAMAN id'ye göre (`visited[routeId][ad]`) → bulaşma yok / yeni rota tertemiz (karar 2/3). Saved-sekme checklist + ilerleme korundu, iki giriş aynı `visited[id]`'ye yazar (senkron).
+> - **GÜZERGAHLARIM→AÇ FIX (Seçenek 2):** (B-3) `buildRecord` artık **poly+dakika saklıyor** → kayıtlı rota **ağ-bağımsız** anında açılır (QA: OSRM bloklu iken bile çizdi, 0 OSRM çağrısı). (B-1) `loadRoute` async öncesi **`clearRoute()` + anında `drawRoutes+fitActive+spawnVenues`** → stale render bitti (eski İstanbul-içi zoom / yanlış koridor sızıntısı gitti); poly'siz eski kayıt → `fitStops()`+canlı-OSRM fallback. **Bağlam UI:** `activeRouteId` set iken soft şerit **"Yüklü güzergah: «ad»"** + buton **"Kaydet"→"Güncelle"** (aynı id overwrite, **duplikasyon yok**, `visited` korunur); divergence → form "Güzergahımı Kaydet"e döner.
 >
-> ### ✅ DALGA 1 — MEKANİK + RENK + INPUT-× — COMMIT'Lİ `8a15890`
-> Tek temiz commit, sadece `v6/yol-guzergahim-v2.html`. Playwright ALL PASS (1440/390, console/mojibake 0). İçerik:
-> - **Dada-soft palet:** domates gradient KALDIRILDI → soft beyaz kart + ince domates sol-aksan + küçük rozet (puf-noktaları ruhu) · **seçili-Dada bug fix** (yeşil kenar + köşe ✓ + Dada aksanı birlikte okunur).
-> - **Mesafe formatı:** tek `proxLabel` — `<0.5km`→**"Tam yol üstü"** ("0 km" gitti) · `<1km`→metre · `≥1km`→km · 4 yüzeyde tutarlı (kadran/detay/tam-liste/harita-preview).
-> - **Seçili harita pini:** Dada pin domates dolgu + **yeşil seçili halka (hover'da korunur)** · sade-seçili yeşil halka/kenar. **Detay "Dada öneriyor" rozeti** artık SADECE `dada:true` (`[hidden]` override — `display:inline-flex` UA'yı eziyordu).
-> - **Seçili hover preview:** ince 1px yeşil kenar + hafif yeşil overlay + köşe ✓ (padding ile metne binmez).
-> - **ROAD_POOL yeniden kuruldu:** **190 mekan / 33 şehir**, dada **~%19.5** (şehir başı 1-2 kuratoryal), İstanbul ağırlığı düştü · **deniz-üstü koordinat fix** (jitter ±0.044°→±0.009° + 11 kıyı şehir bazı karaya nudge; eski 26 deniz-mekanı→0).
-> - **Slider** track yeşil→sarı→domates + 3-kademe thumb · **krem** sadece cam panelde (placeholder/durum→nötr).
-> - **Durak input ×:** input İÇİ **clear ×** (`:placeholder-shown` ile metin varken görünür, input'u daraltmaz) + **AYRI satır-sil (trash)** kompakt (min-2 disabled) · input ferahladı (%81).
+> ### ✅ ÖNCEKİ COMMIT'LER (bu özellik ailesi)
+> - **`8a15890`** — DALGA 1 (Dada-soft palet, `proxLabel` mesafe formatı, seçili pin/preview, ROAD_POOL 190 mekan/33 şehir + deniz-koord fix, slider, durak input-× + satır-sil).
+> - **`a26e9a1`** — Alternatif rota görünürlüğü (beyaz casing + nötr gri, ince + alt z-index, hover + km·süre tooltip, liste↔harita çift-yön senkron) + **Güzergahlarım Dada pill**.
+> - **`e225b89`** — Leaflet **box-zoom kapatıldı** (`boxZoom:false`); normal zoom korundu.
+> - **`fcef076`** — **Focus-outline fix:** `.leaflet-interactive:focus{outline:none}` + `:focus-visible` tomato ring (klavye erişilebilirliği korundu). *Ders: "mavi dikdörtgen" box-zoom değil, focusable SVG path UA outline'ıydı.*
+> - **`fef3b61`** — handoff chore.
 >
-> ### 🎯 TEMİZ PENCERE KUYRUĞU (sıradaki oturumlar) — *2 görünürlük fix ✅ bitti (bu oturum)*
-> 1. **DALGA 3 ÖN-ANALİZ (ilk iş; plan-first, KOD YOK):** checkpoint/ziyaret + "Tümü ziyaret edildi" sonrası tamamlama spec (yol-rev-spec.md temel: A+C toast+rozet+özet) · Güzergahlarım erişim (`?tab=saved` deep-link + Hesabım/Portal/Keşfet) · "Yeni rota" CTA. **CC analizine bırakılan açık karar: 5. KARAR aşağıda.**
-> 2. **DALGA 2 — header** (route-line üst şerit + **"ROTA PLANLAYICI" eyebrow**, K7=A).
-> 3. **DALGA 4 — mobil** (Faz1 bottom-sheet detay → Faz4 390 breakpoint, yol-rev-mobil.md).
-> 4. **DALGA 5 — veri** (alternatif rota prod-OSRM · "Troy/Truva" Beyar netleştirecek). NOT: alt-rota görsel/sync kodu hazır ve doğrulandı (mock 2-rota); public OSRM bazen tek rota dönüyor → graceful, prod-OSRM ile çok-rota beslenince otomatik çalışır.
+> ### 🎯 KUYRUK (resume'da sıradaki iş — öncelik sırası)
+> 1. **Revize-mock ikilisi (← SIRADAKİ, ucuz):** alternatif yol sayısını artır + şehir/liste uzunluğunu artır (mock data).
+> 2. **clear × hover/tık radius tutarsızlığı** (ufak CSS, projedeki radius token'ıyla hizala).
+> 3. **SPONSOR KART:** Yol Üstü Mekanlar şeridine premium reklam kartı (**frontend-design skill ŞART**) — ⚠️ **canlıya çıkmadan Yasin Bey onayı** gerekir (reklam/gelir kararı).
+> 4. **DALGA 2 — header:** **"ROTA PLANLAYICI" eyebrow** (K7=A) + route-line üst şerit.
+> 5. **DALGA 4 — mobil** (Faz1 bottom-sheet detay → Faz4 390 breakpoint, `yol-rev-mobil.md`).
+> 6. **DALGA 5 — veri** (gerçek OSRM/veri besleme). NOT: kayıtlı rotalar artık **poly sakladığı için ağ-bağımsız açılıyor** → bu yük hafifledi; alt-rota görsel/sync kodu hazır, prod-OSRM çok-rota besleyince otomatik çalışır.
 >
-> ### ⏳ AÇIK CONCERN'LER (Yol Güzergahım DIŞI, commit bekliyor)
-> - **`sezon-v1.html` watermark** — working tree'de commit'siz (` M`, onaysız belirginleştirme); ayrı concern, ayrı commit. DOKUNMA.
-> - **PUSH bekleyen: 8 commit** (`origin/main`'den önde). Beyar ayrıca "push" diyecek.
+> ### ⏳ AÇIK CONCERN'LER
+> - **`sezon-v1.html` watermark** — working tree'de commit'siz (` M`, onaysız); Yol Güzergahım DIŞI, ayrı iş — **DOKUNULMADI, DOKUNMA**.
+> - **PUSH bekleyen: 9 commit** (`origin/main`'den önde) — canlıya **batch halinde, Dalga 2 sonrası** önerildi. Beyar ayrıca "push" diyecek.
 >
-> ### KARARLAR — CHECKPOINT (4 ONAYLI + 1 açık)
-> ✅ **route-scoped ziyaret** (`visited{routeId:{ad}}`) · ✅ **bulaşma yok** (aynı mekan farklı güzergahta otomatik ziyaret görünmez) · ✅ **yeni rota tertemiz** (yeni güzergah 0 ziyaretle başlar) · ✅ **harita+liste çift sinyal** (pin + satır birlikte). ⏳ **5. KARAR — "Yolculuğu Başlat" ayrı bir mod mu** (planlama ↔ navigasyon/ziyaret modu ayrımı) → **Dalga 3 CC ön-analizine bırakıldı**, kod yok.
+> ### KARARLAR — CHECKPOINT (5/5 KAPALI) + SAVED-FLOW
+> ✅ route-scoped ziyaret · ✅ bulaşma yok · ✅ yeni rota tertemiz · ✅ harita+liste çift sinyal · ✅ **5. KARAR = (b)** "Yükle"yince otomatik ziyaret bağlamı (ayrı mod YOK). · ✅ **SAVED-FLOW = Seçenek 2** (tek-harita, "yüklü rota" bağlamı + Güncelle, yeni view yok).
 >
 > ### MODÜL-YERLEŞİK SABİT KARARLAR
-> kaydet→toast + Güzergahlarım'a geç · kayıt adı otomatik (kalkış→varış) düzenlenebilir · mekan≠durak · Dada öneriyor elle `dada:true` · eşik oransal+slider · global harita Türkiye merkezli · tek-tip durak seçim sırasıyla (auto-reorder YOK) · mekan kartı sade.
+> kaydet→toast + Güzergahlarım'a geç (yeni kayıt) · GÜNCELLE→sekmede kal · kayıt adı otomatik (kalkış→varış) düzenlenebilir · mekan≠durak · Dada öneriyor elle `dada:true` · eşik oransal+slider · global harita Türkiye merkezli · tek-tip durak seçim sırasıyla (auto-reorder YOK) · mekan kartı sade · **kayıt artık poly+dakika saklar (ağ-bağımsız görüntüleme)**.
 >
 > ### KURALLAR
 > izole sayfa-içi CSS/JS · kanonik kabuk (sa-shell/sa-ui/sa-*) DOKUNMA · v1 DOKUNMA · domates `#E14827` / yeşil `#009d4f` token (ham hex kaçın) · frontend-design + uiux-review skill · görsel QA tam-sayfa SS self-verify (1440/390) · commit yalnız onayla · **PUSH YOK** (Beyar ayrıca söyleyecek).
 >
-> ### WORKING-TREE (commit dışı, DOKUNMA): `sezon-v1.html` watermark (onaysız) · untracked plan/qa dosyaları (`yol-rev-*.mjs/.md`, `_gen_roadpool.mjs` dahil) · bu `handoff.md` (ayrı chore commit'i).
+> ### WORKING-TREE (commit dışı, DOKUNMA): `sezon-v1.html` watermark (onaysız) · untracked plan/qa dosyaları (`yol-rev-*.mjs/.md`, `yol-v2-*-qa.mjs`, `_gen_roadpool.mjs` dahil) · bu `handoff.md` (ayrı chore commit'i).
 >
 > ### ESKİ SIRADAKİLER (Yol v2 revize sonrası): RAPORLAR FAZ-3 (jargon hover tooltip, plan-first) · diğerleri aşağıda.
 >
