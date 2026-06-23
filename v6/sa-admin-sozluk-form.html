@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Yeni Terim — Admin — DadaMutfak</title>
+<link rel="shortcut icon" type="image/x-icon" href="assets/img/favicon.ico" />
+<!-- FontAwesome 6.5.2 (kilitli ikon seti) -->
+<link rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+      integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A=="
+      crossorigin="anonymous" referrerpolicy="no-referrer" />
+<!-- PAYLAŞILAN KABUK (tek kaynak) -->
+<link rel="stylesheet" href="assets/css/sa-shell.css" />
+<style>
+/* =====================================================================
+   SA-ADMIN-SOZLUK-FORM — SAYFA CSS (ekrana özel; kabuk CSS'i sa-shell.css'te).
+   ÇERÇEVE MİRASI: sa-admin-kullanicilar-form (kompakt kimlik-formu: form-sec ·
+   form-layout · sticky side-card). Yeni CSS dili icat YOK; sadece terim-özel
+   önizleme rozetleri eklendi (palet-içi token, ham renk literali YOK). =========== */
+
+/* ORTAK FORM ALANLARI — tüm sa-* form ekranlarında AYNEN */
+.form-grid{display:grid;gap:18px}
+.frow{display:flex;flex-direction:column;gap:7px}
+.frow label{font-size:12.5px;font-weight:700;color:var(--slate-2)}
+.frow .fhint{font-size:11.5px;color:var(--muted);font-weight:500}
+.finput,.fselect,.ftext{width:100%;font-family:inherit;font-size:13.5px;font-weight:500;color:var(--ink);background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-md);padding:0 14px;height:44px;outline:none;transition:.2s var(--ease)}
+.ftext{height:auto;padding:12px 14px;line-height:1.5;resize:vertical;min-height:96px}
+.finput:focus,.fselect:focus,.ftext:focus{border-color:var(--acc);box-shadow:0 0 0 3px rgba(var(--acc-rgb),.12)}
+.frow.two{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.form-sec{padding:18px 22px;border-bottom:1px solid var(--line)}
+.form-sec:last-child{border-bottom:none}
+.form-sec-tt{font-size:13px;font-weight:700;color:var(--slate);margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.form-sec-tt i{color:var(--acc)}
+.form-actions{display:flex;gap:10px;justify-content:flex-end;padding:16px 22px}
+
+/* select açılır ok */
+.fselect{appearance:none;-webkit-appearance:none;cursor:pointer;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%237E7E7E' stroke-width='1.6' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 15px center;padding-right:40px}
+
+/* harf alanı dar */
+.frow.harf .finput{max-width:90px;text-align:center;text-transform:uppercase;font-weight:700}
+
+/* form + yan kart 2-kolon */
+.form-layout{display:grid;grid-template-columns:minmax(0,1fr) minmax(280px,360px);gap:24px;align-items:start}
+
+/* yan kart (kullanicilar-form kalıbı) */
+.side-card{position:sticky;top:calc(var(--pnl-top-h) + 28px);background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-lg);box-shadow:var(--sh-sm)}
+.side-card .sc-head{padding:16px 18px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:8px}
+.side-card .sc-head b{font-size:14px;font-weight:700;color:var(--slate)}
+.side-card .sc-head i{color:var(--acc);font-size:13px}
+.side-card .sc-body{padding:18px}
+.sc-stack{display:flex;flex-direction:column;gap:14px}
+.frow-check{display:flex;align-items:center;gap:10px}
+.frow-check input[type=checkbox]{width:18px;height:18px;accent-color:var(--acc);cursor:pointer;flex:none}
+.frow-check label{font-size:13px;font-weight:500;color:var(--slate);cursor:pointer;line-height:1.4}
+.sc-div{height:1px;background:var(--line);margin:2px 0}
+
+/* terim önizleme (sözlük .term-item ruhu — palet-içi token) */
+.tg-prev{display:flex;align-items:center;gap:12px}
+.tg-ltr{flex:none;width:42px;height:42px;border-radius:var(--radius-circle);background:rgba(var(--acc-rgb),.12);color:var(--acc-deep);display:grid;place-items:center;font-size:16px;font-weight:700;text-transform:uppercase}
+.tg-pmeta{min-width:0;line-height:1.4}
+.tg-pterm{font-size:14.5px;font-weight:700;color:var(--slate)}
+.tg-pgloss{font-size:12px;color:var(--muted);font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:200px}
+.tg-prow{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:14px}
+.tg-prow .sc-lbl{font-size:11.5px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.tg-prow .sc-val{font-size:13px;color:var(--slate);font-weight:600}
+
+@media(max-width:900px){
+  .form-layout{grid-template-columns:minmax(0,1fr)}
+  .side-card{position:static}
+  .frow.two{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body data-brand="mutfak" data-sec="admin" data-screen="sozluk">
+
+<div class="sa-app">
+
+  <!-- §1 İKON-RAIL -->
+  <aside class="sa-rail" id="saRail">
+    <a class="sa-rail-logo" href="sa-giris-v1.html" title="Yönetim Girişi"><img src="assets/img/logo-mark.png" alt="DadaMutfak" /></a>
+    <a class="sa-rail-ico" data-sec="genel" href="sa-shell.html?sec=genel" title="Genel Bakış"><i class="fa-solid fa-gauge-high"></i></a>
+    <span class="sa-rail-div"></span>
+    <a class="sa-rail-ico" data-sec="admin"   href="sa-admin.html"   title="Admin"><i class="fa-solid fa-shield-halved"></i></a>
+    <a class="sa-rail-ico" data-sec="saglik"  href="sa-saglik.html"  title="Sağlık &amp; Diyet"><i class="fa-solid fa-heart-pulse"></i></a>
+    <a class="sa-rail-ico" data-sec="store"   href="sa-store.html"   title="DadaStore"><i class="fa-solid fa-bag-shopping"></i></a>
+    <a class="sa-rail-ico" data-sec="dadafit" href="sa-dadafit.html" title="DadaFit"><i class="fa-solid fa-dumbbell"></i></a>
+    <a class="sa-rail-ico" data-sec="isletme" href="sa-isletme.html" title="İşletmeler"><i class="fa-solid fa-store"></i></a>
+    <a class="sa-rail-ico is-locked" data-sec="akademi" href="#" title="DadaAkademi — Yakında"><i class="fa-solid fa-graduation-cap"></i><i class="fa-solid fa-lock sr-lock"></i></a>
+    <div class="sa-rail-foot"><a class="sa-rail-ico" href="sa-giris-v1.html" title="Siteye Dön"><i class="fa-solid fa-arrow-left"></i></a></div>
+  </aside>
+
+  <!-- §2 BÖLÜM MENÜSÜ (JS render) -->
+  <nav class="sa-menu" id="saMenu"></nav>
+  <div class="sa-divider" id="saDivider" role="separator" aria-label="Menüyü daralt/genişlet" title="Sürükle veya tıkla — menüyü daralt/genişlet"><span class="sa-grip"><i class="fa-solid fa-grip-lines-vertical"></i></span></div>
+  <div class="pnl-overlay" id="pnlOverlay"></div>
+
+  <!-- §3 ÜST BAR -->
+  <header class="pnl-top">
+    <button class="pnl-burger" id="pnlBurger" aria-label="Menü"><i class="fa-solid fa-bars"></i></button>
+    <div class="pnl-search"><i class="fa-solid fa-magnifying-glass"></i><input type="text" placeholder="Kullanıcı, içerik ara…" /></div>
+    <div class="pnl-top-tools">
+      <button class="pnl-bell" aria-label="Bildirimler"><i class="fa-regular fa-bell"></i><span class="pb-dot"></span></button>
+      <div class="pnl-me">
+        <div class="pm-ava" style="background-image:url('https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=240&q=80&auto=format&fit=crop')"></div>
+        <div class="pm-id"><div class="pm-name" id="pmName">Süper Admin</div><div class="pm-role" id="pmRole">Tüm yetki</div></div>
+        <i class="fa-solid fa-chevron-down"></i>
+      </div>
+    </div>
+  </header>
+
+  <!-- §4 İÇERİK — Yeni Terim Formu -->
+  <main class="pnl-main" id="saMain">
+
+    <div class="pnl-page-head">
+      <div>
+        <a href="sa-admin-sozluk.html" style="display:inline-flex;align-items:center;gap:7px;font-size:13px;font-weight:700;color:var(--muted);margin-bottom:8px;transition:.18s" onmouseover="this.style.color='var(--acc)'" onmouseout="this.style.color='var(--muted)'"><i class="fa-solid fa-arrow-left"></i> Sözlük</a>
+        <h1>Yeni Terim</h1>
+        <div class="ph-sub">Mutfak terimini, tanımını ve kategorisini gir — sözlükte yayınlansın</div>
+      </div>
+    </div>
+
+    <div class="form-layout">
+
+      <!-- ana form kartı -->
+      <div class="pnl-card">
+
+        <!-- Terim bilgileri -->
+        <div class="form-sec">
+          <div class="form-sec-tt"><i class="fa-solid fa-spell-check"></i> Terim Bilgileri</div>
+          <div class="form-grid">
+            <div class="frow">
+              <label for="f-terim">Terim</label>
+              <input class="finput" id="f-terim" type="text" value="Benmari" placeholder="Örn. Benmari" />
+            </div>
+            <div class="frow">
+              <label for="f-gloss">Yabancı ad / okunuş <span style="font-weight:500;color:var(--muted)">(opsiyonel)</span></label>
+              <input class="finput" id="f-gloss" type="text" value="bain-marie · su banyosunda eritme" placeholder="Örn. bain-marie · su banyosunda eritme" />
+              <span class="fhint">Terimin altında küçük gri yazıyla görünür.</span>
+            </div>
+            <div class="frow two">
+              <div class="frow">
+                <label for="f-kategori">Kategori</label>
+                <select class="fselect" id="f-kategori">
+                  <option value="teknik" selected>Pişirme Teknikleri</option>
+                  <option value="hamur">Hamur &amp; Fırın</option>
+                  <option value="malzeme">Malzeme &amp; Baharat</option>
+                  <option value="arac">Araç-Gereç</option>
+                  <option value="dunya">Dünya Mutfağı</option>
+                </select>
+              </div>
+              <div class="frow harf">
+                <label for="f-harf">Harf (A-Z)</label>
+                <input class="finput" id="f-harf" type="text" maxlength="1" value="B" placeholder="B" />
+                <span class="fhint">Terimden otomatik gelir; istersen düzelt.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tanım & örnek -->
+        <div class="form-sec">
+          <div class="form-sec-tt"><i class="fa-solid fa-align-left"></i> Tanım &amp; Örnek</div>
+          <div class="form-grid">
+            <div class="frow">
+              <label for="f-tanim">Tanım</label>
+              <textarea class="ftext" id="f-tanim" placeholder="Terimi tek bir net paragrafla anlat…">Bir kabın, içinde su bulunan daha büyük bir kabın içine oturtularak dolaylı ısıyla ısıtılması yöntemi. Çikolata, krema gibi hassas malzemeler doğrudan ateşte bozulmadan, yavaşça eritilir.</textarea>
+            </div>
+            <div class="frow">
+              <label for="f-ornek">Örnek cümle <span style="font-weight:500;color:var(--muted)">(opsiyonel)</span></label>
+              <input class="finput" id="f-ornek" type="text" value="Çikolatayı benmari usulü eritip ılıyınca kremaya ekleyin." placeholder="Terimin kullanıldığı örnek bir cümle" />
+            </div>
+          </div>
+        </div>
+
+        <!-- Bağlantı -->
+        <div class="form-sec">
+          <div class="form-sec-tt"><i class="fa-solid fa-link"></i> Bağlantı <span style="font-size:12px;font-weight:500;color:var(--muted)">(opsiyonel)</span></div>
+          <div class="form-grid">
+            <div class="frow">
+              <label for="f-tarif">İlgili tarif</label>
+              <input class="finput" id="f-tarif" type="text" value="Benmari çikolatalı sufle" placeholder="Örn. Benmari çikolatalı sufle" />
+              <span class="fhint">Terim kartında “ilgili tarif” linki olarak çıkar. İkinci “Püf Noktaları’nda ara” linki otomatik eklenir.</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- aksiyonlar -->
+        <div class="form-actions">
+          <a class="btn btn-ghost btn-sm" href="sa-admin-sozluk.html">İptal</a>
+          <button class="btn btn-acc btn-sm" type="button" id="saveBtn"><i class="fa-solid fa-floppy-disk"></i> Terimi Kaydet</button>
+        </div>
+
+      </div><!-- /pnl-card -->
+
+      <!-- yan kart: yayın durumu + önizleme -->
+      <div>
+        <div class="side-card">
+          <div class="sc-head"><i class="fa-solid fa-globe"></i><b>Yayın Durumu</b></div>
+          <div class="sc-body">
+            <div class="sc-stack">
+              <div class="frow">
+                <label for="f-durum">Durum</label>
+                <select class="fselect" id="f-durum">
+                  <option value="yayinda" selected>Yayında — sözlükte görünür</option>
+                  <option value="taslak">Taslak — yalnızca yöneticiler görür</option>
+                </select>
+              </div>
+              <div class="frow-check">
+                <input type="checkbox" id="f-populer" />
+                <label for="f-populer">Popüler — sözlük başında öne çıkar</label>
+              </div>
+
+              <div class="sc-div"></div>
+
+              <!-- canlı önizleme -->
+              <div class="tg-prev">
+                <div class="tg-ltr" id="prevLtr">B</div>
+                <div class="tg-pmeta">
+                  <div class="tg-pterm" id="prevTerim">Benmari</div>
+                  <div class="tg-pgloss" id="prevGloss">bain-marie · su banyosunda eritme</div>
+                </div>
+              </div>
+              <div class="tg-prow">
+                <span class="sc-lbl">Kategori</span>
+                <span class="sc-val" id="prevKat">Pişirme Teknikleri</span>
+              </div>
+              <div class="tg-prow">
+                <span class="sc-lbl">Durum</span>
+                <span class="pstat ok" id="prevDurum">Yayında</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- bilgi notu -->
+        <div style="margin-top:14px;padding:14px 16px;background:rgba(var(--acc-rgb),.07);border:1px solid rgba(var(--acc-rgb),.18);border-radius:var(--radius-md)">
+          <div style="display:flex;align-items:flex-start;gap:10px">
+            <i class="fa-solid fa-circle-info" style="color:var(--acc-deep);font-size:14px;margin-top:1px;flex:none"></i>
+            <div style="font-size:12.5px;color:var(--slate-2);line-height:1.5">
+              Terimler tek bir <b>/sozluk</b> sayfasında harf ve kategoriye göre listelenir. Ayrı sayfa açılmaz; bu yüzden SEO meta gerekmez.
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /form-layout -->
+
+  </main>
+
+</div><!-- /sa-app -->
+
+<script src="assets/js/sa-ui.js"></script>
+<script src="assets/js/sa-shell.js"></script>
+<script>
+/* sayfa JS — harf auto-fill (tr) + canlı önizleme (mockup; veri persist etmez) */
+(function(){
+  var fTerim=document.getElementById('f-terim');
+  var fGloss=document.getElementById('f-gloss');
+  var fKategori=document.getElementById('f-kategori');
+  var fHarf=document.getElementById('f-harf');
+  var fDurum=document.getElementById('f-durum');
+  var prevLtr=document.getElementById('prevLtr');
+  var prevTerim=document.getElementById('prevTerim');
+  var prevGloss=document.getElementById('prevGloss');
+  var prevKat=document.getElementById('prevKat');
+  var prevDurum=document.getElementById('prevDurum');
+
+  var KAT_LABEL={
+    'teknik':'Pişirme Teknikleri',
+    'hamur':'Hamur & Fırın',
+    'malzeme':'Malzeme & Baharat',
+    'arac':'Araç-Gereç',
+    'dunya':'Dünya Mutfağı'
+  };
+  var DURUM_CLASS={'yayinda':'ok','taslak':'wait'};
+  var DURUM_LABEL={'yayinda':'Yayında','taslak':'Taslak'};
+
+  /* harf, kullanıcı elle değiştirene dek terimin ilk harfinden otomatik (tr İ/I) */
+  var harfTouched=false;
+  fHarf.addEventListener('input',function(){harfTouched=true;render();});
+
+  function autoHarf(){
+    if(harfTouched)return;
+    var t=(fTerim.value||'').trim();
+    fHarf.value=t?t.charAt(0).toLocaleUpperCase('tr'):'';
+  }
+
+  function render(){
+    var terim=(fTerim.value||'').trim();
+    var gloss=(fGloss.value||'').trim();
+    var harf=(fHarf.value||'').trim().toLocaleUpperCase('tr');
+
+    prevTerim.textContent=terim||'Terim';
+    prevTerim.style.color=terim?'var(--slate)':'var(--muted)';
+    prevGloss.textContent=gloss||'—';
+    prevLtr.textContent=harf||'?';
+    prevKat.textContent=KAT_LABEL[fKategori.value]||'—';
+
+    var dc=DURUM_CLASS[fDurum.value]||'ok';
+    prevDurum.className='pstat '+dc;
+    prevDurum.textContent=DURUM_LABEL[fDurum.value]||'—';
+  }
+
+  fTerim.addEventListener('input',function(){autoHarf();render();});
+  [fGloss,fKategori,fDurum].forEach(function(el){el.addEventListener('input',render);});
+
+  render();
+
+  document.getElementById('saveBtn').addEventListener('click',function(){
+    if(window.saToast)saToast('Terim kaydedildi',{type:'ok'});
+  });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Sözlük — Admin — DadaMutfak</title>
+<link rel="shortcut icon" type="image/x-icon" href="assets/img/favicon.ico" />
+<!-- FontAwesome 6.5.2 (kilitli ikon seti) -->
+<link rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+      integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A=="
+      crossorigin="anonymous" referrerpolicy="no-referrer" />
+<!-- PAYLAŞILAN KABUK (tek kaynak) -->
+<link rel="stylesheet" href="assets/css/sa-shell.css" />
+<link rel="stylesheet" href="assets/css/sa-list.css" />
+<link rel="stylesheet" href="assets/css/sa-ui.css" />
+<style>
+/* =====================================================================
+   SA-ADMIN-SOZLUK — SAYFA CSS (ekrana özel; kabuk CSS'i sa-shell.css'te).
+   sa-admin-icerik'in BİREBİR KARDEŞİ (filtre chip + ptable + saConfirm sil).
+   Terimler tek /sozluk sayfasında yaşar — detay/SEO yok. Kategori rozeti =
+   TEK accent token-tint + kategoriye özel İKON (ham renk literali YOK). ======== */
+
+/* filtre çubuğu (icerik pattern; chip = radius-sm KÖŞELİ) */
+.filter-bar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:16px 22px;border-bottom:1px solid var(--line)}
+.filter-bar .fb-search{flex:1;min-width:200px;max-width:320px;position:relative}
+.filter-bar .fb-search i{position:absolute;left:12px;top:50%;transform:translateY(-50%);font-size:13px;color:var(--muted);pointer-events:none}
+.filter-bar .fb-search input{width:100%;height:38px;padding:0 12px 0 34px;font-family:inherit;font-size:13px;font-weight:500;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:var(--radius-sm);outline:none;transition:.2s var(--ease)}
+.filter-bar .fb-search input::placeholder{color:var(--muted)}
+.filter-bar .fb-search input:focus{border-color:var(--acc);background:var(--paper);box-shadow:0 0 0 3px rgba(var(--acc-rgb),.11)}
+
+.chips{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.chip{font-size:12.5px;font-weight:500;color:var(--slate-2);background:var(--paper);border:1px solid var(--line);padding:7px 14px;border-radius:var(--radius-sm);cursor:pointer;transition:.18s var(--ease);display:inline-flex;align-items:center;gap:6px}
+.chip:hover{border-color:var(--acc);color:var(--acc-deep)}
+.chip .ch-cnt{white-space:nowrap;font-size:10.5px;font-weight:700;background:rgba(var(--acc-rgb),.15);color:var(--acc-deep);min-width:18px;height:17px;display:inline-flex;align-items:center;justify-content:center;padding:0 5px;border-radius:var(--radius-sm)}
+.chip.is-on .ch-cnt{background:rgba(var(--acc-rgb),.22)}
+.chip.is-on{border-color:var(--acc);color:var(--acc-deep);background:rgba(var(--acc-rgb),.10);font-weight:700}
+
+/* tablo */
+.ptable{width:100%;border-collapse:collapse}
+.ptable th{font-size:11.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);padding:12px 16px;border-bottom:1px solid var(--line);text-align:left;white-space:nowrap}
+.ptable th:first-child{padding-left:22px}
+.ptable th:last-child{padding-right:22px;text-align:right}
+.ptable td{padding:14px 16px;border-bottom:1px solid var(--line);font-size:13.5px;vertical-align:middle}
+.ptable td:first-child{padding-left:22px}
+.ptable td:last-child{padding-right:22px;text-align:right}
+.ptable tr:last-child td{border-bottom:none}
+.ptable tr:hover td{background:var(--bg)}
+
+/* terim adı hücresi (harf avatarı + terim + gloss) */
+.pg-cell{display:flex;align-items:center;gap:12px;min-width:0}
+.pg-ico{width:38px;height:38px;flex:none;border-radius:var(--radius-circle);background:rgba(var(--acc-rgb),.10);color:var(--acc-deep);display:grid;place-items:center;font-size:15px;font-weight:700;text-transform:uppercase}
+.pg-info{min-width:0;line-height:1.35}
+.pg-title{font-size:13.5px;font-weight:700;color:var(--slate);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tg-gloss{font-size:12px;color:var(--muted);font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+/* kategori rozeti — TEK accent token-tint, ayrım kategoriye özel İKON ile */
+.tg-cat{display:inline-flex;align-items:center;gap:6px;font-size:11.5px;font-weight:700;padding:4px 10px;border-radius:var(--radius-sm);white-space:nowrap;background:rgba(var(--acc-rgb),.10);color:var(--acc-deep)}
+.tg-cat i{font-size:10px;opacity:.85}
+
+/* harf hücresi */
+.tg-harf{font-size:13px;font-weight:700;color:var(--slate-2);font-variant-numeric:tabular-nums}
+
+/* aksiyon butonları */
+.row-acts{display:flex;align-items:center;justify-content:flex-end;gap:6px}
+.ia-btn{width:32px;height:32px;border-radius:var(--radius-sm);border:1px solid var(--line);background:var(--paper);color:var(--muted);font-size:13px;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;transition:.18s var(--ease)}
+.ia-btn:hover{border-color:var(--acc);color:var(--acc-deep);background:rgba(var(--acc-rgb),.07)}
+.ia-btn.danger:hover{border-color:var(--tomato);color:var(--tomato);background:var(--tomato-tint)}
+
+@media(max-width:860px){.ptable .col-cat,.ptable .col-cat-th{display:none}}
+@media(max-width:640px){
+  .ptable .col-ltr,.ptable .col-ltr-th{display:none}
+  .filter-bar{padding:12px 16px}
+  .ptable th,.ptable td{padding-left:10px;padding-right:10px}
+  .ptable th:first-child,.ptable td:first-child{padding-left:16px}
+  .ptable th:last-child,.ptable td:last-child{padding-right:16px}
+  .pg-title,.tg-gloss{white-space:normal;word-break:break-word}
+  .pg-cell{gap:9px}
+}
+</style>
+</head>
+<body data-brand="mutfak" data-sec="admin" data-screen="sozluk">
+
+<div class="sa-app">
+
+  <!-- §1 İKON-RAIL -->
+  <aside class="sa-rail" id="saRail">
+    <a class="sa-rail-logo" href="sa-giris-v1.html" title="Yönetim Girişi"><img src="assets/img/logo-mark.png" alt="DadaMutfak" /></a>
+    <a class="sa-rail-ico" data-sec="genel" href="sa-shell.html?sec=genel" title="Genel Bakış"><i class="fa-solid fa-gauge-high"></i></a>
+    <span class="sa-rail-div"></span>
+    <a class="sa-rail-ico" data-sec="admin"   href="sa-admin.html"   title="Admin"><i class="fa-solid fa-shield-halved"></i></a>
+    <a class="sa-rail-ico" data-sec="saglik"  href="sa-saglik.html"  title="Sağlık &amp; Diyet"><i class="fa-solid fa-heart-pulse"></i></a>
+    <a class="sa-rail-ico" data-sec="store"   href="sa-store.html"   title="DadaStore"><i class="fa-solid fa-bag-shopping"></i></a>
+    <a class="sa-rail-ico" data-sec="dadafit" href="sa-dadafit.html" title="DadaFit"><i class="fa-solid fa-dumbbell"></i></a>
+    <a class="sa-rail-ico" data-sec="isletme" href="sa-isletme.html" title="İşletmeler"><i class="fa-solid fa-store"></i></a>
+    <a class="sa-rail-ico is-locked" data-sec="akademi" href="#" title="DadaAkademi — Yakında"><i class="fa-solid fa-graduation-cap"></i><i class="fa-solid fa-lock sr-lock"></i></a>
+    <div class="sa-rail-foot"><a class="sa-rail-ico" href="sa-giris-v1.html" title="Siteye Dön"><i class="fa-solid fa-arrow-left"></i></a></div>
+  </aside>
+
+  <!-- §2 BÖLÜM MENÜSÜ (JS render) -->
+  <nav class="sa-menu" id="saMenu"></nav>
+  <div class="sa-divider" id="saDivider" role="separator" aria-label="Menüyü daralt/genişlet" title="Sürükle veya tıkla — menüyü daralt/genişlet"><span class="sa-grip"><i class="fa-solid fa-grip-lines-vertical"></i></span></div>
+  <div class="pnl-overlay" id="pnlOverlay"></div>
+
+  <!-- §3 ÜST BAR -->
+  <header class="pnl-top">
+    <button class="pnl-burger" id="pnlBurger" aria-label="Menü"><i class="fa-solid fa-bars"></i></button>
+    <div class="pnl-search"><i class="fa-solid fa-magnifying-glass"></i><input type="text" placeholder="Kullanıcı, içerik ara…" /></div>
+    <div class="pnl-top-tools">
+      <button class="pnl-bell" aria-label="Bildirimler"><i class="fa-regular fa-bell"></i><span class="pb-dot"></span></button>
+      <div class="pnl-me">
+        <div class="pm-ava" style="background-image:url('https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=240&q=80&auto=format&fit=crop')"></div>
+        <div class="pm-id"><div class="pm-name" id="pmName">Süper Admin</div><div class="pm-role" id="pmRole">Tüm yetki</div></div>
+        <i class="fa-solid fa-chevron-down"></i>
+      </div>
+    </div>
+  </header>
+
+  <!-- §4 İÇERİK — Sözlük listesi -->
+  <main class="pnl-main" id="saMain">
+
+    <div class="pnl-page-head">
+      <div>
+        <h1>Sözlük</h1>
+        <div class="ph-sub">Mutfak terimleri sözlüğü · <strong>12</strong> terim</div>
+      </div>
+      <div class="ph-actions">
+        <a class="btn btn-ghost btn-sm" href="#" id="exportBtn"><i class="fa-solid fa-download"></i> Dışa Aktar</a>
+        <a class="btn btn-acc btn-sm" href="sa-admin-sozluk-form.html"><i class="fa-solid fa-plus"></i> Yeni Terim</a>
+      </div>
+    </div>
+
+    <div class="pnl-card">
+
+      <div class="filter-bar">
+        <div class="fb-search"><i class="fa-solid fa-magnifying-glass"></i><input type="text" placeholder="Terim ara — örn. benmari, jülyen…" id="cSearch" /></div>
+        <div class="chips" id="catChips">
+          <button class="chip is-on" data-cat="all">Tümü <span class="ch-cnt">12</span></button>
+          <button class="chip" data-cat="teknik">Pişirme Teknikleri <span class="ch-cnt">6</span></button>
+          <button class="chip" data-cat="hamur">Hamur &amp; Fırın <span class="ch-cnt">1</span></button>
+          <button class="chip" data-cat="malzeme">Malzeme &amp; Baharat <span class="ch-cnt">1</span></button>
+          <button class="chip" data-cat="arac">Araç-Gereç <span class="ch-cnt">2</span></button>
+          <button class="chip" data-cat="dunya">Dünya Mutfağı <span class="ch-cnt">2</span></button>
+        </div>
+      </div>
+
+      <div class="pc-body flush">
+        <table class="ptable" id="cTable">
+          <thead>
+            <tr>
+              <th>Terim</th>
+              <th class="col-cat-th">Kategori</th>
+              <th class="col-ltr-th">Harf</th>
+              <th>Durum</th>
+              <th>Aksiyon</th>
+            </tr>
+          </thead>
+          <tbody>
+
+            <tr data-cat="teknik">
+              <td>
+                <div class="pg-cell">
+                  <div class="pg-ico">B</div>
+                  <div class="pg-info"><div class="pg-title">Benmari</div><div class="tg-gloss">bain-marie · su banyosunda eritme</div></div>
+                </div>
+              </td>
+              <td class="col-cat"><span class="tg-cat"><i class="fa-solid fa-fire-flame-curved"></i> Pişirme Teknikleri</span></td>
+              <td class="col-ltr"><span class="tg-harf">B</span></td>
+              <td><span class="pstat ok">Yayında</span></td>
+              <td><div class="row-acts">
+                <a class="ia-btn" href="sa-admin-sozluk-form.html" title="Düzenle"><i class="fa-solid fa-pen"></i></a>
+                <button class="ia-btn danger" data-del="Benmari" title="Sil"><i class="fa-solid fa-trash"></i></button>
+              </div></td>
+            </tr>
+
+            <tr data-cat="teknik">
+              <td>
+                <div class="pg-cell">
+                  <div class="pg-ico">B</div>
+                  <div class="pg-info"><div class="pg-title">Beşamel</div><div class="tg-gloss">temel beyaz sos</div></div>
+                </div>
+              </td>
+              <td class="col-cat"><span class="tg-cat"><i class="fa-solid fa-fire-flame-curved"></i> Pişirme Teknikleri</span></td>
+              <td class="col-ltr"><span class="tg-harf">B</span></td>
+              <td><span class="pstat ok">Yayında</span></td>
+              <td><div class="row-acts">
+                <a class="ia-btn" href="sa-admin-sozluk-form.html" title="Düzenle"><i class="fa-solid fa-pen"></i></a>
+                <button class="ia-btn danger" data-del="Beşamel" title="Sil"><i class="fa-solid fa-trash"></i></button>
+              </div></td>
+            </tr>
+
+            <tr data-cat="teknik">
+              <td>
+                <div class="pg-cell">
+                  <div class="pg-ico">J</div>
+                  <div class="pg-info"><div class="pg-title">Jülyen</div><div class="tg-gloss">julienne · kibrit çöpü doğrama</div></div>
+                </div>
+              </td>
+              <td class="col-cat"><span class="tg-cat"><i class="fa-solid fa-fire-flame-curved"></i> Pişirme Teknikleri</span></td>
+              <td class="col-ltr"><span class="tg-harf">J</span></td>
+              <td><span class="pstat ok">Yayında</span></td>
+              <td><div class="row-acts">
+                <a class="ia-btn" href="sa-admin-sozluk-form.html" title="Düzenle"><i class="fa-solid fa-pen"></i></a>
+                <button class="ia-btn danger" data-del="Jülyen" title="Sil"><i class="fa-solid fa-trash"></i></button>
+              </div></td>
+            </tr>
+
+            <tr data-cat="teknik">
+              <td>
+                <div class="pg-cell">
+                  <div class="pg-ico">M</div>
+                  <div class="pg-info"><div class="pg-title">Meyane</div><div class="tg-gloss">roux · un-yağ kavrumu</div></div>
+                </div>
+              </td>
+              <td class="col-cat"><span class="tg-cat"><i class="fa-solid fa-fire-flame-curved"></i> Pişirme Teknikleri</span></td>
+              <td class="col-ltr"><span class="tg-harf">M</span></td>
+              <td><span class="pstat ok">Yayında</span></td>
+              <td><div class="row-acts">
+                <a class="ia-btn" href="sa-admin-sozluk-form.html" title="Düzenle"><i class="fa-solid fa-pen"></i></a>
+                <button class="ia-btn danger" data-del="Meyane" title="Sil"><i class="fa-solid fa-trash"></i></button>
+              </div></td>
+            </tr>
+
+            <tr data-cat="teknik">
+              <td>
+                <div class="pg-cell">
+                  <div class="pg-ico">S</div>
+                  <div class="pg-info"><div class="pg-title">Sote</div><div class="tg-gloss">sauté · yüksek ateşte çabuk kavurma</div></div>
+                </div>
+              </td>
+              <td class="col-cat"><span class="tg-cat"><i class="fa-solid fa-fire-flame-curved"></i> Pişirme Teknikleri</span></td>
+              <td class="col-ltr"><span class="tg-harf">S</span></td>
+              <td><span class="pstat ok">Yayında</span></td>
+              <td><div class="row-acts">
+                <a class="ia-btn" href="sa-admin-sozluk-form.html" title="Düzenle"><i class="fa-solid fa-pen"></i></a>
+                <button class="ia-btn danger" data-del="Sote" title="Sil"><i class="fa-solid fa-trash"></i></button>
+              </div></td>
+            </tr>
+
+            <tr data-cat="teknik">
+              <td>
+                <div class="pg-cell">
+                  <div class="pg-ico">F</div>
+                  <div class="pg-info"><div class="pg-title">Flambe</div><div class="tg-gloss">alevde pişirme</div></div>
+                </div>
+              </td>
+              <td class="col-cat"><span class="tg-cat"><i class="fa-solid fa-fire-flame-curved"></i> Pişirme Teknikleri</span></td>
+              <td class="col-ltr"><span class="tg-harf">F</span></td>
+              <td><span class="pstat wait">Taslak</span></td>
+              <td><div class="row-acts">
+                <a class="ia-btn" href="sa-admin-sozluk-form.html" title="Düzenle"><i class="fa-solid fa-pen"></i></a>
+                <button class="ia-btn danger" data-del="Flambe" title="Sil"><i class="fa-solid fa-trash"></i></button>
+              </div></td>
+            </tr>
+
+            <tr data-cat="hamur">
+              <td>
+                <div class="pg-cell">
+                  <div class="pg-ico">M</div>
+                  <div class="pg-info"><div class="pg-title">Mayalama</div><div class="tg-gloss">hamuru dinlendirme</div></div>
+                </div>
+              </td>
+              <td class="col-cat"><span class="tg-cat"><i class="fa-solid fa-bread-slice"></i> Hamur &amp; Fırın</span></td>
+              <td class="col-ltr"><span class="tg-harf">M</span></td>
+              <td><span class="pstat ok">Yayında</span></td>
+              <td><div class="row-acts">
+                <a class="ia-btn" href="sa-admin-sozluk-form.html" title="Düzenle"><i class="fa-solid fa-pen"></i></a>
+                <button class="ia-btn danger" data-del="Mayalama" title="Sil"><i class="fa-solid fa-trash"></i></button>
+              </div></td>
+            </tr>
+
+            <tr data-cat="malzeme">
+              <td>
+                <div class="pg-cell">
+                  <div class="pg-ico">F</div>
+                  <div class="pg-info"><div class="pg-title">Fermantasyon</div><div class="tg-gloss">mayalanma</div></div>
+                </div>
+              </td>
+              <td class="col-cat"><span class="tg-cat"><i class="fa-solid fa-mortar-pestle"></i> Malzeme &amp; Baharat</span></td>
+              <td class="col-ltr"><span class="tg-harf">F</span></td>
+              <td><span class="pstat ok">Yayında</span></td>
+              <td><div class="row-acts">
+                <a class="ia-btn" href="sa-admin-sozluk-form.html" title="Düzenle"><i class="fa-solid fa-pen"></i></a>
+                <button class="ia-btn danger" data-del="Fermantasyon" title="Sil"><i class="fa-solid fa-trash"></i></button>
+              </div></td>
+            </tr>
+
+            <tr data-cat="arac">
+              <td>
+                <div class="pg-cell">
+                  <div class="pg-ico">M</div>
+                  <div class="pg-info"><div class="pg-title">Mise en place</div><div class="tg-gloss">hazırlık düzeni</div></div>
+                </div>
+              </td>
+              <td class="col-cat"><span class="tg-cat"><i class="fa-solid fa-utensils"></i> Araç-Gereç</span></td>
+              <td class="col-ltr"><span class="tg-harf">M</span></td>
+              <td><span class="pstat ok">Yayında</span></td>
+              <td><div class="row-acts">
+                <a class="ia-btn" href="sa-admin-sozluk-form.html" title="Düzenle"><i class="fa-solid fa-pen"></i></a>
+                <button class="ia-btn danger" data-del="Mise en place" title="Sil"><i class="fa-solid fa-trash"></i></button>
+              </div></td>
+            </tr>
+
+            <tr data-cat="arac">
+              <td>
+                <div class="pg-cell">
+                  <div class="pg-ico">Z</div>
+                  <div class="pg-info"><div class="pg-title">Zeste</div><div class="tg-gloss">narenciye kabuğu rendesi</div></div>
+                </div>
+              </td>
+              <td class="col-cat"><span class="tg-cat"><i class="fa-solid fa-utensils"></i> Araç-Gereç</span></td>
+              <td class="col-ltr"><span class="tg-harf">Z</span></td>
+              <td><span class="pstat wait">Taslak</span></td>
+              <td><div class="row-acts">
+                <a class="ia-btn" href="sa-admin-sozluk-form.html" title="Düzenle"><i class="fa-solid fa-pen"></i></a>
+                <button class="ia-btn danger" data-del="Zeste" title="Sil"><i class="fa-solid fa-trash"></i></button>
+              </div></td>
+            </tr>
+
+            <tr data-cat="dunya">
+              <td>
+                <div class="pg-cell">
+                  <div class="pg-ico">T</div>
+                  <div class="pg-info"><div class="pg-title">Tempura</div><div class="tg-gloss">Japon kızartma hamuru</div></div>
+                </div>
+              </td>
+              <td class="col-cat"><span class="tg-cat"><i class="fa-solid fa-earth-americas"></i> Dünya Mutfağı</span></td>
+              <td class="col-ltr"><span class="tg-harf">T</span></td>
+              <td><span class="pstat ok">Yayında</span></td>
+              <td><div class="row-acts">
+                <a class="ia-btn" href="sa-admin-sozluk-form.html" title="Düzenle"><i class="fa-solid fa-pen"></i></a>
+                <button class="ia-btn danger" data-del="Tempura" title="Sil"><i class="fa-solid fa-trash"></i></button>
+              </div></td>
+            </tr>
+
+            <tr data-cat="dunya">
+              <td>
+                <div class="pg-cell">
+                  <div class="pg-ico">U</div>
+                  <div class="pg-info"><div class="pg-title">Umami</div><div class="tg-gloss">beşinci tat</div></div>
+                </div>
+              </td>
+              <td class="col-cat"><span class="tg-cat"><i class="fa-solid fa-earth-americas"></i> Dünya Mutfağı</span></td>
+              <td class="col-ltr"><span class="tg-harf">U</span></td>
+              <td><span class="pstat ok">Yayında</span></td>
+              <td><div class="row-acts">
+                <a class="ia-btn" href="sa-admin-sozluk-form.html" title="Düzenle"><i class="fa-solid fa-pen"></i></a>
+                <button class="ia-btn danger" data-del="Umami" title="Sil"><i class="fa-solid fa-trash"></i></button>
+              </div></td>
+            </tr>
+
+          </tbody>
+        </table>
+
+        <div class="pnl-empty" id="emptyState" style="display:none">
+          <div class="pe-ico"><i class="fa-solid fa-spell-check"></i></div>
+          <h4>Terim bulunamadı</h4>
+          <p>Arama veya filtre kriterlerine uyan terim yok. Filtreyi sıfırlayın ya da yeni terim ekleyin.</p>
+          <a class="pe-tag" href="sa-admin-sozluk-form.html"><i class="fa-solid fa-plus"></i> Yeni Terim Ekle</a>
+        </div>
+      </div>
+
+    </div><!-- /pnl-card -->
+
+  </main>
+
+</div><!-- /sa-app -->
+
+<script src="assets/js/sa-ui.js"></script>
+<script src="assets/js/sa-shell.js"></script>
+<script src="assets/js/sa-chcnt.js"></script>
+<script>
+/* sayfa JS — kategori chip filtre + arama + sil onayı (sa-admin-icerik kardeşi) */
+(function(){
+  var chips=document.querySelectorAll('#catChips .chip');
+  var rows=document.querySelectorAll('#cTable tbody tr');
+  var searchInput=document.getElementById('cSearch');
+  var emptyState=document.getElementById('emptyState');
+  var activeCat='all';
+
+  function applyFilters(){
+    var q=(searchInput.value||'').toLocaleLowerCase('tr').trim();
+    var visible=0;
+    rows.forEach(function(row){
+      var catMatch=(activeCat==='all'||row.dataset.cat===activeCat);
+      var term=(row.querySelector('.pg-title')||{}).textContent||'';
+      var gloss=(row.querySelector('.tg-gloss')||{}).textContent||'';
+      var textMatch=!q||(term.toLocaleLowerCase('tr').indexOf(q)>-1)||(gloss.toLocaleLowerCase('tr').indexOf(q)>-1);
+      var show=catMatch&&textMatch;
+      row.style.display=show?'':'none';
+      if(show)visible++;
+    });
+    emptyState.style.display=visible===0?'block':'none';
+  }
+
+  chips.forEach(function(chip){
+    chip.addEventListener('click',function(){
+      chips.forEach(function(c){c.classList.remove('is-on')});
+      chip.classList.add('is-on');
+      activeCat=chip.dataset.cat;
+      applyFilters();
+    });
+  });
+  searchInput.addEventListener('input',applyFilters);
+
+  /* sil — saConfirm (yıkıcı) */
+  document.querySelectorAll('[data-del]').forEach(function(btn){
+    btn.addEventListener('click',function(){
+      var name=btn.getAttribute('data-del');
+      if(!window.saConfirm)return;
+      saConfirm({
+        danger:true,title:'Terimi sil',
+        message:'"'+name+'" terimi kalıcı olarak silinecek. Bu işlem geri alınamaz.',
+        ok:'Sil',cancel:'Vazgeç',
+        onConfirm:function(){
+          var tr=btn.closest('tr');if(tr)tr.remove();
+          if(window.saToast)saToast('"'+name+'" terimi silindi',{type:'danger'});
+        }
+      });
+    });
+  });
+})();
+</script>
+</body>
+</html>
