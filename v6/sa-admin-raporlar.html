@@ -68,10 +68,47 @@
 .rep-panel.is-active{display:block;animation:repFade .22s var(--ease)}
 @keyframes repFade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
 
-/* KPI dönem-kıyas referans satırı (kıyas açıkken görünür) */
+/* KPI dönem-kıyas referans satırı (kıyas açıkken görünür) — pill ile belirgin */
 .kpi-cmp{font-size:11px;color:var(--muted);margin-top:5px;display:none;font-variant-numeric:tabular-nums}
 .kpi-cmp i{font-size:9.5px;margin-right:3px}
-body.cmp-on .kpi-cmp{display:block}
+body.cmp-on .kpi-cmp{
+  display:inline-flex;align-items:center;gap:4px;margin-top:7px;
+  padding:3px 9px;border-radius:999px;
+  background:rgba(var(--acc-rgb),.1);color:var(--acc-deep);font-weight:700;
+}
+body.cmp-on .kpi-cmp i{color:var(--acc-deep)}
+
+/* =====================================================================
+   ÖZEL TARİH ARALIĞI POPOVER — iki native date input (harici lib YOK).
+   range-wrap relative kapsayıcı; pop mutlak konumlu, palet-içi, izole.
+   ===================================================================== */
+.range-wrap{position:relative}
+.date-pop{
+  position:absolute;top:calc(100% + 8px);right:0;z-index:60;
+  background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-md);
+  box-shadow:var(--sh-lg,var(--sh-md));padding:15px;min-width:312px;
+  animation:repFade .18s var(--ease);
+}
+.date-pop[hidden]{display:none}
+.dp-head{font-size:12px;font-weight:700;color:var(--slate);margin-bottom:11px;display:flex;align-items:center;gap:7px}
+.dp-head i{color:var(--acc-deep)}
+.dp-row{display:flex;gap:10px;margin-bottom:13px}
+.dp-field{display:flex;flex-direction:column;gap:5px;flex:1;min-width:0}
+.dp-field label{font-size:11px;font-weight:700;letter-spacing:.02em;text-transform:uppercase;color:var(--muted)}
+.dp-field input[type=date]{
+  font-family:inherit;font-size:13px;padding:9px 11px;
+  border:1px solid var(--line);border-radius:var(--radius-sm);
+  background:var(--bg);color:var(--slate);width:100%;
+  font-variant-numeric:tabular-nums;
+}
+.dp-field input[type=date]:focus{outline:none;border-color:var(--acc);box-shadow:0 0 0 3px rgba(var(--acc-rgb),.12)}
+.dp-foot{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.dp-note{font-size:10.5px;color:var(--muted);font-weight:600;line-height:1.3}
+.dp-err{font-size:11px;color:var(--tomato);font-weight:700;margin-bottom:9px;display:none}
+.dp-err.show{display:block}
+@media(max-width:480px){
+  .date-pop{right:auto;left:0;min-width:0;width:min(312px,calc(100vw - 40px))}
+}
 
 /* KPI grid 6'lı varyant (Genel Bakış) — kabuktaki 4'lü grid'i sayfada genişlet */
 .kpi-grid.k6{grid-template-columns:repeat(3,minmax(0,1fr))}
@@ -94,7 +131,13 @@ body.cmp-on .kpi-cmp{display:block}
   content:"";position:absolute;inset:22%;border-radius:var(--radius-circle);
   background:var(--paper);box-shadow:inset 0 0 0 1px var(--line);
 }
-.rep-donut-ctr{position:absolute;inset:0;display:grid;place-items:center;text-align:center;line-height:1.1}
+/* z-index:2 ŞART — ::after (beyaz iç halka) DOM'da ctr'den SONRA gelir ve
+   pseudo olarak en son boyanır; z-index olmadan merkez yazının ÜSTÜNÜ örter.
+   ctr'yi halkanın üstüne çıkarır → ring → beyaz delik → yazı (okunur).
+   FLEX-column center: grid place-items:center yalnız öğeyi KENDİ satırında
+   ortalar, satır grubunu 128px kutuda dikey ortalamaz → yazı yukarı kayardı.
+   flex + justify-content:center + align-items:center iki eksende de ortalar. */
+.rep-donut-ctr{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;line-height:1.1;z-index:2}
 .rep-donut-ctr b{font-size:19px;font-weight:700;color:var(--slate);letter-spacing:-.02em}
 .rep-donut-ctr span{font-size:10px;color:var(--muted);font-weight:600}
 .rep-legend{display:flex;flex-direction:column;gap:11px;min-width:140px;flex:1}
@@ -386,6 +429,66 @@ body.cmp-on .kpi-cmp{display:block}
   .bp-ico{width:40px;height:40px;font-size:17px}
   .bp-ttl{font-size:16px}
 }
+
+/* =====================================================================
+   DALGA 2 — CROSS-CUTTING L3 (Kıyas çapraz-satış · kohort · birleşik kuyruk)
+   Tümü mevcut token + .brand-* scope üzerine; ham hex YOK, saf-CSS türevler.
+   ===================================================================== */
+
+/* ---- dönem-kıyas tablosu (ptable türevi; sayı sütunları sağa) ---- */
+.cmp-table td.cnum,.cmp-table th.cnum{text-align:right;font-variant-numeric:tabular-nums}
+.cmp-table td.cnum{font-weight:700;color:var(--slate-2)}
+.cmp-pill{font-size:11.5px;font-weight:700;display:inline-flex;align-items:center;gap:4px;white-space:nowrap;justify-content:flex-end}
+.cmp-pill.up{color:var(--green-deep)}
+.cmp-pill.down{color:var(--tomato)}
+.cmp-pill.flat{color:var(--muted)}
+
+/* ---- normalize marka kıyas — bullet bar (dist türevi, marka renkli) ---- */
+.kbar-list{display:flex;flex-direction:column;gap:16px;padding:22px}
+.kbar-row{display:grid;grid-template-columns:158px minmax(0,1fr) 78px 60px;gap:14px;align-items:center;font-size:13px}
+.kbar-name{display:inline-flex;align-items:center;gap:9px;font-weight:700;color:var(--slate-2);min-width:0}
+.kbar-name .kb-dot{width:11px;height:11px;border-radius:3px;flex:none;background:var(--acc)}
+.kbar-name span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.kbar-track{height:12px;border-radius:999px;background:var(--bg);overflow:hidden}
+.kbar-fill{height:100%;border-radius:999px;background:var(--acc);transition:width .5s var(--ease)}
+.kbar-val{text-align:right;font-weight:700;color:var(--slate);font-variant-numeric:tabular-nums}
+.kbar-mom{text-align:right;font-size:11.5px;font-weight:700;font-variant-numeric:tabular-nums;display:inline-flex;align-items:center;gap:3px;justify-content:flex-end}
+.kbar-mom.up{color:var(--green-deep)}
+.kbar-mom.down{color:var(--tomato)}
+
+/* ---- ÇAPRAZ-SATIŞ MATRİSİ — saf-CSS ısı-matrisi (grid + token opaklık) ----
+   Her veri satırına .brand-X eklenir → o satırın hücreleri KAYNAK markanın
+   hue'sunda boyanır (rgba(var(--acc-rgb),--v)); köşegen = sessiz hatch. */
+.xsell{overflow-x:auto;-webkit-overflow-scrolling:touch;padding:12px 22px 6px}
+.xs-grid{display:flex;flex-direction:column;gap:6px;min-width:580px}
+.xs-row{display:grid;grid-template-columns:160px repeat(5,minmax(0,1fr));gap:6px;align-items:center}
+.xs-corner{font-size:10px;font-weight:700;color:var(--muted);line-height:1.3;align-self:end;text-transform:uppercase;letter-spacing:.02em}
+.xs-clbl{text-align:center;font-size:11px;font-weight:700;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding:0 2px}
+.xs-rlbl{display:inline-flex;align-items:center;gap:8px;font-size:12px;font-weight:700;color:var(--slate-2);min-width:0}
+.xs-rlbl .xr-dot{width:10px;height:10px;border-radius:3px;flex:none;background:var(--acc)}
+.xs-rlbl span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.xs-cell{height:48px;border-radius:7px;background:rgba(var(--acc-rgb),var(--v,.08));display:grid;place-items:center;font-size:12.5px;font-weight:700;color:var(--slate);font-variant-numeric:tabular-nums;transition:outline .14s var(--ease)}
+.xs-cell.dark{color:#fff}
+.xs-cell.self{background:repeating-linear-gradient(45deg,var(--bg),var(--bg) 5px,var(--paper) 5px,var(--paper) 10px);color:var(--muted);font-weight:600}
+.xs-cell:not(.self):hover{outline:2px solid rgba(var(--acc-rgb),.55);outline-offset:-2px;cursor:default}
+
+/* ---- ısı-skala açıklaması ---- */
+.heat-legend{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:8px 22px 20px;font-size:11.5px;color:var(--muted);font-weight:600}
+.heat-scale{display:inline-flex;gap:3px;align-items:center}
+.heat-scale i{width:24px;height:11px;border-radius:3px;display:block}
+.heat-note{display:inline-flex;align-items:center;gap:6px}
+
+/* ---- birleşik onay kuyruğu — tür hücresi marka renkli ikon + .pstat SLA ---- */
+.q-type{display:flex;align-items:center;gap:11px;min-width:0}
+.q-ico{width:32px;height:32px;flex:none;border-radius:8px;display:grid;place-items:center;font-size:13px;background:rgba(var(--acc-rgb),.13);color:var(--acc-deep)}
+.q-name{font-size:13.5px;font-weight:700;color:var(--slate);white-space:nowrap}
+.q-meta{font-size:11.5px;color:var(--muted);margin-top:1px}
+.q-big{font-size:16px;font-weight:800;color:var(--slate);font-variant-numeric:tabular-nums}
+
+@media(max-width:720px){
+  .kbar-row{grid-template-columns:110px minmax(0,1fr) 62px;gap:9px}
+  .kbar-mom{display:none}
+}
 </style>
 </head>
 <body data-brand="mutfak" data-sec="admin" data-screen="raporlar">
@@ -446,13 +549,28 @@ body.cmp-on .kpi-cmp{display:block}
         <div class="ph-sub" id="repSub">Son 30 günün platform özeti — büyüme, içerik ve gelir göstergeleri</div>
       </div>
       <div class="ph-actions">
-        <div class="range-chips" id="rangeChips" role="group" aria-label="Tarih aralığı">
-          <button class="chip" data-range="bugun">Bugün</button>
-          <button class="chip" data-range="7g">7g</button>
-          <button class="chip is-on" data-range="30g">30g</button>
-          <button class="chip" data-range="90g">90g</button>
-          <button class="chip" data-range="yil">Bu Yıl</button>
-          <button class="chip" data-range="ozel">Özel</button>
+        <div class="range-wrap">
+          <div class="range-chips" id="rangeChips" role="group" aria-label="Tarih aralığı">
+            <button class="chip" data-range="bugun">Bugün</button>
+            <button class="chip" data-range="7g">7g</button>
+            <button class="chip is-on" data-range="30g">30g</button>
+            <button class="chip" data-range="90g">90g</button>
+            <button class="chip" data-range="yil">Bu Yıl</button>
+            <button class="chip" data-range="ozel" aria-haspopup="dialog" aria-expanded="false">Özel</button>
+          </div>
+          <!-- Özel tarih aralığı seçici (native date input · backend'de bağlanacak) -->
+          <div class="date-pop" id="datePop" role="dialog" aria-label="Özel tarih aralığı seç" hidden>
+            <div class="dp-head"><i class="fa-solid fa-calendar-days"></i> Özel tarih aralığı</div>
+            <div class="dp-err" id="dpErr"><i class="fa-solid fa-circle-exclamation"></i> Geçerli bir aralık seçin (bitiş ≥ başlangıç).</div>
+            <div class="dp-row">
+              <div class="dp-field"><label for="dpStart">Başlangıç</label><input type="date" id="dpStart" /></div>
+              <div class="dp-field"><label for="dpEnd">Bitiş</label><input type="date" id="dpEnd" /></div>
+            </div>
+            <div class="dp-foot">
+              <span class="dp-note">Veri mock —<br>backend'de bağlanacak</span>
+              <button class="btn btn-acc btn-sm" id="dpApply" type="button">Uygula</button>
+            </div>
+          </div>
         </div>
         <button class="btn btn-ghost btn-sm cmp-toggle" id="cmpToggle" type="button" aria-pressed="false"><i class="fa-solid fa-right-left"></i> Kıyas</button>
         <a class="btn btn-ghost btn-sm" href="#" id="exportBtn"><i class="fa-solid fa-arrow-down-to-line"></i> Dışa Aktar</a>
@@ -548,11 +666,11 @@ body.cmp-on .kpi-cmp{display:block}
           <span class="kpi-delta up" style="font-size:11.5px"><i class="fa-solid fa-arrow-up"></i> +2,1p çapraz</span>
         </div>
         <div class="rep-donut-wrap" style="padding-bottom:20px">
-          <div class="rep-donut" role="img" aria-label="Üye dikey derinliği: tek dikey %77, iki dikey %17, üç+ dikey %6" style="--p1:77%;--p2:94%;--p3:100%">
-            <div class="rep-donut-ctr"><b>%23</b><span>2+ dikey</span></div>
+          <div class="rep-donut" role="img" aria-label="Üye dikey derinliği: tek dikey %77, iki dikey %17, üç+ dikey %6 — toplam 8.412 üye" style="--p1:77%;--p2:94%;--p3:100%;--dc1:rgba(var(--acc-rgb),.18);--dc2:rgba(var(--acc-rgb),.55);--dc3:var(--acc)">
+            <div class="rep-donut-ctr"><b>8.412</b><span>üye</span></div>
           </div>
           <div class="rep-legend">
-            <div class="rl-item"><span class="rl-dot" style="background:var(--bg);box-shadow:inset 0 0 0 1px var(--line)"></span><b>Tek dikey</b><span class="rl-val">%77</span></div>
+            <div class="rl-item"><span class="rl-dot" style="background:rgba(var(--acc-rgb),.18)"></span><b>Tek dikey</b><span class="rl-val">%77</span></div>
             <div class="rl-item"><span class="rl-dot" style="background:rgba(var(--acc-rgb),.55)"></span><b>İki dikey</b><span class="rl-val">%17</span></div>
             <div class="rl-item"><span class="rl-dot" style="background:var(--acc)"></span><b>Üç+ dikey</b><span class="rl-val">%6</span></div>
           </div>
@@ -1090,13 +1208,13 @@ body.cmp-on .kpi-cmp{display:block}
           <div class="pnl-card">
             <div class="pc-head"><div class="pc-title"><i class="fa-solid fa-chart-pie"></i> Challenge Katılımı</div></div>
             <div class="rep-donut-wrap" style="padding-bottom:16px">
-              <div class="rep-donut" role="img" aria-label="Challenge katılım: tamamladı %64, devam %24, bıraktı %12" style="--p1:64%;--p2:88%;--p3:100%">
-                <div class="rep-donut-ctr"><b>%64</b><span>tamamladı</span></div>
+              <div class="rep-donut" role="img" aria-label="Challenge katılım: tamamladı %64, devam %24, bıraktı %12 — toplam 1.940 katılım" style="--p1:64%;--p2:88%;--p3:100%">
+                <div class="rep-donut-ctr"><b>1.940</b><span>katılım</span></div>
               </div>
               <div class="rep-legend">
                 <div class="rl-item"><span class="rl-dot" style="background:var(--acc)"></span><b>Tamamladı</b><span class="rl-val">%64</span></div>
-                <div class="rl-item"><span class="rl-dot" style="background:rgba(var(--acc-rgb),.45)"></span><b>Devam ediyor</b><span class="rl-val">%24</span></div>
-                <div class="rl-item"><span class="rl-dot" style="background:var(--bg);box-shadow:inset 0 0 0 1px var(--line)"></span><b>Bıraktı</b><span class="rl-val">%12</span></div>
+                <div class="rl-item"><span class="rl-dot" style="background:rgba(var(--acc-rgb),.55)"></span><b>Devam ediyor</b><span class="rl-val">%24</span></div>
+                <div class="rl-item"><span class="rl-dot" style="background:rgba(var(--acc-rgb),.32)"></span><b>Bıraktı</b><span class="rl-val">%12</span></div>
               </div>
             </div>
           </div>
@@ -1181,8 +1299,8 @@ body.cmp-on .kpi-cmp{display:block}
               </div>
               <div class="rep-legend">
                 <div class="rl-item"><span class="rl-dot" style="background:var(--acc)"></span><b>Onaylı</b><span class="rl-val">%88</span></div>
-                <div class="rl-item"><span class="rl-dot" style="background:rgba(var(--acc-rgb),.4)"></span><b>Bekleyen</b><span class="rl-val">%8</span></div>
-                <div class="rl-item"><span class="rl-dot" style="background:var(--bg);box-shadow:inset 0 0 0 1px var(--line)"></span><b>Reddedilen</b><span class="rl-val">%4</span></div>
+                <div class="rl-item"><span class="rl-dot" style="background:rgba(var(--acc-rgb),.55)"></span><b>Bekleyen</b><span class="rl-val">%8</span></div>
+                <div class="rl-item"><span class="rl-dot" style="background:rgba(var(--acc-rgb),.32)"></span><b>Reddedilen</b><span class="rl-val">%4</span></div>
               </div>
             </div>
           </div>
@@ -1215,14 +1333,153 @@ body.cmp-on .kpi-cmp{display:block}
 
     <!-- ============ SEKME 3 — KIYAS (L3 — DALGA 2'de dolacak) ============ -->
     <section class="rep-panel" id="panel-kiyas" role="tabpanel" aria-labelledby="tab-kiyas" tabindex="0" hidden>
-      <div class="pnl-card">
-        <div class="pnl-empty">
-          <div class="pe-ico"><i class="fa-solid fa-scale-balanced"></i></div>
-          <h4>Cross-Brand Kıyas &amp; Çapraz-Satış</h4>
-          <p>Markaların normalize yan-yana karşılaştırması, dikeyler-arası üye örtüşme/çapraz-satış ısı matrisi ve büyüme-katkı kadranı bu sekmede toplanacak.</p>
-          <span class="pe-tag"><i class="fa-solid fa-layer-group"></i> DALGA 2'de gelecek</span>
+
+      <!-- ----- DÖNEM KIYAS — seçili dönem vs önceki eşit dönem ----- -->
+      <div class="pnl-card" style="margin-bottom:16px">
+        <div class="pc-head">
+          <div class="pc-title"><i class="fa-solid fa-right-left"></i> Dönem Kıyas — Seçili Dönem vs Önceki Eşit Dönem</div>
+          <span class="cl-val" style="font-size:12px">Son 30g ↔ önceki 30g</span>
+        </div>
+        <div class="pc-body flush">
+          <table class="ptable cmp-table">
+            <thead>
+              <tr><th>Hub metriği</th><th class="cnum">Önceki dönem</th><th class="cnum">Bu dönem</th><th class="cnum">Değişim</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Toplam kullanıcı</td><td class="cnum">7.928</td><td class="cnum">8.412</td><td><span class="cmp-pill up"><i class="fa-solid fa-arrow-up"></i> +6,1%</span></td></tr>
+              <tr><td>Aktif abonelik</td><td class="cnum">1.175</td><td class="cnum">1.286</td><td><span class="cmp-pill up"><i class="fa-solid fa-arrow-up"></i> +9,4%</span></td></tr>
+              <tr><td>Hub MRR</td><td class="cnum">₺110.450</td><td class="cnum">₺118.400</td><td><span class="cmp-pill up"><i class="fa-solid fa-arrow-up"></i> +7,2%</span></td></tr>
+              <tr><td>2+ dikeyde aktif üye</td><td class="cnum">%20,9</td><td class="cnum">%23,0</td><td><span class="cmp-pill up"><i class="fa-solid fa-arrow-up"></i> +2,1p</span></td></tr>
+              <tr><td>Aktif işletme</td><td class="cnum">203</td><td class="cnum">214</td><td><span class="cmp-pill up"><i class="fa-solid fa-arrow-up"></i> +5,4%</span></td></tr>
+              <tr><td>No-show oranı (Sağlık)</td><td class="cnum">%9,6</td><td class="cnum">%8,4</td><td><span class="cmp-pill up"><i class="fa-solid fa-arrow-down"></i> -1,2p</span></td></tr>
+              <tr><td>Toplam hub geliri</td><td class="cnum">₺120.760</td><td class="cnum">₺142.500</td><td><span class="cmp-pill up"><i class="fa-solid fa-arrow-up"></i> +18,0%</span></td></tr>
+            </tbody>
+          </table>
         </div>
       </div>
+
+      <!-- ----- ÇAPRAZ-SATIŞ MATRİSİ — hub'ın imza analizi (dikey × dikey) ----- -->
+      <div class="pnl-card" style="margin-bottom:16px">
+        <div class="pc-head">
+          <div class="pc-title"><i class="fa-solid fa-shuffle"></i> Markalar-Arası Çapraz-Satış Matrisi</div>
+          <span class="proto-note">Üye örtüşmesi · backend'de bağlanacak</span>
+        </div>
+        <div class="xsell" role="img" aria-label="Markalar-arası çapraz-satış ısı matrisi: satır kaynak dikey, sütun hedef dikey, hücre kaynak dikeyde aktif üyenin hedefte de aktiflik oranı. Örnek: Sağlık kullanıcısının %46'sı İçerikte, %19'u Store'da aktif.">
+          <div class="xs-grid">
+            <!-- başlık satırı -->
+            <div class="xs-row">
+              <div class="xs-corner">Kaynak ↓ / Hedef →</div>
+              <div class="xs-clbl">İçerik</div>
+              <div class="xs-clbl">Store</div>
+              <div class="xs-clbl">DadaFit</div>
+              <div class="xs-clbl">Sağlık</div>
+              <div class="xs-clbl">İşletme</div>
+            </div>
+            <!-- İçerik kaynak -->
+            <div class="xs-row brand-icerik">
+              <div class="xs-rlbl"><span class="xr-dot"></span><span>İçerik &amp; Tarifler</span></div>
+              <div class="xs-cell self">—</div>
+              <div class="xs-cell" style="--v:.38">%18</div>
+              <div class="xs-cell" style="--v:.16">%7</div>
+              <div class="xs-cell" style="--v:.20">%9</div>
+              <div class="xs-cell" style="--v:.12">%5</div>
+            </div>
+            <!-- Store kaynak -->
+            <div class="xs-row brand-store">
+              <div class="xs-rlbl"><span class="xr-dot"></span><span>DadaStore</span></div>
+              <div class="xs-cell dark" style="--v:.84">%42</div>
+              <div class="xs-cell self">—</div>
+              <div class="xs-cell" style="--v:.14">%6</div>
+              <div class="xs-cell" style="--v:.24">%11</div>
+              <div class="xs-cell" style="--v:.10">%4</div>
+            </div>
+            <!-- DadaFit kaynak -->
+            <div class="xs-row brand-dadafit">
+              <div class="xs-rlbl"><span class="xr-dot"></span><span>DadaFit</span></div>
+              <div class="xs-cell dark" style="--v:.76">%38</div>
+              <div class="xs-cell" style="--v:.30">%14</div>
+              <div class="xs-cell self">—</div>
+              <div class="xs-cell" style="--v:.46">%22</div>
+              <div class="xs-cell" style="--v:.09">%3</div>
+            </div>
+            <!-- Sağlık kaynak -->
+            <div class="xs-row brand-saglik">
+              <div class="xs-rlbl"><span class="xr-dot"></span><span>Sağlık &amp; Diyet</span></div>
+              <div class="xs-cell dark" style="--v:.90">%46</div>
+              <div class="xs-cell" style="--v:.40">%19</div>
+              <div class="xs-cell" style="--v:.34">%16</div>
+              <div class="xs-cell self">—</div>
+              <div class="xs-cell" style="--v:.10">%4</div>
+            </div>
+            <!-- İşletme kaynak -->
+            <div class="xs-row brand-isletme">
+              <div class="xs-rlbl"><span class="xr-dot"></span><span>İşletmeler</span></div>
+              <div class="xs-cell dark" style="--v:.62">%31</div>
+              <div class="xs-cell" style="--v:.26">%12</div>
+              <div class="xs-cell" style="--v:.12">%5</div>
+              <div class="xs-cell" style="--v:.16">%7</div>
+              <div class="xs-cell self">—</div>
+            </div>
+          </div>
+        </div>
+        <div class="heat-legend">
+          <span class="heat-note">Düşük</span>
+          <span class="heat-scale">
+            <i style="background:rgba(var(--acc-rgb),.12)"></i>
+            <i style="background:rgba(var(--acc-rgb),.3)"></i>
+            <i style="background:rgba(var(--acc-rgb),.5)"></i>
+            <i style="background:rgba(var(--acc-rgb),.7)"></i>
+            <i style="background:rgba(var(--acc-rgb),.9)"></i>
+          </span>
+          <span class="heat-note">Yüksek geçiş yoğunluğu</span>
+          <span class="heat-note" style="margin-left:auto"><i class="fa-solid fa-circle-info"></i> Satır rengi = kaynak marka · hücre = kaynakta aktif üyenin hedefte de aktiflik oranı</span>
+        </div>
+        <div class="sig-insight" style="padding:0 22px 20px;margin-top:0">
+          <i class="fa-solid fa-lightbulb"></i>
+          <span>Üyelerin <b>%23'ü 2+ dikeyde aktif</b>; bu üyeler tekil kullanıcıdan <b>2,4× LTV</b> üretiyor. En güçlü köprü <b>Sağlık → İçerik (%46)</b> ve <b>DadaFit → Sağlık (%22)</b> — diyet/fitness kullanıcısı içerik motoruna akıyor.</span>
+        </div>
+      </div>
+
+      <!-- ----- NORMALİZE MARKA KIYAS — ortak eksen (gelir katkısı) + MoM ----- -->
+      <div class="pnl-card">
+        <div class="pc-head">
+          <div class="pc-title"><i class="fa-solid fa-ranking-star"></i> Normalize Marka Kıyası — Gelir Katkısı &amp; Büyüme</div>
+          <span class="cl-val" style="font-size:12px">Çubuk: gelir katkısı · sağ: aylık büyüme</span>
+        </div>
+        <div class="kbar-list">
+          <div class="kbar-row brand-store">
+            <div class="kbar-name"><span class="kb-dot"></span><span>DadaStore</span></div>
+            <div class="kbar-track"><div class="kbar-fill" style="width:100%"></div></div>
+            <div class="kbar-val">₺96.300</div>
+            <div class="kbar-mom up"><i class="fa-solid fa-arrow-up"></i> +21%</div>
+          </div>
+          <div class="kbar-row brand-icerik">
+            <div class="kbar-name"><span class="kb-dot"></span><span>Abonelik &amp; İçerik</span></div>
+            <div class="kbar-track"><div class="kbar-fill" style="width:92%"></div></div>
+            <div class="kbar-val">₺88.200</div>
+            <div class="kbar-mom up"><i class="fa-solid fa-arrow-up"></i> +7%</div>
+          </div>
+          <div class="kbar-row brand-saglik">
+            <div class="kbar-name"><span class="kb-dot"></span><span>Sağlık &amp; Diyet</span></div>
+            <div class="kbar-track"><div class="kbar-fill" style="width:41%"></div></div>
+            <div class="kbar-val">₺39.600</div>
+            <div class="kbar-mom up"><i class="fa-solid fa-arrow-up"></i> +14%</div>
+          </div>
+          <div class="kbar-row brand-isletme">
+            <div class="kbar-name"><span class="kb-dot"></span><span>İşletmeler</span></div>
+            <div class="kbar-track"><div class="kbar-fill" style="width:36%"></div></div>
+            <div class="kbar-val">₺34.200</div>
+            <div class="kbar-mom up"><i class="fa-solid fa-arrow-up"></i> +9%</div>
+          </div>
+          <div class="kbar-row brand-dadafit">
+            <div class="kbar-name"><span class="kb-dot"></span><span>DadaFit</span></div>
+            <div class="kbar-track"><div class="kbar-fill" style="width:26%"></div></div>
+            <div class="kbar-val">₺25.400</div>
+            <div class="kbar-mom up"><i class="fa-solid fa-arrow-up"></i> +18%</div>
+          </div>
+        </div>
+      </div>
+
     </section><!-- /panel-kiyas -->
 
     <!-- ============ SEKME 3 — FİNANSAL (iskelet + temsili veri) ============ -->
@@ -1273,20 +1530,46 @@ body.cmp-on .kpi-cmp{display:block}
             <div class="rep-legend">
               <div class="rl-item"><span class="rl-dot" style="background:var(--acc)"></span><b>Abonelik</b><span class="rl-val">%62</span></div>
               <div class="rl-item"><span class="rl-dot" style="background:rgba(var(--acc-rgb),.55)"></span><b>Store</b><span class="rl-val">%28</span></div>
-              <div class="rl-item"><span class="rl-dot" style="background:rgba(var(--acc-rgb),.28)"></span><b>Reklam</b><span class="rl-val">%10</span></div>
+              <div class="rl-item"><span class="rl-dot" style="background:rgba(var(--acc-rgb),.32)"></span><b>Reklam</b><span class="rl-val">%10</span></div>
             </div>
           </div>
         </div>
       </div>
 
+      <!-- MARKA BAZLI GELİR KIRILIMI (hub roll-up — gelir türü + pay + MoM) -->
+      <div class="pnl-card" style="margin-bottom:16px">
+        <div class="pc-head">
+          <div class="pc-title"><i class="fa-solid fa-coins"></i> Marka Bazlı Gelir Kırılımı</div>
+          <span class="proto-note">Temsili veri</span>
+        </div>
+        <div class="pc-body flush">
+          <table class="ptable cmp-table">
+            <thead>
+              <tr><th>Marka</th><th>Gelir türü</th><th class="cnum">Gelir</th><th class="cnum">Pay</th><th class="cnum">MoM</th></tr>
+            </thead>
+            <tbody>
+              <tr><td><span class="brand-store" style="display:inline-flex;align-items:center;gap:9px"><span style="width:10px;height:10px;border-radius:3px;background:var(--acc);flex:none"></span><b style="font-weight:700;color:var(--slate)">DadaStore</b></span></td><td>Ürün satışı</td><td class="cnum">₺96.300</td><td class="cnum">%34</td><td><span class="cmp-pill up"><i class="fa-solid fa-arrow-up"></i> +21%</span></td></tr>
+              <tr><td><span class="brand-icerik" style="display:inline-flex;align-items:center;gap:9px"><span style="width:10px;height:10px;border-radius:3px;background:var(--acc);flex:none"></span><b style="font-weight:700;color:var(--slate)">Abonelik &amp; İçerik</b></span></td><td>Abonelik</td><td class="cnum">₺88.200</td><td class="cnum">%31</td><td><span class="cmp-pill up"><i class="fa-solid fa-arrow-up"></i> +7%</span></td></tr>
+              <tr><td><span class="brand-saglik" style="display:inline-flex;align-items:center;gap:9px"><span style="width:10px;height:10px;border-radius:3px;background:var(--acc);flex:none"></span><b style="font-weight:700;color:var(--slate)">Sağlık &amp; Diyet</b></span></td><td>Randevu komisyonu</td><td class="cnum">₺39.600</td><td class="cnum">%14</td><td><span class="cmp-pill up"><i class="fa-solid fa-arrow-up"></i> +14%</span></td></tr>
+              <tr><td><span class="brand-isletme" style="display:inline-flex;align-items:center;gap:9px"><span style="width:10px;height:10px;border-radius:3px;background:var(--acc);flex:none"></span><b style="font-weight:700;color:var(--slate)">İşletmeler</b></span></td><td>Reklam &amp; öne çıkarma</td><td class="cnum">₺34.200</td><td class="cnum">%12</td><td><span class="cmp-pill up"><i class="fa-solid fa-arrow-up"></i> +9%</span></td></tr>
+              <tr><td><span class="brand-dadafit" style="display:inline-flex;align-items:center;gap:9px"><span style="width:10px;height:10px;border-radius:3px;background:var(--acc);flex:none"></span><b style="font-weight:700;color:var(--slate)">DadaFit</b></span></td><td>Abonelik</td><td class="cnum">₺25.400</td><td class="cnum">%9</td><td><span class="cmp-pill up"><i class="fa-solid fa-arrow-up"></i> +18%</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
       <div class="rep-2col">
-        <!-- abonelik planları -->
+        <!-- abonelik planları (gerçek kademeler: sa-admin-fiyatlandirma) -->
         <div class="pnl-card">
-          <div class="pc-head"><div class="pc-title"><i class="fa-solid fa-crown"></i> Abonelik Planları</div></div>
+          <div class="pc-head"><div class="pc-title"><i class="fa-solid fa-crown"></i> Abonelik Kademeleri</div><a class="pc-link" href="sa-admin-fiyatlandirma.html">Fiyatları Yönet <i class="fa-solid fa-arrow-right"></i></a></div>
           <div class="dist-list">
-            <div class="dist-row"><div class="dist-head"><b>Pro Aylık</b><span>%46</span></div><div class="dist-track"><div class="dist-fill" style="width:46%"></div></div></div>
-            <div class="dist-row"><div class="dist-head"><b>Pro Yıllık</b><span>%34</span></div><div class="dist-track"><div class="dist-fill lvl2" style="width:34%"></div></div></div>
-            <div class="dist-row"><div class="dist-head"><b>Pro+ Yıllık</b><span>%20</span></div><div class="dist-track"><div class="dist-fill lvl3" style="width:20%"></div></div></div>
+            <div class="dist-row"><div class="dist-head"><b>Ücretsiz <span style="font-weight:600;color:var(--muted)">· ₺0</span></b><span>7.126 · %85</span></div><div class="dist-track"><div class="dist-fill lvl4" style="width:85%"></div></div></div>
+            <div class="dist-row"><div class="dist-head"><b>Pro 1 <span style="font-weight:600;color:var(--muted)">· ₺79/ay</span></b><span>982 · %12</span></div><div class="dist-track"><div class="dist-fill" style="width:12%"></div></div></div>
+            <div class="dist-row"><div class="dist-head"><b>Pro 2 <span style="font-weight:600;color:var(--muted)">· ₺149/ay</span></b><span>304 · %4</span></div><div class="dist-track"><div class="dist-fill lvl2" style="width:4%"></div></div></div>
+          </div>
+          <div class="sig-insight" style="padding:2px 22px 18px;margin-top:2px">
+            <i class="fa-solid fa-crown"></i>
+            <span><b>1.286 ücretli abone</b> · ödeme dönüşümü <b>%15,3</b> — ücretsiz havuz (7.126) Pro'ya dönüşüm motoru.</span>
           </div>
         </div>
 
@@ -1311,6 +1594,70 @@ body.cmp-on .kpi-cmp{display:block}
         <div class="kpi-card warm"><div class="kpi-ico"><i class="fa-solid fa-flag"></i></div><div><div class="kpi-num">14</div><div class="kpi-lbl">Rapor edilen</div><div class="kpi-delta up"><i class="fa-solid fa-arrow-trend-down"></i> -3</div><div class="kpi-cmp"><i class="fa-solid fa-arrow-left"></i> önceki: 17</div></div></div>
         <div class="kpi-card"><div class="kpi-ico"><i class="fa-solid fa-ban"></i></div><div><div class="kpi-num">%6,8</div><div class="kpi-lbl">Red oranı</div><div class="kpi-delta up"><i class="fa-solid fa-arrow-trend-down"></i> -1,1p</div><div class="kpi-cmp"><i class="fa-solid fa-arrow-left"></i> önceki: %7,9</div></div></div>
         <div class="kpi-card"><div class="kpi-ico"><i class="fa-solid fa-stopwatch"></i></div><div><div class="kpi-num">3,4 sa</div><div class="kpi-lbl">Ort. onay süresi</div><div class="kpi-delta up"><i class="fa-solid fa-arrow-trend-down"></i> -0,6sa</div><div class="kpi-cmp"><i class="fa-solid fa-arrow-left"></i> önceki: 4,0 sa</div></div></div>
+      </div>
+
+      <!-- BİRLEŞİK ONAY KUYRUĞU — tüm markalardan bekleyen moderasyon/onay tek tabloda -->
+      <div class="pnl-card" style="margin-bottom:16px">
+        <div class="pc-head">
+          <div class="pc-title"><i class="fa-solid fa-layer-group"></i> Birleşik Onay Kuyruğu (markalar-arası)</div>
+          <span class="proto-note">Mevcut sayaçların roll-up'ı · backend'de bağlanacak</span>
+        </div>
+        <div class="pc-body flush">
+          <div class="mini-kpis" style="border-radius:0;border-bottom:1px solid var(--line)">
+            <div class="mk-cell"><div class="mk-num">72</div><div class="mk-lbl">Toplam bekleyen öğe</div><div class="mk-delta down"><i class="fa-solid fa-arrow-up"></i> 6 dikey</div></div>
+            <div class="mk-cell"><div class="mk-num">3,4 sa</div><div class="mk-lbl">Ort. onay süresi</div><div class="mk-delta up"><i class="fa-solid fa-arrow-down"></i> -0,6sa</div></div>
+            <div class="mk-cell"><div class="mk-num">1</div><div class="mk-lbl">SLA dışı kuyruk</div><div class="mk-delta down"><i class="fa-solid fa-arrow-up"></i> İşletme kaydı</div></div>
+          </div>
+          <table class="ptable cmp-table">
+            <thead>
+              <tr><th>Onay türü</th><th>Marka</th><th class="cnum">Bekleyen</th><th class="cnum">En eski</th><th>SLA</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><div class="q-type brand-icerik"><span class="q-ico"><i class="fa-solid fa-utensils"></i></span><div><div class="q-name">Tarif onayı</div><div class="q-meta">Topluluk tarifi moderasyonu</div></div></div></td>
+                <td><span class="brand-icerik" style="display:inline-flex;align-items:center;gap:7px;font-weight:700;color:var(--slate-2)"><span style="width:9px;height:9px;border-radius:3px;background:var(--acc)"></span>İçerik</span></td>
+                <td class="cnum"><span class="q-big">31</span></td>
+                <td class="cnum">6 sa</td>
+                <td><span class="pstat ok">SLA içinde</span></td>
+              </tr>
+              <tr>
+                <td><div class="q-type brand-isletme"><span class="q-ico"><i class="fa-solid fa-store"></i></span><div><div class="q-name">İşletme kaydı</div><div class="q-meta">Belge &amp; profil doğrulaması</div></div></div></td>
+                <td><span class="brand-isletme" style="display:inline-flex;align-items:center;gap:7px;font-weight:700;color:var(--slate-2)"><span style="width:9px;height:9px;border-radius:3px;background:var(--acc)"></span>İşletmeler</span></td>
+                <td class="cnum"><span class="q-big">18</span></td>
+                <td class="cnum">1,2 gün</td>
+                <td><span class="pstat warm">SLA aşımı</span></td>
+              </tr>
+              <tr>
+                <td><div class="q-type brand-saglik"><span class="q-ico"><i class="fa-solid fa-user-doctor"></i></span><div><div class="q-name">Diyetisyen başvurusu</div><div class="q-meta">Diploma &amp; uzmanlık onayı</div></div></div></td>
+                <td><span class="brand-saglik" style="display:inline-flex;align-items:center;gap:7px;font-weight:700;color:var(--slate-2)"><span style="width:9px;height:9px;border-radius:3px;background:var(--acc)"></span>Sağlık</span></td>
+                <td class="cnum"><span class="q-big">4</span></td>
+                <td class="cnum">8 sa</td>
+                <td><span class="pstat ok">SLA içinde</span></td>
+              </tr>
+              <tr>
+                <td><div class="q-type brand-dadafit"><span class="q-ico"><i class="fa-solid fa-dumbbell"></i></span><div><div class="q-name">Antrenör başvurusu</div><div class="q-meta">Sertifika doğrulaması</div></div></div></td>
+                <td><span class="brand-dadafit" style="display:inline-flex;align-items:center;gap:7px;font-weight:700;color:var(--slate-2)"><span style="width:9px;height:9px;border-radius:3px;background:var(--acc)"></span>DadaFit</span></td>
+                <td class="cnum"><span class="q-big">2</span></td>
+                <td class="cnum">5 sa</td>
+                <td><span class="pstat ok">SLA içinde</span></td>
+              </tr>
+              <tr>
+                <td><div class="q-type brand-icerik"><span class="q-ico"><i class="fa-solid fa-pen-nib"></i></span><div><div class="q-name">Şef / üretici başvurusu</div><div class="q-meta">İçerik üreticisi rol talebi</div></div></div></td>
+                <td><span class="brand-icerik" style="display:inline-flex;align-items:center;gap:7px;font-weight:700;color:var(--slate-2)"><span style="width:9px;height:9px;border-radius:3px;background:var(--acc)"></span>İçerik</span></td>
+                <td class="cnum"><span class="q-big">3</span></td>
+                <td class="cnum">11 sa</td>
+                <td><span class="pstat wait">Yaklaşıyor</span></td>
+              </tr>
+              <tr>
+                <td><div class="q-type"><span class="q-ico"><i class="fa-solid fa-flag"></i></span><div><div class="q-name">İçerik şikayeti</div><div class="q-meta">Kullanıcı raporu incelemesi</div></div></div></td>
+                <td><span style="display:inline-flex;align-items:center;gap:7px;font-weight:700;color:var(--slate-2)"><span style="width:9px;height:9px;border-radius:3px;background:var(--muted)"></span>Moderasyon</span></td>
+                <td class="cnum"><span class="q-big">14</span></td>
+                <td class="cnum">2 sa</td>
+                <td><span class="pstat ok">SLA içinde</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
 
       <div class="rep-2col">
@@ -1381,6 +1728,50 @@ body.cmp-on .kpi-cmp{display:block}
     <!-- ============ SEKME 5 — DEMOGRAFİ (iskelet + temsili veri) ============ -->
     <section class="rep-panel" id="panel-demografi" role="tabpanel" aria-labelledby="tab-demografi" tabindex="0" hidden>
 
+      <!-- HUB-GENELİ KAYIT KOHORTU × TUTUNDURMA (saf-CSS heatmap; opaklık = %) -->
+      <div class="pnl-card" style="margin-bottom:16px">
+        <div class="pc-head">
+          <div class="pc-title"><i class="fa-solid fa-table-cells"></i> Kayıt Kohortu × Tutundurma</div>
+          <span class="proto-note">Hub geneli · backend'de bağlanacak</span>
+        </div>
+        <div class="cohort">
+          <div class="coh-grid" role="img" aria-label="Hub geneli kayıt kohortu tutundurma ısı haritası: aylık kayıt kohortları satır, kayıt sonrası ay sütun, hücre o kohortun ilgili ayda aktif kalma oranı.">
+            <div class="coh-row coh-head">
+              <span class="coh-lbl">Kayıt kohortu</span>
+              <div class="coh-cell">1. ay</div><div class="coh-cell">2. ay</div><div class="coh-cell">3. ay</div><div class="coh-cell">6. ay</div><div class="coh-cell">12. ay</div>
+            </div>
+            <div class="coh-row">
+              <span class="coh-lbl">Ocak (1.240)</span>
+              <div class="coh-cell dark" style="--v:.90">%90</div><div class="coh-cell dark" style="--v:.71">%71</div><div class="coh-cell dark" style="--v:.58">%58</div><div class="coh-cell" style="--v:.44">%44</div><div class="coh-cell" style="--v:.33">%33</div>
+            </div>
+            <div class="coh-row">
+              <span class="coh-lbl">Şubat (1.380)</span>
+              <div class="coh-cell dark" style="--v:.88">%88</div><div class="coh-cell dark" style="--v:.69">%69</div><div class="coh-cell" style="--v:.55">%55</div><div class="coh-cell" style="--v:.41">%41</div><div class="coh-cell" style="--v:.06">—</div>
+            </div>
+            <div class="coh-row">
+              <span class="coh-lbl">Mart (1.510)</span>
+              <div class="coh-cell dark" style="--v:.87">%87</div><div class="coh-cell dark" style="--v:.67">%67</div><div class="coh-cell" style="--v:.52">%52</div><div class="coh-cell" style="--v:.38">%38</div><div class="coh-cell" style="--v:.06">—</div>
+            </div>
+            <div class="coh-row">
+              <span class="coh-lbl">Nisan (1.640)</span>
+              <div class="coh-cell dark" style="--v:.86">%86</div><div class="coh-cell dark" style="--v:.66">%66</div><div class="coh-cell" style="--v:.49">%49</div><div class="coh-cell" style="--v:.06">—</div><div class="coh-cell" style="--v:.06">—</div>
+            </div>
+            <div class="coh-row">
+              <span class="coh-lbl">Mayıs (1.820)</span>
+              <div class="coh-cell dark" style="--v:.84">%84</div><div class="coh-cell dark" style="--v:.63">%63</div><div class="coh-cell" style="--v:.06">—</div><div class="coh-cell" style="--v:.06">—</div><div class="coh-cell" style="--v:.06">—</div>
+            </div>
+            <div class="coh-row">
+              <span class="coh-lbl">Haziran (1.960)</span>
+              <div class="coh-cell dark" style="--v:.82">%82</div><div class="coh-cell" style="--v:.06">—</div><div class="coh-cell" style="--v:.06">—</div><div class="coh-cell" style="--v:.06">—</div><div class="coh-cell" style="--v:.06">—</div>
+            </div>
+          </div>
+        </div>
+        <div class="sig-insight" style="padding:0 22px 20px;margin-top:0">
+          <i class="fa-solid fa-arrow-trend-up"></i>
+          <span>3. ay tutundurma <b>%58 → %49</b> bandında stabil; <b>12. ay %33</b> (Ocak kohortu) sektör ortalamasının üzerinde. Çapraz-dikey üyeler tekil kohorttan <b>+18p</b> daha yüksek tutunuyor.</span>
+        </div>
+      </div>
+
       <div class="rep-2col">
         <!-- yaş & cinsiyet -->
         <div class="pnl-card">
@@ -1404,7 +1795,7 @@ body.cmp-on .kpi-cmp{display:block}
             <div class="rep-legend">
               <div class="rl-item"><span class="rl-dot" style="background:var(--acc)"></span><b>Mobil</b><span class="rl-val">%68</span></div>
               <div class="rl-item"><span class="rl-dot" style="background:rgba(var(--acc-rgb),.55)"></span><b>Masaüstü</b><span class="rl-val">%24</span></div>
-              <div class="rl-item"><span class="rl-dot" style="background:rgba(var(--acc-rgb),.28)"></span><b>Tablet</b><span class="rl-val">%8</span></div>
+              <div class="rl-item"><span class="rl-dot" style="background:rgba(var(--acc-rgb),.32)"></span><b>Tablet</b><span class="rl-val">%8</span></div>
             </div>
           </div>
         </div>
@@ -1464,38 +1855,97 @@ body.cmp-on .kpi-cmp{display:block}
 <script>
 /* sayfa JS — tarih aralığı + kıyas + sekme geçişi (veri statik; görsel feedback) */
 (function(){
-  /* ---- tarih aralığı chip toggle (global, tüm sekmeleri besler — statik) ---- */
+  /* ---- tarih aralığı + Özel seçici + kıyas (mockup görsel feedback;
+         gerçek veri filtresi backend'de bağlanacak — veri statik kalır) ---- */
   var chips=document.querySelectorAll('#rangeChips .chip');
   var sub=document.getElementById('repSub');
   var labels={
-    'bugun':'Bugünün',
-    '7g':'Son 7 günün',
-    '30g':'Son 30 günün',
-    '90g':'Son 90 günün',
-    'yil':'Bu yılın',
-    'ozel':'Seçili dönemin'
+    'bugun':'Bugünün','7g':'Son 7 günün','30g':'Son 30 günün',
+    '90g':'Son 90 günün','yil':'Bu yılın','ozel':'Seçili dönemin'
   };
-  function setSub(r){
-    if(sub&&labels[r])sub.textContent=labels[r]+' platform özeti — büyüme, içerik ve gelir göstergeleri';
+  var state={range:'30g',custom:null,cmp:false};
+  function buildSub(){
+    var period;
+    if(state.range==='ozel'&&state.custom){period=state.custom+' dönemi özeti';}
+    else{period=(labels[state.range]||'Seçili dönemin')+' platform özeti';}
+    var s=period+' — büyüme, içerik ve gelir göstergeleri';
+    if(state.cmp)s+=' · önceki eşit döneme kıyasla';
+    return s;
   }
+  function render(){if(sub)sub.textContent=buildSub();}
+  function setChip(range){chips.forEach(function(c){c.classList.toggle('is-on',c.dataset.range===range);});}
+
+  /* Özel tarih aralığı popover */
+  var pop=document.getElementById('datePop');
+  var ozelBtn=document.querySelector('#rangeChips .chip[data-range="ozel"]');
+  var dpStart=document.getElementById('dpStart');
+  var dpEnd=document.getElementById('dpEnd');
+  var dpApply=document.getElementById('dpApply');
+  var dpErr=document.getElementById('dpErr');
+  function isoOffset(days){
+    var d=new Date();d.setDate(d.getDate()+days);
+    var m=String(d.getMonth()+1).padStart(2,'0'),da=String(d.getDate()).padStart(2,'0');
+    return d.getFullYear()+'-'+m+'-'+da;
+  }
+  function fmtTR(iso){var p=iso.split('-');return p[2]+'.'+p[1]+'.'+p[0];}
+  function openPop(){
+    if(!pop)return;
+    if(!dpEnd.value)dpEnd.value=isoOffset(0);
+    if(!dpStart.value)dpStart.value=isoOffset(-29);
+    dpStart.max=isoOffset(0);dpEnd.max=isoOffset(0);
+    if(dpErr)dpErr.classList.remove('show');
+    pop.hidden=false;
+    if(ozelBtn)ozelBtn.setAttribute('aria-expanded','true');
+  }
+  function closePop(){
+    if(!pop)return;
+    pop.hidden=true;
+    if(ozelBtn)ozelBtn.setAttribute('aria-expanded','false');
+  }
+
   chips.forEach(function(chip){
     chip.addEventListener('click',function(){
-      chips.forEach(function(c){c.classList.remove('is-on')});
-      chip.classList.add('is-on');
-      setSub(chip.dataset.range);
-      /* veri mock kalır — gerçek aralık filtresi backend'de bağlanacak */
+      var r=chip.dataset.range;
+      if(r==='ozel'){
+        setChip('ozel');                 /* Özel modu görünür aktif */
+        if(pop&&pop.hidden)openPop();else closePop();
+        return;
+      }
+      closePop();
+      state.range=r;state.custom=null;
+      setChip(r);
+      render();
     });
   });
 
-  /* ---- kıyas toggle (önceki eşit dönem referans satırı) ---- */
+  if(dpApply){
+    dpApply.addEventListener('click',function(){
+      var s=dpStart?dpStart.value:'',en=dpEnd?dpEnd.value:'';
+      if(!s||!en||en<s){if(dpErr)dpErr.classList.add('show');return;}
+      if(dpErr)dpErr.classList.remove('show');
+      state.range='ozel';state.custom=fmtTR(s)+' – '+fmtTR(en);
+      setChip('ozel');render();closePop();
+    });
+  }
+  [dpStart,dpEnd].forEach(function(inp){if(inp)inp.addEventListener('change',function(){if(dpErr)dpErr.classList.remove('show');});});
+
+  /* dışarı tıkla / Esc → popover kapat */
+  document.addEventListener('click',function(e){
+    if(pop&&!pop.hidden&&!pop.contains(e.target)&&!(ozelBtn&&ozelBtn.contains(e.target)))closePop();
+  });
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')closePop();});
+
+  /* ---- kıyas toggle (önceki eşit dönem referans pill'i belirginleşir) ---- */
   var cmp=document.getElementById('cmpToggle');
   if(cmp){
     cmp.addEventListener('click',function(){
-      var on=document.body.classList.toggle('cmp-on');
-      cmp.classList.toggle('is-on',on);
-      cmp.setAttribute('aria-pressed',on?'true':'false');
+      state.cmp=document.body.classList.toggle('cmp-on');
+      cmp.classList.toggle('is-on',state.cmp);
+      cmp.setAttribute('aria-pressed',state.cmp?'true':'false');
+      render();
     });
   }
+  render();
 
   /* ---- sekme geçişi (role=tab/tabpanel; aria + ok-tuşu) ---- */
   var tabs=Array.prototype.slice.call(document.querySelectorAll('#repTabs .rep-tab'));
