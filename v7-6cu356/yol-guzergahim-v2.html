@@ -92,6 +92,14 @@ input{font:inherit}
   border-right:1px solid rgba(255,255,255,.6);
   box-shadow:8px 0 36px rgba(33,30,22,.12);
 }
+/* SHEET GRIP — yalnız mobil (bottom-sheet sürükle/aç-kapa tutamağı). Desktop'ta gizli (sol dock). */
+.yg-sheet-grip{display:none;flex:0 0 auto;height:22px;position:relative;cursor:grab}
+.yg-sheet-grip::before{content:"";position:absolute;top:9px;left:50%;transform:translateX(-50%);
+  width:38px;height:4px;border-radius:99px;background:var(--line-2)}
+.yg-sheet-ctx,.yg-browse-cta{display:none}   /* yalnız mobil — aşağıda @media(max-width:860px) tanımlı */
+/* grip/chip/CTA buton oldu → tıklayınca kalan default focus dikdörtgenini KALDIR; klavye için ince :focus-visible halka */
+.yg-sheet-grip:focus,.yg-sheet-ctx:focus,.yg-browse-cta:focus{outline:none}
+.yg-sheet-grip:focus-visible,.yg-sheet-ctx:focus-visible,.yg-browse-cta:focus-visible{outline:2px solid var(--tomato);outline-offset:2px;border-radius:10px}
 .yg-tabs{display:flex;gap:7px;padding:13px 16px 12px;border-bottom:1px solid var(--line);flex:0 0 auto}
 .yg-tab{
   flex:1; height:42px; display:inline-flex;align-items:center;justify-content:center;gap:8px;
@@ -839,16 +847,74 @@ input{font:inherit}
 
 /* ===================== RESPONSIVE (≤860px → panel üstte cam sheet, harita altta) ===================== */
 @media (max-width:860px){
-  .yg-panel{top:60px;left:0;right:0;width:auto;height:52dvh;border-right:0;
-    border-bottom:1px solid var(--line);box-shadow:0 10px 32px rgba(33,30,22,.14)}
+  /* FAZ 1 — PANEL → ALT BOTTOM-SHEET (harita tam-ekran dominant). Sheet dipten yükselir, transform ile
+     3 detent (peek/half/full). Base = HALF; JS (Faz 2) .sheet-* sınıflarını toggle eder. Desktop scope DIŞI. */
+  .yg-panel{top:auto;bottom:0;left:0;right:0;width:auto;height:86dvh;
+    border-right:0;border-top:0;                       /* üst çizgi kaldırıldı — ayrımı gölge sağlıyor (çift-kenar/line giderildi) */
+    border-radius:var(--radius-lg) var(--radius-lg) 0 0;
+    box-shadow:0 -12px 38px rgba(33,30,22,.17);
+    transform:translateY(34dvh);transition:transform .34s var(--ease)}   /* default = HALF → ~52dvh görünür */
+  .yg-panel.sheet-half{transform:translateY(34dvh)}
+  .yg-panel.sheet-full{transform:translateY(0)}                          /* tam → 86dvh, iç scroll */
+  .yg-panel.sheet-peek{transform:translateY(calc(86dvh - 84px))}         /* grip + özet chip (~84px) görünür → harita ~%82 */
+  .yg-panel.sheet-dragging{transition:none}                              /* drag sırasında parmağı 1:1 takip */
+  .yg-sheet-grip{display:block;touch-action:none;height:26px}
+  /* PEEK özet chip — yalnız peek (browse): rota özeti / rotasız prompt. half/full'da gizli (tam bilgi zaten görünür). */
+  .yg-sheet-ctx{display:none;width:100%;align-items:center;justify-content:space-between;gap:12px;
+    padding:4px 18px 12px;background:transparent;text-align:left;cursor:pointer}
+  .yg-panel.sheet-peek .yg-sheet-ctx{display:flex}
+  .yg-sheet-ctx-txt{display:flex;flex-direction:column;gap:2px;min-width:0}
+  .yg-sheet-ctx-main{font-size:15px;font-weight:700;letter-spacing:-.01em;color:var(--slate);line-height:1.2;
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:74vw}
+  .yg-sheet-ctx-sub{font-size:12px;font-weight:600;color:var(--muted);line-height:1.2;
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:74vw}
+  .yg-sheet-ctx-go{flex:0 0 auto;width:30px;height:30px;display:inline-flex;align-items:center;justify-content:center;
+    border-radius:50%;background:var(--tomato-tint);color:var(--tomato);font-size:11px}
+  /* BROWSE CTA (half/full) — yol üstü mekanlara götürür */
+  .yg-browse-cta:not([hidden]){display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;
+    margin-top:14px;padding:13px 15px;border:1px solid var(--tomato);border-radius:var(--radius-md);
+    background:var(--tomato-tint);cursor:pointer;transition:transform .12s var(--ease)}
+  .yg-browse-cta:active{transform:scale(.99)}
+  .yg-browse-cta-l{display:flex;align-items:center;gap:9px;font-size:13.5px;font-weight:600;color:var(--slate);min-width:0}
+  .yg-browse-cta-l i{color:var(--tomato);font-size:14px}
+  .yg-browse-cta-l b{font-weight:800}
+  .yg-browse-cta-go{flex:0 0 auto;display:inline-flex;align-items:center;gap:6px;font-size:12.5px;font-weight:700;color:var(--tomato);white-space:nowrap}
+  /* iki-handle netliği: dash kendi handle'ı mobilde GİZLİ (ray görünürlüğü sheet detent'inden yönetilir → tek tutamak = grip) */
+  .yg-dash-handle{display:none}
+  /* boş-durum illüstrasyonu mobilde gizli (peek chip + numaralı durak alanları zaten yönlendiriyor; kırpık görünmesin) */
+  #ygStart{display:none}
+  /* TÜMÜNÜ GÖR (full) — başlık+arama+filtre SABİT, yalnız liste scroll (Maps liste pattern) */
+  #viewAll{padding:0;display:flex;flex-direction:column;overflow:hidden}
+  #viewAll .yg-all-head{flex:0 0 auto;padding:15px 16px 9px;background:rgba(252,250,246,.97);
+    -webkit-backdrop-filter:blur(8px) saturate(150%);backdrop-filter:blur(8px) saturate(150%);border-bottom:1px solid var(--line)}
+  #viewAll .yg-all-head .yg-bc{margin-bottom:11px}
+  #viewAll .yg-all-head .yg-fl-chips{margin-bottom:9px}
+  #viewAll .yg-all-head .yg-fl-count{margin-bottom:0}
+  #viewAll .yg-all-body{flex:1 1 auto;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:12px 16px 26px;
+    -webkit-mask-image:linear-gradient(to bottom,#000 calc(100% - 22px),transparent);
+    mask-image:linear-gradient(to bottom,#000 calc(100% - 22px),transparent)}
   .yg-map-wrap{inset:0}
-  .leaflet-top.leaflet-left{left:8px;top:calc(52dvh + 64px)}
+  /* harita tam-ekran → leaflet zoom kontrolü header (60px) altına, sol-üst */
+  .leaflet-top.leaflet-left{left:8px;top:68px}
   .yg-top{padding:0 14px 0 16px}
   .yg-title{font-size:14.5px}
-  .yg-dash{left:8px;right:8px;bottom:8px;padding:10px 11px}
+  .yg-dash{left:8px;right:8px;bottom:var(--dashb,8px);padding:10px 11px}
+  /* GRUP B: handle touch hedefi 30→40px (yüzme/konum korunsun → top -38→-44). Collapsed'da handle
+     viewport dışına taşmasın: 100%+16 mobil bottom:8'de alt-kenarı tam sınıra getiriyordu (1px clip + safe-area).
+     40px handle/-44 offset ile 100%+2px → ~10px güvenli marj. :not(.full-hidden) → full-view tam-gizleme korunur. */
+  .yg-dash-handle{height:40px;top:-44px}
+  .yg-dash.collapsed:not(.full-hidden){transform:translateY(calc(100% + 2px))}
   .yg-dcard{flex:0 0 200px}
-  .yg-detail{top:auto;bottom:calc(8px + 132px);left:8px;right:8px;width:auto}
-  .yg-detail-media{height:104px}
+  /* GRUP A: detay kartı alt-offset'i dash gerçek yüksekliğine bağlı (--dashh, JS sync) — hardcoded 132px
+     dash 161px iken 29px çakışma yapıyordu. Açıkken offsetHeight+8, kapalı handle clearance, gizli tabana. */
+  .yg-detail{top:auto;bottom:calc(8px + var(--dashh,140px));left:8px;right:8px;width:auto}
+  /* DETAY KARTI KOMPAKT (mobil) — preview küçült: media+gövde+CTA daralt, harita/ray için yer aç */
+  .yg-detail-media{height:78px}
+  .yg-detail-body{padding:11px 13px 13px}
+  .yg-detail-name{font-size:15px}
+  .yg-detail-add{height:40px;margin-top:11px}
+  .yg-detail-visit{height:38px;margin-top:8px}
+  .yg-detail-more{height:38px}
   /* KONUM BUL: tam-genişlik harita altında merkez/sığdır (panel-w formülü mobilde geçersiz) */
   .yg-locate{right:14px}
   .yg-geo-prompt{left:8px;right:8px;max-width:none;transform:none;justify-content:space-between}
@@ -876,8 +942,17 @@ input{font:inherit}
 <!-- ===== SPLIT: SOL PANEL + TAM-EKRAN HARİTA ===== -->
 <div class="yg-app">
 
-  <!-- SOL PANEL (Dock) -->
+  <!-- SOL PANEL (Dock) · mobilde alttan çekilen bottom-sheet (grip = sürükle/aç-kapa tutamağı, Faz 2'de etkin) -->
   <aside class="yg-panel">
+    <div class="yg-sheet-grip" aria-hidden="true"></div>
+    <!-- PEEK özet chip — yalnız mobil + peek: rota varsa kalkış→varış·km·mekan, yoksa "Rotanı çiz" prompt (tıkla→genişle) -->
+    <button class="yg-sheet-ctx" id="ygSheetCtx" type="button">
+      <span class="yg-sheet-ctx-txt">
+        <span class="yg-sheet-ctx-main" id="ygSheetCtxMain">Rotanı çiz</span>
+        <span class="yg-sheet-ctx-sub" id="ygSheetCtxSub">Kalkış ve varış şehrini seç</span>
+      </span>
+      <i class="fa-solid fa-chevron-up yg-sheet-ctx-go" aria-hidden="true"></i>
+    </button>
     <div class="yg-tabs" role="tablist">
       <button class="yg-tab is-active" id="tabRoute" role="tab" aria-selected="true">
         <i class="fa-solid fa-route"></i> Rota Kur
@@ -920,6 +995,12 @@ input{font:inherit}
             <div class="yg-sum-note" id="ygNote"></div>
           </div>
         </div>
+
+        <!-- MOBİL browse keşfi: half/full'da rota varken yol üstü mekanlara götüren NET affordance (tıkla → peek/harita+ray) -->
+        <button class="yg-browse-cta" id="ygBrowseCta" type="button" hidden>
+          <span class="yg-browse-cta-l"><i class="fa-solid fa-utensils"></i> <span><b id="ygBrowseCnt">0</b> yol üstü mekan</span></span>
+          <span class="yg-browse-cta-go">Haritada gör <i class="fa-solid fa-arrow-right"></i></span>
+        </button>
 
         <!-- alternatif rotalar (sol-panel liste, tık-seç) -->
         <div class="yg-alts" id="ygAlts" hidden>
@@ -976,26 +1057,32 @@ input{font:inherit}
 
       <!-- VIEW B: TÜM ROTA MEKANLARI (K9 — "Tümünü Gör" push view; breadcrumb ile döner) -->
       <section class="yg-view" id="viewAll" role="tabpanel" hidden>
-        <div class="yg-bc">
-          <button class="yg-bc-back" id="ygAllBack" type="button"><i class="fa-solid fa-chevron-left"></i> Geri</button>
-          <span class="yg-bc-cur">Tüm Mekanlar</span>
+        <!-- SABİT başlık (mobil full'da sticky): geri + başlık + arama + filtre + sayaç -->
+        <div class="yg-all-head">
+          <div class="yg-bc">
+            <button class="yg-bc-back" id="ygAllBack" type="button"><i class="fa-solid fa-chevron-left"></i> Geri</button>
+            <span class="yg-bc-cur">Tüm Mekanlar</span>
+          </div>
+          <div class="yg-search">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="text" id="ygAllSearch" autocomplete="off" placeholder="Mekan ara…" aria-label="Mekan ara">
+          </div>
+          <div class="yg-fl-chips" id="ygAllChips">
+            <button class="yg-fl-chip is-active" type="button" data-f="all">Tümü</button>
+            <button class="yg-fl-chip" type="button" data-f="on">Yol Üstü</button>
+            <button class="yg-fl-chip" type="button" data-f="near">Yola Yakın</button>
+            <button class="yg-fl-chip" type="button" data-f="dada">Dada öneriyor</button>
+          </div>
+          <div class="yg-fl-count" id="ygAllCount">0 mekan</div>
         </div>
-        <div class="yg-search">
-          <i class="fa-solid fa-magnifying-glass"></i>
-          <input type="text" id="ygAllSearch" autocomplete="off" placeholder="Mekan ara…" aria-label="Mekan ara">
+        <!-- SCROLL gövde (yalnız liste kayar) -->
+        <div class="yg-all-body">
+          <div class="yg-fl-empty" id="ygAllEmpty" hidden>
+            <div class="yg-fl-empty-ico"><i class="fa-solid fa-magnifying-glass"></i></div>
+            <p>Eşleşen mekan yok. Aramayı veya filtreyi değiştir.</p>
+          </div>
+          <ul class="yg-fl-list" id="ygAllList"></ul>
         </div>
-        <div class="yg-fl-chips" id="ygAllChips">
-          <button class="yg-fl-chip is-active" type="button" data-f="all">Tümü</button>
-          <button class="yg-fl-chip" type="button" data-f="on">Yol Üstü</button>
-          <button class="yg-fl-chip" type="button" data-f="near">Yola Yakın</button>
-          <button class="yg-fl-chip" type="button" data-f="dada">Dada öneriyor</button>
-        </div>
-        <div class="yg-fl-count" id="ygAllCount">0 mekan</div>
-        <div class="yg-fl-empty" id="ygAllEmpty" hidden>
-          <div class="yg-fl-empty-ico"><i class="fa-solid fa-magnifying-glass"></i></div>
-          <p>Eşleşen mekan yok. Aramayı veya filtreyi değiştir.</p>
-        </div>
-        <ul class="yg-fl-list" id="ygAllList"></ul>
       </section>
 
       <!-- VIEW C: GÜZERGAHLARIM (Dalga 3-B — kayıtlı güzergahlar + checkpoint/ziyaret) -->
@@ -1603,6 +1690,7 @@ input{font:inherit}
     if(cntOnEl)cntOnEl.textContent='0'; if(cntNearEl)cntNearEl.textContent='0';
     closeDetail(); renderSelected();   // detay kapan + "güzergahımdaki mekanlar" gizlen (seçim korunur)
     if(viewAllEl && !viewAllEl.hidden) closeAllView();   // rota gidince tam listeden Rota Kur'a dön
+    updateSheetCtx(); updateBrowseCta();   // FAZ 4: peek chip → "Rotanı çiz" prompt'a dön, browse CTA gizle
   }
   // ---- B: "Yeni Güzergah" — yüklü/taze rotadan TERTEMİZ planlamaya dön ----
   function resetPlanner(){
@@ -1635,8 +1723,15 @@ input{font:inherit}
   function fitPad(){
     var pad={paddingTopLeft:[34,84],paddingBottomRight:[40,40]};
     var pb=panel.getBoundingClientRect();
-    if(window.innerWidth>860)pad.paddingTopLeft=[Math.round(pb.width)+28,84];
-    else pad.paddingTopLeft=[22,Math.round(pb.height)+72];
+    if(window.innerWidth>860){
+      pad.paddingTopLeft=[Math.round(pb.width)+28,84];   // desktop: sol dock genişliği
+    } else {
+      // mobil: panel ALT bottom-sheet → rota, sheet ÜSTÜndeki görünür haritaya sığsın.
+      // üst = header (~72px) · alt = GÖRÜNÜR sheet yüksekliği (detent'e göre, getBoundingClientRect transform-sonrası).
+      var vis=Math.max(0, Math.round(window.innerHeight - pb.top));   // görünür sheet
+      pad.paddingTopLeft=[22,72];
+      pad.paddingBottomRight=[40, vis+16];
+    }
     return pad;
   }
   function fitActive(){ if(!routeLine)return; map.fitBounds(routeLine.getBounds().pad(0.04), fitPad()); }
@@ -1760,6 +1855,18 @@ input{font:inherit}
     }
   }
   function flyToVenue(lat,lng){ preloadVenueTiles(lat,lng); map.stop(); map.flyTo([lat,lng],VENUE_ZOOM,{duration:.7,easeLinearity:.25}); }
+  // FAZ 4: mobilde harita ALT yarısı sheet'le örtülü → bir noktaya uçarken merkezi sheet kadar AŞAĞI kaydır ki
+  // nokta (konum/şehir) GÖRÜNÜR alanın (header↔sheet) ortasına gelsin (yoksa geometrik merkez sheet arkasında kalıyordu).
+  function flyToVisible(lat,lng,zoom,opts){
+    opts=opts||{duration:.7};
+    if(typeof mqMobile!=='undefined' && mqMobile.matches && panel){
+      var vh=window.innerHeight, peek=panel.classList.contains('sheet-peek');
+      var sV=peek?PEEK_PX:(panel.classList.contains('sheet-full')?Math.round(0.86*vh):Math.round(0.52*vh));
+      var dy=Math.round((sV-60)/2);   // görünür merkez = (header 60 ↔ sheetTop) ortası
+      if(dy>10){ var pt=map.project([lat,lng],zoom); pt.y+=dy; map.flyTo(map.unproject(pt,zoom),zoom,opts); return; }
+    }
+    map.flyTo([lat,lng],zoom,opts);
+  }
   var selectedVenues=[];           // "Güzergahımdaki mekanlar" — durak listesinden AYRI koleksiyon (mekan≠durak)
   var activeRouteId=null;          // (b) "Yükle"yince ziyaret bağlamı: yalnız yüklü KAYITLI rotada ziyaret-affordance açık; serbest planlamada null (karar 1+3 yapısal güvencesi)
   function isVisited(m){ return !!(activeRouteId && visited[activeRouteId] && visited[activeRouteId][m.ad]); }  // ziyaret HER ZAMAN id'ye göre (ada göre global ASLA — karar 2/3)
@@ -1855,7 +1962,7 @@ input{font:inherit}
   // rota üstü mekanlar (koridor içi) — Dada önce + mesafe sıralı; harita pini + alt kadran kartı
   function spawnVenues(){
     clearVenuePins();
-    if(!route.poly){ if(dashEl)dashEl.hidden=true; syncBottomOffset(); closeDetail(); renderSelected(); return; }
+    if(!route.poly){ if(dashEl)dashEl.hidden=true; syncBottomOffset(); closeDetail(); renderSelected(); updateSheetCtx(); updateBrowseCta(); return; }
     currentVenueList=ROAD_POOL.map(function(m){return {m:m,off:distToRoute(m)};})
       .filter(function(x){return x.off<=corridor;})
       .sort(function(a,b){ if(a.m.dada!==b.m.dada)return a.m.dada?-1:1; return a.off-b.off; });
@@ -1872,6 +1979,7 @@ input{font:inherit}
     if(detailVenue){ var still=currentVenueList.filter(function(x){return x.m.ad===detailVenue.ad;})[0];
       if(still)openDetail(still.m,still.off); else closeDetail(); }
     if(viewAllEl && !viewAllEl.hidden) renderAll();   // tam liste açıkken koridor/rota değişirse tazele
+    updateSheetCtx(); updateBrowseCta();   // FAZ 4: peek chip (kalkış→varış·km·mekan) + browse CTA (N mekan) tazele
   }
   // ALT KADRAN = HIZLI VİTRİN: yalnız öncelikli ilk SHOWCASE (Dada önce → yakınlık); tümü "Tümünü Gör"de
   var SHOWCASE=12;
@@ -1879,6 +1987,8 @@ input{font:inherit}
     if(!dashEl||!dashScrollEl)return;
     if(!list.length){dashEl.hidden=true;syncBottomOffset();return;}
     dashEl.hidden=false;
+    // FAZ 3: mobilde venue rayı yalnız BROWSE (sheet peek) modunda görünür → PLAN modunda (half/full) gizle
+    if(typeof mqMobile!=='undefined' && mqMobile.matches && panel && !panel.classList.contains('sheet-peek')) applyDashCollapsed(true,false);
     // C: yüklü rotada başlık "öneri" olduğunu netleştirir (sol liste = senin mekanların)
     if(dashTitleTxtEl)dashTitleTxtEl.textContent = activeRouteId ? 'Bu rota için öneriler' : 'Yol üstü mekanlar';
     if(dashCountEl)dashCountEl.textContent=list.length;          // TOPLAM yol-üstü+yakın (vitrin değil)
@@ -1924,6 +2034,7 @@ input{font:inherit}
   var dashHandleEl=document.getElementById('ygDashHandle');
   var dashHandleIco=document.getElementById('ygDashHandleIco');
   var DASH_KEY='dada_yg_v2_dashcollapsed';
+  var coordLock=false;   // FAZ 3: sheet↔dash karşılıklı dışlama re-entry guard
   function applyDashCollapsed(c,save){
     if(!dashEl)return;
     dashEl.classList.toggle('collapsed',c);
@@ -1931,6 +2042,10 @@ input{font:inherit}
       dashHandleEl.setAttribute('aria-label',c?'Mekan panelini göster':'Mekan panelini gizle'); }
     if(dashHandleIco)dashHandleIco.className='fa-solid '+(c?'fa-chevron-up':'fa-chevron-down');   // çift-ok yön: kapalı=yukarı(aç) / açık=aşağı(kapat)
     if(save)lsSet(DASH_KEY,c);
+    // FAZ 3: dash AÇILIRSA (c=false) mobilde browse moduna geç → sheet'i peek'e indir (karşılıklı dışlama)
+    if(typeof mqMobile!=='undefined' && mqMobile.matches && !coordLock && c===false){
+      coordLock=true; applySheetDetent('peek',true); coordLock=false;
+    }
     syncBottomOffset();   // kapalıyken kadran gizli → FAB/prompt/toast tabana iner
   }
   var dashCollapsed=!!lsGet(DASH_KEY,false);
@@ -1939,6 +2054,109 @@ input{font:inherit}
   // Eşik (corridor) slider'ında ÇAĞRILMAZ (mikro-ayar → zorla açma agresif olur). State tutarlı (lsSet).
   function ensureDashExpanded(){ if(dashCollapsed){ dashCollapsed=false; applyDashCollapsed(false,true); } }
   if(dashHandleEl)dashHandleEl.addEventListener('click',function(){ dashCollapsed=!dashCollapsed; applyDashCollapsed(dashCollapsed,true); });
+
+  // ---- FAZ 2: MOBİL BOTTOM-SHEET DETENT (grip tap-cycle: peek→half→full→peek). matchMedia guard → davranış yalnız mobil. ----
+  var sheetGripEl=document.querySelector('.yg-sheet-grip');
+  var sheetCtxEl=document.getElementById('ygSheetCtx'),
+      sheetCtxMainEl=document.getElementById('ygSheetCtxMain'),
+      sheetCtxSubEl=document.getElementById('ygSheetCtxSub'),
+      browseCtaEl=document.getElementById('ygBrowseCta'),
+      browseCntEl=document.getElementById('ygBrowseCnt');
+  var SHEET_KEY='dada_yg_v2_sheetdetent';
+  var mqMobile=window.matchMedia('(max-width:860px)');
+  var DETENTS=['peek','half','full'];
+  var PEEK_PX=84;   // peek görünür yükseklik (grip + özet chip) — CSS .sheet-peek ile EŞ
+  var sheetDetent=(function(){ var s=lsGet(SHEET_KEY,'half'); return DETENTS.indexOf(s)>=0?s:'half'; })();
+  // PEEK özet chip metni — rota varsa kalkış→varış·km·mekan, yoksa "Rotanı çiz" prompt
+  function sheetCtxText(){
+    var f=(typeof filled==='function')?filled():[];
+    if(route && route.poly && f.length>=2){
+      var km=(kmEl?(''+kmEl.textContent).trim():''), n=currentVenueList?currentVenueList.length:0;
+      return {main:f[0].ad+' → '+f[f.length-1].ad, sub:(km && km!=='—' && km!=='…'?km+' km · ':'')+n+' mekan'};
+    }
+    return {main:'Rotanı çiz', sub:'Kalkış ve varış şehrini seç'};
+  }
+  function updateSheetCtx(){ if(!sheetCtxMainEl)return; var t=sheetCtxText(); sheetCtxMainEl.textContent=t.main; if(sheetCtxSubEl)sheetCtxSubEl.textContent=t.sub; }
+  // BROWSE keşif CTA — half/full'da rota+mekan varsa "N yol üstü mekan · Haritada gör" göster (peek'te ray zaten görünür)
+  function updateBrowseCta(){
+    if(!browseCtaEl)return;
+    var show=mqMobile.matches && route && route.poly && currentVenueList && currentVenueList.length>0 && sheetDetent!=='peek';
+    browseCtaEl.hidden=!show;
+    if(show && browseCntEl)browseCntEl.textContent=currentVenueList.length;
+  }
+  function applySheetDetent(d,save){
+    if(!panel)return;
+    if(DETENTS.indexOf(d)<0)d='half';
+    sheetDetent=d;
+    panel.classList.remove('sheet-peek','sheet-half','sheet-full');
+    panel.classList.add('sheet-'+d);
+    if(sheetGripEl){
+      sheetGripEl.setAttribute('aria-label', d==='full'?'Paneli küçült':(d==='peek'?'Paneli aç':'Paneli genişlet'));
+      sheetGripEl.setAttribute('aria-expanded', d==='peek'?'false':'true');
+    }
+    if(save)lsSet(SHEET_KEY,d);
+    // FAZ 3: karşılıklı dışlama — half/full = PLAN (venue rayı gizli) · peek = BROWSE (ray kullanıcı tercihine göre).
+    if(mqMobile.matches && !coordLock){
+      coordLock=true;
+      if(d==='peek'){ if(dashEl && !dashEl.hidden) applyDashCollapsed(dashCollapsed,false); }   // rayı tercihe göre geri getir
+      else { applyDashCollapsed(true,false); }                                                    // plan → rayı gizle (pref'i BOZMA)
+      coordLock=false;
+    }
+    updateSheetCtx(); updateBrowseCta();
+    syncBottomOffset();   // görünür alt-yığın (sheet detent + ray) değişti → FAB/prompt/toast/detay re-sync
+  }
+  // grip TAP = peek↔half toggle (basınca iner/biner) · DRAG = serbest detent snap (peek/half/full) → çentik affordance'ı davranışla eşler.
+  function cycleSheetDetent(){ applySheetDetent(sheetDetent==='peek'?'half':'peek', true); }
+  function detentT(d){ var vh=window.innerHeight; return d==='full'?0:(d==='half'?Math.round(0.34*vh):Math.round(0.86*vh-PEEK_PX)); }
+  var dragging=false,dragStartY=0,dragBaseT=0,dragCurT=0,dragMoved=0;
+  function gripDown(e){
+    if(!mqMobile.matches||!panel)return;
+    dragging=true; dragMoved=0;
+    dragStartY=(e.touches?e.touches[0].clientY:e.clientY);
+    dragBaseT=detentT(sheetDetent); dragCurT=dragBaseT;
+    panel.classList.add('sheet-dragging');
+    if(e.pointerId!=null && sheetGripEl.setPointerCapture){ try{sheetGripEl.setPointerCapture(e.pointerId);}catch(_){ } }
+  }
+  function gripMove(e){
+    if(!dragging)return;
+    var y=(e.touches?e.touches[0].clientY:e.clientY), dy=y-dragStartY;
+    dragMoved=Math.max(dragMoved,Math.abs(dy));
+    var vh=window.innerHeight, maxT=Math.round(0.86*vh-PEEK_PX);
+    dragCurT=Math.max(0,Math.min(maxT,dragBaseT+dy));
+    panel.style.transform='translateY('+dragCurT+'px)';
+    if(e.cancelable)e.preventDefault();
+  }
+  function gripUp(){
+    if(!dragging)return; dragging=false;
+    panel.classList.remove('sheet-dragging');
+    if(dragMoved<6){ panel.style.transform=''; cycleSheetDetent(); return; }   // küçük hareket = TAP
+    var cands=[['full',detentT('full')],['half',detentT('half')],['peek',detentT('peek')]];
+    cands.sort(function(a,b){return Math.abs(a[1]-dragCurT)-Math.abs(b[1]-dragCurT);});
+    var target=cands[0][0];
+    requestAnimationFrame(function(){ if(panel)panel.style.transform=''; });   // inline temizle → class transform (.34s) devralır
+    applySheetDetent(target,true);
+  }
+  function syncSheetForViewport(){
+    if(!panel)return;
+    if(mqMobile.matches){ applySheetDetent(sheetDetent,false); }
+    else { panel.classList.remove('sheet-peek','sheet-half','sheet-full'); panel.style.transform=''; }   // desktop → sol dock
+    updateSheetCtx(); updateBrowseCta();
+  }
+  if(sheetGripEl){
+    sheetGripEl.setAttribute('role','button');
+    sheetGripEl.setAttribute('tabindex','0');
+    sheetGripEl.removeAttribute('aria-hidden');
+    sheetGripEl.addEventListener('pointerdown',gripDown);
+    window.addEventListener('pointermove',gripMove,{passive:false});
+    window.addEventListener('pointerup',gripUp);
+    window.addEventListener('pointercancel',gripUp);
+    sheetGripEl.addEventListener('keydown',function(e){ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); cycleSheetDetent(); } });
+  }
+  if(sheetCtxEl)sheetCtxEl.addEventListener('click',function(){ applySheetDetent('half',true); });    // peek chip → genişle (düzenle)
+  if(browseCtaEl)browseCtaEl.addEventListener('click',function(){ applySheetDetent('peek',true); });   // CTA → browse (harita + ray)
+  syncSheetForViewport();
+  if(mqMobile.addEventListener)mqMobile.addEventListener('change',syncSheetForViewport);
+  else if(mqMobile.addListener)mqMobile.addListener(syncSheetForViewport);   // eski Safari fallback
 
   // ---- K1: mekan detay kartı (tıkla → harita uçar + kart) ----
   function tierLabel(off){return proxTier(off)==='on'?'Yol üstü':'Yola yakın';}
@@ -1981,6 +2199,8 @@ input{font:inherit}
     detailEl.hidden=false;
     setActiveCards(m.ad);        // A2: bu mekanın kartını (slider + tam liste) aktif işaretle
     setActivePin(m.ad);          // çift yönlü: haritadaki pini de aktif/seçili işaretle (3 yüzey senkron)
+    // FAZ 4: mobilde mekana dokununca sheet'i peek'e indir → detay kartı harita üstünde net dursun (planlama sheet'i arkasında kopuk kalmasın)
+    if(typeof mqMobile!=='undefined' && mqMobile.matches && sheetDetent!=='peek') applySheetDetent('peek',true);
   }
   function closeDetail(){ detailVenue=null; if(detailEl)detailEl.hidden=true; clearActiveCards(); clearActivePin(); }  // balon kapanınca 3 yüzeyde de aktiflik kalkar
   function updateDetailBtn(m){
@@ -2171,6 +2391,8 @@ input{font:inherit}
     // B2: tam liste solda her şeyi gösteriyor → alt slider gereksiz. YUMUŞAK gizle (full-hidden translateY .34s, handle ile aynı dil; ani pop YOK).
     // hidden=true KULLANMA (display:none animasyon almaz); collapse class korunur → geri dönünce saygı duyulur.
     if(dashEl)dashEl.classList.add('full-hidden'); syncBottomOffset();
+    // FAZ 4: mobilde "Tümünü Gör" → sheet TAM açılsın (liste gömülü/yarım gelmesin; sticky başlık+arama+filtre + scroll liste)
+    if(typeof mqMobile!=='undefined' && mqMobile.matches) applySheetDetent('full',true);
   }
   function closeAllView(){
     viewAllEl.classList.remove('is-active'); viewAllEl.hidden=true;
@@ -2178,6 +2400,8 @@ input{font:inherit}
     if(dashEl)dashEl.classList.remove('full-hidden');   // B2: slider YUMUŞAK geri gelir (collapse class dashEl'de kalır → kullanıcı kapattıysa kapalı döner)
     renderDash(currentVenueList);
     selectTab('route');
+    // FAZ 4: mobilde "Geri" → browse'a dön (peek: harita + ray), tam liste kapanınca planlama formuna gömülme
+    if(typeof mqMobile!=='undefined' && mqMobile.matches) applySheetDetent('peek',true);
   }
   if(dashAllBtn)dashAllBtn.addEventListener('click',openAllView);
   if(allBackEl)allBackEl.addEventListener('click',closeAllView);
@@ -2200,10 +2424,33 @@ input{font:inherit}
   // alt kadran açıkken FAB/prompt/toast'ı kadran yüksekliği kadar yukarı kaydır (çakışma önle)
   function syncBottomOffset(){
     if(!appEl)return;
+    // ---- FAZ 3: MOBİL alt-yığın tek-kaynak — sheet (peek/half/full) + (peek modda) venue rayı. ----
+    if(typeof mqMobile!=='undefined' && mqMobile.matches && panel){
+      var vh=window.innerHeight;
+      var peek=panel.classList.contains('sheet-peek');
+      // sV = görünür sheet — detent'ten DETERMINISTIK (canlı rect transition ortasında yanlış okuyordu):
+      // peek=96px (CSS translateY 86dvh-96) · full=86dvh · half=52dvh.
+      var sV=peek?PEEK_PX:(panel.classList.contains('sheet-full')?Math.round(0.86*vh):Math.round(0.52*vh));
+      var dHidden=!dashEl || dashEl.hidden;
+      var dVis=!dHidden && !dashEl.classList.contains('collapsed') && !dashEl.classList.contains('full-hidden');
+      var dH=dVis?dashEl.offsetHeight:0;
+      var browseDash=peek && dVis;                          // ray yalnız peek (browse) modunda
+      appEl.style.setProperty('--dashb',(browseDash?sV:8)+'px');   // ray bottom: peek üstü / (gizli) taban
+      var occ=sV+(browseDash?dH:0);                         // alttaki en üst dolu nokta (sheet + ray)
+      appEl.style.setProperty('--locb',(occ+8)+'px');       // FAB/geo/toast: occ üstü
+      appEl.style.setProperty('--dashh',occ+'px');          // detay: bottom = 8 + occ → occ üstü (artık sheet ARKASINA düşmez)
+      return;
+    }
+    // ---- DESKTOP (orijinal mantık AYNEN) ----
     // kadran görünür VE açık ise yüksekliği kadar offset; gizli/kapalı (collapsed) / full-view (full-hidden) ise FAB tabana iner
-    var vis=dashEl && !dashEl.hidden && !dashEl.classList.contains('collapsed') && !dashEl.classList.contains('full-hidden');
+    var hidden=!dashEl || dashEl.hidden;
+    var fullHidden=!hidden && dashEl.classList.contains('full-hidden');
+    var collapsed=!hidden && dashEl.classList.contains('collapsed');
+    var vis=!hidden && !collapsed && !fullHidden;
     var h=vis?dashEl.offsetHeight:0;
     appEl.style.setProperty('--locb',(h?(h+12):0)+'px');
+    var dashh=vis?(dashEl.offsetHeight+8):((collapsed && !fullHidden)?44:0);
+    appEl.style.setProperty('--dashh',dashh+'px');
   }
   function geoToast(msg,icon){
     if(!toastWrap)return;
@@ -2245,7 +2492,7 @@ input{font:inherit}
       setGeoBusy(false);
       var lat=pos.coords.latitude, lng=pos.coords.longitude;
       showGeoMarker(lat,lng);
-      map.flyTo([lat,lng],11,{duration:.7});
+      flyToVisible(lat,lng,11);   // mobilde sheet kadar yukarı offset → konum görünür alana otursun (aşağıda/arkada kalmasın)
       var n=nearestCity(lat,lng);
       if(n && geoPrompt){
         geoNearest=n.city;
