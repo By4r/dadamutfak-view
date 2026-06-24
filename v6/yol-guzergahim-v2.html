@@ -1442,6 +1442,11 @@ input{font:inherit}
     stopMarkers.forEach(function(mk){map.removeLayer(mk);}); stopMarkers=[];
     clearVenuePins(); if(dashEl)dashEl.hidden=true; syncBottomOffset();
     currentRoutes=[]; activeIdx=0; route.poly=null;
+    // STALE FIX: rota geçersizleşince (durak <2 / hata / reset / yükleme-öncesi) bağımlı TÜM çıktılar tek noktadan gitsin —
+    // alternatif km kartları + koridor sayaçları panelde kalmasın (eskiden yalnız resetPlanner temizliyordu → durak-sil'de stale kalıyordu)
+    if(altsEl)altsEl.hidden=true; if(altListEl)altListEl.innerHTML='';
+    if(corrEl)corrEl.hidden=true;
+    if(cntOnEl)cntOnEl.textContent='0'; if(cntNearEl)cntNearEl.textContent='0';
     closeDetail(); renderSelected();   // detay kapan + "güzergahımdaki mekanlar" gizlen (seçim korunur)
     if(viewAllEl && !viewAllEl.hidden) closeAllView();   // rota gidince tam listeden Rota Kur'a dön
   }
