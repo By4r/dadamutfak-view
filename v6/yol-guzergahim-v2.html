@@ -121,6 +121,13 @@ input{font:inherit}
 .yg-reverse i{font-size:12px}
 .yg-reverse:hover:not(:disabled){border-color:var(--tomato);color:var(--tomato)}
 .yg-reverse:disabled{opacity:.4;cursor:not-allowed}
+.yg-sec-actions{display:flex;align-items:center;gap:8px}
+/* B — "Yeni Güzergah" ghost buton (sec-head; çizili/dolu durumda görünür) */
+.yg-newroute{display:inline-flex;align-items:center;gap:7px;height:32px;padding:0 11px;border:1px solid var(--line);background:var(--paper);border-radius:var(--radius-md);font-size:12px;font-weight:600;color:var(--slate-2);transition:.16s var(--ease)}
+.yg-newroute[hidden]{display:none}
+.yg-newroute i{font-size:12px}
+.yg-newroute:hover{border-color:var(--tomato);color:var(--tomato)}
+.yg-newroute.confirm{border-color:var(--tomato);background:var(--tomato);color:#fff}
 
 /* ===================== YOL EKSENİ (signature) ===================== */
 .yg-route{position:relative;padding-left:2px}
@@ -488,6 +495,14 @@ input{font:inherit}
 .yg-mine-card.visited .yg-mine-media{position:relative}
 .yg-mine-vchk{position:absolute;right:-4px;bottom:-4px;width:18px;height:18px;border-radius:50%;background:var(--green);color:#fff;
   display:flex;align-items:center;justify-content:center;font-size:9px;border:2px solid var(--paper);box-shadow:var(--sh-sm)}
+/* A — yüklü rotada sol-liste tek-tık ziyaret affordance (serbest planlamada satır statik) */
+.yg-mine.is-loaded .yg-mine-card{cursor:pointer}
+.yg-mine.is-loaded .yg-mine-card:not(.visited):hover{border-color:var(--green);background:var(--green-tint)}
+.yg-mine.is-loaded .yg-mine-card:focus-visible{outline:2px solid var(--green);outline-offset:2px}
+/* C — sahiplik çapası: sol liste = SENİN eklediklerin (alt şerit = öneri) */
+.yg-mine-sub{font-size:11px;color:var(--muted);margin:-4px 0 11px;line-height:1.45}
+.yg-mine-sub[hidden]{display:none}
+.yg-mine-sub b{color:var(--slate-2);font-weight:700}
 
 /* ===================== K9: TÜM ROTA MEKANLARI (Tümünü Gör push view) ===================== */
 .yg-bc{display:flex;align-items:center;gap:9px;margin-bottom:16px}
@@ -727,9 +742,12 @@ input{font:inherit}
       <section class="yg-view is-active" id="viewRoute" role="tabpanel" aria-labelledby="tabRoute">
         <div class="yg-sec-head">
           <span class="yg-eyebrow">Güzergah</span>
-          <button class="yg-reverse" id="ygReverse" type="button" disabled>
-            <i class="fa-solid fa-arrow-right-arrow-left"></i> Yönü çevir
-          </button>
+          <div class="yg-sec-actions">
+            <button class="yg-newroute" id="ygNewRoute" type="button" hidden><i class="fa-solid fa-rotate-left"></i> Yeni Güzergah</button>
+            <button class="yg-reverse" id="ygReverse" type="button" disabled>
+              <i class="fa-solid fa-arrow-right-arrow-left"></i> Yönü çevir
+            </button>
+          </div>
         </div>
 
         <div class="yg-route">
@@ -774,6 +792,7 @@ input{font:inherit}
             <span class="yg-mine-h">Güzergahımdaki mekanlar</span>
             <span class="yg-mine-cnt" id="ygMineCnt">0</span>
           </div>
+          <div class="yg-mine-sub" id="ygMineSub" hidden></div>
           <div class="yg-mine-empty" id="ygMineEmpty">
             <i class="fa-solid fa-utensils"></i>
             <span>Henüz mekan eklemedin. Aşağıdaki kadrandan bir mekana dokun, <b>Güzergaha Ekle</b> ile buraya taşı.</span>
@@ -854,7 +873,7 @@ input{font:inherit}
   <!-- ALT YATAY KADRAN — HIZLI VİTRİN (öncelikli ~12 mekan); tümü için "Tümünü Gör" -->
   <div class="yg-dash" id="ygDash" hidden>
     <div class="yg-dash-head">
-      <span class="yg-dash-title"><i class="fa-solid fa-utensils"></i> Yol üstü mekanlar <span class="yg-dash-cnt" id="ygDashCount">0</span></span>
+      <span class="yg-dash-title"><i class="fa-solid fa-utensils"></i> <span id="ygDashTitleTxt">Yol üstü mekanlar</span> <span class="yg-dash-cnt" id="ygDashCount">0</span></span>
       <button class="yg-dash-all" id="ygDashAll" type="button">Tümünü Gör <i class="fa-solid fa-arrow-right"></i></button>
     </div>
     <div class="yg-dash-scroll" id="ygDashScroll"></div>
@@ -1264,6 +1283,7 @@ input{font:inherit}
   // DOM
   var stopListEl=document.getElementById('ygStopList'), stopAddBtn=document.getElementById('ygStopAdd'),
       reverseBtn=document.getElementById('ygReverse'),
+      newRouteBtn=document.getElementById('ygNewRoute'),
       startEmpty=document.getElementById('ygStart'),
       summaryEl=document.getElementById('ygSummary'),
       kmEl=document.getElementById('ygKm'), kmUnitEl=document.getElementById('ygKmUnit'), noteEl=document.getElementById('ygNote');
@@ -1425,6 +1445,34 @@ input{font:inherit}
     closeDetail(); renderSelected();   // detay kapan + "güzergahımdaki mekanlar" gizlen (seçim korunur)
     if(viewAllEl && !viewAllEl.hidden) closeAllView();   // rota gidince tam listeden Rota Kur'a dön
   }
+  // ---- B: "Yeni Güzergah" — yüklü/taze rotadan TERTEMİZ planlamaya dön ----
+  function resetPlanner(){
+    stops=[null,null]; selectedVenues=[]; activeRouteId=null;     // sıfır-bağlam (divergence mantığıyla tutarlı)
+    nameEdited=false; lastAutoName=''; if(saveNameEl)saveNameEl.value='';
+    corridor=12; if(corrSlider)corrSlider.value=12;
+    clearRoute();                                                  // harita/poly temizle → renderSelected mine+save gizler
+    if(summaryEl)summaryEl.hidden=true; if(altsEl)altsEl.hidden=true; if(corrEl)corrEl.hidden=true;
+    renderStops(); placeStopMarkers();                            // boş 2 durak, pin yok
+    if(startEmpty)startEmpty.hidden=false;
+    selectTab('route'); disarmReset();
+    var f=stopListEl.querySelector('.yg-stop-input'); if(f)f.focus();
+  }
+  function updateNewRouteBtn(){
+    if(!newRouteBtn)return;
+    var has=filled().length>0 || !!route.poly;                    // temizlenecek bir şey varken görünür
+    newRouteBtn.hidden=!has; if(!has)disarmReset();
+  }
+  var newRoutePending=false, newRouteTimer=null;
+  function armReset(){ newRoutePending=true; if(!newRouteBtn)return;
+    newRouteBtn.classList.add('confirm'); newRouteBtn.innerHTML='<i class="fa-solid fa-triangle-exclamation"></i> Emin misin?';
+    clearTimeout(newRouteTimer); newRouteTimer=setTimeout(disarmReset,3000); }
+  function disarmReset(){ newRoutePending=false; clearTimeout(newRouteTimer); if(!newRouteBtn)return;
+    newRouteBtn.classList.remove('confirm'); newRouteBtn.innerHTML='<i class="fa-solid fa-rotate-left"></i> Yeni Güzergah'; }
+  if(newRouteBtn)newRouteBtn.addEventListener('click',function(){
+    var unsaved=!!route.poly && !activeRouteId;                   // taze/diverged çizili rota = kaydedilmemiş iş
+    if(unsaved && !newRoutePending){ armReset(); return; }        // 2-adımlı onay (kazara kayıp önle); yüklü&temiz → direkt sıfırla
+    resetPlanner();
+  });
   function fitPad(){
     var pad={paddingTopLeft:[34,84],paddingBottomRight:[40,40]};
     var pb=panel.getBoundingClientRect();
@@ -1516,7 +1564,8 @@ input{font:inherit}
       altsEl=document.getElementById('ygAlts'), altListEl=document.getElementById('ygAltList'),
       corrEl=document.getElementById('ygCorr'), corrSlider=document.getElementById('ygCorrSlider'),
       corrValEl=document.getElementById('ygCorrVal'), cntOnEl=document.getElementById('ygCntOn'), cntNearEl=document.getElementById('ygCntNear'),
-      dashEl=document.getElementById('ygDash'), dashCountEl=document.getElementById('ygDashCount'), dashScrollEl=document.getElementById('ygDashScroll');
+      dashEl=document.getElementById('ygDash'), dashCountEl=document.getElementById('ygDashCount'), dashScrollEl=document.getElementById('ygDashScroll'),
+      dashTitleTxtEl=document.getElementById('ygDashTitleTxt');
   // detay kartı + güzergahımdaki mekanlar DOM
   var detailEl=document.getElementById('ygDetail'), detailMediaEl=document.getElementById('ygDetailMedia'),
       detailBadgeEl=document.getElementById('ygDetailBadge'), detailNameEl=document.getElementById('ygDetailName'),
@@ -1526,7 +1575,8 @@ input{font:inherit}
       detailVisitEl=document.getElementById('ygDetailVisit'), detailVisitTxtEl=document.getElementById('ygDetailVisitTxt'),
       detailCloseEl=document.getElementById('ygDetailClose');
   var mineEl=document.getElementById('ygMine'), mineCntEl=document.getElementById('ygMineCnt'),
-      mineEmptyEl=document.getElementById('ygMineEmpty'), mineListEl=document.getElementById('ygMineList');
+      mineEmptyEl=document.getElementById('ygMineEmpty'), mineListEl=document.getElementById('ygMineList'),
+      mineSubEl=document.getElementById('ygMineSub');
 
   var venuePins=[], VIMG='?w=300&q=80&auto=format&fit=crop';
   var selectedVenues=[];           // "Güzergahımdaki mekanlar" — durak listesinden AYRI koleksiyon (mekan≠durak)
@@ -1580,6 +1630,8 @@ input{font:inherit}
     if(!dashEl||!dashScrollEl)return;
     if(!list.length){dashEl.hidden=true;syncBottomOffset();return;}
     dashEl.hidden=false;
+    // C: yüklü rotada başlık "öneri" olduğunu netleştirir (sol liste = senin mekanların)
+    if(dashTitleTxtEl)dashTitleTxtEl.textContent = activeRouteId ? 'Bu rota için öneriler' : 'Yol üstü mekanlar';
     if(dashCountEl)dashCountEl.textContent=list.length;          // TOPLAM yol-üstü+yakın (vitrin değil)
     var show=list.slice(0,SHOWCASE);                              // data-i = list index (slice baştan → korunur)
     var html=show.map(function(x,i){
@@ -1686,25 +1738,40 @@ input{font:inherit}
   // ---- K3: sol panel "Güzergahımdaki mekanlar" listesi ----
   function renderSelected(){
     if(!mineEl)return;
-    if(!route.poly){ mineEl.hidden=true; updateSaveBlock(); return; }
+    var loaded=!!activeRouteId;                          // A: yalnız yüklü rotada satır tık-toggle affordance
+    mineEl.classList.toggle('is-loaded',loaded);
+    if(!route.poly){ mineEl.hidden=true; if(mineSubEl)mineSubEl.hidden=true; updateSaveBlock(); updateNewRouteBtn(); return; }
     mineEl.hidden=false;
     updateSaveBlock();
+    // C: sahiplik çapası — bunlar SENİN eklediklerin (alt şerit = öneri)
+    if(mineSubEl){ if(loaded){ var rc=getRec(activeRouteId); mineSubEl.hidden=false; mineSubEl.innerHTML='<b>'+(rc?rc.ad:'Bu güzergah')+'</b> için eklediğin mekanlar — satıra dokun: ziyaret işaretle'; } else mineSubEl.hidden=true; }
     if(mineCntEl)mineCntEl.textContent=selectedVenues.length;
-    if(!selectedVenues.length){ if(mineEmptyEl)mineEmptyEl.hidden=false; if(mineListEl)mineListEl.innerHTML=''; return; }
+    if(!selectedVenues.length){ if(mineEmptyEl)mineEmptyEl.hidden=false; if(mineListEl)mineListEl.innerHTML=''; updateNewRouteBtn(); return; }
     if(mineEmptyEl)mineEmptyEl.hidden=true;
     mineListEl.innerHTML=selectedVenues.map(function(m,i){
       var vis=isVisited(m);                              // karar 4 liste yarısı: yüklü rotada ziyaretliyse üstü-çizik + sönük (saved checklist diliyle tutarlı)
-      return '<li class="yg-mine-card'+(vis?' visited':'')+'" data-i="'+i+'">'+
+      return '<li class="yg-mine-card'+(vis?' visited':'')+'" data-i="'+i+'"'+
+        (loaded?' role="button" tabindex="0" aria-pressed="'+(vis?'true':'false')+'" title="'+(vis?'Ziyareti geri al':'Ziyaret ettim')+'"':'')+'>'+
         '<span class="yg-mine-media" style="background-image:url(\''+imgUrl(m.img)+'\')">'+(vis?'<span class="yg-mine-vchk"><i class="fa-solid fa-check"></i></span>':'')+'</span>'+
         '<span class="yg-mine-info"><span class="yg-mine-name">'+m.ad+'</span><span class="yg-mine-loc">'+m.konum+'</span></span>'+
         '<button class="yg-mine-x" type="button" aria-label="Mekanı çıkar"><i class="fa-solid fa-xmark"></i></button>'+
       '</li>';
     }).join('');
+    updateNewRouteBtn();
   }
+  // A: gövde tık = ziyaret toggle + sağda detay preview (yüklü rota); X = mekanı çıkar (mevcut davranış)
   if(mineListEl)mineListEl.addEventListener('click',function(e){
-    var btn=e.target.closest('.yg-mine-x'); if(!btn)return;
-    var li=btn.closest('.yg-mine-card'); var m=selectedVenues[+li.getAttribute('data-i')];
-    if(m)toggleSelected(m);
+    var li=e.target.closest('.yg-mine-card'); if(!li)return;
+    var m=selectedVenues[+li.getAttribute('data-i')]; if(!m)return;
+    if(e.target.closest('.yg-mine-x')){ toggleSelected(m); return; }   // çıkar → preview/ziyaret tetiklemez
+    if(activeRouteId){ toggleVisited(m); openDetail(m,distToRoute(m)); }   // ziyaret (mevcut) + mevcut detay kartını sağda aç (yeni kart değil)
+  });
+  // A: klavye erişimi — yüklü rotada satır Enter/Space ile ziyaret + preview
+  if(mineListEl)mineListEl.addEventListener('keydown',function(e){
+    if(e.key!=='Enter'&&e.key!==' ')return;
+    var li=e.target.closest('.yg-mine-card'); if(!li||!activeRouteId)return;
+    e.preventDefault();
+    var m=selectedVenues[+li.getAttribute('data-i')]; if(m){ toggleVisited(m); openDetail(m,distToRoute(m)); }
   });
 
   // ============ K9: TÜM ROTA MEKANLARI — arama + filtre + dikey tam liste (push view) ============
