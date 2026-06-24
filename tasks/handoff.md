@@ -1,35 +1,31 @@
-# DadaMutfak — Handoff (Yol Güzergahım v2 SAVED-UX + FAB tutarlılık COMMIT'Lİ, PUSH YOK · sıradaki: SPONSOR KART)
+# DadaMutfak — Handoff (Yol Güzergahım v2 SPONSOR ŞERİT + STALE-FIX COMMIT'Lİ, PUSH YOK · sıradaki: SPONSOR FAZ 2)
 
-> ## ⏸️ OTURUM SONU DURUMU (2026-06-24 — Yol Güzergahım v2 **SAVED-ROUTE UX paketi + sentetik kaldırma + clear-× radius + FAB ikon-only (3 sayfa) KOMPLE + COMMIT'Lİ** · sıradaki: SPONSOR KART)
+> ## ⏸️ OTURUM SONU DURUMU (2026-06-24 — Yol Güzergahım v2 **stale-state fix + SPONSOR KART ŞERİT MOCKUP KOMPLE + COMMIT'Lİ** · sıradaki: SPONSOR FAZ 2 → Dalga 2)
 >
-> **PROJE:** DadaMutfak yol güzergahı **BAŞTAN TASARIM** (Roadtrippers referanslı tam-ekran). Dosya: **`v6/yol-guzergahim-v2.html`** (v1 DOKUNULMUYOR). Revize karar tablosu: `tasks/yol-rev-plan.md` · analizler: `yol-rev-{checkpoint,savedflow,savedux}-analiz.md`.
+> **PROJE:** DadaMutfak yol güzergahı **BAŞTAN TASARIM** (Roadtrippers referanslı tam-ekran). Dosya: **`v6/yol-guzergahim-v2.html`** (v1 DOKUNULMUYOR). Revize karar tablosu: `tasks/yol-rev-plan.md` · sponsor plan: `tasks/yol-sponsor-karti-plan.md` (3 karar: ilk-sıra konum / Sponsorlu disclosure domates-dışı / DARK premium).
 >
-> ### ✅ BU OTURUM — COMMIT'Lİ (push YOK — `origin/main`'den **18 commit önde**)
-> Tüm işler Playwright ALL PASS (1440/390, console/mojibake 0). QA: `tasks/yol-v2-{savedux,minepreview,altremove,mockcount,alt-mock,clearradius}-qa.mjs` + `{kesfet,anasayfa}-ygfab-qa.mjs` (untracked).
-> - **`1a3567e`** — anasayfa-portal-v3a FAB ikon-only hover-genişle (kesfet deseni hizalama).
-> - **`ce71b26`** — kesfet-v1 FAB ikon-only + hover-genişle metin (FAB radius `--radius-pill`→`--radius-lg` squircle, dokunmatik ikon-only, aria-label).
-> - **`30a72d7`** — **SAVED-ROUTE UX paketi** (3 madde): (A) sol-liste row tap → ziyaret toggle (`toggleVisited` reuse, `activeRouteId` gate) **+ detay preview açar** (X = çıkar, erken-return; serbest planlamada nötr). (B) **"Yeni Güzergah" reset** butonu (sec-head ghost; `resetPlanner` stops/venues/activeRouteId/ad/corridor sıfırla; kaydedilmemiş iş → 2-adımlı "Emin misin?" onay; yüklü&temiz → direkt). (C) **bağlamsal etiket** = yüklü rotada dash başlığı "Yol üstü mekanlar"→"Bu rota için öneriler" + sol-liste sahiplik çapası "«ad» için eklediğin mekanlar" (sol=SENİN, alt=ÖNERİ).
-> - **`50153ab`** — **Sentetik alternatif rota KALDIRILDI** (`bulgeRoute/topUpAlts/polySpan/ALT_TARGET` silindi; `currentRoutes=routes` → yalnız GERÇEK OSRM alternatifleri; tek rota → temiz harita, gri spagetti yok). Stil/çizim mantığı korundu (gerçek alt gelirse çizilir). **TEKNİK BORÇ KAPANDI.**
-> - **`15145a9`** — clear-× radius `50%`→`var(--radius-sm)` (satır-sil/grip ikon-buton deseniyle hizalı) + ≥44px tap (şeffaf `::before`), hover/focus tutarlı.
-> - **`eab439c`** — handoff chore (sentetik borç notu, artık çözüldü).
-> - **`e8ccebd`** — **ROAD_POOL 190→259 mekan / 40 koridor anahtarı KALICI** (mekan/şehir çoğaltma; sentetik kısmı sonradan geri alındı, mekan genişlemesi KALDI).
+> ### ✅ BU OTURUM — COMMIT'Lİ (push YOK — `origin/main`'den **21 commit önde**, handoff chore ile 22)
+> QA Playwright ALL PASS (1440/390, console/mojibake 0). QA: `tasks/yol-v2-{sponsor,stalefix}-qa.mjs` (untracked).
+> - **`b9a4cce`** — **SPONSOR KART ŞERİT MOCKUP** (DEMO, Yasin onayı bekler). `.yg-dcard.sponsor`: KOYU `--slate` yüzey + nazik `--tomato` radial ember gradient (color-mix, token-içi) — premium=KONTRAST (beyaz komşulardan ayrışma), glow/altın YOK. **"Sponsorlu" disclosure pill** (slate chip + cream yazı, domates-DIŞI → ücretli ≠ editöryal "Dada"). **"Menüyü Gör" domates CTA** + koyu zeminde açık tipografi (WCAG). **DadaMutfak logo watermark** = header markının beyaz siluet'i (`logo-official.png`'den izole, wordmark HARİÇ → **yeni asset `v6/assets/img/logo-mark-white.png`**), içeriğin arkasında (z:0, pointer-events:none), yatık, soft .10. Sponsor vitrin **İLK** slotta; **sponsor↔dada KARŞILIKLI DIŞLAR** (veri `dada:false` + render Dada dalı atlanır). Mock sponsor = "Gebze Köfte Durağı". CTA hedefi mock (tık→detay).
+> - **`9e53ced`** — **STALE-STATE FIX**: durak <2 düşünce `clearRoute()` artık alternatif km listesi + koridor paneli + yol-üstü/yakın sayaçları da temizler (eskiden yalnız `resetPlanner` yapıyordu → durak-sil'de harita boşalıp panelde stale km/sayaç kalıyordu). Teardown tek noktada → tüm çağıranlar (durak<2 / hata / reset / yükleme-öncesi) tutarlı.
 >
 > ### ✅ ÖNCEKİ COMMIT'LER (bu özellik ailesi)
-> - **`17d323f`** — CHECKPOINT (b "Yükle"yince ziyaret bağlamı, route-scoped `visited[id][ad]`) + GÜZERGAHLARIM→AÇ FIX (Seçenek 2: `buildRecord` poly+dakika saklar→ağ-bağımsız; `loadRoute` stale-render fix; "Yüklü güzergah" bağlamı + Güncelle).
-> - **`8a15890`** DALGA 1 · **`a26e9a1`** alt-rota görünürlük + Dada pill · **`e225b89`** box-zoom off · **`fcef076`** focus-outline fix · **`fef3b61`** chore.
+> - **`1a3567e`** anasayfa FAB ikon-only · **`ce71b26`** kesfet FAB ikon-only · **`30a72d7`** SAVED-ROUTE UX (tap-visit+preview / Yeni Güzergah / bağlamsal etiket) · **`50153ab`** sentetik alt-rota KALDIRILDI (gerçek OSRM) · **`15145a9`** clear-× radius · **`e8ccebd`** ROAD_POOL 259/40 · **`17d323f`** CHECKPOINT route-scoped + GÜZERGAHLARIM AÇ fix · **`8a15890`** DALGA 1 · **`a26e9a1`** alt-rota+Dada pill · **`e225b89`** box-zoom off · **`fcef076`** focus-outline.
 >
 > ### 🎯 KUYRUK (resume'da sıradaki iş — öncelik sırası)
-> 1. **SPONSOR KART (← SIRADAKİ):** "Yol Üstü Mekanlar / Bu rota için öneriler" şeridine premium reklam kartı (**frontend-design skill ŞART**) — ⚠️ **canlıya çıkmadan Yasin Bey onayı** gerekir (reklam/gelir kararı).
+> 1. **SPONSOR FAZ 2 (← SIRADAKİ):** şerit kartı DONE; **3 yüzey tutarlılığı** kaldı → (a) **detay preview kartına "Sponsorlu" disclosure senkronu** (sponsor mekan tıklanınca açılan detayda da reklam etiketi görünsün) + (b) **harita sponsor pini ayırt edici** (sponsor mekanın pini diğer pinlerden görsel ayrışsın). Şerit↔detay↔harita üçü tutarlı olmalı. ⚠️ Tümü DEMO — canlı=Yasin onayı.
 > 2. **DALGA 2 — header:** **"ROTA PLANLAYICI" eyebrow** (K7=A) + route-line üst şerit.
 > 3. **DALGA 4 — mobil** (Faz1 bottom-sheet detay → Faz4 390 breakpoint, `yol-rev-mobil.md`).
-> 4. **DALGA 5 — veri** (gerçek OSRM/veri besleme → **gerçek alternatifler** otomatik çizilir; sentetik zaten kaldırıldı). Kayıtlı rotalar poly sakladığı için ağ-bağımsız açılıyor (yük hafif).
+> 4. **DALGA 5 — veri** (gerçek OSRM/veri besleme → **gerçek alternatifler** otomatik çizilir; sentetik zaten kaldırıldı). Kayıtlı rotalar poly sakladığı için ağ-bağımsız açılıyor.
 >
 > ### ⏳ AÇIK CONCERN'LER
+> - **SPONSOR canlı = YASİN BEY ONAYI** (reklam/gelir özelliği). Şerit mockup'ı bitti ama canlıya çıkmadan onay şart; CTA hedefi şu an mock (tık→detay).
+> - **Yeni asset `v6/assets/img/logo-mark-white.png`** — header `logo-official.png` markının beyaz siluet'i (wordmark hariç), watermark için. `b9a4cce`'de commit'li.
 > - **`sezon-v1.html` watermark** — working tree'de commit'siz (` M`, onaysız); Yol Güzergahım DIŞI, ayrı iş — **DOKUNULMADI, DOKUNMA**.
-> - **PUSH bekleyen: 18 commit** (`origin/main`'den önde) — canlıya **batch halinde, Dalga 2 sonrası** önerildi. Beyar ayrıca "push" diyecek.
+> - **PUSH bekleyen: 21 commit** (`origin/main`'den önde) — canlıya **batch halinde** önerildi. Beyar ayrıca "push" diyecek.
 >
 > ### REVİZE LİSTESİ DURUMU
-> ✅ alternatif rota 4'e çıkar (sonra sentetik **kaldırıldı** → gerçek alternatifler) · ✅ liste/şehir çoğaltma (ROAD_POOL 259/40 kalıcı) · ✅ clear-× radius · ✅ saved-route UX (tap-visit+preview / Yeni Güzergah / bağlamsal etiket) · ✅ FAB ikon-only (kesfet+anasayfa) · ⏳ **SPONSOR KART kaldı**.
+> ✅ alternatif rota (sentetik kaldırıldı → gerçek) · ✅ liste/şehir çoğaltma (ROAD_POOL 259/40) · ✅ clear-× radius · ✅ saved-route UX · ✅ FAB ikon-only · ✅ **stale-state fix** · ✅ **SPONSOR ŞERİT mockup** (yalnız **Yasin onayı + FAZ 2** kaldı: detay disclosure + harita pini).
 >
 > ### KARARLAR — CHECKPOINT (5/5 KAPALI) + SAVED-FLOW
 > ✅ route-scoped ziyaret · ✅ bulaşma yok · ✅ yeni rota tertemiz · ✅ harita+liste çift sinyal · ✅ **5. KARAR = (b)** "Yükle"yince otomatik ziyaret bağlamı (ayrı mod YOK). · ✅ **SAVED-FLOW = Seçenek 2** (tek-harita, "yüklü rota" bağlamı + Güncelle, yeni view yok).
