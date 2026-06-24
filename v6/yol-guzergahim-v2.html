@@ -1362,50 +1362,6 @@ input{font:inherit}
     });
   }
 
-  // ---- DEMO: alternatif rotayı 4'e tamamla ----
-  // Public OSRM çoğu kez tek rota döner; görselde alternatif çeşitliliğini sergilemek için ana
-  // rotadan TÜRETİLMİŞ (yanal şişirme) ek rotalarla doldur. Şema değişmez ({poly,km,dakika}).
-  // GERÇEK alternatif gelirse korunur — yalnız EKSİK kalırsa sentetik eklenir (graceful).
-  var ALT_TARGET=4;
-  function polySpan(poly){
-    var loLa=Infinity,hiLa=-Infinity,loLo=Infinity,hiLo=-Infinity;
-    poly.forEach(function(p){ if(p[0]<loLa)loLa=p[0]; if(p[0]>hiLa)hiLa=p[0]; if(p[1]<loLo)loLo=p[1]; if(p[1]>hiLo)hiLo=p[1]; });
-    return Math.max(hiLa-loLa, hiLo-loLo);
-  }
-  // ana rotayı sinüs zarfıyla yana şişir: uçlar (kalkış/varış) SABİT, orta nokta amp kadar kayar
-  function bulgeRoute(base, amp, idx){
-    var poly=base.poly, n=poly.length, np=[];
-    for(var i=0;i<n;i++){
-      var la=poly[i][0], lo=poly[i][1];
-      if(i>0 && i<n-1){
-        var clat=Math.cos(la*Math.PI/180)||0.0001;            // lng'i lat ölçeğine indir
-        var dla=poly[i+1][0]-poly[i-1][0];
-        var dlo=(poly[i+1][1]-poly[i-1][1])*clat;
-        var len=Math.hypot(dla,dlo)||1;
-        var w=Math.sin(i/(n-1)*Math.PI);                       // 0→1→0 (uçlar sabit)
-        la += (-dlo/len)*w*amp;                                // dik birim (-dlo,dla)/len
-        lo += ( dla/len)*w*amp/clat;                           // lng'i geri ölçeklendir
-      }
-      np.push([la,lo]);
-    }
-    var f=1+0.035*idx+0.02;                                    // yanal sapma → biraz daha uzun/yavaş (deterministik kademe)
-    return {poly:np, km:(base.km!=null?+(base.km*f).toFixed(1):null), dakika:(base.dakika!=null?Math.round(base.dakika*(f+0.03)):null)};
-  }
-  function topUpAlts(routes){
-    if(!routes||!routes.length)return routes;
-    var out=routes.slice(0,ALT_TARGET);                        // gerçek alternatifleri koru (en çok 4)
-    if(out.length>=ALT_TARGET||!out[0].poly||out[0].poly.length<3)return out;
-    var base=out[0], span=polySpan(base.poly)||0.2;
-    var presets=[{amp:0.06,s:1},{amp:0.05,s:-1},{amp:0.09,s:1},{amp:0.07,s:-1}];
-    var k=out.length-1;                                        // mevcut alt sayısı kadar ileri başla (çakışma yok)
-    while(out.length<ALT_TARGET){
-      var p=presets[(out.length-1)%presets.length];
-      out.push(bulgeRoute(base, span*p.amp*(1+0.15*k)*p.s, out.length));
-      k++;
-    }
-    return out;
-  }
-
   function buildRoute(){
     if(filled().length<2)return;
     if(startEmpty)startEmpty.hidden=true;
@@ -1415,7 +1371,7 @@ input{font:inherit}
     osrmRoute().then(function(routes){
       if(seq!==buildSeq)return;                 // bayat sonuç → yoksay (yarış kilidi)
       routeSource='gercek';
-      currentRoutes=topUpAlts(routes); activeIdx=0; route.poly=currentRoutes[0].poly;
+      currentRoutes=routes; activeIdx=0; route.poly=routes[0].poly;
       drawRoutes(); placeStopMarkers();
       updateSummary(); renderAltList(); refreshThreshold(); spawnVenues();
       fitActive();
