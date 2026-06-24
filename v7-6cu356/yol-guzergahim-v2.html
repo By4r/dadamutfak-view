@@ -342,8 +342,27 @@ input{font:inherit}
 /* ALT YATAY KADRAN — yol üstü mekanlar (durak DEĞİL; rota üstünde belirtilir) */
 .yg-dash{position:absolute;left:calc(var(--panel-w) + 16px);right:16px;bottom:16px;z-index:20;
   background:rgba(255,255,255,.88);-webkit-backdrop-filter:blur(20px) saturate(150%);backdrop-filter:blur(20px) saturate(150%);
-  border:1px solid var(--line-2);border-radius:var(--radius-lg);padding:12px 14px 13px}
+  border:1px solid var(--line-2);border-radius:var(--radius-lg);padding:12px 14px 13px;
+  transition:transform .34s var(--ease)}
 .yg-dash[hidden]{display:none}
+/* B1: aç-kapat — kapalıyken GÖVDE tamamen gömülür (YOL ÜSTÜ MEKANLAR şeridi + Tümünü Gör tam aşağı iner), SADECE üstteki
+   yüzen tutamak görünür. Tam gömme → taşan full-width şerit yok → sağdaki konum-bul FAB ile çakışma da biter (handle orta, FAB sağ). */
+.yg-dash.collapsed{transform:translateY(calc(100% + 16px))}
+/* B2: full-view'da TAM gizle (handle dahil) — yumuşak translateY (.collapsed dili, ani pop yok). collapsed'dan SONRA → onu ezer */
+.yg-dash.full-hidden{transform:translateY(calc(100% + 96px));pointer-events:none}
+/* TUTAMAK — yüzen TAM pill, kadran üst-ORTASINDA (sağdaki konum-bul FAB'ı sağda → çakışmaz). HER durumda AYNI boyut/hiza (tutarlı):
+   yatay+dikey TAM ortalı (inline-flex + line-height:1), tamamı kadranın dışında yüzer (yarısı içerde DEĞİL). Etiket her zaman görünür.
+   Açık=chevron-down (gizle) · kapalı=chevron-up (göster) — tek fark ok yönü. */
+.yg-dash-handle{position:absolute;top:-38px;left:50%;transform:translateX(-50%);height:30px;padding:0 16px;
+  display:inline-flex;align-items:center;justify-content:center;gap:7px;line-height:1;
+  border:1px solid var(--line-2);background:rgba(255,255,255,.97);
+  -webkit-backdrop-filter:blur(20px) saturate(150%);backdrop-filter:blur(20px) saturate(150%);
+  border-radius:var(--radius-md);color:var(--slate-2);font-weight:700;font-size:11.5px;white-space:nowrap;
+  box-shadow:var(--sh-md);transition:color .16s var(--ease),border-color .16s var(--ease);z-index:3}
+.yg-dash-handle i{font-size:11px;line-height:1}
+.yg-dash-handle:hover{color:var(--tomato);border-color:var(--tomato)}
+.yg-dash-handle-lbl{font-size:11.5px;font-weight:700;letter-spacing:.01em;line-height:1}
+@media (prefers-reduced-motion:reduce){ .yg-dash{transition:none} }
 .yg-dash-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:11px}
 .yg-dash-title{display:flex;align-items:center;gap:8px;font-size:12px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--slate)}
 .yg-dash-title>i{color:var(--tomato);font-size:13px}
@@ -417,6 +436,12 @@ input{font:inherit}
 /* sponsor + eklendi: gradient yüzey korunur (sel green-tint'i source-order'da .sponsor yener), yeşil ✓ + kenarla "eklendi" okunur */
 .yg-dcard.sponsor.sel{border-color:var(--green-soft)}
 .yg-dcard.sponsor.sel:hover{border-color:var(--green-soft)}
+/* AKTİF/SEÇİLİ — HOVER border dili (ince 1px temiz, kaba concentric ring DEĞİL) + hafif glow (hover'dan kalıcı ayrım).
+   4 KATMAN: border register'ı EZMEZ; her register kendi HOVER rengini KALICI alır → normal/dada=tomato · sponsor=slate-2 · eklendi=green.
+   Seçili-belli sinyali: kalıcı hover-border + yumuşak glow (hover geçici + glow yok/sönük). */
+.yg-dcard.is-active{border-color:var(--tomato);box-shadow:0 4px 14px rgba(225,72,39,.22),0 1px 3px rgba(33,30,22,.08);z-index:3}
+.yg-dcard.sponsor.is-active{border-color:var(--slate-2)}     /* sponsor slate kimliği korunur (is-active tomato'yu ezmesin) */
+.yg-dcard.sel.is-active{border-color:var(--green)}           /* eklendi yeşil korunur (is-active tomato'yu ezmesin) → seçili glow'dan belli */
 
 /* harita venue pini — temiz daire (teardrop yerine) */
 .yg-vpin .vp{display:flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:50%;
@@ -449,6 +474,17 @@ input{font:inherit}
 .yg-vpin.sponsor.sel .vp{background:var(--slate);border-color:#fff;color:var(--cream)}
 .yg-vpin.sponsor.visited .vp{background:var(--slate);border-color:#fff;color:var(--cream)}
 .yg-vpin.visited:hover .vp{opacity:1}
+/* AKTİF PİN (geçici — balonu açık / son seçilen mekan; çift yönlü senkron: kart/liste ↔ pin). KANAL = scale + tomato DIŞ-halka + elevation.
+   Register dolgu (dada domates / sponsor slate / normal beyaz) DOLGU kanalında → halka EZMEZ. sel YEŞİL halka korunur:
+   sel'de iç yeşil (eklendi) + dış tomato (aktif) concentric → ikisi de okunur. Kartlardaki tomato glow diliyle tutarlı. */
+.yg-vpin.is-active{z-index:1100!important}
+/* ölçülü: ring 2.5px + %82 opacity (color-mix, token-içi) + scale 1.22 → seçili NET ama göze batmaz */
+.yg-vpin.is-active .vp{transform:scale(1.22);box-shadow:0 0 0 2.5px rgba(225,72,39,.82),var(--sh-pop)}
+/* eklendi YEŞİL iç-halka DEĞİŞMEZ (3px green); yalnız aktif tomato dış-ring incelir (6px→5.5px) + opacity */
+.yg-vpin.sel.is-active .vp{box-shadow:0 0 0 3px var(--green),0 0 0 5.5px rgba(225,72,39,.82),var(--sh-pop)}
+/* aktif pin hover'da da aktif kimliğini korur (sade hover scale/gölge aktif halkayı ezmesin) */
+.yg-vpin.is-active:hover .vp{transform:scale(1.22);box-shadow:0 0 0 2.5px rgba(225,72,39,.82),var(--sh-pop)}
+.yg-vpin.sel.is-active:hover .vp{box-shadow:0 0 0 3px var(--green),0 0 0 5.5px rgba(225,72,39,.82),var(--sh-pop)}
 /* venue önizleme tooltip (hover'da foto + ad + konum) */
 .leaflet-tooltip.yg-vtip{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-md);
   box-shadow:var(--sh-pop);padding:0;overflow:hidden;display:flex;width:188px;white-space:normal}
@@ -654,6 +690,12 @@ input{font:inherit}
 /* "Sponsorlu" disclosure = "Dada" tag'iyle BİREBİR aynı konum/yapı (görsel sol-üst köşe overlay, .yg-fl-badge tabanı), FARKLI register:
    slate chip + cream yazı + megafon (Dada=domates+çatal). Foto üstünde NET pop için gölge. sponsor↔dada KARŞILIKLI DIŞLAR. */
 .yg-fl-badge.spon{background:var(--slate);color:var(--cream);white-space:nowrap;box-shadow:0 1px 4px rgba(33,30,22,.4)}
+/* AKTİF/SEÇİLİ tam-liste satırı — slider .yg-dcard.is-active ile BİREBİR: HOVER border dili (ince temiz) + hafif glow. */
+.yg-fl-card{position:relative}
+/* sponsor.is-active glow'u açık çünkü .yg-fl-card.sponsor:hover (0,3,0, sh-sm) sade .is-active'i (0,2,0) ezerdi; sponsor slate border korunur.
+   sponsor+eklendi seçili → .sponsor:has(.is-added) (0,4,0) green border'ı zaten kazanır → eklendi yeşili okunur. */
+.yg-fl-card.is-active{border-color:var(--tomato);box-shadow:0 4px 14px rgba(225,72,39,.22),0 1px 3px rgba(33,30,22,.08);z-index:2}
+.yg-fl-card.sponsor.is-active{border-color:var(--slate-2);box-shadow:0 4px 14px rgba(225,72,39,.22),0 1px 3px rgba(33,30,22,.08);z-index:2}
 
 /* ===================== DALGA 3-B: GÜZERGAHIMI KAYDET (sol panel, rota çizili durumda) ===================== */
 .yg-save{margin-top:22px}
@@ -978,6 +1020,7 @@ input{font:inherit}
 
   <!-- ALT YATAY KADRAN — HIZLI VİTRİN (öncelikli ~12 mekan); tümü için "Tümünü Gör" -->
   <div class="yg-dash" id="ygDash" hidden>
+    <button class="yg-dash-handle" id="ygDashHandle" type="button" aria-expanded="true" aria-controls="ygDashScroll" aria-label="Mekan panelini gizle"><i class="fa-solid fa-chevron-down" id="ygDashHandleIco"></i><span class="yg-dash-handle-lbl">Yol üstü mekanlar</span></button>
     <div class="yg-dash-head">
       <span class="yg-dash-title"><i class="fa-solid fa-utensils"></i> <span id="ygDashTitleTxt">Yol üstü mekanlar</span> <span class="yg-dash-cnt" id="ygDashCount">0</span></span>
       <button class="yg-dash-all" id="ygDashAll" type="button">Tümünü Gör <i class="fa-solid fa-arrow-right"></i></button>
@@ -1500,6 +1543,7 @@ input{font:inherit}
       currentRoutes=routes; activeIdx=0; route.poly=routes[0].poly;
       drawRoutes(); placeStopMarkers();
       updateSummary(); renderAltList(); refreshThreshold(); spawnVenues();
+      ensureDashExpanded();   // AUTO-EXPAND: yeni rota hesaplandı (durak ekle/çıkar/yön çevir buraya gelir) → kapalıysa yumuşak aç
       fitActive();
     }).catch(function(){
       if(seq!==buildSeq)return;
@@ -1540,6 +1584,7 @@ input{font:inherit}
     if(i===activeIdx||!currentRoutes[i])return;
     activeIdx=i; route.poly=currentRoutes[i].poly;
     drawRoutes(); updateSummary(); renderAltList(); refreshThreshold(); spawnVenues();
+    ensureDashExpanded();   // AUTO-EXPAND: alternatif rota seçildi → kapalıysa yumuşak aç
   }
   function clearRoute(){
     routeLayers.forEach(function(l){map.removeLayer(l);}); routeLayers=[]; altByIdx={};
@@ -1692,6 +1737,26 @@ input{font:inherit}
       mineSubEl=document.getElementById('ygMineSub');
 
   var venuePins=[], VIMG='?w=300&q=80&auto=format&fit=crop';
+  // A1: mekana tıkla→uç zoom'u (liste + alt slider TEK kaynak). Orta-karar: balon belirgin, sokak/bina seviyesine inmez.
+  var VENUE_ZOOM=13;
+  // GLITCH FIX: mekana tıklayınca PARABOLİK flyTo (sinematik uzaklaş→yaklaş — istenen davranış). Glitch'in kaynağı parabol DEĞİL:
+  //   (1) RACE — devam eden animasyon (rota fitActive / önceki tıklama) bitmeden yenisi → ara state. map.stop() temiz keser.
+  //   (2) Animasyon sırasında harita kayarken pinler sabit mouse altından geçip tooltip flicker → mapAnimating bayrağı bastırır (aşağıda).
+  // setView (sert snap / boş-gri tile) GERİ ALINDI → flyTo parabolü korunur. maxZoom=VENUE_ZOOM ile tepe aşırı dibe inmez,
+  // easeLinearity ile geçiş yumuşatılır (pixelli ara faz minimize).
+  // İLK-TIKLAMA PIXELLİ FIX: ilk tıklama fit zoom'undan (geniş rota, z~8-9) VENUE_ZOOM'a BÜYÜK zoom-in → hedef z13 tile'ları
+  // cache'de yok → varışta düşük-res büyütme ("kocaman pixelli"). Sonraki tıklamalar zaten z13 + paylaşılan cache → temiz.
+  // Çözüm (parabolü BOZMADAN): flyTo'dan ÖNCE hedef z13 3x3 tile'ı tarayıcı cache'ine ısıt (minimal 9 istek; cache'lenince tekrar yok).
+  function lon2tile(lon,z){ return Math.floor((lon+180)/360*Math.pow(2,z)); }
+  function lat2tile(lat,z){ return Math.floor((1-Math.log(Math.tan(lat*Math.PI/180)+1/Math.cos(lat*Math.PI/180))/Math.PI)/2*Math.pow(2,z)); }
+  var TILE_SUBS=['a','b','c'];
+  function preloadVenueTiles(lat,lng){
+    var z=VENUE_ZOOM, xc=lon2tile(lng,z), yc=lat2tile(lat,z), i=0;
+    for(var dx=-1;dx<=1;dx++)for(var dy=-1;dy<=1;dy++){
+      var img=new Image(); img.src='https://'+TILE_SUBS[(i++)%3]+'.tile.openstreetmap.org/'+z+'/'+(xc+dx)+'/'+(yc+dy)+'.png';
+    }
+  }
+  function flyToVenue(lat,lng){ preloadVenueTiles(lat,lng); map.stop(); map.flyTo([lat,lng],VENUE_ZOOM,{duration:.7,easeLinearity:.25}); }
   var selectedVenues=[];           // "Güzergahımdaki mekanlar" — durak listesinden AYRI koleksiyon (mekan≠durak)
   var activeRouteId=null;          // (b) "Yükle"yince ziyaret bağlamı: yalnız yüklü KAYITLI rotada ziyaret-affordance açık; serbest planlamada null (karar 1+3 yapısal güvencesi)
   function isVisited(m){ return !!(activeRouteId && visited[activeRouteId] && visited[activeRouteId][m.ad]); }  // ziyaret HER ZAMAN id'ye göre (ada göre global ASLA — karar 2/3)
@@ -1708,12 +1773,48 @@ input{font:inherit}
     // Yakınlık (Yol üstü/yakın) sponsor için detay kartında görünür. Diğer mekanlar: tier korunur.
     return '<span class="yg-vtip-img" style="background-image:url(\''+imgUrl(m.img)+'\')"></span>'+
     '<span class="yg-vtip-b"><span class="yg-vtip-name">'+m.ad+'</span><span class="yg-vtip-loc">'+m.konum+'</span>'+(m.sponsor?spon:tier)+'</span>';}
+  // === ÇAKIŞIK PİN HOVER FLICKER FIX ===
+  // Kök neden: üst üste binen pinlerin hit-area'ları çakışıyor + Leaflet'in OTOMATIK tooltip hover handler'ı (mouseover→aç / mouseout→kapa)
+  // iki pin arasında ping-pong yapıyor → balon titriyor. Çözüm: (1) riseOnHover kapalı (z-index zıplaması kesilir),
+  // (2) Leaflet'in otomatik aç/kapa handler'ı kaldırılıp MANUEL kontrol: hover seti + kapanışta debounce (yapışkan) +
+  // DETERMİNİSTİK tek-sahip (hoverSet'teki pinlerden venuePins sırasındaki İLK = sabit) → çakışıkta tek balon, titremez.
+  var hoverSet=[], tipTimer=null, tipMk=null, mapAnimating=false;
+  function pickHoverPin(){ for(var i=0;i<venuePins.length;i++){ if(hoverSet.indexOf(venuePins[i].mk)>=0)return venuePins[i].mk; } return null; }
+  function evalTip(){
+    // STALE temizliği: çakışık pinde atlama hareketinde bazı pinlerin mouseout'u tetiklenmeyebilir → hoverSet'te kalıntı kalır.
+    // DOM :hover ile gerçekten cursor altında olmayanları çıkar → cursor ayrılınca balon güvenle kapanır.
+    hoverSet=hoverSet.filter(function(mk){ var el=mk.getElement(); return el && el.matches(':hover'); });
+    var pick=pickHoverPin();
+    if(!pick){ if(tipMk){tipMk.closeTooltip();tipMk=null;} return; }
+    if(tipMk!==pick){ if(tipMk)tipMk.closeTooltip(); pick.openTooltip(); tipMk=pick; }   // sabit pick → çakışıkta el değiştirmez
+  }
+  function tipOver(mk){ if(mapAnimating)return; clearTimeout(tipTimer); if(hoverSet.indexOf(mk)<0)hoverSet.push(mk); evalTip(); }   // hover başlayınca pending close iptal (yapışkan); animasyon sırasında bastır
+  function tipOut(mk){ var i=hoverSet.indexOf(mk); if(i>=0)hoverSet.splice(i,1); clearTimeout(tipTimer); tipTimer=setTimeout(evalTip,160); }   // kapanış debounce'lı
+  function resetHoverTip(){ clearTimeout(tipTimer); hoverSet=[]; if(tipMk){tipMk.closeTooltip();} tipMk=null; }
+  // GÜVENLİK AĞI: çakışık pinde atlama hareketinde marker mouseout'u kaçabilir → tooltip stale açık kalır.
+  // Map mousemove'da cursor herhangi bir pin üstünde DEĞİLSE debounce'lı kapat (mouseout'a bağımlı değil).
+  if(map)map.on('mousemove',function(e){
+    if(!tipMk||mapAnimating)return;
+    var t=e.originalEvent&&e.originalEvent.target;
+    if(t&&t.closest&&t.closest('.yg-vpin'))return;            // hâlâ bir pin üstünde → açık kalsın
+    clearTimeout(tipTimer); tipTimer=setTimeout(function(){ hoverSet=[]; if(tipMk){tipMk.closeTooltip();tipMk=null;} },160);
+  });
+  // ANİMASYON SIRASINDA HOVER BASTIR (İş 2 kök neden): flyTo/zoom sırasında harita kayarken pinler SABİT mouse altından
+  // geçip mouseover/mouseout fırtınası → tooltip flicker. Hareket/zoom başında balonu kapat + hover'ı kilitle, bitince serbest.
+  if(map){
+    map.on('movestart zoomstart',function(){ mapAnimating=true; clearTimeout(tipTimer); hoverSet=[]; if(tipMk){tipMk.closeTooltip();tipMk=null;} });
+    map.on('moveend zoomend',function(){ mapAnimating=false; });
+  }
   function bindVenueTooltip(mk,m){
     if(mk.getTooltip())mk.unbindTooltip();
     mk.bindTooltip(venueTipHtml(m),{direction:'top',offset:[0,-14],opacity:1,
       className:'yg-vtip'+(m.sponsor?' sponsor':'')+(m.dada?' dada':'')+(isSel(m)?' sel':'')});
+    // Leaflet'in OTOMATIK hover aç/kapa interaction'ını kaldır (flicker kaynağı) → manuel debounce'lı kontrol bağla
+    mk.off('mouseover'); mk.off('mouseout');
+    mk.on('mouseover',function(){ tipOver(mk); });
+    mk.on('mouseout',function(){ tipOut(mk); });
   }
-  function clearVenuePins(){venuePins.forEach(function(p){map.removeLayer(p.mk);});venuePins=[];}
+  function clearVenuePins(){if(typeof resetHoverTip==='function')resetHoverTip(); venuePins.forEach(function(p){map.removeLayer(p.mk);});venuePins=[];}
   function venueIcon(m){var vis=isSel(m)&&isVisited(m);   // ziyaret sinyali yalnız güzergaha eklenmiş + yüklü rotada işaretli mekanda
     var spon=!!m.sponsor;                                 // SPONSOR (mock/demo) — slate pin + DADA logo mark (premium, marka-içi); dada(domates) ile karşılıklı dışlar
     var inner=vis?'<i class="fa-solid fa-check"></i>'
@@ -1732,7 +1833,7 @@ input{font:inherit}
       .sort(function(a,b){ if(a.m.dada!==b.m.dada)return a.m.dada?-1:1; return a.off-b.off; });
     currentVenueList.forEach(function(x){
       var m=x.m, off=x.off;
-      var mk=L.marker([m.lat,m.lng],{icon:venueIcon(m),riseOnHover:true}).addTo(map);
+      var mk=L.marker([m.lat,m.lng],{icon:venueIcon(m),riseOnHover:false}).addTo(map);   // riseOnHover KAPALI: çakışık pinde z-index zıplaması flicker'a yol açıyordu (manuel tooltip + scale öne çıkarmayı zaten sağlıyor)
       bindVenueTooltip(mk,m);   // hover önizleme: foto + ad + konum (+ seçili ise yeşil çerçeve)
       mk.on('click',function(){ openDetail(m,off); });
       venuePins.push({mk:mk,m:m});
@@ -1777,18 +1878,39 @@ input{font:inherit}
       html+='<button class="yg-dmore" type="button"><i class="fa-solid fa-layer-group"></i> Tümünü Gör<span>+'+(list.length-SHOWCASE)+' mekan daha</span></button>';
     }
     dashScrollEl.innerHTML=html;
+    if(detailVenue)setActiveCards(detailVenue.ad);   // A2: yeniden render'da aktif kart vurgusunu koru
     syncBottomOffset();
   }
   if(dashScrollEl)dashScrollEl.addEventListener('click',function(e){
     if(e.target.closest('.yg-dmore')){ openAllView(); return; }
     var c=e.target.closest('.yg-dcard'); if(!c)return;
     var x=currentVenueList[+c.getAttribute('data-i')]; if(!x)return;
-    map.flyTo([x.m.lat,x.m.lng],11,{duration:.6});
+    flyToVenue(x.m.lat,x.m.lng);
     openDetail(x.m,x.off);
   });
   if(corrSlider)corrSlider.addEventListener('input',function(){
     corridor=+corrSlider.value; refreshThreshold(); spawnVenues();
   });
+
+  // ---- B1: alt kadran AÇ-KAPAT (bottom-sheet tutamak) — durum localStorage'da kalıcı; B2 full-view gizlemesinden bağımsız ----
+  var dashHandleEl=document.getElementById('ygDashHandle');
+  var dashHandleIco=document.getElementById('ygDashHandleIco');
+  var DASH_KEY='dada_yg_v2_dashcollapsed';
+  function applyDashCollapsed(c,save){
+    if(!dashEl)return;
+    dashEl.classList.toggle('collapsed',c);
+    if(dashHandleEl){ dashHandleEl.setAttribute('aria-expanded',c?'false':'true');
+      dashHandleEl.setAttribute('aria-label',c?'Mekan panelini göster':'Mekan panelini gizle'); }
+    if(dashHandleIco)dashHandleIco.className='fa-solid '+(c?'fa-chevron-up':'fa-chevron-down');   // çift-ok yön: kapalı=yukarı(aç) / açık=aşağı(kapat)
+    if(save)lsSet(DASH_KEY,c);
+    syncBottomOffset();   // kapalıyken kadran gizli → FAB/prompt/toast tabana iner
+  }
+  var dashCollapsed=!!lsGet(DASH_KEY,false);
+  applyDashCollapsed(dashCollapsed,false);
+  // AUTO-EXPAND: yalnız ANLAMLI rota/güzergah değişiminde (yeni hesaplama/yön/alternatif/yükleme) çağrılır → kapalıysa yumuşak aç + state güncelle.
+  // Eşik (corridor) slider'ında ÇAĞRILMAZ (mikro-ayar → zorla açma agresif olur). State tutarlı (lsSet).
+  function ensureDashExpanded(){ if(dashCollapsed){ dashCollapsed=false; applyDashCollapsed(false,true); } }
+  if(dashHandleEl)dashHandleEl.addEventListener('click',function(){ dashCollapsed=!dashCollapsed; applyDashCollapsed(dashCollapsed,true); });
 
   // ---- K1: mekan detay kartı (tıkla → harita uçar + kart) ----
   function tierLabel(off){return proxTier(off)==='on'?'Yol üstü':'Yola yakın';}
@@ -1829,8 +1951,10 @@ input{font:inherit}
     updateDetailBtn(m);
     updateVisitBtn(m);
     detailEl.hidden=false;
+    setActiveCards(m.ad);        // A2: bu mekanın kartını (slider + tam liste) aktif işaretle
+    setActivePin(m.ad);          // çift yönlü: haritadaki pini de aktif/seçili işaretle (3 yüzey senkron)
   }
-  function closeDetail(){ detailVenue=null; if(detailEl)detailEl.hidden=true; }
+  function closeDetail(){ detailVenue=null; if(detailEl)detailEl.hidden=true; clearActiveCards(); clearActivePin(); }  // balon kapanınca 3 yüzeyde de aktiflik kalkar
   function updateDetailBtn(m){
     var added=isSel(m);
     detailAddEl.classList.toggle('is-added',added);
@@ -1864,7 +1988,32 @@ input{font:inherit}
   if(detailVisitEl)detailVisitEl.addEventListener('click',function(){ if(detailVenue)toggleVisited(detailVenue); });
 
   // ---- K2: "Güzergaha Ekle" toggle + pin/kart senkron (durağa EKLEMEZ) ----
-  function syncVenuePin(m){ var e=venuePins.filter(function(p){return p.m.ad===m.ad;})[0]; if(e){ e.mk.setIcon(venueIcon(m)); bindVenueTooltip(e.mk,m); } }
+  // A2: AKTİF KART vurgusu — son tıklanan/balonu açık mekan. Tek seferde bir kart aktif (önceki temizlenir);
+  // slider (.yg-dcard) + tam liste (.yg-fl-card) TUTARLI. data-i = currentVenueList index (her iki render aynı şema).
+  function clearActiveCards(){
+    if(dashScrollEl)dashScrollEl.querySelectorAll('.yg-dcard.is-active').forEach(function(el){el.classList.remove('is-active');});
+    if(allListEl)allListEl.querySelectorAll('.yg-fl-card.is-active').forEach(function(el){el.classList.remove('is-active');});
+  }
+  function setActiveCards(ad){
+    clearActiveCards();
+    var idx=currentVenueList.map(function(x){return x.m.ad;}).indexOf(ad); if(idx<0)return;
+    if(dashScrollEl){var d=dashScrollEl.querySelector('.yg-dcard[data-i="'+idx+'"]'); if(d)d.classList.add('is-active');}
+    if(allListEl){var f=allListEl.querySelector('.yg-fl-card[data-i="'+idx+'"]'); if(f)f.classList.add('is-active');}
+  }
+  // çift yönlü senkron: aktif PİN — kart/liste tıkla→pin seçili, pin tıkla→kart/liste seçili (hepsi openDetail huni'sinden).
+  var activePinAd=null;
+  function clearActivePin(){
+    venuePins.forEach(function(p){var el=p.mk.getElement(); if(el)el.classList.remove('is-active');});
+    activePinAd=null;
+  }
+  function setActivePin(ad){
+    clearActivePin();
+    var e=venuePins.filter(function(p){return p.m.ad===ad;})[0]; if(!e)return;
+    var el=e.mk.getElement(); if(el)el.classList.add('is-active');
+    activePinAd=ad;
+  }
+  function syncVenuePin(m){ var e=venuePins.filter(function(p){return p.m.ad===m.ad;})[0]; if(e){ e.mk.setIcon(venueIcon(m)); bindVenueTooltip(e.mk,m);
+    if(activePinAd===m.ad){ var el=e.mk.getElement(); if(el)el.classList.add('is-active'); } } }   // setIcon yeni DOM yaratır → aktif pin vurgusunu geri uygula
   function syncVenueCard(m){
     var idx=currentVenueList.map(function(x){return x.m.ad;}).indexOf(m.ad);
     if(idx<0||!dashScrollEl)return;
@@ -1971,6 +2120,7 @@ input{font:inherit}
     if(!shown){ if(allEmptyEl)allEmptyEl.hidden=false; allListEl.innerHTML=''; return; }
     if(allEmptyEl)allEmptyEl.hidden=true;
     allListEl.innerHTML=html;
+    if(detailVenue)setActiveCards(detailVenue.ad);   // A2: tam liste yeniden render'da aktif vurguyu koru
   }
   // tam listedeki kartın "Ekle" durumunu noktasal senkronla (slider ↔ tam liste tutarlılığı)
   function syncFlCard(m){
@@ -1990,10 +2140,15 @@ input{font:inherit}
     viewRoute.classList.remove('is-active'); viewRoute.hidden=true;
     viewSaved.classList.remove('is-active'); viewSaved.hidden=true;
     viewAllEl.classList.add('is-active'); viewAllEl.hidden=false; viewAllEl.scrollTop=0;
+    // B2: tam liste solda her şeyi gösteriyor → alt slider gereksiz. YUMUŞAK gizle (full-hidden translateY .34s, handle ile aynı dil; ani pop YOK).
+    // hidden=true KULLANMA (display:none animasyon almaz); collapse class korunur → geri dönünce saygı duyulur.
+    if(dashEl)dashEl.classList.add('full-hidden'); syncBottomOffset();
   }
   function closeAllView(){
     viewAllEl.classList.remove('is-active'); viewAllEl.hidden=true;
     if(tabsEl)tabsEl.style.display='';
+    if(dashEl)dashEl.classList.remove('full-hidden');   // B2: slider YUMUŞAK geri gelir (collapse class dashEl'de kalır → kullanıcı kapattıysa kapalı döner)
+    renderDash(currentVenueList);
     selectTab('route');
   }
   if(dashAllBtn)dashAllBtn.addEventListener('click',openAllView);
@@ -2004,7 +2159,7 @@ input{font:inherit}
     var add=e.target.closest('.yg-fl-add');
     if(add){ var xa=currentVenueList[+add.getAttribute('data-i')]; if(xa)toggleSelected(xa.m); return; }
     var main=e.target.closest('.yg-fl-main');
-    if(main){ var xm=currentVenueList[+main.getAttribute('data-i')]; if(xm){ map.flyTo([xm.m.lat,xm.m.lng],11,{duration:.6}); openDetail(xm.m,xm.off); } }
+    if(main){ var xm=currentVenueList[+main.getAttribute('data-i')]; if(xm){ flyToVenue(xm.m.lat,xm.m.lng); openDetail(xm.m,xm.off); } }
   });
 
   // ============ KONUM BUL — geolocation → mavi nokta + flyTo + en yakın şehir "Buradan başla" ============
@@ -2017,7 +2172,9 @@ input{font:inherit}
   // alt kadran açıkken FAB/prompt/toast'ı kadran yüksekliği kadar yukarı kaydır (çakışma önle)
   function syncBottomOffset(){
     if(!appEl)return;
-    var h=(dashEl && !dashEl.hidden)?dashEl.offsetHeight:0;
+    // kadran görünür VE açık ise yüksekliği kadar offset; gizli/kapalı (collapsed) / full-view (full-hidden) ise FAB tabana iner
+    var vis=dashEl && !dashEl.hidden && !dashEl.classList.contains('collapsed') && !dashEl.classList.contains('full-hidden');
+    var h=vis?dashEl.offsetHeight:0;
     appEl.style.setProperty('--locb',(h?(h+12):0)+'px');
   }
   function geoToast(msg,icon){
@@ -2242,7 +2399,7 @@ input{font:inherit}
       routeSource='gercek';
       currentRoutes=[{poly:rec.poly, km:(rec.km!=null?rec.km:null), dakika:(rec.dakika!=null?rec.dakika:null)}];
       activeIdx=0; route.poly=rec.poly;
-      drawRoutes(); updateSummary(); renderAltList(); refreshThreshold(); spawnVenues(); fitActive();
+      drawRoutes(); updateSummary(); renderAltList(); refreshThreshold(); spawnVenues(); ensureDashExpanded(); fitActive();   /* AUTO-EXPAND: kayıtlı güzergah yüklendi → kapalıysa yumuşak aç */
     } else {                                                 // eski poly'siz kayıt → fallback canlı-OSRM, AMA önce yeni stops'a fit + spinner (boşlukta stale yok)
       fitStops(); buildRoute();
     }
