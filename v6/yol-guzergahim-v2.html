@@ -451,6 +451,18 @@ input{font:inherit}
 .yg-vtip-tier{font-size:10.5px;font-weight:700;margin-top:1px}  /* preview yakınlık etiketi — kadran/detayla tutarlı */
 .yg-vtip-tier.on{color:var(--green)} .yg-vtip-tier.near{color:var(--muted)}
 .yg-vtip.dada .yg-vtip-name{color:var(--tomato)}
+/* SPONSOR balon — GÖRÜNÜR ama KOMPAKT/klas ayrım: belirgin slate SOL-SPİNE (featured listing edge, brand register) + hafif slate-tint zemin (beyaz komşulardan ayrışır) + derin elevasyon.
+   "Sponsorlu" pill meta SLOTUNDA durur (tier yerine, JS) → DİKEY ŞİŞME YOK, balon dada/normal ile aynı yükseklik. Büyük detay kartının AĞIR dili (koyu gradient + logo watermark) YOK — küçük balon için ölçülü; zemin açık, içerik okunur. */
+.leaflet-tooltip.yg-vtip.sponsor{border-color:color-mix(in srgb, var(--line) 56%, var(--slate));
+  border-left:4px solid var(--slate);
+  background:color-mix(in srgb, var(--paper) 94%, var(--slate));
+  box-shadow:0 14px 38px rgba(33,30,22,.24)}
+/* ok ucu balon zeminiyle aynı (tint) — saf-beyaz uçla uyumsuzluk olmasın */
+.leaflet-tooltip.yg-vtip.sponsor.leaflet-tooltip-top::before{border-top-color:color-mix(in srgb, var(--paper) 94%, var(--slate))}
+/* SPONSOR hover önizleme (mock/demo) — pin'in hover yüzeyinde de "Sponsorlu" şeffaflığı: küçük slate/cream megafon etiketi (reklam disclosure) */
+.yg-vtip-spon{display:inline-flex;align-items:center;gap:4px;align-self:flex-start;margin-top:2px;padding:2px 7px;
+  background:var(--slate);color:var(--cream);border-radius:var(--radius-pill);font-size:9.5px;font-weight:700;line-height:1.4}
+.yg-vtip-spon i{font-size:8px}
 /* seçili mekan (selectedVenues) → preview: İNCE yeşil kenar (1px, kalın halka kaldırıldı) + hafif yeşil overlay + köşe ✓
    (alt kadran seçili kartla aynı dil — soft) */
 .leaflet-tooltip.yg-vtip.sel{border-color:var(--green);background:linear-gradient(var(--green-tint),var(--green-tint)),var(--paper);box-shadow:var(--sh-pop)}
@@ -1632,12 +1644,15 @@ input{font:inherit}
   function venueTipHtml(m){
     var off=route.poly?distToRoute(m):null;
     var tier=(off!=null&&isFinite(off))?'<span class="yg-vtip-tier '+proxTier(off)+'">'+proxLabel(off)+'</span>':'';
+    var spon=m.sponsor?'<span class="yg-vtip-spon"><i class="fa-solid fa-bullhorn"></i> Sponsorlu</span>':'';  // hover'da reklam disclosure (3 yüzey senkron)
+    // KOMPAKT: sponsor → "Sponsorlu" pill meta SLOTUNU alır (tier YERİNE, fazladan satır DEĞİL) → balon dikeyde dada/normal ile aynı yükseklik.
+    // Yakınlık (Yol üstü/yakın) sponsor için detay kartında görünür. Diğer mekanlar: tier korunur.
     return '<span class="yg-vtip-img" style="background-image:url(\''+imgUrl(m.img)+'\')"></span>'+
-    '<span class="yg-vtip-b"><span class="yg-vtip-name">'+m.ad+'</span><span class="yg-vtip-loc">'+m.konum+'</span>'+tier+'</span>';}
+    '<span class="yg-vtip-b"><span class="yg-vtip-name">'+m.ad+'</span><span class="yg-vtip-loc">'+m.konum+'</span>'+(m.sponsor?spon:tier)+'</span>';}
   function bindVenueTooltip(mk,m){
     if(mk.getTooltip())mk.unbindTooltip();
     mk.bindTooltip(venueTipHtml(m),{direction:'top',offset:[0,-14],opacity:1,
-      className:'yg-vtip'+(m.dada?' dada':'')+(isSel(m)?' sel':'')});
+      className:'yg-vtip'+(m.sponsor?' sponsor':'')+(m.dada?' dada':'')+(isSel(m)?' sel':'')});
   }
   function clearVenuePins(){venuePins.forEach(function(p){map.removeLayer(p.mk);});venuePins=[];}
   function venueIcon(m){var vis=isSel(m)&&isVisited(m);   // ziyaret sinyali yalnız güzergaha eklenmiş + yüklü rotada işaretli mekanda
