@@ -639,6 +639,17 @@ input{font:inherit}
 .yg-fl-empty-ico{width:54px;height:54px;margin:0 auto 13px;border-radius:50%;display:flex;align-items:center;justify-content:center;
   background:var(--tomato-tint);color:var(--tomato);font-size:20px}
 .yg-fl-empty p{font-size:13.5px;line-height:1.55;color:var(--muted);max-width:240px;margin:0 auto}
+/* SPONSOR liste satırı (mock/demo · Yasin onayı bekler) — BALON dozuyla ölçülü ayrım (uzun/çok-tekrarlı yüzey → alt şerit gibi TAM koyu/gradient DEĞİL, liste boğulmaz):
+   belirgin slate SOL-SPİNE 4px (balon spine'ı liste satırına uyarlı, featured-listing edge) + çok hafif slate-tint zemin (saf beyazdan ayrışır) + slate kenar.
+   "Sponsorlu" pill YAKINLIK SATIRINDA inline durur (ayrı header bandı YOK → DİKEY ŞİŞME YOK, satır yüksekliği ≈ diğer satırlar). sponsor↔dada dışlar (dada:false → Dada rozeti hiç render olmaz). */
+/* Sol-spine YOK (alt şerit sponsor kartıyla tutarlı — orada koyu zemin sinyali, burada köşe pill + tint zemin yeterli).
+   Sponsor sinyali: görsel köşesindeki "Sponsorlu" pill + hafif slate-tint zemin + tüm-kenar ince slate-mix kenar. (Domates ember denendi → geri alındı, düz tint kaldı.) */
+.yg-fl-card.sponsor{border-color:color-mix(in srgb, var(--line) 54%, var(--slate));
+  background:color-mix(in srgb, var(--paper) 93%, var(--slate))}
+.yg-fl-card.sponsor:hover{border-color:var(--slate-2);box-shadow:var(--sh-sm)}
+/* "Sponsorlu" disclosure = "Dada" tag'iyle BİREBİR aynı konum/yapı (görsel sol-üst köşe overlay, .yg-fl-badge tabanı), FARKLI register:
+   slate chip + cream yazı + megafon (Dada=domates+çatal). Foto üstünde NET pop için gölge. sponsor↔dada KARŞILIKLI DIŞLAR. */
+.yg-fl-badge.spon{background:var(--slate);color:var(--cream);white-space:nowrap;box-shadow:0 1px 4px rgba(33,30,22,.4)}
 
 /* ===================== DALGA 3-B: GÜZERGAHIMI KAYDET (sol panel, rota çizili durumda) ===================== */
 .yg-save{margin-top:22px}
@@ -1926,12 +1937,21 @@ input{font:inherit}
   function renderAll(){
     if(!allListEl)return;
     var html='', shown=0;
-    currentVenueList.forEach(function(x,i){
-      if(!matchVenue(x))return; shown++;
-      var m=x.m, tier=proxTier(x.off), added=isSel(m);
-      html+='<li class="yg-fl-card" data-i="'+i+'">'+
+    // SPONSOR pin (mock/demo) — eşleşen sonuç kümesinde sponsor mekan EN ÜSTE; geri kalan MEVCUT göreli sırada (stable partition, sort değil).
+    // Yapay enjeksiyon YOK: sponsor yalnız aktif filtre/aramaya zaten uyuyorsa tepeye alınır (matchVenue filtresinden geçenler arasında).
+    var matched=[]; currentVenueList.forEach(function(x,i){ if(matchVenue(x))matched.push({x:x,i:i}); });
+    var ordered=matched.filter(function(e){return e.x.m.sponsor;}).concat(matched.filter(function(e){return !e.x.m.sponsor;}));
+    ordered.forEach(function(e){
+      var x=e.x, i=e.i; shown++;
+      var m=x.m, tier=proxTier(x.off), added=isSel(m), isSpon=!!m.sponsor;
+      // SPONSOR (mock/demo) — sponsor↔dada KARŞILIKLI DIŞLAR: "Sponsorlu" disclosure görsel sol-üst köşede (Dada tag'iyle aynı konum/yapı, slate register), Dada rozeti ATLANIR.
+      // Köşe overlay → meta satırı (yakınlık) normal düzende, satırı uzatmaz (dikey şişme YOK).
+      var badge=isSpon
+        ? '<span class="yg-fl-badge spon"><i class="fa-solid fa-bullhorn"></i> Sponsorlu</span>'
+        : (m.dada?'<span class="yg-fl-badge"><i class="fa-solid fa-utensils"></i> Dada</span>':'');
+      html+='<li class="yg-fl-card'+(isSpon?' sponsor':'')+'" data-i="'+i+'">'+
         '<button class="yg-fl-main" type="button" data-i="'+i+'">'+
-          '<span class="yg-fl-media" style="background-image:url(\''+imgUrl(m.img)+'\')">'+(m.dada?'<span class="yg-fl-badge"><i class="fa-solid fa-utensils"></i> Dada</span>':'')+'</span>'+
+          '<span class="yg-fl-media" style="background-image:url(\''+imgUrl(m.img)+'\')">'+badge+'</span>'+
           '<span class="yg-fl-body">'+
             '<span class="yg-fl-name">'+m.ad+'</span>'+
             '<span class="yg-fl-loc">'+m.konum+'</span>'+
