@@ -1,31 +1,38 @@
-# DadaMutfak — Handoff (Yol Güzergahım v2 SPONSOR ŞERİT + STALE-FIX COMMIT'Lİ, PUSH YOK · sıradaki: SPONSOR FAZ 2)
+# DadaMutfak — Handoff (Yol Güzergahım v2 SPONSOR FAZ-2 PREMIUM 4/5 YÜZEY COMMIT'Lİ, PUSH YOK · sıradaki: SPONSOR LİSTE SATIRI = son yüzey)
 
-> ## ⏸️ OTURUM SONU DURUMU (2026-06-24 — Yol Güzergahım v2 **stale-state fix + SPONSOR KART ŞERİT MOCKUP KOMPLE + COMMIT'Lİ** · sıradaki: SPONSOR FAZ 2 → Dalga 2)
+> ## ⏸️ OTURUM SONU DURUMU (2026-06-24 — Yol Güzergahım v2 **SPONSOR KART PREMIUM görsel kimliği 4/5 yüzeyde COMMIT'Lİ** · sıradaki: SPONSOR "Tüm Mekanlar" LİSTE satırı → Dalga 2)
 >
 > **PROJE:** DadaMutfak yol güzergahı **BAŞTAN TASARIM** (Roadtrippers referanslı tam-ekran). Dosya: **`v6/yol-guzergahim-v2.html`** (v1 DOKUNULMUYOR). Revize karar tablosu: `tasks/yol-rev-plan.md` · sponsor plan: `tasks/yol-sponsor-karti-plan.md` (3 karar: ilk-sıra konum / Sponsorlu disclosure domates-dışı / DARK premium).
 >
-> ### ✅ BU OTURUM — COMMIT'Lİ (push YOK — `origin/main`'den **21 commit önde**, handoff chore ile 22)
-> QA Playwright ALL PASS (1440/390, console/mojibake 0). QA: `tasks/yol-v2-{sponsor,stalefix}-qa.mjs` (untracked).
-> - **`b9a4cce`** — **SPONSOR KART ŞERİT MOCKUP** (DEMO, Yasin onayı bekler). `.yg-dcard.sponsor`: KOYU `--slate` yüzey + nazik `--tomato` radial ember gradient (color-mix, token-içi) — premium=KONTRAST (beyaz komşulardan ayrışma), glow/altın YOK. **"Sponsorlu" disclosure pill** (slate chip + cream yazı, domates-DIŞI → ücretli ≠ editöryal "Dada"). **"Menüyü Gör" domates CTA** + koyu zeminde açık tipografi (WCAG). **DadaMutfak logo watermark** = header markının beyaz siluet'i (`logo-official.png`'den izole, wordmark HARİÇ → **yeni asset `v6/assets/img/logo-mark-white.png`**), içeriğin arkasında (z:0, pointer-events:none), yatık, soft .10. Sponsor vitrin **İLK** slotta; **sponsor↔dada KARŞILIKLI DIŞLAR** (veri `dada:false` + render Dada dalı atlanır). Mock sponsor = "Gebze Köfte Durağı". CTA hedefi mock (tık→detay).
-> - **`9e53ced`** — **STALE-STATE FIX**: durak <2 düşünce `clearRoute()` artık alternatif km listesi + koridor paneli + yol-üstü/yakın sayaçları da temizler (eskiden yalnız `resetPlanner` yapıyordu → durak-sil'de harita boşalıp panelde stale km/sayaç kalıyordu). Teardown tek noktada → tüm çağıranlar (durak<2 / hata / reset / yükleme-öncesi) tutarlı.
+> ### 🟦 SPONSOR KART — YÜZEY DURUMU (4/5 COMMIT'Lİ · son yüzey = liste satırı)
+> Mock sponsor = **"Gebze Köfte Durağı"** (`dada:false`+`sponsor:true`+`sponsorCta:"Menüyü Gör"`). ⚠️ Tümü DEMO — canlı=Yasin onayı. QA Playwright ALL PASS (1440/390, console/mojibake 0): `tasks/yol-v2-{sponsor,sponsorfaz2,sponsorballoon}-qa.mjs` (untracked).
+> - **Alt şerit kartı** ✅ **`b9a4cce`** — KOYU `--slate` + `--tomato` radial ember gradient (color-mix, token-içi) · **"Sponsorlu" disclosure pill** (slate chip + cream, domates-DIŞI) · **"Menüyü Gör" domates CTA** · **Dada logo watermark** (beyaz mark, `assets/img/logo-mark-white.png`, z:0/pointer-none/yatık/.10) · İLK slot · sponsor↔dada KARŞILIKLI DIŞLAR.
+> - **Harita balonu (tooltip)** ✅ **`7933f20`** — ÖLÇÜLÜ premium: slate **sol-spine 4px** + hafif slate-tint zemin (`paper 94%+slate`) + derin elevasyon + **"Sponsorlu" pill META SLOTUNDA** (tier yerine → fazladan satır YOK). Kompakt **77px ≈ dada 74px** (şişme yok). Koyu gradient/logo watermark YOK (küçük/çok-tekrarlı yüzeye özel ölçü).
+> - **Detay preview (sağ üst kart)** ✅ **`a09a79e`** — TAM premium: gövde koyu gradient (şeritle senkron) + **Dada logo watermark sağdan-çapraz** (-15°/.10/arka) + "Sponsorlu" slate/cream badge (megafon) + ikincil CTA **"Menüyü Gör"** (sponsorCta) + `.is-sponsor` üst slate hairline; sponsor↔dada dışlama (Dada "öneriyor" rozeti atlanır).
+> - **Harita pini** ✅ **`a09a79e`** — KOYU slate pin + **Dada logo mark** (`vp-logo`, megafon DEĞİL → sofistike/marka-içi); dada(domates/çatal)+normal(beyaz/iğne)den ayrışır; sel/visited'te slate kimlik korunur. **Star/rating-display fix aynı pakette** (`.yg-detail-star[hidden]{display:none}` → dada-dışı mekanda önceki puan sızması giderildi).
+> - **"Tüm Mekanlar" (full-view) LİSTESİ** ⏳ **EKSİK — TEK KALAN YÜZEY (← SIRADAKİ İŞ).** Sponsor satırı (Gebze Köfte Durağı) hâlâ normal kart gibi, belli değil. **Doz: BALON mantığı** — ölçülü ayrım (Sponsorlu etiket + ince premium kenar/zemin); alt şerit gibi TAM koyu DEĞİL (uzun liste boğulmaz).
+>
+> ### 📐 REGISTER KURALI (yüzeyler-arası tutarlılık)
+> **Sponsor** = slate/koyu + cream **"Sponsorlu"** pill (megafon, domates-DIŞI) · **Dada** = beyaz + domates **"Dada"** · **karşılıklı dışlama her yüzeyde**. Doz: **büyük/öne-çıkan yüzey (şerit+detay) = TAM premium** (koyu+logo+gradient) · **küçük/çok-tekrarlı yüzey (balon+pin+liste) = ÖLÇÜLÜ premium** (etiket + ince kenar/zemin, boğmaz).
 >
 > ### ✅ ÖNCEKİ COMMIT'LER (bu özellik ailesi)
-> - **`1a3567e`** anasayfa FAB ikon-only · **`ce71b26`** kesfet FAB ikon-only · **`30a72d7`** SAVED-ROUTE UX (tap-visit+preview / Yeni Güzergah / bağlamsal etiket) · **`50153ab`** sentetik alt-rota KALDIRILDI (gerçek OSRM) · **`15145a9`** clear-× radius · **`e8ccebd`** ROAD_POOL 259/40 · **`17d323f`** CHECKPOINT route-scoped + GÜZERGAHLARIM AÇ fix · **`8a15890`** DALGA 1 · **`a26e9a1`** alt-rota+Dada pill · **`e225b89`** box-zoom off · **`fcef076`** focus-outline.
+> - **`9e53ced`** stale-state fix (durak<2 → `clearRoute()` alt-km/koridor/sayaç da temizler) · **`1a3567e`** anasayfa FAB ikon-only · **`ce71b26`** kesfet FAB ikon-only · **`30a72d7`** SAVED-ROUTE UX · **`50153ab`** sentetik alt-rota KALDIRILDI (gerçek OSRM) · **`15145a9`** clear-× radius · **`e8ccebd`** ROAD_POOL 259/40 · **`17d323f`** CHECKPOINT route-scoped · **`8a15890`** DALGA 1 · **`a26e9a1`** alt-rota+Dada pill · **`e225b89`** box-zoom off · **`fcef076`** focus-outline.
 >
 > ### 🎯 KUYRUK (resume'da sıradaki iş — öncelik sırası)
-> 1. **SPONSOR FAZ 2 (← SIRADAKİ):** şerit kartı DONE; **3 yüzey tutarlılığı** kaldı → (a) **detay preview kartına "Sponsorlu" disclosure senkronu** (sponsor mekan tıklanınca açılan detayda da reklam etiketi görünsün) + (b) **harita sponsor pini ayırt edici** (sponsor mekanın pini diğer pinlerden görsel ayrışsın). Şerit↔detay↔harita üçü tutarlı olmalı. ⚠️ Tümü DEMO — canlı=Yasin onayı.
-> 2. **DALGA 2 — header:** **"ROTA PLANLAYICI" eyebrow** (K7=A) + route-line üst şerit.
-> 3. **DALGA 4 — mobil** (Faz1 bottom-sheet detay → Faz4 390 breakpoint, `yol-rev-mobil.md`).
-> 4. **DALGA 5 — veri** (gerçek OSRM/veri besleme → **gerçek alternatifler** otomatik çizilir; sentetik zaten kaldırıldı). Kayıtlı rotalar poly sakladığı için ağ-bağımsız açılıyor.
+> 1. **SPONSOR LİSTE SATIRI (← SIRADAKİ):** "Tüm Mekanlar" full-view'da sponsor satırı = son yüzey → 5/5 TAM biter. Doz = balon (ölçülü). Bitince sponsor görsel kimliği komple.
+> 2. **YASİN BEY ONAYI** (sponsor gelir/reklam kararı) → sonra push. Canlıya çıkmadan şart.
+> 3. **DALGA 2 — header:** **"ROTA PLANLAYICI" eyebrow** (K7=A) + route-line üst şerit.
+> 4. **DALGA 4 — mobil** (Faz1 bottom-sheet detay → Faz4 390 breakpoint, `yol-rev-mobil.md`).
+> 5. **DALGA 5 — veri** (gerçek OSRM/veri → **gerçek alternatifler** otomatik; sentetik kaldırıldı). Kayıtlı rotalar poly saklar → ağ-bağımsız.
+> 6. **PUSH** — `origin/main`'den **24 commit önde** (handoff chore ile 25). Canlıya batch önerildi; Beyar ayrıca "push" diyecek.
 >
 > ### ⏳ AÇIK CONCERN'LER
-> - **SPONSOR canlı = YASİN BEY ONAYI** (reklam/gelir özelliği). Şerit mockup'ı bitti ama canlıya çıkmadan onay şart; CTA hedefi şu an mock (tık→detay).
-> - **Yeni asset `v6/assets/img/logo-mark-white.png`** — header `logo-official.png` markının beyaz siluet'i (wordmark hariç), watermark için. `b9a4cce`'de commit'li.
+> - **SPONSOR canlı = YASİN BEY ONAYI** (reklam/gelir özelliği). 4/5 yüzey commit'li ama DEMO; canlıya çıkmadan onay şart; CTA hedefleri mock.
+> - **Asset `v6/assets/img/logo-mark-white.png`** — header markının beyaz siluet'i (wordmark hariç); şerit+detay watermark + pin logo mark aynı asset. `b9a4cce`'de commit'li.
 > - **`sezon-v1.html` watermark** — working tree'de commit'siz (` M`, onaysız); Yol Güzergahım DIŞI, ayrı iş — **DOKUNULMADI, DOKUNMA**.
-> - **PUSH bekleyen: 21 commit** (`origin/main`'den önde) — canlıya **batch halinde** önerildi. Beyar ayrıca "push" diyecek.
 >
 > ### REVİZE LİSTESİ DURUMU
-> ✅ alternatif rota (sentetik kaldırıldı → gerçek) · ✅ liste/şehir çoğaltma (ROAD_POOL 259/40) · ✅ clear-× radius · ✅ saved-route UX · ✅ FAB ikon-only · ✅ **stale-state fix** · ✅ **SPONSOR ŞERİT mockup** (yalnız **Yasin onayı + FAZ 2** kaldı: detay disclosure + harita pini).
+> ✅ alternatif rota (sentetik kaldırıldı → gerçek) · ✅ liste/şehir çoğaltma (ROAD_POOL 259/40) · ✅ clear-× radius · ✅ saved-route UX · ✅ FAB ikon-only · ✅ **stale-state fix** · ✅ **SPONSOR 4/5 yüzey premium** (şerit+balon+detay+pin commit'li; yalnız **liste satırı + Yasin onayı** kaldı).
 >
 > ### KARARLAR — CHECKPOINT (5/5 KAPALI) + SAVED-FLOW
 > ✅ route-scoped ziyaret · ✅ bulaşma yok · ✅ yeni rota tertemiz · ✅ harita+liste çift sinyal · ✅ **5. KARAR = (b)** "Yükle"yince otomatik ziyaret bağlamı (ayrı mod YOK). · ✅ **SAVED-FLOW = Seçenek 2** (tek-harita, "yüklü rota" bağlamı + Güncelle, yeni view yok).
