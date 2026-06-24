@@ -454,11 +454,14 @@ input{font:inherit}
    (Dada-seçili: domates dolgu KORUNUR + üstüne yeşil halka birlikte) */
 .yg-vpin.sel .vp{box-shadow:0 0 0 3px var(--green),var(--sh-md)}
 .yg-vpin.sel:not(.dada) .vp{border-color:var(--green);color:var(--green)}
-/* PİN HOVER — büyü + öne gel (görsel önizleme tooltip ile birlikte) */
-.yg-vpin:hover{z-index:1000!important}
-.yg-vpin:hover .vp{transform:scale(1.22);box-shadow:var(--sh-pop)}
+/* PİN HOVER — büyü + öne gel (görsel önizleme tooltip ile birlikte).
+   JS-YÖNETİMLİ .is-hover (saf CSS :hover DEĞİL): harita flyTo/zoom ile pin cursor altından kayınca
+   (mousemove olmadan) :hover takılı kalıp pini büyük bırakıyordu → tooltip ile AYNI yaşam döngüsüne bağlandı
+   (tek-sahip; movestart/mouseout/safety-net temizler) → "pin takılması" giderildi. */
+.yg-vpin.is-hover{z-index:1000!important}
+.yg-vpin.is-hover .vp{transform:scale(1.22);box-shadow:var(--sh-pop)}
 /* seçili pin HOVER → yeşil halka KORUNUR (sade hover sh-pop'u halkayı ezmesin; Dada-seçili dahil) */
-.yg-vpin.sel:hover .vp{box-shadow:0 0 0 3px var(--green),var(--sh-pop)}
+.yg-vpin.sel.is-hover .vp{box-shadow:0 0 0 3px var(--green),var(--sh-pop)}
 /* ZİYARET EDİLDİ (b — yüklü kayıtlı rotada haritadan işaretlenir): dolu yeşil + beyaz ✓ + sönük "gidildi" sinyali;
    sel yeşil halkasıyla birlikte okunur; Dada-ziyaret domates kimliğini korur. Specificity sel:not(.dada)'yı (0,4,1) yensin diye .sel.visited / .dada.visited (sıra: sel önce, dada sonra) */
 .yg-vpin.visited .vp{opacity:.66}
@@ -473,7 +476,7 @@ input{font:inherit}
   background:url(assets/img/logo-mark-white.png) center/contain no-repeat}
 .yg-vpin.sponsor.sel .vp{background:var(--slate);border-color:#fff;color:var(--cream)}
 .yg-vpin.sponsor.visited .vp{background:var(--slate);border-color:#fff;color:var(--cream)}
-.yg-vpin.visited:hover .vp{opacity:1}
+.yg-vpin.visited.is-hover .vp{opacity:1}
 /* AKTİF PİN (geçici — balonu açık / son seçilen mekan; çift yönlü senkron: kart/liste ↔ pin). KANAL = scale + tomato DIŞ-halka + elevation.
    Register dolgu (dada domates / sponsor slate / normal beyaz) DOLGU kanalında → halka EZMEZ. sel YEŞİL halka korunur:
    sel'de iç yeşil (eklendi) + dış tomato (aktif) concentric → ikisi de okunur. Kartlardaki tomato glow diliyle tutarlı. */
@@ -483,8 +486,8 @@ input{font:inherit}
 /* eklendi YEŞİL iç-halka DEĞİŞMEZ (3px green); yalnız aktif tomato dış-ring incelir (6px→5.5px) + opacity */
 .yg-vpin.sel.is-active .vp{box-shadow:0 0 0 3px var(--green),0 0 0 5.5px rgba(225,72,39,.82),var(--sh-pop)}
 /* aktif pin hover'da da aktif kimliğini korur (sade hover scale/gölge aktif halkayı ezmesin) */
-.yg-vpin.is-active:hover .vp{transform:scale(1.22);box-shadow:0 0 0 2.5px rgba(225,72,39,.82),var(--sh-pop)}
-.yg-vpin.sel.is-active:hover .vp{box-shadow:0 0 0 3px var(--green),0 0 0 5.5px rgba(225,72,39,.82),var(--sh-pop)}
+.yg-vpin.is-active.is-hover .vp{transform:scale(1.22);box-shadow:0 0 0 2.5px rgba(225,72,39,.82),var(--sh-pop)}
+.yg-vpin.sel.is-active.is-hover .vp{box-shadow:0 0 0 3px var(--green),0 0 0 5.5px rgba(225,72,39,.82),var(--sh-pop)}
 /* venue önizleme tooltip (hover'da foto + ad + konum) */
 .leaflet-tooltip.yg-vtip{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-md);
   box-shadow:var(--sh-pop);padding:0;overflow:hidden;display:flex;width:188px;white-space:normal}
@@ -1778,38 +1781,63 @@ input{font:inherit}
   // iki pin arasında ping-pong yapıyor → balon titriyor. Çözüm: (1) riseOnHover kapalı (z-index zıplaması kesilir),
   // (2) Leaflet'in otomatik aç/kapa handler'ı kaldırılıp MANUEL kontrol: hover seti + kapanışta debounce (yapışkan) +
   // DETERMİNİSTİK tek-sahip (hoverSet'teki pinlerden venuePins sırasındaki İLK = sabit) → çakışıkta tek balon, titremez.
-  var hoverSet=[], tipTimer=null, tipMk=null, mapAnimating=false;
-  function pickHoverPin(){ for(var i=0;i<venuePins.length;i++){ if(hoverSet.indexOf(venuePins[i].mk)>=0)return venuePins[i].mk; } return null; }
+  // MANUEL hover kontrolü — çoklu-tooltip flicker fix (yoğun/çakışık pin kümesi; Playwright kanıtlı: 7-pin küme → aynı anda 4 balon):
+  //  (a) COALESCE: art arda gelen mouseover fırtınası tek evalTip'e indirgenir (8ms) → çakışıkta birden fazla balon AÇILMAZ
+  //  (b) SON-HOVER SAHİP (sticky last-owner): venuePins sıra-bağımlılığı yerine en son mouseover alan pin sahip → deterministik + kullanıcı niyeti + flip-flop kökten kesilir
+  //  (c) TEK-TOOLTIP INVARIANT: sahip değişince eski + pick dışı TÜM balonlar kapatılır, sonra yeni açılır → aynı anda en fazla 1 tooltip (openCount<=1)
+  var hoverSet=[], tipTimer=null, tipMk=null, mapAnimating=false, pendingMk=null, coalesceTimer=null;
+  // TEK PAYLAŞILAN TOOLTIP: per-marker bindTooltip yerine map'e bağlı TEK tooltip nesnesi → yapısal olarak aynı anda
+  // en fazla 1 balon DOM'da (orphan/çoklu-balon imkânsız). pick değişince içerik+konum+kimlik-class'ı güncellenir.
+  var hoverTip=L.tooltip({direction:'top',offset:[0,-14],opacity:1,className:'yg-vtip'});
+  function mDataOf(mk){ for(var i=0;i<venuePins.length;i++){ if(venuePins[i].mk===mk)return venuePins[i].m; } return null; }
+  function showHoverTip(mk){
+    var m=mDataOf(mk); if(!m){ hideHoverTip(); return; }
+    hoverTip.setContent(venueTipHtml(m));
+    hoverTip.setLatLng(mk.getLatLng());
+    if(!map.hasLayer(hoverTip))hoverTip.addTo(map);
+    var el=hoverTip.getElement();   // register kimliği: sponsor (slate spine) / dada (domates ad) / sel (yeşil + ✓) — class toggle, base yg-vtip korunur
+    if(el){ el.classList.toggle('sponsor',!!m.sponsor); el.classList.toggle('dada',!!m.dada); el.classList.toggle('sel',isSel(m)); }
+    // PİN SCALE/halka: tek-sahip is-hover (saf CSS :hover değil) → harita kayınca takılmaz
+    for(var i=0;i<venuePins.length;i++){ var pe=venuePins[i].mk.getElement(); if(pe)pe.classList.toggle('is-hover',venuePins[i].mk===mk); }
+  }
+  function hideHoverTip(){ if(map&&map.hasLayer(hoverTip))map.removeLayer(hoverTip);
+    for(var i=0;i<venuePins.length;i++){ var pe=venuePins[i].mk.getElement(); if(pe)pe.classList.remove('is-hover'); } }
+  function pickHoverPin(){
+    // SON-HOVER: en son mouseover alan pin hâlâ cursor altındaysa sahip = o (sıra-bağımsız, niyeti yansıtır)
+    if(pendingMk){ var pe=pendingMk.getElement(); if(pe&&pe.matches(':hover')&&hoverSet.indexOf(pendingMk)>=0)return pendingMk; }
+    // pendingMk ayrıldıysa mevcut sahip hâlâ hover'da ise KORU (sticky → titremez); değilse hoverSet'teki en yeni geçerli
+    if(tipMk&&hoverSet.indexOf(tipMk)>=0){ var te=tipMk.getElement(); if(te&&te.matches(':hover'))return tipMk; }
+    return hoverSet.length?hoverSet[hoverSet.length-1]:null;
+  }
   function evalTip(){
-    // STALE temizliği: çakışık pinde atlama hareketinde bazı pinlerin mouseout'u tetiklenmeyebilir → hoverSet'te kalıntı kalır.
-    // DOM :hover ile gerçekten cursor altında olmayanları çıkar → cursor ayrılınca balon güvenle kapanır.
+    coalesceTimer=null;
+    // STALE temizliği: çakışık pinde atlama hareketinde bazı pinlerin mouseout'u kaçabilir → hoverSet kalıntısını :hover ile süz.
     hoverSet=hoverSet.filter(function(mk){ var el=mk.getElement(); return el && el.matches(':hover'); });
     var pick=pickHoverPin();
-    if(!pick){ if(tipMk){tipMk.closeTooltip();tipMk=null;} return; }
-    if(tipMk!==pick){ if(tipMk)tipMk.closeTooltip(); pick.openTooltip(); tipMk=pick; }   // sabit pick → çakışıkta el değiştirmez
+    if(!pick){ if(tipMk){hideHoverTip();tipMk=null;} return; }
+    if(tipMk!==pick){ tipMk=pick; showHoverTip(pick); }   // tek tooltip taşınır+güncellenir → openCount yapısal olarak <=1
   }
-  function tipOver(mk){ if(mapAnimating)return; clearTimeout(tipTimer); if(hoverSet.indexOf(mk)<0)hoverSet.push(mk); evalTip(); }   // hover başlayınca pending close iptal (yapışkan); animasyon sırasında bastır
-  function tipOut(mk){ var i=hoverSet.indexOf(mk); if(i>=0)hoverSet.splice(i,1); clearTimeout(tipTimer); tipTimer=setTimeout(evalTip,160); }   // kapanış debounce'lı
-  function resetHoverTip(){ clearTimeout(tipTimer); hoverSet=[]; if(tipMk){tipMk.closeTooltip();} tipMk=null; }
+  function tipOver(mk){ if(mapAnimating)return; clearTimeout(tipTimer); pendingMk=mk; if(hoverSet.indexOf(mk)<0)hoverSet.push(mk);
+    if(coalesceTimer)clearTimeout(coalesceTimer); coalesceTimer=setTimeout(evalTip,8); }   // COALESCE: mouseover fırtınası → tek evalTip; pending close iptal (yapışkan)
+  function tipOut(mk){ var i=hoverSet.indexOf(mk); if(i>=0)hoverSet.splice(i,1); if(mk===pendingMk)pendingMk=null; clearTimeout(tipTimer); tipTimer=setTimeout(evalTip,160); }   // kapanış debounce'lı
+  function resetHoverTip(){ clearTimeout(tipTimer); if(coalesceTimer)clearTimeout(coalesceTimer); coalesceTimer=null; pendingMk=null; hoverSet=[]; hideHoverTip(); tipMk=null; }
   // GÜVENLİK AĞI: çakışık pinde atlama hareketinde marker mouseout'u kaçabilir → tooltip stale açık kalır.
   // Map mousemove'da cursor herhangi bir pin üstünde DEĞİLSE debounce'lı kapat (mouseout'a bağımlı değil).
   if(map)map.on('mousemove',function(e){
     if(!tipMk||mapAnimating)return;
     var t=e.originalEvent&&e.originalEvent.target;
     if(t&&t.closest&&t.closest('.yg-vpin'))return;            // hâlâ bir pin üstünde → açık kalsın
-    clearTimeout(tipTimer); tipTimer=setTimeout(function(){ hoverSet=[]; if(tipMk){tipMk.closeTooltip();tipMk=null;} },160);
+    clearTimeout(tipTimer); tipTimer=setTimeout(function(){ pendingMk=null; hoverSet=[]; hideHoverTip(); tipMk=null; },160);
   });
   // ANİMASYON SIRASINDA HOVER BASTIR (İş 2 kök neden): flyTo/zoom sırasında harita kayarken pinler SABİT mouse altından
   // geçip mouseover/mouseout fırtınası → tooltip flicker. Hareket/zoom başında balonu kapat + hover'ı kilitle, bitince serbest.
   if(map){
-    map.on('movestart zoomstart',function(){ mapAnimating=true; clearTimeout(tipTimer); hoverSet=[]; if(tipMk){tipMk.closeTooltip();tipMk=null;} });
+    map.on('movestart zoomstart',function(){ mapAnimating=true; clearTimeout(tipTimer); if(coalesceTimer)clearTimeout(coalesceTimer); coalesceTimer=null; pendingMk=null; hoverSet=[]; hideHoverTip(); tipMk=null; });
     map.on('moveend zoomend',function(){ mapAnimating=false; });
   }
+  // Per-marker tooltip YOK (tek paylaşılan hoverTip kullanılıyor) → yalnız manuel hover handler bağla.
+  // İçerik+kimlik-class showHoverTip'te pick anında üretilir → sel/sponsor/dada her zaman güncel (rebind gerekmez).
   function bindVenueTooltip(mk,m){
-    if(mk.getTooltip())mk.unbindTooltip();
-    mk.bindTooltip(venueTipHtml(m),{direction:'top',offset:[0,-14],opacity:1,
-      className:'yg-vtip'+(m.sponsor?' sponsor':'')+(m.dada?' dada':'')+(isSel(m)?' sel':'')});
-    // Leaflet'in OTOMATIK hover aç/kapa interaction'ını kaldır (flicker kaynağı) → manuel debounce'lı kontrol bağla
     mk.off('mouseover'); mk.off('mouseout');
     mk.on('mouseover',function(){ tipOver(mk); });
     mk.on('mouseout',function(){ tipOut(mk); });
