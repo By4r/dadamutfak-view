@@ -16,9 +16,12 @@
 > - **`fcef076`** — **Focus-outline fix:** `.leaflet-interactive:focus{outline:none}` + `:focus-visible` tomato ring (klavye erişilebilirliği korundu). *Ders: "mavi dikdörtgen" box-zoom değil, focusable SVG path UA outline'ıydı.*
 > - **`fef3b61`** — handoff chore.
 >
+> ### ⚠️ TEKNİK BORÇ — Sentetik alternatif rota (commit `e8ccebd`)
+> `bulgeRoute()` ile üretilen alternatifler **GERÇEK YOL DEĞİL** — ana rotanın sinüs zarfıyla yana şişirilmiş **demo doldurucusu**. Sadece mock/demo görsel amaçlı. **Dalga 5'te (gerçek OSRM/veri)** prod rota servisi bağlanınca: ya tamamen **kaldır**, ya da **"gerçek alternatif yoksa fallback"** moduna indir. 🚫 **CANLIDA sahte rota kullanıcıya gösterilmemeli** (var olmayan yola yönlendirme riski). `topUpAlts()` zaten gerçek alternatifleri koruyor → prod-OSRM çok-rota beslerse sentetik otomatik devreden çıkar; tek kalan risk public OSRM'in tek-rota döndüğü durum.
+>
 > ### 🎯 KUYRUK (resume'da sıradaki iş — öncelik sırası)
-> 1. **Revize-mock ikilisi (← SIRADAKİ, ucuz):** alternatif yol sayısını artır + şehir/liste uzunluğunu artır (mock data).
-> 2. **clear × hover/tık radius tutarsızlığı** (ufak CSS, projedeki radius token'ıyla hizala).
+> 1. **Revize-mock ikilisi** — ✅ **BİTTİ** (commit `e8ccebd`): alternatif yol 4'e çıkarıldı (gerçek korunur + `bulgeRoute` sentetik doldurucu), ROAD_POOL 190→259 mekan / 40 koridor anahtarı. QA `yol-v2-{mockcount,alt-mock}-qa.mjs` ALL PASS (1440/390, console/mojibake 0). ⚠️ borç notu ↑.
+> 2. **clear × hover/tık radius tutarsızlığı (← SIRADAKİ)** (ufak CSS, projedeki radius token'ıyla hizala).
 > 3. **SPONSOR KART:** Yol Üstü Mekanlar şeridine premium reklam kartı (**frontend-design skill ŞART**) — ⚠️ **canlıya çıkmadan Yasin Bey onayı** gerekir (reklam/gelir kararı).
 > 4. **DALGA 2 — header:** **"ROTA PLANLAYICI" eyebrow** (K7=A) + route-line üst şerit.
 > 5. **DALGA 4 — mobil** (Faz1 bottom-sheet detay → Faz4 390 breakpoint, `yol-rev-mobil.md`).
