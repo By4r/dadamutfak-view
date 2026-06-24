@@ -466,7 +466,10 @@ input{font:inherit}
    JS-YÖNETİMLİ .is-hover (saf CSS :hover DEĞİL): harita flyTo/zoom ile pin cursor altından kayınca
    (mousemove olmadan) :hover takılı kalıp pini büyük bırakıyordu → tooltip ile AYNI yaşam döngüsüne bağlandı
    (tek-sahip; movestart/mouseout/safety-net temizler) → "pin takılması" giderildi. */
-.yg-vpin.is-hover{z-index:1000!important}
+/* FLICKER FIX: is-hover'da z-index BUMP YOK. is-hover SAHİP pine konur (pickHoverPin seçimi, illa cursor-altı topmost
+   değil) → z:1000 sahibi tepeye fırlatınca yoğun çakışık kümede cursor-altı pin ↔ sahip salınıyordu (flip-flop: çift
+   balon + dada/default kimlik). riseOnHover:false niyetiyle de çelişiyordu. Hovered pin zaten en üstte → bump gereksiz;
+   kaldırıldı → sahiplik Leaflet latlng-z sırasıyla DETERMINISTIK (osilasyon kesik). */
 .yg-vpin.is-hover .vp{transform:scale(1.22);box-shadow:var(--sh-pop)}
 /* seçili pin HOVER → yeşil halka KORUNUR (sade hover sh-pop'u halkayı ezmesin; Dada-seçili dahil) */
 .yg-vpin.sel.is-hover .vp{box-shadow:0 0 0 3px var(--green),var(--sh-pop)}
@@ -498,7 +501,8 @@ input{font:inherit}
 .yg-vpin.sel.is-active.is-hover .vp{box-shadow:0 0 0 3px var(--green),0 0 0 5.5px rgba(225,72,39,.82),var(--sh-pop)}
 /* venue önizleme tooltip (hover'da foto + ad + konum) */
 .leaflet-tooltip.yg-vtip{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-md);
-  box-shadow:var(--sh-pop);padding:0;overflow:hidden;display:flex;width:188px;white-space:normal}
+  box-shadow:var(--sh-pop);padding:0;overflow:hidden;display:flex;width:188px;white-space:normal;
+  transition:none!important}   /* FLICKER FIX: Leaflet fade-anim (.leaflet-fade-anim opacity .2s) remove+add'de iki balonu üst üste gösteriyordu → kapat (anlık göster/gizle, overlap imkânsız) */
 .leaflet-tooltip.yg-vtip.leaflet-tooltip-top::before{border-top-color:var(--paper)}
 .yg-vtip-img{flex:0 0 56px;align-self:stretch;min-height:56px;background-size:cover;background-position:center;background-color:var(--line)}
 .yg-vtip-b{flex:1;min-width:0;padding:8px 10px;display:flex;flex-direction:column;gap:2px;justify-content:center}
@@ -1916,13 +1920,20 @@ input{font:inherit}
     if(tipMk&&hoverSet.indexOf(tipMk)>=0){ var te=tipMk.getElement(); if(te&&te.matches(':hover'))return tipMk; }
     return hoverSet.length?hoverSet[hoverSet.length-1]:null;
   }
+  var lastTipSwitch=0, TIP_SWITCH_CD=150;   // FLICKER FIX: sahip-geçiş histerezisi (yoğun çakışık kümede A↔B salınımını mekanizmadan bağımsız kes)
   function evalTip(){
     coalesceTimer=null;
     // STALE temizliği: çakışık pinde atlama hareketinde bazı pinlerin mouseout'u kaçabilir → hoverSet kalıntısını :hover ile süz.
     hoverSet=hoverSet.filter(function(mk){ var el=mk.getElement(); return el && el.matches(':hover'); });
     var pick=pickHoverPin();
-    if(!pick){ if(tipMk){hideHoverTip();tipMk=null;} return; }
-    if(tipMk!==pick){ tipMk=pick; showHoverTip(pick); }   // tek tooltip taşınır+güncellenir → openCount yapısal olarak <=1
+    if(!pick){ if(tipMk){hideHoverTip();tipMk=null;} return; }   // küme tamamen terk → ANINDA kapat (cooldown'a tabi değil)
+    if(tipMk!==pick){
+      // HİSTEREZİS: son geçişten <CD ise sahibi KORU → çakışık pinde dada↔default flip-flop kesilir.
+      // (Küme-içi pinler ~px komşu → tooltip neredeyse aynı yerde; algılanmaz "lag", titreme YOK.)
+      var now=Date.now();
+      if(tipMk && (now-lastTipSwitch)<TIP_SWITCH_CD) return;
+      lastTipSwitch=now; tipMk=pick; showHoverTip(pick);   // tek tooltip taşınır+güncellenir → openCount yapısal <=1
+    }
   }
   function tipOver(mk){ if(mapAnimating)return; clearTimeout(tipTimer); pendingMk=mk; if(hoverSet.indexOf(mk)<0)hoverSet.push(mk);
     if(coalesceTimer)clearTimeout(coalesceTimer); coalesceTimer=setTimeout(evalTip,8); }   // COALESCE: mouseover fırtınası → tek evalTip; pending close iptal (yapışkan)
