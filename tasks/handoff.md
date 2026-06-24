@@ -1,35 +1,35 @@
-# DadaMutfak — Handoff (SIRADAKİ: Yol Güzergahım v2 — Dalga 1 + görsel fix + CHECKPOINT + SAVED-FLOW COMMIT'Lİ, PUSH YOK · sıradaki: revize-mock ikilisi)
+# DadaMutfak — Handoff (Yol Güzergahım v2 SAVED-UX + FAB tutarlılık COMMIT'Lİ, PUSH YOK · sıradaki: SPONSOR KART)
 
-> ## ⏸️ OTURUM SONU DURUMU (2026-06-24 — Yol Güzergahım v2 **CHECKPOINT (b) + GÜZERGAHLARIM→AÇ FIX (Seçenek 2) KOMPLE + COMMIT'Lİ** · sıradaki: revize-mock ikilisi)
+> ## ⏸️ OTURUM SONU DURUMU (2026-06-24 — Yol Güzergahım v2 **SAVED-ROUTE UX paketi + sentetik kaldırma + clear-× radius + FAB ikon-only (3 sayfa) KOMPLE + COMMIT'Lİ** · sıradaki: SPONSOR KART)
 >
-> **PROJE:** DadaMutfak yol güzergahı **BAŞTAN TASARIM** (Roadtrippers referanslı tam-ekran). Dosya: **`v6/yol-guzergahim-v2.html`** (v1 DOKUNULMUYOR). Revize karar tablosu: `tasks/yol-rev-plan.md` · keşif md'leri: `yol-rev-{renk,header,mobil,spec}.md` · analizler: `yol-rev-checkpoint-analiz.md` · `yol-rev-savedflow-analiz.md`.
+> **PROJE:** DadaMutfak yol güzergahı **BAŞTAN TASARIM** (Roadtrippers referanslı tam-ekran). Dosya: **`v6/yol-guzergahim-v2.html`** (v1 DOKUNULMUYOR). Revize karar tablosu: `tasks/yol-rev-plan.md` · analizler: `yol-rev-{checkpoint,savedflow,savedux}-analiz.md`.
 >
-> ### ✅ BU OTURUM — CHECKPOINT + SAVED-FLOW COMMIT'Lİ `17d323f` (push YOK — `origin/main`'den **9 commit önde**)
-> Tek dosya `v6/yol-guzergahim-v2.html`. Playwright ALL PASS (1440/390, console/mojibake 0). İki iş aynı feature ailesi (loadRoute/activeRouteId/route-scoped visited) → tek commit. QA: `tasks/yol-v2-{checkpoint,savedflow}-qa.mjs` (untracked).
-> - **CHECKPOINT (b) — "Yükle"yince ziyaret bağlamı:** `activeRouteId` state (loadRoute'ta `rec.id`, divergence'ta `maybeBuild`/ters-çevir → null). **Çift sinyal:** harita pini ziyaret = yeşil dolgu + ✓ + sönük (Dada-ziyaret domates kimliğini korur) + sol "Güzergahımdaki mekanlar" üstü-çizik + medya köşesi ✓. Detay kartında **"Ziyaret ettim/Ziyaret edildi" toggle** (yalnız `activeRouteId && isSel` → serbest planlamada gizli = karar 1 gate). Ziyaret HER ZAMAN id'ye göre (`visited[routeId][ad]`) → bulaşma yok / yeni rota tertemiz (karar 2/3). Saved-sekme checklist + ilerleme korundu, iki giriş aynı `visited[id]`'ye yazar (senkron).
-> - **GÜZERGAHLARIM→AÇ FIX (Seçenek 2):** (B-3) `buildRecord` artık **poly+dakika saklıyor** → kayıtlı rota **ağ-bağımsız** anında açılır (QA: OSRM bloklu iken bile çizdi, 0 OSRM çağrısı). (B-1) `loadRoute` async öncesi **`clearRoute()` + anında `drawRoutes+fitActive+spawnVenues`** → stale render bitti (eski İstanbul-içi zoom / yanlış koridor sızıntısı gitti); poly'siz eski kayıt → `fitStops()`+canlı-OSRM fallback. **Bağlam UI:** `activeRouteId` set iken soft şerit **"Yüklü güzergah: «ad»"** + buton **"Kaydet"→"Güncelle"** (aynı id overwrite, **duplikasyon yok**, `visited` korunur); divergence → form "Güzergahımı Kaydet"e döner.
+> ### ✅ BU OTURUM — COMMIT'Lİ (push YOK — `origin/main`'den **18 commit önde**)
+> Tüm işler Playwright ALL PASS (1440/390, console/mojibake 0). QA: `tasks/yol-v2-{savedux,minepreview,altremove,mockcount,alt-mock,clearradius}-qa.mjs` + `{kesfet,anasayfa}-ygfab-qa.mjs` (untracked).
+> - **`1a3567e`** — anasayfa-portal-v3a FAB ikon-only hover-genişle (kesfet deseni hizalama).
+> - **`ce71b26`** — kesfet-v1 FAB ikon-only + hover-genişle metin (FAB radius `--radius-pill`→`--radius-lg` squircle, dokunmatik ikon-only, aria-label).
+> - **`30a72d7`** — **SAVED-ROUTE UX paketi** (3 madde): (A) sol-liste row tap → ziyaret toggle (`toggleVisited` reuse, `activeRouteId` gate) **+ detay preview açar** (X = çıkar, erken-return; serbest planlamada nötr). (B) **"Yeni Güzergah" reset** butonu (sec-head ghost; `resetPlanner` stops/venues/activeRouteId/ad/corridor sıfırla; kaydedilmemiş iş → 2-adımlı "Emin misin?" onay; yüklü&temiz → direkt). (C) **bağlamsal etiket** = yüklü rotada dash başlığı "Yol üstü mekanlar"→"Bu rota için öneriler" + sol-liste sahiplik çapası "«ad» için eklediğin mekanlar" (sol=SENİN, alt=ÖNERİ).
+> - **`50153ab`** — **Sentetik alternatif rota KALDIRILDI** (`bulgeRoute/topUpAlts/polySpan/ALT_TARGET` silindi; `currentRoutes=routes` → yalnız GERÇEK OSRM alternatifleri; tek rota → temiz harita, gri spagetti yok). Stil/çizim mantığı korundu (gerçek alt gelirse çizilir). **TEKNİK BORÇ KAPANDI.**
+> - **`15145a9`** — clear-× radius `50%`→`var(--radius-sm)` (satır-sil/grip ikon-buton deseniyle hizalı) + ≥44px tap (şeffaf `::before`), hover/focus tutarlı.
+> - **`eab439c`** — handoff chore (sentetik borç notu, artık çözüldü).
+> - **`e8ccebd`** — **ROAD_POOL 190→259 mekan / 40 koridor anahtarı KALICI** (mekan/şehir çoğaltma; sentetik kısmı sonradan geri alındı, mekan genişlemesi KALDI).
 >
 > ### ✅ ÖNCEKİ COMMIT'LER (bu özellik ailesi)
-> - **`8a15890`** — DALGA 1 (Dada-soft palet, `proxLabel` mesafe formatı, seçili pin/preview, ROAD_POOL 190 mekan/33 şehir + deniz-koord fix, slider, durak input-× + satır-sil).
-> - **`a26e9a1`** — Alternatif rota görünürlüğü (beyaz casing + nötr gri, ince + alt z-index, hover + km·süre tooltip, liste↔harita çift-yön senkron) + **Güzergahlarım Dada pill**.
-> - **`e225b89`** — Leaflet **box-zoom kapatıldı** (`boxZoom:false`); normal zoom korundu.
-> - **`fcef076`** — **Focus-outline fix:** `.leaflet-interactive:focus{outline:none}` + `:focus-visible` tomato ring (klavye erişilebilirliği korundu). *Ders: "mavi dikdörtgen" box-zoom değil, focusable SVG path UA outline'ıydı.*
-> - **`fef3b61`** — handoff chore.
->
-> ### ⚠️ TEKNİK BORÇ — Sentetik alternatif rota (commit `e8ccebd`)
-> `bulgeRoute()` ile üretilen alternatifler **GERÇEK YOL DEĞİL** — ana rotanın sinüs zarfıyla yana şişirilmiş **demo doldurucusu**. Sadece mock/demo görsel amaçlı. **Dalga 5'te (gerçek OSRM/veri)** prod rota servisi bağlanınca: ya tamamen **kaldır**, ya da **"gerçek alternatif yoksa fallback"** moduna indir. 🚫 **CANLIDA sahte rota kullanıcıya gösterilmemeli** (var olmayan yola yönlendirme riski). `topUpAlts()` zaten gerçek alternatifleri koruyor → prod-OSRM çok-rota beslerse sentetik otomatik devreden çıkar; tek kalan risk public OSRM'in tek-rota döndüğü durum.
+> - **`17d323f`** — CHECKPOINT (b "Yükle"yince ziyaret bağlamı, route-scoped `visited[id][ad]`) + GÜZERGAHLARIM→AÇ FIX (Seçenek 2: `buildRecord` poly+dakika saklar→ağ-bağımsız; `loadRoute` stale-render fix; "Yüklü güzergah" bağlamı + Güncelle).
+> - **`8a15890`** DALGA 1 · **`a26e9a1`** alt-rota görünürlük + Dada pill · **`e225b89`** box-zoom off · **`fcef076`** focus-outline fix · **`fef3b61`** chore.
 >
 > ### 🎯 KUYRUK (resume'da sıradaki iş — öncelik sırası)
-> 1. **Revize-mock ikilisi** — ✅ **BİTTİ** (commit `e8ccebd`): alternatif yol 4'e çıkarıldı (gerçek korunur + `bulgeRoute` sentetik doldurucu), ROAD_POOL 190→259 mekan / 40 koridor anahtarı. QA `yol-v2-{mockcount,alt-mock}-qa.mjs` ALL PASS (1440/390, console/mojibake 0). ⚠️ borç notu ↑.
-> 2. **clear × hover/tık radius tutarsızlığı (← SIRADAKİ)** (ufak CSS, projedeki radius token'ıyla hizala).
-> 3. **SPONSOR KART:** Yol Üstü Mekanlar şeridine premium reklam kartı (**frontend-design skill ŞART**) — ⚠️ **canlıya çıkmadan Yasin Bey onayı** gerekir (reklam/gelir kararı).
-> 4. **DALGA 2 — header:** **"ROTA PLANLAYICI" eyebrow** (K7=A) + route-line üst şerit.
-> 5. **DALGA 4 — mobil** (Faz1 bottom-sheet detay → Faz4 390 breakpoint, `yol-rev-mobil.md`).
-> 6. **DALGA 5 — veri** (gerçek OSRM/veri besleme). NOT: kayıtlı rotalar artık **poly sakladığı için ağ-bağımsız açılıyor** → bu yük hafifledi; alt-rota görsel/sync kodu hazır, prod-OSRM çok-rota besleyince otomatik çalışır.
+> 1. **SPONSOR KART (← SIRADAKİ):** "Yol Üstü Mekanlar / Bu rota için öneriler" şeridine premium reklam kartı (**frontend-design skill ŞART**) — ⚠️ **canlıya çıkmadan Yasin Bey onayı** gerekir (reklam/gelir kararı).
+> 2. **DALGA 2 — header:** **"ROTA PLANLAYICI" eyebrow** (K7=A) + route-line üst şerit.
+> 3. **DALGA 4 — mobil** (Faz1 bottom-sheet detay → Faz4 390 breakpoint, `yol-rev-mobil.md`).
+> 4. **DALGA 5 — veri** (gerçek OSRM/veri besleme → **gerçek alternatifler** otomatik çizilir; sentetik zaten kaldırıldı). Kayıtlı rotalar poly sakladığı için ağ-bağımsız açılıyor (yük hafif).
 >
 > ### ⏳ AÇIK CONCERN'LER
 > - **`sezon-v1.html` watermark** — working tree'de commit'siz (` M`, onaysız); Yol Güzergahım DIŞI, ayrı iş — **DOKUNULMADI, DOKUNMA**.
-> - **PUSH bekleyen: 9 commit** (`origin/main`'den önde) — canlıya **batch halinde, Dalga 2 sonrası** önerildi. Beyar ayrıca "push" diyecek.
+> - **PUSH bekleyen: 18 commit** (`origin/main`'den önde) — canlıya **batch halinde, Dalga 2 sonrası** önerildi. Beyar ayrıca "push" diyecek.
+>
+> ### REVİZE LİSTESİ DURUMU
+> ✅ alternatif rota 4'e çıkar (sonra sentetik **kaldırıldı** → gerçek alternatifler) · ✅ liste/şehir çoğaltma (ROAD_POOL 259/40 kalıcı) · ✅ clear-× radius · ✅ saved-route UX (tap-visit+preview / Yeni Güzergah / bağlamsal etiket) · ✅ FAB ikon-only (kesfet+anasayfa) · ⏳ **SPONSOR KART kaldı**.
 >
 > ### KARARLAR — CHECKPOINT (5/5 KAPALI) + SAVED-FLOW
 > ✅ route-scoped ziyaret · ✅ bulaşma yok · ✅ yeni rota tertemiz · ✅ harita+liste çift sinyal · ✅ **5. KARAR = (b)** "Yükle"yince otomatik ziyaret bağlamı (ayrı mod YOK). · ✅ **SAVED-FLOW = Seçenek 2** (tek-harita, "yüklü rota" bağlamı + Güncelle, yeni view yok).
