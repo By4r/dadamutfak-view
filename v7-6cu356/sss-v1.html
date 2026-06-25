@@ -1607,15 +1607,44 @@ html,body{overflow-x:clip}
 // ?auth=1 → localStorage dm_auth='1' + body.is-auth ; ?auth=0 → temizle (logout)
 // param yoksa localStorage'a bakılır. Çıkış linkleri ?auth=0'a yönlendirir (M7).
 (function(){
-  var qs = location.search;
-  if(qs.indexOf('auth=1')>-1){ try{localStorage.setItem('dm_auth','1');}catch(e){} }
-  else if(qs.indexOf('auth=0')>-1){ try{localStorage.removeItem('dm_auth');}catch(e){} }
-  var authed = false;
-  try{ authed = localStorage.getItem('dm_auth')==='1'; }catch(e){}
-  if(authed){ document.body.classList.add('is-auth'); }
-  // M6 — bottom-nav "Hesap" hedefi: logged-in → Defter, logged-out → giriş
-  var bnAcc = document.getElementById('bnAccount');
-  if(bnAcc){ bnAcc.setAttribute('href', authed ? 'mutfak-defteri-v1.html' : 'giris-v1.html'); }
+  /* C1 — tek auth/rol token dm_user{auth,roles[],verified,level}. Eski dm_auth/dm_business
+     migrate+silinir. Kök kuralı: auth ⟹ roles "kullanici" ile başlar; isletme operatörü
+     ["kullanici","isletme"]. Class additive (is-auth/has-business AYNEN) + body[data-roles]. */
+  var KEY='dm_user', OK={kullanici:1,antrenor:1,diyetisyen:1,isletme:1};
+  function rd(){ try{var r=localStorage.getItem(KEY);return r?JSON.parse(r):null;}catch(e){return null;} }
+  function wr(u){ try{localStorage.setItem(KEY,JSON.stringify(u));}catch(e){} }
+  var u=rd();
+  if(!u){                                   // migrasyon: eski binary flag → dm_user (bir kez)
+    var oa=false,ob=false;
+    try{oa=localStorage.getItem('dm_auth')==='1';}catch(e){}
+    try{ob=localStorage.getItem('dm_business')==='1';}catch(e){}
+    if(oa||ob){ u={auth:true,roles:['kullanici'],verified:false,level:0}; if(ob)u.roles.push('isletme'); wr(u); }
+  }
+  try{localStorage.removeItem('dm_auth');localStorage.removeItem('dm_business');}catch(e){}  // eski anahtar temizliği
+  var qs=location.search;                    // URL-param (demo/SS akışı korunur + yeni roller)
+  function ens(){ if(!u)u={auth:false,roles:[],verified:false,level:0}; }
+  function addR(r){ ens(); if(OK[r]&&u.roles.indexOf(r)<0)u.roles.push(r); }
+  if(qs.indexOf('auth=1')>-1){ ens(); u.auth=true; }
+  else if(qs.indexOf('auth=0')>-1){ u=null; try{localStorage.removeItem(KEY);}catch(e){} }
+  if(qs.indexOf('business=1')>-1){ ens(); u.auth=true; addR('isletme'); }
+  else if(qs.indexOf('business=0')>-1){ if(u){var bi=u.roles.indexOf('isletme'); if(bi>-1)u.roles.splice(bi,1);} }
+  var rm=/[?&]role=(antrenor|diyetisyen|isletme)/.exec(qs); if(rm){ ens(); u.auth=true; addR(rm[1]); }
+  if(u){
+    if(qs.indexOf('verified=1')>-1)u.verified=true; else if(qs.indexOf('verified=0')>-1)u.verified=false;
+    var lm=/[?&]level=(\d+)/.exec(qs); if(lm)u.level=parseInt(lm[1],10)||0;
+    if(u.auth&&u.roles.indexOf('kullanici')<0)u.roles.unshift('kullanici');   // kök her zaman önde
+    wr(u);
+  }
+  var b=document.body, authed=!!(u&&u.auth);   // DOM: eski class kanalı (additive) + data-roles
+  if(authed){
+    b.classList.add('is-auth');
+    if(u.roles.indexOf('isletme')>-1)b.classList.add('has-business');   // C3 köprü sinyali — AYNEN
+    b.setAttribute('data-roles',u.roles.join(' '));
+    if(u.verified)b.setAttribute('data-verified','1');
+    if(u.level)b.setAttribute('data-level',String(u.level));
+  }
+  var bnA=document.getElementById('bnAccount');   // M6 — bottom-nav Hesap hedefi
+  if(bnA)bnA.setAttribute('href', authed?'mutfak-defteri-v1.html':'giris-v1.html');
 })();
 
 if(location.search.indexOf('dd=1')>-1){document.querySelector('.nav-item').classList.add('open');var _l=document.getElementById('tbLang');if(_l)_l.classList.add('open');}
@@ -2023,13 +2052,7 @@ window.__bottomStrips=window.__bottomStrips||[];
    ?business=1 → localStorage dm_business='1' + body.has-business ; ?business=0 → temizle.
    param yoksa localStorage'a bakılır. Adım 1 işletme linkleri (İşletmem→Panele Git,
    panel topbar account chip) body.has-business ile rol-koşullu gösterilir. */
-(function(){
-  var qs=location.search, biz=false;
-  if(qs.indexOf('business=1')>-1){ try{localStorage.setItem('dm_business','1');}catch(e){} }
-  else if(qs.indexOf('business=0')>-1){ try{localStorage.removeItem('dm_business');}catch(e){} }
-  try{ biz=localStorage.getItem('dm_business')==='1'; }catch(e){}
-  if(biz){ document.body.classList.add('has-business'); }
-})();
+(function(){ /* C1 — dm_business emekli; işletme/rol state'i üstteki dm_user token'ında (is-auth kardeşi). */ })();
 </script>
 </body>
 </html>
