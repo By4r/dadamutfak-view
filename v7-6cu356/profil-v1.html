@@ -50,6 +50,8 @@
   --cream-2:#F7F1E6;
   /* kurumsal alternatif renkler (kılavuz) */
   --c-purple:#b14fc5; --c-mint:#6cca98; --c-green:#009d4f; --c-petrol:#006072;
+  --c-green-deep:#007a3d; --c-green-tint:rgba(0,157,79,.12); --c-green-soft:rgba(0,157,79,.24);  /* antrenör (DadaFit) aksanı — C2-1b */
+  --c-petrol-deep:#004f5e; --c-petrol-tint:rgba(0,96,114,.12); --c-petrol-soft:rgba(0,96,114,.24);  /* işletme aksanı — C2-1c */
   --paper:#ffffff;
   --bg:#f9f9f9;              /* eski site grisi — sayfa zemini (Revize T3 M12) */
   --ink:#211E16;
@@ -1399,9 +1401,12 @@ body[data-roles~="diyetisyen"] .pf-on.pf-rl-dyt{display:block !important}
    ile yapar. (Antrenör/işletme kendi noktasını eklediğinde aynı prensip genişler.) */
 body[data-roles~="diyetisyen"] .pf-ava .pf-ava-edit{display:none !important}
 body[data-roles~="diyetisyen"] .pf-ava .pf-on{z-index:3}
-body[data-roles~="diyetisyen"] .pf-book.pf-rl-dyt{display:inline-flex !important}
-body[data-roles~="diyetisyen"] .pf-msg.pf-rl-dyt{display:inline-flex !important}
-body[data-roles~="diyetisyen"] .pf-resp.pf-rl-dyt{display:flex !important}
+/* ZİYARETÇİ CTA'ları (Randevu/Mesaj/yanıt) yalnız PUBLIC — operatör kendine randevu olamaz.
+   Own'da kök 'Profili Düzenle' gösterilir (C2 own↔public bug fix; antrenör ile tutarlı). */
+body.pf-public[data-roles~="diyetisyen"] .pf-book.pf-rl-dyt{display:inline-flex !important}
+body.pf-public[data-roles~="diyetisyen"] .pf-msg.pf-rl-dyt{display:inline-flex !important}
+body.pf-public[data-roles~="diyetisyen"] .pf-resp.pf-rl-dyt{display:flex !important}
+/* kimlik/stats = her iki modda */
 body[data-roles~="diyetisyen"] .pf-stats.pf-rl-dyt{display:flex !important}
 body[data-roles~="diyetisyen"] .dt.pf-rl-dyt{display:inline-flex !important}
 body[data-roles~="diyetisyen"] .pf-pro-band.pf-rl-dyt{display:flex !important}
@@ -1641,6 +1646,196 @@ body[data-roles~="isletme"] .pf-crumb-own .pf-crumb-op{display:inline}
   .ab-main h2{font-size:19px}
   .apt-slots{grid-template-columns:repeat(3,1fr)}
 }
+
+/* ============================================================
+   C2-1b — ANTRENÖR ROL KATMANI (tek profil-v1 · body[data-roles~="antrenor"])
+   Pattern: C2-1a diyetisyen katmanı İKİZİ (pf-rl-at gate + --c-green #009d4f aksan).
+   Kaynak: antrenor-detay-v1.html (cp- dark DadaFit hero → pf- LIGHT slot RE-SKIN;
+   cp- CSS PORT EDİLMEZ, mevcut pf- hero slot'larına gated içerik biner).
+   data-cap KULLANILMAZ. Diyetisyen (pf-rl-dyt) BOZULMAZ — ayrı id/pane/gate; nane
+   --green (#3BB77E) SIZMAZ (pane-içi shared aksan .pf-at-pane / #atApt* ile override).
+   ============================================================ */
+/* ---- görünürlük geçidi ---- */
+.pf-rl-at{display:none !important}
+body[data-roles~="antrenor"] .pf-verify.pf-rl-at{display:inline-flex !important}
+body[data-roles~="antrenor"] .pf-handle-at.pf-rl-at{display:block !important}
+body[data-roles~="antrenor"] .pf-on.pf-rl-at{display:block !important}
+/* avatar köşesi: TEK temiz yeşil müsaitlik noktası → kök kamera affordance gizle (diyetisyen dersi) */
+body[data-roles~="antrenor"] .pf-ava .pf-ava-edit{display:none !important}
+body[data-roles~="antrenor"] .pf-ava .pf-on{z-index:3}
+/* ZİYARETÇİ CTA'ları (fiyat/Randevu/Danışan/Mesaj/yanıt) yalnız PUBLIC modda — operatör kendi
+   profilinde kendine randevu/danışan olamaz. Own'da kök 'Profili Düzenle' (pf-act-own) gösterilir. */
+body.pf-public[data-roles~="antrenor"] .pf-price.pf-rl-at{display:flex !important}
+body.pf-public[data-roles~="antrenor"] .pf-book.pf-rl-at{display:inline-flex !important}
+body.pf-public[data-roles~="antrenor"] .pf-client.pf-rl-at{display:inline-flex !important}
+body.pf-public[data-roles~="antrenor"] .pf-msg.pf-rl-at{display:inline-flex !important}
+body.pf-public[data-roles~="antrenor"] .pf-resp.pf-rl-at{display:flex !important}
+/* kimlik/stats = her iki modda (own+public) */
+body[data-roles~="antrenor"] .pf-stats.pf-rl-at{display:flex !important}
+body[data-roles~="antrenor"] .dt.pf-rl-at{display:inline-flex !important}
+/* antrenör modunda kök sayaç şeridini gizle (profesyonel şerit devralır) */
+body[data-roles~="antrenor"] .pf-stats-kok{display:none !important}
+/* aksiyon kolonu (dikey; diyetisyen ikizi) — Üye Ol + share gizli */
+body[data-roles~="antrenor"] .pf-actions{flex-direction:column;align-items:stretch;width:200px}
+body[data-roles~="antrenor"] .pf-actions .pf-member{display:none !important}
+body[data-roles~="antrenor"] .pf-actions .icon-btn{display:none !important}
+@media(max-width:640px){body[data-roles~="antrenor"] .pf-actions{width:100%}}
+/* TÜM butonlar AYNI box anatomisi (yamukluk gider; pf-client dahil) */
+body[data-roles~="antrenor"] .pf-actions > .pf-book,
+body[data-roles~="antrenor"] .pf-actions > .pf-client,
+body[data-roles~="antrenor"] .pf-actions > .pf-follow,
+body[data-roles~="antrenor"] .pf-actions > .pf-msg,
+body[data-roles~="antrenor"] .pf-actions > .pf-edit-btn{
+  align-items:center;justify-content:center;gap:9px;width:100%;box-sizing:border-box;
+  padding:13px 20px;font-size:13.5px;line-height:1.25;border-radius:var(--radius-md);white-space:nowrap;
+}
+/* yeşil aksan = --c-green; diyetisyen nane base'lerini override (sızma yok) */
+body[data-roles~="antrenor"] .pf-ava .pf-on{background:var(--c-green)}
+body[data-roles~="antrenor"] .pf-verify{color:var(--c-green-deep);background:var(--c-green-tint)}
+body[data-roles~="antrenor"] .pf-book{background:var(--c-green);border-color:var(--c-green)}
+body[data-roles~="antrenor"] .pf-book:hover{background:var(--c-green-deep)}
+body[data-roles~="antrenor"] .pf-msg:hover{border-color:var(--c-green);color:var(--c-green)}
+body[data-roles~="antrenor"] .pf-resp{color:var(--c-green-deep)}
+body[data-roles~="antrenor"] .pfs.green i{background:var(--c-green-tint);color:var(--c-green-deep)}
+body[data-roles~="antrenor"] .pf-follow{background:var(--c-green);border-color:var(--c-green)}
+body[data-roles~="antrenor"] .pf-follow:hover{background:var(--c-green-deep);border-color:var(--c-green-deep)}
+body[data-roles~="antrenor"] .pf-follow.following:hover{border-color:var(--c-green);color:var(--c-green);background:var(--c-green-tint)}
+
+/* ---- rol etiketi (pf-handle-dyt ikizi — yeşil ünvan) ---- */
+.pf-handle-at{font-size:13.5px;color:var(--c-green-deep);font-weight:700;margin-top:4px}
+/* ---- Danışan Ol (ikincil yeşil; Randevu Al filled ile dengeli) ---- */
+.pf-client{align-items:center;justify-content:center;gap:9px;font-family:inherit;font-size:13.5px;font-weight:700;color:var(--c-green-deep);background:var(--c-green-tint);border:1px solid var(--c-green);border-radius:var(--radius-md);padding:12px 16px;cursor:pointer;transition:.2s var(--ease)}
+.pf-client:hover{background:var(--c-green);color:#fff}
+/* ---- fiyat satırı (₺/seans) ---- */
+.pf-price{align-items:baseline;justify-content:center;gap:7px;margin-bottom:3px}
+.pf-price b{font-size:23px;font-weight:800;color:var(--slate);letter-spacing:-.01em}
+.pf-price span{font-size:12.5px;color:var(--muted);font-weight:500}
+
+/* ---- PROGRAMLAR (prog-* antrenör-unique; cp dark → pf light, --fit→--c-green) ---- */
+.prog-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+.prog-card{display:flex;flex-direction:column;background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-lg);overflow:hidden;transition:.25s var(--ease)}
+.prog-card:hover{border-color:#dcdcdc;box-shadow:var(--sh-sm);transform:translateY(-4px)}
+.prog-media{position:relative;aspect-ratio:16/10;background-size:cover;background-position:center;padding:13px;display:flex;align-items:flex-start;gap:7px}
+.prog-media::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(20,18,12,0) 38%,rgba(20,18,12,.74));z-index:0}
+.prog-level,.prog-dur{position:relative;z-index:1;display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:700;color:#fff;background:rgba(20,18,12,.42);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);padding:5px 10px;border-radius:var(--radius-sm)}
+.prog-level i,.prog-dur i{color:#fff;font-size:10px}
+.prog-title{position:absolute;left:14px;right:14px;bottom:13px;z-index:1;color:#fff;font-size:16px;line-height:1.25;margin:0}
+.prog-body{display:flex;flex-direction:column;flex:1;padding:16px 18px 18px}
+.prog-body p{font-size:13px;color:var(--muted);font-weight:500;line-height:1.55;margin-bottom:14px}
+.prog-feats{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:16px}
+.prog-feats span{font-size:11.5px;font-weight:600;color:var(--slate-2);background:var(--bg);border:1px solid var(--line);padding:5px 10px;border-radius:var(--radius-sm)}
+.prog-foot{margin-top:auto;display:flex;align-items:center;justify-content:space-between;gap:12px;padding-top:14px;border-top:1px solid var(--line)}
+.prog-foot .price{font-size:12.5px;color:var(--muted);font-weight:500}
+.prog-foot .price b{font-size:17px;color:var(--slate);font-weight:700;margin-left:4px}
+.prog-foot .go{display:inline-flex;align-items:center;gap:7px;font-size:12.5px;font-weight:700;color:var(--c-green-deep);white-space:nowrap;transition:.2s var(--ease)}
+.prog-card:hover .go{gap:10px}
+
+/* ---- ALT CTA BANDI (cp-cta-band → pf-atband; LIGHT, yeşil) ---- */
+.pf-atband{display:none;align-items:center;justify-content:space-between;gap:30px;background:linear-gradient(120deg,#E7F6EF 0%,#F1FAF5 58%,#fff 100%);border:1px solid var(--c-green-soft);border-radius:var(--radius-lg);padding:30px 34px;margin-top:30px}
+body.pf-public[data-roles~="antrenor"] .pf-atband.pf-rl-at{display:flex !important}  /* ziyaretçi dönüşüm bandı yalnız PUBLIC */
+.pf-atband .cb-eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:12px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--c-green-deep);margin-bottom:10px}
+.pf-atband h2{font-size:23px;margin-bottom:8px}
+.pf-atband .cb-copy p{font-size:14px;color:var(--slate-2);font-weight:500;line-height:1.6;max-width:520px;margin:0}
+.pf-atband .cb-act{flex:none;display:flex;flex-direction:column;gap:10px;min-width:212px}
+.pf-atband .cb-act .pf-client,.pf-atband .cb-act .pf-msg{display:inline-flex;width:100%;padding:13px 20px;box-sizing:border-box}
+.pf-atband .cb-note{display:inline-flex;align-items:center;gap:8px;font-size:11.5px;color:var(--muted);font-weight:500;margin-top:2px}
+.pf-atband .cb-note i{color:var(--c-green-deep)}
+@media(max-width:860px){.pf-atband{flex-direction:column;align-items:flex-start}.pf-atband .cb-act{width:100%}}
+
+/* ---- antrenör pane-içi aksan: shared ab-/rev- nane → --c-green (PANE-SCOPED, diyetisyen'e SIZMAZ) ---- */
+.pf-at-pane .ap-item i{background:var(--c-green-tint);color:var(--c-green-deep)}
+.pf-at-pane .info-card h4 i{color:var(--c-green)}
+.pf-at-pane .ic-verify{color:var(--c-green-deep);background:var(--c-green-tint)}
+.pf-at-pane .ab-spec .chip:hover{border-color:var(--c-green);color:var(--c-green-deep);background:var(--c-green-tint)}
+.pf-at-pane .rev-filter .chip.active{border-color:var(--c-green);color:var(--c-green-deep);background:var(--c-green-tint)}
+.pf-at-pane .rev-badge{color:var(--c-green-deep);background:var(--c-green-tint)}
+.pf-at-pane .rev-help:hover{color:var(--c-green)}
+.pf-at-pane .rev-reply{background:var(--c-green-tint);border-color:var(--c-green-soft)}
+.pf-at-pane .rev-reply b{color:var(--c-green-deep)}
+.pf-at-pane .sec-head .eyebrow,.pf-at-pane .see-all{color:var(--c-green-deep)}
+
+/* ---- antrenör MODALLARI (#atApt*/#atMsg*): apt-* shared CSS nane → --c-green override (SCOPED) ---- */
+#atAptModal .apt-close:hover,#atMsgModal .apt-close:hover{border-color:var(--c-green);color:var(--c-green)}
+#atAptModal .apt-lbl i,#atMsgModal .apt-lbl i{color:var(--c-green)}
+#atAptModal .apt-head p i,#atMsgModal .apt-head p i{color:var(--c-green-deep)}
+#atAptModal .apt-svc label:hover{border-color:var(--c-green)}
+#atAptModal .apt-svc .rd::after{background:var(--c-green)}
+#atAptModal .apt-svc input:checked~.rd{border-color:var(--c-green)}
+#atAptModal .apt-svc input:checked~.si b{color:var(--c-green-deep)}
+#atAptModal .apt-svc label:has(input:checked){border-color:var(--c-green);background:var(--c-green-tint)}
+#atAptModal .apt-day small{color:var(--c-green-deep)}
+#atAptModal .apt-day:hover,#atAptModal .apt-slot:hover{border-color:var(--c-green)}
+#atAptModal .apt-slot:hover{color:var(--c-green)}
+#atAptModal .apt-day.sel,#atAptModal .apt-slot.sel{border-color:var(--c-green);background:var(--c-green)}
+#atAptModal .apt-success .ok{background:var(--c-green-tint);color:var(--c-green)}
+body[data-roles~="antrenor"] .apt-confirm.btn-primary{background:var(--c-green)}
+body[data-roles~="antrenor"] .apt-confirm.btn-primary:hover{background:var(--c-green-deep)}
+#atMsgSend.btn-primary{background:var(--c-green)}
+#atMsgSend.btn-primary:hover{background:var(--c-green-deep)}
+@media(max-width:1024px){.prog-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:640px){.prog-grid{grid-template-columns:1fr}}
+
+/* ============================================================
+   C2-1c — İŞLETME ROL KATMANI + SAHİP→PANEL KÖPRÜSÜ (pf-panel)
+   İşletme = petrol (--c-petrol #006072). Köprü = 3 operatör, yalnız OWN mod.
+   pf-rl-isl distinkt izolasyon (dyt/at gibi). own↔public CTA dersi korunur:
+   ziyaretçi CTA (Mekanı Gör/Mesaj/Takip) yalnız public; yönetim (Profili/Panelden
+   Düzenle) yalnız own. Diyetisyen/antrenör BOZULMAZ.
+   ============================================================ */
+.pf-rl-isl{display:none !important}
+body[data-roles~="isletme"] .pf-verify.pf-rl-isl{display:inline-flex !important}
+body[data-roles~="isletme"] .pf-handle-isl.pf-rl-isl{display:block !important}
+/* ziyaretçi CTA yalnız PUBLIC (own↔public dersi) */
+body.pf-public[data-roles~="isletme"] .pf-venue.pf-rl-isl{display:inline-flex !important}
+body.pf-public[data-roles~="isletme"] .pf-msg.pf-rl-isl{display:inline-flex !important}
+/* aksiyon kolonu (dikey; operatör ikizi) — Üye Ol + share gizli */
+body[data-roles~="isletme"] .pf-actions{flex-direction:column;align-items:stretch;width:200px}
+body[data-roles~="isletme"] .pf-actions .pf-member{display:none !important}
+body[data-roles~="isletme"] .pf-actions .icon-btn{display:none !important}
+@media(max-width:640px){body[data-roles~="isletme"] .pf-actions{width:100%}}
+body[data-roles~="isletme"] .pf-actions > .pf-venue,
+body[data-roles~="isletme"] .pf-actions > .pf-follow,
+body[data-roles~="isletme"] .pf-actions > .pf-msg,
+body[data-roles~="isletme"] .pf-actions > .pf-edit-btn,
+body[data-roles~="isletme"] .pf-actions > .pf-panel{
+  align-items:center;justify-content:center;gap:9px;width:100%;box-sizing:border-box;
+  padding:13px 20px;font-size:13.5px;line-height:1.25;border-radius:var(--radius-md);white-space:nowrap;
+}
+/* petrol aksan — --green/--c-green SIZMAZ */
+body[data-roles~="isletme"] .pf-verify{color:var(--c-petrol);background:var(--c-petrol-tint)}
+body[data-roles~="isletme"] .pf-follow{background:var(--c-petrol);border-color:var(--c-petrol)}
+body[data-roles~="isletme"] .pf-follow:hover{background:var(--c-petrol-deep);border-color:var(--c-petrol-deep)}
+body[data-roles~="isletme"] .pf-follow.following:hover{border-color:var(--c-petrol);color:var(--c-petrol);background:var(--c-petrol-tint)}
+body[data-roles~="isletme"] .pf-msg:hover{border-color:var(--c-petrol);color:var(--c-petrol)}
+/* rol etiketi (petrol ünvan) */
+.pf-handle-isl{font-size:13.5px;color:var(--c-petrol);font-weight:700;margin-top:4px}
+/* Mekanı Gör (petrol birincil link-buton) */
+.pf-venue{align-items:center;justify-content:center;gap:9px;font-family:inherit;font-size:14px;font-weight:700;color:#fff;background:var(--c-petrol);border:1px solid var(--c-petrol);border-radius:var(--radius-md);padding:14px 22px;cursor:pointer;transition:.2s var(--ease);white-space:nowrap}
+.pf-venue:hover{background:var(--c-petrol-deep);transform:translateY(-2px)}
+
+/* ---- SAHİP→PANEL KÖPRÜSÜ (pf-panel pill; 3 operatör, yalnız OWN) ---- */
+/* base .pf-panel CSS zaten var (yeşil dashed); rol gate + own-mod + rol rengi */
+body:not(.pf-public)[data-roles~="diyetisyen"] .pf-panel.pf-rl-dyt{display:inline-flex !important}
+body:not(.pf-public)[data-roles~="antrenor"]  .pf-panel.pf-rl-at{display:inline-flex !important}
+body:not(.pf-public)[data-roles~="isletme"]   .pf-panel.pf-rl-isl{display:inline-flex !important}
+body[data-roles~="antrenor"] .pf-panel{color:var(--c-green-deep);background:var(--c-green-tint);border-color:var(--c-green)}
+body[data-roles~="antrenor"] .pf-panel:hover{background:var(--c-green);color:#fff;border-color:var(--c-green)}
+body[data-roles~="isletme"]  .pf-panel{color:var(--c-petrol);background:var(--c-petrol-tint);border-color:var(--c-petrol)}
+body[data-roles~="isletme"]  .pf-panel:hover{background:var(--c-petrol);color:#fff;border-color:var(--c-petrol)}
+/* operatör own kolonunda pf-panel uniform (dyt/at; isl yukarıda) */
+body[data-roles~="diyetisyen"] .pf-actions > .pf-panel,
+body[data-roles~="antrenor"] .pf-actions > .pf-panel{
+  align-items:center;justify-content:center;gap:9px;width:100%;box-sizing:border-box;
+  padding:13px 20px;font-size:13.5px;line-height:1.25;border-radius:var(--radius-md);white-space:nowrap;
+}
+
+/* ---- işletme MESAJ MODALI (#islMsgModal; apt-* paylaşılır, petrol scoped) ---- */
+#islMsgModal .apt-close:hover{border-color:var(--c-petrol);color:var(--c-petrol)}
+#islMsgModal .apt-lbl i{color:var(--c-petrol)}
+#islMsgModal .apt-head p i{color:var(--c-petrol)}
+#islMsgModal .apt-success .ok{background:var(--c-petrol-tint);color:var(--c-petrol)}
+#islMsgSend.btn-primary{background:var(--c-petrol)}
+#islMsgSend.btn-primary:hover{background:var(--c-petrol-deep)}
 </style>
 </head>
 <body data-brand="mutfak">
@@ -2050,11 +2245,13 @@ body[data-roles~="isletme"] .pf-crumb-own .pf-crumb-op{display:inline}
 
     <!-- kimlik kartı — banner'a biner -->
     <div class="pf-head">
-      <div class="pf-ava" style="background-image:url('https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=300&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')"><button class="pf-ava-edit pf-edit-aff" type="button" aria-label="Fotoğrafı değiştir"><i class="fa-solid fa-camera"></i></button><span class="pf-on pf-rl-dyt" title="Şu an müsait"></span></div>
+      <div class="pf-ava" style="background-image:url('https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=300&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')"><button class="pf-ava-edit pf-edit-aff" type="button" aria-label="Fotoğrafı değiştir"><i class="fa-solid fa-camera"></i></button><span class="pf-on pf-rl-dyt" title="Şu an müsait"></span><span class="pf-on pf-rl-at" title="Yeni danışan alıyor"></span></div>
       <div class="pf-id">
-        <h1>Elif Şahin <span class="tbadge t-dada"><i class="fa-solid fa-medal"></i> Usta Aşçı</span> <span class="pf-verify pf-rl-dyt"><i class="fa-solid fa-circle-check"></i> Doğrulanmış Uzman</span></h1>
+        <h1>Elif Şahin <span class="tbadge t-dada"><i class="fa-solid fa-medal"></i> Usta Aşçı</span> <span class="pf-verify pf-rl-dyt"><i class="fa-solid fa-circle-check"></i> Doğrulanmış Uzman</span> <span class="pf-verify pf-rl-at"><i class="fa-solid fa-shield-halved"></i> DadaMutfak Onaylı</span> <span class="pf-verify pf-rl-isl"><i class="fa-solid fa-store"></i> İşletme Sahibi</span></h1>
         <span class="pf-handle">@elifsahin</span>
         <span class="pf-handle-dyt pf-rl-dyt">Uzman Diyetisyen · Klinik Beslenme &amp; Kilo Yönetimi</span>
+        <span class="pf-handle-at pf-rl-at">Antrenör · Güç &amp; Kondisyon · Evde Antrenman</span>
+        <span class="pf-handle-isl pf-rl-isl">Gebze Köfte Durağı · Restoran &amp; Köfte</span>
         <p class="pf-bio">Ege otları, zeytinyağlılar ve annemden kalan el yazısı defterdeki tarifler... 12 yıldır her denediğimi bu deftere işliyorum. Buyrun, mutfağım sizin mutfağınız.</p>
         <div class="pf-meta">
           <span><i class="fa-solid fa-location-dot"></i> İzmir, Türkiye</span>
@@ -2063,10 +2260,20 @@ body[data-roles~="isletme"] .pf-crumb-own .pf-crumb-op{display:inline}
         </div>
       </div>
       <div class="pf-actions">
+        <!-- antrenör: fiyat + birincil CTA (rol-koşullu) -->
+        <span class="pf-price pf-rl-at"><b>₺450</b><span>/ seans başı</span></span>
+        <button class="pf-book pf-rl-at" id="atOpenApt" type="button"><i class="fa-solid fa-calendar-check"></i> Randevu Al</button>
+        <button class="pf-client pf-rl-at" id="atClient" type="button"><i class="fa-solid fa-user-plus"></i> Danışan Ol</button>
         <!-- diyetisyen: birincil CTA (rol-koşullu) -->
         <button class="pf-book pf-rl-dyt" id="openApt" type="button"><i class="fa-solid fa-calendar-check"></i> Randevu Al</button>
+        <!-- işletme: birincil ziyaretçi CTA = mekan public sayfası (rol+public) -->
+        <a class="pf-venue pf-rl-isl pf-act-public" href="mekan-detay-v1.html"><i class="fa-solid fa-store"></i> Mekanı Gör</a>
         <!-- own: kendi defterin → hesabim profil ayarı -->
         <a class="pf-edit-btn pf-act-own" href="hesabim-v1.html?tab=profil"><i class="fa-solid fa-pen"></i> Profili Düzenle</a>
+        <!-- SAHİP→PANEL köprüsü (pf-panel; yalnız own + ilgili operatör rolü) -->
+        <a class="pf-panel pf-rl-dyt" href="panel-shell.html"><i class="fa-solid fa-gauge-high"></i> Panelden Düzenle</a>
+        <a class="pf-panel pf-rl-at" href="antrenor-panel-v1.html"><i class="fa-solid fa-gauge-high"></i> Panelden Düzenle</a>
+        <a class="pf-panel pf-rl-isl" href="mekan-panel-v1.html"><i class="fa-solid fa-gauge-high"></i> Panelden Düzenle</a>
         <!-- public: başka kullanıcı → takip -->
         <button class="pf-follow pf-act-public" id="pfFollow" type="button"><i class="fa-solid fa-user-plus"></i> Takip Et</button>
         <!-- madde 30: ücretli üyelik (ücretsiz "Takip Et"ten ayrı) — public; üye iken "Üyelisin" -->
@@ -2075,6 +2282,11 @@ body[data-roles~="isletme"] .pf-crumb-own .pf-crumb-op{display:inline}
         <!-- diyetisyen: ikincil aksiyon + yanıt notu (rol-koşullu) -->
         <button class="pf-msg pf-rl-dyt" id="openMsg" type="button"><i class="fa-regular fa-comment"></i> Mesaj</button>
         <span class="pf-resp pf-rl-dyt"><i class="fa-solid fa-bolt"></i> Genelde 2 saat içinde yanıtlar</span>
+        <!-- antrenör: ikincil aksiyon + yanıt notu (rol-koşullu) -->
+        <button class="pf-msg pf-rl-at" id="atOpenMsg" type="button"><i class="fa-regular fa-comment"></i> Mesaj</button>
+        <span class="pf-resp pf-rl-at"><i class="fa-solid fa-bolt"></i> Genelde 3 saat içinde yanıtlar</span>
+        <!-- işletme: ikincil ziyaretçi aksiyon (rol+public) -->
+        <button class="pf-msg pf-rl-isl" id="islOpenMsg" type="button"><i class="fa-regular fa-comment"></i> Mesaj</button>
       </div>
     </div>
 
@@ -2085,7 +2297,14 @@ body[data-roles~="isletme"] .pf-crumb-own .pf-crumb-op{display:inline}
       <div class="pfs score"><i class="fa-solid fa-star"></i><div><span>Danışan Puanı</span><b>4.9 / 5</b></div></div>
       <div class="pfs green"><i class="fa-solid fa-clock"></i><div><span>Yanıt Süresi</span><b>&lt; 2 saat</b></div></div>
     </div>
-    <!-- sayaç şeridi (kök üye — diyetisyende gizlenir) -->
+    <!-- sayaç şeridi — antrenör profesyonel şerit (rol-koşullu) -->
+    <div class="pf-stats pf-rl-at">
+      <div class="pfs"><i class="fa-solid fa-user-group"></i><div><span>Danışan</span><b>180+</b></div></div>
+      <div class="pfs"><i class="fa-solid fa-briefcase"></i><div><span>Deneyim</span><b>8 yıl</b></div></div>
+      <div class="pfs score"><i class="fa-solid fa-star"></i><div><span>Danışan Puanı</span><b>4.9 / 5</b></div></div>
+      <div class="pfs green"><i class="fa-solid fa-clock"></i><div><span>Yanıt Süresi</span><b>~3 saat</b></div></div>
+    </div>
+    <!-- sayaç şeridi (kök üye — operatörde gizlenir) -->
     <div class="pf-stats pf-stats-kok">
       <div class="pfs"><i class="fa-solid fa-utensils"></i><div><span>Tarif</span><b>128</b></div></div>
       <div class="pfs"><i class="fa-solid fa-lightbulb"></i><div><span>Püf Noktası</span><b>36</b></div></div>
@@ -2108,6 +2327,10 @@ body[data-roles~="isletme"] .pf-crumb-own .pf-crumb-op{display:inline}
         <button class="dt pf-rl-dyt" type="button" data-tab="hizmetler"><i class="fa-solid fa-stethoscope"></i> Hizmetler <span class="cnt">3</span></button>
         <button class="dt pf-rl-dyt" type="button" data-tab="dytmenuler"><i class="fa-solid fa-utensils"></i> Örnek Menüler <span class="cnt">3</span></button>
         <button class="dt pf-rl-dyt" type="button" data-tab="yorumlar"><i class="fa-solid fa-comment-dots"></i> Yorumlar <span class="cnt">212</span></button>
+        <!-- antrenör sekmeleri (rol-koşullu; distinkt at* data-tab → diyetisyen hakkinda/yorumlar ile ÇAKIŞMAZ) -->
+        <button class="dt pf-rl-at" type="button" data-tab="athakkinda"><i class="fa-solid fa-user"></i> Hakkında</button>
+        <button class="dt pf-rl-at" type="button" data-tab="atprogramlar"><i class="fa-solid fa-dumbbell"></i> Programlar <span class="cnt">3</span></button>
+        <button class="dt pf-rl-at" type="button" data-tab="atyorumlar"><i class="fa-solid fa-comment-dots"></i> Danışan Yorumları <span class="cnt">120</span></button>
         <button class="dt active" type="button" data-tab="tarifler"><i class="fa-solid fa-utensils"></i> Tarifleri <span class="cnt">128</span></button>
         <button class="dt" type="button" data-tab="puf"><i class="fa-solid fa-lightbulb"></i> Püf Noktaları <span class="cnt">36</span></button>
         <button class="dt" type="button" data-tab="uyelik"><i class="fa-solid fa-star"></i> Üyelik</button>
@@ -3085,6 +3308,197 @@ body[data-roles~="isletme"] .pf-crumb-own .pf-crumb-op{display:inline}
       </div>
     </div>
 
+    <!-- ============================================================
+         ANTRENÖR PANELLERİ (rol-koşullu; distinkt at* data-pane → diyetisyen ile ÇAKIŞMAZ)
+         pf-at-pane = pane-içi nane aksanı --c-green'e çevirir (sızma yok). C2-1b.
+         ============================================================ -->
+
+    <!-- ===== ANTRENÖR HAKKINDA ===== -->
+    <div class="pf-pane pf-at-pane" data-pane="athakkinda" hidden>
+      <div class="ab-grid">
+        <div class="ab-main">
+          <h2>Çalışma şeklim</h2>
+          <p>Antrenman, kendini kötü hissettiren bir ceza değil; hayatına oturan bir alışkanlık olmalı. Danışanlarımla önce hedefini, günlük rutinini ve evindeki imkanları konuşuyoruz — pahalı ekipman ya da salon üyeliği şart değil. Sonra haftalık güncellenen, sürdürülebilir ve senin tempona uygun bir plan kuruyoruz.</p>
+          <p>Her bedeni olduğu yerden alıp ileriye taşımaya inanıyorum. İlk görüşmede hareket geçmişini, varsa sakatlıklarını ve neyi keyifle yaptığını dinliyorum; plan oradan şekilleniyor. Tartı tek ölçüt değil — enerji, uyku ve nasıl hissettiğin de takip ettiğimiz şeyler.</p>
+
+          <h2>Uzmanlık alanlarım</h2>
+          <div class="ab-spec chips">
+            <span class="chip">Güç &amp; Kondisyon</span>
+            <span class="chip">Evde Antrenman</span>
+            <span class="chip">Kilo Yönetimi</span>
+            <span class="chip">Başlangıç Seviyesi</span>
+            <span class="chip">Ekipmansız Çalışma</span>
+            <span class="chip">Alışkanlık Kurma</span>
+          </div>
+
+          <h2>Beni farklı kılan</h2>
+          <div class="ab-approach">
+            <div class="ap-item"><i class="fa-solid fa-arrows-rotate"></i><div><b>Haftalık revizyon</b><span>Plan, ilerlemene ve geri bildirimine göre her hafta yeniden ayarlanır.</span></div></div>
+            <div class="ap-item"><i class="fa-solid fa-house"></i><div><b>Evinde çalış</b><span>Salon gerekmez — vücut ağırlığı ve evindeki birkaç eşya yeterli.</span></div></div>
+            <div class="ap-item"><i class="fa-solid fa-comments"></i><div><b>Seans arası destek</b><span>Sorularına mesajla genelde 3 saat içinde dönüş yaparım.</span></div></div>
+            <div class="ap-item"><i class="fa-solid fa-utensils"></i><div><b>Beslenme ile birlikte</b><span>DadaMutfak diyetisyenleriyle ortak plan — hareket ve beslenme bir arada.</span></div></div>
+          </div>
+        </div>
+
+        <aside class="ab-side">
+          <div class="info-card">
+            <h4><i class="fa-solid fa-circle-check"></i> Uygunluk</h4>
+            <div class="ic-row"><span class="ic-ico"><i class="fa-solid fa-user-plus"></i></span><div><b>Yeni danışan alıyor</b><span class="ic-verify"><i class="fa-solid fa-circle-check"></i> Şu an müsait</span></div></div>
+            <div class="ic-row"><span class="ic-ico"><i class="fa-solid fa-video"></i></span><div><b>Çalışma şekli</b><span>Online &amp; hibrit · İstanbul (Kadıköy) yüz yüze</span></div></div>
+            <div class="ic-row"><span class="ic-ico"><i class="fa-solid fa-clock"></i></span><div><b>Uygunluk</b><span>Hafta içi 09:00–20:00</span></div></div>
+            <div class="ic-row"><span class="ic-ico"><i class="fa-solid fa-bolt"></i></span><div><b>Yanıt süresi</b><span>Ortalama 3 saat içinde</span></div></div>
+          </div>
+          <div class="info-card">
+            <h4><i class="fa-solid fa-certificate"></i> Sertifikalar &amp; Belgeler</h4>
+            <div class="ic-row"><span class="ic-ico"><i class="fa-solid fa-graduation-cap"></i></span><div><b>Marmara Üniversitesi</b><span>Spor Bilimleri (Lisans)</span></div></div>
+            <div class="ic-row"><span class="ic-ico"><i class="fa-solid fa-certificate"></i></span><div><b>NASM Kişisel Antrenörlük</b><span>Sertifika · 2017</span></div></div>
+            <div class="ic-row"><span class="ic-ico"><i class="fa-solid fa-id-card"></i></span><div><b>Belge doğrulama</b><span>DadaMutfak ekibi tarafından incelendi</span><span class="ic-verify"><i class="fa-solid fa-circle-check"></i> DadaMutfak Onaylı</span></div></div>
+            <div class="ic-row"><span class="ic-ico"><i class="fa-solid fa-language"></i></span><div><b>Diller</b><span>Türkçe, İngilizce</span></div></div>
+          </div>
+          <div class="info-card">
+            <h4><i class="fa-solid fa-circle-info"></i> Hızlı Bilgi</h4>
+            <div class="ic-row"><span class="ic-ico"><i class="fa-solid fa-briefcase"></i></span><div><b>Deneyim</b><span>8 yıl antrenörlük</span></div></div>
+            <div class="ic-row"><span class="ic-ico"><i class="fa-solid fa-user-group"></i></span><div><b>Danışan</b><span>180+ kişiyle çalıştı</span></div></div>
+          </div>
+        </aside>
+      </div>
+    </div>
+
+    <!-- ===== ANTRENÖR PROGRAMLAR ===== -->
+    <div class="pf-pane pf-at-pane" data-pane="atprogramlar" hidden>
+      <div class="sec-head"><div>
+        <span class="eyebrow"><i class="fa-solid fa-dumbbell"></i> Programlar &amp; Seanslar</span>
+        <h2>Sunduğum programlar</h2>
+        <div class="sec-tools"><a class="see-all" href="program-liste-v1.html">Tüm Programlar <i class="fa-solid fa-arrow-right"></i></a></div>
+        <p class="lead">Her program seviyene göre uyarlanır — başlamadan önce ücretsiz tanışma görüşmesinde birlikte karar veririz.</p>
+      </div></div>
+      <div class="prog-grid">
+        <a class="prog-card" href="program-detay-v1.html">
+          <div class="prog-media" style="background-image:url('https://images.unsplash.com/photo-1518611012118-696072aa579a?w=700&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-12')">
+            <span class="prog-level"><i class="fa-solid fa-seedling"></i> Başlangıç</span>
+            <span class="prog-dur"><i class="fa-solid fa-calendar-day"></i> 6 hafta</span>
+            <h3 class="prog-title">Evde İlk Adım: Ekipmansız Güç</h3>
+          </div>
+          <div class="prog-body">
+            <p>Salona gitmeden, evinde vücut ağırlığıyla temel kuvvet ve hareket alışkanlığı kur.</p>
+            <div class="prog-feats"><span>Haftada 3 gün</span><span>20–30 dk</span><span>Ekipmansız</span></div>
+            <div class="prog-foot"><span class="price">Paket <b>₺2.400</b></span><span class="go">Programı Gör <i class="fa-solid fa-arrow-right"></i></span></div>
+          </div>
+        </a>
+        <a class="prog-card" href="program-detay-v1.html">
+          <div class="prog-media" style="background-image:url('https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=700&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-12')">
+            <span class="prog-level"><i class="fa-solid fa-fire"></i> Orta</span>
+            <span class="prog-dur"><i class="fa-solid fa-calendar-day"></i> 8 hafta</span>
+            <h3 class="prog-title">Sürdürülebilir Kilo Yönetimi</h3>
+          </div>
+          <div class="prog-body">
+            <p>Tempolu kardiyo ile kuvveti dengeleyen, günlük hayata oturan bir hareket düzeni.</p>
+            <div class="prog-feats"><span>Haftada 4 gün</span><span>30–40 dk</span><span>Online takip</span></div>
+            <div class="prog-foot"><span class="price">Paket <b>₺3.200</b></span><span class="go">Programı Gör <i class="fa-solid fa-arrow-right"></i></span></div>
+          </div>
+        </a>
+        <a class="prog-card" href="program-detay-v1.html">
+          <div class="prog-media" style="background-image:url('https://images.unsplash.com/photo-1538805060514-97d9cc17730c?w=700&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-12')">
+            <span class="prog-level"><i class="fa-solid fa-user-check"></i> Birebir</span>
+            <span class="prog-dur"><i class="fa-solid fa-calendar-day"></i> Aylık</span>
+            <h3 class="prog-title">Birebir Online Koçluk</h3>
+          </div>
+          <div class="prog-body">
+            <p>Tamamen sana özel plan, haftalık görüntülü seans ve seans arası mesajla sürekli destek.</p>
+            <div class="prog-feats"><span>4 seans / ay</span><span>Kişiye özel</span><span>Sınırsız mesaj</span></div>
+            <div class="prog-foot"><span class="price">Aylık <b>₺4.800</b></span><span class="go">Programı Gör <i class="fa-solid fa-arrow-right"></i></span></div>
+          </div>
+        </a>
+      </div>
+    </div>
+
+    <!-- ===== ANTRENÖR DANIŞAN YORUMLARI (diyetisyen yorumlar markup REUSE) ===== -->
+    <div class="pf-pane pf-at-pane" data-pane="atyorumlar" hidden>
+      <div class="rev-layout">
+        <aside class="rev-summary">
+          <div class="rev-big">
+            <b>4.9</b>
+            <div class="rev-stars"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
+            <span>120 danışan değerlendirmesi</span>
+          </div>
+          <div class="rs-bars">
+            <div class="rs-bar"><span class="rl">5 <i class="fa-solid fa-star"></i></span><span class="rs-track"><span class="rs-fill" style="width:88%"></span></span><span class="rn">106</span></div>
+            <div class="rs-bar"><span class="rl">4 <i class="fa-solid fa-star"></i></span><span class="rs-track"><span class="rs-fill" style="width:9%"></span></span><span class="rn">11</span></div>
+            <div class="rs-bar"><span class="rl">3 <i class="fa-solid fa-star"></i></span><span class="rs-track"><span class="rs-fill" style="width:2%"></span></span><span class="rn">2</span></div>
+            <div class="rs-bar"><span class="rl">2 <i class="fa-solid fa-star"></i></span><span class="rs-track"><span class="rs-fill" style="width:1%"></span></span><span class="rn">1</span></div>
+            <div class="rs-bar"><span class="rl">1 <i class="fa-solid fa-star"></i></span><span class="rs-track"><span class="rs-fill" style="width:0%"></span></span><span class="rn">0</span></div>
+          </div>
+        </aside>
+        <div class="rev-main">
+          <div class="rev-filter chips">
+            <span class="lbl">Filtrele:</span>
+            <button class="chip active" type="button">Tümü</button>
+            <button class="chip" type="button">Evde Antrenman</button>
+            <button class="chip" type="button">Kilo Yönetimi</button>
+            <button class="chip" type="button">Başlangıç</button>
+            <button class="chip" type="button">Online</button>
+          </div>
+          <div class="rev-list">
+            <article class="rev-item">
+              <div class="rev-top">
+                <div class="rev-av" style="background-image:url('https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=120&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')"></div>
+                <div class="rev-who"><b>Pınar G. <span class="rev-badge"><i class="fa-solid fa-circle-check"></i> Doğrulanmış danışan</span></b><span>Online danışan · 4 ay</span></div>
+                <div class="rev-rate"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
+              </div>
+              <p class="rev-text">Spor salonuna adım atmaya çekinen biriydim. Her şeyi evimde, kendi tempomda yapabileceğim şekilde kurdu. Hiç yargılanmadığımı hissettim — bu benim için en önemlisiydi.</p>
+              <div class="rev-tags"><span class="rev-tag">Evde Antrenman</span><span class="rev-tag">Başlangıç</span></div>
+              <div class="rev-reply"><b><i class="fa-solid fa-reply"></i> Antrenörün yanıtı</b>Bu kadar yol katettiğin için tebrikler Pınar! Düzenli alışkanlığın harika 👏</div>
+              <div class="rev-foot">
+                <button class="rev-help" type="button"><i class="fa-regular fa-thumbs-up"></i> Faydalı</button>
+                <span class="rev-help" style="cursor:default">14 değerlendirme faydalı buldu</span>
+              </div>
+            </article>
+            <article class="rev-item">
+              <div class="rev-top">
+                <div class="rev-av" style="background-image:url('https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=120&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')"></div>
+                <div class="rev-who"><b>Mert A. <span class="rev-badge"><i class="fa-solid fa-circle-check"></i> Doğrulanmış danışan</span></b><span>Online danışan · 6 ay</span></div>
+                <div class="rev-rate"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
+              </div>
+              <p class="rev-text">Masa başı işten dolayı sürekli yorgundum. Plan her hafta yenileniyor, sıkılmama izin vermiyor. Mesaj attığımda hep hızlı dönüyor; kendimi yalnız hissetmedim.</p>
+              <div class="rev-tags"><span class="rev-tag">Kilo Yönetimi</span><span class="rev-tag">Online</span></div>
+              <div class="rev-foot">
+                <button class="rev-help" type="button"><i class="fa-regular fa-thumbs-up"></i> Faydalı</button>
+                <span class="rev-help" style="cursor:default">9 değerlendirme faydalı buldu</span>
+              </div>
+            </article>
+            <article class="rev-item">
+              <div class="rev-top">
+                <div class="rev-av" style="background-image:url('https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?w=120&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')"></div>
+                <div class="rev-who"><b>Elif D. <span class="rev-badge"><i class="fa-solid fa-circle-check"></i> Doğrulanmış danışan</span></b><span>Hibrit danışan · 3 ay</span></div>
+                <div class="rev-rate"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
+              </div>
+              <p class="rev-text">Daha önce denediğim her şey beni kötü hissettirip bırakmama neden olmuştu. Beden-pozitif yaklaşımı sayesinde ilk kez tartı yerine kendime odaklandım. Diyetisyeniyle ortak çalışması büyük artı.</p>
+              <div class="rev-tags"><span class="rev-tag">Başlangıç</span><span class="rev-tag">Beslenme</span></div>
+              <div class="rev-foot">
+                <button class="rev-help" type="button"><i class="fa-regular fa-thumbs-up"></i> Faydalı</button>
+                <span class="rev-help" style="cursor:default">8 değerlendirme faydalı buldu</span>
+              </div>
+            </article>
+          </div>
+          <div class="rev-more"><button class="btn btn-ghost" type="button"><i class="fa-solid fa-arrow-down"></i> Daha fazla yorum (117)</button></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== ANTRENÖR ALT CTA BANDI (cp-cta-band → pf-atband; rol-koşullu) ===== -->
+    <div class="pf-atband pf-rl-at">
+      <div class="cb-copy">
+        <span class="cb-eyebrow"><i class="fa-solid fa-user-plus"></i> Birlikte başlayalım</span>
+        <h2>Çalışmaya hazır mısın?</h2>
+        <p>İlk 15 dakikalık tanışma görüşmesi ücretsiz. Hedefini anlat, sana uygun olup olmadığımıza birlikte karar verelim — baskı yok, taahhüt yok.</p>
+      </div>
+      <div class="cb-act">
+        <button class="pf-client" id="atBandClient" type="button"><i class="fa-solid fa-user-plus"></i> Danışan Ol</button>
+        <button class="pf-msg" id="atBandMsg" type="button"><i class="fa-regular fa-comment"></i> Mesaj Gönder</button>
+        <span class="cb-note"><i class="fa-solid fa-shield-halved"></i> DadaMutfak Onaylı · sertifikası doğrulandı</span>
+      </div>
+    </div>
+
   </div>
 </section>
 
@@ -3303,6 +3717,131 @@ body[data-roles~="isletme"] .pf-crumb-own .pf-crumb-op{display:inline}
         <span class="ok"><i class="fa-solid fa-check"></i></span>
         <h4>Mesajın iletildi</h4>
         <p>Uzm. Dyt. Elif Şahin yanıtladığında e-posta ile haberdar olacaksın.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     C2-1b — ANTRENÖR MODALLARI (ayrı pf-rl-at blok; distinkt at* id → diyetisyen #aptModal/#msgModal'a SIFIR dokunuş)
+     apt-* CSS paylaşılır; nane→--c-green #atApt*/#atMsg* scoped override ile. JS ayrı IIFE.
+     ============================================================ -->
+<!-- ===== ANTRENÖR RANDEVU MODALI ===== -->
+<div class="apt-overlay" id="atAptOverlay"></div>
+<div class="apt-modal" id="atAptModal" role="dialog" aria-modal="true" aria-label="Randevu Al">
+  <div class="apt-panel">
+    <div class="apt-head">
+      <div class="apt-av" style="background-image:url('https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=300&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')"></div>
+      <div>
+        <h3>Randevu Al</h3>
+        <p><i class="fa-solid fa-shield-halved"></i> Antrenör Elif Şahin</p>
+      </div>
+      <button class="apt-close" id="atAptClose" type="button" aria-label="Kapat"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="apt-body" id="atAptBody">
+      <div class="apt-block">
+        <div class="apt-lbl"><i class="fa-solid fa-dumbbell"></i> Seans türü</div>
+        <div class="apt-svc" id="atAptSvc">
+          <label><input type="radio" name="atsvc" data-price="0" checked /><span class="rd"></span><span class="si"><b>Tanışma Görüşmesi</b><span>15 dk · online · ücretsiz</span></span><span class="sp">Ücretsiz</span></label>
+          <label><input type="radio" name="atsvc" data-price="450" /><span class="rd"></span><span class="si"><b>Birebir Seans</b><span>60 dk · online/yüz yüze</span></span><span class="sp">₺450</span></label>
+          <label><input type="radio" name="atsvc" data-price="4800" /><span class="rd"></span><span class="si"><b>Birebir Online Koçluk</b><span>Aylık · 4 seans</span></span><span class="sp">₺4.800</span></label>
+        </div>
+      </div>
+      <div class="apt-block">
+        <div class="apt-lbl"><i class="fa-solid fa-calendar-days"></i> Gün seç</div>
+        <div class="apt-days">
+            <button class="apt-day" type="button" data-day="Bug 11"><span>Bug</span><b>11</b><small>2 slot</small></button>
+            <button class="apt-day sel" type="button" data-day="Çar 12"><span>Çar</span><b>12</b><small>4 slot</small></button>
+            <button class="apt-day" type="button" data-day="Per 13"><span>Per</span><b>13</b><small>3 slot</small></button>
+            <button class="apt-day off" type="button" data-day="Cum 14"><span>Cum</span><b>14</b><small>—</small></button>
+            <button class="apt-day" type="button" data-day="Cmt 15"><span>Cmt</span><b>15</b><small>5 slot</small></button>
+            <button class="apt-day" type="button" data-day="Paz 16"><span>Paz</span><b>16</b><small>3 slot</small></button>
+            <button class="apt-day" type="button" data-day="Pzt 17"><span>Pzt</span><b>17</b><small>5 slot</small></button>
+        </div>
+      </div>
+      <div class="apt-block">
+        <div class="apt-lbl"><i class="fa-solid fa-clock"></i> Saat seç</div>
+        <div class="apt-slots">
+            <button class="apt-slot" type="button" data-slot="08:00">08:00</button>
+            <button class="apt-slot" type="button" data-slot="09:00">09:00</button>
+            <button class="apt-slot off" type="button" data-slot="10:00">10:00</button>
+            <button class="apt-slot" type="button" data-slot="12:00">12:00</button>
+            <button class="apt-slot" type="button" data-slot="17:00">17:00</button>
+            <button class="apt-slot" type="button" data-slot="18:00">18:00</button>
+            <button class="apt-slot off" type="button" data-slot="19:00">19:00</button>
+            <button class="apt-slot" type="button" data-slot="20:00">20:00</button>
+        </div>
+      </div>
+      <div class="apt-foot">
+        <div class="apt-sum">Seçilen<b id="atAptSum">Tanışma Görüşmesi · Ücretsiz</b></div>
+        <button class="btn btn-primary apt-confirm" id="atAptConfirm" type="button"><i class="fa-solid fa-check"></i> Randevuyu Onayla</button>
+      </div>
+    </div>
+    <div class="apt-body" id="atAptSuccess" hidden>
+      <div class="apt-success">
+        <span class="ok"><i class="fa-solid fa-check"></i></span>
+        <h4>Randevu talebin alındı</h4>
+        <p id="atAptSuccessText">Antrenör Elif Şahin onayladığında e-posta ve SMS ile bilgilendirileceksin.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== ANTRENÖR MESAJ MODALI ===== -->
+<div class="apt-overlay" id="atMsgOverlay"></div>
+<div class="apt-modal" id="atMsgModal" role="dialog" aria-modal="true" aria-label="Mesaj Gönder">
+  <div class="apt-panel">
+    <div class="apt-head">
+      <div class="apt-av" style="background-image:url('https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=300&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')"></div>
+      <div><h3>Mesaj Gönder</h3><p><i class="fa-solid fa-bolt"></i> Genelde 3 saat içinde yanıtlar</p></div>
+      <button class="apt-close" id="atMsgClose" type="button" aria-label="Kapat"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="apt-body" id="atMsgForm">
+      <div class="apt-block">
+        <div class="apt-lbl"><i class="fa-solid fa-pen"></i> Mesajın</div>
+        <div class="fb-field"><textarea placeholder="Hangi konuda destek istiyorsun? Hedefini kısaca anlat — uygunsa tanışma görüşmesi önerecektir." required></textarea></div>
+        <div class="fb-field"><input type="email" placeholder="E-posta adresin (yanıt için) *" required /></div>
+      </div>
+      <div class="apt-foot">
+        <span class="apt-sum"><i class="fa-solid fa-lock" style="color:var(--c-green-deep)"></i> Mesajın yalnızca antrenöre iletilir</span>
+        <button class="btn btn-primary" id="atMsgSend" type="button"><i class="fa-solid fa-paper-plane"></i> Gönder</button>
+      </div>
+    </div>
+    <div class="apt-body" id="atMsgSuccess" hidden>
+      <div class="apt-success">
+        <span class="ok"><i class="fa-solid fa-check"></i></span>
+        <h4>Mesajın iletildi</h4>
+        <p>Antrenör Elif Şahin yanıtladığında e-posta ile haberdar olacaksın.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== İŞLETME MESAJ MODALI (C2-1c; ayrı pf-rl-isl blok; apt-* CSS paylaşır) ===== -->
+<div class="apt-overlay" id="islMsgOverlay"></div>
+<div class="apt-modal" id="islMsgModal" role="dialog" aria-modal="true" aria-label="İşletmeye Mesaj">
+  <div class="apt-panel">
+    <div class="apt-head">
+      <div class="apt-av" style="background-image:url('https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=300&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')"></div>
+      <div><h3>Mesaj Gönder</h3><p><i class="fa-solid fa-store"></i> Gebze Köfte Durağı</p></div>
+      <button class="apt-close" id="islMsgClose" type="button" aria-label="Kapat"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="apt-body" id="islMsgForm">
+      <div class="apt-block">
+        <div class="apt-lbl"><i class="fa-solid fa-pen"></i> Mesajın</div>
+        <div class="fb-field"><textarea placeholder="Rezervasyon, menü ya da bir sorunu yazabilirsin." required></textarea></div>
+        <div class="fb-field"><input type="email" placeholder="E-posta adresin (yanıt için) *" required /></div>
+      </div>
+      <div class="apt-foot">
+        <span class="apt-sum"><i class="fa-solid fa-lock" style="color:var(--c-petrol)"></i> Mesajın yalnızca işletmeye iletilir</span>
+        <button class="btn btn-primary" id="islMsgSend" type="button"><i class="fa-solid fa-paper-plane"></i> Gönder</button>
+      </div>
+    </div>
+    <div class="apt-body" id="islMsgSuccess" hidden>
+      <div class="apt-success">
+        <span class="ok"><i class="fa-solid fa-check"></i></span>
+        <h4>Mesajın iletildi</h4>
+        <p>Gebze Köfte Durağı yanıtladığında e-posta ile haberdar olacaksın.</p>
       </div>
     </div>
   </div>
@@ -4262,6 +4801,76 @@ document.addEventListener('click',function(e){
   document.getElementById('msgSend').addEventListener('click',function(){msgForm.hidden=true;msgSuccess.hidden=false;});
   document.addEventListener('keydown',function(e){if(e.key==='Escape'){closeApt();closeMsg();}});
   if(params.get('msg')==='1')openMsg();
+})();
+
+/* ===== C2-1b — ANTRENÖR MODAL JS (ayrı IIFE; gün/saat sorguları atAptModal'a SCOPED) =====
+   Tetikleyiciler rol-gated (pf-rl-at). Diyetisyen JS'e DOKUNULMADI — ayrı at* id'ler. */
+(function(){
+  var params=new URLSearchParams(location.search);
+  var m=document.getElementById('atAptModal'),ov=document.getElementById('atAptOverlay');
+  if(!m||!ov)return;
+  var sum=document.getElementById('atAptSum'),body=document.getElementById('atAptBody'),succ=document.getElementById('atAptSuccess');
+  function info(){
+    var r=m.querySelector('#atAptSvc input:checked');
+    var lbl=r.closest('label').querySelector('.si b').textContent;
+    var price=r.closest('label').querySelector('.sp').textContent;
+    return lbl+' · '+price;
+  }
+  function refresh(){ sum.textContent=info(); }
+  function open(presetPrice){
+    if(presetPrice!=null){ var r=m.querySelector('#atAptSvc input[data-price="'+presetPrice+'"]'); if(r)r.checked=true; }
+    body.hidden=false; succ.hidden=true; refresh();
+    m.classList.add('show');ov.classList.add('show');document.body.style.overflow='hidden';
+  }
+  function close(){m.classList.remove('show');ov.classList.remove('show');document.body.style.overflow='';}
+  var ob=document.getElementById('atOpenApt'); if(ob)ob.addEventListener('click',function(){open();});
+  var cl=document.getElementById('atClient'); if(cl)cl.addEventListener('click',function(){open(0);});      // Danışan Ol → tanışma preset
+  var bc=document.getElementById('atBandClient'); if(bc)bc.addEventListener('click',function(){open(0);});
+  document.getElementById('atAptClose').addEventListener('click',close);
+  ov.addEventListener('click',close);
+  m.querySelectorAll('#atAptSvc input').forEach(function(i){i.addEventListener('change',refresh);});
+  m.querySelectorAll('.apt-day').forEach(function(d){
+    d.addEventListener('click',function(){ m.querySelectorAll('.apt-day').forEach(function(x){x.classList.remove('sel');}); d.classList.add('sel'); });
+  });
+  m.querySelectorAll('.apt-slot').forEach(function(sl){
+    sl.addEventListener('click',function(){ m.querySelectorAll('.apt-slot').forEach(function(x){x.classList.remove('sel');}); sl.classList.add('sel'); });
+  });
+  document.getElementById('atAptConfirm').addEventListener('click',function(){
+    var day=m.querySelector('.apt-day.sel'),slot=m.querySelector('.apt-slot.sel');
+    var dtxt=(day?day.getAttribute('data-day'):'Çar 12')+(slot?' · '+slot.getAttribute('data-slot'):' · 18:00');
+    document.getElementById('atAptSuccessText').textContent='Randevu talebin için: '+info()+' — '+dtxt+'. Antrenör onayladığında e-posta ve SMS ile bilgilendirileceksin.';
+    body.hidden=true; succ.hidden=false;
+  });
+  if(params.get('atrandevu')==='1')open();
+
+  /* ---- ANTRENÖR MESAJ MODALI ---- */
+  var mm=document.getElementById('atMsgModal'),mov=document.getElementById('atMsgOverlay');
+  var mf=document.getElementById('atMsgForm'),ms=document.getElementById('atMsgSuccess');
+  function openMsg(){mf.hidden=false;ms.hidden=true;mm.classList.add('show');mov.classList.add('show');document.body.style.overflow='hidden';}
+  function closeMsg(){mm.classList.remove('show');mov.classList.remove('show');document.body.style.overflow='';}
+  var omb=document.getElementById('atOpenMsg'); if(omb)omb.addEventListener('click',openMsg);
+  var bmb=document.getElementById('atBandMsg'); if(bmb)bmb.addEventListener('click',openMsg);
+  document.getElementById('atMsgClose').addEventListener('click',closeMsg);
+  mov.addEventListener('click',closeMsg);
+  document.getElementById('atMsgSend').addEventListener('click',function(){mf.hidden=true;ms.hidden=false;});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape'){close();closeMsg();}});
+  if(params.get('atmsg')==='1')openMsg();
+})();
+
+/* ===== C2-1c — İŞLETME MESAJ MODAL JS (ayrı IIFE; pf-rl-isl) ===== */
+(function(){
+  var params=new URLSearchParams(location.search);
+  var mm=document.getElementById('islMsgModal'),mov=document.getElementById('islMsgOverlay');
+  if(!mm||!mov)return;
+  var mf=document.getElementById('islMsgForm'),ms=document.getElementById('islMsgSuccess');
+  function openMsg(){mf.hidden=false;ms.hidden=true;mm.classList.add('show');mov.classList.add('show');document.body.style.overflow='hidden';}
+  function closeMsg(){mm.classList.remove('show');mov.classList.remove('show');document.body.style.overflow='';}
+  var omb=document.getElementById('islOpenMsg'); if(omb)omb.addEventListener('click',openMsg);
+  document.getElementById('islMsgClose').addEventListener('click',closeMsg);
+  mov.addEventListener('click',closeMsg);
+  document.getElementById('islMsgSend').addEventListener('click',function(){mf.hidden=true;ms.hidden=false;});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')closeMsg();});
+  if(params.get('islmsg')==='1')openMsg();
 })();
 
 /* ---- PRO-GATE (canonical; [data-pro-gate] tetikler) ---- */
