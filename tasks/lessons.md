@@ -551,3 +551,13 @@ verir); gerçek nav HTML'i div-depth ile çıkar, nav-div == öğe−1 say. (6) 
 ## Sözlük/dizin tipi modüllerde alfabetik (A-Z) gezinme imza etkileşimdir — kesilmez (2026-06-23, faz3-sozluk)
 
 **Kural:** Sözlük/dizin/ansiklopedi gibi A-Z'ye doğal yatkın modüllerde alfabetik (A-Z) gezinme BİRİNCİL/imza etkileşimdir; efor tasarrufu için "arama+kategori yeter" diye kesilmez. Kategori filtresi İKİNCİL kalır. Filtreler AND birleşir (A-Z + kategori + arama birlikte daraltır).
+
+## PROFİL/TASARIM TURU ÖZ-DENETİM PROTOKOLÜ (2026-06-25, C2-1a profil)
+
+Her profil/tasarım turu sonunda CC kendi denetler, Beyar tek tek state açmaz:
+1. **Playwright ile TÜM rol×view state'leri — HEM taze context HEM ortak senaryo** (aynı tarayıcıda art arda gezinme = localStorage carryover).
+2. **Her state:** `data-roles` computed + rol sızması + buton hizası/yükseklik (computed, skew yok) + **AVATAR/İKON KÖŞE öğeleri çakışma** (üst üste binme, çeyrek daire vb.) + etiket tutarlılığı + **console 0**.
+3. **SS** (1440+390) + kritik öğelerde **YAKIN-PLAN SS** (avatar köşe, buton grubu). Sızma/yamukluk/çakışma/kayma VARSA **CC kendi düzeltir, Beyar'a getirmez**.
+4. Beyar'a yalnız TEMİZ sonuç + kısa **state matris tablosu**. **Lead computed+SS teyidi şart** (teammate iddiası yetmez).
+5. **Dersler:** (a) **carryover MUTLAKA test** (taze context yetmez — IIFE persisted localStorage rolünü taşıyabilir; bkz. C2-1a `?auth=1`'de diyetisyen sızması, fix = URL parametresi varsa rolleri URL'den authoritative yeniden kur); (b) **köşe affordance'ları** (kamera/nokta/rozet) üst üste binebilir — rol modunda hangisi görünür açıkça gate'le (bkz. C2-1a avatar yarım-kırmızı-yarım-yeşil = kök kamera + diyetisyen yeşil nokta üst üste).
+6. **OWN↔PUBLIC CTA TUTARLILIĞI (2026-06-25, C2-1b bug):** operatör profillerinde (antrenör/diyetisyen/işletme) own modda SADECE yönetim CTA'sı (Profili Düzenle / Panelden Düzenle), public modda SADECE ziyaretçi CTA'sı (Randevu Al / Danışan Ol / Mesaj / Takip / mekan linki). **Test:** own'da ziyaretçi CTA'sı GÖRÜNMEMELİ (kendine randevu/danışan olamaz), public'te yönetim CTA'sı görünmemeli. **Her operatör rolü × own/public computed display** test edilir. **Kök sebep tuzağı:** operatör katmanı CTA'larını yalnız ROL geçidine bağlayıp (`body[data-roles~="X"] .pf-book{display}`) own↔public geçidini (`body.pf-public`) almazsa CTA her iki modda basılı kalır — kök üyenin `pf-act-own`/`pf-act-public` mekanizması MİRAS alınmalı (gate = `body.pf-public[data-roles~="X"] .pf-...`). Dönüşüm bandı/fiyat da ziyaretçi CTA'sıdır → public-only.
