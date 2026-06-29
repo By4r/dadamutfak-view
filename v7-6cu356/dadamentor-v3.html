@@ -83,17 +83,19 @@ button{font-family:inherit}
 
 /* ========================== HEADER ========================== */
 /* portal-v3a uyumu: şeffaf(at-top) → frosted(scroll) */
+/* R2: hero BEYAZ olduğu için header at-top da AÇIK temalı (koyu içerik, okunur) */
 .site-head{
   position:fixed;top:0;left:0;right:0;z-index:50;
-  background:transparent;
-  border-bottom:1px solid rgba(255,255,255,.14); /* portal at-top divider dili */
+  background:rgba(255,255,255,.72);
+  backdrop-filter:saturate(140%) blur(8px);
+  border-bottom:1px solid var(--line);
   transition:background .3s var(--ease),border-color .3s var(--ease),backdrop-filter .3s var(--ease),box-shadow .3s var(--ease);
 }
 .site-head.frosted{
-  background:rgba(255,255,255,.88);
+  background:rgba(255,255,255,.9);
   backdrop-filter:saturate(150%) blur(14px);
   border-color:var(--line);
-  box-shadow:0 4px 20px rgba(33,30,22,.05);
+  box-shadow:0 4px 20px rgba(33,30,22,.06);
 }
 .site-head .hw{display:flex;align-items:center;justify-content:space-between;
   height:var(--header-h);gap:16px;max-width:var(--wrap);margin-inline:auto;padding-inline:32px}
@@ -102,36 +104,30 @@ button{font-family:inherit}
 .brand{display:flex;align-items:center;gap:10px;flex:none}
 .brand .mark{width:36px;height:36px;border-radius:var(--r-circle);background:var(--tomato);
   display:grid;place-items:center;color:#fff;font-size:16px;flex:none}
-.brand .word{font-weight:800;font-size:20px;letter-spacing:-.01em;color:#fff;transition:color .3s var(--ease)}
-.brand .word b{color:#fff;transition:color .3s var(--ease)}
-.site-head.frosted .brand .word{color:var(--slate)}
-.site-head.frosted .brand .word b{color:var(--tomato)}
+.brand .word{font-weight:800;font-size:20px;letter-spacing:-.01em;color:var(--slate);transition:color .3s var(--ease)}
+.brand .word b{color:var(--tomato);transition:color .3s var(--ease)}
 
 /* head aksiyonlar */
 .head-acts{display:flex;align-items:center;gap:8px;margin-left:auto;flex:none}
 .icon-btn{width:43px;height:43px;display:grid;place-items:center;border-radius:var(--r-md);
-  border:1px solid rgba(255,255,255,.26);color:#fff;background:rgba(255,255,255,.10);
+  border:1px solid var(--line);color:var(--slate);background:var(--paper);
   cursor:pointer;font-size:15px;transition:.2s var(--ease)}
-.icon-btn:hover{background:rgba(255,255,255,.20);border-color:rgba(255,255,255,.5)}
-.site-head.frosted .icon-btn{background:var(--paper);border-color:var(--line);color:var(--slate)}
-.site-head.frosted .icon-btn:hover{border-color:var(--tomato);color:var(--tomato)}
+.icon-btn:hover{background:var(--bg);border-color:var(--tomato);color:var(--tomato)}
 
 /* giriş */
 .btn-login{display:inline-flex;align-items:center;gap:8px;font-weight:700;font-size:14px;
-  color:#fff;border:1px solid rgba(255,255,255,.28);background:rgba(255,255,255,.10);
+  color:var(--slate);border:1px solid var(--line);background:var(--paper);
   border-radius:var(--r-md);height:43px;padding:0 18px;cursor:pointer;transition:.2s var(--ease)}
-.btn-login:hover{background:rgba(255,255,255,.20)}
-.site-head.frosted .btn-login{background:var(--paper);border-color:var(--line);color:var(--slate)}
-.site-head.frosted .btn-login:hover{border-color:var(--tomato);color:var(--tomato)}
+.btn-login:hover{border-color:var(--tomato);color:var(--tomato)}
 .btn-login-hdr{display:inline-flex}
 
 /* dil seçici (portal .tb-lang deseni — header'a taşındı) */
 .tb-lang{position:relative;display:flex;align-items:center}
-.tb-lang-btn{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.10);
-  border:1px solid rgba(255,255,255,.26);border-radius:var(--r-md);cursor:pointer;
-  color:#fff;font-family:inherit;font-size:13px;font-weight:700;height:43px;padding:0 13px;
+.tb-lang-btn{display:inline-flex;align-items:center;gap:6px;background:var(--paper);
+  border:1px solid var(--line);border-radius:var(--r-md);cursor:pointer;
+  color:var(--slate);font-family:inherit;font-size:13px;font-weight:700;height:43px;padding:0 13px;
   transition:.2s var(--ease)}
-.tb-lang-btn:hover{background:rgba(255,255,255,.20)}
+.tb-lang-btn:hover{border-color:var(--tomato);color:var(--tomato)}
 .tb-lang-btn .lbl{letter-spacing:.03em}
 .tb-lang-caret{font-size:9px;opacity:.7;transition:transform .2s var(--ease)}
 .tb-lang.open .tb-lang-caret{transform:rotate(180deg)}
@@ -155,6 +151,7 @@ button{font-family:inherit}
 /* full-bleed canvas · bg cross-fade · portal zemin varsayılan */
 .hero{
   position:relative;
+  z-index:2;              /* R1: sabit footer (z:1) hero beyazının ALTINDA kalsın (sızma fix) */
   min-height:100vh;
   display:flex;
   align-items:flex-start;
@@ -162,56 +159,27 @@ button{font-family:inherit}
   background:var(--bg);
 }
 
-/* 2-katman cross-fade bg */
-.hbg-a,.hbg-b{
-  position:absolute;inset:0;
-  background-size:cover;background-position:center;
-  transition:opacity .6s var(--ease);
-  pointer-events:none;z-index:0;
-  will-change:opacity;
-}
-.hbg-a{opacity:1}
-.hbg-b{opacity:0}
-
-/* portal açık zemin (dünya yokken) */
+/* REV3: full-bleed dünya görseli + koyu overlay + grain KALDIRILDI.
+   Hero artık portal-v3a gibi beyaz/açık zemin — HER ZAMAN görünür. */
 .h-portal-bg{
   position:absolute;inset:0;z-index:0;pointer-events:none;
   background:
-    radial-gradient(52% 42% at 18% 22%, rgba(var(--tomato-rgb),.06) 0%, transparent 62%),
-    radial-gradient(46% 48% at 87% 86%, rgba(177,79,197,.04) 0%, transparent 65%),
+    radial-gradient(52% 42% at 16% 20%, rgba(var(--tomato-rgb),.05) 0%, transparent 60%),
+    radial-gradient(48% 50% at 88% 88%, rgba(177,79,197,.035) 0%, transparent 66%),
     var(--bg);
-  transition:opacity .5s var(--ease);
 }
-.hero.world-active .h-portal-bg{opacity:0}
 
-/* koyu overlay (dünya aktifken) — portal hero dili: 180° + yumuşak 90°, görsel NET kalır */
-.h-overlay{
-  position:absolute;inset:0;z-index:1;pointer-events:none;
-  background:
-    linear-gradient(180deg, rgba(16,14,9,.62) 0%, rgba(16,14,9,.48) 30%, rgba(16,14,9,.78) 68%, rgba(16,14,9,.96) 100%),
-    linear-gradient(90deg, rgba(16,14,9,.48) 0%, rgba(16,14,9,.26) 45%, rgba(16,14,9,.10) 80%);
-  opacity:0;transition:opacity .5s var(--ease);
-}
-.hero.world-active .h-overlay{opacity:1}
-
-/* dünya renk gradienti — portal hero dili: büyük köşe-radyali + yumuşak 3-durak falloff
-   (renk HİSSEDİLİR ama baskın değil; her dünya kendi --bc rengiyle, atmosferik) */
+/* aktif dünyanın rengi — beyaz zeminde ÖLÇÜLÜ köşe washı (koyu overlay YOK) */
 .h-wgrad{
-  position:absolute;inset:0;z-index:1;pointer-events:none;
+  position:absolute;inset:0;z-index:0;pointer-events:none;
   background:
-    radial-gradient(80% 78% at 100% 100%,
-      color-mix(in srgb,var(--bc,var(--tomato)) 24%,transparent) 0%,
-      color-mix(in srgb,var(--bc,var(--tomato)) 8%,transparent) 32%,
-      transparent 62%);
+    radial-gradient(72% 72% at 100% 100%,
+      color-mix(in srgb,var(--bc,var(--tomato)) 13%,transparent) 0%,
+      color-mix(in srgb,var(--bc,var(--tomato)) 4%,transparent) 36%,
+      transparent 64%);
   opacity:0;transition:opacity .5s var(--ease);
 }
 .hero.world-active .h-wgrad{opacity:1}
-
-/* film grain */
-.h-grain{
-  position:absolute;inset:0;z-index:2;opacity:.18;mix-blend-mode:overlay;pointer-events:none;
-  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.4'/%3E%3C/svg%3E");
-}
 
 /* hero stage — Alt 1: SOL panel-lg + SAĞ 1fr kart */
 .hero-stage{
@@ -235,7 +203,7 @@ button{font-family:inherit}
   box-shadow:var(--sh-3);
   background:var(--d-deep);
   display:flex;flex-direction:column;justify-content:space-between;
-  transition:width .5s var(--ease-spring),height .5s var(--ease-spring),border-radius .5s var(--ease-spring),box-shadow .42s var(--ease),transform .45s var(--ease-spring),opacity .35s var(--ease);
+  transition:width .5s var(--ease-spring),height .5s var(--ease-spring),border-radius .5s var(--ease-spring),box-shadow .42s var(--ease),transform .45s var(--ease-spring),opacity .35s var(--ease),background .4s var(--ease),border-color .4s var(--ease);
 }
 
 /* video bg (alt6 birebir) */
@@ -300,17 +268,22 @@ button{font-family:inherit}
 .mp-back i{font-size:11px}
 
 /* mini overlay (collapse hali) */
+/* Q2: collapsed = ikon+metin PILL (offmenu "let's work together" mantığı) */
 .mp-mini-overlay{
   display:flex;position:absolute;inset:0;z-index:5;
-  align-items:center;justify-content:center;
-  background:rgba(22,19,16,.72);backdrop-filter:blur(6px);
+  align-items:center;justify-content:flex-start;gap:11px;padding:0 22px 0 8px;
   cursor:pointer;opacity:0;pointer-events:none;
   transition:opacity .3s var(--ease);
 }
-.mp-mini-overlay .mav{width:42px;height:42px;border-radius:var(--r-circle);background:var(--tomato);
-  color:#fff;display:grid;place-items:center;font-size:18px;
-  box-shadow:0 0 0 4px rgba(var(--tomato-rgb),.28);
+/* eski canlı stil: tomato pusula badge + beyaz ikon (koyu FAB üstünde marka aksanı) */
+.mp-mini-overlay .mav{width:40px;height:40px;border-radius:var(--r-circle);background:var(--tomato);
+  color:#fff;display:grid;place-items:center;font-size:17px;flex:none;
+  box-shadow:0 0 0 3px rgba(var(--tomato-rgb),.26);
   transform:scale(.55);transition:transform .45s var(--ease-spring)}
+.mp-mini-lbl{font-weight:800;font-size:14.5px;letter-spacing:-.01em;color:#fff;white-space:nowrap;
+  opacity:0;transform:translateX(-6px);
+  transition:opacity .3s var(--ease) .05s,transform .35s var(--ease-spring) .05s}
+.mentor-panel.mini .mp-mini-lbl{opacity:1;transform:none}
 
 /* ---- FLOATING state (offmenu: hero dışı → sol-ALT köşe, içeriği İTMEZ) ---- */
 /* JS ekler: .floating · panel position:fixed olur, içerik TAM GENİŞLİK akar (overlay/FAB) */
@@ -326,24 +299,32 @@ button{font-family:inherit}
   animation:floatIn .5s var(--ease-spring);  /* yalnız hero→floating giriş */
 }
 @keyframes floatIn{from{opacity:0;transform:translateY(26px) scale(.965)}to{opacity:1;transform:none}}
+/* footer perdesi açılınca panel nazikçe kenara çekilir (footer'ı örtmesin) — küçülme DEĞİL */
+.mentor-panel.foot-hide{transform:translateY(150%) !important;opacity:0;pointer-events:none}
 .mentor-panel.floating .mp-chat{flex:none;justify-content:flex-end}
 /* floating panel hero-stage stacking context'inden (z:3) kurtulup scroll-body (z:5) ÜSTÜNE çıksın */
 body.panel-floating .hero{z-index:45}
 
 /* ---- MINI state (offmenu collapse · sol-alt köşe baloncuk, küçül ama KAL) ---- */
 /* JS ekler: .mini */
+/* mini = tomato FAB (ikon+metin), SERT kurumsal kart radius (--r-lg) — to-top ile aynı köşeli dil */
 .mentor-panel.mini{
   position:fixed;
   left:24px;right:auto;bottom:24px;top:auto;
-  width:64px !important;height:64px !important;max-height:64px;
-  border-radius:var(--r-circle);
-  z-index:40;cursor:pointer;
-  box-shadow:0 16px 44px rgba(16,14,9,.42);
+  width:148px !important;height:56px !important;max-height:56px; /* SABİT genişlik → collapse morph'u akıcı (auto transition etmiyordu) */
+  border-radius:var(--r-lg);
+  z-index:40;cursor:pointer;overflow:hidden;
+  background:var(--slate);                       /* premium koyu (Process Black token) */
+  border:1px solid rgba(255,255,255,.09);
+  box-shadow:0 14px 38px rgba(16,14,9,.46);
   /* animation YOK — collapse↔expand morph'u transition ile (offmenu/super) */
 }
-.mentor-panel.mini .mp-chat{opacity:0;pointer-events:none;transform:translateY(6px)}
-.mentor-panel.mini .mp-top{opacity:0;pointer-events:none}
-.mentor-panel.mini .mp-mini-overlay{opacity:1;pointer-events:auto}
+.mentor-panel.mini .mp-media,.mentor-panel.mini .mp-fade{opacity:0}
+/* gizli flow içeriği absolute → pill genişliğini ŞİŞİRMESİN (yalnız overlay genişliği belirler) */
+.mentor-panel.mini .mp-top,.mentor-panel.mini .mp-chat{position:absolute;left:0;right:0}
+.mentor-panel.mini .mp-chat{bottom:0;opacity:0;pointer-events:none;transform:translateY(6px)}
+.mentor-panel.mini .mp-top{top:0;opacity:0;pointer-events:none}
+.mentor-panel.mini .mp-mini-overlay{position:relative;inset:auto;height:56px;opacity:1;pointer-events:auto}
 .mentor-panel.mini .mp-mini-overlay .mav{transform:scale(1)}
 
 /* toggle yalnız floating'te görünür (hero'da panel tam kalır) */
@@ -367,32 +348,48 @@ body.panel-floating .hero{z-index:45}
   box-shadow:var(--sh-3);background:var(--d-deep);
 }
 
-/* 4 dünya sırtı — aktif kartın yanında dikey renkli şeritler */
+/* 4 dünya sırtı — REV3: her sırt o dünyanın GÖRSELİ + koyu/renk veil + watermark */
 .deck-rail{flex:none;display:flex;align-items:stretch;gap:8px;z-index:1}
 .deck-spine{
-  position:relative;width:56px;flex:none;border:0;padding:0;cursor:pointer;overflow:hidden;
-  border-radius:var(--r-lg);
-  background:linear-gradient(168deg,var(--bc) 0%,color-mix(in srgb,var(--bc) 58%,#161310) 100%);
-  box-shadow:var(--sh-2);
-  display:flex;align-items:center;justify-content:center;
+  position:relative;width:60px;flex:none;border:0;padding:0;cursor:pointer;overflow:hidden;
+  border-radius:var(--r-lg);box-shadow:var(--sh-2);background:#161310;
+  display:flex;align-items:flex-end;justify-content:center;
   transition:transform .34s var(--ease-spring),filter .2s var(--ease),box-shadow .34s var(--ease),width .34s var(--ease-spring);
 }
-.deck-spine::after{content:"";position:absolute;inset:0;pointer-events:none;
-  background:linear-gradient(180deg,rgba(255,255,255,.16) 0%,transparent 42%,rgba(0,0,0,.20) 100%)}
-.deck-spine .ds-ico{position:absolute;top:15px;left:50%;transform:translateX(-50%);z-index:1;
-  color:#fff;font-size:13px;opacity:.92}
-.deck-spine .ds-name{position:relative;z-index:1;writing-mode:vertical-rl;
-  font-weight:800;font-size:14px;letter-spacing:.03em;color:#fff;
-  text-shadow:0 1px 10px rgba(0,0,0,.35);white-space:nowrap}
-.deck-spine:hover,.deck-spine:focus-visible{transform:translateY(-5px);filter:brightness(1.08);box-shadow:var(--sh-3)}
+/* görsel (Kerem pattern: div+bg cover) */
+.deck-spine .ds-img{position:absolute;inset:0;z-index:0;background-size:cover;background-position:center;
+  transition:transform .5s var(--ease)}
+.deck-spine:hover .ds-img{transform:scale(1.06)}
+/* dünya rengi + okunabilirlik veil'i */
+.deck-spine .ds-veil{position:absolute;inset:0;z-index:1;pointer-events:none;
+  background:
+    linear-gradient(180deg, color-mix(in srgb,var(--bc) 30%,rgba(13,11,8,.55)) 0%, rgba(13,11,8,.40) 40%, rgba(13,11,8,.76) 100%),
+    linear-gradient(0deg, color-mix(in srgb,var(--bc) 24%,transparent) 0%, transparent 52%)}
+/* patlamış marka watermark — oversized, dikey, yarı saydam */
+/* R3: rotate(180) → dikey metin doğru okunur yönde (alttan üste) */
+.deck-spine .ds-stamp{position:absolute;z-index:2;left:50%;top:50%;transform:translate(-50%,-50%) rotate(180deg);
+  writing-mode:vertical-rl;font-weight:800;font-size:52px;letter-spacing:-.045em;line-height:.86;
+  color:rgba(255,255,255,.15);white-space:nowrap;pointer-events:none;text-transform:uppercase}
+.deck-spine::after{content:"";position:absolute;inset:0;z-index:2;pointer-events:none;
+  background:linear-gradient(180deg,rgba(255,255,255,.13) 0%,transparent 30%,rgba(0,0,0,.14) 100%)}
+/* okunur etiket: Dada(300) thin + marka(800) bold — dikey */
+.deck-spine .ds-ico{position:absolute;z-index:3;top:13px;left:50%;transform:translateX(-50%);
+  color:#fff;font-size:13px;opacity:.95;filter:drop-shadow(0 1px 4px rgba(0,0,0,.45))}
+.deck-spine .ds-name{position:relative;z-index:3;writing-mode:vertical-rl;transform:rotate(180deg);
+  display:inline-flex;align-items:flex-start;gap:2px;padding-top:16px;white-space:nowrap;
+  text-shadow:0 1px 12px rgba(0,0,0,.55)}
+.deck-spine .ds-name .pre{font-weight:300;font-size:12.5px;letter-spacing:.04em;color:rgba(255,255,255,.82)}
+.deck-spine .ds-name .brand{font-weight:800;font-size:15px;letter-spacing:.01em;color:#fff}
+.deck-spine:hover,.deck-spine:focus-visible{transform:translateY(-5px);filter:brightness(1.05);box-shadow:var(--sh-3)}
 .deck-spine[hidden]{display:none}
 
 .sr-bg{position:absolute;inset:0;background-size:cover;background-position:center;
   transition:opacity .55s var(--ease),transform .7s var(--ease)}
 .world-card:hover .sr-bg{transform:scale(1.03)}
+/* REV3: tüm karta koyu veil — üst eyebrow da okunur (önce üst zayıftı) */
 .sr-overlay{position:absolute;inset:0;z-index:1;pointer-events:none;background:
-  linear-gradient(180deg, rgba(16,14,9,.42) 0%, rgba(16,14,9,.22) 26%, rgba(16,14,9,.58) 60%, rgba(16,14,9,.90) 100%),
-  linear-gradient(90deg, rgba(16,14,9,.24) 0%, transparent 56%)}
+  linear-gradient(180deg, rgba(16,14,9,.62) 0%, rgba(16,14,9,.47) 30%, rgba(16,14,9,.66) 60%, rgba(16,14,9,.92) 100%),
+  linear-gradient(90deg, rgba(16,14,9,.34) 0%, rgba(16,14,9,.10) 55%, transparent 82%)}
 .sr-grain{position:absolute;inset:0;z-index:2;opacity:.22;mix-blend-mode:overlay;pointer-events:none;
   background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.4'/%3E%3C/svg%3E")}
 .sr-content{position:absolute;inset:0;z-index:3;display:flex;flex-direction:column;
@@ -412,7 +409,7 @@ body.panel-floating .hero{z-index:45}
   backdrop-filter:blur(8px);padding:7px 17px;border-radius:var(--r-pill)}
 .sr-metric i{font-size:12px}
 .sr-bottom{display:flex;flex-direction:column;gap:16px}
-.sr-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:11px}
+.sr-cards{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
 .sr-card{padding:14px 16px;border-radius:var(--r-lg);background:rgba(22,19,14,.62);backdrop-filter:blur(10px);
   border:1px solid rgba(251,248,243,.10);border-top:2px solid var(--bc);display:flex;flex-direction:column;gap:5px;
   transition:background .22s var(--ease),transform .22s var(--ease)}
@@ -467,19 +464,31 @@ body.panel-floating .hero{z-index:45}
   display:flex;flex-direction:column;align-items:flex-end;gap:18px;
   opacity:0;pointer-events:none;transition:opacity .4s var(--ease),transform .4s var(--ease)}
 .dot-ray.show{opacity:1;pointer-events:auto;transform:translateY(-50%) translateX(0)}
-.dot-ray::before{content:"";position:absolute;right:3px;top:-4px;bottom:-4px;width:1px;
-  background:rgba(255,255,255,.16);pointer-events:none}
-.dr-item{position:relative;display:flex;align-items:center;gap:11px;cursor:pointer;z-index:1;
+/* dikey çizgi dot'ların yatay MERKEZİNDEN geçer (dot 10px → merkez 5px; çizgi 2px @right:4 → merkez 5px) */
+.dot-ray::before{content:"";position:absolute;right:4px;top:-4px;bottom:-4px;width:2px;border-radius:2px;
+  background:rgba(255,255,255,.22);pointer-events:none}
+.dr-item{position:relative;display:flex;align-items:center;gap:12px;cursor:pointer;z-index:1;
   background:none;border:0;padding:0}
-.dr-dot{width:9px;height:9px;border-radius:var(--r-circle);
-  border:1.5px solid rgba(255,255,255,.5);background:transparent;flex:none;
-  transition:background .25s var(--ease),border-color .25s var(--ease),transform .25s var(--ease)}
-.dr-item.active .dr-dot{background:var(--dc,#fff);border-color:var(--dc,#fff);transform:scale(1.55)}
+/* pasif dot DOLU-soluk (halka YOK → çizgi içinden delmez, nokta çizgi üstünde oturur) */
+.dr-dot{width:10px;height:10px;border-radius:var(--r-circle);border:0;
+  background:rgba(255,255,255,.42);flex:none;
+  transition:background .25s var(--ease),transform .25s var(--ease),box-shadow .25s var(--ease)}
+.dr-item:hover .dr-dot{background:rgba(255,255,255,.72)}
+.dr-item.active .dr-dot{background:var(--dc,#fff);transform:scale(1.5);
+  box-shadow:0 0 0 4px color-mix(in srgb,var(--dc,#fff) 22%,transparent)}
 .dr-lbl{order:-1;font-weight:700;font-size:10.5px;letter-spacing:.07em;color:rgba(255,255,255,.66);
   white-space:nowrap;opacity:0;transform:translateX(6px);pointer-events:none;
   transition:opacity .2s var(--ease),transform .2s var(--ease)}
 .dr-item:hover .dr-lbl,.dr-item:focus-visible .dr-lbl,.dr-item.active .dr-lbl{opacity:1;transform:translateX(0)}
 .dr-item.active .dr-lbl{color:var(--dc,#fff)}
+/* R5: AÇIK/BEYAZ section'da (editorial) dot-ray koyulaşsın — yoksa kaybolur */
+.dot-ray.on-light::before{background:rgba(33,30,22,.20)}
+.dot-ray.on-light .dr-dot{background:rgba(33,30,22,.32)}
+.dot-ray.on-light .dr-item:hover .dr-dot{background:rgba(33,30,22,.58)}
+.dot-ray.on-light .dr-item.active .dr-dot{background:var(--dc,#211E16);
+  box-shadow:0 0 0 4px color-mix(in srgb,var(--dc,#211E16) 18%,transparent)}
+.dot-ray.on-light .dr-lbl{color:rgba(33,30,22,.6)}
+.dot-ray.on-light .dr-item.active .dr-lbl{color:var(--dc,#211E16)}
 
 /* ========================== APPLE REVEAL (fade-up + stagger) ========================== */
 .reveal{opacity:0;transform:translateY(24px);
@@ -529,72 +538,121 @@ body.panel-floating .hero{z-index:45}
 .see-all i{font-size:12px;transition:transform .2s var(--ease)}
 .see-all:hover i{transform:translateX(3px)}
 
-/* #pano — portal .r-card dili (hairline, radius-lg, lift -6px, hairline footer) */
-.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:26px}
-.p-card{background:var(--paper);border:1px solid var(--line);border-radius:var(--r-lg);overflow:hidden;
-  display:flex;flex-direction:column;transition:.3s var(--ease);cursor:pointer}
-.p-card:hover{transform:translateY(-6px);border-color:#dcdcdc;box-shadow:var(--sh-2)}
-.p-card-top{padding:22px 22px 0;flex:1}
-.p-ico{width:48px;height:48px;border-radius:var(--r-md);display:grid;place-items:center;font-size:19px;margin-bottom:14px}
-.p-lbl{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;margin-bottom:7px}
-.p-title{font-weight:800;font-size:18px;color:var(--slate);line-height:1.25;letter-spacing:-.01em;margin-bottom:8px;transition:color .2s var(--ease)}
-.p-card:hover .p-title{color:var(--tomato)}
-.p-desc{font-size:14px;color:var(--slate-2);line-height:1.55;margin-bottom:18px}
-.p-foot{margin-top:auto;padding:14px 22px;border-top:1px solid var(--line);display:flex;align-items:center;justify-content:space-between}
-.p-meta{font-size:12px;font-weight:600;color:var(--muted)}
-.p-go{display:inline-flex;align-items:center;gap:7px;font-size:12.5px;font-weight:700;transition:gap .18s var(--ease)}
-.p-go:hover{gap:10px}
-.p-go i{font-size:11px}
-
-/* #niyet — portal calc-card icon-tile grid */
-.calc-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
-.calc-card{display:flex;align-items:center;gap:14px;padding:15px;background:var(--paper);
-  border:1px solid var(--line);border-radius:var(--r-lg);cursor:pointer;transition:.25s var(--ease)}
-.calc-card:hover{transform:translateY(-3px);border-color:var(--bc,var(--tomato))}
-.calc-ico{flex:none;width:50px;height:50px;border-radius:var(--r-lg);display:grid;place-items:center;font-size:19px;
+/* ===== EDITORIAL DÜNYA SECTION (görselsiz: Diet · Gourmet) ===== */
+.wsec{position:relative;min-height:100vh;display:flex;align-items:center;overflow:hidden;
+  scroll-snap-align:start;background:var(--paper)}
+.wsec.alt{background:var(--bg)}
+.wsec::before{content:"";position:absolute;inset:0;z-index:0;pointer-events:none;
+  background:
+    radial-gradient(58% 60% at 90% 12%, color-mix(in srgb,var(--bc,var(--tomato)) 9%,transparent) 0%, transparent 60%),
+    radial-gradient(56% 64% at 4% 94%, color-mix(in srgb,var(--bc,var(--tomato)) 6%,transparent) 0%, transparent 64%)}
+/* MERKEZİ düzen: floating mentor paneli (sol-alt) ve dot-ray (sağ) güvenli bölgesinde kalır
+   (sol-hizalı CTA panel arkasında kalıyordu). Görselli sahneler zaten merkezi → ritim tutarlı. */
+.wsec-inner{position:relative;z-index:1;width:100%;max-width:660px;margin-inline:auto;
+  padding:96px 32px;display:flex;flex-direction:column;align-items:center;text-align:center}
+.wsec .eyebrow{color:var(--bc,var(--tomato));justify-content:center;margin-bottom:18px}
+.wsec h2{font-weight:800;font-size:clamp(33px,4vw,50px);line-height:1.05;letter-spacing:-.035em;
+  color:var(--slate);margin-bottom:18px}
+.wsec h2 em{font-style:normal;color:var(--bc,var(--tomato))}
+.wsec-desc{font-weight:500;font-size:clamp(15px,1.5vw,17.5px);line-height:1.65;color:var(--slate-2);
+  max-width:50ch;margin:0 auto 32px}
+.wsec-cta{display:inline-flex;align-items:center;gap:10px;font-weight:800;font-size:14.5px;color:#fff;
+  padding:14px 28px;border-radius:var(--r-md);background:var(--bc,var(--tomato));border:1.5px solid transparent;
+  box-shadow:0 8px 26px color-mix(in srgb,var(--bc,var(--tomato)) 30%,transparent);transition:.22s var(--ease)}
+.wsec-cta:hover{filter:brightness(1.07);transform:translateY(-2px)}
+.wsec-cta i{transition:transform .22s var(--ease)}
+.wsec-cta:hover i{transform:translateX(4px)}
+/* özellik kolonu — merkezi blok altında, dar ve ortalı (dünya renkli) */
+.wsec-feats{display:flex;flex-direction:column;gap:13px;width:100%;max-width:500px;
+  margin-top:42px;text-align:left}
+.wfeat{display:flex;align-items:flex-start;gap:16px;background:var(--paper);border:1px solid var(--line);
+  border-left:3px solid var(--bc,var(--tomato));border-radius:var(--r-lg);padding:18px 20px;
+  box-shadow:var(--sh-1);transition:.25s var(--ease)}
+.wsec.alt .wfeat{background:var(--paper)}
+.wfeat:hover{transform:translateX(5px);box-shadow:var(--sh-2)}
+.wfeat-ico{flex:none;width:46px;height:46px;border-radius:var(--r-md);display:grid;place-items:center;font-size:18px;
   background:color-mix(in srgb,var(--bc,var(--tomato)) 12%,var(--paper));color:var(--bc,var(--tomato))}
-.calc-tx{font-weight:700;font-size:14px;color:var(--slate);line-height:1.3}
+.wfeat .n{flex:none;width:46px;height:46px;border-radius:var(--r-circle);display:grid;place-items:center;
+  font-weight:800;font-size:16px;color:#fff;background:var(--bc,var(--tomato))}
+.wfeat-tx h4{font-weight:800;font-size:16px;color:var(--slate);letter-spacing:-.01em;margin-bottom:3px}
+.wfeat-tx p{font-weight:500;font-size:13.5px;color:var(--muted);line-height:1.5}
 
-/* #manifesto — portal dark band + findbar bülten + slate footer */
-.mani-band{position:relative;overflow:hidden;background:var(--slate);color:#fff;padding:64px 0;
-  scroll-snap-align:start;scroll-margin-top:var(--header-h)}
-.mani-band::before{content:"";position:absolute;top:-90px;right:-60px;width:300px;height:300px;border-radius:var(--r-circle);
-  background:radial-gradient(circle,rgba(var(--tomato-rgb),.28),transparent 70%);pointer-events:none}
-.mani-grid{position:relative;display:grid;grid-template-columns:150px 1fr;gap:48px;align-items:start}
-.mani-lbl{font-weight:700;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--tomato);padding-top:9px}
-.mani-q{font-size:clamp(19px,2.1vw,26px);font-weight:500;line-height:1.6;color:rgba(255,255,255,.9);max-width:60ch}
-.mani-q em{font-style:normal;color:#fff;font-weight:800}
+/* ===== FİNALE — AÇIK "dünya seçici compass" (R6: koyu jenerik band yerine).
+   Akademi(koyu)→finale(açık)→footer(koyu) = ritim devam + footer ayrışır. ===== */
+.finale{position:relative;overflow:hidden;background:var(--paper);
+  padding:clamp(80px,11vh,128px) 0;text-align:center;scroll-snap-align:start}
+.finale::before{content:"";position:absolute;inset:0;pointer-events:none;
+  background:
+    radial-gradient(46% 60% at 6% 0%, rgba(var(--tomato-rgb),.05) 0%, transparent 60%),
+    radial-gradient(42% 58% at 96% 100%, rgba(177,79,197,.05) 0%, transparent 62%)}
+.finale-in{position:relative;z-index:1;max-width:880px;margin-inline:auto;padding:0 32px}
+.finale .eyebrow{color:var(--tomato);justify-content:center;margin-bottom:20px}
+.finale h2{font-weight:800;font-size:clamp(32px,4.6vw,56px);line-height:1.02;letter-spacing:-.04em;
+  color:var(--slate);margin-bottom:18px}
+.finale h2 em{font-style:normal;color:var(--tomato)}
+.finale-lead{font-weight:500;font-size:clamp(15px,1.6vw,18px);line-height:1.6;color:var(--muted);
+  max-width:52ch;margin:0 auto 40px}
+/* 5 baş-modül router'ı — her dünyanın gerçek flagship modülüne giden CTA kartı (R4 tutarlı) */
+.finale-worlds{display:flex;flex-wrap:wrap;justify-content:center;gap:13px}
+/* Q6: kurumsal KART radius (--r-lg), aşırı yuvarlak/pill DEĞİL */
+.fw{display:inline-flex;align-items:center;gap:13px;padding:14px 17px;border-radius:var(--r-lg);
+  background:var(--paper);border:1px solid var(--line);box-shadow:var(--sh-1);
+  text-align:left;transition:.24s var(--ease)}
+.fw .fw-dot{width:11px;height:11px;border-radius:var(--r-circle);background:var(--bc);flex:none;
+  box-shadow:0 0 0 4px color-mix(in srgb,var(--bc) 20%,transparent)}
+.fw-tx{display:flex;flex-direction:column;line-height:1.18}
+.fw-brand{font-weight:700;font-size:10.5px;letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
+.fw-mod{font-weight:800;font-size:15px;letter-spacing:-.01em;color:var(--slate);transition:color .24s var(--ease)}
+.fw i{font-size:11.5px;color:var(--muted);margin-left:3px;transition:transform .24s var(--ease),color .24s var(--ease)}
+.fw:hover{border-color:var(--bc);transform:translateY(-3px);box-shadow:var(--sh-2)}
+.fw:hover .fw-mod{color:var(--bc)}
+.fw:hover i{color:var(--bc);transform:translateX(3px)}
 
-.news-sec{background:var(--paper);padding:44px 0;border-top:1px solid var(--line)}
-.findbar{display:flex;align-items:center;gap:22px;flex-wrap:wrap;background:var(--paper);
-  border:1px solid var(--line);border-left:4px solid var(--tomato);border-radius:var(--r-lg);
-  padding:24px 26px;box-shadow:var(--sh-1)}
-.fb-ico{flex:none;width:46px;height:46px;border-radius:var(--r-md);background:var(--tomato-tint);
-  color:var(--tomato);display:grid;place-items:center;font-size:20px}
-.fb-tx{flex:1;min-width:220px}
-.fb-tx h3{font-weight:800;font-size:20px;letter-spacing:-.01em;color:var(--slate);margin-bottom:4px}
-.fb-tx p{color:var(--muted);font-size:14px}
-.news-form{display:flex;gap:10px}
-.news-form input{width:240px;max-width:100%;font:inherit;font-weight:500;font-size:14px;color:var(--ink);
-  background:var(--bg);border:1px solid var(--line);border-radius:var(--r-md);
-  padding:13px 16px;outline:none;transition:border-color .2s var(--ease)}
-.news-form input:focus{border-color:var(--tomato)}
-.news-form input::placeholder{color:var(--muted)}
+/* ===== FOOTER (portal-v3a birebir + perdeli reveal + Gaviaworks imzası) ===== */
+.site-foot{position:fixed;left:0;right:0;bottom:0;z-index:1;
+  background:var(--slate);color:#aebcc6;padding:64px 0 0;overflow:hidden}
+.site-foot .wrap{position:relative;
+  transform:translateY(46px);opacity:0;transition:transform .7s var(--ease-spring),opacity .55s var(--ease)}
+.site-foot.revealed .wrap{transform:none;opacity:1}
+.foot-grid{display:grid;grid-template-columns:1.6fr 1fr 1fr 1fr;gap:44px 28px;
+  padding-bottom:46px;border-bottom:1px solid rgba(255,255,255,.1)}
+.foot-brand img{height:40px;width:auto;margin-bottom:18px}
+.foot-brand .foot-tag{font-size:14px;font-weight:500;color:#9fb0bc;line-height:1.6;max-width:30ch;margin-bottom:20px}
+.foot-soc{display:flex;gap:11px}
+.foot-soc a{width:42px;height:42px;border-radius:var(--r-md);background:rgba(255,255,255,.07);
+  display:grid;place-items:center;color:#cdd8e0;font-size:16px;transition:.2s var(--ease)}
+.foot-soc a:hover{background:var(--tomato);color:#fff;transform:translateY(-3px)}
+.foot-col h5{color:#fff;font-size:15px;font-weight:700;margin-bottom:16px}
+.foot-col a{display:block;font-size:14px;font-weight:500;color:#9fb0bc;padding:7px 0;transition:.2s var(--ease)}
+.foot-col a:hover{color:var(--tomato);padding-left:5px}
+.foot-legal{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:8px 10px;
+  padding:22px 0 0;font-size:12px;font-weight:500}
+.foot-legal a{white-space:nowrap;color:#8ea0ac;transition:.2s var(--ease)}
+.foot-legal a:hover{color:#cdd8e0}
+.foot-legal .sep{width:1px;height:11px;background:rgba(255,255,255,.28);flex:none}
+/* R6: alt satır MERKEZİ + üstünde soft divider (turkiyeinnovationweek mantığı) */
+.foot-bottom{display:flex;flex-direction:column;align-items:center;gap:7px;
+  margin-top:24px;padding:22px 0 30px;border-top:1px solid rgba(255,255,255,.09);
+  text-align:center;font-size:13px;font-weight:500;color:#7e8e9a}
+.foot-bottom .fb-left b{color:#cdd8e0;font-weight:700}
+.foot-sign{display:inline-flex;align-items:center;gap:9px;color:#9fb0bc;transition:.2s var(--ease)}
+/* Q4: koyu footer'da okunsun — beyaz mono (footer DadaMutfak logosuyla tutarlı; gerçek g şekli korunur) */
+.foot-sign img{height:20px;width:auto;filter:brightness(0) invert(1);opacity:.8;transition:.2s var(--ease)}
+.foot-sign b{color:#cdd8e0;font-weight:700}
+.foot-sign:hover{color:#fff}
+.foot-sign:hover img{opacity:1}
+@media(prefers-reduced-motion:reduce){.site-foot .wrap{transform:none;opacity:1}}
 
-.foot-compact{background:var(--slate);padding:24px 0}
-.fc-inner{display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap}
-.fc-brand{display:flex;align-items:center;gap:10px;font-weight:800;font-size:17px;color:#fff}
-.fc-brand .mark{width:30px;height:30px;border-radius:var(--r-circle);background:var(--tomato);
-  display:grid;place-items:center;color:#fff;font-size:13px}
-.fc-brand b{color:var(--tomato)}
-.fc-links{display:flex;gap:14px;flex-wrap:wrap}
-.fc-links a{color:rgba(255,255,255,.40);font-size:13px;transition:color .18s var(--ease)}
-.fc-links a:hover{color:rgba(255,255,255,.76)}
-.fc-soc{display:flex;gap:8px}
-.fc-soc a{width:32px;height:32px;border-radius:var(--r-circle);border:1px solid rgba(255,255,255,.18);
-  display:grid;place-items:center;color:rgba(255,255,255,.40);transition:.18s var(--ease)}
-.fc-soc a:hover{border-color:var(--tomato);color:var(--tomato)}
-.fc-copy{color:rgba(255,255,255,.28);font-size:12px}
+/* ===== SCROLL-TO-TOP (sağ-alt; FAB sol-alt, dot-ray sağ-orta ile çakışmaz) ===== */
+/* mentor mini FAB (--r-lg) ile aynı SERT köşeli dil — tomato, token radius, eş gölge/boy */
+.to-top{position:fixed;right:24px;bottom:24px;z-index:41;
+  width:54px;height:54px;border-radius:var(--r-lg);border:0;
+  background:var(--tomato);color:#fff;display:grid;place-items:center;font-size:16px;cursor:pointer;
+  box-shadow:0 14px 38px rgba(var(--tomato-rgb),.40);
+  opacity:0;visibility:hidden;transform:translateY(12px) scale(.92);
+  transition:opacity .3s var(--ease),transform .35s var(--ease-spring),background .2s var(--ease)}
+.to-top.show{opacity:1;visibility:visible;transform:none}
+.to-top:hover{background:var(--tomato-dark);transform:translateY(-3px)}
 
 /* ========================== DRAWER ========================== */
 .drawer-back{position:fixed;inset:0;background:rgba(33,30,22,.42);opacity:0;visibility:hidden;transition:.3s var(--ease);z-index:90}
@@ -643,29 +701,33 @@ body.panel-floating .hero{z-index:45}
   .world-deck{position:relative !important;top:auto !important;height:auto;flex-direction:column;gap:10px}
   .world-card{flex:none;height:400px}
   .deck-rail{flex-direction:row;flex-wrap:wrap;gap:8px}
-  .deck-spine{width:auto;flex:1 1 calc(50% - 4px);min-width:0;height:50px;border-radius:var(--r-md);flex-direction:row;gap:8px;padding:0 14px}
+  .deck-spine{width:auto;flex:1 1 calc(50% - 4px);min-width:0;height:54px;border-radius:var(--r-md);flex-direction:row;align-items:center;justify-content:flex-start;gap:9px;padding:0 16px}
   .deck-spine .ds-ico{position:static;transform:none;font-size:13px;flex:none}
-  .deck-spine .ds-name{writing-mode:horizontal-tb;font-size:13.5px;letter-spacing:0;white-space:nowrap}
+  .deck-spine .ds-stamp{display:none}
+  .deck-spine .ds-name{writing-mode:horizontal-tb;transform:none;padding-top:0;padding-bottom:0;align-items:baseline;gap:4px}
   .hero{min-height:auto}
   .scroll-body{margin-left:0 !important}
   .btn-login-hdr,.hamburger~.btn-login-hdr{display:none}
   .hamburger{display:grid}
-  .grid-3{grid-template-columns:1fr 1fr}
-  .calc-grid{grid-template-columns:1fr 1fr}
+  /* editorial section + footer mobil */
+  .wsec-inner{grid-template-columns:1fr;gap:34px;padding:74px 32px}
+  .site-foot{position:static}
+  .site-foot .wrap{transform:none;opacity:1}
+  .foot-grid{grid-template-columns:1fr 1fr;gap:36px 28px}
+  .foot-brand{grid-column:1/-1}
+  .scroll-body{margin-bottom:0 !important}
 }
 @media(max-width:760px){
   .sec{padding:48px 0}
   .wrap{padding-inline:20px}
-  .grid-3{grid-template-columns:1fr}
-  .calc-grid{grid-template-columns:1fr}
-  .mani-grid{grid-template-columns:1fr;gap:16px}
-  .findbar{gap:16px}
-  .news-form{flex-direction:column;width:100%}
-  .news-form input{width:100%}
+  .wsec-inner{padding:60px 20px}
   .sr-cards{grid-template-columns:1fr 1fr}
   .sr-cta-bar{flex-direction:column;align-items:stretch}
   .btn-enter{justify-content:center}
-  .fc-inner{flex-direction:column;align-items:flex-start;gap:16px}
+  .finale{padding:72px 0}
+  .foot-grid{grid-template-columns:1fr;gap:30px}
+  .foot-legal{justify-content:center;text-align:center}
+  .foot-bottom{flex-direction:column;gap:14px;text-align:center;justify-content:center}
 }
 @media(max-width:430px){.sr-cards{grid-template-columns:1fr}}
 
@@ -674,14 +736,21 @@ body.ss-mode .mentor-panel{position:relative !important;height:500px !important;
 body.ss-mode .world-deck{position:relative !important;top:auto !important;height:auto;flex-direction:column}
 body.ss-mode .world-card{height:500px;flex:none}
 body.ss-mode .deck-rail{flex-direction:row}
-body.ss-mode .deck-spine{width:auto;flex:1;height:54px}
-body.ss-mode .deck-spine .ds-name{writing-mode:horizontal-tb}
+body.ss-mode .deck-spine{width:auto;flex:1;height:56px;align-items:center}
+body.ss-mode .deck-spine .ds-name{writing-mode:horizontal-tb;transform:none;padding-top:0;padding-bottom:0}
+body.ss-mode .deck-spine .ds-stamp{display:none}
 body.ss-mode .deck-spine .ds-ico{position:static;transform:none}
-body.ss-mode .scroll-body{margin-left:0 !important}
+body.ss-mode .scroll-body{margin-left:0 !important;margin-bottom:0 !important}
 body.ss-mode .site-head{position:relative}
 body.ss-mode .hero{min-height:auto}
 body.ss-mode .hero-stage{min-height:auto;padding-top:16px}
 body.ss-mode .dot-ray{display:none}
+body.ss-mode .to-top{display:none}
+body.ss-mode .scene{height:auto;min-height:600px}
+body.ss-mode .wsec{min-height:auto}
+body.ss-mode .wsec-inner{padding:72px 32px}
+body.ss-mode .site-foot{position:static}
+body.ss-mode .site-foot .wrap{transform:none;opacity:1}
 body.ss-mode html{scroll-snap-type:none}
 body.ss-mode .reveal{opacity:1;transform:none}
 </style>
@@ -721,13 +790,9 @@ body.ss-mode .reveal{opacity:1;transform:none}
 
 <!-- ========================== HERO ========================== -->
 <section class="hero" id="hero">
-  <!-- 2-katman bg cross-fade -->
-  <div class="hbg-a" id="hbgA"></div>
-  <div class="hbg-b" id="hbgB"></div>
+  <!-- REV3: full-bleed dünya görseli kaldırıldı — beyaz/portal zemin -->
   <div class="h-portal-bg"></div>
-  <div class="h-overlay"></div>
   <div class="h-wgrad" id="hWgrad"></div>
-  <div class="h-grain"></div>
 
   <div class="hero-stage" id="heroStage">
 
@@ -743,6 +808,7 @@ body.ss-mode .reveal{opacity:1;transform:none}
       <!-- mini collapse overlay -->
       <div class="mp-mini-overlay" id="mpMiniOv" aria-hidden="true">
         <span class="mav"><i class="fa-solid fa-compass"></i></span>
+        <span class="mp-mini-lbl">Mentör</span>
       </div>
 
       <div class="mp-top">
@@ -766,10 +832,10 @@ body.ss-mode .reveal{opacity:1;transform:none}
           <!-- 5 dünya haritası — varsayılan açık; tık → o dünyanın sahnesine in -->
           <div class="mp-step" data-s="worlds">
             <button class="mp-opt w-gastro"  type="button" data-widx="0">DadaGastro</button>
-            <button class="mp-opt w-gourmet" type="button" data-widx="1">DadaGourmet</button>
-            <button class="mp-opt w-diet"    type="button" data-widx="2">DadaDiet</button>
-            <button class="mp-opt w-fit"     type="button" data-widx="3">DadaFit</button>
-            <button class="mp-opt w-akademi" type="button" data-widx="4">DadaAkademi</button>
+            <button class="mp-opt w-diet"    type="button" data-widx="1">DadaDiet</button>
+            <button class="mp-opt w-fit"     type="button" data-widx="2">DadaFit</button>
+            <button class="mp-opt w-gourmet" type="button" data-widx="3">DadaGourmet</button>
+            <button class="mp-opt w-akademi" type="button" data-widx="4">DadaCampus</button>
           </div>
         </div>
       </div>
@@ -805,13 +871,38 @@ body.ss-mode .reveal{opacity:1;transform:none}
       </div>
     </div><!-- /world-card -->
 
-      <!-- 4 dünya sırtı (aktif olan JS ile gizlenir) -->
+      <!-- 4 dünya sırtı — görsel + veil + watermark (aktif olan JS ile gizlenir) -->
       <div class="deck-rail" id="deckRail">
-        <button class="deck-spine w-gastro"  type="button" data-widx="0" aria-label="DadaGastro'ya geç"><i class="fa-solid fa-utensils ds-ico"></i><span class="ds-name">DadaGastro</span></button>
-        <button class="deck-spine w-gourmet" type="button" data-widx="1" aria-label="DadaGourmet'e geç"><i class="fa-solid fa-map-location-dot ds-ico"></i><span class="ds-name">DadaGourmet</span></button>
-        <button class="deck-spine w-diet"    type="button" data-widx="2" aria-label="DadaDiet'e geç"><i class="fa-solid fa-leaf ds-ico"></i><span class="ds-name">DadaDiet</span></button>
-        <button class="deck-spine w-fit"     type="button" data-widx="3" aria-label="DadaFit'e geç"><i class="fa-solid fa-dumbbell ds-ico"></i><span class="ds-name">DadaFit</span></button>
-        <button class="deck-spine w-akademi" type="button" data-widx="4" aria-label="DadaAkademi'ye geç"><i class="fa-solid fa-graduation-cap ds-ico"></i><span class="ds-name">DadaAkademi</span></button>
+        <button class="deck-spine w-gastro" type="button" data-widx="0" aria-label="DadaGastro'ya geç">
+          <span class="ds-img" style="background-image:url('https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=1000&q=80')"></span>
+          <span class="ds-veil"></span><span class="ds-stamp">Gastro</span>
+          <i class="fa-solid fa-utensils ds-ico"></i>
+          <span class="ds-name"><span class="pre">Dada</span><span class="brand">Gastro</span></span>
+        </button>
+        <button class="deck-spine w-diet" type="button" data-widx="1" aria-label="DadaDiet'e geç">
+          <span class="ds-img" style="background-image:url('https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=1000&q=80')"></span>
+          <span class="ds-veil"></span><span class="ds-stamp">Diet</span>
+          <i class="fa-solid fa-leaf ds-ico"></i>
+          <span class="ds-name"><span class="pre">Dada</span><span class="brand">Diet</span></span>
+        </button>
+        <button class="deck-spine w-fit" type="button" data-widx="2" aria-label="DadaFit'e geç">
+          <span class="ds-img" style="background-image:url('https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?auto=format&fit=crop&w=1000&q=80')"></span>
+          <span class="ds-veil"></span><span class="ds-stamp">Fit</span>
+          <i class="fa-solid fa-dumbbell ds-ico"></i>
+          <span class="ds-name"><span class="pre">Dada</span><span class="brand">Fit</span></span>
+        </button>
+        <button class="deck-spine w-gourmet" type="button" data-widx="3" aria-label="DadaGourmet'e geç">
+          <span class="ds-img" style="background-image:url('https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=1000&q=80')"></span>
+          <span class="ds-veil"></span><span class="ds-stamp">Gourmet</span>
+          <i class="fa-solid fa-map-location-dot ds-ico"></i>
+          <span class="ds-name"><span class="pre">Dada</span><span class="brand">Gourmet</span></span>
+        </button>
+        <button class="deck-spine w-akademi" type="button" data-widx="4" aria-label="DadaCampus'a geç">
+          <span class="ds-img" style="background-image:url('https://images.unsplash.com/photo-1556910103-1c02745aae4d?auto=format&fit=crop&w=1000&q=80')"></span>
+          <span class="ds-veil"></span><span class="ds-stamp">Campus</span>
+          <i class="fa-solid fa-graduation-cap ds-ico"></i>
+          <span class="ds-name"><span class="pre">Dada</span><span class="brand">Campus</span></span>
+        </button>
       </div>
     </div><!-- /world-deck -->
 
@@ -824,6 +915,7 @@ body.ss-mode .reveal{opacity:1;transform:none}
   <!-- ========================== 5 SİNEMATİK DÜNYA SAHNESİ ========================== -->
   <div class="scenes" id="scenes">
 
+    <!-- 1 · GASTRO — görselli sinematik · CTA: en güçlü modül = tarif bulucu -->
     <section class="scene w-gastro" id="scene-gastro">
       <div class="scene-bg" style="background-image:url('https://images.unsplash.com/photo-1466637574441-749b8f19452f?auto=format&fit=crop&w=1920&q=75')"></div>
       <div class="scene-overlay"></div>
@@ -831,41 +923,31 @@ body.ss-mode .reveal{opacity:1;transform:none}
       <div class="scene-body">
         <div class="scene-eyebrow reveal" data-r="1"><i class="fa-solid fa-utensils"></i> DadaGastro</div>
         <h2 class="scene-tag reveal" data-r="2">Pişir. Deneyle. <em>Sahip çık.</em></h2>
-        <p class="scene-desc reveal" data-r="3">Binlerce tarif, günlük menü planı ve “ne pişirsem” asistanı — mutfağının tek merkezi.</p>
+        <p class="scene-desc reveal" data-r="3">Binlerce tarif ve günlük menü planı seni bekliyor. Bilmediğin tek şey bu akşam ne pişireceğin — onu da birlikte çözelim.</p>
         <div class="scene-cta reveal" data-r="4">
-          <a class="btn-world" href="anasayfa-portal-v3a.html">DadaGastro'yu keşfet <i class="fa-solid fa-arrow-right"></i></a>
+          <a class="btn-world" href="bugun-ne-pisirsem-v1.html">Ne pişirsem? <i class="fa-solid fa-arrow-right"></i></a>
         </div>
       </div>
     </section>
 
-    <section class="scene w-gourmet" id="scene-gourmet">
-      <div class="scene-bg" style="background-image:url('https://images.unsplash.com/photo-1414235077428-338989a2e8c0?auto=format&fit=crop&w=1920&q=75')"></div>
-      <div class="scene-overlay"></div>
-      <div class="scene-grain"></div>
-      <div class="scene-body">
-        <div class="scene-eyebrow reveal" data-r="1"><i class="fa-solid fa-map-location-dot"></i> DadaGourmet</div>
-        <h2 class="scene-tag reveal" data-r="2">Şehrin <em>lezzet rotası</em> senin.</h2>
-        <p class="scene-desc reveal" data-r="3">Gurme mekânlar, sokak lezzetleri ve etkinlikler — keşfedilecek bir sofra hep var.</p>
-        <div class="scene-cta reveal" data-r="4">
-          <a class="btn-world" href="kesfet-v1.html">DadaGourmet'i keşfet <i class="fa-solid fa-arrow-right"></i></a>
+    <!-- 2 · DIET — görselsiz editorial · CTA: en güçlü modül = diyetisyen dizini -->
+    <section class="wsec w-diet" id="scene-diet">
+      <div class="wsec-inner">
+        <div class="wsec-lead">
+          <span class="eyebrow reveal" data-r="1"><i class="fa-solid fa-leaf"></i> DadaDiet</span>
+          <h2 class="reveal" data-r="2">Sağlıkta yanında bir <em>uzman</em>.</h2>
+          <p class="wsec-desc reveal" data-r="3">Diyetisyenini seç, sana özel planını al, ilerlemeni birlikte takip edin. Kendi sağlık yolunda yalnız değilsin.</p>
+          <a class="wsec-cta reveal" data-r="4" href="diyetisyen-dizin-v1.html">Diyetisyen bul <i class="fa-solid fa-arrow-right"></i></a>
+        </div>
+        <div class="wsec-feats reveal" data-r="3">
+          <div class="wfeat"><span class="wfeat-ico"><i class="fa-solid fa-user-doctor"></i></span><div class="wfeat-tx"><h4>Uzman diyetisyenler</h4><p>140+ onaylı uzman arasından sana uygun olanı seç.</p></div></div>
+          <div class="wfeat"><span class="wfeat-ico"><i class="fa-solid fa-clipboard-list"></i></span><div class="wfeat-tx"><h4>Kişiye özel plan</h4><p>Hedefine ve damak tadına göre hazırlanan beslenme programı.</p></div></div>
+          <div class="wfeat"><span class="wfeat-ico"><i class="fa-solid fa-chart-line"></i></span><div class="wfeat-tx"><h4>Sürekli takip</h4><p>İlerlemeni ölç, randevularını yönet, yolda kal.</p></div></div>
         </div>
       </div>
     </section>
 
-    <section class="scene w-diet" id="scene-diet">
-      <div class="scene-bg" style="background-image:url('https://images.unsplash.com/photo-1490645935967-10de6ba17061?auto=format&fit=crop&w=1920&q=75')"></div>
-      <div class="scene-overlay"></div>
-      <div class="scene-grain"></div>
-      <div class="scene-body">
-        <div class="scene-eyebrow reveal" data-r="1"><i class="fa-solid fa-leaf"></i> DadaDiet</div>
-        <h2 class="scene-tag reveal" data-r="2">Sağlıklı olmak bir <em>seçim</em>.</h2>
-        <p class="scene-desc reveal" data-r="3">Uzman diyetisyenler, kişisel planlar ve takip araçları — kendi yolunda emin adımlarla ilerle.</p>
-        <div class="scene-cta reveal" data-r="4">
-          <a class="btn-world" href="saglik-hub-v1.html">DadaDiet'i keşfet <i class="fa-solid fa-arrow-right"></i></a>
-        </div>
-      </div>
-    </section>
-
+    <!-- 3 · FIT — görselli sinematik · CTA: gerçek baş modül = egzersiz kütüphanesi (hero btn-fit primary) -->
     <section class="scene w-fit" id="scene-fit">
       <div class="scene-bg" style="background-image:url('https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&w=1920&q=75')"></div>
       <div class="scene-overlay"></div>
@@ -873,169 +955,132 @@ body.ss-mode .reveal{opacity:1;transform:none}
       <div class="scene-body">
         <div class="scene-eyebrow reveal" data-r="1"><i class="fa-solid fa-dumbbell"></i> DadaFit</div>
         <h2 class="scene-tag reveal" data-r="2">Her hareket bir <em>başlangıç</em>.</h2>
-        <p class="scene-desc reveal" data-r="3">Antrenörler, programlar ve evde hareket rutinleri — dönüşümünü bugün başlat.</p>
+        <p class="scene-desc reveal" data-r="3">Yüzlerce egzersiz, video anlatım ve evde hareket rutini tek kütüphanede. Bedenine en çok yakışan hareketi seç, bugün başla.</p>
         <div class="scene-cta reveal" data-r="4">
-          <a class="btn-world" href="dadafit-hub-v1.html">DadaFit'i keşfet <i class="fa-solid fa-arrow-right"></i></a>
+          <a class="btn-world" href="egzersiz-kutuphane-v1.html">Egzersizleri keşfet <i class="fa-solid fa-arrow-right"></i></a>
         </div>
       </div>
     </section>
 
+    <!-- 4 · GOURMET — görselsiz editorial · CTA: gerçek baş modül = editör-onaylı mekân dizini -->
+    <section class="wsec alt w-gourmet" id="scene-gourmet">
+      <div class="wsec-inner">
+        <div class="wsec-lead">
+          <span class="eyebrow reveal" data-r="1"><i class="fa-solid fa-map-location-dot"></i> DadaGourmet</span>
+          <h2 class="reveal" data-r="2">Şehrin <em>lezzet rotası</em> senin.</h2>
+          <p class="wsec-desc reveal" data-r="3">Editör seçkisi gurme mekânlar, sokak lezzetleri ve etkinlikler — keşfedilecek bir sofra hep var. Şehrin en iyi adreslerini gez, beğen, rotala.</p>
+          <a class="wsec-cta reveal" data-r="4" href="mekan-liste-v1.html">Mekânları keşfet <i class="fa-solid fa-arrow-right"></i></a>
+        </div>
+        <div class="wsec-feats reveal" data-r="3">
+          <div class="wfeat"><span class="wfeat-ico"><i class="fa-solid fa-location-dot"></i></span><div class="wfeat-tx"><h4>Editör seçkisi mekânlar</h4><p>Karaköy'den Nişantaşı'na, onaylı adresleri keşfet.</p></div></div>
+          <div class="wfeat"><span class="wfeat-ico"><i class="fa-solid fa-route"></i></span><div class="wfeat-tx"><h4>Lezzet rotaları</h4><p>Beğendiklerini akıllı bir güzergaha dönüştür.</p></div></div>
+          <div class="wfeat"><span class="wfeat-ico"><i class="fa-solid fa-calendar-day"></i></span><div class="wfeat-tx"><h4>Etkinlik & yeni açılanlar</h4><p>Şehirde olan biteni ilk sen yakala.</p></div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5 · AKADEMI — görselli sinematik · CTA: akademi-v1 ("Yakında" okul/bekleme). ansiklopedi GASTRO'nun, kullanılmadı -->
     <section class="scene w-akademi" id="scene-akademi">
       <div class="scene-bg" style="background-image:url('https://images.unsplash.com/photo-1481627834876-b7833e8f5570?auto=format&fit=crop&w=1920&q=75')"></div>
       <div class="scene-overlay"></div>
       <div class="scene-grain"></div>
       <div class="scene-body">
-        <div class="scene-eyebrow reveal" data-r="1"><i class="fa-solid fa-graduation-cap"></i> DadaAkademi</div>
+        <div class="scene-eyebrow reveal" data-r="1"><i class="fa-solid fa-graduation-cap"></i> DadaCampus</div>
         <h2 class="scene-tag reveal" data-r="2">Öğrenmek bir <em>lezzet</em>.</h2>
-        <p class="scene-desc reveal" data-r="3">Mutfak bilimi, beslenme rehberleri ve şef hikâyeleri — merakını besle, ustalaş.</p>
+        <p class="scene-desc reveal" data-r="3">Mutfakta ustalaşmanın kampüsü — atölyeler, dersler ve şef hikâyeleri çok yakında. Açıldığında ilk haber alan sen ol.</p>
         <div class="scene-cta reveal" data-r="4">
-          <a class="btn-world" href="akademi-v1.html">DadaAkademi'yi keşfet <i class="fa-solid fa-arrow-right"></i></a>
+          <a class="btn-world" href="akademi-v1.html">Kampüsü keşfet <i class="fa-solid fa-arrow-right"></i></a>
         </div>
       </div>
     </section>
 
   </div><!-- /scenes -->
 
-  <!-- ---- #pano: Bugünün Panosu (portal .r-card dili) ---- -->
-  <section id="pano" class="sec sec-white">
-    <div class="wrap">
-      <div class="sec-head reveal">
-        <div>
-          <span class="eyebrow"><i class="fa-solid fa-sun"></i> Bugünün Panosu</span>
-          <h2>Gününü planla.</h2>
-          <p class="lead">Tarif, su takibi ve kısa antrenman — hepsi bir bakışta.</p>
-        </div>
-        <div class="sec-tools">
-          <a class="see-all" href="anasayfa-portal-v3a.html">Tamamını gör <i class="fa-solid fa-arrow-right"></i></a>
-        </div>
-      </div>
-      <div class="grid-3 reveal">
-        <!-- tarif -->
-        <a class="p-card" href="anasayfa-portal-v3a.html">
-          <div class="p-card-top">
-            <div class="p-ico" style="background:var(--tomato-tint);color:var(--tomato)"><i class="fa-solid fa-bowl-food"></i></div>
-            <div class="p-lbl" style="color:var(--tomato)">Tarif</div>
-            <div class="p-title">Fırında köz patlıcan</div>
-            <div class="p-desc">Hazırlık 10 dk · Pişirme 30 dk. Kolay, sağlıklı ve lezzetli.</div>
-          </div>
-          <div class="p-foot">
-            <span class="p-meta">4 kişilik · 340 kcal</span>
-            <span class="p-go" style="color:var(--tomato)">Tarife git <i class="fa-solid fa-arrow-right"></i></span>
-          </div>
-        </a>
-        <!-- su takibi -->
-        <a class="p-card" href="gunluk-su-v1.html">
-          <div class="p-card-top">
-            <div class="p-ico" style="background:color-mix(in srgb,var(--b-diet) 12%,var(--paper));color:var(--b-diet)"><i class="fa-solid fa-droplet"></i></div>
-            <div class="p-lbl" style="color:var(--b-diet)">Su Takibi</div>
-            <div class="p-title">5 / 8 bardak</div>
-            <div class="p-desc">Günlük hedefe ulaşmak için 3 bardak daha içmelisin.</div>
-          </div>
-          <div class="p-foot">
-            <span class="p-meta">Kalan: 600 ml</span>
-            <span class="p-go" style="color:var(--b-diet)">Takibe git <i class="fa-solid fa-arrow-right"></i></span>
-          </div>
-        </a>
-        <!-- antrenman -->
-        <a class="p-card" href="dadafit-hub-v1.html">
-          <div class="p-card-top">
-            <div class="p-ico" style="background:color-mix(in srgb,var(--b-fit) 12%,var(--paper));color:var(--b-fit)"><i class="fa-solid fa-dumbbell"></i></div>
-            <div class="p-lbl" style="color:var(--b-fit)">Antrenman</div>
-            <div class="p-title">20 dk mobilite</div>
-            <div class="p-desc">Hafif başlangıç için tasarlanmış günlük hareket rutini.</div>
-          </div>
-          <div class="p-foot">
-            <span class="p-meta">Başlangıç · 20 dk</span>
-            <span class="p-go" style="color:var(--b-fit)">Başla <i class="fa-solid fa-arrow-right"></i></span>
-          </div>
-        </a>
+  <!-- ---- FİNALE: açık "dünya seçici compass" (manifesto/jenerik CTA band yerine) ---- -->
+  <section class="finale" id="kapanis">
+    <div class="finale-in">
+      <span class="eyebrow reveal" data-r="1"><i class="fa-solid fa-compass"></i> Pusulan hazır</span>
+      <h2 class="reveal" data-r="2">Nereden başlayacağına <em>sen karar ver.</em></h2>
+      <p class="finale-lead reveal" data-r="3">Beş dünya, tek çatı. DadaMentor seni doğru araca götürür — ilk durağını seç, gerisi gelsin.</p>
+      <div class="finale-worlds reveal" data-r="4">
+        <a class="fw w-gastro"  href="bugun-ne-pisirsem-v1.html"><span class="fw-dot"></span><span class="fw-tx"><span class="fw-brand">DadaGastro</span><span class="fw-mod">Ne pişirsem?</span></span><i class="fa-solid fa-arrow-right"></i></a>
+        <a class="fw w-diet"    href="diyetisyen-dizin-v1.html"><span class="fw-dot"></span><span class="fw-tx"><span class="fw-brand">DadaDiet</span><span class="fw-mod">Diyetisyen bul</span></span><i class="fa-solid fa-arrow-right"></i></a>
+        <a class="fw w-fit"     href="egzersiz-kutuphane-v1.html"><span class="fw-dot"></span><span class="fw-tx"><span class="fw-brand">DadaFit</span><span class="fw-mod">Egzersizleri keşfet</span></span><i class="fa-solid fa-arrow-right"></i></a>
+        <a class="fw w-gourmet" href="mekan-liste-v1.html"><span class="fw-dot"></span><span class="fw-tx"><span class="fw-brand">DadaGourmet</span><span class="fw-mod">Mekânları keşfet</span></span><i class="fa-solid fa-arrow-right"></i></a>
+        <a class="fw w-akademi" href="akademi-v1.html"><span class="fw-dot"></span><span class="fw-tx"><span class="fw-brand">DadaCampus</span><span class="fw-mod">Kampüsü keşfet</span></span><i class="fa-solid fa-arrow-right"></i></a>
       </div>
     </div>
   </section>
 
-  <!-- ---- #niyet: Bir şeye mi ihtiyacın var? (portal calc-card dili) ---- -->
-  <section id="niyet" class="sec sec-cream">
-    <div class="wrap">
-      <div class="sec-head reveal">
-        <div>
-          <span class="eyebrow"><i class="fa-solid fa-compass"></i> İhtiyaçların</span>
-          <h2>Bir şeye mi ihtiyacın var?</h2>
-          <p class="lead">Ne yapmak istediğini seç — DadaMentor seni doğru araca götürsün.</p>
-        </div>
-      </div>
-      <div class="calc-grid reveal">
-        <a class="calc-card w-gastro" href="tarif-bulucu-v1.html"><span class="calc-ico"><i class="fa-solid fa-wand-magic-sparkles"></i></span><span class="calc-tx">Ne pişirsem?</span></a>
-        <a class="calc-card w-gourmet" href="kesfet-v1.html"><span class="calc-ico"><i class="fa-solid fa-map-location-dot"></i></span><span class="calc-tx">Mekân bul</span></a>
-        <a class="calc-card w-diet" href="saglik-hub-v1.html"><span class="calc-ico"><i class="fa-solid fa-leaf"></i></span><span class="calc-tx">Diyet planı al</span></a>
-        <a class="calc-card w-diet" href="gunluk-kalori-v1.html"><span class="calc-ico"><i class="fa-solid fa-calculator"></i></span><span class="calc-tx">Kalori hesapla</span></a>
-        <a class="calc-card w-fit" href="dadafit-hub-v1.html"><span class="calc-ico"><i class="fa-solid fa-dumbbell"></i></span><span class="calc-tx">Program bul</span></a>
-        <a class="calc-card w-akademi" href="akademi-v1.html"><span class="calc-ico"><i class="fa-solid fa-graduation-cap"></i></span><span class="calc-tx">Kurs başlat</span></a>
-        <a class="calc-card w-gastro" href="dada-shop-v1.html"><span class="calc-ico"><i class="fa-solid fa-bag-shopping"></i></span><span class="calc-tx">Ürün ara</span></a>
-        <a class="calc-card w-diet" href="diyetisyen-dizin-v1.html"><span class="calc-ico"><i class="fa-solid fa-user-doctor"></i></span><span class="calc-tx">Diyetisyen bul</span></a>
-        <a class="calc-card w-fit" href="antrenorler-v1.html"><span class="calc-ico"><i class="fa-solid fa-person-running"></i></span><span class="calc-tx">Antrenör bul</span></a>
-        <a class="calc-card w-akademi" href="ansiklopedi-v1.html"><span class="calc-ico"><i class="fa-solid fa-book-open"></i></span><span class="calc-tx">Ansiklopedi</span></a>
-      </div>
-    </div>
-  </section>
+  <div id="footSentinel" aria-hidden="true"></div>
+</div><!-- /scroll-body -->
 
-  <!-- ---- #manifesto: kapanış (portal dark band + findbar bülten) ---- -->
-  <section id="manifesto">
-    <div class="mani-band">
-      <div class="wrap mani-grid reveal">
-        <span class="mani-lbl">Manifesto</span>
-        <blockquote class="mani-q">
-          Dada bir yemek sitesi değil; bir <em>yaşam pusulası</em>. Pişirmek, sağlıklı olmak, hareket etmek, öğrenmek ve keşfetmek tek bir hayatın parçaları. DadaMentor bu parçaları birbirine bağlar — sana yön gösterir, yerine karar vermez.
-        </blockquote>
-      </div>
-    </div>
-    <div class="news-sec">
-      <div class="wrap">
-        <div class="findbar reveal">
-          <span class="fb-ico"><i class="fa-solid fa-envelope-open-text"></i></span>
-          <div class="fb-tx">
-            <h3>Pusulanı haftada bir güncelle.</h3>
-            <p>Beş dünyadan seçkiler, yeni içerikler ve ipuçları — gelen kutuna.</p>
-          </div>
-          <form class="news-form" onsubmit="return false">
-            <input type="email" placeholder="E-posta adresin" aria-label="E-posta adresi" />
-            <button class="btn btn-tomato" type="submit">Abone ol</button>
-          </form>
-        </div>
-      </div>
-    </div>
-    <div class="foot-compact">
-      <div class="wrap fc-inner">
-        <a class="fc-brand" href="dadamentor-v2-a.html">
-          <span class="mark"><i class="fa-solid fa-compass"></i></span>
-          Dada<b>Mentor</b>
-        </a>
-        <nav class="fc-links" aria-label="Dünyalar">
-          <a href="anasayfa-portal-v3a.html">DadaGastro</a>
-          <a href="kesfet-v1.html">DadaGourmet</a>
-          <a href="saglik-hub-v1.html">DadaDiet</a>
-          <a href="dadafit-hub-v1.html">DadaFit</a>
-          <a href="akademi-v1.html">DadaAkademi</a>
-          <a href="dada-shop-v1.html">DadaStore</a>
-        </nav>
-        <div class="fc-soc">
+<!-- ========================== FOOTER (portal-v3a birebir + perdeli reveal) ========================== -->
+<footer class="site-foot" id="siteFoot">
+  <div class="wrap">
+    <div class="foot-grid">
+      <div class="foot-brand">
+        <img src="assets/img/logo-official-white.png" alt="DadaMutfak" />
+        <p class="foot-tag">Beş dünyayı tek çatı altında buluşturan yaşam pusulan.</p>
+        <div class="foot-soc">
           <a href="#" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
           <a href="#" aria-label="YouTube"><i class="fa-brands fa-youtube"></i></a>
           <a href="#" aria-label="X"><i class="fa-brands fa-x-twitter"></i></a>
+          <a href="#" aria-label="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
+          <a href="#" aria-label="LinkedIn"><i class="fa-brands fa-linkedin-in"></i></a>
         </div>
-        <span class="fc-copy">© 2026 DadaMentor</span>
+      </div>
+      <div class="foot-col">
+        <h5>Dünyalar</h5>
+        <a href="anasayfa-portal-v3a.html">DadaGastro</a>
+        <a href="saglik-hub-v1.html">DadaDiet</a>
+        <a href="dadafit-hub-v1.html">DadaFit</a>
+        <a href="kesfet-v1.html">DadaGourmet</a>
+        <a href="akademi-v1.html">DadaCampus</a>
+        <a href="dada-shop-v1.html">DadaStore</a>
+      </div>
+      <div class="foot-col">
+        <h5>Hızlı Erişim</h5>
+        <a href="hakkimizda-v1.html">Hakkımızda</a>
+        <a href="hakkimizda-v1.html#kunye">Künye</a>
+        <a href="sss-v1.html">S.S.S.</a>
+        <a href="sefler-v1.html">Şefler</a>
+      </div>
+      <div class="foot-col">
+        <h5>İletişim</h5>
+        <a href="iletisim-v1.html">Bize Ulaşın</a>
+        <a href="reklam-ver-v1.html">Reklam ve İş Birliği</a>
+        <a href="sef-ol-v1.html">Şef Ol</a>
       </div>
     </div>
-  </section>
+    <div class="foot-legal">
+      <a href="yasal-v1.html?metin=iade">İptal, İade ve Değişim</a><span class="sep"></span>
+      <a href="yasal-v1.html?metin=teslimat">Ödeme ve Teslimat</a><span class="sep"></span>
+      <a href="yasal-v1.html?metin=mesafeli">Mesafeli Satış</a><span class="sep"></span>
+      <a href="yasal-v1.html?metin=cerez">Gizlilik ve Çerez</a><span class="sep"></span>
+      <a href="yasal-v1.html?metin=uyelik">Üyelik Sözleşmesi</a><span class="sep"></span>
+      <a href="yasal-v1.html?metin=kullanim">Kullanım Koşulları</a><span class="sep"></span>
+      <a href="yasal-v1.html?metin=kvkk">KVKK</a>
+    </div>
+    <div class="foot-bottom">
+      <span class="fb-left">© 2026 <b>DadaMutfak</b> · Bir <b>Dadaİstanbul</b> ürünüdür.</span>
+      <a class="foot-sign" href="https://gaviaworks.com" target="_blank" rel="noopener" aria-label="Gaviaworks">
+        Tasarım &amp; geliştirme · <img src="assets/img/gavia-mark.png" alt="" /> <b>Gaviaworks</b>
+      </a>
+    </div>
+  </div>
+</footer>
 
-</div><!-- /scroll-body -->
+<!-- başa dön -->
+<button class="to-top" id="toTop" type="button" aria-label="Başa dön"><i class="fa-solid fa-arrow-up"></i></button>
 
 <!-- ========================== SAHNE DOT-RAY ========================== -->
 <nav class="dot-ray" id="dotRay" aria-label="Dünya sahneleri">
   <button class="dr-item" type="button" data-scene="scene-gastro"  style="--dc:var(--b-gastro)"  aria-label="DadaGastro sahnesi"><span class="dr-lbl">DadaGastro</span><span class="dr-dot"></span></button>
-  <button class="dr-item" type="button" data-scene="scene-gourmet" style="--dc:var(--b-gourmet)" aria-label="DadaGourmet sahnesi"><span class="dr-lbl">DadaGourmet</span><span class="dr-dot"></span></button>
   <button class="dr-item" type="button" data-scene="scene-diet"    style="--dc:var(--b-diet)"    aria-label="DadaDiet sahnesi"><span class="dr-lbl">DadaDiet</span><span class="dr-dot"></span></button>
   <button class="dr-item" type="button" data-scene="scene-fit"     style="--dc:var(--b-fit)"     aria-label="DadaFit sahnesi"><span class="dr-lbl">DadaFit</span><span class="dr-dot"></span></button>
-  <button class="dr-item" type="button" data-scene="scene-akademi" style="--dc:var(--b-akademi)" aria-label="DadaAkademi sahnesi"><span class="dr-lbl">DadaAkademi</span><span class="dr-dot"></span></button>
+  <button class="dr-item" type="button" data-scene="scene-gourmet" style="--dc:var(--b-gourmet)" aria-label="DadaGourmet sahnesi"><span class="dr-lbl">DadaGourmet</span><span class="dr-dot"></span></button>
+  <button class="dr-item" type="button" data-scene="scene-akademi" style="--dc:var(--b-akademi)" aria-label="DadaCampus sahnesi"><span class="dr-lbl">DadaCampus</span><span class="dr-dot"></span></button>
 </nav>
 
 <!-- ========================== DRAWER ========================== -->
@@ -1053,7 +1098,7 @@ body.ss-mode .reveal{opacity:1;transform:none}
   <a class="d-world w-gourmet" href="kesfet-v1.html"><i class="fa-solid fa-map-location-dot"></i> DadaGourmet</a>
   <a class="d-world w-diet"    href="saglik-hub-v1.html"><i class="fa-solid fa-leaf"></i> DadaDiet</a>
   <a class="d-world w-fit"     href="dadafit-hub-v1.html"><i class="fa-solid fa-dumbbell"></i> DadaFit</a>
-  <a class="d-world w-akademi" href="akademi-v1.html"><i class="fa-solid fa-graduation-cap"></i> DadaAkademi</a>
+  <a class="d-world w-akademi" href="akademi-v1.html"><i class="fa-solid fa-graduation-cap"></i> DadaCampus</a>
   <a class="d-world w-store"   href="dada-shop-v1.html"><i class="fa-solid fa-bag-shopping"></i> DadaStore</a>
   <div class="drawer-cta">
     <a class="btn btn-ghost btn-block" href="#">Giriş</a>
@@ -1066,37 +1111,38 @@ body.ss-mode .reveal{opacity:1;transform:none}
   "use strict";
 
   /* ===== DÜNYA VERİSİ (alt6 W[] birebir) ===== */
+  /* REV3: sıra section akışıyla aynı — Gastro→Diet→Fit→Gourmet→Akademi */
   var W=[
     {cls:'w-gastro',href:'anasayfa-portal-v3a.html',name:'DadaGastro',eyebrow:'DadaGastro · Pişir',
      tagline:'Binlerce tarif, bir dokunuşta pişirme keyfine ulaş.',metricIcon:'fa-bowl-food',metricTxt:'12B+ tarif &amp; içerik',
      img:'https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=1600&q=80',
      color:'#E14827',
-     cards:[{tag:'Öne çıkan',title:'Kırmızı mercimek çorbası'},{tag:'Hızlı tarif',title:'Sebzeli fırın makarna'},{tag:'Tatlı',title:'Sütlaç — fırında klasik'}],
+     cards:[{tag:'Öne çıkan',title:'Kırmızı mercimek çorbası'},{tag:'Hızlı tarif',title:'Sebzeli fırın makarna'}],
      hint:'Tarife hemen başla — binlerce seçenek seni bekliyor.'},
-    {cls:'w-gourmet',href:'kesfet-v1.html',name:'DadaGourmet',eyebrow:'DadaGourmet · Keşfet',
-     tagline:'Gurme mekânlar, lezzet rotaları ve şehrin sırrı.',metricIcon:'fa-map-location-dot',metricTxt:'850+ mekân &amp; etkinlik',
-     img:'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=1600&q=80',
-     color:'#b14fc5',
-     cards:[{tag:'Lezzet rotası',title:'Karaköy sokak lezzetleri'},{tag:'Yeni açıldı',title:'Nişantaşı Bistro'},{tag:'Etkinlik',title:'Şarap degüstasyon gecesi'}],
-     hint:'Şehrin en iyi sofralarını keşfet.'},
     {cls:'w-diet',href:'saglik-hub-v1.html',name:'DadaDiet',eyebrow:'DadaDiet · Sağlıklı Yaşa',
      tagline:'Diyetisyenin yanında, kendi sağlık yolunda ilerle.',metricIcon:'fa-user-doctor',metricTxt:'140+ uzman diyetisyen',
      img:'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=1600&q=80',
      color:'#3BB77E',
-     cards:[{tag:'Hesaplayıcı',title:'Günlük kalori ihtiyacın'},{tag:'Diyet planı',title:'Akdeniz diyeti — 7 gün'},{tag:'Uzman',title:'Diyetisyen randevusu al'}],
+     cards:[{tag:'Uzman',title:'Sana uygun diyetisyeni bul'},{tag:'Diyet planı',title:'Akdeniz diyeti — 7 gün'}],
      hint:'Sağlıklı yaşam bir alışkanlıktır — bugün başla.'},
     {cls:'w-fit',href:'dadafit-hub-v1.html',name:'DadaFit',eyebrow:'DadaFit · Hareket Et',
      tagline:'Antrenörünle hareket et, dönüşümünü hisset.',metricIcon:'fa-dumbbell',metricTxt:'200+ antrenman programı',
      img:'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?auto=format&fit=crop&w=1600&q=80',
      color:'#009d4f',
-     cards:[{tag:'Başlangıç',title:'30 günlük fit program'},{tag:'Antrenör',title:'Kişisel koçunla tanış'},{tag:'Hareket',title:'Evde HIIT — 20 dakika'}],
+     cards:[{tag:'Antrenör',title:'Kişisel koçunla tanış'},{tag:'Başlangıç',title:'30 günlük fit program'}],
      hint:'Her hareket bir başlangıç. Programını bul.'},
-    {cls:'w-akademi',href:'akademi-v1.html',name:'DadaAkademi',eyebrow:'DadaAkademi · Öğren',
+    {cls:'w-gourmet',href:'kesfet-v1.html',name:'DadaGourmet',eyebrow:'DadaGourmet · Keşfet',
+     tagline:'Gurme mekânlar, lezzet rotaları ve şehrin sırrı.',metricIcon:'fa-map-location-dot',metricTxt:'850+ mekân &amp; etkinlik',
+     img:'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=1600&q=80',
+     color:'#b14fc5',
+     cards:[{tag:'Lezzet rotası',title:'Karaköy sokak lezzetleri'},{tag:'Yeni açıldı',title:'Nişantaşı Bistro'}],
+     hint:'Şehrin en iyi sofralarını keşfet.'},
+    {cls:'w-akademi',href:'akademi-v1.html',name:'DadaCampus',eyebrow:'DadaCampus · Öğren',
      tagline:'Mutfak bilimi, beslenme rehberleri ve ilham veren içerikler.',metricIcon:'fa-graduation-cap',metricTxt:'500+ içerik &amp; kurs',
      img:'https://images.unsplash.com/photo-1556910103-1c02745aae4d?auto=format&fit=crop&w=1600&q=80',
      color:'#006072',
-     cards:[{tag:'Kurs',title:'Bıçak kullanım teknikleri'},{tag:'Ansiklopedi',title:'Baharatların dünyası'},{tag:'İlham',title:'Şef hikâyeleri'}],
-     hint:'Öğrenmek bir lezzettir — mera-kınla gir.'}
+     cards:[{tag:'Ansiklopedi',title:'Malzemeleri tanı'},{tag:'İlham',title:'Şef hikâyeleri'}],
+     hint:'Öğrenmek bir lezzettir — merakınla gir.'}
   ];
 
   /* ===== ELEMENT REF ===== */
@@ -1108,7 +1154,6 @@ body.ss-mode .reveal{opacity:1;transform:none}
   var mpMiniOv=document.getElementById('mpMiniOv');
   var scrollBody=document.getElementById('scrollBody');
   var siteHead=document.getElementById('siteHead');
-  var hbgA=document.getElementById('hbgA'), hbgB=document.getElementById('hbgB');
   var hWgrad=document.getElementById('hWgrad');
   var srBg=document.getElementById('srBg'), srContent=document.getElementById('srContent');
   var srEyebrow=document.getElementById('srEyebrow'), srEyeTxt=document.getElementById('srEyebrowTxt');
@@ -1118,22 +1163,6 @@ body.ss-mode .reveal{opacity:1;transform:none}
   var deckRail=document.getElementById('deckRail');
   var dotRay=document.getElementById('dotRay');
   var scenesWrap=document.getElementById('scenes');
-
-  /* ===== BG CROSS-FADE ===== */
-  var bgSlot=0;
-  function setBg(url){
-    var next=bgSlot===0?1:0;
-    var layers=[hbgA,hbgB];
-    layers[next].style.backgroundImage="url('"+url+"')";
-    layers[next].style.opacity='1';
-    layers[bgSlot].style.opacity='0';
-    bgSlot=next;
-  }
-  function clearBg(){
-    hbgA.style.opacity='0';
-    hbgB.style.opacity='0';
-    bgSlot=0;
-  }
 
   /* ===== KART İÇERİK (alt6 applyContent/switchTo birebir) ===== */
   function cardsHtml(w){
@@ -1168,8 +1197,7 @@ body.ss-mode .reveal{opacity:1;transform:none}
     cardBusy=true;
     current=idx;
     var w=W[idx];
-    /* hero bg swap + overlay + gradient */
-    setBg(w.img);
+    /* REV3: full-bleed görsel yok — yalnız beyaz zeminde ölçülü renk washı */
     hero.classList.add('world-active');
     hWgrad.style.setProperty('--bc',w.color);
     /* kart içeriği cross-fade */
@@ -1246,7 +1274,9 @@ body.ss-mode .reveal{opacity:1;transform:none}
     if(panel.classList.contains('floating')) return;
     panel.classList.add('floating');
     document.body.classList.add('panel-floating');
-    if(window.innerWidth<=1080 && panelState==='full') collapsePanel(); /* mobil: alt-dock mini-pill */
+    /* Scroll-tetikli otomatik collapse YOK — panel açık/genişlemiş kalır (kullanıcı mpToggle ile kapatır).
+       Yalnız mobilde (≤1080) tam panel ekranı kaplamasın diye alt-dock mini-pill'e düşer. */
+    if(window.innerWidth<=1080 && panelState==='full') collapsePanel();
   }
   function goHero(){
     if(!panel.classList.contains('floating')) return;
@@ -1305,14 +1335,20 @@ body.ss-mode .reveal{opacity:1;transform:none}
   document.addEventListener('keydown',function(e){ if(e.key==='Escape') closeD(); });
 
   /* ===== SAHNE DOT-RAY (aktif takip + görünürlük + tıkla-git) ===== */
-  var sceneEls=Array.prototype.slice.call(document.querySelectorAll('.scene'));
+  var sceneEls=Array.prototype.slice.call(document.querySelectorAll('.scene, .wsec'));
   var drItems=Array.prototype.slice.call(dotRay.querySelectorAll('.dr-item'));
   function setActiveScene(id){
     drItems.forEach(function(it){ it.classList.toggle('active', it.getAttribute('data-scene')===id); });
   }
   if('IntersectionObserver' in window){
     var sObs=new IntersectionObserver(function(es){
-      es.forEach(function(e){ if(e.isIntersecting && e.intersectionRatio>=0.5) setActiveScene(e.target.id); });
+      es.forEach(function(e){ if(e.isIntersecting && e.intersectionRatio>=0.5){
+        setActiveScene(e.target.id);
+        dotRay.classList.toggle('on-light', e.target.classList.contains('wsec')); /* R5: açık section'da koyu dot */
+        /* scroll'da mentor paneli çipini de o dünyaya senkronla (tık/hover dışı senkron eksikti) */
+        var key=e.target.id.replace('scene-','');
+        for(var wi=0;wi<W.length;wi++){ if(W[wi].cls==='w-'+key){ switchTo(wi); break; } }
+      } });
     },{threshold:0.5});
     sceneEls.forEach(function(s){ sObs.observe(s); });
     var railObs=new IntersectionObserver(function(es){
@@ -1358,6 +1394,54 @@ body.ss-mode .reveal{opacity:1;transform:none}
     window.addEventListener('resize',onPar,{passive:true});
     parallax();
   }
+
+  /* ===== FOOTER PERDELİ REVEAL (curtain — scroll-body fixed footer'ı açar) ===== */
+  var siteFoot=document.getElementById('siteFoot');
+  var footSentinel=document.getElementById('footSentinel');
+  var footVisible=false;
+  function setFootSpace(){
+    if(siteFoot && window.innerWidth>1080 && !document.body.classList.contains('ss-mode')){
+      scrollBody.style.marginBottom=siteFoot.offsetHeight+'px';
+    } else if(scrollBody){
+      scrollBody.style.marginBottom='';
+    }
+  }
+  setFootSpace();
+  window.addEventListener('resize',setFootSpace,{passive:true});
+  window.addEventListener('load',setFootSpace);
+
+  /* ===== SCROLL-TO-TOP (footer açıkken gizlenir, gavia imzasını örtmesin) ===== */
+  var toTop=document.getElementById('toTop');
+  function onTopScroll(){
+    if(!footVisible && window.scrollY>window.innerHeight*1.1) toTop.classList.add('show');
+    else toTop.classList.remove('show');
+  }
+  window.addEventListener('scroll',onTopScroll,{passive:true});
+  onTopScroll();
+  toTop.addEventListener('click',function(){
+    window.scrollTo({top:0,behavior:reduceMo?'auto':'smooth'});
+  });
+
+  if('IntersectionObserver' in window && siteFoot && footSentinel){
+    /* R7: reveal TEK YÖNLÜ (eşik civarı flicker/zıplama yok); footVisible iki yönlü (to-top için) */
+    var fObs=new IntersectionObserver(function(es){
+      es.forEach(function(e){
+        if(e.isIntersecting) siteFoot.classList.add('revealed'); /* bir kez açıl, geri kapanma */
+        footVisible=e.isIntersecting; onTopScroll();
+      });
+    },{threshold:0, rootMargin:'0px 0px 14% 0px'});
+    fObs.observe(footSentinel);
+
+    /* Panel, FİNALE (#kapanis) görünür olunca kenara çekilir → finale kartlarını + footer'ı örtmesin.
+       (Mentor dünya-rehberliği bitti; finale = "modülünü seç" çıkış router'ı.) Yukarı dönünce geri gelir. */
+    var kapanis=document.getElementById('kapanis');
+    if(kapanis){
+      var kObs=new IntersectionObserver(function(es){
+        es.forEach(function(e){ panel.classList.toggle('foot-hide', e.isIntersecting); });
+      },{threshold:0.18});
+      kObs.observe(kapanis);
+    }
+  } else if(siteFoot){ siteFoot.classList.add('revealed'); }
 
   /* ===== SS + AUTH ===== */
   try{ if(/[?&]ss=1/.test(location.search)) document.body.classList.add('ss-mode'); }catch(e){}
