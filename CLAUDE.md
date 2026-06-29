@@ -107,6 +107,20 @@ Etki alanı: dokunulan sayfa + ona bağlı bilinen akışlar (tüm siteyi tarama
   başka mı) kararı HENÜZ VERİLMEDİ. Önce arayüz dili ve sayfa tasarımları
   netleşecek, stack sonra konuşulacak.
 
+## Deploy / Canlı (keşfe gerek YOK — kanonik)
+
+- **Repo:** `By4r/dadamutfak-view` · branch **`main`** · **GitHub Pages AKTİF**
+  (kaynak: **main / kök**, build: legacy Jekyll, HTTPS zorunlu, özel domain yok).
+- **Site kökü:** https://by4r.github.io/dadamutfak-view/
+- **Sayfa URL yapısı:** `https://by4r.github.io/dadamutfak-view/v7-6cu356/<dosya>.html`
+  (tüm public sayfalar `v7-6cu356/` altında; iç linkler relative).
+- **Örnekler:** portal → `.../v7-6cu356/anasayfa-portal-v3a.html` ·
+  DadaMentor v3 → `.../v7-6cu356/dadamentor-v3.html` ·
+  giriş → `.../v7-6cu356/sa-giris-v1.html`
+- **Deploy = `git push origin main`** → Pages otomatik rebuild (~1-2 dk). Ayrı deploy script YOK.
+- ⚠️ **`assets/video/*.mp4` gitignore'lı** → canlıda yüklenmez, yerine gradient fallback
+  görünür (videolar Beyar'ın local/yedek asset'i, repoya girmez).
+
 ## Referans Materyaller
 
 - `drive-download-.../dada-mutfak-icerik/` — mevcut public site (70+ HTML)
