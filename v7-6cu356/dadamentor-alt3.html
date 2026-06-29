@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>DadaMentor — Beş dünya, bir yolculuk</title>
+<link rel="shortcut icon" type="image/x-icon" href="assets/img/favicon.ico" />
+
+<!-- FontAwesome 6.5.2 (kurumsal kilitli ikon seti) -->
+<link rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+      integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A=="
+      crossorigin="anonymous" referrerpolicy="no-referrer" />
+<style>
+/* =====================================================================
+   DadaMentor ALT 3 — DİKEY SİNEMATİK DÜNYALAR
+   Yapı: scroll-snap 100vh sahneler · sağ nokta-ray · şeffaf minimal header
+   Sahne sırası: Giriş → Gastro → Gourmet → Diet → Fit → Akademi → Store → Kapanış
+   Token: v1 sistemi birebir; cream/metalik/serif YASAK; ham hex YOK
+   ===================================================================== */
+
+/* ---- Gilroy: tek kurumsal aile ---- */
+@font-face{font-family:"Gilroy";src:url("assets/fonts/Gilroy-Light.otf") format("opentype");font-weight:300;font-style:normal;font-display:swap}
+@font-face{font-family:"Gilroy";src:url("assets/fonts/Gilroy-Medium.ttf") format("truetype");font-weight:500;font-style:normal;font-display:swap}
+@font-face{font-family:"Gilroy";src:url("assets/fonts/Gilroy-ExtraBold.otf") format("opentype");font-weight:800;font-style:normal;font-display:swap}
+
+/* ---- TOKEN SİSTEMİ (ham hex YOK · cream YOK · metalik YOK) ---- */
+:root{
+  --ink:#211E16; --ink-2:#2A2620; --ink-3:#322D26; --ink-deep:#1A1711; --ink-topbar:#13100A;
+  --tomato:#E14827; --tomato-dark:#C43D20; --tomato-rgb:225,72,39;
+  --paper:#ffffff;
+  --text:#FBF8F3; --text-2:rgba(251,248,243,.66); --text-3:rgba(251,248,243,.40);
+  --line:rgba(251,248,243,.12); --line-soft:rgba(251,248,243,.07);
+  --glass:rgba(251,248,243,.04); --hi:rgba(251,248,243,.06);
+  /* 5 dünya + Store kanonik */
+  --b-gastro:#E14827;  --b-gastro-l:#F0613F;
+  --b-gourmet:#b14fc5; --b-gourmet-l:#C66BD8;
+  --b-diet:#3BB77E;    --b-diet-l:#52CD94;
+  --b-fit:#009d4f;     --b-fit-l:#22BE6E;
+  --b-akademi:#006072; --b-akademi-l:#2E97AB;
+  --b-store:#E14827;
+  /* geometri */
+  --wrap:1240px;
+  --r-sm:8px; --r-md:12px; --r-lg:16px; --r-xl:24px; --r-pill:999px; --r-circle:50%;
+  --ease:cubic-bezier(.22,.61,.36,1);
+  --sh-1:0 1px 2px rgba(0,0,0,.34),0 2px 8px rgba(0,0,0,.26),inset 0 1px 0 var(--hi);
+  --sh-2:0 10px 30px rgba(0,0,0,.44),inset 0 1px 0 var(--hi);
+  --sh-3:0 26px 60px rgba(0,0,0,.58),inset 0 1px 0 var(--hi);
+  --header-h:70px;
+}
+
+*{margin:0;padding:0;box-sizing:border-box}
+html{height:100%}
+body{
+  font-family:"Gilroy",system-ui,sans-serif;font-weight:500;
+  color:var(--text);background:var(--ink);
+  -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;
+  line-height:1.6;overflow-x:hidden;
+  height:100%;overflow-y:scroll;
+  scroll-snap-type:y mandatory;scroll-behavior:smooth;
+}
+@media(prefers-reduced-motion:reduce){
+  *{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important}
+  body{scroll-snap-type:none!important;scroll-behavior:auto!important}
+}
+a{color:inherit;text-decoration:none}
+ul{list-style:none}
+button{font-family:inherit;cursor:pointer}
+:focus-visible{outline:2px solid var(--tomato);outline-offset:3px;border-radius:4px}
+
+.wrap{width:100%;max-width:var(--wrap);margin-inline:auto;padding-inline:32px}
+
+/* eyebrow — portal birebir */
+.eyebrow{
+  display:inline-flex;align-items:center;gap:9px;
+  font-weight:700;font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--tomato);
+}
+.eyebrow::before{content:"";width:26px;height:2px;background:currentColor;border-radius:2px}
+.eyebrow i{font-size:13px}
+
+/* başlık ölçeği */
+.h-xl{font-weight:800;font-size:clamp(40px,5.4vw,68px);line-height:1.05;letter-spacing:-.035em;color:var(--text)}
+.h-lg{font-weight:800;font-size:34px;line-height:1.12;letter-spacing:-.02em;color:var(--text)}
+.h-md{font-weight:800;font-size:22px;line-height:1.2;letter-spacing:-.01em;color:var(--text)}
+.lead{font-size:18px;line-height:1.66;color:var(--text-2)}
+
+/* buton */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:9px;font-weight:800;font-size:14.5px;
+  cursor:pointer;border-radius:var(--r-md);padding:13px 24px;transition:.22s var(--ease);border:1px solid transparent;white-space:nowrap}
+.btn-tomato{background:var(--tomato);color:#fff;box-shadow:var(--sh-1)}
+.btn-tomato:hover{background:var(--tomato-dark);transform:translateY(-2px);box-shadow:var(--sh-2)}
+.btn-ghost-white{border-color:rgba(255,255,255,.28);color:#fff;background:rgba(255,255,255,.07);backdrop-filter:blur(4px)}
+.btn-ghost-white:hover{border-color:#fff;background:rgba(255,255,255,.14);transform:translateY(-1px)}
+.btn-lg{padding:16px 30px;font-size:15.5px}
+.btn-block{width:100%}
+
+/* dünya renk yardımcıları */
+.w-gastro{--bc:var(--b-gastro);--bl:var(--b-gastro-l)}
+.w-gourmet{--bc:var(--b-gourmet);--bl:var(--b-gourmet-l)}
+.w-diet{--bc:var(--b-diet);--bl:var(--b-diet-l)}
+.w-fit{--bc:var(--b-fit);--bl:var(--b-fit-l)}
+.w-akademi{--bc:var(--b-akademi);--bl:var(--b-akademi-l)}
+.w-store{--bc:var(--b-store);--bl:var(--b-gastro-l)}
+
+/* ====================== HEADER (şeffaf, sabit, minimal) ====================== */
+.site-head{
+  position:fixed;top:0;left:0;right:0;z-index:50;height:var(--header-h);
+  background:linear-gradient(180deg,rgba(16,14,9,.76) 0%,rgba(16,14,9,0) 100%);
+  transition:background .32s var(--ease),backdrop-filter .32s var(--ease),border-color .32s var(--ease);
+  border-bottom:1px solid transparent;
+}
+.site-head.frosted{
+  background:rgba(33,30,22,.86);
+  backdrop-filter:blur(18px) saturate(140%);
+  border-bottom-color:var(--line);
+}
+.site-head .wrap{display:flex;align-items:center;justify-content:space-between;height:100%}
+
+.brand{display:flex;align-items:center;gap:11px;flex:none}
+.brand .mark{width:34px;height:34px;border-radius:var(--r-circle);background:var(--tomato);
+  display:grid;place-items:center;color:#fff;font-size:15px;flex:none}
+.brand .word{font-weight:800;font-size:20px;letter-spacing:-.01em;color:#fff}
+.brand .word b{color:var(--tomato);font-weight:800}
+
+.head-right{display:flex;align-items:center;gap:10px}
+.icon-btn{width:40px;height:40px;display:grid;place-items:center;border-radius:var(--r-circle);
+  border:1px solid rgba(255,255,255,.2);color:#fff;background:rgba(255,255,255,.06);
+  font-family:inherit;transition:.2s var(--ease)}
+.icon-btn:hover{border-color:var(--tomato);color:var(--tomato)}
+.head-login{
+  font-weight:700;font-size:13.5px;color:#fff;
+  padding:9px 18px;border-radius:var(--r-md);
+  border:1px solid rgba(255,255,255,.22);background:rgba(255,255,255,.06);
+  transition:.2s var(--ease);
+}
+.head-login:hover{border-color:#fff;background:rgba(255,255,255,.14)}
+.hamburger{display:none}
+
+/* ====================== NOKTA-RAY (sağ, sabit) ====================== */
+.dot-ray{
+  position:fixed;right:30px;top:50%;transform:translateY(-50%);
+  z-index:40;display:flex;flex-direction:column;align-items:flex-end;gap:18px;
+}
+/* dikey bağlayıcı çizgi */
+.dot-ray::before{
+  content:"";position:absolute;
+  right:3px;top:0;bottom:0;width:1px;
+  background:rgba(255,255,255,.13);pointer-events:none;
+}
+.dr-item{
+  position:relative;display:flex;align-items:center;gap:11px;cursor:pointer;z-index:1;
+}
+.dr-dot{
+  width:8px;height:8px;border-radius:var(--r-circle);
+  border:1.5px solid rgba(255,255,255,.44);background:transparent;
+  transition:background .25s var(--ease),border-color .25s var(--ease),transform .25s var(--ease);
+  flex:none;
+}
+.dr-item.active .dr-dot{
+  background:var(--dc,#fff);border-color:var(--dc,#fff);transform:scale(1.55);
+}
+.dr-lbl{
+  font-weight:700;font-size:10.5px;letter-spacing:.07em;color:rgba(255,255,255,.65);
+  white-space:nowrap;order:-1;
+  opacity:0;transform:translateX(5px);
+  transition:opacity .2s var(--ease),transform .2s var(--ease);pointer-events:none;
+}
+.dr-item:hover .dr-lbl,
+.dr-item.active .dr-lbl{opacity:1;transform:translateX(0)}
+.dr-item.active .dr-lbl{color:var(--dc,#fff)}
+
+/* ====================== SAHNE TEMEL (100vh, scroll-snap) ====================== */
+.scene{
+  position:relative;height:100vh;
+  scroll-snap-align:start;overflow:hidden;
+  display:flex;align-items:center;justify-content:center;
+}
+/* görseli div+bg cover/center (Kerem Bey pattern) */
+.scene-bg{
+  position:absolute;inset:0;
+  background-size:cover;background-position:center;
+  transition:transform 8s var(--ease);will-change:transform;
+}
+.scene:hover .scene-bg{transform:scale(1.04)}
+/* sinematik overlay (0.35–0.42 opaklık aralığı) */
+.scene-overlay{
+  position:absolute;inset:0;z-index:1;pointer-events:none;
+  background:
+    linear-gradient(180deg, rgba(16,14,9,.68) 0%, rgba(16,14,9,.30) 50%, rgba(16,14,9,.72) 100%),
+    radial-gradient(80% 60% at 50% 50%, rgba(16,14,9,.18) 0%, rgba(16,14,9,.48) 100%);
+}
+/* film greni (ölçülü) */
+.scene-grain{
+  position:absolute;inset:0;z-index:2;opacity:.26;mix-blend-mode:overlay;pointer-events:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.4'/%3E%3C/svg%3E")
+}
+/* içerik katmanı */
+.scene-body{
+  position:relative;z-index:3;
+  text-align:center;padding:0 24px;max-width:860px;width:100%;
+}
+
+/* dünya eyebrow (sahne içinde —  world aksan rengini kullanır) */
+.scene-eyebrow{
+  display:inline-flex;align-items:center;gap:9px;
+  font-weight:700;font-size:12px;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--bc,var(--tomato));margin-bottom:20px;
+}
+.scene-eyebrow::before{content:"";width:26px;height:2px;background:currentColor;border-radius:2px}
+.scene-eyebrow i{font-size:13px}
+
+/* sahne tagline (büyük, sinematik başlık) */
+.scene-tag{
+  font-weight:800;font-size:clamp(30px,4.2vw,52px);line-height:1.08;letter-spacing:-.03em;
+  color:#fff;text-shadow:0 2px 32px rgba(0,0,0,.55);
+  margin-bottom:18px;
+}
+.scene-tag em{font-style:normal;color:var(--bc,var(--tomato))}
+
+/* tek satır açıklama */
+.scene-desc{
+  font-weight:300;font-size:clamp(14px,1.5vw,17.5px);color:rgba(255,255,255,.80);
+  line-height:1.65;margin-bottom:34px;max-width:52ch;margin-inline:auto;
+}
+
+/* sahne CTA */
+.scene-cta{display:flex;align-items:center;justify-content:center;gap:14px;flex-wrap:wrap}
+.btn-world{
+  display:inline-flex;align-items:center;gap:8px;
+  font-weight:800;font-size:14.5px;color:#fff;
+  padding:14px 28px;border-radius:var(--r-md);
+  background:var(--bc,var(--tomato));border:1.5px solid transparent;
+  transition:.22s var(--ease);
+  box-shadow:0 4px 22px rgba(0,0,0,.38);
+}
+.btn-world:hover{filter:brightness(1.12);transform:translateY(-2px);box-shadow:0 8px 32px rgba(0,0,0,.48)}
+.btn-world i{transition:transform .25s var(--ease)}
+.btn-world:hover i{transform:translateX(3px)}
+
+/* kaydır ipucu */
+.scroll-hint{
+  position:absolute;left:50%;bottom:26px;transform:translateX(-50%);z-index:3;
+  display:flex;flex-direction:column;align-items:center;gap:8px;
+  color:rgba(255,255,255,.52);font-weight:300;font-size:11px;letter-spacing:.18em;text-transform:uppercase;
+}
+.scroll-hint i{font-size:14px;animation:bob 2s var(--ease) infinite}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(7px)}}
+
+/* ====================== SAHNE 0 — GİRİŞ (DadaMentor karşılama) ====================== */
+.scene-intro .scene-body{max-width:800px}
+.scene-intro h1{
+  font-weight:800;font-size:clamp(38px,5.4vw,72px);line-height:1.04;letter-spacing:-.04em;
+  color:#fff;text-shadow:0 2px 36px rgba(0,0,0,.48);
+  margin:0 auto 18px;max-width:15ch;
+}
+.scene-intro h1 em{font-style:normal;color:var(--tomato)}
+.intro-sub{
+  font-size:clamp(15px,1.7vw,18px);color:rgba(255,255,255,.78);font-weight:300;
+  line-height:1.66;margin-bottom:34px;max-width:48ch;margin-inline:auto;
+}
+
+/* dünya ikonları şeridi */
+.world-strip{display:flex;align-items:center;justify-content:center;gap:14px;flex-wrap:wrap;margin-bottom:34px}
+.ws-item{
+  display:flex;flex-direction:column;align-items:center;gap:7px;
+  padding:10px 12px;border-radius:var(--r-lg);
+  background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);
+  transition:.22s var(--ease);
+}
+.ws-item:hover{background:rgba(255,255,255,.11);border-color:var(--wc,rgba(255,255,255,.3));transform:translateY(-3px)}
+.ws-ic{
+  width:36px;height:36px;border-radius:var(--r-md);display:grid;place-items:center;font-size:14px;
+  background:color-mix(in srgb,var(--wc,var(--tomato)) 24%,transparent);
+  color:var(--wc,var(--tomato));
+}
+.ws-nm{font-weight:700;font-size:10.5px;letter-spacing:.06em;color:rgba(255,255,255,.78)}
+
+/* ====================== KAPANIŞ — manifesto + bülten + footer kompakt ====================== */
+.scene-close{
+  min-height:100vh;height:auto;scroll-snap-align:start;overflow:hidden;
+  background:var(--ink-deep);display:flex;flex-direction:column;
+  border-top:1px solid var(--line-soft);
+}
+/* manifesto blok */
+.close-mani{
+  flex:1;display:flex;align-items:center;
+  border-bottom:1px solid var(--line-soft);
+}
+.close-mani .wrap{
+  padding:80px 32px;
+  display:grid;grid-template-columns:auto 1fr;gap:48px;align-items:start;
+}
+.mani-lbl{font-weight:300;font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--tomato);white-space:nowrap;padding-top:8px}
+.close-mani blockquote{
+  font-weight:500;font-size:clamp(19px,2.3vw,27px);line-height:1.56;color:var(--text);max-width:62ch;
+}
+.close-mani blockquote em{font-style:normal;color:var(--tomato);font-weight:800}
+
+/* bülten */
+.close-news{border-bottom:1px solid var(--line-soft);padding:38px 0}
+.close-news .wrap{display:grid;grid-template-columns:1fr auto;gap:32px;align-items:center}
+.cn-l h3{font-weight:800;font-size:22px;letter-spacing:-.01em;margin-bottom:7px}
+.cn-l p{color:var(--text-2);font-size:14px}
+.news-form{display:flex;gap:10px}
+.news-form input{
+  width:260px;max-width:100%;
+  font:inherit;font-weight:500;font-size:14px;color:var(--text);
+  background:var(--ink);border:1px solid var(--line);border-radius:var(--r-md);
+  padding:13px 16px;outline:none;transition:border-color .2s var(--ease);
+}
+.news-form input::placeholder{color:var(--text-3)}
+.news-form input:focus{border-color:var(--tomato)}
+
+/* compact footer */
+.close-foot{padding:28px 0;background:var(--ink-deep)}
+.close-foot .wrap{
+  display:flex;align-items:center;justify-content:space-between;
+  gap:20px;flex-wrap:wrap;
+}
+.cf-brand{display:flex;align-items:center;gap:10px;font-weight:800;font-size:18px;color:#fff}
+.cf-brand .mark{width:30px;height:30px;border-radius:var(--r-circle);background:var(--tomato);display:grid;place-items:center;color:#fff;font-size:13px}
+.cf-brand b{color:var(--tomato)}
+.cf-links{display:flex;gap:16px;flex-wrap:wrap}
+.cf-links a{color:var(--text-3);font-size:13px;transition:color .18s var(--ease)}
+.cf-links a:hover{color:var(--text-2)}
+.cf-soc{display:flex;gap:9px}
+.cf-soc a{
+  width:33px;height:33px;border-radius:var(--r-circle);
+  border:1px solid var(--line);display:grid;place-items:center;
+  color:var(--text-3);transition:.18s var(--ease);
+}
+.cf-soc a:hover{border-color:var(--tomato);color:var(--tomato)}
+.cf-copy{color:var(--text-3);font-size:12.5px}
+
+/* ====================== DRAWER (mobil) ====================== */
+.drawer-back{position:fixed;inset:0;background:rgba(0,0,0,.62);opacity:0;visibility:hidden;transition:.3s var(--ease);z-index:90}
+.drawer-back.open{opacity:1;visibility:visible}
+.drawer{
+  position:fixed;top:0;right:0;bottom:0;width:min(320px,88vw);
+  background:var(--ink-2);border-left:1px solid var(--line);
+  transform:translateX(100%);transition:transform .32s var(--ease);
+  z-index:91;padding:22px;overflow-y:auto;display:flex;flex-direction:column;gap:6px;
+}
+.drawer.open{transform:translateX(0)}
+.drawer-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.d-link{display:flex;align-items:center;gap:11px;padding:12px;border-radius:var(--r-md);
+  color:var(--text);font-weight:500;font-size:14.5px;transition:.18s var(--ease)}
+.d-link:hover{background:var(--glass)}
+.d-sec{font-weight:300;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--text-3);margin:14px 12px 4px}
+.d-world{display:flex;align-items:center;gap:11px;padding:11px 12px;border-radius:var(--r-md);
+  background:var(--glass);border-left:3px solid var(--bc);margin-bottom:6px;
+  color:var(--text);font-weight:700;font-size:13.5px}
+.d-world i{color:var(--bl)}
+.drawer-cta{display:flex;flex-direction:column;gap:9px;margin-top:16px}
+
+/* ====================== RESPONSIVE ====================== */
+@media(max-width:960px){
+  .dot-ray{right:18px}
+  .dr-lbl{display:none}
+}
+@media(max-width:760px){
+  .hamburger{display:grid}
+  .head-login{display:none}
+  .scene-body{padding:0 20px}
+  .close-mani .wrap{grid-template-columns:1fr;gap:14px}
+  .close-news .wrap{grid-template-columns:1fr;gap:18px}
+  .news-form{flex-direction:column}
+  .news-form input{width:100%}
+  .close-foot .wrap{flex-direction:column;align-items:flex-start;gap:14px}
+  .world-strip{gap:8px}
+}
+@media(max-width:480px){
+  .dot-ray{right:10px}
+  .ws-nm{display:none}
+  .ws-item{padding:8px}
+}
+
+/* ====================== SS MODU (?ss=1) ====================== */
+/* headless screenshot: scroll-snap kapat, sahneler dikey akar, hepsini yakala */
+body.ss-mode{scroll-snap-type:none}
+body.ss-mode .scene{scroll-snap-align:none;height:auto;min-height:100vh}
+body.ss-mode .scene-close{scroll-snap-align:none}
+body.ss-mode .scene-bg{position:absolute;inset:0}
+/* SS modunda sahneler gerçek viewport-height box olsun (bg cover çalışsın) */
+body.ss-mode .scene::before{
+  content:"";display:block;min-height:100vh;height:0;
+  float:left;width:0;
+}
+body.ss-mode .scene::after{content:"";display:table;clear:both}
+</style>
+</head>
+<body data-brand="mentor-alt3">
+
+<!-- ============ HEADER — şeffaf, sabit, minimal ============ -->
+<header class="site-head" id="siteHead">
+  <div class="wrap">
+    <a class="brand" href="dadamentor-alt3.html" aria-label="DadaMentor ana sayfa">
+      <span class="mark"><i class="fa-solid fa-compass"></i></span>
+      <span class="word">Dada<b>Mentor</b></span>
+    </a>
+    <div class="head-right">
+      <button class="icon-btn" type="button" aria-label="Ara"><i class="fa-solid fa-magnifying-glass"></i></button>
+      <a class="head-login" href="#">Giriş</a>
+      <button class="icon-btn hamburger" type="button" id="hamburger" aria-label="Menü"><i class="fa-solid fa-bars"></i></button>
+    </div>
+  </div>
+</header>
+
+<!-- ============ NOKTA-RAY — sağ dikey navigasyon ============ -->
+<nav class="dot-ray" id="dotRay" aria-label="Sahne navigasyonu">
+  <div class="dr-item active" data-scene="0" tabindex="0" role="button"
+       style="--dc:var(--tomato)" aria-label="Giriş">
+    <span class="dr-lbl">DadaMentor</span>
+    <span class="dr-dot"></span>
+  </div>
+  <div class="dr-item" data-scene="1" tabindex="0" role="button"
+       style="--dc:var(--b-gastro)" aria-label="DadaGastro">
+    <span class="dr-lbl">DadaGastro</span>
+    <span class="dr-dot"></span>
+  </div>
+  <div class="dr-item" data-scene="2" tabindex="0" role="button"
+       style="--dc:var(--b-gourmet)" aria-label="DadaGourmet">
+    <span class="dr-lbl">DadaGourmet</span>
+    <span class="dr-dot"></span>
+  </div>
+  <div class="dr-item" data-scene="3" tabindex="0" role="button"
+       style="--dc:var(--b-diet)" aria-label="DadaDiet">
+    <span class="dr-lbl">DadaDiet</span>
+    <span class="dr-dot"></span>
+  </div>
+  <div class="dr-item" data-scene="4" tabindex="0" role="button"
+       style="--dc:var(--b-fit)" aria-label="DadaFit">
+    <span class="dr-lbl">DadaFit</span>
+    <span class="dr-dot"></span>
+  </div>
+  <div class="dr-item" data-scene="5" tabindex="0" role="button"
+       style="--dc:var(--b-akademi)" aria-label="DadaAkademi">
+    <span class="dr-lbl">DadaAkademi</span>
+    <span class="dr-dot"></span>
+  </div>
+  <div class="dr-item" data-scene="6" tabindex="0" role="button"
+       style="--dc:var(--b-store)" aria-label="DadaStore">
+    <span class="dr-lbl">DadaStore</span>
+    <span class="dr-dot"></span>
+  </div>
+</nav>
+
+<!-- ============ SAHNE 0 — GİRİŞ (DadaMentor karşılama) ============ -->
+<section class="scene scene-intro" id="scene-0">
+  <div class="scene-bg" style="background-image:url('https://images.unsplash.com/photo-1414235077428-338989a2e8c0?auto=format&fit=crop&w=1920&q=75')"></div>
+  <div class="scene-overlay"></div>
+  <div class="scene-grain"></div>
+
+  <div class="scene-body">
+    <div class="scene-eyebrow" style="color:var(--tomato)"><i class="fa-solid fa-compass"></i> DadaMentor</div>
+    <h1>Hayatın beş <em>dünyası</em>, tek bir pusulada.</h1>
+    <p class="intro-sub">Mutfaktan sofraya, sağlıktan harekete, öğrenmekten keşfetmeye — DadaMentor seni yönlendirir. Seç, yaşa, büyü.</p>
+
+    <div class="world-strip" role="list">
+      <a class="ws-item" href="#scene-1" style="--wc:var(--b-gastro)" role="listitem">
+        <span class="ws-ic"><i class="fa-solid fa-utensils"></i></span>
+        <span class="ws-nm">Gastro</span>
+      </a>
+      <a class="ws-item" href="#scene-2" style="--wc:var(--b-gourmet)" role="listitem">
+        <span class="ws-ic"><i class="fa-solid fa-map-location-dot"></i></span>
+        <span class="ws-nm">Gourmet</span>
+      </a>
+      <a class="ws-item" href="#scene-3" style="--wc:var(--b-diet)" role="listitem">
+        <span class="ws-ic"><i class="fa-solid fa-leaf"></i></span>
+        <span class="ws-nm">Diet</span>
+      </a>
+      <a class="ws-item" href="#scene-4" style="--wc:var(--b-fit)" role="listitem">
+        <span class="ws-ic"><i class="fa-solid fa-dumbbell"></i></span>
+        <span class="ws-nm">Fit</span>
+      </a>
+      <a class="ws-item" href="#scene-5" style="--wc:var(--b-akademi)" role="listitem">
+        <span class="ws-ic"><i class="fa-solid fa-graduation-cap"></i></span>
+        <span class="ws-nm">Akademi</span>
+      </a>
+      <a class="ws-item" href="#scene-6" style="--wc:var(--b-store)" role="listitem">
+        <span class="ws-ic"><i class="fa-solid fa-bag-shopping"></i></span>
+        <span class="ws-nm">Store</span>
+      </a>
+    </div>
+
+    <div class="scene-cta">
+      <a class="btn-world" href="#scene-1" style="background:var(--tomato)">Yolculuğa Başla <i class="fa-solid fa-arrow-down"></i></a>
+      <a class="btn-ghost-white btn" href="#scene-close">Manifesto</a>
+    </div>
+  </div>
+
+  <div class="scroll-hint" aria-hidden="true"><span>Keşfet</span><i class="fa-solid fa-chevron-down"></i></div>
+</section>
+
+<!-- ============ SAHNE 1 — DAGASTRO ============ -->
+<section class="scene w-gastro" id="scene-1">
+  <div class="scene-bg" style="background-image:url('https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=1920&q=75')"></div>
+  <div class="scene-overlay"></div>
+  <div class="scene-grain"></div>
+  <div class="scene-body">
+    <div class="scene-eyebrow"><i class="fa-solid fa-utensils"></i> DadaGastro</div>
+    <p class="scene-tag">Pişir. Deneyle. <em>Sahip çık.</em></p>
+    <p class="scene-desc">12 milyar+ tarif, günlük menü planı, akıllı "ne pişirsem" asistanı — mutfağın eksiksiz merkezi.</p>
+    <div class="scene-cta">
+      <a class="btn-world" href="anasayfa-portal-v3a.html">DadaGastro'yu Keşfet <i class="fa-solid fa-arrow-right"></i></a>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SAHNE 2 — DAGOURMET ============ -->
+<section class="scene w-gourmet" id="scene-2">
+  <div class="scene-bg" style="background-image:url('https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=1920&q=75')"></div>
+  <div class="scene-overlay"></div>
+  <div class="scene-grain"></div>
+  <div class="scene-body">
+    <div class="scene-eyebrow"><i class="fa-solid fa-map-location-dot"></i> DadaGourmet</div>
+    <p class="scene-tag">Lezzetin <em>adresi</em> var.</p>
+    <p class="scene-desc">Gurme mekânlar, tadım notları, şehrin lezzet rotaları ve etkinlik rehberi — keşfetmek için her zaman bir neden vardır.</p>
+    <div class="scene-cta">
+      <a class="btn-world" href="kesfet-v1.html">DadaGourmet'yi Keşfet <i class="fa-solid fa-arrow-right"></i></a>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SAHNE 3 — DADADIET ============ -->
+<section class="scene w-diet" id="scene-3">
+  <div class="scene-bg" style="background-image:url('https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=1920&q=75')"></div>
+  <div class="scene-overlay"></div>
+  <div class="scene-grain"></div>
+  <div class="scene-body">
+    <div class="scene-eyebrow"><i class="fa-solid fa-leaf"></i> DadaDiet</div>
+    <p class="scene-tag">Sağlıklı olmak <em>seçim</em> meselesi.</p>
+    <p class="scene-desc">Diyetisyenler, kişisel beslenme planları, kalori ve vücut kütle hesaplayıcıları — sağlıklı yaşamın tüm araçları tek yerde.</p>
+    <div class="scene-cta">
+      <a class="btn-world" href="saglik-hub-v1.html">DadaDiet'i Keşfet <i class="fa-solid fa-arrow-right"></i></a>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SAHNE 4 — DADAFIT ============ -->
+<section class="scene w-fit" id="scene-4">
+  <div class="scene-bg" style="background-image:url('https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?auto=format&fit=crop&w=1920&q=75')"></div>
+  <div class="scene-overlay"></div>
+  <div class="scene-grain"></div>
+  <div class="scene-body">
+    <div class="scene-eyebrow"><i class="fa-solid fa-dumbbell"></i> DadaFit</div>
+    <p class="scene-tag">Hareket et. Güçlen. <em>Devam et.</em></p>
+    <p class="scene-desc">Sertifikalı antrenörler, kişiye özel programlar, ilerleme takibi — atletik yaşamın tüm gücü burada.</p>
+    <div class="scene-cta">
+      <a class="btn-world" href="dadafit-hub-v1.html">DadaFit'i Keşfet <i class="fa-solid fa-arrow-right"></i></a>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SAHNE 5 — DADA AKADEMİ ============ -->
+<section class="scene w-akademi" id="scene-5">
+  <div class="scene-bg" style="background-image:url('https://images.unsplash.com/photo-1556910103-1c02745aae4d?auto=format&fit=crop&w=1920&q=75')"></div>
+  <div class="scene-overlay"></div>
+  <div class="scene-grain"></div>
+  <div class="scene-body">
+    <div class="scene-eyebrow"><i class="fa-solid fa-graduation-cap"></i> DadaAkademi</div>
+    <p class="scene-tag">Mutfağı ve hayatı <em>öğren.</em></p>
+    <p class="scene-desc">Video dersler, ansiklopedi, mutfak teknikleri ve sertifika programları — bilgi her zaman erişilebilir.</p>
+    <div class="scene-cta">
+      <a class="btn-world" href="akademi-v1.html">DadaAkademi'yi Keşfet <i class="fa-solid fa-arrow-right"></i></a>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SAHNE 6 — DADADSTORE ============ -->
+<section class="scene w-store" id="scene-6">
+  <div class="scene-bg" style="background-image:url('https://images.unsplash.com/photo-1556911220-bff31c812dba?auto=format&fit=crop&w=1920&q=75')"></div>
+  <div class="scene-overlay"></div>
+  <div class="scene-grain"></div>
+  <div class="scene-body">
+    <div class="scene-eyebrow"><i class="fa-solid fa-bag-shopping"></i> DadaStore</div>
+    <p class="scene-tag">Mutfağına <em>yatırım</em> yap.</p>
+    <p class="scene-desc">Özenle seçilmiş mutfak ekipmanı, malzeme ve hediyeler — tariften masaya, masadan hediyeye her şey burada.</p>
+    <div class="scene-cta">
+      <a class="btn-world" href="dada-shop-v1.html" style="background:var(--tomato)">DadaStore'a Git <i class="fa-solid fa-arrow-right"></i></a>
+    </div>
+  </div>
+</section>
+
+<!-- ============ KAPANIŞ — manifesto + bülten + footer kompakt ============ -->
+<section class="scene-close" id="scene-close">
+  <!-- manifesto -->
+  <div class="close-mani">
+    <div class="wrap">
+      <span class="mani-lbl">Manifesto</span>
+      <blockquote>Dada bir yemek sitesi değil; bir <em>yaşam pusulası</em>. Pişirmek, sağlıklı olmak, hareket etmek, öğrenmek ve keşfetmek tek bir hayatın parçaları. DadaMentor bu parçaları birbirine bağlar — sana yön gösterir, yerine karar vermez.</blockquote>
+    </div>
+  </div>
+
+  <!-- bülten -->
+  <div class="close-news">
+    <div class="wrap">
+      <div class="cn-l">
+        <h3>Pusulanı haftada bir güncelle.</h3>
+        <p>Beş dünyadan seçkiler, yeni içerikler ve ipuçları — gelen kutuna.</p>
+      </div>
+      <form class="news-form" onsubmit="return false">
+        <input type="email" placeholder="E-posta adresin" aria-label="E-posta adresi" />
+        <button class="btn btn-tomato" type="submit">Abone ol</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- compact footer -->
+  <div class="close-foot">
+    <div class="wrap">
+      <a class="cf-brand" href="dadamentor-alt3.html">
+        <span class="mark"><i class="fa-solid fa-compass"></i></span>
+        Dada<b>Mentor</b>
+      </a>
+      <nav class="cf-links" aria-label="Dünyalar">
+        <a href="anasayfa-portal-v3a.html">DadaGastro</a>
+        <a href="kesfet-v1.html">DadaGourmet</a>
+        <a href="saglik-hub-v1.html">DadaDiet</a>
+        <a href="dadafit-hub-v1.html">DadaFit</a>
+        <a href="akademi-v1.html">DadaAkademi</a>
+        <a href="dada-shop-v1.html">DadaStore</a>
+      </nav>
+      <div class="cf-soc">
+        <a href="#" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+        <a href="#" aria-label="YouTube"><i class="fa-brands fa-youtube"></i></a>
+        <a href="#" aria-label="X"><i class="fa-brands fa-x-twitter"></i></a>
+      </div>
+      <span class="cf-copy">© 2026 DadaMentor. Tüm hakları saklıdır.</span>
+    </div>
+  </div>
+</section>
+
+<!-- ============ DRAWER (mobil) ============ -->
+<div class="drawer-back" id="drawerBack"></div>
+<aside class="drawer" id="drawer" aria-hidden="true">
+  <div class="drawer-top">
+    <a class="brand" href="dadamentor-alt3.html">
+      <span class="mark"><i class="fa-solid fa-compass"></i></span>
+      <span class="word">Dada<b>Mentor</b></span>
+    </a>
+    <button class="icon-btn" type="button" id="drawerClose" aria-label="Kapat"><i class="fa-solid fa-xmark"></i></button>
+  </div>
+  <a class="d-link" href="#scene-0"><i class="fa-solid fa-compass"></i> DadaMentor</a>
+  <div class="d-sec">Dünyalar</div>
+  <a class="d-world w-gastro" href="anasayfa-portal-v3a.html"><i class="fa-solid fa-utensils"></i> DadaGastro</a>
+  <a class="d-world w-gourmet" href="kesfet-v1.html"><i class="fa-solid fa-map-location-dot"></i> DadaGourmet</a>
+  <a class="d-world w-diet" href="saglik-hub-v1.html"><i class="fa-solid fa-leaf"></i> DadaDiet</a>
+  <a class="d-world w-fit" href="dadafit-hub-v1.html"><i class="fa-solid fa-dumbbell"></i> DadaFit</a>
+  <a class="d-world w-akademi" href="akademi-v1.html"><i class="fa-solid fa-graduation-cap"></i> DadaAkademi</a>
+  <a class="d-world w-store" href="dada-shop-v1.html"><i class="fa-solid fa-bag-shopping"></i> DadaStore</a>
+  <div class="drawer-cta">
+    <a class="btn btn-ghost-white btn-block" href="#">Giriş</a>
+    <a class="btn btn-tomato btn-block" href="#">Üye Ol</a>
+  </div>
+</aside>
+
+<script>
+(function(){
+  "use strict";
+
+  /* ---- SS modu (?ss=1) ---- */
+  try{ if(/[?&]ss=1/.test(location.search)) document.body.classList.add('ss-mode'); }catch(e){}
+
+  /* ---- Sahne dizisi (scene-0…scene-6) ---- */
+  var scenes = [];
+  for(var i = 0; i <= 6; i++){
+    var s = document.getElementById('scene-'+i);
+    if(s) scenes.push(s);
+  }
+
+  /* ---- Nokta-ray öğeleri ---- */
+  var rayItems = Array.from(document.querySelectorAll('.dr-item'));
+
+  function setActive(idx){
+    rayItems.forEach(function(item,i){ item.classList.toggle('active', i === idx); });
+  }
+
+  /* ---- IntersectionObserver: görünür sahneyi takip et ---- */
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      if(e.isIntersecting && e.intersectionRatio >= 0.45){
+        var id = e.target.getAttribute('id');
+        var idx = parseInt(id.replace('scene-',''), 10);
+        if(!isNaN(idx)) setActive(idx);
+      }
+    });
+  }, { threshold: 0.45 });
+
+  scenes.forEach(function(s){ io.observe(s); });
+
+  /* ---- Nokta tıkla / klavye → o sahneye ---- */
+  rayItems.forEach(function(item){
+    function jump(){
+      var idx = parseInt(item.getAttribute('data-scene'), 10);
+      var target = document.getElementById('scene-'+idx);
+      if(target) target.scrollIntoView({ behavior:'smooth', block:'start' });
+    }
+    item.addEventListener('click', jump);
+    item.addEventListener('keydown', function(e){
+      if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); jump(); }
+    });
+  });
+
+  /* ---- Header: intro görünürken gradient yeterli; başka sahnedeyken frosted ---- */
+  var head = document.getElementById('siteHead');
+  var introScene = document.getElementById('scene-0');
+  if(head && introScene){
+    var introObs = new IntersectionObserver(function(entries){
+      entries.forEach(function(e){
+        head.classList.toggle('frosted', !e.isIntersecting);
+      });
+    }, { threshold: 0.15 });
+    introObs.observe(introScene);
+  }
+
+  /* ---- Drawer ---- */
+  var drawer = document.getElementById('drawer');
+  var back   = document.getElementById('drawerBack');
+  function openDrawer(){
+    drawer.classList.add('open'); back.classList.add('open');
+    drawer.setAttribute('aria-hidden','false');
+  }
+  function closeDrawer(){
+    drawer.classList.remove('open'); back.classList.remove('open');
+    drawer.setAttribute('aria-hidden','true');
+  }
+  var ham = document.getElementById('hamburger');
+  if(ham) ham.addEventListener('click', openDrawer);
+  var dc = document.getElementById('drawerClose');
+  if(dc) dc.addEventListener('click', closeDrawer);
+  back.addEventListener('click', closeDrawer);
+  drawer.querySelectorAll('a').forEach(function(a){ a.addEventListener('click', closeDrawer); });
+
+  /* ---- Klavye: Escape → Drawer kapat ---- */
+  document.addEventListener('keydown', function(e){
+    if(e.key === 'Escape') closeDrawer();
+  });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>DadaMentor — mentor + preview</title>
+<link rel="shortcut icon" type="image/x-icon" href="assets/img/favicon.ico" />
+
+<!-- FontAwesome 6.5.2 (kurumsal kilitli ikon seti — emoji yok) -->
+<link rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+      integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A=="
+      crossorigin="anonymous" referrerpolicy="no-referrer" />
+<style>
+/* =====================================================================
+   DadaMentor — ALT 6 · AÇIK ZEMİN (portal-v3a UI dili) · tek ekran
+   SOL: mentor paneli (offmenu-vari KOYU video kart, açık zemine oturur)
+   SAĞ: preview switcher (alt4 mekaniği · görsel sahne)
+   Açık zemin #f9f9f9 + koyu metin #211E16 + domates #E14827 + 5 dünya rengi
+   Gilroy-only · FontAwesome · KREM YASAK · token disiplini
+   ===================================================================== */
+
+@font-face{font-family:"Gilroy";src:url("assets/fonts/Gilroy-Light.otf") format("opentype");font-weight:300;font-style:normal;font-display:swap}
+@font-face{font-family:"Gilroy";src:url("assets/fonts/Gilroy-Medium.ttf") format("truetype");font-weight:500;font-style:normal;font-display:swap}
+@font-face{font-family:"Gilroy";src:url("assets/fonts/Gilroy-ExtraBold.otf") format("opentype");font-weight:800;font-style:normal;font-display:swap}
+
+:root{
+  /* AÇIK SAYFA (portal-v3a token'ları) */
+  --bg:#f9f9f9; --paper:#ffffff;
+  --slate:#211E16; --slate-2:#56514a; --ink:#211E16; --muted:#7E7E7E;
+  --line:#ECECEC;
+  --tomato:#E14827; --tomato-dark:#C43D20; --tomato-tint:#FBE9E3; --tomato-rgb:225,72,39;
+  /* KOYU KART iç tokenleri (mentor video paneli + preview iç metni) */
+  --d-2:#2A2620; --d-3:#322D26; --d-deep:#161310;
+  --dtext:#FBF8F3; --dtext-2:rgba(251,248,243,.72); --dtext-3:rgba(251,248,243,.46);
+  --dline:rgba(251,248,243,.16); --dglass:rgba(20,17,11,.60);
+  /* 5 dünya kanonik + açık-zemin-okunur light türev */
+  --b-gastro:#E14827;  --b-gastro-l:#F0613F;
+  --b-gourmet:#b14fc5; --b-gourmet-l:#C66BD8;
+  --b-diet:#3BB77E;    --b-diet-l:#52CD94;
+  --b-fit:#009d4f;     --b-fit-l:#22BE6E;
+  --b-akademi:#006072; --b-akademi-l:#2E97AB;
+  --b-store:#E14827;
+  --wrap:1240px;
+  --r-sm:8px; --r-md:12px; --r-lg:16px; --r-xl:24px; --r-pill:999px; --r-circle:50%;
+  --ease:cubic-bezier(.22,.61,.36,1);
+  /* portal gölge ölçeği (açık) */
+  --sh-1:0 1px 2px rgba(33,30,22,.04), 0 2px 6px rgba(33,30,22,.05);
+  --sh-2:0 6px 22px rgba(33,30,22,.09);
+  --sh-3:0 18px 50px rgba(33,30,22,.16);
+  --header-h:66px;
+}
+
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:"Gilroy",system-ui,sans-serif;font-weight:500;color:var(--ink);background:var(--bg);
+  -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;line-height:1.55;overflow-x:hidden;
+  min-height:100vh;display:flex;flex-direction:column}
+@media (prefers-reduced-motion:reduce){*{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important;scroll-behavior:auto!important}}
+a{color:inherit;text-decoration:none}
+img{display:block;max-width:100%}
+ul{list-style:none}
+button{font-family:inherit}
+:focus-visible{outline:2px solid var(--tomato);outline-offset:3px;border-radius:4px}
+.wrap{width:100%;max-width:var(--wrap);margin-inline:auto;padding-inline:32px}
+
+/* buton (portal-v3a) */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:9px;font-weight:800;font-size:14.5px;
+  cursor:pointer;border-radius:var(--r-md);padding:12px 22px;transition:.22s var(--ease);border:1px solid transparent;white-space:nowrap}
+.btn-tomato{background:var(--tomato);color:#fff}
+.btn-tomato:hover{background:var(--tomato-dark);transform:translateY(-2px)}
+.btn-ghost{background:var(--paper);color:var(--slate);border:1px solid var(--line);font-weight:700}
+.btn-ghost:hover{border-color:var(--slate);transform:translateY(-2px)}
+.btn-block{width:100%}
+
+/* dünya renk eşlemesi */
+.w-gastro{--bc:var(--b-gastro);--bl:var(--b-gastro-l)}
+.w-gourmet{--bc:var(--b-gourmet);--bl:var(--b-gourmet-l)}
+.w-diet{--bc:var(--b-diet);--bl:var(--b-diet-l)}
+.w-fit{--bc:var(--b-fit);--bl:var(--b-fit-l)}
+.w-akademi{--bc:var(--b-akademi);--bl:var(--b-akademi-l)}
+.w-store{--bc:var(--b-store);--bl:var(--b-gastro-l)}
+
+/* ====================== HEADER (açık · beyaz blur · sticky) ====================== */
+.site-head{position:sticky;top:0;z-index:50;flex:none;
+  background:rgba(255,255,255,.86);backdrop-filter:saturate(150%) blur(12px);
+  border-bottom:1px solid var(--line)}
+.site-head .wrap{display:flex;align-items:center;justify-content:space-between;height:var(--header-h);gap:24px}
+.brand{display:flex;align-items:center;gap:11px;flex:none}
+.brand .mark{width:36px;height:36px;border-radius:var(--r-circle);background:var(--tomato);display:grid;place-items:center;color:#fff;font-size:16px;flex:none}
+.brand .word{font-weight:800;font-size:21px;letter-spacing:-.01em;color:var(--slate)}
+.brand .word b{color:var(--tomato);font-weight:800}
+.nav-main{display:flex;align-items:center;gap:2px;margin-left:8px}
+.nav-link{position:relative;display:inline-flex;align-items:center;gap:7px;font-weight:700;font-size:15px;color:var(--slate);
+  padding:9px 13px;border-radius:var(--r-md);background:transparent;border:0;cursor:pointer;transition:.2s var(--ease)}
+.nav-link:hover{color:var(--tomato);background:var(--tomato-tint)}
+.nav-link i.caret{font-size:10px;opacity:.5;transition:transform .2s var(--ease)}
+.nav-item.open .nav-link i.caret{transform:rotate(180deg)}
+.head-actions{display:flex;align-items:center;gap:10px;margin-left:auto;flex:none}
+.icon-btn{width:42px;height:42px;display:grid;place-items:center;border-radius:var(--r-md);
+  border:1px solid var(--line);color:var(--slate);background:var(--paper);cursor:pointer;transition:.2s var(--ease)}
+.icon-btn:hover{border-color:var(--tomato);color:var(--tomato)}
+.hamburger{display:none}
+/* MEGA: Dünyalar (açık) */
+.nav-item{position:relative}
+.mega{position:absolute;top:calc(100% + 12px);left:0;transform:translateY(8px);
+  width:min(840px,92vw);background:var(--paper);border:1px solid var(--line);border-radius:var(--r-xl);
+  box-shadow:var(--sh-3);padding:20px;opacity:0;visibility:hidden;transition:.26s var(--ease);z-index:40}
+.nav-item.open .mega{opacity:1;visibility:visible;transform:translateY(0)}
+.mega-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}
+.mw{display:flex;flex-direction:column;gap:9px;padding:15px 14px;border-radius:var(--r-lg);
+  background:var(--bg);border:1px solid var(--line);border-top:3px solid var(--bc);
+  transition:transform .2s var(--ease),box-shadow .2s var(--ease)}
+.mw:hover{transform:translateY(-4px);box-shadow:var(--sh-2)}
+.mw .mw-ic{width:36px;height:36px;border-radius:var(--r-md);display:grid;place-items:center;font-size:15px;
+  background:color-mix(in srgb,var(--bc) 14%,var(--paper));color:var(--bc)}
+.mw .mw-nm{font-weight:800;font-size:14.5px;color:var(--slate)}
+.mw .mw-rl{font-size:12px;color:var(--muted);line-height:1.45;flex:1}
+.mw .mw-go{font-weight:700;font-size:11.5px;color:var(--bc);display:inline-flex;align-items:center;gap:6px}
+.mega-store{margin-top:12px;display:flex;align-items:center;justify-content:space-between;gap:16px;
+  padding:14px 18px;border-radius:var(--r-lg);background:var(--tomato-tint);border:1px solid color-mix(in srgb,var(--tomato) 26%,transparent)}
+.mega-store .ms-l{display:flex;align-items:center;gap:13px}
+.mega-store .ms-ic{width:38px;height:38px;border-radius:var(--r-md);background:var(--tomato);color:#fff;display:grid;place-items:center;font-size:15px}
+.mega-store .ms-nm{font-weight:800;font-size:14.5px;color:var(--slate)}
+.mega-store .ms-rl{font-size:12px;color:var(--slate-2)}
+
+/* ====================== HERO — TEK EKRAN (flex:1 · panel + preview) ====================== */
+.hero{position:relative;flex:1 1 auto;min-height:0;display:grid;align-items:stretch;
+  padding:24px 30px;background:
+  radial-gradient(46% 38% at 16% 18%, var(--tomato-tint) 0%, transparent 60%),
+  radial-gradient(50% 46% at 88% 86%, color-mix(in srgb,var(--b-gourmet) 8%,transparent) 0%, transparent 64%),
+  var(--bg)}
+.hero-stage{position:relative;z-index:2;width:100%;max-width:1340px;margin-inline:auto;
+  display:grid;grid-template-columns:392px 1fr;gap:30px;align-items:stretch;min-height:540px}
+
+/* ---- SOL: MENTOR PANELİ (KOYU video kart · açık zemine oturur) ---- */
+.mentor-panel{position:relative;display:flex;flex-direction:column;justify-content:space-between;
+  min-height:0;overflow:hidden;border:1px solid var(--line);border-radius:var(--r-xl);
+  box-shadow:var(--sh-3);background:var(--d-deep);transition:transform .4s var(--ease),opacity .35s var(--ease)}
+.mentor-panel.closed{transform:translateX(-18px) scale(.98);opacity:0;visibility:hidden;pointer-events:none}
+.mp-media{position:absolute;inset:0;z-index:0;overflow:hidden}
+.mp-atmos{position:absolute;inset:0;background:
+  radial-gradient(110% 60% at 34% 24%, rgba(var(--tomato-rgb),.24), transparent 58%),
+  linear-gradient(162deg,var(--d-3) 0%,var(--d-deep) 92%)}
+.mp-media video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.mentor-panel.ss-mode .mp-media video{display:none}
+.mp-fade{position:absolute;inset:0;z-index:1;pointer-events:none;background:
+  linear-gradient(180deg, rgba(22,19,16,.05) 0%, transparent 30%, rgba(22,19,16,.34) 54%, rgba(22,19,16,.82) 78%, rgba(22,19,16,.97) 100%)}
+.mp-top{position:relative;z-index:3;display:flex;align-items:center;justify-content:space-between;padding:15px 16px}
+.mp-tag{display:inline-flex;align-items:center;gap:8px;font-weight:300;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:rgba(255,255,255,.82)}
+.mp-tag i{font-size:11px;color:var(--tomato)}
+.mp-close{width:30px;height:30px;border-radius:var(--r-circle);border:1px solid var(--dline);
+  background:rgba(22,19,16,.40);backdrop-filter:blur(4px);color:rgba(255,255,255,.8);
+  display:grid;place-items:center;cursor:pointer;font-size:12px;transition:.2s var(--ease)}
+.mp-close:hover{color:#fff;border-color:rgba(255,255,255,.4)}
+.mp-chat{position:relative;z-index:3;padding:0 16px 17px;display:flex;flex-direction:column;gap:11px;max-height:62%}
+.mp-id{display:flex;align-items:center;gap:11px;flex:none}
+.mp-av{width:38px;height:38px;border-radius:var(--r-circle);background:var(--tomato);color:#fff;display:grid;place-items:center;font-size:15px;flex:none;
+  box-shadow:0 0 0 4px rgba(var(--tomato-rgb),.22)}
+.mp-id .nm{font-weight:800;font-size:15.5px;color:#fff;line-height:1.1}
+.mp-id .on{display:inline-flex;align-items:center;gap:6px;font-weight:300;font-size:11px;letter-spacing:.04em;color:rgba(255,255,255,.74)}
+.mp-id .on .d{width:7px;height:7px;border-radius:var(--r-circle);background:var(--b-diet-l);box-shadow:0 0 0 3px color-mix(in srgb,var(--b-diet-l) 28%,transparent)}
+.mp-bubble{flex:none;align-self:flex-start;max-width:94%;background:rgba(38,34,29,.86);backdrop-filter:blur(7px);border:1px solid var(--dline);
+  border-radius:4px 15px 15px 15px;padding:12px 15px;font-weight:600;font-size:15.5px;line-height:1.4;color:#fff}
+.mp-steps{flex:0 0 auto;display:flex;flex-direction:column;overflow:visible}
+/* çipler: offmenu pill — kısa metin, küçük hap, wrap, ikon/açıklama/ok YOK */
+.mp-step{display:none;flex-wrap:wrap;gap:8px}
+.mentor-panel[data-step="home"]   .mp-step[data-s="home"],
+.mentor-panel[data-step="worlds"] .mp-step[data-s="worlds"]{display:flex;animation:mpIn .3s var(--ease)}
+@keyframes mpIn{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:translateY(0)}}
+.mp-opt{display:inline-flex;align-items:center;cursor:pointer;white-space:nowrap;
+  padding:9px 15px;border-radius:var(--r-md);background:rgba(22,19,16,.50);backdrop-filter:blur(7px);
+  border:1px solid var(--dline);color:rgba(255,255,255,.92);font-weight:600;font-size:13px;letter-spacing:.005em;
+  transition:background .2s var(--ease),border-color .2s var(--ease),color .2s var(--ease),transform .2s var(--ease)}
+.mp-opt:hover{background:rgba(42,38,32,.86);border-color:var(--bc,var(--tomato));color:#fff}
+.mp-opt.active{background:var(--bc,var(--tomato));border-color:transparent;color:#fff;
+  box-shadow:0 5px 18px color-mix(in srgb,var(--bc,var(--tomato)) 42%,transparent)}
+.mp-back{flex-basis:100%;display:inline-flex;align-items:center;gap:8px;cursor:pointer;margin-bottom:2px;
+  background:none;border:0;color:rgba(255,255,255,.66);font-weight:700;font-size:12px;letter-spacing:.04em;padding:2px 0;transition:color .2s var(--ease)}
+.mp-back i{font-size:11px}
+.mp-back:hover{color:#fff}
+/* panel yeniden-aç sekmesi */
+.mp-reopen{position:absolute;left:0;top:50%;transform:translateY(-50%) translateX(-120%);z-index:8;
+  display:inline-flex;align-items:center;gap:9px;padding:11px 17px;border-radius:0 var(--r-pill) var(--r-pill) 0;
+  background:var(--paper);border:1px solid var(--line);border-left:0;color:var(--slate);cursor:pointer;
+  font-weight:700;font-size:13px;box-shadow:var(--sh-2);transition:transform .35s var(--ease),opacity .3s var(--ease);opacity:0}
+.mp-reopen.show{transform:translateY(-50%) translateX(0);opacity:1}
+.mp-reopen i{color:var(--tomato)}
+
+/* ---- SAĞ: PREVIEW SAHNESİ (alt4 · görsel kart) ---- */
+.preview-wrap{position:relative;min-width:0}
+.split-scene{position:relative;height:100%;border-radius:var(--r-xl);overflow:hidden;border:1px solid var(--line);box-shadow:var(--sh-3);background:var(--d-deep)}
+.sr-bg{position:absolute;inset:0;background-size:cover;background-position:center;transition:opacity .55s var(--ease),transform .7s var(--ease)}
+.split-scene:hover .sr-bg{transform:scale(1.03)}
+.sr-overlay{position:absolute;inset:0;z-index:1;pointer-events:none;background:
+  linear-gradient(180deg, rgba(16,14,9,.42) 0%, rgba(16,14,9,.22) 26%, rgba(16,14,9,.58) 60%, rgba(16,14,9,.90) 100%),
+  linear-gradient(90deg, rgba(16,14,9,.46) 0%, transparent 56%)}
+.sr-grain{position:absolute;inset:0;z-index:2;opacity:.22;mix-blend-mode:overlay;pointer-events:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.4'/%3E%3C/svg%3E")}
+.sr-content{position:absolute;inset:0;z-index:3;display:flex;flex-direction:column;justify-content:space-between;
+  padding:40px 46px 42px;transition:opacity .32s var(--ease),transform .32s var(--ease)}
+.sr-content.tx-out{opacity:0;transform:translateY(10px)}
+.sr-eyebrow{display:inline-flex;align-items:center;gap:9px;margin-bottom:16px;font-weight:700;font-size:11px;letter-spacing:.18em;text-transform:uppercase}
+.sr-eyebrow-dot{width:6px;height:6px;border-radius:var(--r-circle);background:var(--bc);flex:none}
+.sr-eyebrow-txt{color:var(--bl)}
+.sr-world-name{font-weight:800;font-size:clamp(40px,4.4vw,62px);line-height:1.0;letter-spacing:-.04em;color:#fff;text-shadow:0 2px 44px rgba(0,0,0,.5);margin-bottom:14px}
+.sr-tagline{font-weight:500;font-size:16.5px;color:rgba(255,255,255,.84);line-height:1.5;max-width:38ch;margin-bottom:18px}
+.sr-metric{display:inline-flex;align-items:center;gap:9px;font-weight:700;font-size:13px;letter-spacing:.04em;
+  color:#fff;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.22);backdrop-filter:blur(8px);padding:7px 17px;border-radius:var(--r-pill)}
+.sr-metric i{font-size:12px}
+.sr-bottom{display:flex;flex-direction:column;gap:16px}
+.sr-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:11px}
+.sr-card{padding:14px 16px;border-radius:var(--r-lg);background:rgba(22,19,14,.62);backdrop-filter:blur(10px);
+  border:1px solid rgba(251,248,243,.10);border-top:2px solid var(--bc);display:flex;flex-direction:column;gap:5px;
+  transition:background .22s var(--ease),transform .22s var(--ease)}
+.sr-card:hover{background:rgba(22,19,14,.84);transform:translateY(-3px)}
+.sc-tag{font-weight:300;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--bl)}
+.sc-title{font-weight:800;font-size:13px;color:#fff;line-height:1.3}
+.sr-cta-bar{display:flex;align-items:center;justify-content:space-between;gap:16px}
+.sr-hint{font-weight:300;font-size:13px;color:rgba(255,255,255,.52);letter-spacing:.01em}
+.btn-enter{display:inline-flex;align-items:center;gap:10px;font-weight:800;font-size:14.5px;padding:13px 26px;border-radius:var(--r-md);
+  background:var(--bc);color:#fff;border:1px solid transparent;cursor:pointer;
+  box-shadow:0 6px 24px color-mix(in srgb,var(--bc) 40%,transparent);transition:.22s var(--ease)}
+.btn-enter:hover{filter:brightness(1.08);transform:translateY(-2px)}
+.btn-enter i{transition:transform .22s var(--ease)}
+.btn-enter:hover i{transform:translateX(4px)}
+
+/* ====================== FOOTER (sade · açık · ince üst bant) ====================== */
+.footer{flex:none;background:var(--paper);border-top:1px solid var(--line)}
+.footer .wrap{display:flex;align-items:center;justify-content:space-between;gap:24px;flex-wrap:wrap;height:58px}
+.foot-l{display:flex;align-items:center;gap:18px;flex-wrap:wrap}
+.foot-l .ft-brand{font-weight:800;font-size:14px;color:var(--slate)}
+.foot-l .ft-brand b{color:var(--tomato)}
+.foot-links{display:flex;align-items:center;gap:4px 16px;flex-wrap:wrap}
+.foot-links a{display:inline-flex;align-items:center;gap:7px;color:var(--muted);font-size:13px;font-weight:600;transition:color .18s var(--ease)}
+.foot-links a:hover{color:var(--slate)}
+.foot-links a .dotc{width:7px;height:7px;border-radius:var(--r-circle);flex:none}
+.foot-r{display:flex;align-items:center;gap:14px;flex-wrap:wrap;color:var(--muted);font-size:12px}
+.foot-r a{color:var(--muted);transition:color .18s var(--ease)}
+.foot-r a:hover{color:var(--slate)}
+.foot-r .sep{width:1px;height:11px;background:var(--line);flex:none}
+
+/* ====================== DRAWER (mobil · açık) ====================== */
+.drawer-back{position:fixed;inset:0;background:rgba(33,30,22,.42);opacity:0;visibility:hidden;transition:.3s var(--ease);z-index:90}
+.drawer-back.open{opacity:1;visibility:visible}
+.drawer{position:fixed;top:0;right:0;bottom:0;width:min(360px,88vw);background:var(--paper);border-left:1px solid var(--line);
+  transform:translateX(100%);transition:transform .32s var(--ease);z-index:91;padding:22px;overflow-y:auto;display:flex;flex-direction:column;gap:8px}
+.drawer.open{transform:translateX(0)}
+.drawer-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.drawer .d-sec{font-weight:300;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin:8px 12px 6px}
+.drawer .d-world{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:var(--r-md);background:var(--bg);
+  border:1px solid var(--line);border-left:3px solid var(--bc);margin-bottom:7px;color:var(--slate);font-weight:700;font-size:14px}
+.drawer .d-world i{color:var(--bc)}
+.drawer-cta{display:flex;flex-direction:column;gap:10px;margin-top:18px}
+
+/* ====================== RESPONSIVE ====================== */
+@media (max-width:1080px){
+  body{display:block}
+  .hero{display:block;padding:92px 0 48px}
+  .hero-stage{grid-template-columns:1fr;gap:18px;max-width:480px;margin-inline:auto;padding-inline:24px;align-items:stretch}
+  .mentor-panel{min-height:500px}
+  .mp-chat{max-height:none}
+  .mp-steps{overflow:visible}
+  .split-scene{min-height:430px}
+  .sr-content{padding:32px 28px 28px}
+  .footer .wrap{height:auto;padding-block:18px;flex-direction:column;align-items:flex-start;gap:14px}
+}
+@media (max-width:760px){
+  .nav-main{display:none}
+  .head-actions .btn{display:none}
+  .hamburger{display:grid}
+  .sr-cards{grid-template-columns:1fr 1fr}
+  .sr-world-name{font-size:clamp(34px,9vw,44px)}
+  .sr-cta-bar{flex-direction:column;align-items:stretch;gap:12px}
+  .btn-enter{justify-content:center}
+}
+@media (max-width:430px){ .sr-cards{grid-template-columns:1fr} }
+</style>
+</head>
+<body>
+
+<!-- ============ HEADER ============ -->
+<header class="site-head" id="siteHead"><div class="wrap">
+  <a class="brand" href="dadamentor-v1.html" aria-label="DadaMentor ana sayfa">
+    <span class="mark"><i class="fa-solid fa-compass"></i></span>
+    <span class="word">Dada<b>Mentor</b></span>
+  </a>
+  <nav class="nav-main">
+    <div class="nav-item" id="navWorlds">
+      <button class="nav-link" type="button" aria-haspopup="true" aria-expanded="false">Dünyalar <i class="fa-solid fa-chevron-down caret"></i></button>
+      <div class="mega" role="menu">
+        <div class="mega-grid">
+          <a class="mw w-gastro" href="anasayfa-portal-v3a.html" role="menuitem">
+            <span class="mw-ic"><i class="fa-solid fa-utensils"></i></span>
+            <span class="mw-nm">DadaGastro</span>
+            <span class="mw-rl">Tarifler, "ne pişirsem", mutfak çekirdeği.</span>
+            <span class="mw-go">Keşfet <i class="fa-solid fa-arrow-right"></i></span>
+          </a>
+          <a class="mw w-gourmet" href="kesfet-v1.html" role="menuitem">
+            <span class="mw-ic"><i class="fa-solid fa-map-location-dot"></i></span>
+            <span class="mw-nm">DadaGourmet</span>
+            <span class="mw-rl">Mekânlar, gurme lezzetler, etkinlikler.</span>
+            <span class="mw-go">Keşfet <i class="fa-solid fa-arrow-right"></i></span>
+          </a>
+          <a class="mw w-diet" href="saglik-hub-v1.html" role="menuitem">
+            <span class="mw-ic"><i class="fa-solid fa-leaf"></i></span>
+            <span class="mw-nm">DadaDiet</span>
+            <span class="mw-rl">Diyetisyenler, hesaplayıcılar, sağlıklı yaşam.</span>
+            <span class="mw-go">Keşfet <i class="fa-solid fa-arrow-right"></i></span>
+          </a>
+          <a class="mw w-fit" href="dadafit-hub-v1.html" role="menuitem">
+            <span class="mw-ic"><i class="fa-solid fa-dumbbell"></i></span>
+            <span class="mw-nm">DadaFit</span>
+            <span class="mw-rl">Antrenörler, programlar, hareket.</span>
+            <span class="mw-go">Keşfet <i class="fa-solid fa-arrow-right"></i></span>
+          </a>
+          <a class="mw w-akademi" href="akademi-v1.html" role="menuitem">
+            <span class="mw-ic"><i class="fa-solid fa-graduation-cap"></i></span>
+            <span class="mw-nm">DadaAkademi</span>
+            <span class="mw-rl">Eğitimler, ansiklopedi, öğren.</span>
+            <span class="mw-go">Keşfet <i class="fa-solid fa-arrow-right"></i></span>
+          </a>
+        </div>
+        <a class="mega-store" href="dada-shop-v1.html">
+          <span class="ms-l">
+            <span class="ms-ic"><i class="fa-solid fa-bag-shopping"></i></span>
+            <span><span class="ms-nm">DadaStore</span><br><span class="ms-rl">Mutfak ürünleri & ekipman</span></span>
+          </span>
+          <span class="mw-go" style="color:var(--tomato);font-weight:700;font-size:11.5px">Mağazaya git <i class="fa-solid fa-arrow-right"></i></span>
+        </a>
+      </div>
+    </div>
+  </nav>
+  <div class="head-actions">
+    <button class="icon-btn" type="button" aria-label="Ara"><i class="fa-solid fa-magnifying-glass"></i></button>
+    <a class="btn btn-ghost" href="#" id="hdGiris">Giriş</a>
+    <a class="btn btn-tomato" href="#">Üye Ol</a>
+    <button class="icon-btn hamburger" type="button" id="hamburger" aria-label="Menü"><i class="fa-solid fa-bars"></i></button>
+  </div>
+</div></header>
+
+<!-- ============ HERO — TEK EKRAN (panel + preview) ============ -->
+<section class="hero" id="hero">
+  <div class="hero-stage">
+
+    <!-- SOL: MENTOR PANELİ -->
+    <aside class="mentor-panel" id="mentorPanel" data-step="home" aria-label="Mentor asistan">
+      <div class="mp-media">
+        <div class="mp-atmos"></div>
+        <video id="mentorVideo" autoplay muted loop playsinline preload="auto">
+          <source src="assets/video/mentor-panel.mp4" type="video/mp4" />
+        </video>
+      </div>
+      <div class="mp-fade"></div>
+
+      <div class="mp-top">
+        <span class="mp-tag"><i class="fa-solid fa-comment-dots"></i> Mentor</span>
+        <button class="mp-close" type="button" id="mpClose" aria-label="Paneli kapat"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+
+      <div class="mp-chat">
+        <div class="mp-id">
+          <span class="mp-av"><i class="fa-solid fa-compass"></i></span>
+          <span><span class="nm">DadaMentor</span><br><span class="on"><span class="d"></span> çevrimiçi</span></span>
+        </div>
+        <div class="mp-bubble" id="mpBubble">Bugün neye ihtiyacın var?</div>
+
+        <div class="mp-steps">
+          <!-- ADIM: home -->
+          <div class="mp-step" data-s="home">
+            <button class="mp-opt" type="button" data-go="worlds">Nereden başlamalıyım?</button>
+            <button class="mp-opt w-store" type="button" data-idx="5">Bugünün panosu</button>
+            <button class="mp-opt w-store" type="button" data-idx="6">Bir şeye mi ihtiyacın var?</button>
+          </div>
+
+          <!-- ADIM: worlds -->
+          <div class="mp-step" data-s="worlds">
+            <button class="mp-back" type="button" data-go="home"><i class="fa-solid fa-arrow-left"></i> Geri</button>
+            <button class="mp-opt w-gastro" type="button" data-idx="0">DadaGastro</button>
+            <button class="mp-opt w-gourmet" type="button" data-idx="1">DadaGourmet</button>
+            <button class="mp-opt w-diet" type="button" data-idx="2">DadaDiet</button>
+            <button class="mp-opt w-fit" type="button" data-idx="3">DadaFit</button>
+            <button class="mp-opt w-akademi" type="button" data-idx="4">DadaAkademi</button>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- panel yeniden-aç sekmesi -->
+    <button class="mp-reopen" type="button" id="mpReopen"><i class="fa-solid fa-comment-dots"></i> Mentor</button>
+
+    <!-- SAĞ: PREVIEW SAHNESİ (alt4) -->
+    <div class="preview-wrap">
+      <div class="split-scene" id="splitScene">
+        <div class="sr-bg" id="srBg"></div>
+        <div class="sr-overlay"></div>
+        <div class="sr-grain"></div>
+        <div class="sr-content" id="srContent">
+          <div class="sr-top">
+            <div class="sr-eyebrow w-gastro" id="srEyebrow">
+              <span class="sr-eyebrow-dot"></span>
+              <span class="sr-eyebrow-txt" id="srEyebrowTxt">DadaGastro · Pişir</span>
+            </div>
+            <h2 class="sr-world-name" id="srWorldName">DadaGastro</h2>
+            <p class="sr-tagline" id="srTagline">Binlerce tarif, bir dokunuşta pişirme keyfine ulaş.</p>
+            <div class="sr-metric w-gastro" id="srMetric">
+              <i class="fa-solid fa-bowl-food"></i><span id="srMetricTxt">12B+ tarif &amp; içerik</span>
+            </div>
+          </div>
+          <div class="sr-bottom">
+            <div class="sr-cards" id="srCards"></div>
+            <div class="sr-cta-bar">
+              <p class="sr-hint" id="srHint">Soldan bir dünya seç, sahnesi burada açılsın.</p>
+              <a class="btn-enter w-gastro" id="srEnter" href="anasayfa-portal-v3a.html">Dünyaya gir <i class="fa-solid fa-arrow-right"></i></a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /hero-stage -->
+</section>
+
+<!-- ============ FOOTER (ince üst bant) ============ -->
+<footer class="footer"><div class="wrap">
+  <div class="foot-l">
+    <span class="ft-brand">Dada<b>Mentor</b></span>
+    <nav class="foot-links">
+      <a href="anasayfa-portal-v3a.html"><span class="dotc" style="background:var(--b-gastro)"></span>Gastro</a>
+      <a href="kesfet-v1.html"><span class="dotc" style="background:var(--b-gourmet)"></span>Gourmet</a>
+      <a href="saglik-hub-v1.html"><span class="dotc" style="background:var(--b-diet)"></span>Diet</a>
+      <a href="dadafit-hub-v1.html"><span class="dotc" style="background:var(--b-fit)"></span>Fit</a>
+      <a href="akademi-v1.html"><span class="dotc" style="background:var(--b-akademi)"></span>Akademi</a>
+      <a href="dada-shop-v1.html"><span class="dotc" style="background:var(--b-store)"></span>Store</a>
+    </nav>
+  </div>
+  <div class="foot-r">
+    <span>© 2026 DadaMentor</span><span class="sep"></span>
+    <a href="#">Gizlilik</a><span class="sep"></span><a href="#">KVKK</a>
+  </div>
+</div></footer>
+
+<!-- ============ DRAWER (mobil) ============ -->
+<div class="drawer-back" id="drawerBack"></div>
+<aside class="drawer" id="drawer" aria-hidden="true">
+  <div class="drawer-top">
+    <a class="brand" href="dadamentor-v1.html"><span class="mark"><i class="fa-solid fa-compass"></i></span><span class="word">Dada<b>Mentor</b></span></a>
+    <button class="icon-btn" type="button" id="drawerClose" aria-label="Kapat"><i class="fa-solid fa-xmark"></i></button>
+  </div>
+  <div class="d-sec">Dünyalar</div>
+  <a class="d-world w-gastro" href="anasayfa-portal-v3a.html"><i class="fa-solid fa-utensils"></i> DadaGastro</a>
+  <a class="d-world w-gourmet" href="kesfet-v1.html"><i class="fa-solid fa-map-location-dot"></i> DadaGourmet</a>
+  <a class="d-world w-diet" href="saglik-hub-v1.html"><i class="fa-solid fa-leaf"></i> DadaDiet</a>
+  <a class="d-world w-fit" href="dadafit-hub-v1.html"><i class="fa-solid fa-dumbbell"></i> DadaFit</a>
+  <a class="d-world w-akademi" href="akademi-v1.html"><i class="fa-solid fa-graduation-cap"></i> DadaAkademi</a>
+  <a class="d-world w-store" href="dada-shop-v1.html"><i class="fa-solid fa-bag-shopping"></i> DadaStore</a>
+  <div class="drawer-cta">
+    <a class="btn btn-ghost btn-block" href="#">Giriş</a>
+    <a class="btn btn-tomato btn-block" href="#">Üye Ol</a>
+  </div>
+</aside>
+
+<script>
+(function(){
+  "use strict";
+  /* Dünyalar mega */
+  var worlds=document.getElementById('navWorlds');
+  var wbtn=worlds.querySelector('.nav-link');
+  wbtn.addEventListener('click',function(e){ e.stopPropagation();
+    var open=worlds.classList.toggle('open'); wbtn.setAttribute('aria-expanded',open); });
+  worlds.addEventListener('mouseenter',function(){ worlds.classList.add('open'); wbtn.setAttribute('aria-expanded','true'); });
+  worlds.addEventListener('mouseleave',function(){ worlds.classList.remove('open'); wbtn.setAttribute('aria-expanded','false'); });
+  document.addEventListener('click',function(e){ if(!worlds.contains(e.target)){ worlds.classList.remove('open'); wbtn.setAttribute('aria-expanded','false'); } });
+  document.addEventListener('keydown',function(e){ if(e.key==='Escape') worlds.classList.remove('open'); });
+
+  /* ====== PREVIEW VERİSİ (7 sahne: 5 dünya + pano + store) ====== */
+  var W=[
+    {cls:'w-gastro',href:'anasayfa-portal-v3a.html',name:'DadaGastro',eyebrow:'DadaGastro · Pişir',
+     tagline:'Binlerce tarif, bir dokunuşta pişirme keyfine ulaş.',metricIcon:'fa-bowl-food',metricTxt:'12B+ tarif &amp; içerik',
+     img:'https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=1600&q=80',
+     cards:[{tag:'Öne çıkan',title:'Kırmızı mercimek çorbası'},{tag:'Hızlı tarif',title:'Sebzeli fırın makarna'},{tag:'Tatlı',title:'Sütlaç — fırında klasik'}],
+     hint:'Tarife hemen başla — binlerce seçenek seni bekliyor.'},
+    {cls:'w-gourmet',href:'kesfet-v1.html',name:'DadaGourmet',eyebrow:'DadaGourmet · Keşfet',
+     tagline:'Gurme mekânlar, lezzet rotaları ve şehrin sırrı.',metricIcon:'fa-map-location-dot',metricTxt:'850+ mekân &amp; etkinlik',
+     img:'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=1600&q=80',
+     cards:[{tag:'Lezzet rotası',title:'Karaköy sokak lezzetleri'},{tag:'Yeni açıldı',title:'Nişantaşı Bistro'},{tag:'Etkinlik',title:'Şarap degüstasyon gecesi'}],
+     hint:'Şehrin en iyi sofralarını keşfet.'},
+    {cls:'w-diet',href:'saglik-hub-v1.html',name:'DadaDiet',eyebrow:'DadaDiet · Sağlıklı Yaşa',
+     tagline:'Diyetisyenin yanında, kendi sağlık yolunda ilerle.',metricIcon:'fa-user-doctor',metricTxt:'140+ uzman diyetisyen',
+     img:'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=1600&q=80',
+     cards:[{tag:'Hesaplayıcı',title:'Günlük kalori ihtiyacın'},{tag:'Diyet planı',title:'Akdeniz diyeti — 7 gün'},{tag:'Uzman',title:'Diyetisyen randevusu al'}],
+     hint:'Sağlıklı yaşam bir alışkanlıktır — bugün başla.'},
+    {cls:'w-fit',href:'dadafit-hub-v1.html',name:'DadaFit',eyebrow:'DadaFit · Hareket Et',
+     tagline:'Antrenörünle hareket et, dönüşümünü hisset.',metricIcon:'fa-dumbbell',metricTxt:'200+ antrenman programı',
+     img:'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?auto=format&fit=crop&w=1600&q=80',
+     cards:[{tag:'Başlangıç',title:'30 günlük fit program'},{tag:'Antrenör',title:'Kişisel koçunla tanış'},{tag:'Hareket',title:'Evde HIIT — 20 dakika'}],
+     hint:'Her hareket bir başlangıç. Programını bul.'},
+    {cls:'w-akademi',href:'akademi-v1.html',name:'DadaAkademi',eyebrow:'DadaAkademi · Öğren',
+     tagline:'Mutfak bilimi, beslenme rehberleri ve ilham veren içerikler.',metricIcon:'fa-graduation-cap',metricTxt:'500+ içerik &amp; kurs',
+     img:'https://images.unsplash.com/photo-1556910103-1c02745aae4d?auto=format&fit=crop&w=1600&q=80',
+     cards:[{tag:'Kurs',title:'Bıçak kullanım teknikleri'},{tag:'Ansiklopedi',title:'Baharatların dünyası'},{tag:'İlham',title:'Şef hikâyeleri'}],
+     hint:'Öğrenmek bir lezzettir — merakınla gir.'},
+    {cls:'w-store',href:'saglik-hub-v1.html',name:'Bugünün Panosu',eyebrow:'Bugünün Panosu · Sana özel',
+     tagline:'Tarif, su, antrenman ve günün ipucu — hepsi bir bakışta.',metricIcon:'fa-sun',metricTxt:'4 günlük öneri',
+     img:'https://images.unsplash.com/photo-1490645935967-10de6ba17061?auto=format&fit=crop&w=1600&q=80',
+     cards:[{tag:'Tarif',title:'Fırında köz patlıcan'},{tag:'Su',title:'5 / 8 bardak'},{tag:'Antrenman',title:'20 dk mobilite'}],
+     hint:'Gününü planlamaya hazır mısın?'},
+    {cls:'w-store',href:'dada-shop-v1.html',name:'DadaStore',eyebrow:'DadaStore · Alışveriş',
+     tagline:'Özenle seçilmiş mutfak ekipmanları ve hediyeler.',metricIcon:'fa-bag-shopping',metricTxt:'2.000+ ürün',
+     img:'https://images.unsplash.com/photo-1556911220-bff31c812dba?auto=format&fit=crop&w=1600&q=80',
+     cards:[{tag:'Öne çıkan',title:'Dökme demir tava seti'},{tag:'Yeni',title:'Sürdürülebilir mutfak seti'},{tag:'İndirimde',title:'Bıçak seti — %30 off'}],
+     hint:'Tariften masaya eksiksiz bir mutfak.'}
+  ];
+
+  var current=-1, busy=false;
+  var srBg=document.getElementById('srBg'), srContent=document.getElementById('srContent');
+  var srEyebrow=document.getElementById('srEyebrow'), srEyeTxt=document.getElementById('srEyebrowTxt');
+  var srName=document.getElementById('srWorldName'), srTagline=document.getElementById('srTagline');
+  var srMetric=document.getElementById('srMetric'), srMetTxt=document.getElementById('srMetricTxt');
+  var srCards=document.getElementById('srCards'), srHint=document.getElementById('srHint'), srEnter=document.getElementById('srEnter');
+  var panel=document.getElementById('mentorPanel');
+  var opts=panel.querySelectorAll('.mp-opt[data-idx]');
+
+  function cardsHtml(w){ return w.cards.map(function(c){
+    return '<div class="sr-card '+w.cls+'"><span class="sc-tag">'+c.tag+'</span><span class="sc-title">'+c.title+'</span></div>'; }).join(''); }
+  function applyContent(w){
+    srEyebrow.className='sr-eyebrow '+w.cls; srEyeTxt.textContent=w.eyebrow;
+    srName.textContent=w.name; srTagline.textContent=w.tagline;
+    srMetric.className='sr-metric '+w.cls; srMetric.innerHTML='<i class="fa-solid '+w.metricIcon+'"></i><span>'+w.metricTxt+'</span>';
+    srCards.innerHTML=cardsHtml(w); srHint.textContent=w.hint;
+    srEnter.className='btn-enter '+w.cls; srEnter.setAttribute('href',w.href);
+  }
+  function setActive(idx){ opts.forEach(function(o){ o.classList.toggle('active',+o.getAttribute('data-idx')===idx); }); }
+  function switchTo(idx){
+    if(idx===current||busy) return; busy=true;
+    setActive(idx);
+    var w=W[idx]; srBg.style.backgroundImage="url('"+w.img+"')";
+    srContent.classList.add('tx-out');
+    setTimeout(function(){ applyContent(w); srContent.classList.remove('tx-out'); current=idx; busy=false; },260);
+  }
+  (function(){ var w=W[0]; srBg.style.backgroundImage="url('"+w.img+"')"; applyContent(w); current=0; })();
+
+  /* MENTOR PANELİ — adım + preview tetikleme */
+  var bubble=document.getElementById('mpBubble');
+  var bubbleTxt={home:'Bugün neye ihtiyacın var?',worlds:'Beş dünya, tek çatı — hangisini görmek istersin?'};
+  function setStep(s){ if(!bubbleTxt[s]) s='home'; panel.setAttribute('data-step',s); bubble.textContent=bubbleTxt[s];
+    var sc=panel.querySelector('.mp-steps'); if(sc) sc.scrollTop=0; }
+  panel.querySelectorAll('.mp-opt,.mp-back').forEach(function(el){
+    el.addEventListener('click',function(){
+      if(el.hasAttribute('data-idx')) switchTo(+el.getAttribute('data-idx'));
+      if(el.hasAttribute('data-go')){ var g=el.getAttribute('data-go'); setStep(g); if(g==='worlds') switchTo(0); }
+    });
+    if(el.hasAttribute('data-idx')){
+      el.addEventListener('mouseenter',function(){ if(window.innerWidth>1080) switchTo(+el.getAttribute('data-idx')); });
+    }
+  });
+
+  /* panel kapat / yeniden aç */
+  var reopen=document.getElementById('mpReopen');
+  document.getElementById('mpClose').addEventListener('click',function(){ panel.classList.add('closed'); reopen.classList.add('show'); });
+  reopen.addEventListener('click',function(){ panel.classList.remove('closed'); reopen.classList.remove('show'); setStep('home'); });
+
+  /* drawer */
+  var drawer=document.getElementById('drawer'), back=document.getElementById('drawerBack');
+  function openD(){ drawer.classList.add('open'); back.classList.add('open'); drawer.setAttribute('aria-hidden','false'); }
+  function closeD(){ drawer.classList.remove('open'); back.classList.remove('open'); drawer.setAttribute('aria-hidden','true'); }
+  document.getElementById('hamburger').addEventListener('click',openD);
+  document.getElementById('drawerClose').addEventListener('click',closeD);
+  back.addEventListener('click',closeD);
+  drawer.querySelectorAll('a').forEach(function(a){ a.addEventListener('click',closeD); });
+
+  /* SS modu */
+  try{ if(/[?&]ss=1/.test(location.search)){ panel.classList.add('ss-mode'); } }catch(e){}
+  try{ var mv=document.getElementById('mentorVideo'); if(mv){ mv.playbackRate=0.8; } }catch(e){}
+  try{ if(localStorage.getItem('dm_user')){ document.body.classList.add('is-auth'); } }catch(e){}
+})();
+</script>
+</body>
+</html>
