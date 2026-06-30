@@ -114,6 +114,9 @@ KONMAZ (soru/bağlam zaten `mp-bubble`'da). **Köprü çipi = yalnız marka adı
 - [ ] Reveal: `.sec-head`'lere `.reveal`, FOUC-guard, reduced-motion'da içerik görünür. (Not: bazı sayfalarda `.sec-head` markup yok → reveal no-op kalır, zararsız.)
 - [ ] **İç menü (Faz B) hizalandı:** header+drawer'da Keşfet & Sağlıklı Yaşam KALDIRILDI; Püf Noktaları üst-seviye; Mutfak Sırları dropdown/d-sub'ında puf YOK; Dada Store eklendi (header `.nav-store`, drawer `.d-store`); drawer öğeleri `.d-lbl`+ikon; **bottom-nav baseline (dokunulmaz)**; `.nav-store`/`.nav-ico`/`.d-store` CSS taşındı. Arama butonu `brand=` değeri pilotla aynı bırakılır (toplu metin fazına).
 - [ ] **Mentor panel ölçümü:** panel aç (`floating`, `mini` kaldır) → `.mp-chat` yüksekliği **≤ 270px tavan** (@1440; azsa altında serbest) + figür yüzü açık + kimlik öğeleri pilotla aynı (MENTOR/DadaMentor/çevrimiçi/pusula). Pilot referans 270px.
+- [ ] **Reveal görünürlüğü (görsel-only defekt yakalama):** Sayfada `.reveal` varsa → panel/section'ları görünüme getir, her `.reveal` başlığın computed `opacity>0` olduğunu ölç. Reveal JS callback'i `classList.add('in')` eklemeli (CSS `.reveal.in{opacity:1}` ile eşleşir). ⚠️ Hatalı `'revealed'` → başlık opacity:0 kalır, console/taşma VERMEZ. Doğru referans: `kategori-v1`.
+- [ ] **Bant (brand-switch) DOM byte-eşitliği:** `.tb-right` (brand-switch + pill'ler) kanonik `tarif-liste-v1` ile diff'le → aktif-state hariç FARK SIFIR. Pill etiketleri TAM form (`.bd`Dada+`.sf`X, kısa "Gastro" değil); eski `tb-div-worlds` divider kalıntısı OLMAMALI.
+- [ ] **Canlı teyit (push sonrası):** WebFetch'e GÜVENME (15-dk cache, eski gösterir). (a) `raw.githubusercontent` ile repo byte-identik mi + (b) `curl "<url>?cb=$RANDOM"` → `age:0`. Tarayıcı eski = CDN cache → hard-refresh.
 - [ ] Denetim: console 0 · yatay taşma 0 (@1440 + @390) · **cream `#EFE5D3` 0** · giden link/CTA dead-link 0.
 
 ---
