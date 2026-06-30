@@ -762,15 +762,21 @@ html,body{overflow-x:hidden}
    ===================================================================== */
 
 /* ---- HERO: koyu band (liste hero dili) — yeşil sağlık aksanı ---- */
-.sh-top{position:relative;padding-top:128px;background:#15241c;overflow:hidden}
-/* hero media: gerçek video (autoplay/muted/loop/playsinline) + poster = foto; ::after nane overlay video ÜSTÜNDE; içerik .wrap z:2. prefers-reduced-motion → video gizli, poster kalır. */
-.sh-hero-media{position:absolute;inset:0;z-index:0;background:#15241c}
+/* FULL-VIEWPORT hero (Gastro .hero-v kompozisyonu → Diet): tam ekran yükseklik, içerik dikey ortalı */
+.sh-top{position:relative;min-height:100vh;min-height:100svh;display:flex;align-items:center;padding-top:96px;background:#15241c;overflow:hidden}
+/* hero media: optimize lazy video (JS kontrollü) + LOCAL poster (ilk-paint + mobil/reduced/save-data fallback) = bg; ::after nane overlay video ÜSTÜNDE; içerik .wrap z:2. prefers-reduced-motion → video gizli, poster kalır. */
+.sh-hero-media{position:absolute;inset:0;z-index:0;background:#15241c url('assets/img/diet-hero-poster.jpg') center/cover no-repeat}
 .sh-hero-media video{width:100%;height:100%;object-fit:cover;object-position:center 30%;display:block}
 .sh-hero-media::after{content:"";position:absolute;inset:0;background:
   radial-gradient(820px 360px at 84% 12%,rgba(59,183,126,.22),transparent 62%),
   linear-gradient(90deg,rgba(18,28,22,.93) 0%,rgba(20,32,25,.80) 46%,rgba(20,32,25,.55) 100%),
   linear-gradient(180deg,rgba(18,28,22,0) 58%,rgba(16,26,20,.9) 100%)}
 @media (prefers-reduced-motion:reduce){.sh-hero-media video{display:none}}
+/* full-viewport hero alt scroll ipucu */
+.sh-scroll{position:absolute;left:50%;bottom:24px;transform:translateX(-50%);z-index:3;color:rgba(255,255,255,.72);font-size:11.5px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;display:flex;flex-direction:column;align-items:center;gap:8px;pointer-events:none}
+.sh-scroll i{font-size:15px;animation:shbob 1.8s var(--ease) infinite}
+@keyframes shbob{0%,100%{transform:translateY(0)}50%{transform:translateY(6px)}}
+@media (prefers-reduced-motion:reduce){.sh-scroll i{animation:none}}
 .sh-top .wrap{position:relative;z-index:2}
 .sh-top .rd-crumb{color:#bcd0c4}
 .sh-top .rd-crumb a{color:#bcd0c4}
@@ -896,6 +902,7 @@ html,body{overflow-x:hidden}
 
 /* ---- responsive ---- */
 @media (max-width:1024px){
+  .sh-top{align-items:flex-start}/* stacked içerik 100vh'yi aşarsa üstten başla, kırpma yok */
   .sh-hero{grid-template-columns:minmax(0,1fr);align-items:start;gap:22px;padding-bottom:34px}
   .sh-main{min-width:0}
   .sh-htrust{margin-top:18px}
@@ -1267,8 +1274,9 @@ html,body{overflow-x:hidden}
 <!-- ===== HERO: koyu band + yeşil aksan ===== -->
 <section class="below-header sh-top">
   <div class="sh-hero-media" aria-hidden="true">
-    <video autoplay muted loop playsinline preload="auto" poster="https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=1600&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5">
-      <source src="assets/video/diet-hero.mp4" type="video/mp4" />
+    <video class="sh-hero-vid" muted loop playsinline preload="none" poster="assets/img/diet-hero-poster.jpg">
+      <source data-src="assets/video/diet-hero.webm" type="video/webm" />
+      <source data-src="assets/video/diet-hero.mp4" type="video/mp4" />
     </video>
   </div>
   <div class="wrap">
@@ -1331,6 +1339,7 @@ html,body{overflow-x:hidden}
       </aside>
     </div>
   </div>
+  <div class="sh-scroll" aria-hidden="true"><span>Keşfet</span><i class="fa-solid fa-chevron-down"></i></div>
 </section>
 
 <!-- ===== HESAPLAYICILAR ===== -->
@@ -2107,6 +2116,32 @@ window.__bottomStrips=window.__bottomStrips||[];
    param yoksa localStorage'a bakılır. Adım 1 işletme linkleri (İşletmem→Panele Git,
    panel topbar account chip) body.has-business ile rol-koşullu gösterilir. */
 (function(){ /* C1 — dm_business emekli; işletme/rol state'i üstteki dm_user token'ında (is-auth kardeşi). */ })();
+</script>
+<script>
+/* ===== FULL-VIEWPORT HERO — optimize video yükleme (marka-klon hero standardı) =====
+   poster-first paint (CSS bg + poster attr) · lazy IntersectionObserver (viewport'a girince yükle)
+   · mobil statik poster (video HİÇ yüklenmez) · reduced-motion + Save-Data fallback (çift kemer).
+   Asset: assets/video/diet-hero.webm (VP9) + .mp4 (H.264) + assets/img/diet-hero-poster.jpg */
+(function(){
+  var v=document.querySelector('.sh-hero-vid'); if(!v) return;
+  var reduced=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var mobile=window.matchMedia('(max-width:760px)').matches;
+  var saveData=!!(navigator.connection && navigator.connection.saveData);
+  // mobil / reduced-motion / save-data → video YÜKLEME; poster (CSS bg + attr) kalır
+  if(reduced||mobile||saveData) return;
+  function loadVideo(){
+    var srcs=v.querySelectorAll('source[data-src]');
+    for(var i=0;i<srcs.length;i++){ if(!srcs[i].getAttribute('src')) srcs[i].setAttribute('src',srcs[i].getAttribute('data-src')); }
+    v.load();
+    var p=v.play(); if(p && p.catch) p.catch(function(){});
+  }
+  if('IntersectionObserver' in window){
+    var io=new IntersectionObserver(function(es){
+      for(var i=0;i<es.length;i++){ if(es[i].isIntersecting){ loadVideo(); io.disconnect(); break; } }
+    },{threshold:.25});
+    io.observe(v);
+  } else { loadVideo(); }
+})();
 </script>
 </body>
 </html>
