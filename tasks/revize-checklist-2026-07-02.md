@@ -12,7 +12,9 @@ Bu dosya kalıcı yol haritasıdır. Oturum durumu handoff.md'de; buraya sadece 
 - [ ] A4 — DadaDiet güven katmanı UI: disclaimer şeridi + uzman profil alanları (diploma/uzmanlık/kayıt/doğrulama tarihi) + sağlık içerik meta (kaynak/uzman onayı/son güncelleme) — "örnek" çerçeveli iskelet, gerçek data Yasin'den
 - [ ] A5 — Gourmet kesfet → landing restructure: modül önizlemeleri + tab'leri header nav'a ayrı modül + konsept içerik görselli slider (tarif-liste tarzı) + alta mekan-bul widget — BÜYÜK, önce keşif
 - [x] A6 — DadaDiet Diyetisyen Bul sihirbazı — CANLI (76100b2). Yeni `diyetisyen-bul-v1.html` (3 adım: hedef/görüşme/uzman tercihi, dizindeki 9 gerçek profil yeniden kullanıldı, kademeli gevşetme, disclaimer). Kablolama: saglik-hub diet-panel CTA + dizin hero köprü CTA. Mega-menü "Diyetisyen Ara" linkleri (Gastro/utility) BİLİNÇLİ dokunulmadı — istenirse ayrı mikro-iş.
-- [ ] A7 — Etkinlikler gerçek festival datasıyla doldur — data Beyar'dan gelir (doğrulanmış sheet), görsel bizim
+- [x] A7 — Etkinlikler gerçek festival datasıyla doldur — CANLI (d26da8b, 9 gerçek festival Nisan→Ekim 2026)
+- [ ] A7-detay — etkinlik kartlarına detay sayfası (9 festival, karttan tıklama açılmıyor şu an). Pattern: Gourmet mekan-detay-v1. YENİ İŞ, taze session.
+- [ ] A7-cleanup — .ev-note ölü CSS temizliği (A7 data'da markup kalktı) — dead-CSS mikro-iş.
 - [ ] A8 — Mobil ana sayfa: kısa karşılama + 5 modül kartı (Gastro/Diet/Fit/Gourmet/Campus) + kişiselleştirilmiş hızlı aksiyonlar + DadaMentor alanı — BÜYÜK
 
 ## KOVA 2 — İçerik girişi (Yasin brief gerekli)
