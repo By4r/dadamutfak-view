@@ -6,8 +6,9 @@ Bu dosya kalıcı yol haritasıdır. Oturum durumu handoff.md'de; buraya sadece 
 ## KOVA 1 — CC view işleri (bu repo)
 - [x] A2 — Gourmet nav + footer tutarlılığı (header 3-item parite + footer "Gurme Lezzetler" temizliği) — CANLI
 - [x] A3a — Ölü CSS: saglik-hub .rd-crumb (6 satır) — CANLI (df6974d)
-- [ ] A3b — Fit df-* klon-artığı dead-CSS süpürmesi (enerji-defteri: df-bridge-card/df-bc-*/df-chal/df-tdee/df-cta/df-cta-acts ölü ailesi) — CERRAHİ: df-ledger CANLI koru, çok-selektörlü @media'da sadece ölü token'ları çıkar. NOT: enerji-defteri dosyasına A1 (hero) de dokunuyor — çakışmayı önlemek için A1 ile ardışık/tek gate düşünülmeli.
-- [ ] A1 — Enerji Defteri hero kıs + Fit iç sayfa hero tutarlılık taraması (hareket-rehberi kanonik)
+- [x] A3b — Fit df-* klon-artığı dead-CSS süpürmesi (enerji-defteri: df-bridge-card/df-bc-*/df-chal/df-tdee/df-cta/df-cta-acts ölü ailesi) — CERRAHİ: df-ledger CANLI koru, çok-selektörlü @media'da sadece ölü token'ları çıkar. NOT: enerji-defteri dosyasına A1 (hero) de dokunuyor — çakışmayı önlemek için A1 ile ardışık/tek gate düşünülmeli. — CANLI (d485379)
+- [x] A1 — Enerji Defteri hero kıs + Fit iç sayfa hero tutarlılık taraması (hareket-rehberi kanonik) — CANLI (9cf32b1), enerji-defteri hero content-height'a indi
+- [ ] A1b — program-detay + egzersiz-detay aynı full-viewport hero tutarsızlığı (keşifte çıktı, enerji-defteri ile aynı .df-top pattern) — gelecek tur. NOT: dadafit-hub ters durum (hub olduğu halde full-viewport DEĞİL) ayrı inceleme.
 - [ ] A4 — DadaDiet güven katmanı UI: disclaimer şeridi + uzman profil alanları (diploma/uzmanlık/kayıt/doğrulama tarihi) + sağlık içerik meta (kaynak/uzman onayı/son güncelleme) — "örnek" çerçeveli iskelet, gerçek data Yasin'den
 - [ ] A5 — Gourmet kesfet → landing restructure: modül önizlemeleri + tab'leri header nav'a ayrı modül + konsept içerik görselli slider (tarif-liste tarzı) + alta mekan-bul widget — BÜYÜK, önce keşif
 - [ ] A6 — DadaDiet Diyetisyen Ara → sihirbaz/wizard (mekan-bul pattern'ı)
