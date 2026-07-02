@@ -5,7 +5,8 @@ Bu dosya kalıcı yol haritasıdır. Oturum durumu handoff.md'de; buraya sadece 
 
 ## KOVA 1 — CC view işleri (bu repo)
 - [x] A2 — Gourmet nav + footer tutarlılığı (header 3-item parite + footer "Gurme Lezzetler" temizliği) — CANLI
-- [ ] A3 — Ölü CSS temizliği (Diet: .rd-crumb, df-bridge-card, df-cta) — quick-win, grep-teyitli sil
+- [x] A3a — Ölü CSS: saglik-hub .rd-crumb (6 satır) — CANLI (df6974d)
+- [ ] A3b — Fit df-* klon-artığı dead-CSS süpürmesi (enerji-defteri: df-bridge-card/df-bc-*/df-chal/df-tdee/df-cta/df-cta-acts ölü ailesi) — CERRAHİ: df-ledger CANLI koru, çok-selektörlü @media'da sadece ölü token'ları çıkar. NOT: enerji-defteri dosyasına A1 (hero) de dokunuyor — çakışmayı önlemek için A1 ile ardışık/tek gate düşünülmeli.
 - [ ] A1 — Enerji Defteri hero kıs + Fit iç sayfa hero tutarlılık taraması (hareket-rehberi kanonik)
 - [ ] A4 — DadaDiet güven katmanı UI: disclaimer şeridi + uzman profil alanları (diploma/uzmanlık/kayıt/doğrulama tarihi) + sağlık içerik meta (kaynak/uzman onayı/son güncelleme) — "örnek" çerçeveli iskelet, gerçek data Yasin'den
 - [ ] A5 — Gourmet kesfet → landing restructure: modül önizlemeleri + tab'leri header nav'a ayrı modül + konsept içerik görselli slider (tarif-liste tarzı) + alta mekan-bul widget — BÜYÜK, önce keşif
