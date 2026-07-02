@@ -8,10 +8,10 @@ Bu dosya kalıcı yol haritasıdır. Oturum durumu handoff.md'de; buraya sadece 
 - [x] A3a — Ölü CSS: saglik-hub .rd-crumb (6 satır) — CANLI (df6974d)
 - [x] A3b — Fit df-* klon-artığı dead-CSS süpürmesi (enerji-defteri: df-bridge-card/df-bc-*/df-chal/df-tdee/df-cta/df-cta-acts ölü ailesi) — CERRAHİ: df-ledger CANLI koru, çok-selektörlü @media'da sadece ölü token'ları çıkar. NOT: enerji-defteri dosyasına A1 (hero) de dokunuyor — çakışmayı önlemek için A1 ile ardışık/tek gate düşünülmeli. — CANLI (d485379)
 - [x] A1 — Enerji Defteri hero kıs + Fit iç sayfa hero tutarlılık taraması (hareket-rehberi kanonik) — CANLI (9cf32b1), enerji-defteri hero content-height'a indi
-- [ ] A1b — program-detay + egzersiz-detay aynı full-viewport hero tutarsızlığı (keşifte çıktı, enerji-defteri ile aynı .df-top pattern) — gelecek tur. NOT: dadafit-hub ters durum (hub olduğu halde full-viewport DEĞİL) ayrı inceleme.
+- [x] A1b — program-detay + egzersiz-detay hero tutarsızlığı — ÇÖZÜLDÜ (4d3c977). GERÇEK DURUM: canlı hero'lar (.pd-hero 560px kapak, .ed-top kompakt band) zaten content-height'tı; full-viewport kurallar DOM'da kullanılmayan ÖLÜ .df-top/.df-hero klon-artığıydı → 258 satır ölü df-* ailesi süpürüldü (render md5-birebir, df-cta program-detay'da CANLI korundu). dadafit-hub incelemesi: hero TAM 100svh full-viewport render ediyor (istenen durum) — "full-viewport değil" gözlemi doğrulanmadı, değişiklik gerekmedi.
 - [ ] A4 — DadaDiet güven katmanı UI: disclaimer şeridi + uzman profil alanları (diploma/uzmanlık/kayıt/doğrulama tarihi) + sağlık içerik meta (kaynak/uzman onayı/son güncelleme) — "örnek" çerçeveli iskelet, gerçek data Yasin'den
 - [ ] A5 — Gourmet kesfet → landing restructure: modül önizlemeleri + tab'leri header nav'a ayrı modül + konsept içerik görselli slider (tarif-liste tarzı) + alta mekan-bul widget — BÜYÜK, önce keşif
-- [ ] A6 — DadaDiet Diyetisyen Ara → sihirbaz/wizard (mekan-bul pattern'ı)
+- [x] A6 — DadaDiet Diyetisyen Bul sihirbazı — CANLI (76100b2). Yeni `diyetisyen-bul-v1.html` (3 adım: hedef/görüşme/uzman tercihi, dizindeki 9 gerçek profil yeniden kullanıldı, kademeli gevşetme, disclaimer). Kablolama: saglik-hub diet-panel CTA + dizin hero köprü CTA. Mega-menü "Diyetisyen Ara" linkleri (Gastro/utility) BİLİNÇLİ dokunulmadı — istenirse ayrı mikro-iş.
 - [ ] A7 — Etkinlikler gerçek festival datasıyla doldur — data Beyar'dan gelir (doğrulanmış sheet), görsel bizim
 - [ ] A8 — Mobil ana sayfa: kısa karşılama + 5 modül kartı (Gastro/Diet/Fit/Gourmet/Campus) + kişiselleştirilmiş hızlı aksiyonlar + DadaMentor alanı — BÜYÜK
 
