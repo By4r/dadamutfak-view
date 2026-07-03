@@ -1,0 +1,2490 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>DadaDiet — Arama | DadaMutfak</title>
+<link rel="shortcut icon" type="image/x-icon"
+      href="assets/img/favicon.ico" />
+<!-- FontAwesome 6.5.2 (kilitli ikon seti) -->
+<link rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+      integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A=="
+      crossorigin="anonymous" referrerpolicy="no-referrer" />
+<style>
+/* =====================================================================
+   _SHELL.HTML — KANONİK İSKELET (anasayfa-portal-v3a.html'den BİREBİR)
+   Token + tipografi + utilities + topbar + header + mega menü (KİLİTLİ)
+   + footer + drawer/bottom-nav + çerez/görüş modal + ortak JS.
+   Yeni sayfa = bu dosyanın kopyası; SAYFA İÇERİĞİ bloğu doldurulur,
+   sayfa-spesifik CSS "SAYFA CSS" işaretinin altına eklenir.
+   Header varsayılan KATI; hero'lu sayfa ?hdr=hero benzeri davranış için
+   JS'teki heroMode bayrağını açar.
+   ===================================================================== */
+
+/* ============ GERÇEK SİTE FONTU: Gilroy-Medium — TEK YÜZ (eski site DNA'sı) ============
+   Eski site (main.css): @font-face myBrandFont = Gilroy-Medium.ttf, universal reset ile
+   başlık/gövde/buton dahil HER eleman bu tek yüzle render olur; 600/700 bold'lar
+   tarayıcının sentetik bold'udur. Light/ExtraBold dosyaları klasörde var ama
+   eski site CSS'i hiç yüklemez — bu yüzden burada da yalnız Medium yüklenir. */
+@font-face{
+  font-family:"Gilroy";
+  src:url("assets/fonts/Gilroy-Medium.ttf") format("truetype");
+  font-weight:500; font-style:normal; font-display:swap;
+}
+/* R2: marka lockup — gerçek ExtraBold + Light (Gastro paritesi; "Dada"=.bd, suffix=.sf) */
+@font-face{font-family:"GilroyXB";src:url("assets/fonts/Gilroy-ExtraBold.otf") format("opentype");font-weight:800;font-style:normal;font-display:swap}
+@font-face{font-family:"GilroyLt";src:url("assets/fonts/Gilroy-Light.otf") format("opentype");font-weight:300;font-style:normal;font-display:swap}
+.bd{font-family:"GilroyXB","Gilroy",sans-serif;font-weight:800;letter-spacing:-.01em}
+.sf{font-family:"GilroyLt","Gilroy",sans-serif;font-weight:300}
+
+/* ============ KİMLİK TOKEN'LARI (brand-tokens.md) ============ */
+:root{
+  --tomato:#3BB77E;          /* DadaDiet kabuk aksanı — NANE (Beyar kararı A5; site default domatesten bilinçli sapma, --green token'ı). DadaFit'in doygun #009d4f sporcu yeşilinden daha yumuşak/klinik → beslenme tonu */
+  --tomato-dark:#2C9963;     /* hover türevi (nane koyu, --green-deep ile aynı) */
+  --tomato-deep:#1c7a4e;     /* nane derin — CTA/footer/aksan metin (WCAG AA: beyaz üstü & beyaz zeminde ≥4.5) */
+  --tomato-tint:#E6F5EE;     /* nane fısıltısı zemin */
+  --slate:#211E16;           /* Pantone Process Black C — başlık/koyu metin/panel */
+  --slate-2:#56514a;           /* sıcak muted koyu */
+  --green:#3BB77E;           /* yalnız sağlık bloğu */
+  --green-deep:#2c9963;
+  --yellow:#FAC045;          /* yalnız puan */
+  --muted:#717171;           /* ikincil metin (AA: beyaz zeminde ≥4.5) */
+  --line:#ECECEC;            /* hairline ayraç */
+  --cream:#EFE5D3;           /* sıcak nötr */
+  --cream-2:#F7F1E6;
+  /* kurumsal alternatif renkler (kılavuz) */
+  --c-purple:#b14fc5; --c-mint:#6cca98; --c-green:#009d4f; --c-petrol:#006072;
+  --paper:#ffffff;
+  --bg:#f9f9f9;              /* eski site grisi — sayfa zemini (Revize T3 M12) */
+  --ink:#211E16;
+  /* section zemin ritmi — açık bölüm alternasyonu (gri ↔ beyaz, eski site ekseni) */
+  --bg-white:#ffffff;        /* saf beyaz */
+  --bg-cream:#f9f9f9;        /* eski site section grisi (own.css'teki en yaygın zemin) */
+
+  --radius-sm:8px; --radius-md:12px; --radius-lg:16px; --radius-xl:24px; --radius-pill:999px; --radius-circle:50%;
+  /* legacy alias → yeni ölçek */
+  --r:var(--radius-lg); --r-sm:var(--radius-sm); --r-lg:var(--radius-xl);
+  --sh-sm:0 1px 2px rgba(33,30,22,.04), 0 2px 6px rgba(33,30,22,.05);
+  --sh-md:0 6px 22px rgba(33,30,22,.09);
+  --sh-lg:0 18px 50px rgba(33,30,22,.16);
+  --ease:cubic-bezier(.22,.61,.36,1);
+  --wrap:1240px;
+}
+
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  font-family:"Gilroy",system-ui,sans-serif;
+  font-weight:500;
+  color:var(--ink);
+  background:var(--bg);
+  line-height:1.55;
+  -webkit-font-smoothing:antialiased;
+}
+h1,h2,h3,h4{font-weight:700;color:var(--slate);line-height:1.12;letter-spacing:-.02em}
+a{color:inherit;text-decoration:none}
+img{display:block;max-width:100%}
+.wrap{max-width:var(--wrap);margin:0 auto;padding:0 32px}
+.muted{color:var(--muted);font-weight:500}
+
+/* eyebrow */
+.eyebrow{
+  display:inline-flex;align-items:center;gap:8px;
+  font-size:12px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--tomato);
+}
+.eyebrow::before{content:"";width:26px;height:2px;background:currentColor;border-radius:var(--radius-sm)}
+.eyebrow i{font-size:13px}
+
+/* section head */
+.sec{padding:74px 0}
+/* fixed header offseti — sayfanın İLK section'ına bu class verilir
+   (topbar 40 + header 72 = 112px · mobil 62px) */
+.below-header{padding-top:112px}
+/* ortak section header grid'i — aksiyon grubu (Tamamını Gör + oklar/tablar) h2 ile
+   aynı satırda, açıklama altta tek başına: [eyebrow] / [h2 | tools] / [lead] (Revize T4 M1).
+   Sol blok display:contents ile grid'e açılır — DOM aynı, ≤640 pattern'ı ile uyumlu */
+.sec-head,.cat-head,.guide-head{
+  display:grid;grid-template-columns:minmax(0,1fr) auto;column-gap:24px;
+  align-items:center;margin-bottom:34px;
+}
+.sec-head>div:first-child,.cat-head>div:first-child,.guide-head>div:first-child{display:contents}
+.sec-head .eyebrow,.cat-head .eyebrow,.guide-head .eyebrow{grid-row:1;grid-column:1/-1;justify-self:start;margin-bottom:14px}
+.sec-head h2,.cat-head h2,.guide-head h2{grid-row:2;grid-column:1}
+.sec-head .sec-tools,.sec-head .disc-tools,.cat-head .sec-tools,.guide-head .sec-tools{grid-row:2;grid-column:2;align-self:center}
+.sec-head .lead,.cat-head .lead,.guide-head .lead{grid-row:3;grid-column:1/-1;margin-top:10px;color:var(--muted);font-weight:500;font-size:15.5px;max-width:520px}
+.sec-head h2{font-size:34px}
+.see-all{
+  flex:none;display:inline-flex;align-items:center;gap:9px;font-weight:700;font-size:13.5px;
+  color:var(--slate);padding:11px 18px;border:1px solid var(--line);border-radius:var(--radius-md);
+  background:var(--paper);transition:.25s var(--ease);white-space:nowrap;
+}
+.see-all i{font-size:13px;transition:.25s var(--ease)}
+.see-all:hover{border-color:var(--tomato);color:var(--tomato)}
+.see-all:hover i{transform:translateX(3px)}
+
+/* buttons */
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:10px;
+  font-family:inherit;font-weight:700;font-size:14.5px;cursor:pointer;border:none;
+  padding:14px 26px;border-radius:var(--radius-md);transition:.25s var(--ease);
+}
+.btn-primary{background:var(--tomato-deep);color:#fff}
+.btn-primary:hover{background:var(--tomato-dark);transform:translateY(-2px)}
+.btn-ghost{background:var(--paper);color:var(--slate);border:1px solid var(--line)}
+.btn-ghost:hover{border-color:var(--slate);transform:translateY(-2px)}
+
+/* chips */
+.chips{display:flex;flex-wrap:wrap;gap:9px;align-items:center}
+.chips .lbl{font-size:13px;color:var(--muted);font-weight:500;margin-right:2px}
+.chip{
+  font-size:13px;font-weight:500;color:var(--slate);background:var(--paper);border:1px solid var(--line);
+  padding:8px 15px;border-radius:var(--radius-sm);cursor:pointer;transition:.2s var(--ease);
+}
+.chip:hover{border-color:var(--tomato);color:var(--tomato);background:var(--tomato-tint)}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+
+/* ============ TOP UTILITY BAR ============ */
+.topbar{position:fixed;top:0;left:0;right:0;z-index:70;background:var(--ink);color:#e9e2d6;font-size:12.5px;font-weight:500}
+.topbar .wrap{display:flex;align-items:center;justify-content:space-between;height:40px}
+.topbar a{display:inline-flex;align-items:center;gap:7px;color:#e9e2d6;transition:.2s}
+.topbar a:hover{color:#fff}
+.topbar .tb-left{display:flex;align-items:center;gap:16px}
+.topbar .tb-left b{font-weight:600;color:#fff}
+.tb-div{width:1px;height:14px;background:rgba(233,226,214,.22);flex:none}
+.topbar .tb-right{display:flex;gap:18px;align-items:center}
+.topbar .tb-soc{display:flex;gap:14px}
+.topbar .tb-soc a:hover{color:var(--yellow)}
+/* dil seçici — üst bant (ince, açık zemin yazı) */
+.tb-lang{position:relative;display:flex;align-items:center}
+.tb-lang::before{content:"";width:1px;height:14px;background:rgba(233,226,214,.22);margin-right:4px}
+.tb-lang-btn{display:inline-flex;align-items:center;gap:7px;background:transparent;border:none;cursor:pointer;color:#e9e2d6;font-family:inherit;font-size:12.5px;font-weight:500;padding:0;transition:color .2s}
+.tb-lang-btn:hover{color:#fff}
+.tb-lang-btn>span{font-weight:600;letter-spacing:.03em}
+.tb-lang-caret{font-size:9px;transition:transform .2s var(--ease)}
+.tb-lang.open .tb-lang-caret{transform:rotate(180deg)}
+.tb-lang-menu{position:absolute;top:calc(100% + 9px);right:0;min-width:148px;background:#fff;border:1px solid var(--line);border-radius:var(--radius-md);box-shadow:var(--sh-md);padding:6px;opacity:0;visibility:hidden;transform:translateY(-6px);transition:opacity .2s var(--ease),transform .2s var(--ease),visibility .2s;z-index:80}
+.tb-lang.open .tb-lang-menu{opacity:1;visibility:visible;transform:translateY(0)}
+.tb-lang-menu a{display:flex;align-items:center;gap:9px;color:var(--ink);font-size:13px;font-weight:600;padding:9px 11px;border-radius:var(--radius-sm);transition:.18s var(--ease)}
+.tb-lang-menu a span{color:var(--muted);font-weight:500;font-size:12.5px}
+.tb-lang-menu a:hover{background:var(--tomato-tint);color:var(--tomato)}
+.tb-lang-menu a.active,.tb-lang-menu a.active span{color:var(--tomato)}
+
+/* ---- üst bant dünya kapıları: DadaStore + DadaAkademi markalı geçiş (CİLA-2 Faz 5) ---- */
+.topbar .tb-util{color:#cfc7ba}
+.topbar .tb-util:hover{color:#fff}
+.tb-worlds{display:flex;align-items:center;gap:9px}
+.tb-world{display:inline-flex;align-items:center;gap:8px;height:27px;padding:0 12px;border-radius:var(--radius-sm);font-size:12px;font-weight:700;letter-spacing:.01em;border:1px solid transparent;transition:background .2s var(--ease),border-color .2s var(--ease),color .2s var(--ease)}
+.tb-world i{font-size:12.5px;transition:color .2s var(--ease)}
+.tb-world .tw-name{line-height:1}
+.tb-world .tw-arr{font-size:9px;opacity:0;max-width:0;margin-left:-8px;overflow:hidden;transform:translateX(-5px);transition:opacity .2s var(--ease),transform .2s var(--ease),max-width .2s var(--ease),margin-left .2s var(--ease)}
+.tb-world:hover .tw-arr{opacity:.92;max-width:16px;margin-left:0;transform:translateX(0)}
+.tb-world .tw-soon{font-size:9.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;padding:2px 6px;border-radius:var(--radius-sm);background:rgba(233,226,214,.18);color:#e9e2d6;line-height:1}
+/* DadaStore — domates dünyası (sıcak, e-ticaret) */
+.tb-world-store{background:rgba(225,72,39,.18);border-color:rgba(225,72,39,.46);color:#fff}
+.tb-world-store i{color:#ff7d5e}
+.tb-world-store:hover{background:var(--tomato);border-color:var(--tomato);color:#fff}
+.tb-world-store:hover i,.tb-world-store:hover .tw-arr{color:#fff}
+/* DadaAkademi — petrol dünyası (serin, öğrenme) */
+.tb-world-akademi{background:rgba(0,96,114,.30);border-color:rgba(95,203,216,.40);color:#fff}
+.tb-world-akademi i{color:#5fcbd8}
+.tb-world-akademi:hover{background:var(--c-petrol);border-color:var(--c-petrol);color:#fff}
+.tb-world-fit{background:rgba(0,157,79,.22);border-color:rgba(0,157,79,.5);color:#fff}
+.tb-world-fit i{color:#3fd089}
+.tb-world-fit:hover{background:#009d4f;border-color:#009d4f;color:#fff}
+.tb-world-fit:hover i,.tb-world-fit:hover .tw-arr{color:#fff}
+.tb-world-akademi:hover i{color:#fff}
+
+/* ============ HEADER — TEK KAT (marka · ortalanmış nav · aksiyonlar) — Revize T3 M2 ============ */
+.header{
+  position:fixed;top:0;left:0;right:0;z-index:60;
+  top:40px;background:rgba(255,255,255,.94);backdrop-filter:saturate(150%) blur(10px);
+  border-bottom:1px solid var(--line);box-shadow:0 4px 20px rgba(33,30,22,.05);
+  transition:background .3s var(--ease),border-color .3s var(--ease),box-shadow .3s var(--ease);
+}
+/* hero üstünde: şeffaf + beyaz — yalnız heroMode açık sayfalarda kullanılır (JS) */
+.header.at-top{background:transparent;backdrop-filter:none;border-color:rgba(255,255,255,.14);box-shadow:none}
+.h-top>.wrap{display:flex;align-items:center;gap:22px;height:72px}
+.brand{display:flex;align-items:center;flex:none}
+.brand img{height:40px;width:auto;display:block}
+.brand .logo-white{display:none}
+.header.at-top .brand .logo-color{display:none}
+.header.at-top .brand .logo-white{display:block}
+/* ---- DadaDiet kabuk markası (akademi .ak-* pattern'inden türetildi) ---- */
+.dd-brand{display:flex;align-items:center;gap:11px}
+.dd-mark{flex:none;display:block;width:40px;height:40px}
+.dd-word{font-size:23px;font-weight:700;letter-spacing:-.02em;line-height:1;white-space:nowrap}
+.dd-word b{color:var(--slate);font-family:"GilroyXB","Gilroy",sans-serif;font-weight:800}
+.dd-word .dd-st{color:var(--tomato);font-family:"GilroyLt","Gilroy",sans-serif;font-weight:300}
+.header.at-top .dd-word b,.header.at-top .dd-word .dd-st{color:#fff}
+.drawer-brand{display:flex;align-items:center;gap:10px;text-decoration:none}
+.drawer-brand .dd-mark{width:32px;height:32px}
+.drawer-brand .dd-word{font-size:18px}
+/* topbar "DadaMutfak'a dön" geri linki (akademi tb-back) */
+.tb-back{font-weight:600}
+.tb-back i{font-size:11px;transition:transform .2s var(--ease)}
+.tb-back:hover i{transform:translateX(-3px)}
+/* tb-world-saglik pill — DadaDiet nane (diğer kabuklara pill terfisi AYRI TUR; burada tanımlı-hazır) */
+.tb-world-saglik{background:rgba(59,183,126,.20);border-color:rgba(59,183,126,.5);color:#fff}
+.tb-world-saglik i{color:#6cca98}
+.tb-world-saglik:hover{background:var(--green);border-color:var(--green);color:#fff}
+.tb-world-saglik:hover i,.tb-world-saglik:hover .tw-arr{color:#fff}
+/* nav, logo ile aksiyonlar arasında ortalanır */
+.nav{display:flex;gap:2px;flex-wrap:nowrap;flex:1;justify-content:center;min-width:0}
+.nav a{
+  position:relative;font-weight:700;font-size:15px;color:var(--slate);white-space:nowrap;
+  padding:9px 12px;border-radius:var(--radius-md);transition:color .2s var(--ease),background .2s var(--ease);
+}
+.nav a .fa-chevron-down{font-size:9px;margin-left:5px;opacity:.5}
+.nav a:hover{color:var(--tomato);background:var(--tomato-tint)}
+.nav a.active{color:var(--tomato)}
+.nav a.active::after{
+  content:"";position:absolute;left:12px;right:12px;bottom:2px;height:2px;
+  background:var(--tomato);border-radius:var(--radius-sm);
+}
+/* at-top nav beyaz */
+.header.at-top .nav>.nav-item>a{color:#fff}
+.header.at-top .nav>.nav-item>a:hover{background:rgba(255,255,255,.14);color:#fff}
+.header.at-top .nav>.nav-item>a.active{color:#fff}
+.header.at-top .nav>.nav-item>a.active::after{background:#fff}
+.head-actions{margin-left:auto;display:flex;align-items:center;gap:9px;flex:none}
+.icon-btn{
+  width:43px;height:43px;border-radius:var(--radius-md);border:1px solid var(--line);background:var(--paper);
+  display:grid;place-items:center;color:var(--slate);font-size:16px;cursor:pointer;transition:.2s var(--ease);position:relative;
+}
+.icon-btn:hover{border-color:var(--tomato);color:var(--tomato)}
+.header.at-top .icon-btn{background:rgba(255,255,255,.10);border-color:rgba(255,255,255,.30);color:#fff}
+.header.at-top .icon-btn:hover{background:rgba(255,255,255,.20);border-color:#fff;color:#fff}
+/* minimal giriş butonu — kompakt boy, marka rengi (Beyar: eski renk kalsın), flat */
+.btn-login{
+  display:inline-flex;align-items:center;gap:8px;font-family:inherit;font-weight:700;font-size:14px;
+  color:#fff;background:var(--tomato-deep);border:1px solid var(--tomato-deep);border-radius:var(--radius-md);
+  height:43px;padding:0 18px;margin-left:3px;cursor:pointer;white-space:nowrap;transition:.2s var(--ease);
+}
+.btn-login i{font-size:14px}
+.btn-login:hover{background:var(--tomato-dark);border-color:var(--tomato-dark)}
+
+/* ===== LOGIN-STATE (cila-2 faz 2) — header logged-in chrome ===== */
+/* varsayılan logged-out: ekle/zil/avatar gizli. body.is-auth → açılır, btn-login gizlenir */
+.head-add,.head-bell,.acct-wrap{display:none}
+body.is-auth .btn-login{display:none}
+body.is-auth .head-add,body.is-auth .acct-wrap{display:flex}
+body.is-auth .head-bell{display:grid}
+/* ekle + hesap menüsü ortak konteyner (header sağ blok dropdown'ı)
+   NOT: display BASE'te VERİLMEZ — gizle/göster yalnız .head-add/.acct-wrap kurallarınca
+   yönetilir (aksi halde display:flex, üstteki display:none'ı kaynak sırasıyla yener → logged-out sızıntı) */
+.acct-item{position:relative;align-items:center;height:72px}
+.acct-btn{display:inline-flex;align-items:center;gap:7px;height:43px;padding:0 9px 0 5px;background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-md);cursor:pointer;font-family:inherit;transition:.2s var(--ease)}
+.acct-btn:hover{border-color:var(--tomato)}
+.acct-ava{width:33px;height:33px;border-radius:var(--radius-circle);background-size:cover;background-position:center;flex:none}
+.acct-caret{font-size:9px;color:var(--muted);transition:transform .2s var(--ease)}
+.acct-item.open .acct-caret{transform:rotate(180deg)}
+/* bildirim zili + sayaç */
+.head-bell{position:relative}
+.hb-badge{position:absolute;top:-4px;right:-4px;min-width:17px;height:17px;padding:0 4px;border-radius:var(--radius-circle);background:var(--tomato);color:#fff;font-size:10px;font-weight:700;display:grid;place-items:center;border:2px solid #fff}
+/* dropdown panel (header sağa hizalı; nav dropdown diliyle aynı) */
+.acct-menu{position:absolute;top:calc(100% + 12px);right:0;min-width:236px;background:#fff;border:1px solid var(--line);border-radius:var(--radius-lg);box-shadow:var(--sh-lg);padding:10px;opacity:0;visibility:hidden;transform:translateY(8px);transition:.22s var(--ease);z-index:80}
+.acct-item:hover .acct-menu,.acct-item.open .acct-menu{opacity:1;visibility:visible;transform:translateY(0)}
+.acct-menu::before{content:"";position:absolute;top:-7px;right:24px;width:13px;height:13px;background:#fff;border-left:1px solid var(--line);border-top:1px solid var(--line);transform:rotate(45deg)}
+.acct-menu>a{display:flex;align-items:flex-start;gap:12px;padding:11px 13px;border-radius:var(--radius-md);font-size:14px;font-weight:500;color:var(--slate);transition:.16s var(--ease)}
+.acct-menu>a i{width:18px;text-align:center;color:var(--tomato);font-size:14px;margin-top:2px}
+.acct-menu>a span{display:block}
+.acct-menu>a small{display:block;font-size:11.5px;color:var(--muted);font-weight:500;margin-top:1px}
+.acct-menu>a:hover{background:var(--tomato-tint);color:var(--tomato);padding-left:16px}
+.acct-menu .acct-logout,.acct-menu .acct-logout i{color:var(--tomato)}
+/* hesap menüsü kimlik başlığı */
+.acct-id{display:flex;align-items:center;gap:11px;padding:8px 11px 12px}
+.acct-id .acct-ava{width:42px;height:42px}
+.acct-id-txt{min-width:0}
+.acct-id-txt b{display:block;font-size:14.5px;color:var(--slate);font-weight:700}
+.acct-id-txt small{display:block;font-size:12px;color:var(--muted);font-weight:500}
+.acct-div{height:1px;background:var(--line);margin:6px 4px}
+.nav-div{height:1px;background:var(--line);margin:5px 4px}
+/* drawer logged-in kimlik satırı (mobil) */
+.drawer-acct{display:none;align-items:center;gap:12px;padding:2px 2px 12px}
+body.is-auth .drawer-acct{display:flex}
+body.is-auth .drawer-login{display:none}
+.drawer-acct .da-ava{width:46px;height:46px;border-radius:var(--radius-circle);background-size:cover;background-position:center;flex:none}
+.drawer-acct .da-info{min-width:0}
+.drawer-acct .da-info b{display:block;font-size:15px;color:var(--slate);font-weight:700}
+.da-links{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:3px}
+.da-links a{font-size:12.5px;font-weight:700;color:var(--tomato)}
+.da-links a:not(:last-child)::after{content:"·";margin-left:8px;color:var(--muted);font-weight:500}
+/* ===== /LOGIN-STATE ===== */
+
+/* ===== LG-GATE (cila-2 faz 2) — logged-out mikro-aksiyon giriş kapısı ===== */
+.lg-overlay{position:fixed;inset:0;background:rgba(20,18,12,.5);z-index:97;opacity:0;visibility:hidden;transition:opacity .25s var(--ease),visibility .25s}
+.lg-overlay.show{opacity:1;visibility:visible}
+.lg-gate{position:fixed;inset:0;z-index:98;display:grid;place-items:center;padding:20px;opacity:0;visibility:hidden;pointer-events:none;transition:opacity .25s var(--ease),visibility .25s}
+.lg-gate.show{opacity:1;visibility:visible;pointer-events:auto}
+.lg-panel{position:relative;width:min(382px,100%);background:#fff;border-radius:var(--radius-lg);box-shadow:var(--sh-lg);padding:32px 26px 26px;text-align:center;transform:translateY(14px);transition:transform .3s var(--ease)}
+.lg-gate.show .lg-panel{transform:translateY(0)}
+.lg-close{position:absolute;top:13px;right:13px;width:36px;height:36px;border-radius:var(--radius-md);border:1px solid var(--line);background:var(--paper);color:var(--slate);font-size:15px;cursor:pointer;display:grid;place-items:center;transition:.2s var(--ease)}
+.lg-close:hover{border-color:var(--tomato);color:var(--tomato)}
+.lg-ico{width:62px;height:62px;border-radius:var(--radius-circle);background:var(--tomato-tint);color:var(--tomato);display:grid;place-items:center;font-size:25px;margin:0 auto 16px}
+.lg-gate h4{font-size:19px;margin-bottom:8px}
+.lg-gate p{font-size:13.5px;color:var(--muted);font-weight:500;max-width:300px;margin:0 auto 22px;line-height:1.55}
+.lg-acts{display:flex;gap:10px}
+.lg-acts .btn{flex:1}
+/* ===== /LG-GATE ===== */
+
+/* ---- NAV DROPDOWNS ---- */
+.nav .nav-item{position:relative}
+/* nav item tek katın tam yüksekliğini doldursun → hover sürekliliği (mega'ya geçişte kopmaz) */
+.h-top .nav-item{display:flex;align-items:center;height:72px}
+.nav .nav-item>a{display:inline-flex;align-items:center}
+.soon{margin-left:7px;font-size:9.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;
+  color:#fff;background:var(--green);padding:3px 7px;border-radius:var(--radius-sm);vertical-align:middle}
+.dropdown{
+  position:absolute;top:calc(100% + 12px);left:50%;transform:translateX(-50%) translateY(8px);
+  min-width:230px;background:#fff;border:1px solid var(--line);border-radius:var(--radius-lg);box-shadow:var(--sh-lg);
+  padding:10px;opacity:0;visibility:hidden;transition:.22s var(--ease);z-index:80;
+}
+.nav-item:hover .dropdown,.nav-item.open .dropdown{opacity:1;visibility:visible;transform:translateX(-50%) translateY(0)}
+.dropdown::before{content:"";position:absolute;top:-7px;left:50%;transform:translateX(-50%) rotate(45deg);
+  width:13px;height:13px;background:#fff;border-left:1px solid var(--line);border-top:1px solid var(--line)}
+.dropdown a{
+  display:flex;align-items:flex-start;gap:12px;padding:11px 13px;border-radius:var(--radius-md);font-size:14px;font-weight:500;
+  color:var(--slate);transition:.16s var(--ease);
+}
+.dropdown a i{width:18px;text-align:center;color:var(--tomato);font-size:14px;margin-top:2px}
+.dropdown a small{display:block;font-size:11.5px;color:var(--muted);font-weight:500;margin-top:1px}
+.dropdown a:hover{background:var(--tomato-tint);color:var(--tomato);padding-left:16px}
+.dd-head{padding:8px 13px 4px;font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.dd-col{display:flex;flex-direction:column}
+
+/* ---- MEGA MENÜ (Tarifler) — header'a bağlı tam genişlik panel — KİLİTLİ ---- */
+.nav-item.has-mega{position:static}            /* containing block = .header (fixed) */
+.mega{
+  position:absolute;left:0;right:0;top:100%;
+  background:#fff;border-top:1px solid var(--line);
+  box-shadow:var(--sh-lg);padding:28px 0 26px;
+  opacity:0;visibility:hidden;transform:translateY(8px);
+  transition:.22s var(--ease);z-index:80;
+}
+.nav-item:hover .mega,.nav-item.open .mega{opacity:1;visibility:visible;transform:translateY(0)}
+.mega-grid{display:grid;grid-template-columns:2.2fr 1fr;gap:22px;align-items:start}
+.mega-cats{display:grid;grid-template-columns:repeat(3,1fr);gap:2px 16px;align-content:start}
+.mega-cats a{
+  display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:var(--radius-md);
+  font-size:14.5px;font-weight:500;color:var(--slate);transition:.16s var(--ease);line-height:1.25;
+}
+.mega-cats a i{width:20px;text-align:center;color:var(--tomato);font-size:15px;flex:none}
+.mega-cats a small{display:block;font-size:11.5px;color:var(--muted);font-weight:500;margin-top:1px}
+.mega-cats a:hover{background:var(--tomato-tint);color:var(--tomato)}
+.mega-feat{min-width:0;border-left:1px solid var(--line);padding-left:22px}
+.mf-fig{
+  position:relative;aspect-ratio:16/10;border-radius:var(--radius-md);overflow:hidden;
+  background-size:cover;background-position:center;display:flex;align-items:flex-end;cursor:pointer;
+}
+.mf-fig::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(33,30,22,0) 35%,rgba(15,13,9,.78))}
+.mf-fig .r-chip{position:absolute;top:12px;left:12px;background:var(--tomato);color:#fff;z-index:2}
+.mf-fig h4{position:relative;z-index:2;color:#fff;font-size:17px;padding:16px;line-height:1.25}
+/* "Tüm Tarifler" — kategori grid'inin 13. hücresi, buton dilinde (Revize T3 M1) */
+.mega-cats .mega-cat-all{
+  font-weight:700;color:var(--tomato);
+  background:var(--tomato-tint);border:1px solid rgba(59,183,126,.22);
+}
+.mega-cats .mega-cat-all small{color:var(--tomato);opacity:.75}
+.mega-cats .mega-cat-all .mca-arrow{margin-left:auto;width:auto;font-size:13px;transition:transform .2s var(--ease)}
+.mega-cats .mega-cat-all:hover{background:var(--tomato);color:#fff;border-color:var(--tomato)}
+.mega-cats .mega-cat-all:hover i,.mega-cats .mega-cat-all:hover small{color:#fff;opacity:1}
+.mega-cats .mega-cat-all:hover .mca-arrow{transform:translateX(3px)}
+/* Tarif Bulucu CTA — mega-feat kolonunda (Faz3 #22; finder giriş noktası) */
+.mega-find{display:flex;align-items:center;gap:12px;margin-top:14px;padding:13px 14px;border-radius:var(--radius-md);background:var(--tomato-tint);border:1px solid rgba(59,183,126,.22);transition:.18s var(--ease)}
+.mega-find .mf-ico{flex:none;width:38px;height:38px;border-radius:var(--radius-sm);background:#fff;color:var(--tomato);display:grid;place-items:center;font-size:16px}
+.mega-find .mf-body{flex:1;min-width:0}
+.mega-find .mf-body b{display:block;font-size:14px;font-weight:700;color:var(--tomato);line-height:1.2}
+.mega-find .mf-body small{display:block;font-size:11.5px;color:var(--tomato);opacity:.78;font-weight:500;margin-top:2px}
+.mega-find .mf-arr{flex:none;color:var(--tomato);font-size:13px;transition:transform .2s var(--ease)}
+.mega-find:hover{background:var(--tomato);border-color:var(--tomato)}
+.mega-find:hover .mf-body b,.mega-find:hover .mf-body small,.mega-find:hover .mf-arr{color:#fff;opacity:1}
+.mega-find:hover .mf-arr{transform:translateX(3px)}
+/* mega içindeki r-chip (mf-fig rozeti) için minimal taban */
+.r-chip{background:rgba(255,255,255,.94);color:var(--slate);font-size:11.5px;font-weight:700;padding:6px 12px;border-radius:var(--radius-sm);letter-spacing:.02em}
+
+/* ---- "TÜMÜNÜ GÖR" SLIDER ALTYAPISI (oklar + snap track) ---- */
+.sec-tools{flex:none;display:flex;align-items:center;gap:12px}
+.row-nav{display:flex;gap:8px}
+.row-nav button{width:42px;height:42px;font-size:13px;border-radius:var(--radius-md);border:1px solid var(--line);background:var(--paper);color:var(--slate);cursor:pointer;transition:.2s var(--ease)}
+.row-nav button:hover{background:var(--tomato);border-color:var(--tomato);color:#fff}
+.row-track{
+  display:flex;gap:26px;overflow-x:auto;scroll-snap-type:x mandatory;
+  scrollbar-width:none;padding:6px 2px 10px;
+}
+.row-track::-webkit-scrollbar{display:none}
+.row-track>*{flex:none;width:274px;scroll-snap-align:start}
+
+/* ---- FOOTER REVEAL (gaviaworks perde efekti) — yalnız desktop/tablet ----
+   Footer sayfanın arkasında sabit bekler (z düşük); opak içerik wrapper'ı
+   üstünde durur ve sonuna JS ile footer yüksekliği kadar boşluk açılır —
+   scroll sonunda içerik kalkar, footer alttan ortaya çıkar. Mobil: statik. */
+@media (min-width:641px){
+  .footer.orange{position:fixed;left:0;right:0;bottom:0;z-index:1}
+  .page-main{position:relative;z-index:2;background:var(--bg)}
+}
+
+/* ============ FOOTER ============ */
+.footer{background:var(--slate);color:#aebcc6;padding:70px 0 0}
+/* kolon ritmi: logo bloğu geniş, 4 link kolonu eşit dağılır → sağ kenara kadar dengeli */
+.foot-grid{display:grid;grid-template-columns:1.5fr 1fr 1fr 1fr 1.05fr;gap:44px 28px;padding-bottom:50px;border-bottom:1px solid rgba(255,255,255,.1)}
+.foot-col a{white-space:nowrap}
+.foot-brand img{height:42px;width:auto;margin-bottom:22px}
+.foot-soc{display:flex;gap:11px}
+.foot-soc a{width:42px;height:42px;border-radius:var(--radius-md);background:rgba(255,255,255,.07);display:grid;place-items:center;color:#cdd8e0;font-size:16px;transition:.2s var(--ease)}
+.foot-soc a:hover{background:var(--tomato);color:#fff;transform:translateY(-3px)}
+.foot-col h5{color:#fff;font-size:15px;font-weight:700;margin-bottom:18px}
+.foot-col a{display:block;font-size:14px;font-weight:500;color:#9fb0bc;padding:7px 0;transition:.2s}
+.foot-col a:hover{color:var(--tomato);padding-left:5px}
+/* legal bar — 9 link, ince dikey ayraçlı, wrap'li */
+.foot-legal{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:8px 10px;padding:24px 0 0;font-size:12px;font-weight:500}
+.foot-legal a{white-space:nowrap;transition:.2s}
+.foot-legal .sep{width:1px;height:11px;background:rgba(255,255,255,.28);flex:none}
+.foot-bottom{display:flex;align-items:center;justify-content:space-between;padding:16px 0 26px;font-size:13px;font-weight:500;color:#7e8e9a}
+.foot-bottom a:hover{color:#cdd8e0}
+
+/* ---- ORANGE FOOTER (gaviaworks yapısı) ---- */
+.gw-code{font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace;font-weight:700;letter-spacing:-.04em;margin-right:2px}
+.footer.orange{background:var(--tomato-deep);color:rgba(255,255,255,.88)}
+.footer.orange .foot-grid{border-bottom-color:rgba(255,255,255,.18)}
+.footer.orange .foot-soc a{background:rgba(255,255,255,.14);color:#fff}
+.footer.orange .foot-soc a:hover{background:#fff;color:var(--tomato);transform:translateY(-3px)}
+.footer.orange .foot-col h5{color:#fff}
+.footer.orange .foot-col a{color:rgba(255,255,255,.92)}
+.footer.orange .foot-col a:hover{color:#fff;padding-left:5px}
+.footer.orange .foot-legal a{color:rgba(255,255,255,.84)}
+.footer.orange .foot-legal a:hover{color:#fff}
+.footer.orange .foot-bottom{color:rgba(255,255,255,.84)}
+.footer.orange .foot-bottom a{color:rgba(255,255,255,.84)}
+.footer.orange .foot-bottom a:hover{color:#fff}
+
+/* =========================================================
+   RESPONSIVE TABAN  ·  desktop ≥1025px DEĞİŞMEZ
+   tablet 641–1024px · mobil ≤640px
+   ========================================================= */
+
+/* yatay taşmayı global engelle */
+html,body{overflow-x:hidden}
+
+/* sürükle-kaydır (mouse) imleci — yatay slider'lar */
+.drag-scroll.dragging{cursor:grabbing;user-select:none;scroll-behavior:auto}
+.drag-scroll.dragging *{pointer-events:none}
+
+/* ---- MOBİL KOMPONENTLER (desktop'ta gizli) ---- */
+.hamburger{display:none}
+.drawer,.drawer-overlay,.bottom-nav{display:none}
+
+/* drawer */
+.drawer-overlay{position:fixed;inset:0;background:rgba(20,18,12,.5);z-index:95;opacity:0;pointer-events:none;transition:opacity .3s var(--ease)}
+.drawer-overlay.open{opacity:1;pointer-events:auto}
+.drawer{
+  position:fixed;top:0;right:0;height:100%;width:min(360px,86vw);background:#fff;z-index:96;
+  transform:translateX(100%);transition:transform .32s var(--ease);
+  flex-direction:column;box-shadow:-12px 0 44px rgba(20,18,12,.22);
+}
+.drawer.open{transform:translateX(0)}
+.drawer-head{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--line);flex:none}
+.drawer-logo{height:34px;width:auto;display:block}
+.drawer-close{width:42px;height:42px;border-radius:var(--radius-md);border:1px solid var(--line);background:var(--paper);color:var(--slate);font-size:18px;cursor:pointer;display:grid;place-items:center}
+.drawer-close:hover{border-color:var(--tomato);color:var(--tomato)}
+.drawer-nav{flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch}
+.d-item{border-bottom:1px solid var(--line)}
+.d-link{
+  display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%;
+  font-family:inherit;font-weight:700;font-size:16px;color:var(--slate);
+  background:none;border:none;text-align:left;padding:16px 22px;cursor:pointer;
+}
+.d-link .fa-chevron-down{font-size:12px;color:var(--muted);transition:transform .25s var(--ease),color .25s var(--ease)}
+.d-item.open>.d-link .fa-chevron-down{transform:rotate(180deg);color:var(--tomato)}
+.d-link .soon{font-size:9.5px}
+.d-sub{max-height:0;overflow:hidden;transition:max-height .3s var(--ease);background:var(--bg)}
+.d-item.open>.d-sub{max-height:760px}
+.d-sub a{display:flex;align-items:center;gap:11px;padding:13px 22px 13px 36px;font-size:14.5px;font-weight:500;color:var(--slate-2)}
+.d-sub a i{width:18px;text-align:center;color:var(--tomato);font-size:13px}
+.d-sub a:hover{color:var(--tomato);background:var(--tomato-tint)}
+.drawer-foot{padding:18px 20px;border-top:1px solid var(--line);display:flex;flex-direction:column;gap:11px;flex:none}
+.drawer-add{display:flex;align-items:center;justify-content:center;gap:9px;font-weight:700;font-size:14.5px;color:var(--slate);padding:13px;border:1px solid var(--line);border-radius:var(--radius-md);transition:.2s var(--ease)}
+.drawer-add:hover{border-color:var(--tomato);color:var(--tomato)}
+/* drawer dünya kapıları (mobilde üst bant gizli — DadaStore/DadaAkademi buradan) — tb-world kimliği */
+.drawer-worlds{display:grid;grid-template-columns:1fr;gap:9px;margin-top:7px}
+.drawer-world{display:flex;align-items:center;gap:9px;min-height:48px;padding:0 15px;border-radius:var(--radius-md);font-size:14px;font-weight:700;letter-spacing:.01em;border:1px solid transparent;transition:background .2s var(--ease),border-color .2s var(--ease),color .2s var(--ease)}
+.drawer-world i{font-size:13px}
+.drawer-world .dw-name{line-height:1.1}
+.drawer-world .dw-arr{font-size:9px;margin-left:auto;opacity:.7}
+.drawer-world .dw-soon{font-size:9px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;padding:2px 6px;border-radius:var(--radius-sm);margin-left:auto;line-height:1}
+.dw-store{background:rgba(225,72,39,.10);border-color:rgba(225,72,39,.40);color:var(--tomato)}
+.dw-store i{color:var(--tomato)}
+.dw-store:hover{background:var(--tomato);border-color:var(--tomato);color:#fff}
+.dw-store:hover i,.dw-store:hover .dw-arr{color:#fff}
+.dw-akademi{background:rgba(0,96,114,.10);border-color:rgba(0,96,114,.34);color:var(--c-petrol)}
+.dw-akademi i{color:var(--c-petrol)}
+.dw-akademi .dw-soon{background:rgba(0,96,114,.14);color:var(--c-petrol)}
+.dw-akademi:hover{background:var(--c-petrol);border-color:var(--c-petrol);color:#fff}
+.dw-akademi:hover i{color:#fff}
+.dw-fit{background:rgba(0,157,79,.10);border-color:rgba(0,157,79,.36);color:#007a3d}
+.dw-fit i{color:#007a3d}
+.dw-fit:hover{background:#009d4f;border-color:#009d4f;color:#fff}
+.dw-fit:hover i,.dw-fit:hover .dw-arr{color:#fff}
+.dw-akademi:hover .dw-soon{background:rgba(255,255,255,.20);color:#fff}
+/* drawer dil seçici (mobilde üst bant yok) — aç/kapa liste: N dile ölçeklenir */
+.drawer-lang{display:flex;flex-direction:column;margin-top:3px}
+.drawer-lang-toggle{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;background:none;border:none;font-family:inherit;padding:4px 0;cursor:pointer}
+.drawer-lang-label{display:inline-flex;align-items:center;gap:8px;font-size:13px;font-weight:600;color:var(--muted)}
+.drawer-lang-cur{display:inline-flex;align-items:center;gap:8px;font-size:13px;font-weight:700;letter-spacing:.03em;color:var(--slate)}
+.drawer-lang-cur i{font-size:10px;color:var(--muted);transition:transform .25s var(--ease)}
+.drawer-lang.open .drawer-lang-cur i{transform:rotate(180deg)}
+.drawer-lang-list{display:none;flex-direction:column;gap:5px;margin-top:10px;max-height:212px;overflow-y:auto;-webkit-overflow-scrolling:touch}
+.drawer-lang.open .drawer-lang-list{display:flex}
+.drawer-lang-list button{display:flex;align-items:center;gap:10px;width:100%;text-align:left;font-family:inherit;font-size:13.5px;font-weight:500;color:var(--slate);background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-sm);padding:10px 13px;cursor:pointer;transition:.18s var(--ease)}
+.drawer-lang-list button b{font-weight:700;letter-spacing:.03em;width:26px;flex:none}
+.drawer-lang-list button:hover{border-color:var(--tomato);color:var(--tomato)}
+.drawer-lang-list button.active{border-color:rgba(59,183,126,.4);background:var(--tomato-tint);color:var(--tomato)}
+.drawer-lang-list button.active::after{content:"\f00c";font-family:"Font Awesome 6 Free";font-weight:900;margin-left:auto;font-size:12px}
+
+/* mobil alt navigasyon — Instagram tarzı floating frosted pill */
+.bottom-nav{
+  position:fixed;left:16px;right:16px;z-index:90;
+  bottom:calc(14px + env(safe-area-inset-bottom,0px));
+  justify-content:space-around;align-items:center;gap:4px;
+  padding:6px 8px;border-radius:var(--radius-lg);
+  background:rgba(255,255,255,.55);
+  -webkit-backdrop-filter:blur(30px) saturate(190%);backdrop-filter:blur(30px) saturate(190%);
+  border:none;
+  box-shadow:0 10px 30px rgba(33,30,22,.16),0 2px 8px rgba(33,30,22,.07),inset 0 1px 0 rgba(255,255,255,.6);
+  transition:transform .26s var(--ease);
+}
+.bottom-nav.bn-hidden{transform:translateY(calc(100% + 30px));pointer-events:none}
+.bn-item{
+  flex:none;position:relative;display:grid;place-items:center;
+  width:40px;height:40px;border-radius:var(--radius-lg);
+  color:var(--slate-2);font-size:19px;transition:background .2s var(--ease),color .2s var(--ease),transform .12s var(--ease);
+}
+/* etiketler görsel gizli (icon-only, IG tarzı) — erişilebilirlik için DOM'da kalır */
+.bn-item>span:last-child{position:absolute;width:1px;height:1px;padding:0;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+/* aktif: yarı saydam domates (primary) — glass korunur, radius-lg pill ile uyumlu */
+.bn-item.active{color:var(--tomato);background:rgba(59,183,126,.15)}
+.bn-item:active{transform:scale(.9)}
+/* orta FAB: bar'dan çıkık (raised) — düz domates, token radius, halka yok */
+.bn-center{width:auto;height:auto;background:none;transform:translateY(-14px)}
+.bn-center:active{transform:translateY(-14px) scale(.92)}
+.bn-fab{
+  width:52px;height:52px;border-radius:var(--radius-lg);border:none;color:#fff;
+  background:var(--tomato);
+  display:grid;place-items:center;font-size:19px;
+  box-shadow:0 8px 20px rgba(59,183,126,.5);
+}
+
+/* ===================== GÖRÜŞ BİLDİR (eski site "Öneri ve Şikayet" mirası) =====================
+   Eski sitedeki sunum: sağ kenarda 90° döndürülmüş sabit turuncu buton (open-feedback-modal).
+   Aynı desen, yeni dile çevrildi. */
+.feedback-tab{
+  position:fixed;top:50%;right:0;z-index:55;
+  transform-origin:100% 0;transform:rotate(90deg) translateX(50%);
+  display:inline-flex;align-items:center;gap:8px;
+  background:var(--tomato);color:#fff;font-size:12.5px;font-weight:700;letter-spacing:.04em;
+  padding:10px 18px 12px;border-radius:0 0 var(--radius-md) var(--radius-md);
+  white-space:nowrap;
+  transition:background .2s var(--ease),transform .25s var(--ease);
+}
+.feedback-tab i{font-size:13px}
+.feedback-tab:hover{background:var(--tomato-dark);transform:rotate(90deg) translateX(50%) translateY(3px)}
+
+/* görüş bildir modal'ı — eski site akışı (konu seç → form → teşekkür) tek panelde */
+.fb-overlay{position:fixed;inset:0;background:rgba(20,18,12,.5);z-index:97;opacity:0;visibility:hidden;transition:opacity .25s var(--ease),visibility .25s}
+.fb-overlay.show{opacity:1;visibility:visible}
+.fb-modal{position:fixed;inset:0;z-index:98;display:grid;place-items:center;padding:20px;opacity:0;visibility:hidden;pointer-events:none;transition:opacity .25s var(--ease),visibility .25s}
+.fb-modal.show{opacity:1;visibility:visible;pointer-events:auto}
+.fb-panel{width:min(520px,100%);max-height:calc(100vh - 40px);overflow-y:auto;background:#fff;border-radius:var(--radius-lg);box-shadow:var(--sh-lg);transform:translateY(14px);transition:transform .3s var(--ease)}
+.fb-modal.show .fb-panel{transform:translateY(0)}
+.fb-head{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:20px 24px;border-bottom:1px solid var(--line)}
+.fb-head h3{font-size:19px}
+.fb-head p{font-size:12.5px;color:var(--muted);font-weight:500;margin-top:2px}
+.fb-close{flex:none;width:40px;height:40px;border-radius:var(--radius-md);border:1px solid var(--line);background:var(--paper);color:var(--slate);font-size:16px;cursor:pointer;display:grid;place-items:center;transition:.2s var(--ease)}
+.fb-close:hover{border-color:var(--tomato);color:var(--tomato)}
+.fb-body{padding:22px 24px 24px}
+.fb-topics{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:16px}
+.fb-topic{display:flex;align-items:center;gap:10px;font-family:inherit;font-size:13.5px;font-weight:500;color:var(--slate);background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-md);padding:12px 14px;cursor:pointer;transition:.18s var(--ease);text-align:left}
+.fb-topic i{width:18px;text-align:center;color:var(--tomato);font-size:14px;flex:none}
+.fb-topic:hover{border-color:var(--tomato);color:var(--tomato)}
+.fb-topic.active{border-color:rgba(59,183,126,.4);background:var(--tomato-tint);color:var(--tomato);font-weight:700}
+.fb-topic[data-topic="puan"]{grid-column:1/-1;justify-content:center} /* 5. tip (Puan ver — Yasin Bey'e öneri) tam satır */
+.fb-field{margin-bottom:11px}
+.fb-field input,.fb-field textarea{width:100%;font-family:inherit;font-size:14px;font-weight:500;color:var(--slate);background:var(--bg);border:1px solid var(--line);border-radius:var(--radius-md);padding:13px 15px;outline:none;transition:border-color .2s var(--ease)}
+.fb-field input::placeholder,.fb-field textarea::placeholder{color:#a7a7a7}
+.fb-field input:focus,.fb-field textarea:focus{border-color:var(--tomato)}
+.fb-field textarea{min-height:108px;resize:vertical}
+/* M17 — tipe göre alan setleri */
+.fb-fields{display:none}
+.fb-fields.active{display:block;animation:fadeUp .3s var(--ease)}
+.fb-q{font-size:13.5px;font-weight:700;color:var(--slate);margin-bottom:10px}
+.fb-select{
+  appearance:none;-webkit-appearance:none;width:100%;font-family:inherit;font-size:14px;font-weight:500;color:var(--slate);
+  background:var(--bg) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%237E7E7E' stroke-width='1.6' fill='none' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat right 15px center;
+  border:1px solid var(--line);border-radius:var(--radius-md);padding:13px 40px 13px 15px;outline:none;cursor:pointer;transition:border-color .2s var(--ease);
+}
+.fb-select:focus{border-color:var(--tomato)}
+.fb-select:invalid{color:#a7a7a7}
+.fb-chiprow{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:13px}
+.fb-chiprow .chip.active{border-color:var(--tomato);color:var(--tomato);background:var(--tomato-tint);font-weight:700}
+.fb-emoji{display:flex;gap:8px;margin-bottom:13px}
+.fb-emoji button{
+  flex:1;font-size:25px;line-height:1;padding:13px 0;background:var(--bg);border:1px solid var(--line);
+  border-radius:var(--radius-md);cursor:pointer;filter:grayscale(1);opacity:.65;transition:.18s var(--ease);
+}
+.fb-emoji button:hover{filter:none;opacity:1;border-color:var(--tomato)}
+.fb-emoji button.active{filter:none;opacity:1;border-color:rgba(59,183,126,.4);background:var(--tomato-tint);transform:scale(1.06)}
+.fb-shot{
+  display:flex;align-items:center;justify-content:center;gap:9px;width:100%;font-family:inherit;font-size:13px;font-weight:700;
+  color:var(--muted);background:transparent;border:1.5px dashed #d9d9d9;border-radius:var(--radius-md);padding:13px;margin-bottom:11px;
+  cursor:pointer;transition:.18s var(--ease);
+}
+.fb-shot small{font-weight:500}
+.fb-shot:hover{border-color:var(--tomato);color:var(--tomato)}
+.fb-kvkk{display:flex;align-items:flex-start;gap:9px;font-size:12.5px;font-weight:500;color:var(--muted);line-height:1.5;margin:14px 0 16px;cursor:pointer}
+.fb-kvkk input{margin-top:3px;accent-color:var(--tomato);flex:none}
+.fb-kvkk a{color:var(--tomato);font-weight:700;text-decoration:underline;text-underline-offset:2px}
+.fb-send{width:100%}
+.fb-success{text-align:center;padding:18px 0 10px}
+.fb-success .ok{width:62px;height:62px;border-radius:var(--radius-circle);background:#EAF7F0;color:var(--green);display:grid;place-items:center;font-size:26px;margin:0 auto 16px}
+.fb-success h4{font-size:18px;margin-bottom:7px}
+.fb-success p{font-size:13.5px;color:var(--muted);font-weight:500;max-width:340px;margin:0 auto}
+
+/* ===================== ÇEREZ ONAY BANNER ===================== */
+.cookie-banner{
+  position:fixed;left:0;right:0;bottom:24px;z-index:95;
+  width:min(1180px,calc(100% - 48px));margin:0 auto;
+  background:#fff;border:1px solid var(--line);border-radius:var(--radius-lg);
+  box-shadow:var(--sh-lg);padding:16px 20px;
+  transform:translateY(140%);opacity:0;visibility:hidden;
+  transition:transform .42s var(--ease),opacity .35s var(--ease),visibility .42s;
+}
+.cookie-banner.show{transform:translateY(0);opacity:1;visibility:visible}
+.cookie-inner{display:flex;align-items:center;justify-content:space-between;gap:24px}
+.cookie-text{display:flex;align-items:center;gap:14px}
+.cookie-ico{flex:none;width:44px;height:44px;border-radius:var(--radius-md);background:var(--tomato-tint);color:var(--tomato);display:grid;place-items:center;font-size:19px}
+.cookie-text p{font-size:13.5px;font-weight:500;color:var(--slate-2);line-height:1.5;max-width:700px}
+.cookie-text a{color:var(--tomato);font-weight:700;text-decoration:underline;text-underline-offset:2px;white-space:nowrap}
+.cookie-text a:hover{color:var(--tomato-dark)}
+.cookie-actions{flex:none;display:flex;align-items:center;gap:10px}
+.btn-cookie-reject,.btn-cookie-accept{font-family:inherit;font-size:13.5px;font-weight:700;border-radius:var(--radius-md);padding:11px 22px;cursor:pointer;transition:.2s var(--ease);white-space:nowrap}
+.btn-cookie-reject{color:var(--slate);background:transparent;border:1px solid var(--line)}
+.btn-cookie-reject:hover{border-color:var(--slate);color:var(--ink)}
+.btn-cookie-accept{color:#fff;background:var(--tomato-deep);border:1px solid var(--tomato-deep)}
+.btn-cookie-accept:hover{background:var(--tomato-dark);border-color:var(--tomato-dark);transform:translateY(-1px)}
+
+/* ===================== TABLET (≤1024px) — chrome katmanı ===================== */
+@media (max-width:1024px){
+  .wrap{padding:0 24px}
+
+  /* yatay menü → hamburger + drawer */
+  .h-top .nav{display:none}
+  .hamburger{display:grid}
+  .drawer{display:flex}
+  .drawer-overlay{display:block}
+
+  /* üst bant sadeleşir — yatay taşma engeli */
+  .topbar .tb-soc,.topbar .tb-div{display:none}
+
+  .foot-grid{grid-template-columns:1fr 1fr;gap:36px 28px}
+  .foot-brand{grid-column:1/-1}
+  .sec-head h2{font-size:30px}
+}
+
+/* ===================== MOBİL (≤640px) — chrome katmanı ===================== */
+@media (max-width:640px){
+  .wrap{padding:0 16px}
+
+  /* üst bant gizli, header en üste (tek kat 62px) */
+  .topbar{display:none}
+  .header{top:0}
+  .h-top>.wrap{height:62px;gap:10px}
+  .brand img{height:32px}
+  .head-actions{gap:6px}
+  .btn-login{display:none}                                   /* giriş → drawer + bottom-nav */
+  /* logged-in header öğeleri mobilde drawer + bottom-nav'a devreder (kaynak sıra ile is-auth'u yener) */
+  body.is-auth .head-add,body.is-auth .head-bell,body.is-auth .acct-wrap{display:none}
+  .icon-btn{width:40px;height:40px;font-size:15px}
+
+  /* fixed header offseti mobilde tek kat */
+  .below-header{padding-top:62px}
+
+  /* bölüm ritmi */
+  .sec{padding:44px 0}
+
+  /* section başlık araçları: oklar h2 satırında, "Tamamını Gör" kompakt metin-link.
+     DOM aynı — sol blok + sec-tools display:contents ile grid'e açılır:
+     [eyebrow] / [h2 | oklar] / [lead] / [see-all] */
+  .sec-head,.cat-head,.guide-head{
+    display:grid;grid-template-columns:minmax(0,1fr) auto;
+    column-gap:14px;align-items:center;margin-bottom:24px;
+  }
+  .sec-head>div:first-child,.cat-head>div:first-child,.guide-head>div:first-child,
+  .sec-head .sec-tools,.cat-head .sec-tools,.guide-head .sec-tools{display:contents}
+  .sec-head .eyebrow,.cat-head .eyebrow,.guide-head .eyebrow{grid-row:1;grid-column:1/-1}
+  .sec-head h2,.cat-head h2,.guide-head h2{grid-row:2;grid-column:1;font-size:24px}
+  .row-nav,.cat-nav{grid-row:2;grid-column:2;align-self:center}
+  .row-nav button,.cat-nav button{width:38px;height:38px;font-size:12px}
+  .sec-head .lead,.cat-head .lead,.guide-head .lead{grid-row:3;grid-column:1/-1;font-size:14.5px}
+  /* kompakt see-all: buton kabuğu kalkar, metin-link kalır */
+  .see-all{padding:0;border:none;background:transparent;font-size:13.5px;color:var(--tomato)}
+  .sec-tools>.see-all{grid-row:4;grid-column:1/-1;justify-self:start;margin-top:14px}
+
+  .chip{font-size:12px;padding:7px 12px;white-space:nowrap}
+
+  /* görüş bildir etiketi mobilde gizli — bottom-nav + FAB yeterli */
+  .feedback-tab{display:none}
+
+  /* footer — floating pill nav'ı örtmesin */
+  .footer.orange{padding-bottom:calc(86px + env(safe-area-inset-bottom,0px))}
+  .foot-grid{grid-template-columns:1fr;gap:30px}
+  .foot-legal{justify-content:center;text-align:center}
+  .foot-bottom{flex-direction:column;gap:14px;text-align:center}
+
+  /* mobil alt bar aç */
+  .bottom-nav{display:flex}
+
+  /* çerez banner: floating bottom-nav'ın ÜSTÜNDE, alt alta */
+  .cookie-banner{
+    width:calc(100% - 24px);padding:15px 16px;
+    bottom:calc(80px + env(safe-area-inset-bottom,0px));
+  }
+  .cookie-inner{flex-direction:column;align-items:stretch;gap:13px}
+  .cookie-text{align-items:flex-start}
+  .cookie-actions{gap:9px}
+  .cookie-actions button{flex:1;padding:12px 8px;font-size:12.5px}
+}
+
+/* =====================================================================
+   SAYFA CSS — sayfa-spesifik stiller BU İŞARETİN ALTINA eklenir.
+   Yukarıdaki chrome katmanına DOKUNMA (mega menü KİLİTLİ).
+   ===================================================================== */
+
+/* =====================================================================
+   F10 — SAĞLIK HUB · sağlık dili (yeşil aksan; token seti AYNI)
+   Kaynaklar: lst-hero (koyu band) · calc-card/diet-panel (v3a 418–447)
+   ===================================================================== */
+
+/* ---- HERO: koyu band (liste hero dili) — yeşil sağlık aksanı ---- */
+/* FULL-VIEWPORT hero (Gastro .hero-v kompozisyonu → Diet): tam ekran yükseklik, içerik dikey ortalı */
+.sh-top{position:relative;min-height:100vh;min-height:100svh;display:flex;align-items:center;padding-top:96px;background:#15241c;overflow:hidden}
+/* hero media: optimize lazy video (JS kontrollü) + LOCAL poster (ilk-paint + mobil/reduced/save-data fallback) = bg; ::after nane overlay video ÜSTÜNDE; içerik .wrap z:2. prefers-reduced-motion → video gizli, poster kalır. */
+.sh-hero-media{position:absolute;inset:0;z-index:0;background:#15241c url('assets/img/diet-hero-poster.jpg') center/cover no-repeat}
+.sh-hero-media video{width:100%;height:100%;object-fit:cover;object-position:center 30%;display:block}
+.sh-hero-media::after{content:"";position:absolute;inset:0;background:
+  radial-gradient(820px 360px at 84% 12%,rgba(59,183,126,.22),transparent 62%),
+  linear-gradient(90deg,rgba(18,28,22,.93) 0%,rgba(20,32,25,.80) 46%,rgba(20,32,25,.55) 100%),
+  linear-gradient(180deg,rgba(18,28,22,0) 58%,rgba(16,26,20,.9) 100%)}
+@media (prefers-reduced-motion:reduce){.sh-hero-media video{display:none}}
+/* full-viewport hero alt scroll ipucu */
+.sh-scroll{position:absolute;left:50%;bottom:24px;transform:translateX(-50%);z-index:3;color:rgba(255,255,255,.72);font-size:11.5px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;display:flex;flex-direction:column;align-items:center;gap:8px;pointer-events:none}
+.sh-scroll i{font-size:15px;animation:shbob 1.8s var(--ease) infinite}
+@keyframes shbob{0%,100%{transform:translateY(0)}50%{transform:translateY(6px)}}
+@media (prefers-reduced-motion:reduce){.sh-scroll i{animation:none}}
+.sh-top .wrap{position:relative;z-index:2;width:100%}
+.sh-hero{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);gap:50px;align-items:center;padding:14px 0 50px}
+.sh-hero .eyebrow{color:#7fe0b0}
+.sh-hero .eyebrow::before{background:var(--green)}
+.sh-hero h1{color:#fff;font-size:44px;margin:14px 0 12px;letter-spacing:-.03em;text-shadow:0 2px 24px rgba(0,0,0,.25)}
+.sh-hero h1 .accent{color:#54d39a;white-space:nowrap}
+.sh-hero .lead{color:#e3ede7;font-weight:500;font-size:15.5px;max-width:560px;text-shadow:0 1px 14px rgba(0,0,0,.3)}
+.sh-hchips{margin-top:20px}
+.sh-hchips .lbl{color:#c4d4ca}
+.sh-hchips .chip{background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.22);color:#fff;backdrop-filter:blur(4px)}
+.sh-hchips .chip:hover{background:var(--green);border-color:var(--green);color:#fff}
+/* hero trust şeridi (eski sh-stats sayıları — DadaFit df-htrust kalıbı) */
+.sh-htrust{display:flex;flex-wrap:wrap;gap:14px 22px;margin-top:24px}
+.sh-htrust span{display:inline-flex;align-items:center;gap:8px;font-size:13px;font-weight:600;color:#cfe6da}
+.sh-htrust i{color:var(--green);font-size:13px}
+.sh-htrust b{color:#fff;font-weight:700}
+/* SIGNATURE: Günün Beslenme Özeti — sağ kolon canlı kart (cam, nane) */
+.sh-ledger{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.16);border-radius:var(--radius-lg);padding:22px 22px 20px;backdrop-filter:blur(8px);box-shadow:0 18px 50px rgba(0,0,0,.28)}
+.shl-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
+.shl-head h3{color:#fff;font-size:17px;font-weight:700;letter-spacing:-.01em}
+.shl-date{font-size:11.5px;font-weight:600;color:#bfe0cf;background:rgba(59,183,126,.22);border:1px solid rgba(59,183,126,.45);padding:4px 10px;border-radius:var(--radius-pill)}
+.shl-row{margin-bottom:14px}
+.shl-rowtop{display:flex;align-items:center;justify-content:space-between;margin-bottom:7px}
+.shl-tag{display:inline-flex;align-items:center;gap:8px;font-size:13px;font-weight:600;color:#e3efe9}
+.shl-tag i{color:var(--green);width:15px;text-align:center}
+.shl-val{font-size:13.5px;font-weight:700;color:#fff}
+.shl-val small{font-size:11px;font-weight:500;color:#a9c6b7;margin-left:2px}
+.shl-bar{height:7px;border-radius:var(--radius-pill);background:rgba(255,255,255,.12);overflow:hidden}
+.shl-fill{height:100%;border-radius:var(--radius-pill);background:linear-gradient(90deg,var(--green),var(--c-mint))}
+.shl-net{display:flex;gap:11px;align-items:flex-start;margin-top:16px;padding-top:15px;border-top:1px solid rgba(255,255,255,.14)}
+.shl-net>i{color:var(--green);font-size:15px;margin-top:2px}
+.shl-net b{display:block;color:#fff;font-size:13px;font-weight:700;margin-bottom:2px}
+.shl-net span{font-size:12px;color:#b9d3c6;line-height:1.5}
+.shl-net a{color:var(--green);font-weight:700;white-space:nowrap}
+
+/* ---- sağlık eyebrow yeşil (genel) ---- */
+.sec-green .eyebrow{color:var(--green-deep)}
+.sec-green .eyebrow::before{background:var(--green)}
+/* (sayfa-içi araç arama KALDIRILDI — header büyüteci + hero "Popüler" çipleri kapsıyor) */
+
+/* ---- HESAPLAYICILAR: calc-card grid (v3a) — 3 sütun ---- */
+/* HESAPLAYICILAR: yatay scroll-snap slider (3 tam kart + 4.'nün peek'i; sıfır bağımlılık) */
+.calc-slider{position:relative}
+.calc-track{display:flex;gap:16px;overflow-x:auto;scroll-snap-type:x mandatory;scroll-behavior:smooth;scrollbar-width:none;-webkit-overflow-scrolling:touch;padding:4px 2px 8px}
+.calc-track::-webkit-scrollbar{display:none}
+.calc-track>.calc-card{flex:0 0 calc((100% - 122px)/3);scroll-snap-align:start}
+.calc-arrow{position:absolute;top:50%;transform:translateY(-50%);z-index:3;width:42px;height:42px;border-radius:var(--radius-circle);border:1px solid #d9ebe1;background:#fff;color:var(--green-deep);font-size:15px;display:grid;place-items:center;cursor:pointer;box-shadow:0 6px 18px rgba(20,40,30,.12);transition:.2s var(--ease)}
+.calc-arrow:hover{background:var(--green);border-color:var(--green);color:#fff}
+.calc-arrow.prev{left:-12px}
+.calc-arrow.next{right:-12px}
+.calc-arrow[disabled]{opacity:0;pointer-events:none}
+/* DİYET LİSTELERİ: aynı slider reçetesi (hub-card, .calc-arrow yeniden kullanılır) */
+.hub-slider{position:relative}
+.hub-track{display:flex;gap:24px;overflow-x:auto;scroll-snap-type:x mandatory;scroll-behavior:smooth;scrollbar-width:none;-webkit-overflow-scrolling:touch;padding:4px 2px 8px}
+.hub-track::-webkit-scrollbar{display:none}
+.hub-track>.hub-card{flex:0 0 calc((100% - 130px)/3);scroll-snap-align:start}
+.calc-card{display:flex;align-items:center;gap:14px;padding:16px;background:var(--paper);border:1px solid #e2efe8;border-radius:var(--radius-lg);cursor:pointer;transition:.25s var(--ease)}
+.calc-card:hover{transform:translateY(-4px);border-color:var(--green);box-shadow:var(--sh-md)}
+.calc-ico{flex:none;width:50px;height:50px;border-radius:var(--radius-lg);background:#EAF7F0;display:grid;place-items:center}
+.calc-ico i{font-size:21px;color:var(--tomato-deep)}
+.calc-card h4{font-size:16px;margin-bottom:3px}
+.calc-card p{font-size:12.5px;color:var(--muted);font-weight:500}
+.calc-card .go{margin-left:auto;color:var(--green);font-size:13px;transition:.2s var(--ease)}
+.calc-card:hover .go{transform:translateX(3px)}
+
+/* ---- HUB KARTLARI (testler + diyet programları) ---- */
+.hub-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:24px}
+.hub-card{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-lg);overflow:hidden;display:flex;flex-direction:column;cursor:pointer;transition:.3s var(--ease)}
+.hub-card:hover{transform:translateY(-6px);border-color:#dcdcdc;box-shadow:var(--sh-md)}
+.hub-media{position:relative;height:172px;background-size:cover;background-position:center}
+.hub-media::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(33,30,22,0) 52%,rgba(20,18,12,.5))}
+.hub-cat{position:absolute;top:12px;left:12px;z-index:2;background:rgba(255,255,255,.94);color:var(--slate);font-size:11.5px;font-weight:700;padding:6px 12px;border-radius:var(--radius-sm);letter-spacing:.02em}
+.hub-cat.green{background:var(--tomato-deep);color:#fff}
+.hub-tags{position:absolute;bottom:12px;left:12px;z-index:2;display:flex;gap:6px}
+.hub-tag{display:inline-flex;align-items:center;gap:5px;background:rgba(20,18,12,.72);color:#fff;font-size:11px;font-weight:700;padding:6px 10px;border-radius:var(--radius-sm);backdrop-filter:blur(4px)}
+.hub-body{padding:18px;display:flex;flex-direction:column;flex:1}
+.hub-body h4{font-size:17px;margin-bottom:8px;letter-spacing:-.01em}
+.hub-card:hover .hub-body h4{color:var(--green-deep)}
+.hub-body p{font-size:13.5px;color:var(--muted);font-weight:500;line-height:1.55}
+.hub-foot{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:auto;padding-top:14px;margin-top:16px;border-top:1px solid var(--line);font-size:12.5px;color:var(--muted);font-weight:500}
+.hub-foot .go{display:inline-flex;align-items:center;gap:7px;color:var(--tomato-deep);font-weight:700}
+.hub-card:hover .hub-foot .go i{transform:translateX(3px)}
+.hub-foot .go i{transition:.2s var(--ease)}
+
+/* ---- BESİN KÜTÜPHANESİ girişi (yeşil yıkamalı band) ---- */
+.nut-entry{display:grid;grid-template-columns:1.1fr .9fr;gap:40px;align-items:center;background:linear-gradient(180deg,#F2FBF6,#EAF7F0);border:1px solid #d9efe3;border-radius:var(--radius-xl);padding:40px}
+.nut-entry h3{font-size:27px;margin:12px 0 10px}
+.nut-entry p{color:var(--slate-2);font-weight:500;font-size:15px;margin-bottom:22px;max-width:440px}
+.nut-search{display:flex;align-items:center;gap:12px;background:#fff;border:1px solid #d9efe3;border-radius:var(--radius-md);padding:14px 18px;max-width:440px;box-shadow:var(--sh-sm)}
+.nut-search i{color:var(--green);font-size:16px}
+.nut-search span{color:var(--muted);font-size:14px;font-weight:500;flex:1}
+.nut-search .btn{padding:9px 16px;font-size:13px;color:#fff}
+.nut-pop{display:flex;flex-direction:column;gap:11px}
+.nut-row{display:flex;align-items:center;gap:14px;background:#fff;border:1px solid #d9efe3;border-radius:var(--radius-md);padding:13px 16px;transition:.2s var(--ease);cursor:pointer}
+.nut-row:hover{border-color:var(--green);transform:translateX(3px)}
+.nut-row .nr-ico{flex:none;width:42px;height:42px;border-radius:var(--radius-md);background:#EAF7F0;display:grid;place-items:center;color:var(--tomato-deep);font-size:17px}
+.nut-row b{font-size:14.5px;color:var(--slate);display:block}
+.nut-row span{font-size:12.5px;color:var(--muted);font-weight:500}
+.nut-row .kcal{margin-left:auto;font-size:13px;font-weight:700;color:var(--tomato-deep);white-space:nowrap}
+
+/* ---- DİYETİSYEN paneli (v3a diet-panel VERBATIM dili) ---- */
+.diet-panel{background:var(--slate);border-radius:var(--radius-xl);padding:42px;color:#fff;position:relative;overflow:hidden}
+.diet-panel::before{content:"";position:absolute;top:-60px;right:-60px;width:240px;height:240px;border-radius:var(--radius-circle);background:radial-gradient(circle,rgba(59,183,126,.35),transparent 70%)}
+.diet-grid{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center}
+.diet-panel .eyebrow{color:#7fe0b0;position:relative}
+.diet-panel .eyebrow::before{background:var(--green)}
+.diet-panel h3{color:#fff;font-size:28px;margin:13px 0 12px;position:relative;letter-spacing:-.02em}
+.diet-panel .lead{color:#b9c6d1;font-weight:500;font-size:15px;margin-bottom:24px;position:relative}
+.diet-list{position:relative;display:flex;flex-direction:column;gap:13px}
+.diet-doc{display:flex;align-items:center;gap:14px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:var(--radius-lg);padding:13px 15px;transition:.2s var(--ease);cursor:pointer}
+.diet-doc:hover{background:rgba(255,255,255,.1)}
+.diet-doc .av{width:50px;height:50px;border-radius:var(--radius-circle);background-size:cover;background-position:center;flex:none;border:2px solid rgba(59,183,126,.6)}
+.diet-doc .di b{font-size:15px;font-weight:700;color:#fff;display:block}
+.diet-doc .di span{font-size:12.5px;color:#9fb0bc;font-weight:500}
+.diet-doc .tag{margin-left:auto;font-size:11px;font-weight:700;color:var(--c-mint);background:rgba(59,183,126,.18);padding:6px 12px;border-radius:var(--radius-sm);display:flex;align-items:center;gap:6px;white-space:nowrap}
+.diet-panel .btn-green{position:relative;background:var(--tomato-deep);color:#fff;width:100%;margin-top:22px;box-shadow:0 8px 22px rgba(59,183,126,.3)}
+.diet-panel .btn-green:hover{filter:brightness(1.06);transform:translateY(-2px)}
+.diet-panel .diet-all{position:relative;display:inline-flex;align-items:center;gap:8px;margin-top:14px;font-size:13.5px;font-weight:700;color:#7fe0b0}
+.diet-panel .diet-all i{font-size:12px;transition:transform .2s var(--ease)}
+.diet-panel .diet-all:hover{color:#fff}
+.diet-panel .diet-all:hover i{transform:translateX(3px)}
+
+/* ---- responsive ---- */
+@media (max-width:1024px){
+  .sh-top{align-items:flex-start}/* stacked içerik 100vh'yi aşarsa üstten başla, kırpma yok */
+  .sh-hero{grid-template-columns:minmax(0,1fr);align-items:start;gap:22px;padding-bottom:34px}
+  .sh-main{min-width:0}
+  .sh-htrust{margin-top:18px}
+  .sh-ledger{margin-top:4px}
+  .hub-grid{grid-template-columns:1fr 1fr}
+  .calc-track>.calc-card{flex-basis:calc((100% - 60px)/2.3)}
+  .hub-track>.hub-card{flex-basis:calc((100% - 70px)/2.2)}
+  .nut-entry,.diet-grid{grid-template-columns:1fr;gap:28px}
+}
+@media (max-width:640px){
+  .sh-top{padding-top:74px}/* 62 header + 12 nefes (H1 koyu hero kanon) */
+  .sh-hero h1{font-size:29px}
+  .sh-hero .lead{font-size:14.5px}
+  .sh-htrust{gap:10px 16px}
+  .sh-ledger{padding:18px 16px 16px}
+  .sh-hchips{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;padding-bottom:4px}
+  .sh-hchips::-webkit-scrollbar{display:none}
+  .sh-hchips .chip{flex:none;white-space:nowrap}
+  .hub-grid{grid-template-columns:1fr}
+  .calc-track>.calc-card{flex-basis:86%}
+  .hub-track>.hub-card{flex-basis:88%}
+  .calc-arrow{display:none}
+  .nut-entry{padding:26px}
+  .diet-panel{padding:28px}
+}
+
+.nav a.active[href="saglik-hub-v1.html"]{color:var(--green)}
+.nav a.active[href="saglik-hub-v1.html"]::after{background:var(--green)}
+.header.at-top .nav>.nav-item>a.active[href="saglik-hub-v1.html"]{color:#fff}
+.header.at-top .nav>.nav-item>a.active[href="saglik-hub-v1.html"]::after{background:#fff}
+/* saglik-dropdown: scoped health chrome */
+/* diğer dropdown/mega aktif-item (turuncu kanon, underline gizli) */
+.dropdown:not(.dropdown-health) a.active{background:var(--tomato-tint)}
+.dropdown a.active::after,.mega-cats a.active::after{display:none}
+.mega-cats a.active{background:var(--tomato-tint)}
+.nav a[href="saglik-hub-v1.html"]:hover{color:var(--green);background:rgba(59,183,126,.10)}
+.header.at-top .nav>.nav-item>a[href="saglik-hub-v1.html"]:hover{color:#fff;background:rgba(255,255,255,.14)}
+
+/* ============ ADIM 3 — KABUK: brand-switch band (Diet, .bs-diet aktif) ============ */
+/* NOT: .bs-gastro --bs-c LİTERAL #E14827 — bu sayfada --tomato NANE'ye swap'lı (Diet aksanı),
+   var(--tomato) kullanılsaydı Gastro pill'i mint render olurdu. Diğer markalar page-bağımsız token. */
+:root{--c-mint-deep:#3BB77E}
+.brand-switch{display:flex;align-items:center;gap:5px}
+.bs-item{display:inline-flex;align-items:center;gap:7px;height:27px;padding:0 11px;border-radius:var(--radius-sm);color:#e9e2d6;font-size:12px;font-weight:800;letter-spacing:.01em;line-height:1;border:1px solid transparent;transition:background .2s var(--ease),border-color .2s var(--ease),color .2s var(--ease)}
+.bs-item i{font-size:13px;color:var(--bs-ic);transition:color .2s var(--ease)}
+.bs-name{max-width:0;opacity:0;overflow:hidden;white-space:nowrap;transform:translateX(-4px);transition:max-width .26s var(--ease),opacity .2s var(--ease),transform .22s var(--ease)}
+.bs-item:hover,.bs-item:focus-visible{background:var(--bs-c);border-color:var(--bs-c);color:#fff;outline:none}
+.bs-item:hover i,.bs-item:focus-visible i{color:#fff}
+.bs-item:hover .bs-name,.bs-item:focus-visible .bs-name{max-width:140px;opacity:1;transform:none}
+.bs-item.is-active{background:var(--bs-bg);border-color:var(--bs-bd);color:#fff;cursor:default;box-shadow:inset 0 -2px 0 var(--bs-ic)}
+.bs-item.is-active .bs-name{max-width:140px;opacity:1;transform:none}
+.bs-item.is-active i,.bs-item.is-active:hover i{color:var(--bs-ic)}
+.bs-item.is-active:hover{background:var(--bs-bg);border-color:var(--bs-bd)}
+.bs-gastro {--bs-c:#E14827;            --bs-bg:rgba(225,72,39,.18); --bs-bd:rgba(225,72,39,.46); --bs-ic:#ff7d5e}
+.bs-diet   {--bs-c:var(--c-mint-deep); --bs-bg:rgba(59,183,126,.20);--bs-bd:rgba(59,183,126,.5); --bs-ic:#4ecb91}
+.bs-fit    {--bs-c:var(--c-green);     --bs-bg:rgba(0,157,79,.22);  --bs-bd:rgba(0,157,79,.5);   --bs-ic:#3fd089}
+.bs-gourmet{--bs-c:var(--c-purple);    --bs-bg:rgba(177,79,197,.22);--bs-bd:rgba(177,79,197,.5); --bs-ic:#c97ad6}
+.bs-campus {--bs-c:var(--c-petrol);    --bs-bg:rgba(0,96,114,.30);  --bs-bd:rgba(95,203,216,.40);--bs-ic:#5fcbd8}
+
+/* ============ ADIM 3 — KABUK: reveal + scroll-top + DadaMentor FAB (Diet) ============ */
+html.reveal-ready .reveal{opacity:0;transform:translateY(22px);transition:opacity .7s var(--ease),transform .7s var(--ease)}
+html.reveal-ready .reveal.in{opacity:1;transform:none}
+@media (prefers-reduced-motion:reduce){html.reveal-ready .reveal{opacity:1 !important;transform:none !important;transition:none}}
+/* scroll-to-top (sağ-alt) — var(--tomato) bu sayfada NANE */
+.to-top{position:fixed;right:22px;bottom:92px;z-index:55;width:54px;height:54px;border-radius:var(--radius-lg);background:#fff;color:var(--tomato);border:1px solid var(--line);cursor:pointer;font-size:16px;display:inline-flex;align-items:center;justify-content:center;box-shadow:0 8px 20px rgba(33,30,22,.16);opacity:0;visibility:hidden;transform:translateY(8px);transition:opacity .25s var(--ease),transform .25s var(--ease),visibility .25s,background .2s var(--ease),color .2s var(--ease),border-color .2s var(--ease)}
+.to-top.show{opacity:1;visibility:visible;transform:none}
+.to-top:hover{background:var(--tomato);color:#fff;border-color:var(--tomato);transform:translateY(-2px)}
+.to-top:focus-visible{outline:3px solid var(--tomato-tint);outline-offset:2px}
+@media (max-width:640px){.to-top{right:16px;bottom:calc(148px + env(safe-area-inset-bottom,0px));width:48px;height:48px}}
+@media (prefers-reduced-motion:reduce){.to-top{transition:opacity .15s linear}.to-top:hover{transform:none}}
+/* ---- DadaMentor asistan token'lar (Diet: --tomato-rgb NANE 59,183,126 → atmos/av glow mint; gövde koyu kanonik) ---- */
+:root{
+  --d-3:#322D26; --d-deep:#161310;
+  --dline:rgba(251,248,243,.16);
+  --r-md:12px; --r-lg:16px; --r-xl:24px; --r-circle:50%;
+  --ease-spring:cubic-bezier(.16,1,.3,1);
+  --tomato-rgb:59,183,126;
+  --sh-3:0 18px 50px rgba(33,30,22,.16);
+  --panel-fl:360px;
+  --b-gastro:#E14827;  --b-gastro-l:#F0613F;
+  --b-gourmet:#b14fc5; --b-gourmet-l:#C66BD8;
+  --b-diet:#3BB77E;    --b-diet-l:#52CD94;
+  --b-fit:#009d4f;     --b-fit-l:#22BE6E;
+  --b-akademi:#006072; --b-akademi-l:#2E97AB;
+}
+.w-gastro{--bc:var(--b-gastro);--bl:var(--b-gastro-l)}
+.w-gourmet{--bc:var(--b-gourmet);--bl:var(--b-gourmet-l)}
+.w-diet{--bc:var(--b-diet);--bl:var(--b-diet-l)}
+.w-fit{--bc:var(--b-fit);--bl:var(--b-fit-l)}
+.w-akademi{--bc:var(--b-akademi);--bl:var(--b-akademi-l)}
+.mentor-panel{overflow:hidden;border:1px solid var(--dline);border-radius:var(--r-xl);box-shadow:var(--sh-3);background:var(--d-deep);display:flex;flex-direction:column;justify-content:space-between;transition:width .5s var(--ease-spring),height .5s var(--ease-spring),border-radius .5s var(--ease-spring),box-shadow .42s var(--ease),transform .45s var(--ease-spring),opacity .35s var(--ease),background .4s var(--ease),border-color .4s var(--ease)}
+.mp-media{position:absolute;inset:0;z-index:0;overflow:hidden}
+.mp-atmos{position:absolute;inset:0;background:radial-gradient(110% 60% at 34% 24%, rgba(var(--tomato-rgb),.24), transparent 58%),linear-gradient(162deg,var(--d-3) 0%,var(--d-deep) 92%)}
+.mp-media video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.mp-fade{position:absolute;inset:0;z-index:1;pointer-events:none;background:linear-gradient(180deg, rgba(22,19,16,.05) 0%, transparent 30%, rgba(22,19,16,.34) 54%, rgba(22,19,16,.82) 78%, rgba(22,19,16,.97) 100%)}
+.mp-top{position:relative;z-index:3;display:flex;align-items:center;justify-content:space-between;padding:15px 16px;flex:none;transition:opacity .25s var(--ease)}
+.mp-tag{display:inline-flex;align-items:center;gap:8px;font-weight:300;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:rgba(255,255,255,.82)}
+.mp-tag i{font-size:11px;color:var(--tomato)}
+.mp-toggle{width:30px;height:30px;border-radius:var(--r-circle);border:1px solid var(--dline);background:rgba(22,19,16,.40);backdrop-filter:blur(4px);color:rgba(255,255,255,.8);display:grid;place-items:center;cursor:pointer;font-size:12px;transition:.2s var(--ease)}
+.mp-toggle:hover{color:#fff;border-color:rgba(255,255,255,.4)}
+.mp-chat{position:relative;z-index:3;padding:0 16px 17px;display:flex;flex-direction:column;gap:11px;flex:1;min-height:0;justify-content:flex-end;transition:opacity .3s var(--ease),transform .3s var(--ease)}
+.mp-id{display:flex;align-items:center;gap:11px;flex:none}
+.mp-av{width:38px;height:38px;border-radius:var(--r-circle);background:var(--tomato);color:#fff;display:grid;place-items:center;font-size:15px;flex:none;box-shadow:0 0 0 4px rgba(var(--tomato-rgb),.22)}
+.mp-id .nm{font-weight:800;font-size:15.5px;color:#fff;line-height:1.1}
+.mp-id .on{display:inline-flex;align-items:center;gap:6px;font-weight:300;font-size:11px;letter-spacing:.04em;color:rgba(255,255,255,.74)}
+.mp-id .on .d{width:7px;height:7px;border-radius:var(--r-circle);background:var(--b-diet-l);box-shadow:0 0 0 3px color-mix(in srgb,var(--b-diet-l) 28%,transparent)}
+.mp-bubble{flex:none;align-self:flex-start;max-width:94%;background:rgba(38,34,29,.86);backdrop-filter:blur(7px);border:1px solid var(--dline);border-radius:4px 15px 15px 15px;padding:12px 15px;font-weight:600;font-size:15.5px;line-height:1.4;color:#fff}
+.mp-row{flex:0 0 auto;display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.mp-opt{display:inline-flex;align-items:center;justify-content:center;min-width:0;cursor:pointer;white-space:nowrap;text-decoration:none;padding:9px 10px;border-radius:var(--r-md);background:rgba(22,19,16,.50);backdrop-filter:blur(7px);border:1px solid var(--dline);color:rgba(255,255,255,.92);font-weight:600;font-size:12.5px;transition:background .2s var(--ease),border-color .2s var(--ease),color .2s var(--ease),transform .2s var(--ease)}
+.mp-opt:hover{background:rgba(42,38,32,.86);border-color:var(--bc,var(--tomato));color:#fff;transform:translateY(-1px)}
+.mp-opt.active{background:var(--bc,var(--tomato));border-color:transparent;color:#fff;box-shadow:0 5px 18px color-mix(in srgb,var(--bc,var(--tomato)) 42%,transparent)}
+.mp-mini-overlay{display:flex;position:absolute;inset:0;z-index:5;align-items:center;justify-content:flex-start;gap:11px;padding:0 22px 0 8px;cursor:pointer;opacity:0;pointer-events:none;transition:opacity .3s var(--ease)}
+.mp-mini-overlay .mav{width:40px;height:40px;border-radius:var(--r-circle);background:var(--tomato);color:#fff;display:grid;place-items:center;font-size:17px;flex:none;box-shadow:0 0 0 3px rgba(var(--tomato-rgb),.26);transform:scale(.55);transition:transform .45s var(--ease-spring)}
+.mp-mini-lbl{font-weight:800;font-size:14.5px;letter-spacing:-.01em;color:#fff;white-space:nowrap;opacity:0;transform:translateX(-6px);transition:opacity .3s var(--ease) .05s,transform .35s var(--ease-spring) .05s}
+.mentor-panel.mini .mp-mini-lbl{opacity:1;transform:none}
+.mentor-panel.floating{position:fixed;left:24px;right:auto;bottom:24px;top:auto;width:var(--panel-fl) !important;height:min(72vh,540px);z-index:94;border-radius:var(--r-xl);box-shadow:0 28px 80px rgba(16,14,9,.46);animation:floatIn .5s var(--ease-spring)}
+@keyframes floatIn{from{opacity:0;transform:translateY(26px) scale(.965)}to{opacity:1;transform:none}}
+.mentor-panel.foot-hide{transform:translateY(150%) !important;opacity:0;pointer-events:none}
+.mentor-panel.floating .mp-chat{flex:none;justify-content:flex-end}
+.mentor-panel.mini{position:fixed;left:24px;right:auto;bottom:24px;top:auto;width:148px !important;height:56px !important;max-height:56px;border-radius:var(--r-lg);z-index:94;cursor:pointer;overflow:hidden;background:var(--slate);border:1px solid rgba(255,255,255,.09);box-shadow:0 14px 38px rgba(16,14,9,.46)}
+.mentor-panel.mini .mp-media,.mentor-panel.mini .mp-fade{opacity:0}
+.mentor-panel.mini .mp-top,.mentor-panel.mini .mp-chat{position:absolute;left:0;right:0}
+.mentor-panel.mini .mp-chat{bottom:0;opacity:0;pointer-events:none;transform:translateY(6px)}
+.mentor-panel.mini .mp-top{top:0;opacity:0;pointer-events:none}
+.mentor-panel.mini .mp-mini-overlay{position:relative;inset:auto;height:56px;opacity:1;pointer-events:auto}
+.mentor-panel.mini .mp-mini-overlay .mav{transform:scale(1)}
+@media (max-width:640px){.mentor-panel.floating{left:16px;bottom:calc(88px + env(safe-area-inset-bottom,0px));width:calc(100vw - 32px) !important;max-width:360px;height:min(64vh,520px)}.mentor-panel.mini{left:16px;bottom:calc(88px + env(safe-area-inset-bottom,0px))}}
+
+/* ===== A4 GÜVEN KATMANI: tıbbi şerit ===== */
+.pf-disclaimer{background:var(--tomato-tint);border-top:1px solid rgba(59,183,126,.25)}
+.pf-disclaimer .wrap{display:flex;gap:14px;align-items:flex-start;padding-top:22px;padding-bottom:22px}
+.pf-disclaimer i{color:var(--tomato-deep);font-size:17px;margin-top:2px;flex:none}
+.pf-disclaimer p{font-size:13.5px;color:var(--slate-2);font-weight:500;line-height:1.65;max-width:960px}
+.pf-disclaimer b{color:var(--slate);font-weight:700}
+</style>
+<style>
+/* w3-nav-sweep */
+.dropdown .dd-group{margin:6px 0 2px;padding:9px 13px 4px;border-top:1px solid var(--line);font-size:10.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
+.d-sub .d-sub-group{margin-top:6px;padding:10px 22px 4px 36px;border-top:1px solid var(--line);font-size:10px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
+.acct-menu .acct-pro i{color:#d99812}
+.acct-menu .acct-pro:hover{background:linear-gradient(180deg,rgba(251,230,180,.55),rgba(243,209,120,.32))}
+.acct-menu .acct-pro:hover,.acct-menu .acct-pro:hover i{color:#8a6410}
+.vid-pro{display:inline-flex;align-items:center;gap:5px;font-size:10px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:#8a6410;background:linear-gradient(180deg,#fbe6b4,#f3d178);border:1px solid #e0bc63;padding:2px 8px;border-radius:999px;vertical-align:middle;margin-left:9px}
+.vid-pro i{font-size:9px}
+</style>
+<style>
+/* ===== Footer marka hizalama (Gastro footer dili; marka-nötr, sızma yok) ===== */
+.foot-lockup{display:inline-flex;align-items:center;gap:11px;margin-bottom:15px}
+.foot-lockup .fl-mark{width:42px;height:42px;border-radius:50%;background:#fff;color:var(--tomato);display:grid;place-items:center;font-size:17px;flex:none;box-shadow:0 4px 14px rgba(0,0,0,.16)}
+.foot-lockup .fl-word{font-weight:800;font-size:23px;letter-spacing:-.015em;color:#fff;line-height:1}
+.foot-lockup .fl-word .bd,.foot-lockup .fl-word .sf{color:#fff}
+.foot-brand .foot-tag{font-size:14px;font-weight:500;color:rgba(255,255,255,.82);line-height:1.6;max-width:34ch;margin:0 0 18px}
+.foot-bottom .fb-left b{color:#fff;font-weight:700}
+.foot-bottom .fb-left b .bd,.foot-bottom .fb-left b .sf{color:#fff}
+</style>
+<style>
+/* ============ DADADİET ARAMA (arama-diet) — anatomi Fit pilotundan, mint token remap ============
+   Diet shell'inde --tomato = #3BB77E; arama motoru --diet-* (mint) ailesine bağlı → Fit yeşili/Gastro hue'su YOK.
+   Mint token ailesi (Fit aksan ailesi muadili): */
+:root{
+  --diet:#3BB77E; --diet-deep:#1c7a4e; --diet-tint:#E6F5EE;
+  --diet-line:#d4ebe0; --diet-bright:#54D39A; --diet-dark:#211E16;
+}
+
+/* ---- arama hero (koyu mint bandı + beslenme görseli) — solid header altında ---- */
+.fs-top{position:relative;padding:126px 0 56px;background-image:linear-gradient(180deg,rgba(16,32,24,.92) 0%,rgba(22,40,30,.80) 52%,rgba(18,28,22,.88) 100%),url('https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=1680&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-14&high=8&vib=3');background-size:cover;background-position:center;overflow:hidden}
+.fs-top::before{content:"";position:absolute;inset:0;background:radial-gradient(1100px 460px at 16% -10%,rgba(59,183,126,.32),transparent 60%);pointer-events:none;z-index:1}
+.fs-top::after{content:"";position:absolute;right:-120px;bottom:-140px;width:420px;height:420px;border-radius:50%;background:radial-gradient(circle,rgba(84,211,154,.24),transparent 70%);pointer-events:none;z-index:1}
+.fs-top .wrap{position:relative;z-index:2}
+.fs-top .eyebrow{color:var(--diet-bright)}
+.fs-top h1{font-size:33px;letter-spacing:-.02em;color:#fff;margin:10px 0 12px;text-shadow:0 2px 22px rgba(0,0,0,.28)}
+.fs-top h1 .accent{color:var(--diet-bright)}
+.fs-lead{font-size:15.5px;font-weight:500;color:#d7e6dd;max-width:600px;line-height:1.6;margin-bottom:26px}
+/* arama kutusu */
+.fs-box{position:relative;background:var(--paper);border:1px solid var(--diet-line);border-radius:var(--radius-lg);box-shadow:var(--sh-lg);padding:10px;max-width:680px}
+.fs-row{display:flex;gap:8px;padding:6px}
+.fs-input{flex:1;display:flex;align-items:center;gap:12px;background:var(--bg);border:1px solid var(--line);border-radius:var(--radius-md);padding:0 18px}
+.fs-input i{color:var(--diet-deep)}
+.fs-input input{flex:1;min-width:0;border:none;background:transparent;font-family:inherit;font-weight:500;font-size:15.5px;color:var(--slate);padding:16px 0;outline:none}
+.fs-input input::placeholder{color:#a7a7a7;font-weight:500}
+.fs-row .btn{flex:none;padding:0 26px}
+.fs-sum{margin-top:18px;font-size:14.5px;color:#cfe0d6;font-weight:500}
+.fs-sum b{color:#fff;font-weight:700}
+.fs-sum .q{color:var(--diet-bright);font-weight:700}
+
+/* ---- autocomplete dropdown ---- */
+.fs-ac{position:absolute;left:6px;right:6px;top:calc(100% - 4px);z-index:60;background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-md);box-shadow:var(--sh-lg);padding:8px;max-height:min(440px,72vh);overflow-y:auto;opacity:0;visibility:hidden;transform:translateY(-6px);transition:opacity .18s var(--ease),transform .18s var(--ease),visibility .18s;scrollbar-width:thin;scrollbar-color:#d9d9d9 transparent}
+.fs-ac::-webkit-scrollbar{width:8px}
+.fs-ac::-webkit-scrollbar-thumb{background:#dcdcdc;border-radius:var(--radius-pill);border:2px solid var(--paper)}
+.fs-box.ac-open .fs-ac{opacity:1;visibility:visible;transform:translateY(0)}
+.fs-ac .ac-grp{display:flex;align-items:center;gap:8px;padding:11px 12px 6px;font-size:11.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--muted)}
+.fs-ac .ac-grp i{font-size:11px;color:var(--diet)}
+.fs-ac .ac-grp .ac-clear{margin-left:auto;font-size:11px;font-weight:600;letter-spacing:0;text-transform:none;color:var(--muted);cursor:pointer;border:none;background:none;font-family:inherit;padding:2px 4px;border-radius:var(--radius-sm)}
+.fs-ac .ac-grp .ac-clear:hover{color:var(--diet)}
+.fs-ac .ac-opt{display:flex;align-items:center;gap:13px;padding:10px 12px;border-radius:var(--radius-md);cursor:pointer;transition:background .14s var(--ease)}
+.fs-ac .ac-opt .ac-ico{flex:none;width:38px;height:38px;border-radius:var(--radius-sm);background:var(--bg);border:1px solid var(--line);display:grid;place-items:center;color:var(--slate-2);font-size:15px;background-size:cover;background-position:center;overflow:hidden}
+.fs-ac .ac-opt .ac-main{min-width:0;flex:1}
+.fs-ac .ac-opt .ac-ttl{display:block;font-size:14.5px;font-weight:600;color:var(--slate);line-height:1.25;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.fs-ac .ac-opt .ac-ttl mark{background:none;color:var(--diet);font-weight:700;padding:0}
+.fs-ac .ac-opt .ac-sub{display:block;margin-top:1px;font-size:12px;font-weight:500;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.fs-ac .ac-opt .ac-badge{flex:none;display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:700;padding:4px 9px;border-radius:var(--radius-pill);background:var(--diet-tint);color:var(--diet-deep);border:1px solid var(--diet-line)}
+.fs-ac .ac-opt .ac-badge i{font-size:9.5px}
+.fs-ac .ac-opt:hover,.fs-ac .ac-opt.is-active{background:var(--diet-tint)}
+.fs-ac .ac-opt:hover .ac-ttl,.fs-ac .ac-opt.is-active .ac-ttl{color:var(--diet-deep)}
+.fs-ac .ac-query .ac-ico{background:var(--diet);border-color:var(--diet);color:#fff}
+.fs-ac .ac-none{padding:18px 14px;text-align:center;font-size:13.5px;color:var(--muted);font-weight:500}
+
+/* ---- sekme barı ---- */
+.fs-tabbar{position:sticky;top:112px;z-index:40;background:rgba(255,255,255,.93);-webkit-backdrop-filter:blur(10px) saturate(150%);backdrop-filter:blur(10px) saturate(150%);border-bottom:1px solid var(--line);padding:12px 0}
+.fs-tabs{display:flex;gap:4px;background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-md);padding:4px;overflow-x:auto;scrollbar-width:none}
+.fs-tabs::-webkit-scrollbar{display:none}
+.fs-tabs .dt{font-family:inherit;font-weight:700;font-size:13px;color:var(--muted);background:transparent;border:none;border-radius:var(--radius-sm);padding:9px 16px;cursor:pointer;display:inline-flex;align-items:center;gap:7px;transition:.2s var(--ease);white-space:nowrap;flex:none}
+.fs-tabs .dt:hover{color:var(--diet-deep)}
+.fs-tabs .dt.active{background:var(--diet);color:#fff}
+.fs-tabs .dt .cnt{font-size:11px;font-weight:700;opacity:.6}
+
+/* ---- sonuç bölgesi ---- */
+.fs-results{padding:34px 0 60px;background:var(--bg-cream)}
+.fs-pane{animation:fadeUp .35s var(--ease)}
+.fs-pane[hidden]{display:none}
+.fs-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:24px}
+.fs-grid.is-coach{grid-template-columns:repeat(5,1fr);gap:18px}
+.fs-cnt-note{font-size:13.5px;color:var(--muted);font-weight:500;margin:0 0 20px}
+.fs-cnt-note b{color:var(--diet-deep);font-weight:700}
+
+/* ---- sonuç kartı (POOL-driven, tek şablon) ---- */
+.fs-card{display:flex;flex-direction:column;background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-lg);overflow:hidden;cursor:pointer;transition:.28s var(--ease)}
+.fs-card:hover{transform:translateY(-6px);border-color:var(--diet-line);box-shadow:var(--sh-md)}
+.fs-media{position:relative;height:158px;background-size:cover;background-position:center}
+.fs-media::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(33,30,22,0) 55%,rgba(20,18,12,.34))}
+.fs-badge{position:absolute;top:11px;left:11px;z-index:2;display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:700;padding:5px 11px;border-radius:var(--radius-pill);background:rgba(255,255,255,.95);color:var(--diet-deep)}
+.fs-badge i{font-size:10px}
+.fs-tile{height:120px;display:grid;place-items:center;background:var(--diet-tint);color:var(--diet);font-size:34px;position:relative}
+.fs-tile .fs-badge{background:#fff;box-shadow:var(--sh-sm)}
+.fs-cbody{padding:15px 16px 17px;display:flex;flex-direction:column;flex:1}
+.fs-cbody h4{font-size:16px;letter-spacing:-.01em;line-height:1.3;margin-bottom:6px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;transition:color .2s var(--ease)}
+.fs-card:hover .fs-cbody h4{color:var(--diet-deep)}
+.fs-cbody p{font-size:12.5px;color:var(--muted);font-weight:500;line-height:1.45;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.fs-cgo{margin-top:auto;padding-top:13px;font-size:12.5px;font-weight:700;color:var(--diet-deep);display:inline-flex;align-items:center;gap:7px}
+.fs-cgo i{font-size:10px;transition:transform .2s var(--ease)}
+.fs-card:hover .fs-cgo i{transform:translateX(3px)}
+/* antrenör varyantı — yuvarlak avatar, ortalı */
+.fs-card.is-coach{align-items:center;text-align:center;padding:20px 14px 18px}
+.fs-card.is-coach .fs-av{width:92px;height:92px;border-radius:50%;background-size:cover;background-position:center;border:3px solid #fff;box-shadow:var(--sh-sm);transition:.25s var(--ease)}
+.fs-card.is-coach:hover .fs-av{border-color:var(--diet);transform:translateY(-3px)}
+.fs-card.is-coach h4{margin-top:13px;font-size:15.5px}
+.fs-card.is-coach p{-webkit-line-clamp:1}
+.fs-card.is-coach .fs-cbody{padding:0;align-items:center;flex:none}
+.fs-card.is-coach .fs-badge{position:static;margin-top:9px;background:var(--diet-tint);color:var(--diet-deep)}
+
+/* ---- boş durum ---- */
+.fs-empty{display:none;text-align:center;background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-lg);padding:70px 30px;margin-top:8px}
+.fs-empty.show{display:block;animation:fadeUp .35s var(--ease)}
+.fs-empty-ico{width:74px;height:74px;border-radius:var(--radius-lg);background:var(--diet-tint);color:var(--diet);display:grid;place-items:center;font-size:29px;margin:0 auto 20px}
+.fs-empty h3{font-size:22px;margin-bottom:9px}
+.fs-empty p{font-size:14.5px;color:var(--muted);font-weight:500;max-width:420px;margin:0 auto 22px;line-height:1.6}
+
+/* ---- popüler & son aramalar ---- */
+.fs-pop{padding:52px 0 68px;background:var(--bg-white)}
+.fs-pop-grid{display:grid;grid-template-columns:1.25fr 1fr;gap:48px;align-items:start}
+.fs-pop h3{font-size:18px;display:inline-flex;align-items:center;gap:10px;margin-bottom:18px}
+.fs-pop h3 i{color:var(--diet);font-size:15px}
+.fs-chips{display:flex;flex-wrap:wrap;gap:10px}
+.fs-chips .chip{font-family:inherit;font-size:13px;font-weight:600;color:var(--slate-2);background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-pill);padding:9px 16px;cursor:pointer;transition:.18s var(--ease)}
+.fs-chips .chip:hover{border-color:var(--diet);color:var(--diet-deep);background:var(--diet-tint)}
+.fs-recent{display:flex;flex-direction:column}
+.fs-rrow{display:flex;align-items:center;gap:12px;padding:12px 4px;border-bottom:1px solid var(--line);font-size:14px;font-weight:500;color:var(--slate-2);cursor:pointer;transition:.18s var(--ease)}
+.fs-rrow:last-child{border-bottom:none}
+.fs-rrow>i:first-child{color:var(--muted);font-size:13px;flex:none;width:18px;text-align:center}
+.fs-rrow .term{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.fs-rrow .go{margin-left:auto;flex:none;font-size:11px;color:#c7c7c7;transition:.18s var(--ease)}
+.fs-rrow:hover{color:var(--diet-deep)}
+.fs-rrow:hover .go{color:var(--diet);transform:translateX(3px)}
+
+.is-off{display:none!important}
+.sr-vh{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+
+@media (max-width:1024px){
+  .fs-grid{grid-template-columns:1fr 1fr}
+  .fs-grid.is-coach{grid-template-columns:repeat(3,1fr)}
+  .fs-pop-grid{grid-template-columns:1fr;gap:34px}
+}
+@media (max-width:640px){
+  .fs-top{padding:104px 0 40px}
+  .fs-top h1{font-size:25px}
+  .fs-tabbar{top:62px}
+  .fs-grid,.fs-grid.is-coach{display:flex;gap:14px;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;padding-bottom:6px}
+  .fs-grid::-webkit-scrollbar{display:none}
+  .fs-grid>*{flex:none;width:74vw;max-width:280px;scroll-snap-align:start}
+  .fs-grid.is-coach>*{width:52vw;max-width:200px}
+}
+</style>
+</head>
+<body data-brand="diet">
+
+<!-- ===== TOP UTILITY BAR ===== -->
+<div class="topbar">
+  <div class="wrap">
+    <div class="tb-left">
+      <a href="besin-degerleri-v1.html"><i class="fa-solid fa-leaf" style="color:var(--tomato)"></i> 2.400+ besin değeri</a>
+      <span class="tb-div"></span>
+      <div class="tb-soc">
+        <a href="#"><i class="fa-brands fa-instagram"></i></a>
+        <a href="#"><i class="fa-brands fa-youtube"></i></a>
+        <a href="#"><i class="fa-brands fa-pinterest"></i></a>
+      </div>
+    </div>
+    <div class="tb-right">
+      <nav class="brand-switch" aria-label="DadaMentor dünyaları">
+        <a class="bs-item bs-gastro" href="anasayfa-portal-v3a.html" title="DadaGastro"><i class="fa-solid fa-utensils"></i><span class="bs-name"><span class="bd">Dada</span><span class="sf">Gastro</span></span></a>
+        <a class="bs-item bs-diet is-active" href="saglik-hub-v1.html" aria-current="page"><i class="fa-solid fa-leaf"></i><span class="bs-name"><span class="bd">Dada</span><span class="sf">Diet</span></span></a>
+        <a class="bs-item bs-fit" href="dadafit-hub-v1.html" title="DadaFit"><i class="fa-solid fa-dumbbell"></i><span class="bs-name"><span class="bd">Dada</span><span class="sf">Fit</span></span></a>
+        <a class="bs-item bs-gourmet" href="kesfet-v1.html" title="DadaGourmet"><i class="fa-solid fa-map-location-dot"></i><span class="bs-name"><span class="bd">Dada</span><span class="sf">Gourmet</span></span></a>
+        <a class="bs-item bs-campus" href="akademi-v1.html" title="DadaCampus"><i class="fa-solid fa-graduation-cap"></i><span class="bs-name"><span class="bd">Dada</span><span class="sf">Campus</span></span></a>
+      </nav>
+
+      <div class="tb-lang" id="tbLang">
+        <button class="tb-lang-btn" id="tbLangBtn" type="button" aria-haspopup="true" aria-expanded="false">
+          <i class="fa-solid fa-globe"></i><span>EN</span><i class="fa-solid fa-chevron-down tb-lang-caret"></i>
+        </button>
+        <div class="tb-lang-menu" id="tbLangMenu" role="menu">
+          <a href="#" role="menuitem" data-lang="tr">TR <span>Türkçe</span></a>
+          <a href="#" role="menuitem" class="active" data-lang="en">EN <span>English</span></a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== HEADER ===== -->
+<header class="header">
+  <!-- TEK KAT: marka + ortalanmış nav + aksiyonlar (Revize T3 M2) -->
+  <div class="h-top">
+    <div class="wrap">
+      <a class="brand dd-brand" href="saglik-hub-v1.html" aria-label="DadaDiet — Sağlıklı Yaşam">
+        <svg class="dd-mark" viewBox="0 0 44 44" aria-hidden="true">
+          <rect x="3" y="3" width="38" height="38" rx="11" fill="#3BB77E"/>
+          <path d="M30 12 C20 12 14 18 14 27 C14 28.4 14.2 29.7 14.6 31 C24 31 31 25 31 14.2 C31 13.4 30.6 12.7 30 12 Z" fill="#fff" opacity=".96"/>
+          <path d="M16 31 C18 24 22 18 29 14" stroke="#3BB77E" stroke-width="2.1" fill="none" stroke-linecap="round"/>
+          <path d="M22 23 l2.4 0 1.5 -3 2 5.4 1.4 -2.4 2.1 0" stroke="#3BB77E" stroke-width="1.7" fill="none" stroke-linecap="round" stroke-linejoin="round" opacity=".75"/>
+        </svg>
+        <span class="dd-word"><b>Dada</b><span class="dd-st">Diet</span></span>
+      </a>
+      <nav class="nav">
+        <div class="nav-item">
+          <a href="beden-kutle-endeksi-v1.html">Hesaplayıcılar</a>
+        </div>
+        <div class="nav-item"><a href="besin-degerleri-v1.html">Besin Değerleri</a></div>
+        <div class="nav-item"><a href="beslenme-rehberi-v1.html">Beslenme Rehberi</a></div>
+        <div class="nav-item"><a href="diyet-listeleri-v1.html">Programlar</a></div>
+        <div class="nav-item"><a href="saglik-testler-v1.html">Testler</a></div>
+        <div class="nav-item"><a href="diyetisyen-dizin-v1.html">Diyetisyenler</a></div>
+      </nav>
+      <div class="head-actions">
+        <button class="icon-btn" aria-label="DadaDiet içeriğinde ara" onclick="location.href='arama-diet-v1.html'"><i class="fa-solid fa-magnifying-glass"></i></button>
+        <button class="btn-login" onclick="location.href='giris-v1.html'"><i class="fa-regular fa-user"></i> Giriş Yap</button>
+        <!-- LOGIN-STATE: Ekle ▾ (logged-in) -->
+        <div class="acct-item head-add">
+          <button class="icon-btn" aria-label="Ekle" aria-haspopup="true"><i class="fa-solid fa-plus"></i></button>
+          <div class="acct-menu">
+            <a href="tarif-ekle-v1.html"><i class="fa-solid fa-utensils"></i> <span>Tarif Ekle<small>Yeni bir tarif paylaş</small></span></a>
+            <a href="puf-noktasi-ekle-v1.html"><i class="fa-solid fa-lightbulb"></i> <span>Püf Noktası Ekle<small>Küçük bir mutfak sırrı</small></span></a>
+          </div>
+        </div>
+        <!-- LOGIN-STATE: bildirim zili (logged-in) -->
+        <a class="icon-btn head-bell" href="bildirimler-v1.html" aria-label="Bildirimler"><i class="fa-solid fa-bell"></i><span class="hb-badge">3</span></a>
+        <!-- LOGIN-STATE: hesap avatarı ▾ (logged-in) — persona Elif Şahin -->
+        <div class="acct-item acct-wrap">
+          <button class="acct-btn" aria-label="Hesabım" aria-haspopup="true">
+            <span class="acct-ava" style="background-image:url('https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')"></span>
+            <i class="fa-solid fa-chevron-down acct-caret"></i>
+          </button>
+          <div class="acct-menu">
+            <div class="acct-id">
+              <span class="acct-ava" style="background-image:url('https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')"></span>
+              <span class="acct-id-txt"><b>Elif Şahin</b><small>@elifsahin</small></span>
+            </div>
+            <div class="acct-div"></div>
+            <a href="mutfak-defteri-v1.html"><i class="fa-solid fa-book-bookmark"></i> <span>Mutfak Defterim</span></a>
+            <a href="rozetler-v1.html"><i class="fa-solid fa-medal"></i> <span>Rozetlerim</span></a>
+            <a href="mutfak-defteri-v1.html?tab=tarifler"><i class="fa-solid fa-utensils"></i> <span>Tariflerim</span></a>
+            <a href="mutfak-defteri-v1.html?tab=kaydedilenler"><i class="fa-solid fa-bookmark"></i> <span>Kaydedilenler</span></a>
+            <a href="mutfak-defteri-v1.html?tab=menuler"><i class="fa-solid fa-layer-group"></i> <span>Menülerim</span></a>
+            <a href="alisveris-listesi-v1.html"><i class="fa-solid fa-basket-shopping"></i> <span>Alışveriş Listem</span></a>
+            <a href="rezervasyonlarim-v1.html"><i class="fa-solid fa-calendar-check"></i> <span>Rezervasyonlarım</span></a>
+            <a href="pro-v1.html" class="acct-pro"><i class="fa-solid fa-crown"></i> <span>Pro'ya Yükselt</span></a>
+            <a href="hesabim-v1.html"><i class="fa-solid fa-gear"></i> <span>Ayarlar / Hesabım</span></a>
+            <div class="acct-div"></div>
+            <a href="anasayfa-portal-v3a.html?auth=0" class="acct-logout"><i class="fa-solid fa-right-from-bracket"></i> <span>Çıkış</span></a>
+          </div>
+        </div>
+        <button class="icon-btn hamburger" id="hamburger" aria-label="Menü"><i class="fa-solid fa-bars"></i></button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ===== MOBİL DRAWER (≤1024px) ===== -->
+<div class="drawer-overlay" id="drawerOverlay"></div>
+<aside class="drawer" id="drawer" aria-label="Mobil menü">
+  <div class="drawer-head">
+    <a class="drawer-brand" href="saglik-hub-v1.html" aria-label="DadaDiet — Sağlıklı Yaşam">
+      <svg class="dd-mark" viewBox="0 0 44 44" aria-hidden="true">
+        <rect x="3" y="3" width="38" height="38" rx="11" fill="#3BB77E"/>
+        <path d="M30 12 C20 12 14 18 14 27 C14 28.4 14.2 29.7 14.6 31 C24 31 31 25 31 14.2 C31 13.4 30.6 12.7 30 12 Z" fill="#fff" opacity=".96"/>
+        <path d="M16 31 C18 24 22 18 29 14" stroke="#3BB77E" stroke-width="2.1" fill="none" stroke-linecap="round"/>
+      </svg>
+      <span class="dd-word"><b>Dada</b><span class="dd-st">Diet</span></span>
+    </a>
+    <button class="drawer-close" id="drawerClose" aria-label="Menüyü kapat"><i class="fa-solid fa-xmark"></i></button>
+  </div>
+  <nav class="drawer-nav">
+    <div class="d-item"><a class="d-link" href="beden-kutle-endeksi-v1.html"><i class="fa-solid fa-calculator"></i> Hesaplayıcılar</a></div>
+    <div class="d-item"><a class="d-link" href="besin-degerleri-v1.html"><i class="fa-solid fa-table-list"></i> Besin Değerleri</a></div>
+    <div class="d-item"><a class="d-link" href="beslenme-rehberi-v1.html"><i class="fa-solid fa-book-open"></i> Beslenme Rehberi</a></div>
+    <div class="d-item"><a class="d-link" href="diyet-listeleri-v1.html"><i class="fa-solid fa-clipboard-list"></i> Programlar</a></div>
+    <div class="d-item"><a class="d-link" href="saglik-testler-v1.html"><i class="fa-solid fa-clipboard-question"></i> Testler</a></div>
+    <div class="d-item"><a class="d-link" href="diyetisyen-dizin-v1.html"><i class="fa-solid fa-user-doctor"></i> Diyetisyenler</a></div>
+  </nav>
+  <div class="drawer-foot">
+    <!-- LOGIN-STATE: logged-out giriş butonu -->
+    <button class="btn btn-primary drawer-login" style="width:100%" onclick="location.href='giris-v1.html'"><i class="fa-regular fa-user"></i> Giriş Yap</button>
+    <!-- LOGIN-STATE: logged-in kimlik satırı (persona Elif Şahin) -->
+    <div class="drawer-acct">
+      <span class="da-ava" style="background-image:url('https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')"></span>
+      <div class="da-info">
+        <b>Elif Şahin</b>
+        <div class="da-links">
+          <a href="mutfak-defteri-v1.html">Defterim</a>
+          <a href="bildirimler-v1.html">Bildirimler</a>
+          <a href="hesabim-v1.html">Ayarlar</a>
+          <a href="anasayfa-portal-v3a.html?auth=0">Çıkış</a>
+        </div>
+      </div>
+    </div>
+    <a href="tarif-ekle-v1.html" class="drawer-add"><i class="fa-solid fa-circle-plus"></i> Tarif Ekle</a>
+    <!-- KÖPRÜ: mobilde topbar gizli (≤640) → DadaMutfak'a dönüş buradan (akademi/dadafit pattern) -->
+    <a href="anasayfa-portal-v3a.html" class="drawer-add"><i class="fa-solid fa-arrow-left-long"></i> DadaMutfak'a Dön</a>
+    <div class="drawer-lang" id="drawerLang">
+      <button class="drawer-lang-toggle" type="button" aria-haspopup="true" aria-expanded="false">
+        <span class="drawer-lang-label"><i class="fa-solid fa-globe"></i> Dil</span>
+        <span class="drawer-lang-cur"><span id="drawerLangCur">EN — English</span> <i class="fa-solid fa-chevron-down"></i></span>
+      </button>
+      <div class="drawer-lang-list" role="menu">
+        <button type="button" data-lang="tr" data-name="Türkçe"><b>TR</b> Türkçe</button>
+        <button type="button" class="active" data-lang="en" data-name="English"><b>EN</b> English</button>
+      </div>
+    </div>
+  </div>
+</aside>
+
+<!-- ===== MOBİL BOTTOM NAV (≤640px) ===== -->
+<nav class="bottom-nav" aria-label="Mobil alt navigasyon">
+  <a href="beden-kutle-endeksi-v1.html" class="bn-item"><i class="fa-solid fa-calculator"></i><span>Hesaplayıcılar</span></a>
+  <a href="saglik-testler-v1.html" class="bn-item"><i class="fa-solid fa-clipboard-question"></i><span>Testler</span></a>
+  <a href="diyetisyen-dizin-v1.html" class="bn-item bn-center"><span class="bn-fab"><i class="fa-solid fa-user-doctor"></i></span><span>Diyetisyen</span></a>
+  <a href="besin-degerleri-v1.html" class="bn-item"><i class="fa-solid fa-table-list"></i><span>Beslenme</span></a>
+  <a href="anasayfa-portal-v3a.html" class="bn-item"><i class="fa-solid fa-house"></i><span>Ana Site</span></a>
+</nav>
+
+<!-- ===== GÖRÜŞ BİLDİR (sağ kenar sabit etiket) ===== -->
+<a class="feedback-tab" href="#" id="fbTab" aria-label="Görüş Bildir — öneri ve şikayet">
+  <i class="fa-solid fa-comment-dots"></i> Görüş Bildir
+</a>
+
+<!-- ===== GÖRÜŞ BİLDİR MODAL ===== -->
+<div class="fb-overlay" id="fbOverlay"></div>
+<div class="fb-modal" id="fbModal" role="dialog" aria-modal="true" aria-label="Görüş Bildir">
+  <div class="fb-panel">
+    <div class="fb-head">
+      <div>
+        <h3>Görüş Bildir</h3>
+        <p>Önerin, şikayetin veya sorun — hepsine kulak veriyoruz.</p>
+      </div>
+      <button class="fb-close" id="fbClose" type="button" aria-label="Kapat"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="fb-body">
+      <form id="fbForm">
+        <!-- M17: konu tipine göre alan seti değişir (Onedio referansı, mevcut dil korunarak) -->
+        <div class="fb-topics" role="group" aria-label="Konu seç">
+          <button class="fb-topic active" type="button" data-topic="oneri"><i class="fa-solid fa-lightbulb"></i> Önerim var</button>
+          <button class="fb-topic" type="button" data-topic="soru"><i class="fa-solid fa-circle-question"></i> Bir sorum var</button>
+          <button class="fb-topic" type="button" data-topic="sorun"><i class="fa-solid fa-bug"></i> Teknik sorun</button>
+          <button class="fb-topic" type="button" data-topic="ihlal"><i class="fa-solid fa-shield-halved"></i> İhlal bildirimi</button>
+          <button class="fb-topic" type="button" data-topic="puan"><i class="fa-solid fa-face-smile"></i> Puan ver</button>
+        </div>
+
+        <div class="fb-fields active" data-for="oneri">
+          <div class="fb-chiprow" role="group" aria-label="İlgili alan">
+            <button class="chip active" type="button">Tarifler</button>
+            <button class="chip" type="button">Keşfet</button>
+            <button class="chip" type="button">DadaStore</button>
+            <button class="chip" type="button">Uygulama</button>
+            <button class="chip" type="button">Diğer</button>
+          </div>
+          <div class="fb-field"><textarea required placeholder="Önerini anlat *"></textarea></div>
+          <div class="fb-field"><input type="email" placeholder="E-posta adresin (opsiyonel)" /></div>
+        </div>
+
+        <div class="fb-fields" data-for="soru">
+          <div class="fb-field">
+            <select class="fb-select" required>
+              <option value="" selected disabled>Sorunun konusu *</option>
+              <option>Üyelik & Hesap</option>
+              <option>Tarif ekleme</option>
+              <option>Diyetisyen randevusu</option>
+              <option>Sipariş & DadaStore</option>
+              <option>Diğer</option>
+            </select>
+          </div>
+          <div class="fb-field"><textarea required placeholder="Sorunu yaz *"></textarea></div>
+          <div class="fb-field"><input type="email" required placeholder="E-posta adresin (cevap için) *" /></div>
+        </div>
+
+        <div class="fb-fields" data-for="sorun">
+          <div class="fb-field">
+            <select class="fb-select" required>
+              <option value="" selected disabled>Sorunu nerede yaşadın? *</option>
+              <option>Anasayfa</option>
+              <option>Tarif sayfası</option>
+              <option>Arama / Dolapta Ne Var?</option>
+              <option>Üyelik & Giriş</option>
+              <option>DadaStore</option>
+              <option>Mobil uygulama</option>
+            </select>
+          </div>
+          <div class="fb-field"><textarea required placeholder="Sorunu kısaca anlat — ne yaptın, ne oldu? *"></textarea></div>
+          <button class="fb-shot" type="button"><i class="fa-solid fa-image"></i> Ekran görüntüsü ekle <small>(opsiyonel)</small></button>
+          <div class="fb-field"><input type="email" placeholder="E-posta adresin (opsiyonel)" /></div>
+        </div>
+
+        <div class="fb-fields" data-for="ihlal">
+          <div class="fb-field"><input type="url" required placeholder="İhlal içeren sayfanın linki *" /></div>
+          <div class="fb-field">
+            <select class="fb-select" required>
+              <option value="" selected disabled>İhlal türü *</option>
+              <option>Telif hakkı</option>
+              <option>Uygunsuz içerik</option>
+              <option>Spam / yanıltıcı içerik</option>
+              <option>Diğer</option>
+            </select>
+          </div>
+          <div class="fb-field"><textarea required placeholder="Açıklama *"></textarea></div>
+          <div class="fb-field"><input type="email" required placeholder="E-posta adresin *" /></div>
+        </div>
+
+        <div class="fb-fields" data-for="puan">
+          <p class="fb-q">DadaMutfak deneyimini nasıl puanlarsın?</p>
+          <div class="fb-emoji" role="group" aria-label="Puan">
+            <button type="button" data-val="1" aria-label="Çok kötü">😡</button>
+            <button type="button" data-val="2" aria-label="Kötü">🙁</button>
+            <button type="button" data-val="3" aria-label="İdare eder">😐</button>
+            <button type="button" data-val="4" aria-label="İyi">🙂</button>
+            <button type="button" data-val="5" aria-label="Harika">😍</button>
+          </div>
+          <div class="fb-field"><textarea placeholder="Eklemek istediğin bir şey var mı? (opsiyonel)"></textarea></div>
+          <div class="fb-field"><input type="email" placeholder="E-posta adresin (opsiyonel)" /></div>
+        </div>
+
+        <label class="fb-kvkk">
+          <input type="checkbox" required />
+          <span><a href="yasal-v1.html?metin=aydinlatma">Aydınlatma Metni</a>'ni ve <a href="yasal-v1.html?metin=kvkk">KVKK Metni</a>'ni okudum, onaylıyorum.</span>
+        </label>
+        <button class="btn btn-primary fb-send" type="submit"><i class="fa-solid fa-paper-plane"></i> Gönder</button>
+      </form>
+      <div class="fb-success" id="fbSuccess" hidden>
+        <span class="ok"><i class="fa-solid fa-check"></i></span>
+        <h4>Görüşün bize ulaştı</h4>
+        <p>Teşekkürler! Ekibimiz en kısa sürede inceleyip gerekirse e-posta ile dönüş yapacak.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== ÇEREZ ONAY BANNER ===== -->
+<div class="cookie-banner" id="cookieBanner" role="dialog" aria-label="Çerez onayı" aria-live="polite">
+  <div class="cookie-inner">
+    <div class="cookie-text">
+      <span class="cookie-ico"><i class="fa-solid fa-cookie-bite"></i></span>
+      <p>Sana daha iyi bir deneyim sunmak için çerezler kullanıyoruz. Siteyi kullanmaya devam ederek çerez kullanımını kabul etmiş olursun. <a href="yasal-v1.html?metin=cerez">Çerez Politikası</a> · <a href="yasal-v1.html?metin=aydinlatma">KVKK Aydınlatma Metni</a></p>
+    </div>
+    <div class="cookie-actions">
+      <button type="button" class="btn-cookie-reject" id="cookieReject">Reddet</button>
+      <button type="button" class="btn-cookie-accept" id="cookieAccept">Tümünü Kabul Et</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== ANA İÇERİK (footer reveal perdesi) ===== -->
+<main class="page-main" id="pageMain">
+<!-- SAYFA İÇERİĞİ — DADADİET ARAMA (arama-diet) -->
+
+<!-- ===== ARAMA HERO ===== -->
+<section class="fs-top">
+  <div class="wrap">
+    <span class="eyebrow"><i class="fa-solid fa-seedling"></i> DadaDiet · Arama</span>
+    <h1 id="fsTitle">DadaDiet'te <span class="accent">ara</span></h1>
+    <p class="fs-lead" id="fsLead">Hesaplayıcı, besin, diyet programı, beslenme rehberi ya da diyetisyen — tek kutudan tüm DadaDiet içeriğinde ara.</p>
+    <form class="fs-box" id="fsForm" role="search" autocomplete="off">
+      <div class="fs-row">
+        <div class="fs-input">
+          <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+          <input id="fsInput" type="text" role="combobox" aria-expanded="false" aria-autocomplete="list" aria-controls="fsAcList" aria-haspopup="listbox" placeholder="Hesaplayıcı, besin, program veya diyetisyen ara…" aria-label="DadaDiet içeriğinde ara" />
+        </div>
+        <button class="btn btn-primary" type="submit"><i class="fa-solid fa-magnifying-glass"></i> Ara</button>
+      </div>
+      <div class="fs-ac" id="fsAc"><div class="fs-ac-list" id="fsAcList" role="listbox" aria-label="Arama önerileri"></div></div>
+      <span class="sr-vh" id="fsAcStatus" role="status" aria-live="polite"></span>
+    </form>
+    <p class="fs-sum" id="fsSum"></p>
+  </div>
+</section>
+
+<!-- ===== SEKME BARI (6 sekme) ===== -->
+<div class="fs-tabbar" id="fsTabbar">
+  <div class="wrap">
+    <div class="fs-tabs" role="tablist" aria-label="İçerik türü">
+      <button class="dt active" type="button" role="tab" data-tab="tumu">Tümü <span class="cnt" data-cnt="tumu"></span></button>
+      <button class="dt" type="button" role="tab" data-tab="hesap">Hesaplayıcılar <span class="cnt" data-cnt="hesap"></span></button>
+      <button class="dt" type="button" role="tab" data-tab="besin">Besinler <span class="cnt" data-cnt="besin"></span></button>
+      <button class="dt" type="button" role="tab" data-tab="program">Programlar <span class="cnt" data-cnt="program"></span></button>
+      <button class="dt" type="button" role="tab" data-tab="rehber">Rehber <span class="cnt" data-cnt="rehber"></span></button>
+      <button class="dt" type="button" role="tab" data-tab="diyetisyen">Diyetisyenler <span class="cnt" data-cnt="diyetisyen"></span></button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== SONUÇLAR (POOL-driven, JS render) ===== -->
+<section class="fs-results" id="fsResults">
+  <div class="wrap">
+    <p class="fs-cnt-note" id="fsCntNote"></p>
+    <div class="fs-pane" data-pane="tumu"></div>
+    <div class="fs-pane" data-pane="hesap" hidden></div>
+    <div class="fs-pane" data-pane="besin" hidden></div>
+    <div class="fs-pane" data-pane="program" hidden></div>
+    <div class="fs-pane" data-pane="rehber" hidden></div>
+    <div class="fs-pane" data-pane="diyetisyen" hidden></div>
+    <div class="fs-empty" id="fsEmpty">
+      <div class="fs-empty-ico"><i class="fa-solid fa-magnifying-glass"></i></div>
+      <h3>&ldquo;<span id="fsEmptyQ"></span>&rdquo; için sonuç yok</h3>
+      <p>Farklı bir kelime dene — hesaplayıcı, besin, program, rehber ya da diyetisyen.</p>
+      <div class="fs-chips" id="fsEmptyChips"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== POPÜLER + SON ARAMALAR (autocomplete varsayılan kaynağı) ===== -->
+<section class="fs-pop" id="fsPop">
+  <div class="wrap">
+    <div class="fs-pop-grid">
+      <div>
+        <h3><i class="fa-solid fa-fire"></i> Popüler aramalar</h3>
+        <div class="fs-chips" id="fsPopChips">
+          <button class="chip" type="button" data-q="dengeli tabak">dengeli tabak</button>
+          <button class="chip" type="button" data-q="protein">protein</button>
+          <button class="chip" type="button" data-q="su ihtiyacı">su ihtiyacı</button>
+          <button class="chip" type="button" data-q="akdeniz">akdeniz</button>
+          <button class="chip" type="button" data-q="makro">makro</button>
+          <button class="chip" type="button" data-q="porsiyon">porsiyon</button>
+          <button class="chip" type="button" data-q="diyetisyen">diyetisyen</button>
+          <button class="chip" type="button" data-q="vegan">vegan</button>
+        </div>
+      </div>
+      <div id="fsRecentCol" style="display:none">
+        <h3><i class="fa-solid fa-clock-rotate-left"></i> Son aramaların</h3>
+        <div class="fs-recent" id="fsRecent"><!-- localStorage dm_diet_recent'ten JS ile dolar; boşsa kolon gizli --></div>
+      </div>
+    </div>
+  </div>
+</section>
+</main><!-- /.page-main -->
+<script>
+/* ===== DadaDiet ARAMA (arama-diet) — POOL-driven motor · anatomi Fit pilotundan, mint (--diet-*) ===== */
+(function(){
+  var S='&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5';
+  function u(id){return 'https://images.unsplash.com/photo-'+id+'?w=700'+S;}   // besin/program kartı
+  function av(id){return 'https://images.unsplash.com/photo-'+id+'?w=240'+S;}  // diyetisyen avatar
+
+  /* ---- POOL: yalnız GERÇEK DadaDiet içeriği (uydurma yok; damgalayıcı dil yok) ---- */
+  var POOL=[
+    /* Hesaplayıcılar (9) → kendi hesap sayfası (görselsiz, ikon-tile) */
+    {type:'hesap',t:'Bazal Metabolizma Hızı (BMH)',sub:'Dinlenme enerji ihtiyacı',href:'bazal-metabolizma-v1.html',ico:'fa-fire-flame-simple'},
+    {type:'hesap',t:'Beden Kütle Endeksi (BKİ)',sub:'Boy ve kilo oranı',href:'beden-kutle-endeksi-v1.html',ico:'fa-scale-balanced'},
+    {type:'hesap',t:'İdeal Kilo',sub:'Boya göre kilo aralığı',href:'ideal-kilo-v1.html',ico:'fa-weight-scale'},
+    {type:'hesap',t:'Günlük Kalori İhtiyacı',sub:'Aktiviteye göre enerji',href:'gunluk-kalori-v1.html',ico:'fa-gauge-high'},
+    {type:'hesap',t:'Günlük Su İhtiyacı',sub:'Kiloya göre su miktarı',href:'gunluk-su-v1.html',ico:'fa-droplet'},
+    {type:'hesap',t:'Porsiyon Hesaplama',sub:'Tarifi kişi sayısına ölçekle',href:'porsiyon-hesaplama-v1.html',ico:'fa-utensils'},
+    {type:'hesap',t:'Vücut Tipi — Bel/Kalça Oranı',sub:'Yağ dağılımı (WHR)',href:'vucut-tipi-v1.html',ico:'fa-person'},
+    {type:'hesap',t:'Makro Dağılım',sub:'Protein · karbonhidrat · yağ',href:'makro-dagilim-v1.html',ico:'fa-chart-pie'},
+    {type:'hesap',t:'Beslenme Testleri',sub:'Kısa öz-değerlendirme testleri',href:'saglik-testler-v1.html',ico:'fa-clipboard-question'},
+    /* Besinler (3) → besin sayfaları (görselli) */
+    {type:'besin',t:'Besin Kütüphanesi & Kalori Değerleri',sub:'10 kategori · sebze, meyve, et, süt, tahıl…',href:'besin-kutuphanesi-v1.html',img:u('1482049016688-2d3e1b311543')},
+    {type:'besin',t:'Besin Değerleri',sub:'Kalori · protein · karbonhidrat · yağ',href:'besin-degerleri-v1.html',img:u('1512621776951-a57141f2eefd')},
+    {type:'besin',t:'Besin Kalori Cetveli',sub:'Hızlı referans cetveli',href:'besin-kalori-cetveli-v1.html',img:u('1525351484163-7529414344d8')},
+    /* Diyet Programları (8) → kendi program sayfası (görselli) */
+    {type:'program',t:'Akdeniz Tipi Beslenme',sub:'Akdeniz diyeti · 7 günlük program',href:'diyet-program-detay-v1.html',img:u('1540420773420-3366772f4999')},
+    {type:'program',t:'Aile Haftalık Menü',sub:'Aile · haftalık menü',href:'diyet-program-aile-v1.html',img:u('1467453678174-768ec283a940')},
+    {type:'program',t:'Hafif Detoks Programı',sub:'Hafif · sebze ağırlıklı hafta',href:'diyet-program-detoks-v1.html',img:u('1490818387583-1baba5e638af')},
+    {type:'program',t:'Öğrenci Dostu Menü',sub:'Pratik · bütçe dostu',href:'diyet-program-ogrenci-v1.html',img:u('1512852939750-1305098529bf')},
+    {type:'program',t:'16:8 Aralıklı Oruç',sub:'Aralıklı beslenme düzeni',href:'diyet-program-oruc-v1.html',img:u('1505576399279-565b52d4ac71')},
+    {type:'program',t:'Yüksek Proteinli Plan',sub:'Protein ağırlıklı 7 gün',href:'diyet-program-protein-v1.html',img:u('1467003909585-2f8a72700288')},
+    {type:'program',t:'Düşük Şeker Programı',sub:'Şeker azaltma · 7 gün',href:'diyet-program-seker-v1.html',img:u('1547592180-85f173990554')},
+    {type:'program',t:'Bitkisel Temelli Hafta (Vegan)',sub:'Bitkisel · vegan menü',href:'diyet-program-vegan-v1.html',img:u('1512621776951-a57141f2eefd')},
+    /* Beslenme Rehberleri (9) → rehber sayfaları (görselsiz, ikon-tile) */
+    {type:'rehber',t:'Beslenme Rehberi',sub:'Tüm beslenme konuları · dizin',href:'beslenme-rehberi-v1.html',ico:'fa-book-open'},
+    {type:'rehber',t:'Dengeli Tabak Nasıl Kurulur?',sub:'Tabak yöntemi',href:'beslenme-dengeli-tabak-v1.html',ico:'fa-plate-wheat'},
+    {type:'rehber',t:'Öğün Planlama',sub:'Haftalık öğün düzeni',href:'beslenme-ogun-planlama-v1.html',ico:'fa-calendar-days'},
+    {type:'rehber',t:'Porsiyon Kontrolü',sub:'El ölçüsü ile porsiyon',href:'beslenme-porsiyon-kontrolu-v1.html',ico:'fa-hand'},
+    {type:'rehber',t:'Alışveriş ve Etiket Okuma',sub:'Market · besin etiketi',href:'beslenme-alisveris-etiket-v1.html',ico:'fa-cart-shopping'},
+    {type:'rehber',t:'Sağlıklı Mutfak Alışkanlıkları',sub:'Pişirme · saklama',href:'beslenme-saglikli-mutfak-v1.html',ico:'fa-kitchen-set'},
+    {type:'rehber',t:'Protein Kaynakları Rehberi',sub:'Protein kaynakları',href:'protein-rehberi-v1.html',ico:'fa-drumstick-bite'},
+    {type:'rehber',t:'Karbonhidrat Kaynakları Rehberi',sub:'Karbonhidrat kaynakları',href:'karbonhidrat-rehberi-v1.html',ico:'fa-wheat-awn'},
+    {type:'rehber',t:'Yağ Kaynakları Rehberi',sub:'Sağlıklı yağ kaynakları',href:'yag-rehberi-v1.html',ico:'fa-bottle-droplet'},
+    /* Diyetisyenler (9) → diyetisyen-dizin (per-kişi sayfa YOK; avatar is-coach) */
+    {type:'diyetisyen',t:'Dyt. Selin Korkmaz',sub:'DadaDiet diyetisyeni',href:'diyetisyen-dizin-v1.html',img:av('1559839734-2b71ea197ec2')},
+    {type:'diyetisyen',t:'Dyt. Burak Demir',sub:'DadaDiet diyetisyeni',href:'diyetisyen-dizin-v1.html',img:av('1622253692010-333f2da6031d')},
+    {type:'diyetisyen',t:'Dyt. Ayça Yıldız',sub:'DadaDiet diyetisyeni',href:'diyetisyen-dizin-v1.html',img:av('1594824476967-48c8b964273f')},
+    {type:'diyetisyen',t:'Dyt. Elif Şahin',sub:'DadaDiet diyetisyeni',href:'diyetisyen-dizin-v1.html',img:av('1537368910025-700350fe46c7')},
+    {type:'diyetisyen',t:'Dyt. Deniz Aksoy',sub:'DadaDiet diyetisyeni',href:'diyetisyen-dizin-v1.html',img:av('1582750433449-648ed127bb54')},
+    {type:'diyetisyen',t:'Dyt. Gizem Çelik',sub:'DadaDiet diyetisyeni',href:'diyetisyen-dizin-v1.html',img:av('1612349317150-e413f6a5b16d')},
+    {type:'diyetisyen',t:'Dyt. Kerem Polat',sub:'DadaDiet diyetisyeni',href:'diyetisyen-dizin-v1.html',img:av('1573496359142-b8d87734a5a2')},
+    {type:'diyetisyen',t:'Dyt. Mert Aydın',sub:'DadaDiet diyetisyeni',href:'diyetisyen-dizin-v1.html',img:av('1591604021695-0c69b7c05981')},
+    {type:'diyetisyen',t:'Dyt. Onur Taş',sub:'DadaDiet diyetisyeni',href:'diyetisyen-dizin-v1.html',img:av('1612531386530-97286d97c2d2')}
+  ];
+
+  var TYPE={
+    hesap:{lbl:'Hesaplayıcı',ico:'fa-calculator'},
+    besin:{lbl:'Besin',ico:'fa-carrot'},
+    program:{lbl:'Program',ico:'fa-calendar-week'},
+    rehber:{lbl:'Rehber',ico:'fa-book-open'},
+    diyetisyen:{lbl:'Diyetisyen',ico:'fa-user-doctor'}
+  };
+  var TABS=['tumu','hesap','besin','program','rehber','diyetisyen'];
+
+  var trMap={'ı':'i','İ':'i','I':'i','Ş':'s','ş':'s','Ğ':'g','ğ':'g','Ü':'u','ü':'u','Ö':'o','ö':'o','Ç':'c','ç':'c','â':'a','î':'i','û':'u'};
+  function norm(s){return (s||'').replace(/[ıİIŞşĞğÜüÖöÇçâîû]/g,function(m){return trMap[m]||m;}).toLowerCase().replace(/\s+/g,' ').trim();}
+  function esc(s){return (s||'').replace(/[&<>"]/g,function(m){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m];});}
+  function hi(text,qn){
+    if(!qn)return esc(text);
+    var tn=norm(text),i=tn.indexOf(qn);
+    if(i<0)return esc(text);
+    return esc(text.slice(0,i))+'<mark>'+esc(text.slice(i,i+qn.length))+'</mark>'+esc(text.slice(i+qn.length));
+  }
+  function tmeta(t){return TYPE[t]||{lbl:'',ico:'fa-magnifying-glass'};}
+
+  /* ---- sonuç kartı (POOL-driven) ---- */
+  function card(r){
+    var m=tmeta(r.type);
+    var badge='<span class="fs-badge"><i class="fa-solid '+m.ico+'"></i> '+m.lbl+'</span>';
+    if(r.type==='diyetisyen'){
+      return '<a class="fs-card is-coach" href="'+r.href+'">'
+        +'<div class="fs-av" style="background-image:url(\''+r.img+'\')"></div>'
+        +'<div class="fs-cbody"><h4>'+esc(r.t)+'</h4><p>'+esc(r.sub)+'</p></div>'+badge+'</a>';
+    }
+    var head=r.img
+      ? '<div class="fs-media" style="background-image:url(\''+r.img+'\')">'+badge+'</div>'
+      : '<div class="fs-tile"><i class="fa-solid '+(r.ico||m.ico)+'"></i>'+badge+'</div>';
+    return '<a class="fs-card" href="'+r.href+'">'+head
+      +'<div class="fs-cbody"><h4>'+esc(r.t)+'</h4><p>'+esc(r.sub)+'</p>'
+      +'<span class="fs-cgo">İncele <i class="fa-solid fa-arrow-right"></i></span></div></a>';
+  }
+
+  var panes={}, cnts={};
+  TABS.forEach(function(n){
+    panes[n]=document.querySelector('.fs-pane[data-pane="'+n+'"]');
+    cnts[n]=document.querySelector('.cnt[data-cnt="'+n+'"]');
+  });
+  var tabbar=document.getElementById('fsTabbar');
+  var note=document.getElementById('fsCntNote');
+  var emptyEl=document.getElementById('fsEmpty');
+  var popEl=document.getElementById('fsPop');
+
+  function renderResults(q){
+    var qn=q?norm(q):'';
+    var matched=qn?POOL.filter(function(r){return norm(r.t).indexOf(qn)>=0||norm(r.sub).indexOf(qn)>=0;}):POOL.slice();
+    var by={tumu:matched,hesap:[],besin:[],program:[],rehber:[],diyetisyen:[]};
+    matched.forEach(function(r){if(by[r.type])by[r.type].push(r);});
+    TABS.forEach(function(n){
+      var arr=by[n];
+      if(cnts[n])cnts[n].textContent=arr.length;
+      if(!panes[n])return;
+      if(arr.length){
+        panes[n].innerHTML='<div class="fs-grid'+(n==='diyetisyen'?' is-coach':'')+'">'+arr.map(card).join('')+'</div>';
+      }else{
+        panes[n].innerHTML='<p class="fs-cnt-note" style="margin:6px 0 0">Bu türde eşleşme yok.</p>';
+      }
+    });
+    return matched.length;
+  }
+
+  var tabEls=document.querySelectorAll('#fsTabbar .dt');
+  function activate(name){
+    tabEls.forEach(function(t){t.classList.toggle('active',t.getAttribute('data-tab')===name);});
+    TABS.forEach(function(n){if(panes[n])panes[n].hidden=n!==name;});
+  }
+  tabEls.forEach(function(t){
+    t.addEventListener('click',function(){
+      var name=t.getAttribute('data-tab');
+      activate(name);
+      var uu=new URLSearchParams(location.search);
+      if(name==='tumu')uu.delete('tab');else uu.set('tab',name);
+      history.replaceState(null,'',location.pathname+(uu.toString()?'?'+uu.toString():''));
+    });
+  });
+
+  var input=document.getElementById('fsInput');
+  var titleEl=document.getElementById('fsTitle');
+  var leadEl=document.getElementById('fsLead');
+  var sum=document.getElementById('fsSum');
+
+  /* ---- SON ARAMALAR: gerçek localStorage geçmişi (uydurma YOK; boşsa sadece Popüler) ---- */
+  var RKEY='dm_diet_recent';
+  function readRecentLS(){try{var r=JSON.parse(localStorage.getItem(RKEY)||'[]');return Array.isArray(r)?r.filter(function(x){return x&&x.q;}):[];}catch(e){return [];}}
+  function writeRecent(qq){
+    qq=(qq||'').trim();if(!qq)return;
+    try{
+      var arr=readRecentLS().filter(function(x){return norm(x.q)!==norm(qq);});
+      arr.unshift({q:qq,t:Date.now()});
+      localStorage.setItem(RKEY,JSON.stringify(arr.slice(0,6)));
+    }catch(e){}
+  }
+  function relTime(t){var d=Date.now()-(t||0),day=86400000;if(d<3600000)return 'az önce';if(d<day)return 'bugün';if(d<2*day)return 'dün';return Math.floor(d/day)+' gün önce';}
+  function renderRecent(){
+    var col=document.getElementById('fsRecentCol'),boxr=document.getElementById('fsRecent');
+    if(!boxr)return;
+    var arr=readRecentLS();
+    if(!arr.length){if(col)col.style.display='none';boxr.innerHTML='';return;}
+    if(col)col.style.display='';
+    boxr.innerHTML=arr.map(function(r){
+      return '<div class="fs-rrow" data-q="'+esc(r.q)+'"><i class="fa-solid fa-clock-rotate-left" aria-hidden="true"></i><span class="term">'+esc(r.q)+'</span><span class="cnt">'+relTime(r.t)+'</span><i class="fa-solid fa-arrow-right go" aria-hidden="true"></i></div>';
+    }).join('');
+  }
+  renderRecent();
+
+  /* ---- durum makinesi ---- */
+  var p=new URLSearchParams(location.search);
+  var q=p.get('q');
+  var tab=p.get('tab')||'tumu';
+  if(q){
+    input.value=q;
+    var total=renderResults(q);
+    if(total>0){
+      titleEl.innerHTML='&ldquo;<span class="q"></span>&rdquo; için sonuçlar';
+      titleEl.querySelector('.q').textContent=q;
+      leadEl.classList.add('is-off');
+      sum.innerHTML='<b>'+total+' sonuç</b> bulundu · <span class="q">'+esc(q)+'</span> için.';
+      note.innerHTML='Aradığın: <b>'+esc(q)+'</b> — türlere göz atmak için sekmeleri kullan.';
+      popEl.classList.add('is-off');
+      activate(tab);
+    }else{
+      titleEl.innerHTML='&ldquo;<span class="q"></span>&rdquo; için sonuç yok';
+      titleEl.querySelector('.q').textContent=q;
+      leadEl.classList.add('is-off');
+      sum.innerHTML='<b>0 sonuç</b> — yazımı kontrol et ya da önerilere göz at.';
+      tabbar.classList.add('is-off');
+      note.classList.add('is-off');
+      TABS.forEach(function(n){if(panes[n])panes[n].hidden=true;});
+      document.getElementById('fsEmptyQ').textContent=q;
+      var ec=document.getElementById('fsEmptyChips');
+      document.querySelectorAll('#fsPopChips .chip').forEach(function(c){
+        var b=document.createElement('button');b.type='button';b.className='chip';
+        b.setAttribute('data-q',c.getAttribute('data-q'));b.textContent=c.textContent;
+        ec.appendChild(b);
+      });
+      emptyEl.classList.add('show');
+    }
+    document.title='DadaDiet — Arama: '+q;
+  }else{
+    /* arama-first (Gastro paritesi): sorgu yokken kart yok — popüler + son aramalar */
+    sum.innerHTML='<span style="color:#cfe0d6">Hesaplayıcı, besin, program, rehber ya da diyetisyen — aramak için yukarıya yaz.</span>';
+    tabbar.classList.add('is-off');
+    document.getElementById('fsResults').classList.add('is-off');
+    note.classList.add('is-off');
+    document.title='DadaDiet — Arama';
+  }
+
+  /* ===================================================================== AUTOCOMPLETE ===================================================================== */
+  (function(){
+    var box=document.getElementById('fsForm');
+    var ac=document.getElementById('fsAc');
+    var list=document.getElementById('fsAcList');
+    var status=document.getElementById('fsAcStatus');
+    if(!box||!ac||!list||!input)return;
+
+    function readPopular(){var out=[];document.querySelectorAll('#fsPop #fsPopChips .chip[data-q]').forEach(function(c){out.push(c.getAttribute('data-q'));});return out.slice(0,8);}
+    function readRecent(){return readRecentLS().map(function(r){return r.q;});}
+
+    var items=[],active=-1;
+    function render(groups){
+      items=[];active=-1;
+      var html='';
+      groups.forEach(function(g){
+        if(!g.rows.length)return;
+        html+='<div class="ac-grp" aria-hidden="true"><i class="fa-solid '+g.icon+'"></i>'+esc(g.label);
+        if(g.clear)html+='<button type="button" class="ac-clear" data-clear="1">Temizle</button>';
+        html+='</div>';
+        g.rows.forEach(function(r){
+          var idx=items.length;items.push(r);
+          var m=tmeta(r.type);
+          var icoStyle=r.img?' style="background-image:url(\''+r.img+'\');border-color:transparent"':'';
+          var icoInner=r.img?'':'<i class="fa-solid '+(r.icon||r.ico||m.ico)+'"></i>';
+          var badge=(r.type&&TYPE[r.type])?'<span class="ac-badge"><i class="fa-solid '+m.ico+'"></i>'+m.lbl+'</span>':'';
+          var sub=r.sub?'<span class="ac-sub">'+esc(r.sub)+'</span>':'';
+          html+='<div class="ac-opt'+(r.cls||'')+'" role="option" id="fs-opt-'+idx+'" data-type="'+(r.type||'q')+'" data-idx="'+idx+'" aria-selected="false">'
+              +'<span class="ac-ico"'+icoStyle+'>'+icoInner+'</span>'
+              +'<span class="ac-main"><span class="ac-ttl">'+(r.html||esc(r.t))+'</span>'+sub+'</span>'+badge+'</div>';
+        });
+      });
+      if(!groups.some(function(g){return g.rows.length;})){
+        html='<div class="ac-none">Eşleşen öneri yok — yazmaya devam et ya da <b>Enter</b> ile ara.</div>';
+      }
+      list.innerHTML=html;
+    }
+    function buildQuery(qq){
+      var qn=norm(qq);
+      var matched=POOL.filter(function(r){return norm(r.t).indexOf(qn)>=0||(r.sub&&norm(r.sub).indexOf(qn)>=0);});
+      matched.sort(function(a,b){var as=norm(a.t).indexOf(qn)===0?0:1,bs=norm(b.t).indexOf(qn)===0?0:1;return as-bs;});
+      matched=matched.slice(0,7).map(function(r){return {type:r.type,t:r.t,html:hi(r.t,qn),sub:r.sub,img:r.img,ico:r.ico,href:r.href,q:r.t};});
+      var rows=[{type:'q',cls:' ac-query',icon:'fa-magnifying-glass',t:qq,html:'<b>'+esc(qq)+'</b> için ara',sub:'Tüm sonuçları gör',q:qq}];
+      render([{label:'Arama',icon:'fa-magnifying-glass',rows:rows},{label:'Öneriler',icon:'fa-wand-magic-sparkles',rows:matched}]);
+    }
+    function buildDefault(){
+      var recent=readRecent().map(function(qq){return {type:'q',icon:'fa-clock-rotate-left',t:qq,q:qq};});
+      var pop=readPopular().map(function(qq){return {type:'q',icon:'fa-fire',t:qq,q:qq};});
+      render([{label:'Son aramalar',icon:'fa-clock-rotate-left',clear:recent.length>0,rows:recent},{label:'Popüler öneriler',icon:'fa-fire',rows:pop}]);
+    }
+    function announce(){status.textContent=items.length?(items.length+' öneri listelendi.'):'Öneri yok.';}
+    function open(){box.classList.add('ac-open');input.setAttribute('aria-expanded','true');announce();}
+    function close(){box.classList.remove('ac-open');input.setAttribute('aria-expanded','false');input.setAttribute('aria-activedescendant','');setActive(-1);}
+    function isOpen(){return box.classList.contains('ac-open');}
+    function setActive(i){
+      var opts=list.querySelectorAll('.ac-opt');
+      if(active>=0&&opts[active]){opts[active].classList.remove('is-active');opts[active].setAttribute('aria-selected','false');}
+      active=i;
+      if(i>=0&&opts[i]){opts[i].classList.add('is-active');opts[i].setAttribute('aria-selected','true');input.setAttribute('aria-activedescendant',opts[i].id);opts[i].scrollIntoView({block:'nearest'});}
+      else{input.setAttribute('aria-activedescendant','');}
+    }
+    function go(qq){location.href='arama-diet-v1.html'+(qq?'?q='+encodeURIComponent(qq):'');}
+    function choose(i){var r=items[i];if(!r)return;var qq=r.q||r.t;writeRecent(qq);if(r.href){location.href=r.href;return;}go(qq);}
+    var deb;
+    function onInput(){clearTimeout(deb);deb=setTimeout(function(){var v=input.value.trim();if(v.length>=1)buildQuery(v);else buildDefault();open();},150);}
+    input.addEventListener('input',onInput);
+    input.addEventListener('focus',function(){var v=input.value.trim();if(v.length>=1)buildQuery(v);else buildDefault();open();});
+    input.addEventListener('keydown',function(e){
+      var n=items.length;
+      if(e.key==='ArrowDown'){e.preventDefault();if(!isOpen()){onInput();return;}if(n)setActive((active+1)%n);}
+      else if(e.key==='ArrowUp'){e.preventDefault();if(n)setActive(active<=0?n-1:active-1);}
+      else if(e.key==='Enter'){if(isOpen()&&active>=0){e.preventDefault();choose(active);}}
+      else if(e.key==='Escape'){if(isOpen()){e.preventDefault();close();}}
+      else if(e.key==='Home'){if(isOpen()&&n){e.preventDefault();setActive(0);}}
+      else if(e.key==='End'){if(isOpen()&&n){e.preventDefault();setActive(n-1);}}
+    });
+    list.addEventListener('mousemove',function(e){var opt=e.target.closest('.ac-opt');if(!opt)return;var i=+opt.getAttribute('data-idx');if(i!==active)setActive(i);});
+    list.addEventListener('mousedown',function(e){
+      if(e.target.closest('[data-clear]')){e.preventDefault();try{localStorage.removeItem(RKEY);}catch(e2){}renderRecent();buildDefault();return;}
+      var opt=e.target.closest('.ac-opt');if(!opt)return;e.preventDefault();choose(+opt.getAttribute('data-idx'));
+    });
+    document.addEventListener('mousedown',function(e){if(!box.contains(e.target))close();});
+
+    var dp=new URLSearchParams(location.search);
+    if(dp.get('demo')==='1'||location.hash==='#demo'){var dq=dp.get('q');if(dq){input.value=dq;buildQuery(dq);}else buildDefault();open();var di=parseInt(dp.get('ai'),10);if(!isNaN(di))setActive(di);}
+  })();
+
+  /* form gönderimi + çip / son arama köprüleri */
+  document.getElementById('fsForm').addEventListener('submit',function(e){
+    e.preventDefault();
+    var v=input.value.trim();
+    if(v)writeRecent(v);
+    location.href='arama-diet-v1.html'+(v?'?q='+encodeURIComponent(v):'');
+  });
+  document.addEventListener('click',function(e){
+    var c=e.target.closest('[data-q]');
+    if(c&&!c.closest('.ac-opt')){var dq=c.getAttribute('data-q');writeRecent(dq);location.href='arama-diet-v1.html?q='+encodeURIComponent(dq);}
+  });
+})();
+</script>
+
+<!-- ===== LG-GATE (giriş kapısı) — logged-out mikro-aksiyon (yorum/kaydet/takip) =====
+     Markup </main> SONRASINA (lessons: fixed overlay page-main stacking context'ine girmez).
+     body.is-auth iken hiç açılmaz; data-lg-gate taşıyan öğeler tetikler. SS: ?lg=1 -->
+<div class="lg-overlay" id="lgOverlay"></div>
+<div class="lg-gate" id="lgGate" role="dialog" aria-modal="true" aria-label="Giriş gerekli">
+  <div class="lg-panel">
+    <button class="lg-close" id="lgClose" type="button" aria-label="Kapat"><i class="fa-solid fa-xmark"></i></button>
+    <span class="lg-ico"><i class="fa-solid fa-lock"></i></span>
+    <h4 id="lgTitle">Bu işlem için giriş yap</h4>
+    <p id="lgDesc">Kaydetmek, yorum yapmak ve takip etmek için DadaMutfak hesabına giriş yapman gerekiyor.</p>
+    <div class="lg-acts">
+      <a class="btn btn-primary" href="giris-v1.html"><i class="fa-regular fa-user"></i> Giriş Yap</a>
+      <a class="btn btn-ghost" href="giris-v1.html?tab=kayit">Üye Ol</a>
+    </div>
+  </div>
+</div>
+
+
+
+<!-- ===== A4: TIBBİ BİLGİLENDİRME ŞERİDİ ===== -->
+<section class="pf-disclaimer" aria-label="Tıbbi bilgilendirme">
+  <div class="wrap">
+    <i class="fa-solid fa-circle-info"></i>
+    <p>Bu sayfadaki içerik genel bilgilendirme amaçlıdır; <b>tıbbi teşhis veya tedavi yerine geçmez.</b> Kişiye özel beslenme planı yalnızca <b>yetkili bir diyetisyen</b> tarafından hazırlanır. Gebelik, kronik hastalık, düzenli ilaç kullanımı, çocuk beslenmesi veya klinik bir durum varsa plana başlamadan önce <b>hekim ve diyetisyen kontrolü zorunludur.</b></p>
+  </div>
+</section>
+
+<!-- ===== FOOTER ===== -->
+<footer class="footer orange">
+  <div class="wrap">
+    <div class="foot-grid">
+      <div class="foot-brand">
+        <div class="foot-lockup"><span class="fl-mark"><i class="fa-solid fa-leaf"></i></span><span class="fl-word"><span class="bd">Dada</span><span class="sf">Diet</span></span></div>
+        <p class="foot-tag">Sağlıklı yaşamın günlük rehberi — dengeli beslen, takip et, iyi hisset.</p>
+        <div class="foot-soc">
+          <a href="#" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+          <a href="#" aria-label="YouTube"><i class="fa-brands fa-youtube"></i></a>
+          <a href="#" aria-label="X"><i class="fa-brands fa-x-twitter"></i></a>
+          <a href="#" aria-label="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
+          <a href="#" aria-label="LinkedIn"><i class="fa-brands fa-linkedin-in"></i></a>
+        </div>
+      </div>
+      <div class="foot-col">
+        <h5>Diyet</h5>
+        <a href="diyetisyen-ol-v1.html">Diyetisyen Ol</a>
+        <a href="diyetisyen-dizin-v1.html">Diyetisyenler</a>
+        <a href="besin-degerleri-v1.html">Besin Değerleri</a>
+      </div>
+      <div class="foot-col">
+        <h5>Hızlı Erişim</h5>
+        <a href="hakkimizda-v1.html">Hakkımızda</a>
+        <a href="hakkimizda-v1.html#kunye">Künye</a>
+        <a href="sss-v1.html">S.S.S.</a>
+      </div>
+      <div class="foot-col">
+        <h5>İletişim</h5>
+        <a href="iletisim-v1.html">Bize Ulaşın</a>
+        <a href="#" onclick="document.getElementById('fbTab').click();return false;">Öneri ve Şikayet</a>
+      </div>
+      <div class="foot-col">
+        <h5>İş Birliği</h5>
+        <a href="reklam-ver-v1.html">Reklam Vermek İçin</a>
+        <a href="reklam-ver-v1.html">Sponsorlar ve Partnerler</a>
+      </div>
+    </div>
+    <!-- M15: etiketler tek satır için kısaltıldı — tam adlar hedef sayfa başlıklarında (Yasin Bey onayına sunulacak) -->
+    <div class="foot-legal">
+      <a href="yasal-v1.html?metin=iade">İptal, İade ve Değişim</a><span class="sep"></span>
+      <a href="yasal-v1.html?metin=teslimat">Ödeme ve Teslimat</a><span class="sep"></span>
+      <a href="yasal-v1.html?metin=mesafeli">Mesafeli Satış</a><span class="sep"></span>
+      <a href="yasal-v1.html?metin=cerez">Gizlilik ve Çerez</a><span class="sep"></span>
+      <a href="yasal-v1.html?metin=uyelik">Üyelik Sözleşmesi</a><span class="sep"></span>
+      <a href="yasal-v1.html?metin=kullanim">Kullanım Koşulları</a><span class="sep"></span>
+      <a href="yasal-v1.html?metin=aydinlatma">Aydınlatma Metni</a><span class="sep"></span>
+      <a href="yasal-v1.html?metin=kvkk">KVKK</a><span class="sep"></span>
+      <a href="yasal-v1.html?metin=bilgilendirme#b4">İhlal Bildir</a>
+    </div>
+    <div class="foot-bottom">
+      <span class="fb-left">© 2026 <b><span class="bd">Dada</span><span class="sf">Diet</span></b> · Tüm hakları saklıdır.</span>
+      <a href="https://gaviaworks.com" target="_blank" rel="noopener"><span class="gw-code">&lt;/&gt;</span> GaviaWorks</a>
+    </div>
+  </div>
+</footer>
+
+<!-- ===== ADIM 3 KABUK: DadaMentor FAB (sol-alt) + scroll-top (sağ-alt) — </main>/footer sonrası ===== -->
+<aside class="mentor-panel floating mini" id="mentorPanel" data-state="mini" aria-label="DadaMentor asistan">
+  <div class="mp-media">
+    <div class="mp-atmos"></div>
+    <video id="mentorVideo" autoplay muted loop playsinline preload="auto">
+      <source src="assets/video/mentor-panel.mp4" type="video/mp4" />
+    </video>
+  </div>
+  <div class="mp-fade"></div>
+  <div class="mp-mini-overlay" id="mpMiniOv" aria-hidden="false">
+    <span class="mav"><i class="fa-solid fa-compass"></i></span>
+    <span class="mp-mini-lbl">Mentör</span>
+  </div>
+  <div class="mp-top">
+    <span class="mp-tag"><i class="fa-solid fa-comment-dots"></i> Mentor</span>
+    <button class="mp-toggle" type="button" id="mpToggle" aria-label="Paneli küçült">
+      <i class="fa-solid fa-minus" id="mpToggleIco"></i>
+    </button>
+  </div>
+  <div class="mp-chat">
+    <div class="mp-id">
+      <span class="mp-av"><i class="fa-solid fa-compass"></i></span>
+      <span>
+        <span class="nm"><span class="bd">Dada</span><span class="sf">Mentor</span></span><br>
+        <span class="on"><span class="d"></span> çevrimiçi</span>
+      </span>
+    </div>
+    <div class="mp-bubble" id="mpBubble">Bugün sana nasıl yardımcı olayım?</div>
+    <div class="mp-row">
+      <a class="mp-opt" href="beden-kutle-endeksi-v1.html">Hesaplayıcılar</a>
+      <a class="mp-opt" href="besin-degerleri-v1.html">Besin Değerleri</a>
+      <a class="mp-opt" href="diyetisyen-dizin-v1.html">Diyetisyenler</a>
+      <a class="mp-opt w-gastro" href="anasayfa-portal-v3a.html"><span class="bd">Dada</span><span class="sf">Gastro</span></a>
+      <a class="mp-opt w-fit" href="dadafit-hub-v1.html"><span class="bd">Dada</span><span class="sf">Fit</span></a>
+    </div>
+  </div>
+</aside>
+<button class="to-top" id="toTop" type="button" aria-label="Başa dön"><i class="fa-solid fa-arrow-up" aria-hidden="true"></i></button>
+
+<script>
+/* ===== ORTAK CHROME JS (v3a'dan, sayfa-bağımsız hale getirildi) =====
+   SS paramları: ?dd=1 (mega+dil açık) · ?drawer=1 · ?cc=1 (çerez) · ?fb=1 (görüş modal)
+   Header VARSAYILAN KATI. Hero'lu sayfa şeffaf başlangıç isterse aşağıdaki
+   heroMode bayrağını kendi kopyasında true yapar (v3a davranışı). */
+
+// SS paramları
+// ===== Login-state simülasyonu (mockup) — İA §2.3 sözleşmesi =====
+// ?auth=1 → localStorage dm_auth='1' + body.is-auth ; ?auth=0 → temizle (logout)
+// param yoksa localStorage'a bakılır. Çıkış linkleri ?auth=0'a yönlendirir (M7).
+(function(){
+  /* C1 — tek auth/rol token dm_user{auth,roles[],verified,level}. Eski dm_auth/dm_business
+     migrate+silinir. Kök kuralı: auth ⟹ roles "kullanici" ile başlar; isletme operatörü
+     ["kullanici","isletme"]. Class additive (is-auth/has-business AYNEN) + body[data-roles]. */
+  var KEY='dm_user', OK={kullanici:1,antrenor:1,diyetisyen:1,isletme:1};
+  function rd(){ try{var r=localStorage.getItem(KEY);return r?JSON.parse(r):null;}catch(e){return null;} }
+  function wr(u){ try{localStorage.setItem(KEY,JSON.stringify(u));}catch(e){} }
+  var u=rd();
+  if(!u){                                   // migrasyon: eski binary flag → dm_user (bir kez)
+    var oa=false,ob=false;
+    try{oa=localStorage.getItem('dm_auth')==='1';}catch(e){}
+    try{ob=localStorage.getItem('dm_business')==='1';}catch(e){}
+    if(oa||ob){ u={auth:true,roles:['kullanici'],verified:false,level:0}; if(ob)u.roles.push('isletme'); wr(u); }
+  }
+  try{localStorage.removeItem('dm_auth');localStorage.removeItem('dm_business');}catch(e){}  // eski anahtar temizliği
+  var qs=location.search;                    // URL-param (demo/SS akışı korunur + yeni roller)
+  function ens(){ if(!u)u={auth:false,roles:[],verified:false,level:0}; }
+  function addR(r){ ens(); if(OK[r]&&u.roles.indexOf(r)<0)u.roles.push(r); }
+  if(qs.indexOf('auth=1')>-1){ ens(); u.auth=true; }
+  else if(qs.indexOf('auth=0')>-1){ u=null; try{localStorage.removeItem(KEY);}catch(e){} }
+  if(qs.indexOf('business=1')>-1){ ens(); u.auth=true; addR('isletme'); }
+  else if(qs.indexOf('business=0')>-1){ if(u){var bi=u.roles.indexOf('isletme'); if(bi>-1)u.roles.splice(bi,1);} }
+  var rm=/[?&]role=(antrenor|diyetisyen|isletme)/.exec(qs); if(rm){ ens(); u.auth=true; addR(rm[1]); }
+  if(u){
+    if(qs.indexOf('verified=1')>-1)u.verified=true; else if(qs.indexOf('verified=0')>-1)u.verified=false;
+    var lm=/[?&]level=(\d+)/.exec(qs); if(lm)u.level=parseInt(lm[1],10)||0;
+    if(u.auth&&u.roles.indexOf('kullanici')<0)u.roles.unshift('kullanici');   // kök her zaman önde
+    wr(u);
+  }
+  var b=document.body, authed=!!(u&&u.auth);   // DOM: eski class kanalı (additive) + data-roles
+  if(authed){
+    b.classList.add('is-auth');
+    if(u.roles.indexOf('isletme')>-1)b.classList.add('has-business');   // C3 köprü sinyali — AYNEN
+    b.setAttribute('data-roles',u.roles.join(' '));
+    if(u.verified)b.setAttribute('data-verified','1');
+    if(u.level)b.setAttribute('data-level',String(u.level));
+  }
+  var bnA=document.getElementById('bnAccount');   // M6 — bottom-nav Hesap hedefi
+  if(bnA)bnA.setAttribute('href', authed?'mutfak-defteri-v1.html':'giris-v1.html');
+})();
+
+if(location.search.indexOf('dd=1')>-1){document.querySelector('.nav-item').classList.add('open');var _l=document.getElementById('tbLang');if(_l)_l.classList.add('open');}
+if(location.search.indexOf('drawer=1')>-1){window.addEventListener('DOMContentLoaded',function(){document.getElementById('drawer').classList.add('open');document.getElementById('drawerOverlay').classList.add('open');var _s=document.querySelector('.d-has-sub');if(_s)_s.classList.add('open');});}
+
+// header: VARSAYILAN katı (içerik sayfası). heroMode=true → hero üstünde şeffaf,
+// ~60px scroll sonrası katı (v3a davranışı; ?hdr=solid ile yine zorla katı)
+(function(){
+  var header=document.querySelector('.header');
+  var heroMode=false;                                   // hero'lu sayfada true yap (video hero — header şeffaf)
+  var forceSolid=location.search.indexOf('hdr=solid')>-1;
+  if(!heroMode||forceSolid)return;                     // katı kal — at-top hiç eklenmez
+  function onScroll(){ if(window.scrollY<60){header.classList.add('at-top');} else {header.classList.remove('at-top');} }
+  onScroll(); window.addEventListener('scroll',onScroll,{passive:true});
+})();
+
+// save / favorite toggle (recipes + products) — sayfada varsa çalışır
+document.querySelectorAll('.r-save, .p-fav, .feat-save').forEach(function(btn){
+  btn.addEventListener('click',function(e){
+    e.stopPropagation();
+    btn.classList.toggle('saved');
+    var i=btn.querySelector('i');
+    if(btn.classList.contains('saved')){i.classList.remove('fa-regular');i.classList.add('fa-solid');}
+    else{i.classList.remove('fa-solid');i.classList.add('fa-regular');}
+  });
+});
+
+// "tümünü gör" slider okları — data-track / data-dir ile genel
+document.querySelectorAll('.row-nav button').forEach(function(b){
+  b.addEventListener('click',function(){
+    var t=document.getElementById(b.getAttribute('data-track'));
+    if(t){t.scrollBy({left:b.getAttribute('data-dir')==='prev'?-620:620,behavior:'smooth'});if(t._pauseAuto)t._pauseAuto();}
+  });
+});
+
+// nav dropdown click toggle (hover also works via CSS)
+document.querySelectorAll('.nav-item').forEach(function(it){
+  var trigger=it.querySelector(':scope > a');
+  if(!it.querySelector('.dropdown,.mega'))return;
+  trigger.addEventListener('click',function(e){
+    e.preventDefault();
+    var wasOpen=it.classList.contains('open');
+    document.querySelectorAll('.nav-item.open').forEach(function(o){o.classList.remove('open')});
+    if(!wasOpen)it.classList.add('open');
+  });
+});
+document.addEventListener('click',function(e){
+  if(!e.target.closest('.nav-item'))document.querySelectorAll('.nav-item.open').forEach(function(o){o.classList.remove('open')});
+});
+
+// ---- HESAP / EKLE dropdown (header sağ blok, login-state) tıkla-aç ----
+document.querySelectorAll('.acct-item').forEach(function(it){
+  var trigger=it.querySelector('.icon-btn,.acct-btn');
+  if(!trigger||!it.querySelector('.acct-menu'))return;
+  trigger.addEventListener('click',function(e){
+    e.preventDefault();
+    var wasOpen=it.classList.contains('open');
+    document.querySelectorAll('.acct-item.open').forEach(function(o){o.classList.remove('open')});
+    if(!wasOpen)it.classList.add('open');
+  });
+});
+document.addEventListener('click',function(e){
+  if(!e.target.closest('.acct-item'))document.querySelectorAll('.acct-item.open').forEach(function(o){o.classList.remove('open')});
+});
+
+// ---- LG-GATE (giriş kapısı) — logged-out mikro-aksiyon kapısı ----
+(function(){
+  var gate=document.getElementById('lgGate');
+  var overlay=document.getElementById('lgOverlay');
+  if(!gate)return;
+  function open(title,desc){
+    if(document.body.classList.contains('is-auth'))return false;   // logged-in: kapı yok
+    if(title)document.getElementById('lgTitle').textContent=title;
+    if(desc)document.getElementById('lgDesc').textContent=desc;
+    gate.classList.add('show');overlay.classList.add('show');document.body.style.overflow='hidden';
+    return true;
+  }
+  function close(){gate.classList.remove('show');overlay.classList.remove('show');document.body.style.overflow='';}
+  window.__lgGate=open;window.__lgGateClose=close;
+  document.getElementById('lgClose').addEventListener('click',close);
+  overlay.addEventListener('click',close);
+  document.addEventListener('keydown',function(e){if(e.key==='Escape'&&gate.classList.contains('show'))close();});
+  // data-lg-gate taşıyan öğeler logged-out'ta kapıyı açar (capture: sayfa toggle'ından önce keser)
+  document.addEventListener('click',function(e){
+    var t=e.target.closest('[data-lg-gate]');
+    if(!t)return;
+    if(document.body.classList.contains('is-auth'))return;          // logged-in: normal davranış
+    e.preventDefault();e.stopPropagation();
+    open(t.getAttribute('data-lg-title'),t.getAttribute('data-lg-desc'));
+  },true);
+  if(location.search.indexOf('lg=1')>-1){open();}                    // SS paramı
+})();
+
+// ---- DİL SEÇİCİ (üst bant dropdown) ----
+(function(){
+  var lang=document.getElementById('tbLang');
+  if(!lang)return;
+  var btn=document.getElementById('tbLangBtn');
+  btn.addEventListener('click',function(e){
+    e.preventDefault();e.stopPropagation();
+    var open=lang.classList.toggle('open');
+    btn.setAttribute('aria-expanded',open?'true':'false');
+  });
+  lang.querySelectorAll('.tb-lang-menu a').forEach(function(a){
+    a.addEventListener('click',function(e){
+      e.preventDefault();
+      lang.querySelectorAll('.tb-lang-menu a').forEach(function(x){x.classList.remove('active')});
+      a.classList.add('active');
+      btn.querySelector('span').textContent=a.getAttribute('data-lang').toUpperCase();
+      lang.classList.remove('open');btn.setAttribute('aria-expanded','false');
+    });
+  });
+  document.addEventListener('click',function(e){
+    if(!e.target.closest('#tbLang')){lang.classList.remove('open');btn.setAttribute('aria-expanded','false');}
+  });
+})();
+
+// ---- MOBİL DRAWER aç/kapa ----
+(function(){
+  var drawer=document.getElementById('drawer');
+  var overlay=document.getElementById('drawerOverlay');
+  var burger=document.getElementById('hamburger');
+  var closeBtn=document.getElementById('drawerClose');
+  function open(){drawer.classList.add('open');overlay.classList.add('open');document.body.style.overflow='hidden';}
+  function close(){drawer.classList.remove('open');overlay.classList.remove('open');document.body.style.overflow='';}
+  burger.addEventListener('click',open);
+  closeBtn.addEventListener('click',close);
+  overlay.addEventListener('click',close);
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')close();});
+  // accordion: alt menülü öğeler tıkla-aç
+  drawer.querySelectorAll('.d-has-sub > .d-link').forEach(function(lnk){
+    lnk.addEventListener('click',function(){
+      var item=lnk.parentElement;
+      var wasOpen=item.classList.contains('open');
+      drawer.querySelectorAll('.d-item.open').forEach(function(o){o.classList.remove('open')});
+      if(!wasOpen)item.classList.add('open');
+    });
+  });
+  // alt link veya direkt linke tıklayınca drawer kapansın
+  drawer.querySelectorAll('.d-sub a, .d-item > a.d-link, .drawer-foot a, .drawer-foot > button').forEach(function(a){
+    a.addEventListener('click',close);
+  });
+  // drawer dil seçici — aç/kapa liste + seçim (drawer kapanmaz, N dile ölçeklenir)
+  var dl=document.getElementById('drawerLang');
+  if(dl){
+    var dlToggle=dl.querySelector('.drawer-lang-toggle');
+    dlToggle.addEventListener('click',function(){
+      var open=dl.classList.toggle('open');
+      dlToggle.setAttribute('aria-expanded',open?'true':'false');
+    });
+    dl.querySelectorAll('.drawer-lang-list button').forEach(function(b){
+      b.addEventListener('click',function(){
+        dl.querySelectorAll('.drawer-lang-list button').forEach(function(x){x.classList.remove('active')});
+        b.classList.add('active');
+        document.getElementById('drawerLangCur').textContent=b.getAttribute('data-lang').toUpperCase()+' — '+b.getAttribute('data-name');
+        dl.classList.remove('open');dlToggle.setAttribute('aria-expanded','false');
+      });
+    });
+  }
+})();
+
+// ---- SÜRÜKLE-KAYDIR (mouse ile yatay slider'lar) ----
+// Sayfa kendi track selector'larını alttaki listeye ekler (.row-track hazır gelir)
+(function(){
+  function enableDrag(el){
+    el.classList.add('drag-scroll');
+    var down=false,startX=0,startScroll=0,moved=false;
+    el.addEventListener('pointerdown',function(e){
+      if(e.pointerType==='touch')return;           // touch zaten native kayar
+      down=true;moved=false;startX=e.clientX;startScroll=el.scrollLeft;
+    });
+    el.addEventListener('pointermove',function(e){
+      if(!down)return;
+      var dx=e.clientX-startX;
+      if(Math.abs(dx)>4){moved=true;el.classList.add('dragging');}
+      el.scrollLeft=startScroll-dx;
+    });
+    function up(){down=false;setTimeout(function(){el.classList.remove('dragging');},0);}
+    el.addEventListener('pointerup',up);
+    el.addEventListener('pointercancel',up);
+    el.addEventListener('pointerleave',up);
+    // sürükleme sonrası yanlışlıkla tıklamayı engelle
+    el.addEventListener('click',function(e){if(moved){e.preventDefault();e.stopPropagation();moved=false;}},true);
+    // dikey wheel'i yatay scroll'a çevir (trackpad/mouse)
+    el.addEventListener('wheel',function(e){
+      if(el.scrollWidth<=el.clientWidth)return;
+      if(Math.abs(e.deltaX)>Math.abs(e.deltaY))return;
+      e.preventDefault();el.scrollLeft+=e.deltaY;
+    },{passive:false});
+  }
+  ['.row-track','.cat-track','.grid-4','.vid-grid','.chips','.chef-row','.disc-grid'].forEach(function(sel){
+    document.querySelectorAll(sel).forEach(enableDrag);
+  });
+})();
+
+// ---- FOOTER REVEAL — footer yüksekliğini ölç, içerik sonuna boşluk aç ----
+(function(){
+  var main=document.getElementById('pageMain');
+  var foot=document.querySelector('.footer');
+  if(!main||!foot)return;
+  function fit(){
+    if(window.matchMedia('(min-width:641px)').matches){
+      main.style.marginBottom=foot.offsetHeight+'px';
+    }else{
+      main.style.marginBottom='';
+    }
+  }
+  fit();
+  window.addEventListener('resize',fit);
+  window.addEventListener('load',fit);          // logo/font yüklenince yükseklik oturur
+  if(document.fonts&&document.fonts.ready)document.fonts.ready.then(fit);
+})();
+
+// ---- GÖRÜŞ BİLDİR (kenar etiketi → modal) ----
+(function(){
+  var tab=document.getElementById('fbTab');
+  var modal=document.getElementById('fbModal');
+  var overlay=document.getElementById('fbOverlay');
+  if(!tab||!modal)return;
+  var form=document.getElementById('fbForm');
+  var success=document.getElementById('fbSuccess');
+  function open(){modal.classList.add('show');overlay.classList.add('show');document.body.style.overflow='hidden';}
+  function close(){
+    modal.classList.remove('show');overlay.classList.remove('show');document.body.style.overflow='';
+    setTimeout(function(){form.hidden=false;success.hidden=true;form.reset();},300);
+  }
+  tab.addEventListener('click',function(e){e.preventDefault();open();});
+  document.getElementById('fbClose').addEventListener('click',close);
+  overlay.addEventListener('click',close);
+  modal.addEventListener('click',function(e){if(e.target===modal)close();});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')close();});
+  // M17 — konu tipine göre alan seti: aktif pane görünür, pasif pane'lerin
+  // input'ları disable edilir (gizli required alanlar submit'i bloklamasın)
+  function syncPanes(){
+    var cur=modal.querySelector('.fb-topic.active').getAttribute('data-topic');
+    modal.querySelectorAll('.fb-fields').forEach(function(p){
+      var on=p.getAttribute('data-for')===cur;
+      p.classList.toggle('active',on);
+      p.querySelectorAll('input,textarea,select,button').forEach(function(el){el.disabled=!on});
+    });
+  }
+  modal.querySelectorAll('.fb-topic').forEach(function(t){
+    t.addEventListener('click',function(){
+      modal.querySelectorAll('.fb-topic').forEach(function(x){x.classList.remove('active')});
+      t.classList.add('active');
+      syncPanes();
+    });
+  });
+  syncPanes();
+  // emoji + chip seçimleri (tek seçim)
+  modal.querySelectorAll('.fb-emoji button').forEach(function(b){
+    b.addEventListener('click',function(){
+      modal.querySelectorAll('.fb-emoji button').forEach(function(x){x.classList.remove('active')});
+      b.classList.add('active');
+    });
+  });
+  modal.querySelectorAll('.fb-chiprow .chip').forEach(function(c){
+    c.addEventListener('click',function(){
+      modal.querySelectorAll('.fb-chiprow .chip').forEach(function(x){x.classList.remove('active')});
+      c.classList.add('active');
+    });
+  });
+  form.addEventListener('submit',function(e){
+    e.preventDefault();
+    form.hidden=true;success.hidden=false;
+  });
+  if(location.search.indexOf('fb=1')>-1){open();}
+})();
+
+// ---- ÇEREZ ONAY BANNER ----
+(function(){
+  var banner=document.getElementById('cookieBanner');
+  if(!banner)return;
+  var KEY='dm-cookie-consent';
+  var force=location.search.indexOf('cc=1')>-1;   // SS/test için zorla göster
+  function stored(){try{return localStorage.getItem(KEY);}catch(e){return null;}}
+  function dismiss(val){
+    try{localStorage.setItem(KEY,val);}catch(e){}
+    banner.classList.remove('show');if(window.__bnUpdate)window.__bnUpdate();
+  }
+  if(force || !stored()){
+    setTimeout(function(){banner.classList.add('show');if(window.__bnUpdate)window.__bnUpdate();},700);
+  }
+  document.getElementById('cookieAccept').addEventListener('click',function(){dismiss('accepted');});
+  document.getElementById('cookieReject').addEventListener('click',function(){dismiss('rejected');});
+})();
+
+/* ===== SAYFA JS — sayfa-spesifik script BU İŞARETİN ALTINA eklenir ===== */
+</script>
+<script>
+/* ===== MOBİL ALT KATMAN YÖNETİCİSİ (revize2/mobil1 — kanonik) =====
+   Kural: ekranda en fazla 1 sabit alt şerit. Çerez onayı (geçici, öncelikli)
+   ya da sayfanın kendi aksiyon şeridi (window.__bottomStrips) açıkken global
+   bottom-nav gizlenir; şerit olan sayfalarda nav ayrıca aşağı kaydırınca gizlenir. */
+window.__bottomStrips=window.__bottomStrips||[];
+(function(){
+  var nav=document.querySelector('.bottom-nav');
+  if(!nav)return;
+  var cookie=document.getElementById('cookieBanner');
+  var strips=window.__bottomStrips.map(function(s){return document.querySelector(s);}).filter(Boolean);
+  var lastY=window.scrollY||0;
+  function stripShown(){for(var i=0;i<strips.length;i++){if(strips[i]&&strips[i].classList.contains('show'))return true;}return false;}
+  function update(){
+    var y=window.scrollY||0;
+    if((cookie&&cookie.classList.contains('show'))||stripShown()){nav.classList.add('bn-hidden');lastY=y;return;}
+    if(strips.length===0||y<80){nav.classList.remove('bn-hidden');lastY=y;return;}
+    if(y-lastY>12){nav.classList.add('bn-hidden');lastY=y;}
+    else if(lastY-y>12){nav.classList.remove('bn-hidden');lastY=y;}
+  }
+  window.addEventListener('scroll',update,{passive:true});
+  window.addEventListener('resize',update,{passive:true});
+  document.addEventListener('click',function(){setTimeout(update,60);},true);
+  window.__bnUpdate=update;update();
+})();
+</script>
+<script>
+/* ===== Yatay slider (hesaplayıcılar + diyet listeleri) — ok + uç disable, native scroll-snap, sıfır bağımlılık ===== */
+(function(){
+  [['calcTrack','calcPrev','calcNext'],['dietTrack','dietPrev','dietNext']].forEach(function(ids){
+    var track=document.getElementById(ids[0]);
+    var prev=document.getElementById(ids[1]);
+    var next=document.getElementById(ids[2]);
+    if(!track||!prev||!next)return;
+    function step(){return Math.round(track.clientWidth*0.85);}
+    function sync(){
+      var max=track.scrollWidth-track.clientWidth-2;
+      prev.disabled=track.scrollLeft<=2;
+      next.disabled=track.scrollLeft>=max;
+    }
+    prev.addEventListener('click',function(){track.scrollBy({left:-step(),behavior:'smooth'});});
+    next.addEventListener('click',function(){track.scrollBy({left:step(),behavior:'smooth'});});
+    track.addEventListener('scroll',sync,{passive:true});
+    window.addEventListener('resize',sync);
+    sync();
+  });
+})();
+</script>
+<script>
+/* ===== Faz3 — işletme-sahibi rolü (has-business): is-auth kardeşi =====
+   ?business=1 → localStorage dm_business='1' + body.has-business ; ?business=0 → temizle.
+   param yoksa localStorage'a bakılır. Adım 1 işletme linkleri (İşletmem→Panele Git,
+   panel topbar account chip) body.has-business ile rol-koşullu gösterilir. */
+(function(){ /* C1 — dm_business emekli; işletme/rol state'i üstteki dm_user token'ında (is-auth kardeşi). */ })();
+</script>
+<script>
+/* ===== FULL-VIEWPORT HERO — optimize video yükleme (marka-klon hero standardı) =====
+   poster-first paint (CSS bg + poster attr) · lazy IntersectionObserver (viewport'a girince yükle)
+   · mobil statik poster (video HİÇ yüklenmez) · reduced-motion + Save-Data fallback (çift kemer).
+   Asset: assets/video/diet-hero.webm (VP9) + .mp4 (H.264) + assets/img/diet-hero-poster.jpg */
+(function(){
+  var v=document.querySelector('.sh-hero-vid'); if(!v) return;
+  var reduced=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var mobile=window.matchMedia('(max-width:760px)').matches;
+  var saveData=!!(navigator.connection && navigator.connection.saveData);
+  // mobil / reduced-motion / save-data → video YÜKLEME; poster (CSS bg + attr) kalır
+  if(reduced||mobile||saveData) return;
+  function loadVideo(){
+    var srcs=v.querySelectorAll('source[data-src]');
+    for(var i=0;i<srcs.length;i++){ if(!srcs[i].getAttribute('src')) srcs[i].setAttribute('src',srcs[i].getAttribute('data-src')); }
+    v.load();
+    var p=v.play(); if(p && p.catch) p.catch(function(){});
+  }
+  if('IntersectionObserver' in window){
+    var io=new IntersectionObserver(function(es){
+      for(var i=0;i<es.length;i++){ if(es[i].isIntersecting){ loadVideo(); io.disconnect(); break; } }
+    },{threshold:.25});
+    io.observe(v);
+  } else { loadVideo(); }
+})();
+
+/* ===== ADIM 3 KABUK JS (Gastro kabuk bloğu; perde JS sayfada zaten var) ===== */
+// ---- DADAMENTOR ASİSTAN PANELİ (floating collapse/expand morph + footer-hide) ----
+(function(){
+  var panel=document.getElementById('mentorPanel');
+  if(!panel)return;
+  var mpToggle=document.getElementById('mpToggle');
+  var mpToggleIco=document.getElementById('mpToggleIco');
+  var mpMiniOv=document.getElementById('mpMiniOv');
+  var panelState='mini';
+  function collapse(){
+    panelState='mini';panel.setAttribute('data-state','mini');panel.classList.add('mini');
+    if(mpToggleIco)mpToggleIco.className='fa-solid fa-plus';
+    if(mpToggle)mpToggle.setAttribute('aria-label','Paneli büyüt');
+    if(mpMiniOv)mpMiniOv.setAttribute('aria-hidden','false');
+  }
+  function expand(){
+    panelState='full';panel.setAttribute('data-state','full');panel.classList.remove('mini');
+    if(mpToggleIco)mpToggleIco.className='fa-solid fa-minus';
+    if(mpToggle)mpToggle.setAttribute('aria-label','Paneli küçült');
+    if(mpMiniOv)mpMiniOv.setAttribute('aria-hidden','true');
+  }
+  if(mpToggle)mpToggle.addEventListener('click',function(e){e.stopPropagation();panelState==='full'?collapse():expand();});
+  if(mpMiniOv)mpMiniOv.addEventListener('click',expand);
+  function onFootScroll(){
+    var y=window.scrollY||document.documentElement.scrollTop;
+    var max=document.documentElement.scrollHeight-window.innerHeight;
+    panel.classList.toggle('foot-hide',(max-y)<260);
+  }
+  window.addEventListener('scroll',onFootScroll,{passive:true});
+  window.addEventListener('resize',onFootScroll);
+  onFootScroll();
+})();
+// ---- ÖLÇÜLÜ SCROLL-REVEAL (FOUC-güvenli; .reveal hedefi yoksa no-op; class 'in') ----
+(function(){
+  var els=document.querySelectorAll('.reveal');
+  if(!els.length)return;
+  if(window.matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+  if(!('IntersectionObserver' in window))return;
+  document.documentElement.classList.add('reveal-ready');
+  var io=new IntersectionObserver(function(entries){
+    entries.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}});
+  },{threshold:.12,rootMargin:'0px 0px -7% 0px'});
+  els.forEach(function(el){io.observe(el);});
+})();
+// ---- SCROLL-TO-TOP (sağ-alt; scrollY eşiği, dipte gizle) ----
+(function(){
+  var btn=document.getElementById('toTop');
+  if(!btn)return;
+  var smooth=!window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function upd(){
+    var y=window.scrollY||document.documentElement.scrollTop;
+    var max=document.documentElement.scrollHeight-window.innerHeight;
+    btn.classList.toggle('show', y>620 && (max-y)>120);
+  }
+  btn.addEventListener('click',function(){window.scrollTo({top:0,behavior:smooth?'smooth':'auto'});});
+  window.addEventListener('scroll',upd,{passive:true});
+  window.addEventListener('resize',upd);
+  upd();
+})();
+</script>
+</body>
+</html>
