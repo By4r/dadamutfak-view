@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Günlük Su İhtiyacı Hesapla — DadaMutfak</title>
+<title>Porsiyon Hesaplama — Tarifi Kişi Sayısına Göre Ölçekle — DadaMutfak</title>
 <link rel="shortcut icon" type="image/x-icon"
       href="assets/img/favicon.ico" />
 <!-- FontAwesome 6.5.2 (kilitli ikon seti) -->
@@ -801,7 +801,7 @@ html,body{overflow-x:hidden}
 .fk-seg button.active{background:var(--tomato-deep);color:#fff}
 
 /* ---- ÜST BÖLGE (kompakt, krem) — breadcrumb + başlık + hesaplayıcı rayı ---- */
-.calc-top{position:relative;padding-top:128px;background-image:linear-gradient(90deg,rgba(18,28,22,.94),rgba(20,32,25,.74)),url('https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=1600&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5');background-size:cover;background-position:center}
+.calc-top{position:relative;padding-top:128px;background-image:linear-gradient(90deg,rgba(18,28,22,.94),rgba(20,32,25,.74)),url('https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=1600&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5');background-size:cover;background-position:center}
 .calc-top .rd-crumb{padding:18px 0 14px}
 .rd-crumb{display:flex;align-items:center;flex-wrap:wrap;gap:9px;font-size:13px;font-weight:500;color:var(--muted)}
 .rd-crumb a{color:var(--muted);transition:.18s}
@@ -868,12 +868,6 @@ html,body{overflow-x:hidden}
 .bridge .br-txt b{font-size:14.5px;color:var(--slate);display:block}
 .bridge .br-txt span{font-size:12.5px;color:var(--muted);font-weight:500}
 .bridge .br-go{margin-left:auto;flex:none}
-
-/* ---- bardak karşılığı görseli — res-box içi ikon dizisi (200 ml = 1 bardak) ---- */
-.cup-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:20px}
-.cup-row i{font-size:21px;color:#6aa9d8}
-.cup-row i.half{opacity:.35}
-.cup-note{font-size:12px;color:var(--muted);font-weight:600;margin-top:9px}
 
 /* ---- r-card sistemi (v3a VERBATIM — ilgili tarifler) ---- */
 .r-card{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-lg);overflow:hidden;transition:.3s var(--ease);cursor:pointer;display:flex;flex-direction:column}
@@ -1393,12 +1387,12 @@ html.reveal-ready .reveal.in{opacity:1;transform:none}
     <nav class="rd-crumb" aria-label="Sayfa yolu">
       <a href="saglik-hub-v1.html"><i class="fa-solid fa-house"></i></a>
       <i class="fa-solid fa-chevron-right"></i>
-      <b>Günlük Su</b>
+      <b>Porsiyon Hesaplama</b>
     </nav>
     <div class="calc-head">
-      <span class="eyebrow"><i class="fa-solid fa-droplet"></i> Hesaplayıcı</span>
-      <h1>Günlük Su İhtiyacı</h1>
-      <p class="lead">Kilona göre günlük su ihtiyacını hesapla; egzersiz yaptığın günler için ek miktarı da gör.</p>
+      <span class="eyebrow"><i class="fa-solid fa-scale-unbalanced"></i> Hesaplayıcı</span>
+      <h1>Porsiyon Hesaplama</h1>
+      <p class="lead">Bir tarifi kaç kişilik yapacaksan malzemeleri o kişiye göre yeniden ölçekle. Kişi sayısını ve porsiyon boyutunu seç; malzeme çarpanını anında gör.</p>
     </div>
   </div>
 </section>
@@ -1411,9 +1405,9 @@ html.reveal-ready .reveal.in{opacity:1;transform:none}
       <a href="beden-kutle-endeksi-v1.html"><i class="fa-solid fa-weight-scale"></i> Beden Kütle Endeksi</a>
       <a href="gunluk-kalori-v1.html"><i class="fa-solid fa-utensils"></i> Günlük Kalori</a>
       <a href="vucut-tipi-v1.html"><i class="fa-solid fa-person"></i> Vücut Tipi</a>
-      <a class="active" href="gunluk-su-v1.html"><i class="fa-solid fa-droplet"></i> Günlük Su</a>
+      <a href="gunluk-su-v1.html"><i class="fa-solid fa-droplet"></i> Günlük Su</a>
       <a href="ideal-kilo-v1.html"><i class="fa-solid fa-scale-balanced"></i> İdeal Kilo</a>
-      <a href="porsiyon-hesaplama-v1.html"><i class="fa-solid fa-scale-unbalanced"></i> Porsiyon</a>
+      <a class="active" href="porsiyon-hesaplama-v1.html"><i class="fa-solid fa-scale-unbalanced"></i> Porsiyon</a>
     </nav>
   </div>
 </section>
@@ -1427,57 +1421,60 @@ html.reveal-ready .reveal.in{opacity:1;transform:none}
       <div class="calc-card-box">
         <h3>Bilgilerini gir</h3>
         <p class="box-sub">Sonuç anında güncellenir — istersen Hesapla'ya bas.</p>
-        <form id="suForm" autocomplete="off">
+        <form id="porForm" autocomplete="off">
           <div class="fk-grid c2">
             <div class="fk-field">
-              <label class="fk-label" for="kilo">Kilo <span class="req">*</span></label>
-              <div class="fk-suffix"><input class="fk-input" type="number" id="kilo" value="68" min="30" max="300" inputmode="numeric"><span>kg</span></div>
+              <label class="fk-label" for="tarifKisi">Tarif kaç kişilik? <span class="req">*</span></label>
+              <div class="fk-suffix"><input class="fk-input" type="number" id="tarifKisi" value="4" min="1" max="50" inputmode="numeric"><span>kişi</span></div>
             </div>
             <div class="fk-field">
-              <label class="fk-label" for="egzersiz">Günlük egzersiz <span class="opt">opsiyonel</span></label>
-              <select class="fk-select" id="egzersiz">
-                <option value="0" selected>Egzersiz yok</option>
-                <option value="0.5">Yarım saat</option>
-                <option value="1">1 saat</option>
-                <option value="1.5">1.5 saat</option>
-                <option value="2">2 saat ve üzeri</option>
-              </select>
+              <label class="fk-label" for="hedefKisi">Kaç kişilik yapacaksın? <span class="req">*</span></label>
+              <div class="fk-suffix"><input class="fk-input" type="number" id="hedefKisi" value="6" min="1" max="50" inputmode="numeric"><span>kişi</span></div>
+            </div>
+          </div>
+          <div class="fk-grid" style="margin-top:18px">
+            <div class="fk-field">
+              <label class="fk-label">Porsiyon boyutu</label>
+              <div class="fk-seg" id="porsiyon" role="group" aria-label="Porsiyon boyutu">
+                <button type="button" data-mult="0.85"><i class="fa-solid fa-feather"></i> Hafif</button>
+                <button type="button" class="active" data-mult="1"><i class="fa-solid fa-utensils"></i> Normal</button>
+                <button type="button" data-mult="1.2"><i class="fa-solid fa-drumstick-bite"></i> Doyurucu</button>
+              </div>
             </div>
           </div>
           <div class="fk-field" style="margin-top:18px">
-            <label class="fk-label">Egzersiz yoğunluğu <span class="opt">opsiyonel</span></label>
-            <div class="fk-seg" id="yogunluk" role="group" aria-label="Egzersiz yoğunluğu">
-              <button type="button" class="active" data-ml="350"><i class="fa-solid fa-person-walking"></i> Hafif (+350 ml/saat)</button>
-              <button type="button" data-ml="500"><i class="fa-solid fa-person-running"></i> Yoğun (+500 ml/saat)</button>
-            </div>
-            <div class="fk-help"><i class="fa-solid fa-circle-info"></i> Taban ihtiyaç: kilo × 33 ml. Egzersiz yaptığın günlerde her saat için ek su gerekir; sıcak hava ve gebelik/emzirme dönemlerinde ihtiyaç artar.</div>
+            <label class="fk-label" for="ornekMik">Örnek malzeme miktarı <span style="color:var(--muted);font-weight:600">(opsiyonel)</span></label>
+            <div class="fk-suffix"><input class="fk-input" type="number" id="ornekMik" value="400" min="0" max="100000" inputmode="numeric"><span>g / ml / adet</span></div>
           </div>
+          <div class="fk-help" style="margin-top:16px"><i class="fa-solid fa-circle-info"></i> Çarpan = (hedef kişi ÷ tarif kişi) × porsiyon boyutu. Tüm malzemeleri bu çarpanla çarparak ölçekle. Pişirme süresi ve baharatı orantıyla değil, tada göre ayarla.</div>
           <div class="calc-actions">
             <button type="submit" class="btn btn-green"><i class="fa-solid fa-calculator"></i> Hesapla</button>
-            <button type="reset" class="btn btn-ghost" id="suReset">Sıfırla</button>
+            <button type="reset" class="btn btn-ghost" id="porReset">Sıfırla</button>
           </div>
         </form>
       </div>
 
       <!-- SONUÇ -->
       <div class="calc-card-box res-box">
-        <span class="eyebrow" style="color:var(--green-deep)"><i class="fa-solid fa-chart-simple"></i> Sonucun</span>
+        <span class="eyebrow" style="color:var(--green-deep)"><i class="fa-solid fa-chart-simple"></i> Malzeme Çarpanı</span>
         <div class="res-num-row" style="margin-top:14px">
-          <span class="res-num" id="suVal">2.2</span><small>litre/gün</small>
+          <span class="res-num" id="porVal">1,5</span><small>× malzeme</small>
         </div>
-        <span class="res-cat" id="suCat" style="background:#E8F1F8;color:#3d7bb0"><i class="fa-solid fa-glass-water"></i> ≈ 11 bardak (200 ml)</span>
-        <p class="res-desc" id="suDesc">Bu, kilona göre günlük taban su ihtiyacın. Gün içine yay: güne 1-2 bardakla başla, her öğünde ve öğün aralarında birer bardak iç. Çay-kahve yerine geçmez; onlar ayrıca sayılır.</p>
-
-        <div class="cup-row" id="cupRow" aria-hidden="true"></div>
-        <p class="cup-note">1 bardak = 200 ml · görsel, toplam ihtiyacının bardak karşılığıdır</p>
+        <span class="res-cat" style="background:#EAF7F0;color:var(--green-deep)"><i class="fa-solid fa-users"></i> <span id="porCat">6 kişilik porsiyon</span></span>
+        <p class="res-desc">Tarifteki her malzemeyi bu çarpanla çarp. Örneğin <b id="porOrn">400 g</b> bir malzeme, yeni tarifte <b id="porSonuc" style="color:var(--green-deep)">600 g</b> olur. Baharat, tuz ve pişirme süresini orantı yerine tada göre ayarla.</p>
 
         <div class="bridge">
-          <span class="br-ico"><i class="fa-solid fa-utensils"></i></span>
-          <div class="br-txt"><b>Su dengesini destekleyen tarifler</b><span>Çorbalar, kompostolar ve hafif içecekler</span></div>
+          <span class="br-ico"><i class="fa-solid fa-book-open"></i></span>
+          <div class="br-txt"><b>Ölçeklenecek tarifi seç</b><span>Binlerce tarif arasından porsiyonunu ayarla</span></div>
           <a class="see-all br-go" href="tarif-liste-v1.html">Tarifleri Gör <i class="fa-solid fa-arrow-right"></i></a>
         </div>
+        <div class="bridge">
+          <span class="br-ico"><i class="fa-solid fa-cart-shopping"></i></span>
+          <div class="br-txt"><b>Alışveriş listesine dök</b><span>Ölçeklenmiş miktarları haftalık menüne aktar</span></div>
+          <a class="see-all br-go" href="haftalik-menu-v1.html">Haftalık Menü <i class="fa-solid fa-arrow-right"></i></a>
+        </div>
 
-        <div class="fk-help" style="margin-top:18px"><i class="fa-solid fa-circle-info"></i> Bu sonuç genel bilgilendirme amaçlıdır, tıbbi tavsiye değildir. Böbrek/kalp rahatsızlığı gibi durumlarda sıvı alımı için hekimine veya <a href="diyetisyen-dizin-v1.html" style="color:var(--green-deep);font-weight:700">diyetisyenine danış</a>.</div>
+        <div class="fk-help" style="margin-top:18px"><i class="fa-solid fa-circle-info"></i> Ölçekleme malzeme miktarları içindir; besin değeri, kişiye özel porsiyon veya diyet planı için bir <a href="diyetisyen-dizin-v1.html" style="color:var(--green-deep);font-weight:700">diyetisyene danış</a>.</div>
       </div>
 
     </div>
@@ -1489,9 +1486,9 @@ html.reveal-ready .reveal.in{opacity:1;transform:none}
   <div class="wrap">
     <div class="sec-head reveal">
       <div>
-        <span class="eyebrow" style="color:var(--green-deep)"><i class="fa-solid fa-heart"></i> Sıvı Dostu</span>
-        <h2>Sıvı dengesini destekleyen tarifler</h2>
-        <p class="lead">Su oranı yüksek çorbalar, hafif içecekler ve mevsim seçimleri.</p>
+        <span class="eyebrow" style="color:var(--green-deep)"><i class="fa-solid fa-heart"></i> Kalabalığa Uygun</span>
+        <h2>Kolay ölçeklenen, kalabalık tarifleri</h2>
+        <p class="lead">Kişi sayısına göre rahatça büyütebileceğin, misafir ve aile sofrası için doyurucu seçimler.</p>
       </div>
       <div class="sec-tools"><a class="see-all" href="tarif-liste-v1.html">Tümünü Gör <i class="fa-solid fa-arrow-right"></i></a></div>
     </div>
@@ -2013,42 +2010,41 @@ document.addEventListener('click',function(e){
   document.getElementById('cookieReject').addEventListener('click',function(){dismiss('rejected');});
 })();
 
-/* ===== SAYFA JS — Günlük su ihtiyacı (kilo × 33 ml + egzersiz) ===== */
+/* ===== SAYFA JS — Porsiyon ölçekleme (kalori YOK, sadece malzeme çarpanı) ===== */
 (function(){
-  var kilo=document.getElementById('kilo'), egz=document.getElementById('egzersiz');
-  var valEl=document.getElementById('suVal'), catEl=document.getElementById('suCat');
-  var cupRow=document.getElementById('cupRow');
-  var form=document.getElementById('suForm');
-  if(!kilo)return;
-  var mlPerHour=350;
+  var tarifKisi=document.getElementById('tarifKisi'), hedefKisi=document.getElementById('hedefKisi'), ornekMik=document.getElementById('ornekMik');
+  var valEl=document.getElementById('porVal'), catEl=document.getElementById('porCat'), ornEl=document.getElementById('porOrn'), sonucEl=document.getElementById('porSonuc');
+  var form=document.getElementById('porForm');
+  if(!tarifKisi||!hedefKisi)return;
+  var mult=1;
+  function fmtNum(n){ return (Math.round(n*100)/100).toLocaleString('tr-TR'); }
+  function fmtMik(n){ return (Math.round(n*10)/10).toLocaleString('tr-TR'); }
   function calc(){
-    var k=parseFloat(kilo.value), saat=parseFloat(egz.value)||0;
-    if(!k||k<20){valEl.textContent='—';return;}
-    var ml=k*33 + saat*mlPerHour;
-    // klinik üst sınır: 4 L/gün (cila turu — dalga3 soru #14)
-    var capped=ml>4000; if(capped)ml=4000;
-    var litre=ml/1000;
-    valEl.textContent=litre.toFixed(1).replace('.',',');
-    var cups=Math.round(ml/200);
-    catEl.innerHTML='<i class="fa-solid fa-glass-water"></i> ≈ '+cups+' bardak (200 ml)'+(capped?' · günlük üst sınır 4 L':'');
-    // bardak görseli — tam bardaklar dolu, kalan yarım soluk
-    var full=Math.floor(ml/200), half=(ml%200)>=80?1:0, htm='';
-    var shown=Math.min(full,24);
-    for(var i=0;i<shown;i++)htm+='<i class="fa-solid fa-glass-water"></i>';
-    if(half&&shown<24)htm+='<i class="fa-solid fa-glass-water half"></i>';
-    cupRow.innerHTML=htm;
+    var t=parseFloat(tarifKisi.value), h=parseFloat(hedefKisi.value), o=parseFloat(ornekMik.value);
+    if(!t||!h||t<1||h<1){ valEl.textContent='—'; catEl.textContent='Kişi sayısını gir'; return; }
+    var carpan=(h/t)*mult;
+    valEl.textContent=fmtNum(carpan);
+    catEl.textContent=(Math.round(h)+' kişilik porsiyon');
+    if(o && o>0){
+      ornEl.textContent=fmtMik(o)+' g';
+      sonucEl.textContent=fmtMik(o*carpan)+' g';
+    } else {
+      ornEl.textContent='her malzeme';
+      sonucEl.textContent='× '+fmtNum(carpan);
+    }
   }
-  kilo.addEventListener('input',calc);
-  egz.addEventListener('change',calc);
+  [tarifKisi,hedefKisi,ornekMik].forEach(function(el){el.addEventListener('input',calc);});
   form.addEventListener('submit',function(e){e.preventDefault();calc();});
-  document.querySelectorAll('#yogunluk button').forEach(function(b){
+  document.querySelectorAll('#porsiyon button').forEach(function(b){
     b.addEventListener('click',function(){
-      document.querySelectorAll('#yogunluk button').forEach(function(x){x.classList.remove('active')});
-      b.classList.add('active'); mlPerHour=parseFloat(b.getAttribute('data-ml')); calc();
+      document.querySelectorAll('#porsiyon button').forEach(function(x){x.classList.remove('active')});
+      b.classList.add('active'); mult=parseFloat(b.getAttribute('data-mult'))||1; calc();
     });
   });
-  document.getElementById('suReset').addEventListener('click',function(){
-    setTimeout(function(){kilo.value='68';egz.value='0';calc();},0);
+  document.getElementById('porReset').addEventListener('click',function(){
+    setTimeout(function(){tarifKisi.value='4';hedefKisi.value='6';ornekMik.value='400';mult=1;
+      document.querySelectorAll('#porsiyon button').forEach(function(x){x.classList.toggle('active', x.getAttribute('data-mult')==='1')});
+      calc();},0);
   });
   calc();
 })();
