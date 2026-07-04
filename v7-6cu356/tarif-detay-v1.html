@@ -992,11 +992,14 @@ html,body{overflow-x:hidden}
 /* malzeme adı tile'da tekrar etmez — ürün adı sponsor şeridinde zaten var
    (.in DOM'da kalır: alışveriş listesi transferi + erişilebilirlik ondan okur) */
 .ing-row.is-sponsored label .in{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
-.ing-row.is-sponsored label{padding-top:13px;padding-bottom:13px} /* rozet kesikli çizgide: üstteki miktar satırına yapışmasın */
+/* rozet üst satırda (miktarın yanında) — kesikli ayraçta ayrı satır işgal etmez, tile kısalır */
+.ing-row.is-sponsored label .sp-tag{
+  flex:none;font-size:9.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;line-height:1.5;
+  color:var(--muted);background:#fff;border:1px solid var(--line);padding:2px 8px;border-radius:var(--radius-sm);
+}
 /* sponsor şeridi: tek kompakt satır — logo + ürün adı/rol + Sipariş Et;
-   rozet kesikli ayracın üstüne oturur, içerik checkbox hizasından başlar */
-.ing-row .sp-line{background:transparent;border:none;border-radius:0;margin:0 12px 13px;padding:14px 0 0;border-top:1px dashed #e3d5bc}
-.ing-row .sp-line .sp-tag{position:absolute;top:-9px;left:0;right:auto;margin:0} /* sol uç: sağdaki aksiyon ikonlarıyla çakışmaz */
+   içerik checkbox hizasından başlar */
+.ing-row .sp-line{background:transparent;border:none;border-radius:0;margin:0 12px 12px;padding:11px 0 0;border-top:1px dashed #e3d5bc}
 .sp-line .sp-logo{flex:none;width:38px;height:38px;border-radius:10px;display:grid;place-items:center;background:#fff;border:1px solid var(--line);overflow:hidden}
 .sp-line .sp-logo svg{display:block}
 .ing-row .sp-line .sp-info{min-width:0}
@@ -1789,8 +1792,10 @@ body:not(.is-auth) .rev-login{display:flex}
   .rd-aside{order:-1;position:static !important;width:auto !important;max-width:none !important}
   .ing-panel{position:static !important;box-shadow:none !important;border:1px solid #ccc}
   .serv-step button,.ing-add,.ing-swap,.ing-pop,.shop-pop,.conv-pop,
-  .ing-sponsor,.ing-foot,.alt-block,.side-chef,.ing-acts{display:none !important}
+  .ing-sponsor,.ing-foot,.alt-block,.side-chef,.ing-acts,.ing-row label .sp-tag{display:none !important}
   .ing-row.is-sponsored{background:none;border:none}
+  /* sponsor şeridi print'te gizli → malzeme adı (.in) baskıda geri görünür olmalı */
+  .ing-row.is-sponsored label .in{position:static !important;width:auto !important;height:auto !important;clip:auto !important;overflow:visible !important}
   .step-card{break-inside:avoid;box-shadow:none !important;border:1px solid #ccc;margin-bottom:12px}
   .sc-figs{display:none !important}
   .print-head{display:block;margin-bottom:20px;padding-bottom:16px;border-bottom:2px solid var(--slate)}
@@ -2827,7 +2832,7 @@ html.reveal-ready .reveal.in{opacity:1;transform:none}
           <ul class="ing-list" id="ingList">
             <li class="ing-group"><i class="fa-solid fa-circle-notch"></i> Hamur İçin</li>
             <li class="ing-row has-swap is-sponsored">
-              <label><input type="checkbox" /><span class="iq" data-q="3" data-u="su bardağı">3 su bardağı</span><span class="in">Un <small>elenmiş</small></span></label>
+              <label><input type="checkbox" /><span class="iq" data-q="3" data-u="su bardağı">3 su bardağı</span><span class="in">Un <small>elenmiş</small></span><span class="sp-tag">Sponsorlu</span></label>
               <div class="ing-acts">
                 <button class="ing-add" type="button" title="Alışveriş listesine ekle" aria-label="Alışveriş listesine ekle"><i class="fa-solid fa-cart-plus"></i></button>
                 <button class="ing-swap" type="button" aria-label="İkame önerileri"><i class="fa-solid fa-shuffle"></i></button>
@@ -2838,7 +2843,6 @@ html.reveal-ready .reveal.in{opacity:1;transform:none}
                 <div class="ip-row"><i class="fa-solid fa-circle"></i><span><b>Glutensiz un karışımı</b> <small>— kısa yoğur, dinlendirmeyi uzat</small></span></div>
               </div>
               <div class="ing-sponsor sp-line">
-                <span class="sp-tag">Sponsorlu</span>
                 <span class="sp-logo" aria-hidden="true"><svg viewBox="0 0 36 36" width="32" height="32"><circle cx="18" cy="18" r="16" fill="#009d4f"/><circle cx="18" cy="18" r="13.6" fill="none" stroke="rgba(255,255,255,.8)" stroke-width="1.1"/><path d="M18 6.8v7.4M18 9.4l-2.6-1.8M18 9.4l2.6-1.8M18 12.2l-2.6-1.8M18 12.2l2.6-1.8" stroke="#FFE9B8" stroke-width="1.3" stroke-linecap="round"/><text x="18" y="23.4" text-anchor="middle" font-family="Georgia,serif" font-weight="700" font-size="7.6" fill="#fff">Söke</text><path d="M13 26.6h10" stroke="rgba(255,255,255,.6)" stroke-width="1" stroke-linecap="round"/></svg></span>
                 <div class="sp-info"><b>Söke Mantılık Un 1 kg</b><span>Bu tarifin un sponsoru</span></div>
                 <button class="sp-go" type="button">Sipariş Et <i class="fa-solid fa-arrow-right"></i></button>
@@ -2906,13 +2910,12 @@ html.reveal-ready .reveal.in{opacity:1;transform:none}
             </li>
             <li class="ing-group"><i class="fa-solid fa-circle-notch"></i> Sos &amp; Servis İçin</li>
             <li class="ing-row has-swap is-sponsored">
-              <label><input type="checkbox" /><span class="iq" data-q="100" data-u="g">100 g</span><span class="in">Tereyağı <small>sos için</small></span></label>
+              <label><input type="checkbox" /><span class="iq" data-q="100" data-u="g">100 g</span><span class="in">Tereyağı <small>sos için</small></span><span class="sp-tag">Sponsorlu</span></label>
               <div class="ing-acts">
                 <button class="ing-add" type="button" title="Alışveriş listesine ekle" aria-label="Alışveriş listesine ekle"><i class="fa-solid fa-cart-plus"></i></button>
                 <button class="ing-swap" type="button" aria-label="İkame önerileri"><i class="fa-solid fa-shuffle"></i></button>
               </div>
               <div class="ing-sponsor sp-line">
-                <span class="sp-tag">Sponsorlu</span>
                 <span class="sp-logo" aria-hidden="true"><svg viewBox="0 0 36 36" width="32" height="32"><circle cx="18" cy="18" r="16" fill="#E14827"/><circle cx="18" cy="18" r="13.6" fill="none" stroke="rgba(255,255,255,.85)" stroke-width="1.1"/><path d="M12 12.6c1.8-2 3.8-3 6-3s4.2 1 6 3" fill="none" stroke="#FFD9A8" stroke-width="1.6" stroke-linecap="round"/><text x="18" y="21.8" text-anchor="middle" font-family="Georgia,serif" font-style="italic" font-weight="700" font-size="7.6" fill="#fff">Yörem</text><path d="M13 25.4h10" stroke="rgba(255,255,255,.65)" stroke-width="1" stroke-linecap="round"/></svg></span>
                 <div class="sp-info"><b>Yörem Tereyağı 500 g</b><span>Tarifin tereyağı sponsoru</span></div>
                 <button class="sp-go" type="button">Sipariş Et <i class="fa-solid fa-arrow-right"></i></button>
@@ -2941,14 +2944,13 @@ html.reveal-ready .reveal.in{opacity:1;transform:none}
               </div>
             </li>
             <li class="ing-row has-swap is-sponsored">
-              <label><input type="checkbox" /><span class="iq" data-q="500" data-u="g">500 g</span><span class="in">Süzme yoğurt</span></label>
+              <label><input type="checkbox" /><span class="iq" data-q="500" data-u="g">500 g</span><span class="in">Süzme yoğurt</span><span class="sp-tag">Sponsorlu Öneri</span></label>
               <div class="ing-acts">
                 <button class="ing-add" type="button" title="Alışveriş listesine ekle" aria-label="Alışveriş listesine ekle"><i class="fa-solid fa-cart-plus"></i></button>
                 <button class="ing-swap" type="button" aria-label="İkame önerileri"><i class="fa-solid fa-shuffle"></i></button>
               </div>
               <!-- R13: "Sipariş Et"siz sponsor varyantı — yalnız marka önerisi -->
               <div class="ing-sponsor sp-line">
-                <span class="sp-tag">Sponsorlu Öneri</span>
                 <span class="sp-logo" aria-hidden="true"><svg viewBox="0 0 36 36" width="32" height="32"><circle cx="18" cy="18" r="16" fill="#006072"/><circle cx="18" cy="18" r="13.6" fill="none" stroke="rgba(255,255,255,.8)" stroke-width="1.1"/><circle cx="18" cy="12.2" r="2.6" fill="#FFE9B8"/><path d="M10.5 15.5h15" stroke="rgba(255,255,255,.55)" stroke-width="1" stroke-linecap="round"/><text x="18" y="23" text-anchor="middle" font-family="Georgia,serif" font-weight="700" font-size="6.8" fill="#fff">Çiftlik</text><path d="M13 26.4h10" stroke="rgba(255,255,255,.6)" stroke-width="1" stroke-linecap="round"/></svg></span>
                 <div class="sp-info"><b>Çiftlik Süzme Yoğurt 1 kg</b><span>Tarifin yoğurt sponsoru — marka önerisi</span></div>
               </div>
