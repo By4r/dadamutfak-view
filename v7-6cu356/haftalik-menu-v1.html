@@ -789,7 +789,7 @@ html,body{overflow-x:clip}
 .wk-day.today b{color:var(--tomato)}
 .wk-day.today span{color:var(--tomato)}
 /* öğün etiket sütunu */
-.wk-mealcol{display:flex;flex-direction:column;justify-content:center;gap:5px;padding:12px 12px;border-bottom:1px solid var(--line);background:var(--bg)}
+.wk-mealcol{position:relative;display:flex;flex-direction:column;justify-content:center;gap:5px;padding:12px 12px;border-bottom:1px solid var(--line);background:var(--bg)}
 .wk-mealcol>i{width:30px;height:30px;border-radius:var(--radius-md);background:var(--paper);border:1px solid var(--line);color:var(--tomato);display:grid;place-items:center;font-size:13px}
 .wk-mealcol b{font-size:13px;font-weight:700;color:var(--slate)}
 .wk-mealcol small{font-size:11px;color:var(--muted);font-weight:500}
@@ -828,6 +828,9 @@ html,body{overflow-x:clip}
 .mc-cardwrap{flex:none;position:relative}
 .mc-cardwrap .mc-x{position:absolute;top:7px;right:7px;width:22px;height:22px;background:rgba(255,255,255,.92);border-radius:var(--radius-sm);display:grid;place-items:center;opacity:0;z-index:2}
 .mc-cardwrap:hover .mc-x{opacity:1}
+/* cascade düzeltmesi: üstteki .mc-cardwrap .mc-x background'ı .mc-x:hover'ı eziyordu
+   (eşit spesifiklik, sonra gelen kazanır) → hover'da beyaz ikon beyaz zeminde kayboluyordu */
+.mc-cardwrap .mc-x:hover{background:var(--tomato);color:#fff}
 .mc-addmini{display:flex;align-items:center;justify-content:center;gap:6px;width:100%;padding:7px;border:1.5px dashed #dcdcdc;border-radius:var(--radius-sm);background:transparent;color:var(--muted);font-family:inherit;font-size:10.5px;font-weight:700;cursor:pointer;transition:.18s var(--ease)}
 .mc-addmini i{font-size:11px}
 .mc-addmini:hover{border-color:var(--tomato);color:var(--tomato);background:var(--tomato-tint)}
@@ -862,16 +865,20 @@ html,body{overflow-x:clip}
 .wk-insert-btn{display:inline-flex;align-items:center;gap:6px;padding:5px 14px;border:1.5px dashed #dcdcdc;border-radius:var(--radius-sm);background:transparent;color:var(--muted);font-family:inherit;font-size:10.5px;font-weight:700;cursor:pointer;transition:.18s var(--ease);white-space:nowrap}
 .wk-insert-btn i{font-size:10px}
 .wk-insert-btn:hover{border-color:var(--tomato);color:var(--tomato);background:var(--tomato-tint)}
-/* öğün etiketi (revize2 M1/M3): ad tam genişlik, aksiyonlar (kalem + ara öğünde kaldır)
-   adın ALTINDA mini satırda — 104px sütunda ad kırpılmaz, aksiyon etikete gruplu kalır */
-.wk-mc-acts{display:flex;align-items:center;gap:3px;height:18px}
+/* öğün etiketi (revize3 M2): ad + kalem AYNI satırda inline; ara öğün X'i hücre sağ üstünde
+   absolute — iki aksiyon mekânsal ayrık, hayalet-slot yan yana karışıklığı yok */
+.wk-mc-row{display:flex;align-items:center;gap:4px;min-width:0}
 .wk-mc-name{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;cursor:pointer}
 .wk-mc-name[contenteditable="true"]{outline:none;border-bottom:1.5px dashed rgba(225,72,39,.45);overflow:visible;cursor:text;min-width:24px}
-/* kalem + kaldır: board kontrol dili (ghost → tint hover), radius-sm küçük kontrol kanonu */
+.wk-mc-name[contenteditable="true"]+.wk-mc-edit{display:none}
 .wk-mc-edit,.wk-snack-x{flex:none;width:18px;height:18px;border:none;border-radius:var(--radius-sm);background:transparent;color:var(--muted);font-size:9px;cursor:pointer;display:grid;place-items:center;transition:.18s var(--ease)}
+/* kalem: ghost → satır hover'da belirir (board kontrol dili) */
 .wk-mc-edit{opacity:0}
 .wk-mealcol:hover .wk-mc-edit{opacity:.55}
-.wk-mealcol .wk-mc-edit:hover,.wk-mealcol .wk-snack-x:hover{background:var(--tomato-tint);color:var(--tomato);opacity:1}
+.wk-mealcol .wk-mc-edit:hover{background:var(--tomato-tint);color:var(--tomato);opacity:1}
+/* kaldır: HER ZAMAN görünür, hover'da belirginleşir (kaybolma yok) */
+.wk-snack-x{position:absolute;top:8px;right:8px}
+.wk-snack-x:hover{background:var(--tomato-tint);color:var(--tomato);transform:scale(1.15)}
 
 /* ---- GÜNLÜK TOPLAM SATIRI (revize M6) ---- */
 .wk-totlabel{display:flex;flex-direction:column;justify-content:center;gap:3px;padding:12px;background:var(--bg);border-top:1px solid var(--line)}
@@ -1572,7 +1579,7 @@ html.reveal-ready .reveal.in{opacity:1;transform:none}
           <div class="wk-day"><b>Paz</b><span>14 Haz</span></div>
 
           <!-- KAHVALTI -->
-          <div class="wk-mealcol"><i class="fa-solid fa-mug-saucer"></i><b class="wk-mc-name">Kahvaltı</b><span class="wk-mc-acts"><button class="wk-mc-edit" type="button" aria-label="Öğün adını düzenle"><i class="fa-solid fa-pen"></i></button></span></div>
+          <div class="wk-mealcol"><i class="fa-solid fa-mug-saucer"></i><span class="wk-mc-row"><b class="wk-mc-name">Kahvaltı</b><button class="wk-mc-edit" type="button" aria-label="Öğün adını düzenle"><i class="fa-solid fa-pen"></i></button></span></div>
           <div class="mcell" data-meal="Kahvaltı"><button class="mc-x" type="button" aria-label="Kaldır"><i class="fa-solid fa-xmark"></i></button><div class="mc-card" onclick="location.href='tarif-detay-v1.html'"><div class="mc-thumb" style="background-image:url('https://images.unsplash.com/photo-1525755662778-989d0524087e?w=300&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')"></div><div class="mc-name">Domatesli Menemen</div><div class="mc-meta"><i class="fa-solid fa-fire-flame-curved"></i> 320 kcal</div></div></div>
           <div class="mcell" data-meal="Kahvaltı"><button class="mc-x" type="button" aria-label="Kaldır"><i class="fa-solid fa-xmark"></i></button><div class="mc-card" onclick="location.href='tarif-detay-v1.html'"><div class="mc-thumb" style="background-image:url('https://images.unsplash.com/photo-1612240498936-65f5101365d2?w=300&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')"></div><div class="mc-name">Peynirli Omlet</div><div class="mc-meta"><i class="fa-solid fa-fire-flame-curved"></i> 290 kcal</div></div></div>
           <div class="mcell" data-meal="Kahvaltı"><button class="mc-x" type="button" aria-label="Kaldır"><i class="fa-solid fa-xmark"></i></button><div class="mc-card" onclick="location.href='tarif-detay-v1.html'"><div class="mc-thumb" style="background-image:url('https://images.unsplash.com/photo-1533089860892-a7c6f0a88666?w=300&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')"></div><div class="mc-name">Serpme Kahvaltı Tabağı</div><div class="mc-meta"><i class="fa-solid fa-fire-flame-curved"></i> 410 kcal</div></div></div>
@@ -1585,7 +1592,7 @@ html.reveal-ready .reveal.in{opacity:1;transform:none}
           <div class="wk-insert"><button class="wk-insert-btn" type="button"><i class="fa-solid fa-plus"></i> Ara öğün</button></div>
 
           <!-- ÖĞLE -->
-          <div class="wk-mealcol"><i class="fa-solid fa-bowl-food"></i><b class="wk-mc-name">Öğle</b><span class="wk-mc-acts"><button class="wk-mc-edit" type="button" aria-label="Öğün adını düzenle"><i class="fa-solid fa-pen"></i></button></span></div>
+          <div class="wk-mealcol"><i class="fa-solid fa-bowl-food"></i><span class="wk-mc-row"><b class="wk-mc-name">Öğle</b><button class="wk-mc-edit" type="button" aria-label="Öğün adını düzenle"><i class="fa-solid fa-pen"></i></button></span></div>
           <div class="mcell" data-meal="Öğle"><button class="mc-x" type="button" aria-label="Kaldır"><i class="fa-solid fa-xmark"></i></button><div class="mc-card" onclick="location.href='tarif-detay-v1.html'"><div class="mc-thumb" style="background-image:url('https://images.unsplash.com/photo-1547592180-85f173990554?w=300&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')"></div><div class="mc-name">Ezogelin Çorbası</div><div class="mc-meta"><i class="fa-solid fa-fire-flame-curved"></i> 220 kcal</div></div></div>
           <div class="mcell" data-meal="Öğle"><button class="mc-x" type="button" aria-label="Kaldır"><i class="fa-solid fa-xmark"></i></button><div class="mc-card" onclick="location.href='tarif-detay-v1.html'"><div class="mc-thumb" style="background-image:url('https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=300&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')"></div><div class="mc-name">Tavuklu Sezar Salata</div><div class="mc-meta"><i class="fa-solid fa-fire-flame-curved"></i> 380 kcal</div></div></div>
           <div class="mcell" data-meal="Öğle"><button class="mc-x" type="button" aria-label="Kaldır"><i class="fa-solid fa-xmark"></i></button><div class="mc-card" onclick="location.href='tarif-detay-v1.html'"><div class="mc-thumb" style="background-image:url('https://images.unsplash.com/photo-1473093295043-cdd812d0e601?w=300&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')"></div><div class="mc-name">Domates Soslu Makarna</div><div class="mc-meta"><i class="fa-solid fa-fire-flame-curved"></i> 480 kcal</div></div></div>
@@ -1598,7 +1605,7 @@ html.reveal-ready .reveal.in{opacity:1;transform:none}
           <div class="wk-insert"><button class="wk-insert-btn" type="button"><i class="fa-solid fa-plus"></i> Ara öğün</button></div>
 
           <!-- AKŞAM -->
-          <div class="wk-mealcol"><i class="fa-solid fa-utensils"></i><b class="wk-mc-name">Akşam</b><span class="wk-mc-acts"><button class="wk-mc-edit" type="button" aria-label="Öğün adını düzenle"><i class="fa-solid fa-pen"></i></button></span></div>
+          <div class="wk-mealcol"><i class="fa-solid fa-utensils"></i><span class="wk-mc-row"><b class="wk-mc-name">Akşam</b><button class="wk-mc-edit" type="button" aria-label="Öğün adını düzenle"><i class="fa-solid fa-pen"></i></button></span></div>
           <div class="mcell lastrow" data-meal="Akşam"><button class="mc-x" type="button" aria-label="Kaldır"><i class="fa-solid fa-xmark"></i></button><div class="mc-card" onclick="location.href='tarif-detay-v1.html'"><div class="mc-thumb" style="background-image:url('https://images.unsplash.com/photo-1604908176997-125f25cc6f3d?w=300&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')"></div><div class="mc-name">Fırında Sebzeli Tavuk</div><div class="mc-meta"><i class="fa-solid fa-fire-flame-curved"></i> 520 kcal</div></div></div>
           <div class="mcell lastrow" data-meal="Akşam"><button class="mc-x" type="button" aria-label="Kaldır"><i class="fa-solid fa-xmark"></i></button><div class="mc-card" onclick="location.href='tarif-detay-v1.html'"><div class="mc-thumb" style="background-image:url('https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=300&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')"></div><div class="mc-name">Karnıyarık</div><div class="mc-meta"><i class="fa-solid fa-fire-flame-curved"></i> 480 kcal</div></div></div>
           <div class="mcell lastrow" data-meal="Akşam"><button class="mc-x" type="button" aria-label="Kaldır"><i class="fa-solid fa-xmark"></i></button><div class="mc-card" onclick="location.href='tarif-detay-v1.html'"><div class="mc-thumb" style="background-image:url('https://images.unsplash.com/photo-1485921325833-c519f76c4927?w=300&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')"></div><div class="mc-name">Buğulama Levrek</div><div class="mc-meta"><i class="fa-solid fa-fire-flame-curved"></i> 360 kcal</div></div></div>
@@ -2510,10 +2517,9 @@ document.addEventListener('click',function(e){
     var frag=document.createDocumentFragment();
     var col=document.createElement('div');col.className='wk-mealcol snack';
     col.innerHTML='<i class="fa-solid fa-apple-whole"></i>'+
-      '<b class="wk-mc-name">Ara Öğün</b>'+
-      '<span class="wk-mc-acts">'+
-      '<button class="wk-mc-edit" type="button" aria-label="Öğün adını düzenle"><i class="fa-solid fa-pen"></i></button>'+
-      '<button class="wk-snack-x" type="button" aria-label="Ara öğünü kaldır"><i class="fa-solid fa-xmark"></i></button></span>';
+      '<span class="wk-mc-row"><b class="wk-mc-name">Ara Öğün</b>'+
+      '<button class="wk-mc-edit" type="button" aria-label="Öğün adını düzenle"><i class="fa-solid fa-pen"></i></button></span>'+
+      '<button class="wk-snack-x" type="button" aria-label="Ara öğünü kaldır"><i class="fa-solid fa-xmark"></i></button>';
     frag.appendChild(col);
     for(var i=0;i<7;i++){
       var c=document.createElement('div');c.className='mcell empty';
