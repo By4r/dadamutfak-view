@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Haftalık Dada Menü — 7 Günlük Plan & Alışveriş Listesi — DadaGastro</title>
+<title>DadaMenü Pro — 7 Günlük Plan & Alışveriş Listesi — DadaGastro</title>
 <link rel="shortcut icon" type="image/x-icon"
       href="assets/img/favicon.ico" />
 <!-- FontAwesome 6.5.2 (kilitli ikon seti) -->
@@ -752,10 +752,10 @@ html,body{overflow-x:clip}
 
 /* üst band */
 .hm-top{position:relative;padding-top:128px;background-image:linear-gradient(90deg,rgba(28,25,18,.93),rgba(33,30,22,.72)),url('https://images.unsplash.com/photo-1543339308-43e59d6b73a6?w=1600&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5');background-size:cover;background-position:center}
-.hm-head{display:flex;align-items:flex-end;justify-content:space-between;gap:24px;flex-wrap:wrap;padding:4px 0 24px}
+.hm-head{display:flex;align-items:flex-end;justify-content:space-between;gap:24px;flex-wrap:wrap;padding:10px 0 42px}
 .hm-head .eyebrow{margin-bottom:13px}
-.hm-head h1{font-size:38px;letter-spacing:-.03em}
-.hm-head .lead{font-size:15px;color:var(--muted);font-weight:500;margin-top:9px;max-width:560px}
+.hm-head h1{font-size:42px;letter-spacing:-.03em}
+.hm-head .lead{font-size:15.5px;color:var(--muted);font-weight:500;margin-top:9px;max-width:560px}
 
 /* kontrol barı (kişi sayısı + hafta + aksiyonlar) */
 .hm-controls{display:flex;align-items:center;gap:14px;flex-wrap:wrap;padding:16px 18px;background:var(--bg-cream);border:1px solid var(--line);border-radius:var(--radius-lg);margin-bottom:22px}
@@ -794,9 +794,10 @@ html,body{overflow-x:clip}
 .wk-mealcol b{font-size:13px;font-weight:700;color:var(--slate)}
 .wk-mealcol small{font-size:11px;color:var(--muted);font-weight:500}
 .wk-grid .wk-mealcol:last-of-type,.wk-grid .mcell.lastrow{border-bottom:none}
-/* hücre — SABİT yükseklik: satır yüksekliği içerikten bağımsız sabittir, bir hücreye tarif
-   eklemek/çıkarmak satırı büyütmez → komşu hücreler (Ekle butonu + hiza) ASLA etkilenmez */
-.mcell{position:relative;padding:9px;border-bottom:1px solid var(--line);border-left:1px solid var(--line);height:172px}
+/* hücre — MIN yükseklik: taban 172px; 2+ tarifli hücre "+N tarif daha" collapse ile kompakt
+   kalır (revize M7), açık durumda satır içeriğe göre büyür — grid aynı satırın tüm
+   hücrelerini eşit uzatır, hiza bozulmaz, hücre içi scroll YOK */
+.mcell{position:relative;padding:9px;border-bottom:1px solid var(--line);border-left:1px solid var(--line);min-height:172px}
 .mc-card{display:flex;flex-direction:column;gap:7px;height:100%;cursor:pointer}
 .mc-thumb{position:relative;height:60px;border-radius:var(--radius-sm);background-size:cover;background-position:center;overflow:hidden;flex:none}
 .mc-card:hover .mc-thumb::after{content:"";position:absolute;inset:0;background:rgba(225,72,39,.12)}
@@ -813,12 +814,17 @@ html,body{overflow-x:clip}
 .mc-add:hover{border-color:var(--tomato);color:var(--tomato);background:var(--tomato-tint)}
 
 /* hücre içi çoklu tarif yığını + "başka ekle" mini butonu (çoklu ekleme) */
-/* stack SABİT hücrenin içinde scroll eder (max-height:100% → hücre yüksekliğini AŞMAZ, satırı büyütmez) */
-.mc-stack{display:flex;flex-direction:column;gap:8px;max-height:100%;height:100%;overflow-y:auto;overflow-x:hidden;scrollbar-width:thin}
-.mc-stack::-webkit-scrollbar{width:5px}
-.mc-stack::-webkit-scrollbar-thumb{background:#d8d2c6;border-radius:3px}
+/* scroll YOK (revize M7): yığın serbest akar; 2+ kartlı yığın popover kapanınca
+   .collapsed olur → ilk kart + "+N tarif daha" toggle, kalanlar gizli.
+   "Başka tarif ekle" collapse DIŞINDA — ekleme her zaman tek tık (revize2 M2) */
+.mc-stack{display:flex;flex-direction:column;gap:8px}
 .mc-stack .mc-card{height:auto}
 .mc-stack .mc-addmini{flex:none}
+.mc-stack.collapsed .mc-cardwrap:not(:first-of-type){display:none}
+/* aç/kapa toggle — mc-addmini dilinde, dolu (tint) varyant */
+.mc-more{display:flex;align-items:center;justify-content:center;gap:6px;width:100%;padding:6px;border:none;border-radius:var(--radius-sm);background:var(--tomato-tint);color:var(--tomato);font-family:inherit;font-size:10.5px;font-weight:700;cursor:pointer;transition:.18s var(--ease)}
+.mc-more i{font-size:9px}
+.mc-more:hover{background:var(--tomato);color:#fff}
 .mc-cardwrap{flex:none;position:relative}
 .mc-cardwrap .mc-x{position:absolute;top:7px;right:7px;width:22px;height:22px;background:rgba(255,255,255,.92);border-radius:var(--radius-sm);display:grid;place-items:center;opacity:0;z-index:2}
 .mc-cardwrap:hover .mc-x{opacity:1}
@@ -850,6 +856,30 @@ html,body{overflow-x:clip}
 
 /* gün kalori özeti satırı (mobil günde gösterilir, desktop gizli) */
 .wk-daysum{display:none}
+
+/* ---- ARA ÖĞÜN (revize M5): satır arası insert band + ara öğün satırı ---- */
+.wk-insert{grid-column:1/-1;display:flex;align-items:center;justify-content:center;padding:5px 0;border-bottom:1px solid var(--line);background:var(--bg)}
+.wk-insert-btn{display:inline-flex;align-items:center;gap:6px;padding:5px 14px;border:1.5px dashed #dcdcdc;border-radius:var(--radius-pill);background:transparent;color:var(--muted);font-family:inherit;font-size:10.5px;font-weight:700;cursor:pointer;transition:.18s var(--ease);white-space:nowrap}
+.wk-insert-btn i{font-size:10px}
+.wk-insert-btn:hover{border-color:var(--tomato);color:var(--tomato);background:var(--tomato-tint)}
+/* öğün etiketi (revize2 M1/M3): ad tam genişlik, aksiyonlar (kalem + ara öğünde kaldır)
+   adın ALTINDA mini satırda — 104px sütunda ad kırpılmaz, aksiyon etikete gruplu kalır */
+.wk-mc-acts{display:flex;align-items:center;gap:3px;height:18px}
+.wk-mc-name{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;cursor:pointer}
+.wk-mc-name[contenteditable="true"]{outline:none;border-bottom:1.5px dashed rgba(225,72,39,.45);overflow:visible;cursor:text;min-width:24px}
+/* kalem + kaldır: board kontrol dili (ghost → tint hover), radius-sm küçük kontrol kanonu */
+.wk-mc-edit,.wk-snack-x{flex:none;width:18px;height:18px;border:none;border-radius:var(--radius-sm);background:transparent;color:var(--muted);font-size:9px;cursor:pointer;display:grid;place-items:center;transition:.18s var(--ease)}
+.wk-mc-edit{opacity:0}
+.wk-mealcol:hover .wk-mc-edit{opacity:.55}
+.wk-mc-edit:hover,.wk-snack-x:hover{background:var(--tomato-tint);color:var(--tomato);opacity:1}
+
+/* ---- GÜNLÜK TOPLAM SATIRI (revize M6) ---- */
+.wk-totlabel{display:flex;flex-direction:column;justify-content:center;gap:3px;padding:12px;background:var(--bg);border-top:1px solid var(--line)}
+.wk-totlabel b{font-size:11.5px;font-weight:700;color:var(--slate);line-height:1.2}
+.wk-totlabel small{font-size:10px;color:var(--muted);font-weight:500}
+.wk-total{display:grid;place-items:center;padding:12px 8px;text-align:center;border-top:1px solid var(--line);border-left:1px solid var(--line);background:var(--bg);font-size:11px;color:var(--muted);font-weight:500}
+.wk-total b{color:var(--slate);font-size:14.5px;font-weight:700;letter-spacing:-.01em;margin-right:3px}
+.wk-total .wt-flame{color:var(--tomato);font-size:10px;margin-right:5px}
 
 /* ---- ALIŞVERİŞ LİSTESİ ÇIKTISI (yıldız) ---- */
 .shop-sec{margin-top:32px}
@@ -916,7 +946,7 @@ html,body{overflow-x:clip}
 /* ===================== MOBİL (≤640px) ===================== */
 @media (max-width:640px){
   .rd-crumb{padding:14px 0 10px;font-size:12px}
-  .hm-head h1{font-size:26px}
+  .hm-head h1{font-size:27px}
   .hm-controls{flex-direction:column;align-items:stretch;gap:14px}
   .hm-ctl{width:100%}
   .ppl,.wk-nav{width:100%}
@@ -926,8 +956,11 @@ html,body{overflow-x:clip}
   /* board: içeride yatay kaydırılır (sayfa taşmaz) — ilk sütun sticky */
   .wk-board{min-width:760px}
   .wk-grid{min-width:760px}
-  .wk-mealcol{position:sticky;left:0;z-index:2;box-shadow:2px 0 0 var(--line)}
+  .wk-mealcol,.wk-totlabel{position:sticky;left:0;z-index:2;box-shadow:2px 0 0 var(--line)}
   .wk-corner{position:sticky;left:0;z-index:2}
+  /* ara öğün pili: yatay kaydırmada görüş alanında kalsın (board 760px > ekran) */
+  .wk-insert{justify-content:flex-start}
+  .wk-insert-btn{position:sticky;left:116px}
   .wk-scroll::-webkit-scrollbar{height:6px}
   .wk-scroll::-webkit-scrollbar-thumb{background:#d8d8d8;border-radius:var(--radius-sm)}
   .shop-headrow h2{font-size:21px}
@@ -940,6 +973,7 @@ html,body{overflow-x:clip}
 .hm-top .rd-crumb i{color:rgba(255,255,255,.4)}
 .hm-top .rd-crumb b{color:#fff}
 .hm-top .eyebrow{color:#ffd9cf}
+.hm-top .eyebrow::before{background:var(--tomato)}
 .hm-top h1{color:#fff;text-shadow:0 2px 24px rgba(0,0,0,.25)}
 .hm-top h1 .accent{color:#ff7a5c}
 .hm-top .lead{color:#e7edf1;text-shadow:0 1px 14px rgba(0,0,0,.3)}
@@ -1482,12 +1516,12 @@ html.reveal-ready .reveal.in{opacity:1;transform:none}
     <nav class="rd-crumb" aria-label="Sayfa yolu">
       <a href="anasayfa-portal-v3a.html"><i class="fa-solid fa-house"></i></a>
       <i class="fa-solid fa-chevron-right"></i>
-      <b>Haftalık Dada Menü</b>
+      <b>DadaMenü Pro</b>
     </nav>
     <div class="hm-head">
       <div>
         <span class="eyebrow"><i class="fa-solid fa-calendar-week"></i> Planla &amp; Pişir</span>
-        <h1>Haftalık Dada Menü</h1>
+        <h1>DadaMenü <span class="accent">Pro</span></h1>
         <p class="lead">Tüm haftanı tek ekranda planla. Kişi sayını seç, menünü kur — alışveriş listeni biz otomatik çıkaralım.</p>
       </div>
     </div>
@@ -1518,7 +1552,7 @@ html.reveal-ready .reveal.in{opacity:1;transform:none}
       </div>
       <div class="hm-actions">
         <button class="btn btn-ghost" type="button" id="autoGen"><i class="fa-solid fa-wand-magic-sparkles"></i> Otomatik Oluştur</button>
-        <a class="btn btn-ghost" href="tarif-bulucu-v1.html"><i class="fa-solid fa-basket-shopping"></i> Tarif Bulucu</a>
+        <a class="btn btn-ghost" href="tarif-bulucu-v1.html"><i class="fa-solid fa-carrot"></i> Tarif Bulucu</a>
       </div>
     </div>
 
@@ -1537,7 +1571,7 @@ html.reveal-ready .reveal.in{opacity:1;transform:none}
           <div class="wk-day"><b>Paz</b><span>14 Haz</span></div>
 
           <!-- KAHVALTI -->
-          <div class="wk-mealcol"><i class="fa-solid fa-mug-saucer"></i><b>Kahvaltı</b><small>07:30</small></div>
+          <div class="wk-mealcol"><i class="fa-solid fa-mug-saucer"></i><b class="wk-mc-name">Kahvaltı</b><span class="wk-mc-acts"><button class="wk-mc-edit" type="button" aria-label="Öğün adını düzenle"><i class="fa-solid fa-pen"></i></button></span></div>
           <div class="mcell" data-meal="Kahvaltı"><button class="mc-x" type="button" aria-label="Kaldır"><i class="fa-solid fa-xmark"></i></button><div class="mc-card" onclick="location.href='tarif-detay-v1.html'"><div class="mc-thumb" style="background-image:url('https://images.unsplash.com/photo-1525755662778-989d0524087e?w=300&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')"></div><div class="mc-name">Domatesli Menemen</div><div class="mc-meta"><i class="fa-solid fa-fire-flame-curved"></i> 320 kcal</div></div></div>
           <div class="mcell" data-meal="Kahvaltı"><button class="mc-x" type="button" aria-label="Kaldır"><i class="fa-solid fa-xmark"></i></button><div class="mc-card" onclick="location.href='tarif-detay-v1.html'"><div class="mc-thumb" style="background-image:url('https://images.unsplash.com/photo-1612240498936-65f5101365d2?w=300&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')"></div><div class="mc-name">Peynirli Omlet</div><div class="mc-meta"><i class="fa-solid fa-fire-flame-curved"></i> 290 kcal</div></div></div>
           <div class="mcell" data-meal="Kahvaltı"><button class="mc-x" type="button" aria-label="Kaldır"><i class="fa-solid fa-xmark"></i></button><div class="mc-card" onclick="location.href='tarif-detay-v1.html'"><div class="mc-thumb" style="background-image:url('https://images.unsplash.com/photo-1533089860892-a7c6f0a88666?w=300&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')"></div><div class="mc-name">Serpme Kahvaltı Tabağı</div><div class="mc-meta"><i class="fa-solid fa-fire-flame-curved"></i> 410 kcal</div></div></div>
@@ -1546,8 +1580,11 @@ html.reveal-ready .reveal.in{opacity:1;transform:none}
           <div class="mcell" data-meal="Kahvaltı"><button class="mc-x" type="button" aria-label="Kaldır"><i class="fa-solid fa-xmark"></i></button><div class="mc-card" onclick="location.href='tarif-detay-v1.html'"><div class="mc-thumb" style="background-image:url('https://images.unsplash.com/photo-1509440159596-0249088772ff?w=300&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')"></div><div class="mc-name">Tahinli Açma</div><div class="mc-meta"><i class="fa-solid fa-fire-flame-curved"></i> 350 kcal</div></div></div>
           <div class="mcell" data-meal="Kahvaltı"><button class="mc-x" type="button" aria-label="Kaldır"><i class="fa-solid fa-xmark"></i></button><div class="mc-card" onclick="location.href='tarif-detay-v1.html'"><div class="mc-thumb" style="background-image:url('https://images.unsplash.com/photo-1466637574441-749b8f19452f?w=300&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')"></div><div class="mc-name">Şakşuka Tava</div><div class="mc-meta"><i class="fa-solid fa-fire-flame-curved"></i> 300 kcal</div></div></div>
 
+          <!-- ARA ÖĞÜN EKLEME BANDI (Kahvaltı–Öğle) -->
+          <div class="wk-insert"><button class="wk-insert-btn" type="button"><i class="fa-solid fa-plus"></i> Ara öğün</button></div>
+
           <!-- ÖĞLE -->
-          <div class="wk-mealcol"><i class="fa-solid fa-bowl-food"></i><b>Öğle</b><small>13:00</small></div>
+          <div class="wk-mealcol"><i class="fa-solid fa-bowl-food"></i><b class="wk-mc-name">Öğle</b><span class="wk-mc-acts"><button class="wk-mc-edit" type="button" aria-label="Öğün adını düzenle"><i class="fa-solid fa-pen"></i></button></span></div>
           <div class="mcell" data-meal="Öğle"><button class="mc-x" type="button" aria-label="Kaldır"><i class="fa-solid fa-xmark"></i></button><div class="mc-card" onclick="location.href='tarif-detay-v1.html'"><div class="mc-thumb" style="background-image:url('https://images.unsplash.com/photo-1547592180-85f173990554?w=300&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')"></div><div class="mc-name">Ezogelin Çorbası</div><div class="mc-meta"><i class="fa-solid fa-fire-flame-curved"></i> 220 kcal</div></div></div>
           <div class="mcell" data-meal="Öğle"><button class="mc-x" type="button" aria-label="Kaldır"><i class="fa-solid fa-xmark"></i></button><div class="mc-card" onclick="location.href='tarif-detay-v1.html'"><div class="mc-thumb" style="background-image:url('https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=300&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')"></div><div class="mc-name">Tavuklu Sezar Salata</div><div class="mc-meta"><i class="fa-solid fa-fire-flame-curved"></i> 380 kcal</div></div></div>
           <div class="mcell" data-meal="Öğle"><button class="mc-x" type="button" aria-label="Kaldır"><i class="fa-solid fa-xmark"></i></button><div class="mc-card" onclick="location.href='tarif-detay-v1.html'"><div class="mc-thumb" style="background-image:url('https://images.unsplash.com/photo-1473093295043-cdd812d0e601?w=300&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')"></div><div class="mc-name">Domates Soslu Makarna</div><div class="mc-meta"><i class="fa-solid fa-fire-flame-curved"></i> 480 kcal</div></div></div>
@@ -1556,8 +1593,11 @@ html.reveal-ready .reveal.in{opacity:1;transform:none}
           <div class="mcell" data-meal="Öğle"><button class="mc-x" type="button" aria-label="Kaldır"><i class="fa-solid fa-xmark"></i></button><div class="mc-card" onclick="location.href='tarif-detay-v1.html'"><div class="mc-thumb" style="background-image:url('https://images.unsplash.com/photo-1529692236671-f1f6cf9683ba?w=300&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')"></div><div class="mc-name">Izgara Köfte</div><div class="mc-meta"><i class="fa-solid fa-fire-flame-curved"></i> 450 kcal</div></div></div>
           <div class="mcell" data-meal="Öğle"><button class="mc-x" type="button" aria-label="Kaldır"><i class="fa-solid fa-xmark"></i></button><div class="mc-card" onclick="location.href='tarif-detay-v1.html'"><div class="mc-thumb" style="background-image:url('https://images.unsplash.com/photo-1598103442097-8b74394b95c6?w=300&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')"></div><div class="mc-name">Izgara Tavuk &amp; Salata</div><div class="mc-meta"><i class="fa-solid fa-fire-flame-curved"></i> 400 kcal</div></div></div>
 
+          <!-- ARA ÖĞÜN EKLEME BANDI (Öğle–Akşam) -->
+          <div class="wk-insert"><button class="wk-insert-btn" type="button"><i class="fa-solid fa-plus"></i> Ara öğün</button></div>
+
           <!-- AKŞAM -->
-          <div class="wk-mealcol"><i class="fa-solid fa-utensils"></i><b>Akşam</b><small>20:00</small></div>
+          <div class="wk-mealcol"><i class="fa-solid fa-utensils"></i><b class="wk-mc-name">Akşam</b><span class="wk-mc-acts"><button class="wk-mc-edit" type="button" aria-label="Öğün adını düzenle"><i class="fa-solid fa-pen"></i></button></span></div>
           <div class="mcell lastrow" data-meal="Akşam"><button class="mc-x" type="button" aria-label="Kaldır"><i class="fa-solid fa-xmark"></i></button><div class="mc-card" onclick="location.href='tarif-detay-v1.html'"><div class="mc-thumb" style="background-image:url('https://images.unsplash.com/photo-1604908176997-125f25cc6f3d?w=300&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')"></div><div class="mc-name">Fırında Sebzeli Tavuk</div><div class="mc-meta"><i class="fa-solid fa-fire-flame-curved"></i> 520 kcal</div></div></div>
           <div class="mcell lastrow" data-meal="Akşam"><button class="mc-x" type="button" aria-label="Kaldır"><i class="fa-solid fa-xmark"></i></button><div class="mc-card" onclick="location.href='tarif-detay-v1.html'"><div class="mc-thumb" style="background-image:url('https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=300&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')"></div><div class="mc-name">Karnıyarık</div><div class="mc-meta"><i class="fa-solid fa-fire-flame-curved"></i> 480 kcal</div></div></div>
           <div class="mcell lastrow" data-meal="Akşam"><button class="mc-x" type="button" aria-label="Kaldır"><i class="fa-solid fa-xmark"></i></button><div class="mc-card" onclick="location.href='tarif-detay-v1.html'"><div class="mc-thumb" style="background-image:url('https://images.unsplash.com/photo-1485921325833-c519f76c4927?w=300&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')"></div><div class="mc-name">Buğulama Levrek</div><div class="mc-meta"><i class="fa-solid fa-fire-flame-curved"></i> 360 kcal</div></div></div>
@@ -1565,6 +1605,16 @@ html.reveal-ready .reveal.in{opacity:1;transform:none}
           <div class="mcell lastrow" data-meal="Akşam"><button class="mc-x" type="button" aria-label="Kaldır"><i class="fa-solid fa-xmark"></i></button><div class="mc-card" onclick="location.href='tarif-detay-v1.html'"><div class="mc-thumb" style="background-image:url('https://images.unsplash.com/photo-1547592166-23ac45744acd?w=300&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')"></div><div class="mc-name">Sebzeli Güveç</div><div class="mc-meta"><i class="fa-solid fa-fire-flame-curved"></i> 380 kcal</div></div></div>
           <div class="mcell lastrow empty" data-meal="Akşam"><button class="mc-add" type="button"><i class="fa-solid fa-plus"></i> Ekle</button></div>
           <div class="mcell lastrow" data-meal="Akşam"><button class="mc-x" type="button" aria-label="Kaldır"><i class="fa-solid fa-xmark"></i></button><div class="mc-card" onclick="location.href='tarif-detay-v1.html'"><div class="mc-thumb" style="background-image:url('https://images.unsplash.com/photo-1631452180519-c014fe946bc7?w=300&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')"></div><div class="mc-name">Fırın Mantı</div><div class="mc-meta"><i class="fa-solid fa-fire-flame-curved"></i> 560 kcal</div></div></div>
+
+          <!-- GÜNLÜK TOPLAM SATIRI (revize M6 — JS doldurur) -->
+          <div class="wk-totlabel"><b>Günlük Toplam</b><small>tüm öğünler</small></div>
+          <div class="wk-total" data-day="0"></div>
+          <div class="wk-total" data-day="1"></div>
+          <div class="wk-total" data-day="2"></div>
+          <div class="wk-total" data-day="3"></div>
+          <div class="wk-total" data-day="4"></div>
+          <div class="wk-total" data-day="5"></div>
+          <div class="wk-total" data-day="6"></div>
         </div>
       </div>
     </div>
@@ -1733,7 +1783,7 @@ html.reveal-ready .reveal.in{opacity:1;transform:none}
     <div class="mp-row">
       <a class="mp-opt" href="bugun-ne-pisirsem-v1.html">Ne pişirsem</a>
       <a class="mp-opt" href="tarif-bulucu-v1.html">Dolapta ne var</a>
-      <a class="mp-opt" href="haftalik-menu-v1.html">Haftalık menü</a>
+      <a class="mp-opt" href="haftalik-menu-v1.html">DadaMenü Pro</a>
       <a class="mp-opt" href="tarif-ekle-v1.html">Tarif ekle</a>
       <a class="mp-opt w-fit" href="dadafit-hub-v1.html"><span class="bd">Dada</span><span class="sf">Fit</span></a>
       <a class="mp-opt w-diet" href="saglik-hub-v1.html"><span class="bd">Dada</span><span class="sf">Diet</span></a>
@@ -2241,6 +2291,28 @@ document.addEventListener('click',function(e){
     if(menuCountEl) menuCountEl.textContent=recipes.length;
     if(ssSub) ssSub.textContent=total+' kalem · '+activeReyons+' reyon';
     prog();
+    updateDaySums();
+  }
+  // günlük sütun toplamı (revize M6): her günün tüm öğün kartlarının kcal toplamı
+  // flat grid'de sütun indeksi, satır başındaki .wk-mealcol'dan sonraki sıradan türetilir
+  function updateDaySums(){
+    var d=-1,sums=[0,0,0,0,0,0,0];
+    Array.prototype.forEach.call(document.querySelectorAll('.wk-grid>*'),function(el){
+      if(el.classList.contains('wk-mealcol')){d=0;return;}
+      if(el.classList.contains('mcell')){
+        if(d>-1&&d<7){
+          Array.prototype.forEach.call(el.querySelectorAll('.mc-meta'),function(m){
+            var mm=m.textContent.match(/(\d+)/);if(mm)sums[d]+=parseInt(mm[1],10);
+          });
+        }
+        d++;
+      }
+    });
+    document.querySelectorAll('.wk-total').forEach(function(t,i){
+      t.innerHTML=sums[i]>0
+        ?'<span><i class="fa-solid fa-fire-flame-curved wt-flame"></i><b>'+sums[i].toLocaleString('tr-TR')+'</b>kcal</span>'
+        :'<span style="opacity:.45">—</span>';
+    });
   }
 
   // ---- toast ----
@@ -2288,7 +2360,7 @@ document.addEventListener('click',function(e){
   ];
 
   // data-meal değerini öğün tag anahtarına çevirir
-  var MEAL_TAG_MAP={'Kahvaltı':'kahvalti','Öğle':'ogle','Akşam':'aksam'};
+  var MEAL_TAG_MAP={'Kahvaltı':'kahvalti','Öğle':'ogle','Akşam':'aksam','Ara Öğün':'atistirmalik'};
 
   var tsr=document.getElementById('tsr'),
       tsrInput=document.getElementById('tsrInput'),
@@ -2338,12 +2410,31 @@ document.addEventListener('click',function(e){
     }
     existing.innerHTML='<i class="fa-solid fa-fire-flame-curved" style="font-size:9.5px"></i> Öğün: '+sum+' kcal';
   }
+  // toggle + kcal toplamı yönetimi (revize M7): 2+ kartta "+N tarif daha / Daralt" butonu
+  function updateStackUI(stack){
+    if(!stack)return;
+    var cards=stack.querySelectorAll('.mc-cardwrap'),
+        more=stack.querySelector('.mc-more');
+    if(cards.length<2){
+      if(more)more.remove();
+      stack.classList.remove('collapsed');
+    }else{
+      if(!more){
+        more=document.createElement('button');more.type='button';more.className='mc-more';
+        stack.insertBefore(more,stack.querySelector('.mc-addmini'));
+      }
+      more.innerHTML=stack.classList.contains('collapsed')
+        ?'<i class="fa-solid fa-chevron-down"></i> +'+(cards.length-1)+' tarif daha'
+        :'<i class="fa-solid fa-chevron-up"></i> Daralt';
+    }
+    updateMcSum(stack);
+  }
   function addRecipe(cell,r){
     ensureStack(cell);
     var stack=cell.querySelector('.mc-stack'),
         mini=stack.querySelector('.mc-addmini');
     stack.insertBefore(makeCardWrap(r.n,r.img,r.k),mini);
-    updateMcSum(stack);
+    updateStackUI(stack);
     rebuildShop();
   }
   function removeCard(x){
@@ -2355,7 +2446,7 @@ document.addEventListener('click',function(e){
         cell.classList.add('empty');
         cell.innerHTML='<button class="mc-add" type="button"><i class="fa-solid fa-plus"></i> Ekle</button>';
       }else{
-        updateMcSum(stack);
+        updateStackUI(stack);
       }
     }else{                                                       // legacy tek-kartlı hücre → boş slot
       cell.classList.add('empty');
@@ -2389,6 +2480,9 @@ document.addEventListener('click',function(e){
   }
   function openTsr(btn,cell){
     actCell=cell;
+    // daraltılmış yığını aç (revize2 M2): ekleme canlı izlensin; popover kapanınca geri daralır
+    var st=cell.querySelector('.mc-stack');
+    if(st&&st.classList.contains('collapsed')){st.classList.remove('collapsed');updateStackUI(st);}
     actMeal=MEAL_TAG_MAP[cell.getAttribute('data-meal')]||null;
     var rc=btn.getBoundingClientRect(),vw=window.innerWidth,vh=window.innerHeight,
         w=294,hh=320,
@@ -2399,12 +2493,87 @@ document.addEventListener('click',function(e){
     tsr.classList.add('show');
     tsrInput.value='';renderResults('',actMeal);tsrInput.focus();
   }
-  function closeTsr(){tsr.classList.remove('show');actCell=null;actMeal=null;}
+  function closeTsr(){
+    // popover kapanınca 2+ kartlı hedef hücre otomatik daralır (revize M7)
+    if(actCell){
+      var st=actCell.querySelector('.mc-stack');
+      if(st&&st.querySelectorAll('.mc-cardwrap').length>1){
+        st.classList.add('collapsed');updateStackUI(st);
+      }
+    }
+    tsr.classList.remove('show');actCell=null;actMeal=null;
+  }
+
+  // ---- ARA ÖĞÜN SATIRI (revize M5): insert band → tam öğün satırı ----
+  function addSnackRow(band){
+    var frag=document.createDocumentFragment();
+    var col=document.createElement('div');col.className='wk-mealcol snack';
+    col.innerHTML='<i class="fa-solid fa-apple-whole"></i>'+
+      '<b class="wk-mc-name">Ara Öğün</b>'+
+      '<span class="wk-mc-acts">'+
+      '<button class="wk-mc-edit" type="button" aria-label="Öğün adını düzenle"><i class="fa-solid fa-pen"></i></button>'+
+      '<button class="wk-snack-x" type="button" aria-label="Ara öğünü kaldır"><i class="fa-solid fa-xmark"></i></button></span>';
+    frag.appendChild(col);
+    for(var i=0;i<7;i++){
+      var c=document.createElement('div');c.className='mcell empty';
+      c.setAttribute('data-meal','Ara Öğün');
+      c.innerHTML='<button class="mc-add" type="button"><i class="fa-solid fa-plus"></i> Ekle</button>';
+      frag.appendChild(c);
+    }
+    band.parentNode.insertBefore(frag,band);
+    band.style.display='none';                    // band gizlenir; satır kaldırılınca geri gelir
+    updateDaySums();
+  }
+  function removeSnackRow(x){
+    var col=x.closest('.wk-mealcol'),els=[col],n=col.nextElementSibling;
+    while(n&&els.length<8&&n.classList.contains('mcell')){els.push(n);n=n.nextElementSibling;}
+    var band=(n&&n.classList.contains('wk-insert'))?n:null;
+    els.forEach(function(el){el.remove();});
+    if(band)band.style.display='';
+    rebuildShop();showToast('Ara öğün kaldırıldı — liste güncellendi');
+  }
+
+  // ---- ÖĞÜN ADI DÜZENLEME (revize2 M3): ada/kaleme tıkla → inline edit ----
+  // data-meal DEĞİŞMEZ (kanonik): öneri sıralaması + liste + toplamlar addan bağımsız
+  function startEditName(b){
+    if(!b||b.isContentEditable)return;
+    b.dataset.prev=b.textContent;
+    b.setAttribute('contenteditable','true');
+    b.focus();
+    var r=document.createRange();r.selectNodeContents(b);
+    var s=window.getSelection();s.removeAllRanges();s.addRange(r);
+  }
+  function endEditName(b,cancel){
+    if(!b.isContentEditable)return;
+    var v=(cancel?b.dataset.prev:b.textContent).replace(/\s+/g,' ').trim().slice(0,16);
+    b.textContent=v||b.dataset.prev;
+    b.removeAttribute('contenteditable');
+  }
+  board.addEventListener('keydown',function(e){
+    var b=e.target.closest?e.target.closest('.wk-mc-name'):null;
+    if(!b||!b.isContentEditable)return;
+    if(e.key==='Enter'){e.preventDefault();b.blur();}
+    else if(e.key==='Escape'){endEditName(b,true);}
+  },true);
+  board.addEventListener('blur',function(e){
+    var b=e.target.closest?e.target.closest('.wk-mc-name'):null;
+    if(b)endEditName(b,false);
+  },true);
 
   // event delegation — DOM yeniden yazımı sonrası rebind gerekmez
   board.addEventListener('click',function(e){
     var x=e.target.closest('.mc-x');
     if(x){e.stopPropagation();removeCard(x);return;}
+    var more=e.target.closest('.mc-more');
+    if(more){e.stopPropagation();var st=more.closest('.mc-stack');st.classList.toggle('collapsed');updateStackUI(st);return;}
+    var sx=e.target.closest('.wk-snack-x');
+    if(sx){e.stopPropagation();removeSnackRow(sx);return;}
+    var ed=e.target.closest('.wk-mc-edit');
+    if(ed){e.stopPropagation();startEditName(ed.closest('.wk-mealcol').querySelector('.wk-mc-name'));return;}
+    var nm=e.target.closest('.wk-mc-name');
+    if(nm){startEditName(nm);return;}
+    var ins=e.target.closest('.wk-insert-btn');
+    if(ins){e.stopPropagation();addSnackRow(ins.closest('.wk-insert'));return;}
     var add=e.target.closest('.mc-add,.mc-addmini');
     if(add){e.stopPropagation();openTsr(add,add.closest('.mcell'));}
   });
