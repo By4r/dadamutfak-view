@@ -858,7 +858,7 @@ body.pf-public:not(.is-following) .pf-pane.pf-fgate > .pf-lock{display:block}
 /* =========================================================
    ÜYELİK MODÜLÜ (madde 30) — üyeden üyeye ücretli abonelik (Patreon).
    Member-gate = .pf-fgate kardeşi ama AYRI durum (is-member, ?uye=1):
-   public + üye değil → "Üyelere Özel" içerik kilitli; üye → açık.
+   public + üye değil → "Abonelere Özel" içerik kilitli; üye → açık.
    Üyelik sekmesi iki alt-görüm: .pf-mpublic (katılma teklifi) ↔
    .pf-mown (hafif yönetim). Aksan: tomato (Pro ailesi), yeni renk yok.
    ========================================================= */
@@ -875,7 +875,7 @@ body.pf-public .pf-mown{display:none}
 .pf-member:hover{background:var(--tomato-dark);border-color:var(--tomato-dark)}
 .pf-member.is-on{background:var(--tomato-tint);border-color:var(--tomato-tint);color:var(--tomato)}
 .pf-member.is-on:hover{background:var(--tomato-tint)}
-/* --- public görüm: plan kartı (sol) + üyelere özel içerik (sağ) --- */
+/* --- public görüm: plan kartı (sol) + abonelere özel içerik (sağ) --- */
 .uy-grid{display:grid;grid-template-columns:minmax(0,360px) minmax(0,1fr);gap:26px;align-items:start}
 .uy-plan{display:flex;flex-direction:column;background:var(--paper);border:1.5px solid rgba(225,72,39,.4);border-radius:var(--radius-lg);padding:26px 24px;box-shadow:0 12px 32px rgba(225,72,39,.07)}
 .uy-tag{align-self:flex-start;font-size:10.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--tomato);background:var(--tomato-tint);padding:5px 11px;border-radius:var(--radius-sm);margin-bottom:14px}
@@ -898,6 +898,18 @@ body.pf-public .pf-mown{display:none}
 .uy-pill{font-size:10.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--tomato);background:var(--tomato-tint);padding:5px 11px;border-radius:var(--radius-pill)}
 .uy-excl-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}
 .uy-excl-tag{position:absolute;top:13px;left:13px;z-index:2;display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:700;padding:6px 11px;border-radius:var(--radius-sm);color:#fff;background:var(--tomato);box-shadow:0 4px 12px rgba(225,72,39,.32)}
+/* --- Abonelere Özel kart kilidi (Tarifler sekmesi) — video-mutfagi .vid-card.locked
+   blur/watermark DİLİ (blur 7px + dim .30 + dev soluk ikon + merkez CTA), AKSAN TOMATO:
+   şef üyeliği tomato ailesidir, Pro altını KULLANILMAZ (kavram ayrımı — abonelik ≠ Pro).
+   Kilit yalnız public + üye-değil görümde; own/üye görümde kart normal, rozet kalır.
+   Görsel katmanlar pointer-events:none → kart click'i JS'te goCheckout'a delege. */
+.r-card.sub-locked{--sl-blur:7px;--sl-dim:.30}
+body.pf-public:not(.is-member) .r-card.sub-locked .r-media::before{content:"\f005";font-family:"Font Awesome 6 Free";font-weight:900;position:absolute;inset:0;z-index:2;display:grid;place-items:center;font-size:84px;color:rgba(251,233,227,.20);background:rgba(20,18,12,var(--sl-dim));-webkit-backdrop-filter:blur(var(--sl-blur));backdrop-filter:blur(var(--sl-blur));pointer-events:none;text-shadow:0 6px 26px rgba(10,9,6,.5);border-radius:inherit}
+.r-card.sub-locked .sl-cta{display:none;position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);z-index:3;align-items:center;gap:8px;font-size:12.5px;font-weight:700;color:#fff;background:var(--tomato);padding:10px 18px;border-radius:var(--radius-pill);box-shadow:0 10px 30px rgba(10,9,6,.4);pointer-events:none;white-space:nowrap}
+body.pf-public:not(.is-member) .r-card.sub-locked .sl-cta{display:inline-flex}
+body.pf-public:not(.is-member) .r-card.sub-locked{cursor:pointer}
+body.pf-public:not(.is-member) .r-card.sub-locked:hover .sl-cta{background:var(--tomato-dark)}
+body.pf-public:not(.is-member) .r-card.sub-locked .r-save{display:none}
 /* --- own görüm: hafif yönetim (KPI + plan editörü + abone listesi) --- */
 .uy-mtop{margin-bottom:22px}
 .uy-mtop h3{font-size:19px}
@@ -2387,10 +2399,12 @@ body[data-roles~="antrenor"] .pf-actions > .pf-panel{
               </div>
             </div>
           </article>
-          <article class="r-card">
+          <!-- Abonelere Özel kart — public+üye-değil: blur kilit + tık → üyelik checkout -->
+          <article class="r-card sub-locked" data-status="yayinda">
             <div class="r-media-wrap"><div class="r-media" style="background-image:url('https://images.unsplash.com/photo-1547592180-85f173990554?w=600&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')">
-              <span class="r-chip">Çorba</span>
-              <button class="r-save" aria-label="Kaydet"><i class="fa-regular fa-heart"></i></button></div></div>
+              <span class="uy-excl-tag"><i class="fa-solid fa-star"></i> Abonelere Özel</span>
+              <button class="r-save" aria-label="Kaydet"><i class="fa-regular fa-heart"></i></button>
+              <span class="sl-cta"><i class="fa-solid fa-star"></i> Abone Ol</span></div></div>
             <div class="r-body">
               <h4><a href="tarif-detay-v1.html">Tarhana Çorbası — Annemin Usulü</a></h4>
               <div class="r-facts">
@@ -2400,7 +2414,7 @@ body[data-roles~="antrenor"] .pf-actions > .pf-panel{
               </div>
               <div class="r-stats">
                 <span class="r-rate"><i class="fa-solid fa-star"></i> 4.8</span>
-                <span class="r-views"><i class="fa-solid fa-eye"></i> 96B</span>
+                <span class="r-views"><i class="fa-solid fa-lock"></i> Abonelere özel</span>
               </div>
             </div>
           </article>
@@ -2422,11 +2436,13 @@ body[data-roles~="antrenor"] .pf-actions > .pf-panel{
               </div>
             </div>
           </article>
-          <article class="r-card">
+          <!-- Abonelere Özel kart — public+üye-değil: blur kilit + tık → üyelik checkout -->
+          <article class="r-card sub-locked" data-status="yayinda">
             <div class="r-media-wrap"><div class="r-media" style="background-image:url('https://images.unsplash.com/photo-1551183053-bf91a1d81141?w=600&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')">
-              <span class="r-chip">Tatlı</span>
+              <span class="uy-excl-tag"><i class="fa-solid fa-star"></i> Abonelere Özel</span>
               <button class="r-save" aria-label="Kaydet"><i class="fa-regular fa-heart"></i></button>
-              <div class="m-types"><span class="mt"><i class="fa-solid fa-play"></i> 4:12</span></div></div></div>
+              <div class="m-types"><span class="mt"><i class="fa-solid fa-play"></i> 4:12</span></div>
+              <span class="sl-cta"><i class="fa-solid fa-star"></i> Abone Ol</span></div></div>
             <div class="r-body">
               <h4><a href="tarif-detay-v1.html">İncirli Islak Kek</a></h4>
               <div class="r-facts">
@@ -2436,7 +2452,7 @@ body[data-roles~="antrenor"] .pf-actions > .pf-panel{
               </div>
               <div class="r-stats">
                 <span class="r-rate"><i class="fa-solid fa-star"></i> 4.9</span>
-                <span class="r-views"><i class="fa-solid fa-eye"></i> 188B</span>
+                <span class="r-views"><i class="fa-solid fa-lock"></i> Abonelere özel</span>
               </div>
             </div>
           </article>
@@ -2589,12 +2605,12 @@ body[data-roles~="antrenor"] .pf-actions > .pf-panel{
             <span class="uy-tag">Aylık Üyelik</span>
             <span class="uy-ico"><i class="fa-solid fa-star"></i></span>
             <h3>Elif&rsquo;in Mutfağı Üyeliği</h3>
-            <p>Elif&rsquo;in üyelere özel tariflerine, erken erişime ve aylık canlı soru-cevaba katıl. İstediğin an iptal et.</p>
+            <p>Elif&rsquo;in abonelere özel tariflerine, erken erişime ve aylık canlı soru-cevaba katıl. İstediğin an iptal et.</p>
             <div class="uy-price"><b>₺49</b><span>/ ay</span></div>
             <ul class="uy-feats">
-              <li><i class="fa-solid fa-check"></i> Haftalık üyelere özel tarif</li>
+              <li><i class="fa-solid fa-check"></i> Haftalık abonelere özel tarif</li>
               <li><i class="fa-solid fa-check"></i> Yeni tariflere 1 hafta erken erişim</li>
-              <li><i class="fa-solid fa-check"></i> Üyelere özel mevsim menüleri</li>
+              <li><i class="fa-solid fa-check"></i> Abonelere özel mevsim menüleri</li>
               <li><i class="fa-solid fa-check"></i> Aylık canlı soru-cevap yayını</li>
               <li><i class="fa-solid fa-check"></i> Profilinde üyelik rozeti</li>
             </ul>
@@ -2602,26 +2618,26 @@ body[data-roles~="antrenor"] .pf-actions > .pf-panel{
             <p class="uy-note"><i class="fa-solid fa-shield-halved"></i> Güvenli ödeme · istediğin an iptal · temsilî fiyat</p>
           </article>
 
-          <!-- üyelere özel içerik — member-gate (üye değilse kilit, üyeyse açık) -->
+          <!-- abonelere özel içerik — member-gate (üye değilse kilit, üyeyse açık) -->
           <div class="pf-mgate">
             <!-- kilit boş-durum (public + üye değil) -->
             <div class="pf-lock">
               <span class="pl-ico"><i class="fa-solid fa-star"></i></span>
-              <h3>Üyelere Özel İçerik</h3>
-              <p><b>Elif Şahin</b>&rsquo;in üyelere özel tarif, püf ve menülerini görmek için üye olman gerekiyor. Üye olduğunda bu içerik anında açılır.</p>
+              <h3>Abonelere Özel İçerik</h3>
+              <p><b>Elif Şahin</b>&rsquo;in abonelere özel tarif, püf ve menülerini görmek için üye olman gerekiyor. Üye olduğunda bu içerik anında açılır.</p>
               <button class="pl-cta" type="button" data-member-cta><i class="fa-solid fa-star"></i> Üye Ol, Hemen Aç</button>
-              <span class="pl-hint"><i class="fa-solid fa-lock"></i> 14 üyelere özel içerik · üye olduğunda açılır</span>
+              <span class="pl-hint"><i class="fa-solid fa-lock"></i> 14 abonelere özel içerik · üye olduğunda açılır</span>
             </div>
             <!-- gerçek içerik (üye) -->
             <div class="pf-full">
               <div class="uy-excl-head">
-                <h3><i class="fa-solid fa-star"></i> Üyelere Özel</h3>
+                <h3><i class="fa-solid fa-star"></i> Abonelere Özel</h3>
                 <span class="uy-pill">Sadece üyeler</span>
               </div>
               <div class="uy-excl-grid">
                 <article class="r-card">
                   <div class="r-media-wrap"><div class="r-media" style="background-image:url('https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=600&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')">
-                    <span class="uy-excl-tag"><i class="fa-solid fa-star"></i> Üyelere Özel</span>
+                    <span class="uy-excl-tag"><i class="fa-solid fa-star"></i> Abonelere Özel</span>
                     <button class="r-save" aria-label="Kaydet"><i class="fa-regular fa-heart"></i></button></div></div>
                   <div class="r-body">
                     <h4><a href="tarif-detay-v1.html">Ege Usulü Zeytinyağlı Deniz Börülcesi</a></h4>
@@ -2629,12 +2645,12 @@ body[data-roles~="antrenor"] .pf-actions > .pf-panel{
                       <span><i class="fa-solid fa-clock"></i> 35 dk</span>
                       <span><i class="fa-solid fa-gauge-simple"></i> Kolay</span>
                     </div>
-                    <div class="r-stats"><span class="r-rate"><i class="fa-solid fa-star"></i> 5.0</span><span class="r-views"><i class="fa-solid fa-lock"></i> Üyelere özel</span></div>
+                    <div class="r-stats"><span class="r-rate"><i class="fa-solid fa-star"></i> 5.0</span><span class="r-views"><i class="fa-solid fa-lock"></i> Abonelere özel</span></div>
                   </div>
                 </article>
                 <article class="r-card">
                   <div class="r-media-wrap"><div class="r-media" style="background-image:url('https://images.unsplash.com/photo-1455619452474-d2be8b1e70cd?w=600&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')">
-                    <span class="uy-excl-tag"><i class="fa-solid fa-star"></i> Üyelere Özel</span>
+                    <span class="uy-excl-tag"><i class="fa-solid fa-star"></i> Abonelere Özel</span>
                     <button class="r-save" aria-label="Kaydet"><i class="fa-regular fa-heart"></i></button></div></div>
                   <div class="r-body">
                     <h4><a href="tarif-detay-v1.html">Annemin El Yazısı Defterinden: İncir Reçeli</a></h4>
@@ -2642,25 +2658,25 @@ body[data-roles~="antrenor"] .pf-actions > .pf-panel{
                       <span><i class="fa-solid fa-clock"></i> 1 sa 10 dk</span>
                       <span><i class="fa-solid fa-gauge-simple"></i> Orta</span>
                     </div>
-                    <div class="r-stats"><span class="r-rate"><i class="fa-solid fa-star"></i> 4.9</span><span class="r-views"><i class="fa-solid fa-lock"></i> Üyelere özel</span></div>
+                    <div class="r-stats"><span class="r-rate"><i class="fa-solid fa-star"></i> 4.9</span><span class="r-views"><i class="fa-solid fa-lock"></i> Abonelere özel</span></div>
                   </div>
                 </article>
                 <article class="r-card">
                   <div class="r-media-wrap"><div class="r-media" style="background-image:url('https://images.unsplash.com/photo-1476718406336-bb5a9690ee2a?w=600&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')">
-                    <span class="uy-excl-tag"><i class="fa-solid fa-star"></i> Üyelere Özel</span>
+                    <span class="uy-excl-tag"><i class="fa-solid fa-star"></i> Abonelere Özel</span>
                     <button class="r-save" aria-label="Kaydet"><i class="fa-regular fa-heart"></i></button></div></div>
                   <div class="r-body">
-                    <h4><a href="tarif-detay-v1.html">Üyelere Özel Mevsim Menüsü: Sonbahar Sofrası</a></h4>
+                    <h4><a href="tarif-detay-v1.html">Abonelere Özel Mevsim Menüsü: Sonbahar Sofrası</a></h4>
                     <div class="r-facts">
                       <span><i class="fa-solid fa-list-check"></i> 6 tarif</span>
                       <span><i class="fa-solid fa-leaf"></i> Mevsimlik</span>
                     </div>
-                    <div class="r-stats"><span class="r-rate"><i class="fa-solid fa-star"></i> 5.0</span><span class="r-views"><i class="fa-solid fa-lock"></i> Üyelere özel</span></div>
+                    <div class="r-stats"><span class="r-rate"><i class="fa-solid fa-star"></i> 5.0</span><span class="r-views"><i class="fa-solid fa-lock"></i> Abonelere özel</span></div>
                   </div>
                 </article>
                 <article class="r-card">
                   <div class="r-media-wrap"><div class="r-media" style="background-image:url('https://images.unsplash.com/photo-1551218808-94e220e084d2?w=600&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')">
-                    <span class="uy-excl-tag"><i class="fa-solid fa-star"></i> Üyelere Özel</span>
+                    <span class="uy-excl-tag"><i class="fa-solid fa-star"></i> Abonelere Özel</span>
                     <button class="r-save" aria-label="Kaydet"><i class="fa-regular fa-heart"></i></button></div></div>
                   <div class="r-body">
                     <h4><a href="tarif-detay-v1.html">Fırın Püf Noktaları: Hamur İşinde Kusursuz Sonuç</a></h4>
@@ -2668,7 +2684,7 @@ body[data-roles~="antrenor"] .pf-actions > .pf-panel{
                       <span><i class="fa-solid fa-lightbulb"></i> 8 püf</span>
                       <span><i class="fa-solid fa-gauge-simple"></i> Tüm seviyeler</span>
                     </div>
-                    <div class="r-stats"><span class="r-rate"><i class="fa-solid fa-star"></i> 4.8</span><span class="r-views"><i class="fa-solid fa-lock"></i> Üyelere özel</span></div>
+                    <div class="r-stats"><span class="r-rate"><i class="fa-solid fa-star"></i> 4.8</span><span class="r-views"><i class="fa-solid fa-lock"></i> Abonelere özel</span></div>
                   </div>
                 </article>
               </div>
@@ -2697,12 +2713,12 @@ body[data-roles~="antrenor"] .pf-actions > .pf-panel{
           <div class="uy-card-head"><h4><i class="fa-solid fa-star"></i> Üyelik Planı</h4><span class="muted">Public profilinin &ldquo;Üyelik&rdquo; sekmesinde görünür</span></div>
           <div class="uy-field"><label>Plan başlığı</label><input class="uy-input" type="text" value="Elif&rsquo;in Mutfağı Üyeliği" /></div>
           <div class="uy-row2">
-            <div class="uy-field" style="margin-bottom:0"><label>Kısa açıklama</label><input class="uy-input" type="text" value="Üyelere özel tarifler, erken erişim ve aylık soru-cevap." /></div>
+            <div class="uy-field" style="margin-bottom:0"><label>Kısa açıklama</label><input class="uy-input" type="text" value="Abonelere özel tarifler, erken erişim ve aylık soru-cevap." /></div>
             <div class="uy-field" style="margin-bottom:0"><label>Aylık ücret</label><div class="uy-suffix"><input class="uy-input" type="number" value="49" /><span>₺ / ay</span></div></div>
           </div>
           <div class="uy-field" style="margin-top:16px"><label>Üyelik avantajları</label>
             <ul class="uy-feat-edit" id="uyFeatList">
-              <li><input class="uy-input" type="text" value="Haftalık üyelere özel tarif" /><button class="uy-del" type="button" aria-label="Avantajı sil"><i class="fa-regular fa-trash-can"></i></button></li>
+              <li><input class="uy-input" type="text" value="Haftalık abonelere özel tarif" /><button class="uy-del" type="button" aria-label="Avantajı sil"><i class="fa-regular fa-trash-can"></i></button></li>
               <li><input class="uy-input" type="text" value="Yeni tariflere 1 hafta erken erişim" /><button class="uy-del" type="button" aria-label="Avantajı sil"><i class="fa-regular fa-trash-can"></i></button></li>
               <li><input class="uy-input" type="text" value="Aylık canlı soru-cevap yayını" /><button class="uy-del" type="button" aria-label="Avantajı sil"><i class="fa-regular fa-trash-can"></i></button></li>
             </ul>
@@ -3949,18 +3965,6 @@ body[data-roles~="antrenor"] .pf-actions > .pf-panel{
         <a href="reklam-ver-v1.html">Sponsorlar ve Partnerler</a>
       </div>
     </div>
-    <!-- M15: etiketler tek satır için kısaltıldı — tam adlar hedef sayfa başlıklarında (Yasin Bey onayına sunulacak) -->
-    <div class="foot-legal">
-      <a href="yasal-v1.html?metin=iade">İptal, İade ve Değişim</a><span class="sep"></span>
-      <a href="yasal-v1.html?metin=teslimat">Ödeme ve Teslimat</a><span class="sep"></span>
-      <a href="yasal-v1.html?metin=mesafeli">Mesafeli Satış</a><span class="sep"></span>
-      <a href="yasal-v1.html?metin=cerez">Gizlilik ve Çerez</a><span class="sep"></span>
-      <a href="yasal-v1.html?metin=uyelik">Üyelik Sözleşmesi</a><span class="sep"></span>
-      <a href="yasal-v1.html?metin=kullanim">Kullanım Koşulları</a><span class="sep"></span>
-      <a href="yasal-v1.html?metin=aydinlatma">Aydınlatma Metni</a><span class="sep"></span>
-      <a href="yasal-v1.html?metin=kvkk">KVKK</a><span class="sep"></span>
-      <a href="yasal-v1.html?metin=bilgilendirme#b4">İhlal Bildir</a>
-    </div>
     <div class="foot-bottom">
       <span>© 2026 DadaMutfak. Tüm hakları saklıdır.</span>
       <a href="https://gaviaworks.com" target="_blank" rel="noopener">#GaviaWorks</a>
@@ -4382,7 +4386,7 @@ document.addEventListener('click',function(e){
   });
 
   // ---- ÜYE DURUMU (member-gate, madde 30) — renderFollow kardeşi ----
-  // public modda "Üyelere Özel" içerik ücretli üyelik arkasında (body.is-member).
+  // public modda "Abonelere Özel" içerik ücretli üyelik arkasında (body.is-member).
   // ?uye=1 → üye (gate açık) başlar (checkout başarı dönüşünü simüle eder).
   // "Üye Ol" CTA'ları checkout sayfasına gider (Faz B); ücretsiz takipten ayrıdır.
   var mem=document.getElementById('pfMember');
@@ -4400,6 +4404,15 @@ document.addEventListener('click',function(e){
   if(mem)mem.addEventListener('click',function(){ if(document.body.classList.contains('is-member'))return; goCheckout(); });
   document.querySelectorAll('[data-member-cta]').forEach(function(b){
     b.addEventListener('click',goCheckout);
+  });
+  // Abonelere Özel tarif kartları (Tarifler sekmesi) — public+üye-değil: kartın
+  // tamamı üyelik checkout'una gider (capture: içteki tarif linkini geçersiz kılar).
+  // own/üye görümde dokunulmaz — kart normal davranır.
+  document.querySelectorAll('.r-card.sub-locked').forEach(function(card){
+    card.addEventListener('click',function(e){
+      if(!document.body.classList.contains('pf-public')||document.body.classList.contains('is-member'))return;
+      e.preventDefault();e.stopPropagation();goCheckout();
+    },true);
   });
 
   // own yönetim — avantaj repeater (ekle/sil) + tek-plan editörü
