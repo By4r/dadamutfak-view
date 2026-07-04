@@ -29,6 +29,10 @@ Akış dört adımdır; sırayla uygula, adım atlama.
 1. Push ÖNCESİ staged dosya listesini (`git diff --cached --stat`) çıktıya yaz — şeffaflık.
 2. Commit mesajı: **İngilizce, açıklayıcı, kişisel isim yok** (ör. `feat(shopping-list): sponsor market block + dynamic aisle groups`).
 3. Commit'le, `git push origin main`, commit hash'lerini not al.
+4. **PUSH DOĞRULAMA (zorunlu):** push'tan sonra `git status --short --branch` çalıştır ve
+   ilk satıra bak. `[ahead N]` görünüyorsa push tamamlanmamış demektir — tekrar push et ve
+   yeniden kontrol et. Raporda **"origin ile senkron"** ifadesini ANCAK bu doğrulama
+   temiz çıkınca (ahead/behind yok) yaz; doğrulamadan senkron iddia etme.
 
 ## ADIM 3 — HANDOFF GÜNCELLE
 
