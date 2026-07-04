@@ -561,3 +561,10 @@ Her profil/tasarım turu sonunda CC kendi denetler, Beyar tek tek state açmaz:
 4. Beyar'a yalnız TEMİZ sonuç + kısa **state matris tablosu**. **Lead computed+SS teyidi şart** (teammate iddiası yetmez).
 5. **Dersler:** (a) **carryover MUTLAKA test** (taze context yetmez — IIFE persisted localStorage rolünü taşıyabilir; bkz. C2-1a `?auth=1`'de diyetisyen sızması, fix = URL parametresi varsa rolleri URL'den authoritative yeniden kur); (b) **köşe affordance'ları** (kamera/nokta/rozet) üst üste binebilir — rol modunda hangisi görünür açıkça gate'le (bkz. C2-1a avatar yarım-kırmızı-yarım-yeşil = kök kamera + diyetisyen yeşil nokta üst üste).
 6. **OWN↔PUBLIC CTA TUTARLILIĞI (2026-06-25, C2-1b bug):** operatör profillerinde (antrenör/diyetisyen/işletme) own modda SADECE yönetim CTA'sı (Profili Düzenle / Panelden Düzenle), public modda SADECE ziyaretçi CTA'sı (Randevu Al / Danışan Ol / Mesaj / Takip / mekan linki). **Test:** own'da ziyaretçi CTA'sı GÖRÜNMEMELİ (kendine randevu/danışan olamaz), public'te yönetim CTA'sı görünmemeli. **Her operatör rolü × own/public computed display** test edilir. **Kök sebep tuzağı:** operatör katmanı CTA'larını yalnız ROL geçidine bağlayıp (`body[data-roles~="X"] .pf-book{display}`) own↔public geçidini (`body.pf-public`) almazsa CTA her iki modda basılı kalır — kök üyenin `pf-act-own`/`pf-act-public` mekanizması MİRAS alınmalı (gate = `body.pf-public[data-roles~="X"] .pf-...`). Dönüşüm bandı/fiyat da ziyaretçi CTA'sıdır → public-only.
+
+## Handoff commit attı ama push atlandı (2026-07-04, 4252efa)
+
+handoff commit attı ama push atlandı (4252efa) — lokal main origin'den 1 commit ileride kaldı,
+rapor "senkron" dedi. **Kural:** push sonrası `git status --short --branch` ile ahead/behind
+doğrulaması ŞART; `[ahead N]` görünüyorsa tekrar push et. "Origin ile senkron" ifadesi ancak
+doğrulama temiz çıkınca yazılır. (SKILL.md ADIM 2/4'e eklendi.)
