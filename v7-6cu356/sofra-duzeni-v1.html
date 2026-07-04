@@ -899,6 +899,14 @@ html,body{overflow-x:clip}
 .swz-list{list-style:none;margin:16px 0 0;padding:0;display:grid;gap:9px}
 .swz-list li{display:flex;align-items:flex-start;gap:10px;font-size:15.5px;font-weight:600;color:var(--slate-2)}
 .swz-list li i{color:var(--green);font-size:13px;margin-top:4px}
+/* tip seçici (giriş ekranı) — 8 sofra karosu; sayfadaki kategori vitrininin kompakt aynası */
+.swz-pick{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:22px}
+.swz-pick button{display:flex;flex-direction:column;align-items:flex-start;gap:10px;padding:18px 16px;border:1px solid var(--line);border-radius:var(--radius-lg);background:var(--paper);cursor:pointer;text-align:left;font-family:inherit;transition:.2s var(--ease)}
+.swz-pick button:hover{border-color:var(--tomato);transform:translateY(-2px);box-shadow:var(--sh-sm)}
+.swz-pick .pk-ico{width:40px;height:40px;border-radius:var(--radius-md);background:var(--tomato-tint);color:var(--tomato);display:grid;place-items:center;font-size:16px}
+.swz-pick b{font-size:14.5px;font-weight:700;color:var(--slate);line-height:1.3}
+.swz-pick span{font-size:12px;font-weight:600;color:var(--muted)}
+.cookmode.picking .cm-dots,.cookmode.picking .cm-nav{visibility:hidden}
 .cm-bottom{flex:none;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:16px 28px;border-top:1px solid var(--line)}
 .cm-dots{display:flex;gap:7px}
 .cm-dots i{width:9px;height:9px;border-radius:var(--radius-circle);background:var(--line);transition:.25s var(--ease);cursor:pointer}
@@ -916,6 +924,8 @@ html,body{overflow-x:clip}
   .cm-inner p{font-size:16.5px}
   .cm-figs{flex-direction:column}
   .cm-fig{height:170px}
+  .swz-pick{grid-template-columns:repeat(2,1fr);gap:10px}
+  .swz-pick button{padding:14px 13px}
   .cm-bottom{padding:12px 16px}
   .cm-dots{display:none}
   .cm-nav{flex:1}
@@ -1679,7 +1689,7 @@ html.reveal-ready .reveal.in{opacity:1;transform:none}
   <div class="cm-top">
     <div class="cm-name">
       <span class="th"><i class="fa-solid fa-utensils"></i></span>
-      <b>Sofrayı Adım Adım Kur</b>
+      <b id="swzTitle">Sofrayı Adım Adım Kur</b>
     </div>
     <div class="cm-prog">
       <span class="cm-count" id="swzCount">Adım 1 / 6</span>
@@ -2229,66 +2239,252 @@ window.__bottomStrips=window.__bottomStrips||[];
 </script>
 <script>
 /* ===== SOFRA KURULUM SİHİRBAZI — tarif-detay m23 pişirme-modu JS mirası (sofra uyarlaması) =====
-   Adım verisi statik dizi (bnp "Menüyü Pişir" modeli); zamanlayıcı/oto-geçiş yok.
-   Görseller projede kullanılan sofra fotoğrafları (canlı 200 testli). SS: ?kur=1 */
+   Giriş ekranı = sofra tipi seçici (sayfadaki 8 kategorinin aynası); adımlar ve içerik
+   seçilen tipe göre değişir. Veri statik SOFRALAR dizisi; zamanlayıcı/oto-geçiş yok.
+   Görseller projede kullanılan, konu-eşleşmeli fotoğraflar (canlı 200 testli).
+   1. adımda "Önceki" seçiciye döner. SS: ?kur=1 (seçici) · ?kur=<tipId> (doğrudan tip) */
 (function(){
   var wiz=document.getElementById('swz'); if(!wiz) return;
   function img(id){return "https://images.unsplash.com/photo-"+id+"?w=900&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5"}
-  var STEPS=[
-    {tag:"Zemin", t:"Örtü & Zemin", img:"1603298573248-3e98441a0d6d",
-     p:"Temiz ve ütülü bir örtü, sofranın fonunu belirler. Masa örtüsü kenarlardan <b>eşit sarkmalı</b> (20–30 cm ideal); günlük sofrada runner ya da amerikan servis yeterli. Zemin ne kadar sade olursa sofra o kadar ferah görünür.",
-     tip:"Desenli örtü seçtiysen tabak ve peçeteyi düz renkten seç — göz yorulmasın."},
-    {tag:"Yerleşim", t:"Tabak Yerleşimi", img:"1517870662726-c1d98ee36250",
-     p:"Yemek tabağı, masa kenarından <b>bir-iki parmak içeride</b> ve sandalyenin tam karşısında durur. Resmî düzende altta servis (süs) tabağı, üstte yemek tabağı bulunur; çorba servisi varsa kâse en üste gelir.",
-     tip:"Kişiler arasında en az 60 cm bırak — dirsek payı, sofra konforunun yarısıdır."},
-    {tag:"Takımlar", t:"Çatal & Bıçak", img:"1681338764024-e6977bfd18db",
-     p:"Çatal tabağın <b>soluna</b>, bıçak ve kaşık <b>sağına</b> yerleşir; bıçağın keskin ağzı daima tabağa bakar. Birden fazla takım varsa kural basit: <b>dıştan içe doğru</b> — ilk kullanılacak takım en dışta durur.",
-     tip:"Tatlı çatalı ve kaşığını tabağın üst kısmına yatay koyabilirsin — resmî düzenin pratik kısayolu."},
-    {tag:"Camlar", t:"Bardaklar", img:"1773314863076-835e0bdbe3ea",
-     p:"Su bardağı, bıçağın ucunun hemen <b>üstünde</b> durur; meşrubat ya da ayran bardağı onun sağ çaprazına gelir. Bardakları masaya koymadan önce ışığa tutup kontrol et — leke en çok camda belli olur.",
-     tip:"Kalabalık sofrada bardağı örtü desenine değil tabak hizasına göre hizala."},
-    {tag:"Detaylar", t:"Peçete & Detaylar", img:"1642267877584-1fcb61638cc4",
-     p:"Peçete, tabağın üstünde ya da çatalların <b>solunda</b> durur; kumaş peçete sade bir katlamayla her sofraya uyar. Ekmek tabağı sol üstte, tereyağı bıçağı da onun üzerinde yer alır.",
-     tip:"Kağıt peçete kullanıyorsan peçetelik yerine her tabağa tek tek yerleştir — daha özenli görünür."},
-    {tag:"Kontrol", t:"Son Dokunuş", img:"1606660023296-81d67734170a",
-     p:"Masaya son bir kez <b>misafir gözüyle</b> bak. Merkez süsleme (mum, küçük vazo) göz hizasını aşmasın — karşındakini görebilmek sofranın altın kuralıdır.",
-     list:["Örtü düz ve simetrik sarkıyor","Tabaklar hizalı, kenardan bir parmak içeride","Bıçak ağızları tabağa dönük, takımlar dıştan içe","Bardaklar temiz ve sağ üstte","Tuzluk-biberlik ile süsleme ortada, göz hizasının altında"]}
+  /* konu-eşleşmeli görsel havuzu — hepsi projede halihazırda kullanılan ID'ler */
+  var IMG={ortu:"1603298573248-3e98441a0d6d",tabak:"1517870662726-c1d98ee36250",takim:"1681338764024-e6977bfd18db",
+    bardak:"1773314863076-835e0bdbe3ea",pecete:"1642267877584-1fcb61638cc4",sunum:"1606660023296-81d67734170a",
+    kahvalti:"1633327760690-d9bb0513f942",serpme:"1533089860892-a7c6f0a88666",cay:"1495474472287-4d71bcdd2085",
+    menemen:"1525755662778-989d0524087e",kgenel:"1533777324565-a040eb52facd",corba:"1547592180-85f173990554",
+    icecek:"1455619452474-d2be8b1e70cd",pilav:"1516684732162-798a0062be99",bayram:"1780586383003-7a8bb9375ae9",
+    tatli:"1488477181946-6428a0291777",kek:"1474979266404-7eaacbcd87c5",bufe:"1696940823960-ee5242bddc47",
+    salata:"1546069901-ba9599a7e63c",masa:"1610701596007-11502861dcfa"};
+  var SOFRALAR=[
+    {id:"gunluk",ad:"Günlük Aile Sofrası",ikon:"fa-utensils",desc:"6 adım · evde her gün",steps:[
+      {tag:"Zemin",t:"Zemini Hazırla",img:IMG.ortu,
+       p:"Günlük sofrada tam örtü şart değil: her kişinin önüne bir <b>amerikan servis</b> ya da masanın ortasına boydan boya bir <b>runner</b> yeterli. Masa yüzeyi temiz ve kuru olsun; servis altlıklarını sandalyelerin tam karşısına, kenarla hizalı yerleştir.",
+       tip:"Amerikan servis hem masayı sıcak kaptan korur hem de misafir yokken bile \"kurulmuş sofra\" hissi verir — günlük özenin en kestirme yolu."},
+      {tag:"Tabaklar",t:"Tabakları Yerleştir",img:IMG.tabak,
+       p:"Yemek tabağını masa kenarından <b>iki parmak içeride</b>, sandalyenin tam karşısına koy. Çorba günündeysen derin tabağı yemek tabağının üstüne yerleştir; küçük salata kayığı tabağın <b>sol çaprazında</b> dursun.",
+       list:["Yemek tabağı ortada, kenardan iki parmak içeride","Derin (çorba) tabak yemek tabağının üstünde","Salata kayığı sol çaprazda"],
+       tip:"Tabakları yemek ocaktayken diz — servis telaşı başladığında hiza ayarlayacak vakit kalmaz."},
+      {tag:"Takımlar",t:"Çatal, Bıçak, Kaşık",img:IMG.takim,
+       p:"Çatalı tabağın <b>soluna</b>, bıçağı <b>sağına</b> koy; bıçağın keskin ağzı daima tabağa baksın. Çorba kaşığı bıçağın sağında durur. Günlük sofrada tek kat takım yeter — tatlı kaşığını sofraya tatlıyla birlikte getirebilirsin.",
+       tip:"Bıçak ağzının tabağa bakması yalnızca görgü değil, güvenlik: kaseye uzanan kol keskin ağza denk gelmez."},
+      {tag:"Camlar",t:"Bardak & Sürahi",img:IMG.bardak,
+       p:"Su bardağını <b>bıçağın ucunun hemen üstüne</b> koy. Ayran ya da meşrubat bardağı su bardağının sağ çaprazına gelir. Su sürahisini masanın ortasına, herkesin uzanabileceği yere yerleştir.",
+       tip:"Bardağı doldururken masadan kaldırma — havada doldurmak hem damlatır hem hizayı bozar."},
+      {tag:"Ortaklar",t:"Ortak Kapları Kur",img:IMG.salata,
+       p:"Sıcak tencere ya da fırın kabını mutlaka <b>nihale (altlık) üstünde</b> ve masanın merkezine koy. Salata kâsesi ile ekmek sepetini masanın <b>iki ayrı ucuna</b> dağıt ki kimse kimsenin önünden uzanmasın. Her ortak kabın içine kendi servis kaşığını yerleştir.",
+       list:["Sıcak kap merkezde, nihale üstünde","Salata ve ekmek iki ayrı uçta","Her ortak kapta kendi servis takımı"],
+       tip:"Ekmeği sofraya gelmeden dilimle — masada ekmek kesmek hem yer kaplar hem kırıntı saçar."},
+      {tag:"Kontrol",t:"Son Kontrol",img:IMG.sunum,
+       p:"Oturmadan önce masaya bir kez <b>dışarıdan</b> bak: herkesin takımı tam mı, uzanamayan kalacak mı? Peçeteleri tabakların yanına koy, tuzluk-biberliği merkeze al.",
+       list:["Her kişide tabak + çatal-bıçak + bardak tam","Peçete her tabağın yanında","Tuzluk-biberlik masanın ortasında","Sıcak kaplar nihale üstünde, sapları içe dönük"]}
+    ]},
+    {id:"misafir",ad:"Misafir Sofrası",ikon:"fa-users",desc:"7 adım · davet & özel gün",steps:[
+      {tag:"Zemin",t:"Örtü & Runner",img:IMG.ortu,
+       p:"Davet sofrasında tam örtü kullan: kenarlardan <b>eşit ve 20–30 cm</b> sarkmalı, mutlaka ütülü olmalı. Üzerine kontrast renkte bir runner sermek masaya derinlik katar. Örtü ne kadar sade olursa sofra o kadar ferah görünür.",
+       tip:"Örtüyü davetten bir gece önce ser — dolap katlanma izleri sabaha kendiliğinden açılır, ütü telaşı kalmaz."},
+      {tag:"Tabaklar",t:"Servis + Yemek Tabağı",img:IMG.tabak,
+       p:"Önce alta büyük <b>servis (süs) tabağını</b>, üstüne yemek tabağını koy. Servis tabağı yemek boyunca yerinde kalır; tabaklar onun üzerinden değişir. İkisi birlikte masa kenarından iki parmak içeride durmalı.",
+       tip:"Servis tabağın yoksa panik yok: takımın en büyük düz tabağı aynı işi görür — amaç her kişiye sabit bir \"çerçeve\" çizmek."},
+      {tag:"Takımlar",t:"Takımları Diz",img:IMG.takim,
+       p:"Kural tek: <b>ilk kullanılacak takım en dışta</b>. Çorba kaşığı sağda en dışa, ana yemek bıçağı onun iç tarafına (ağzı tabağa dönük); solda salata çatalı dışta, ana çatal içte. Tatlı çatalı ile kaşığını tabağın <b>üst kısmına yatay</b> yerleştir.",
+       list:["Sol, dıştan içe: salata çatalı → ana çatal","Sağ, dıştan içe: çorba kaşığı → ana bıçak","Tatlı takımı tabağın üstünde yatay"],
+       tip:"Menüde olmayan takımı masaya koyma — boş kalan çatal misafirde \"bir şey mi kaçırdım?\" hissi uyandırır."},
+      {tag:"Camlar",t:"Bardakları Hizala",img:IMG.bardak,
+       p:"Su bardağı <b>bıçağın ucunun üstünde</b>; meşrubat bardağı onun sağ çaprazında, hafif aşağıda durur. Bardakları masaya koymadan önce tek tek ışığa tut — leke en çok camda belli olur.",
+       tip:"Kalabalık masada bardağı örtünün desenine değil tabağın hizasına göre yerleştir — göz düz çizgiyi arar."},
+      {tag:"Detaylar",t:"Peçete & Ekmek Tabağı",img:IMG.pecete,
+       p:"Kumaş peçeteyi sade bir katlamayla <b>tabağın üstüne</b> ya da çatalların soluna koy. Ekmek tabağı <b>sol üstte</b> durur; tereyağı bıçağı onun üzerinde, ağzı sola bakacak şekilde bekler.",
+       tip:"Gösterişli peçete katlamaları yerine sade rulo + peçete halkası: hem şık hem misafir açarken bozulmaz."},
+      {tag:"Servis",t:"Ortak Servis & İkram",img:IMG.pilav,
+       p:"Servis kaplarını masaya değil, ayrı bir <b>servis alanına</b> (konsol, tezgâh) kur; masada yalnız kişilik düzen kalsın. İkram sırası klasik: çorba → ana yemek → tatlı. Sıcak kapları en son çıkar.",
+       tip:"Kalabalıkta tabakları mutfakta doldurup getirmek, masada kap dolaştırmaktan hem hızlı hem temizdir."},
+      {tag:"Kontrol",t:"Son Bakış",img:IMG.sunum,
+       p:"Masaya <b>misafir gözüyle</b> son bir tur at. Mum ya da çiçek gibi merkez süslemeler göz hizasını aşmasın — karşındakini görebilmek sofranın altın kuralıdır. Sandalyeler arasında en az 60 cm bırak.",
+       list:["Örtü düz, sarkma dört yanda eşit","Servis + yemek tabağı hizalı","Takımlar dıştan içe, bıçak ağızları tabağa dönük","Bardaklar temiz, sağ üstte","Merkez süsleme göz hizasının altında","Kişiler arası en az 60 cm"]}
+    ]},
+    {id:"kahvalti",ad:"Kahvaltı Sofrası",ikon:"fa-mug-saucer",desc:"6 adım · serpme & hafta sonu",steps:[
+      {tag:"Zemin",t:"Aydınlık Bir Zemin",img:IMG.ortu,
+       p:"Kahvaltı sofrasının ruhu ferahlıktır: <b>açık renk</b> bir örtü ya da amerikan servis seç. Masa sabah ışığı alıyorsa süslemeyi azalt — kalabalık kâse düzeni zaten masayı dolduracak.",
+       tip:"Desenli örtü + desenli kâse göz yorar; ikisinden birini düz tut."},
+      {tag:"Tabaklar",t:"Kahvaltı Tabakları",img:IMG.kgenel,
+       p:"Herkese bir <b>kahvaltı tabağı</b> (yemek tabağından küçük boy) koy, kenardan iki parmak içeride. Çatal solda, bıçak sağda ağzı tabağa dönük. Reçel-bal için küçük tatlı tabağını sol üst çapraza ekle.",
+       tip:"Kahvaltıda büyük yemek tabağı kullanma — küçük tabak masada serpme kâselerine yer açar."},
+      {tag:"Serpme",t:"Kâseleri Dağıt",img:IMG.serpme,
+       p:"Peynir, zeytin, reçel ve söğüşleri <b>küçük kâselere</b> paylaştır ve masaya <b>simetrik</b> dağıt: aynı çeşitten iki kâse yap, masanın iki ucuna koy — kimse kimsenin önünden uzanmasın. Kaşık gereken her kâseye küçük servis kaşığı ekle.",
+       list:["Her çeşit küçük kâsede, tek büyük tabakta değil","Aynı çeşitten iki kâse: iki uca birer tane","Kâse araları eşit, merkez boş kalmasın"],
+       tip:"Çift kâse kuralı serpmenin sırrıdır: masa hem dolu hem düzenli görünür, kâse trafiği biter."},
+      {tag:"Çay",t:"Çay & Kahve İstasyonu",img:IMG.cay,
+       p:"Çay bardağını tabağın <b>sağ üstüne</b>, kulpu sağa bakacak şekilde koy; çay kaşığı tabağın üzerinde dursun. Çaydanlık ya da semaveri masaya değil, yandaki <b>sehpa veya tezgâha</b> kur — masada yer kaplamasın, dolum trafiği sofrayı bölmesin.",
+       tip:"Çay servisini tek kişi üstlensin — herkes kalkıp doldurunca sofra beş dakikada dağılır."},
+      {tag:"Sıcaklar",t:"Sıcakları Zamanla",img:IMG.menemen,
+       p:"Menemen, sahanda yumurta ve sucuk <b>herkes oturduktan sonra</b> gelir — kahvaltının sıcakları bekletilmez. Tavayı doğrudan masaya alacaksan mutlaka nihale üstüne, merkeze koy.",
+       tip:"Sıcaklar gelmeden çayı doldur — yumurta masaya geldiğinde herkesin çayı hazır olsun."},
+      {tag:"Kontrol",t:"Son Kontrol",img:IMG.kahvalti,
+       p:"Oturmadan önce tur at: her kâsenin kaşığı var mı, ekmek sepeti dolu mu, çay istasyonu hazır mı? Peçeteleri tabakların yanına yerleştir.",
+       list:["Her kişide tabak + küçük tabak + çatal-bıçak","Kâseler simetrik, her birinde servis kaşığı","Çay bardağı sağ üstte, kulp sağa dönük","Ekmek sepeti dolu, iki uçta","Sıcaklar için nihale merkezde hazır"]}
+    ]},
+    {id:"resmi",ad:"Resmî Sofra Düzeni",ikon:"fa-wine-glass",desc:"7 adım · tam kurallı",steps:[
+      {tag:"Zemin",t:"Kolalı Örtü",img:IMG.ortu,
+       p:"Resmî sofra <b>beyaz ya da krem</b>, kolalı-ütülü bir örtüyle başlar. Sarkma dört kenarda eşit ve <b>25–30 cm</b> olmalı; örtünün orta çizgisi masanın ortasından geçmeli. Altına molton (örtü altı keçesi) sermek hem kaymayı önler hem tabak sesini keser.",
+       tip:"Kolalı örtü bulamıyorsan sık dokulu pamuklu seç ve nemliyken ütüle — dökümü kolalıya en yakın sonuçtur."},
+      {tag:"Tabaklar",t:"Üç Kat Tabak",img:IMG.tabak,
+       p:"Sıra alttan üste: <b>servis tabağı → yemek tabağı → çorba kâsesi</b>. Servis tabağı masa kenarından iki parmak içeride, sandalyenin tam karşısında. Tabak desenlerinin yönü varsa hepsini aynı yöne çevir.",
+       tip:"Tabaklar arası eşit mesafeyi göz kararı bırakma — iki tabak merkezi arası ideali 60–70 cm'dir, elinle karışlayarak kontrol et."},
+      {tag:"Takımlar",t:"Tam Takım Dizilimi",img:IMG.takim,
+       p:"Menüdeki her yemek için ayrı takım, <b>dıştan içe</b> kullanım sırasıyla dizilir. Sağda en dışta çorba kaşığı, içinde balık bıçağı (varsa), en içte ana bıçak — ağızlar tabağa dönük. Solda aynı sıranın çatalları. Tatlı takımı tabağın üstünde yatay: çatal sapı sola, kaşık sapı sağa.",
+       list:["Sağ, dıştan içe: çorba kaşığı → balık bıçağı → ana bıçak","Sol, dıştan içe: balık çatalı → ana çatal","Tatlı takımı üstte: çatal sapı sola, kaşık sapı sağa","Takım uçları tabak altıyla aynı hizada"],
+       tip:"Takımları yerleştirirken sapların alt ucunu tabağın alt hizasıyla aynı çizgiye getir — düzeni \"resmî\" gösteren bu görünmez çizgidir."},
+      {tag:"Camlar",t:"Bardak İkilisi",img:IMG.bardak,
+       p:"Su bardağı <b>ana bıçağın ucunun üstünde</b> durur; ikinci bardak (meşrubat/şerbet) onun sağ alt çaprazına, <b>45 derece açıyla</b> yerleşir. Bardaklar kesinlikle parmak izsiz olmalı — masaya sapından ya da tabanından tutarak taşı.",
+       tip:"Bardakları en son yerleştir: masaya eğilirken devirme riski en çok camlarda."},
+      {tag:"Detaylar",t:"Peçete & Ekmek Tabağı",img:IMG.pecete,
+       p:"Kumaş peçete resmî sofrada <b>yemek tabağının üstünde</b> ya da çatalların solunda durur; sade dikdörtgen katlama en güvenli seçimdir. Ekmek tabağı <b>sol üstte</b>, tereyağı bıçağı üzerinde ağzı sola dönük bekler.",
+       tip:"Peçeteyi bardağın içine sıkıştırma — restoran şovudur, ev sofrasının resmîsinde sadelik kazanır."},
+      {tag:"Kartlar",t:"Yer & Menü Kartı",img:IMG.masa,
+       p:"Kalabalık resmî davette <b>yer kartı</b> tabağın üst hizasında ya da peçetenin üstünde durur; misafirler yerini aramaz. Menü kartı hazırladıysan peçetenin üzerine ya da iki kişi arasına bir adet koy.",
+       tip:"Oturma planında sohbeti düşün: birbirini tanımayanları yan yana, çok konuşanları masanın iki ucuna dağıt."},
+      {tag:"Kontrol",t:"Simetri Kontrolü",img:IMG.sunum,
+       p:"Masanın başına geç ve <b>karşıdan</b> bak: tabak merkezleri tek çizgide mi, takım uçları hizalı mı, bardaklar aynı noktada mı? Resmî düzeni sıradan sofradan ayıran şey işte bu simetridir. Merkez süsleme göz hizasını aşmasın.",
+       list:["Örtü orta çizgisi masanın ortasında, sarkma eşit","Üç kat tabak: servis + yemek + çorba","Takımlar dıştan içe, uçlar aynı hizada","Su bardağı bıçak ucunda, ikinci bardak 45°","Ekmek tabağı sol üstte, yer kartları yerinde","Merkez süsleme göz hizasının altında"]}
+    ]},
+    {id:"ramazan",ad:"Ramazan Sofrası",ikon:"fa-moon",desc:"6 adım · iftar & sahur",steps:[
+      {tag:"Zemin",t:"Zemin & Oturum Planı",img:IMG.ortu,
+       p:"İftar sofrası genellikle kalabalıktır: masaya kaç kişi oturacağını <b>öğleden önce</b> netleştir, gerekiyorsa masa uzatmasını ve ek sandalyeleri erkenden kur. Örtüyü ser, her kişiye en az <b>55–60 cm</b> genişlik hesapla.",
+       tip:"Kalabalık iftar hazırlığını vakte sıkıştırma — masa ve oturum işini sabah bitir, akşama yalnız yemek kalsın."},
+      {tag:"Tabaklar",t:"Tabak + Çorba Kâsesi",img:IMG.corba,
+       p:"Yemek tabağını kenardan iki parmak içeride kur, <b>çorba kâsesini üstüne</b> hazır koy — iftarda çorba beklemez, ezanla birlikte doldurulur. Kaşık sağda en dışta, hemen kullanıma hazır dursun.",
+       tip:"Çorbayı ezandan 10 dakika önce servis kâsesine al, kapağını kapat — masaya geldiğinde tam içim sıcaklığında olur."},
+      {tag:"İftariyelik",t:"İftariyelikleri Diz",img:IMG.bardak,
+       p:"Hurma, zeytin, peynir ve söğüşleri küçük tabaklarda masanın <b>merkez hattına</b> diz — herkes uzanmadan ilk lokmasına erişebilsin. Ramazan pidesini dilimleyip üstü örtülü sepete koy.",
+       list:["Hurma ve zeytin merkez hatta, birkaç noktaya","Peynir-söğüş küçük tabaklarda araya","Pide dilimli, üstü örtülü sepette"],
+       tip:"İftariyelikleri vakitten yarım saat önce yerleştir; pidenin üstünü ört ki kurumasın."},
+      {tag:"Camlar",t:"Su & Şerbet",img:IMG.icecek,
+       p:"Su bardağı bıçak ucunun üstünde; yanına <b>şerbet ya da ayran bardağı</b> sağ çapraza gelir. Sürahileri dolu hâlde masaya koy — iftar anında kimse ayağa kalkmasın.",
+       tip:"Suyu buzdolabından çıkışta değil oda sıcaklığına yakın servis et — oruç sonrası ilk yudum için daha rahattır."},
+      {tag:"Sıcaklar",t:"Sıcak Geçiş Planı",img:IMG.pilav,
+       p:"İftar iki perdedir: önce çorba, sonra ana yemek. Ana yemeği <b>ocakta kısık ateşte</b> ya da kapalı fırında bekletmeye al; çorba kâseleri toplanırken servis kabına aktar. Pilavı en son dinlendirip aç.",
+       tip:"Çorba ile ana yemek arasına küçük bir nefes payı koy — sofra sohbeti açılır, mide de teşekkür eder."},
+      {tag:"Kontrol",t:"Vakit Öncesi Kontrol",img:IMG.sunum,
+       p:"Ezandan <b>10 dakika önce</b> her şey yerinde olsun: iftariyelikler dizili, çorba kâseleri hazır, sürahiler dolu. Son dakika mutfağa koşmak iftar telaşının en yorucu hâlidir.",
+       list:["İftariyelikler merkez hatta dizili","Çorba kâsesi her tabağın üstünde hazır","Su + şerbet bardakları dolu ya da sürahi masada","Ana yemek ocakta/fırında sıcak bekliyor","Ezandan 10 dakika önce masa tamam"]}
+    ]},
+    {id:"bayram",ad:"Bayram Sofrası",ikon:"fa-gift",desc:"6 adım · ikram düzeni",steps:[
+      {tag:"Zemin",t:"Bayramlık Örtü",img:IMG.ortu,
+       p:"Bayram sofrası günlükten bir kademe şıktır: en özenli örtünü ser, sarkması eşit olsun. Masanın merkezine küçük bir çiçek ya da mum yerleştirebilirsin — göz hizasını aşmasın yeter.",
+       tip:"Bayram sabahı örtü ütüsüyle uğraşma — örtüyü arefe akşamı ser, sabaha hazır uyan."},
+      {tag:"Tabaklar",t:"İkram Tabakları",img:IMG.bayram,
+       p:"Bayram düzeni klasik yemek düzeni değil <b>ikram düzenidir</b>: büyük yemek tabağı yerine herkese küçük <b>pasta/tatlı tabağı</b> + tatlı çatalı koy. Tabaklar kenardan iki parmak içeride, çatal tabağın sağında — ikramda tek takım yeter.",
+       tip:"Misafir sayın belirsizse tabakları masaya değil kenardaki konsola yığ — gelen sayısına göre aç."},
+      {tag:"Tatlılar",t:"Tatlı & Şekerlik",img:IMG.tatli,
+       p:"Baklava ya da bayram tatlısını <b>servis tabağında dilimlenmiş</b> hâlde, servis spatulasıyla birlikte merkeze koy. Şekerlik ve lokumluk iki tane olsun: biri girişte (kapı ikramı), biri masada. Çikolatayı ambalajından çıkarıp kâseye al.",
+       list:["Tatlı dilimli, servis spatulası yanında","Şekerlik girişte + masada birer adet","Çikolata ambalajsız, kâsede"],
+       tip:"Tatlıyı önceden dilimle ama üstünü kapat — hem taze kalır hem servis anında bıçak aranmaz."},
+      {tag:"Çay",t:"Çay & Kahve Düzeni",img:IMG.cay,
+       p:"Bayramda çay ocağı gün boyu açıktır: çay bardaklarını tepside hazır bekle, kahve fincanlarını <b>ayrı bir tepside</b> kur. Kahve suyu ve cezveyi ocağın yanına al — ikinci dalga misafirde arama telaşı olmasın.",
+       tip:"Kahveyi soran değil süren kazanır: \"kahve içer misiniz\" yerine \"kahveniz nasıl olsun\" — bayram inceliğidir."},
+      {tag:"Hazırlık",t:"Misafir Dalgası Hazırlığı",img:IMG.kek,
+       p:"Bayram misafiri <b>dalga dalga</b> gelir: her dalga arasında masayı hızla toparla — kirli tabaklar mutfağa, temiz yedekler masaya. Yedek tabak-çatal ve bardağı el altındaki konsolda hazır tut.",
+       tip:"Bulaşığı dalgalar arasında makineye diz, biriktirme — üçüncü dalga geldiğinde mutfak hâlâ nefes alıyor olsun."},
+      {tag:"Kontrol",t:"Son Kontrol",img:IMG.sunum,
+       p:"Kapı çalmadan önce tur at: şekerlik dolu mu, çay ocağı hazır mı, yedekler el altında mı? Bayram sofrasının sırrı yemek değil <b>hazır olmaktır</b>.",
+       list:["Tatlı dilimli ve kapalı, spatula yanında","Şekerlik + lokumluk dolu","Çay-kahve tepsileri kurulu","Yedek tabak-bardak konsolda","Merkez süsleme göz hizasının altında"]}
+    ]},
+    {id:"cocuklu",ad:"Çocuklu Sofra",ikon:"fa-child",desc:"5 adım · güvenli & pratik",steps:[
+      {tag:"Zemin",t:"Silinebilir Zemin",img:IMG.ortu,
+       p:"Çocuklu masada zemin <b>silinebilir</b> olmalı: muşamba örtü ya da silinebilir amerikan servis kullan. Kumaş örtü kullanacaksan çocuğun önüne ayrıca silinebilir bir alt servis koy — dökülme stresini baştan kaldır.",
+       tip:"Örtünün sarkan kenarını çocuğun oturduğu yerde kısa tut — çekiştirilen örtü, devrilen sofra demektir."},
+      {tag:"Tabaklar",t:"Kırılmaz & Bölmeli Tabak",img:IMG.pecete,
+       p:"Çocuğa <b>kırılmaz</b> (melamin/bambu) ve tercihen <b>bölmeli</b> tabak koy — yemekler birbirine karışmayınca tabak daha kolay biter. Kaymaz tabanlı ya da vantuzlu modeller küçük yaşta masayı kurtarır.",
+       tip:"Bölmeli tabak seçiciliği azaltır: \"değmesin\" kavgası bitince yemek de yenir."},
+      {tag:"Takımlar",t:"Boyuna Uygun Takım",img:IMG.takim,
+       p:"Çocuğun eline uygun <b>küçük boy, küt uçlu</b> çatal-kaşık koy; keskin bıçak çocuğun önüne hiç gelmez. Yetişkin düzeni aynen kurulur — çocuk sofra kuralını yetişkin takımına bakarak öğrenir.",
+       tip:"Takımı çocuğun sağ-sol tercihine göre yerleştir; kural değil konfor öncelikli — alışkanlık sonra oturur."},
+      {tag:"Camlar",t:"Devrilmez Bardak",img:IMG.icecek,
+       p:"Ağır tabanlı ya da devrilmez bardak kullan ve <b>yarısına kadar</b> doldur — dökülse de küçük dökülsün. Bardağı tabağın sağ üstüne ama <b>masa kenarından uzağa</b> koy; dirsek çarpma mesafesinden çıkar.",
+       tip:"Küçük çocukta bardağı yemekten sonra ver — yemek boyunca masada duran su, oyun alanına dönüşür."},
+      {tag:"Güvenlik",t:"Güvenlik Payı + Kontrol",img:IMG.tabak,
+       p:"Sıcak kaplar masanın <b>merkezinde</b>, çocuğun uzanamayacağı mesafede dursun; tencere ve tava <b>sapları içe dönük</b> olsun. Çocuğun önünde yalnız kendi tabağı, takımı ve bardağı kalsın — fazlası risk, eksiği konfordur.",
+       list:["Zemin silinebilir, örtü kenarı kısa","Tabak kırılmaz, tercihen bölmeli","Takım küt uçlu, bıçak çocuğun önünde yok","Bardak devrilmez, yarım dolu, kenardan uzak","Sıcak kaplar merkezde, saplar içe dönük"]}
+    ]},
+    {id:"bufe",ad:"Açık Büfe Düzeni",ikon:"fa-layer-group",desc:"6 adım · kalabalık & kutlama",steps:[
+      {tag:"Plan",t:"İstasyon & Akış Yönü",img:IMG.bufe,
+       p:"Büfenin sırrı <b>tek yönlü akıştır</b>: masanın bir ucunu \"başlangıç\" ilan et, misafir oradan girip diğer uçtan çıksın. Büfe masasını duvara değil, mümkünse <b>iki taraftan dolaşılır</b> şekilde ortaya kur — kuyruk yarıya iner.",
+       tip:"Akış yönünü tabak yığınının yeri belirler: tabaklar neredeyse, kuyruk orada başlar."},
+      {tag:"Tabaklar",t:"Tabak Başta, Takım Sonda",img:IMG.tabak,
+       p:"Tabak yığınını büfenin <b>giriş ucuna</b> koy. Çatal-bıçağı ise peçeteye sarıp <b>çıkış ucuna</b> diz — misafir yemeğini alırken elinde fazladan takım taşımasın. Peçete-takım rulolarını önceden hazırla.",
+       list:["Tabaklar giriş ucunda, yığın hâlinde","Takımlar peçete rulosunda, çıkış ucunda","Yedek tabaklar masa altında hazır"],
+       tip:"Takım rulosu büfenin en küçük ama en etkili inceliğidir — kuyruktaki herkesin bir eli boşalır."},
+      {tag:"Sıra",t:"Yemek Sırası",img:IMG.salata,
+       p:"Yemekleri akış yönünde <b>soğuktan sıcağa</b> diz: önce salata ve mezeler, sonra ana yemekler, en sonda tatlılar. Soslar ve ekmek, ilgili yemeğin hemen yanında dursun — geri dönüş trafiği yaratma.",
+       tip:"Pahalı/az olan ikramı sıranın sonuna koy — büfe psikolojisi: tabak sıranın başında dolar."},
+      {tag:"Sunum",t:"Yükseklik & Etiket",img:IMG.masa,
+       p:"Arka sıradaki kapları ters çevrilmiş kap ya da ayaklı stand üstüne alarak <b>yükselt</b> — iki katlı sunum hem şık hem erişilebilir. Her kabın önüne küçük bir <b>etiket</b> koy; içinde alerjen varsa (fındık, süt) etikete yaz.",
+       tip:"Her sıcak kabın kendi servis takımı olsun — ortak kepçe iki kuyruğu birbirine düğümler."},
+      {tag:"İçecek",t:"İçecek İstasyonu Ayrı",img:IMG.icecek,
+       p:"İçecekleri <b>ayrı bir masaya</b> kur: bardaklar, sürahiler ve buz bir arada. İçecek büfeyle aynı masada olursa kuyruk ana hattı tıkar. Tatlı tabaklarını da mümkünse içecek masasının yanına al.",
+       tip:"Su sürahisini birden fazla noktaya koy — en çok aranan içecek kuyruk beklemesin."},
+      {tag:"Kontrol",t:"Dolaşım Kontrolü",img:IMG.sunum,
+       p:"Açılıştan önce büfeyi bir misafir gibi <b>baştan sona yürü</b>: tabak → yemekler → takım → içecek hattı takılmadan akıyor mu? Masalar arasında en az <b>90 cm</b> geçiş payı bırak.",
+       list:["Akış tek yönlü: tabak → soğuk → sıcak → tatlı → takım","Her kapta kendi servis takımı","Etiketler yerinde, alerjenler yazılı","İçecek istasyonu ayrı masada","Geçiş aralıkları en az 90 cm"]}
+    ]}
   ];
   var inner=document.getElementById('swzInner'),count=document.getElementById('swzCount'),
       bar=document.getElementById('swzBar'),dotsEl=document.getElementById('swzDots'),
       prev=document.getElementById('swzPrev'),next=document.getElementById('swzNext'),
-      closeBtn=document.getElementById('swzClose');
-  var idx=0,n=STEPS.length;
-  dotsEl.innerHTML=STEPS.map(function(){return '<i></i>'}).join('');
-  var dots=dotsEl.querySelectorAll('i');
+      closeBtn=document.getElementById('swzClose'),title=document.getElementById('swzTitle');
+  var cur=null,idx=0;   // cur=null → tip seçici ekranı
+  function buildDots(){
+    dotsEl.innerHTML=cur?cur.steps.map(function(){return '<i></i>'}).join(''):'';
+    dotsEl.querySelectorAll('i').forEach(function(d,i){d.addEventListener('click',function(){idx=i;render()})});
+  }
   function render(){
-    var s=STEPS[idx];
+    wiz.classList.toggle('picking',!cur);
+    if(!cur){ // tip seçici
+      title.textContent='Sofrayı Adım Adım Kur';
+      count.textContent='Sofranı seç';
+      bar.style.width='0%';
+      inner.innerHTML='<div class="cm-num"><span class="n"><i class="fa-solid fa-utensils"></i></span><span class="cm-tag">Kurulum Sihirbazı</span></div>'
+        +'<h2>Hangi sofrayı kuruyorsun?</h2>'
+        +'<p>Sofranı seç — adımlar ve yerleşim talimatları seçtiğin sofraya göre gelsin.</p>'
+        +'<div class="swz-pick">'+SOFRALAR.map(function(s,i){
+          return '<button type="button" data-sofra="'+i+'"><span class="pk-ico"><i class="fa-solid '+s.ikon+'"></i></span><b>'+s.ad+'</b><span>'+s.desc+'</span></button>'
+        }).join('')+'</div>';
+      inner.querySelectorAll('[data-sofra]').forEach(function(b){
+        b.addEventListener('click',function(){cur=SOFRALAR[+b.getAttribute('data-sofra')];idx=0;buildDots();render()});
+      });
+      return;
+    }
+    var s=cur.steps[idx],n=cur.steps.length;
     var h='<div class="cm-num"><span class="n">'+(idx+1)+'</span><span class="cm-tag">'+s.tag+'</span></div>';
     h+='<h2>'+s.t+'</h2><p>'+s.p+'</p>';
     if(s.list){h+='<ul class="swz-list">'+s.list.map(function(x){return '<li><i class="fa-solid fa-check"></i><span>'+x+'</span></li>'}).join('')+'</ul>'}
     if(s.tip){h+='<div class="swz-tip"><i class="fa-solid fa-lightbulb"></i><span>'+s.tip+'</span></div>'}
     if(s.img){h+='<div class="cm-figs"><div class="cm-fig" style="background-image:url(\''+img(s.img)+'\')"></div></div>'}
     inner.innerHTML=h;
+    title.textContent=cur.ad;
     count.textContent='Adım '+(idx+1)+' / '+n;
     bar.style.width=Math.round((idx+1)/n*100)+'%';
-    dots.forEach(function(d,i){d.className=i===idx?'on':(i<idx?'done':'')});
-    prev.disabled=idx===0;
+    dotsEl.querySelectorAll('i').forEach(function(d,i){d.className=i===idx?'on':(i<idx?'done':'')});
+    prev.disabled=false;   // 1. adımda da aktif: seçiciye döner
+    prev.innerHTML=idx===0?'<i class="fa-solid fa-chevron-left"></i> Sofra Seçimi':'<i class="fa-solid fa-chevron-left"></i> Önceki';
     next.innerHTML=idx===n-1?'Sofra Hazır <i class="fa-solid fa-check"></i>':'Sonraki Adım <i class="fa-solid fa-chevron-right"></i>';
   }
-  function open(){idx=0;render();wiz.classList.add('open');document.body.style.overflow='hidden'}
+  function open(sofra){cur=sofra||null;idx=0;buildDots();render();wiz.classList.add('open');document.body.style.overflow='hidden'}
   function close(){wiz.classList.remove('open');document.body.style.overflow=''}
-  document.querySelectorAll('[data-swz-open]').forEach(function(b){b.addEventListener('click',open)});
+  function goPrev(){if(!cur)return;if(idx>0){idx--;render()}else{cur=null;buildDots();render()}}
+  function goNext(){if(!cur)return;if(idx<cur.steps.length-1){idx++;render()}else{close()}}
+  document.querySelectorAll('[data-swz-open]').forEach(function(b){b.addEventListener('click',function(){open()})});
   closeBtn.addEventListener('click',close);
-  prev.addEventListener('click',function(){if(idx>0){idx--;render()}});
-  next.addEventListener('click',function(){if(idx<n-1){idx++;render()}else{close()}});
-  dots.forEach(function(d,i){d.addEventListener('click',function(){idx=i;render()})});
+  prev.addEventListener('click',goPrev);
+  next.addEventListener('click',goNext);
   document.addEventListener('keydown',function(e){
     if(!wiz.classList.contains('open'))return;
     if(e.key==='Escape')close();
-    else if(e.key==='ArrowRight'&&idx<n-1){idx++;render()}
-    else if(e.key==='ArrowLeft'&&idx>0){idx--;render()}
+    else if(e.key==='ArrowRight')goNext();
+    else if(e.key==='ArrowLeft')goPrev();
   });
-  if(new URLSearchParams(location.search).get('kur')==='1'){open()}
+  var q=new URLSearchParams(location.search).get('kur');
+  if(q==='1'){open()}
+  else if(q){var m=SOFRALAR.filter(function(s){return s.id===q})[0];if(m)open(m)}
 })();
 </script>
 </body>
