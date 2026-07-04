@@ -935,7 +935,7 @@ html,body{overflow-x:hidden}
 .flt-reset i{font-size:11px}
 .flt-reset[hidden]{display:none}
 .flt-foot{display:flex;justify-content:flex-end;margin-top:10px}
-.flt-body{display:grid;grid-template-columns:1.4fr 1fr;gap:14px}
+.flt-body{display:grid;grid-template-columns:1fr 1fr;gap:14px}
 .flt-group{background:var(--bg);border:1px solid var(--line);border-radius:var(--radius-md);padding:15px 17px 14px}
 .fg-head{display:flex;align-items:center;gap:9px;font-size:13px;font-weight:800;color:var(--slate);letter-spacing:-.01em;margin-bottom:13px}
 .fg-head i{font-size:13px}
@@ -1120,7 +1120,6 @@ html,body{overflow-x:hidden}
   .mz-cat-h{padding:14px 2px}
   /* Revize 1 — 390'da tek kolon (yan yana akış kalkar) */
   .cat-cols{grid-template-columns:1fr;column-gap:0}
-  .cat-cols>.mz-cat[data-cat="sik"]{grid-column:auto}
   .tb-toolbar{flex-wrap:wrap;gap:12px}
   .tbt-count{flex:1}
   .tb-rsearch{flex-basis:100%;order:3}
@@ -1253,6 +1252,7 @@ html.reveal-ready .reveal.in{opacity:1;transform:none}
 .foot-app h5{color:#fff;font-size:15px;font-weight:700;margin-bottom:13px}
 .foot-app-lead{font-size:13.5px;font-weight:500;color:#ffdccf;line-height:1.55;max-width:34ch;margin-bottom:16px}
 .foot-app-btns{display:flex;flex-wrap:wrap;gap:11px}
+.foot-app-btns .app-btn{width:170px}
 .app-btn{display:inline-flex;align-items:center;gap:11px;padding:10px 16px;border-radius:var(--radius-md);background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.26);color:#fff;transition:.2s var(--ease)}
 .app-btn i{font-size:23px;color:#fff;flex:none}
 .app-btn .ab-tx{display:flex;flex-direction:column;line-height:1.12;text-align:left}
@@ -2432,9 +2432,11 @@ document.addEventListener('click',function(e){
   // Revize M3: sınırlar TAKSONOMİK (kullanıcı "levrek"i nerede arar?) — mock adedine
   // göre bölme/birleştirme YOK; gerçek üründe her kategori 3-5 kat kalabalıklaşır,
   // panel slider'ı + arama kalabalığı taşır (kapasite varsayımı yok).
+  // Revize (Beyar): Sık Kullanılan · Tahıl·Makarna·Ekmek · Kuruyemiş & Kuru Meyve ·
+  // Tatlı & Pastane KALDIRILDI. Yetim taşımalar: pirinç/makarna/un/ekmek/yulaf/irmik →
+  // Bakliyat & Tahıl; tarçın → Baharat & Sos. Kuruyemiş/tatlı kalanları düştü (alerjen
+  // çipi + serbest arama ekleme telafi eder).
   var CATS=[
-    {key:'sik',name:'Sık Kullanılan',icon:'fa-star',color:'#E0883B',items:[
-      ['Yumurta','egg','fa-egg'],['Soğan','onion','fa-circle'],['Domates','tomatoes','fa-apple-whole'],['Patates','potatoes','fa-bowl-food'],['Tavuk göğsü','chicken-breast','fa-drumstick-bite'],['Kıyma','minced-beef','fa-bacon'],['Süt','milk','fa-bottle-water'],['Peynir','cheese','fa-cheese'],['Makarna','pasta','fa-plate-wheat'],['Pirinç','rice','fa-bowl-rice'],['Un','flour','fa-wheat-awn'],['Zeytinyağı','olive-oil','fa-bottle-droplet']]},
     {key:'sebze',name:'Sebzeler',icon:'fa-carrot',color:'#3BB77E',items:[
       ['Soğan','onion','fa-circle'],['Domates','tomatoes','fa-apple-whole'],['Patates','potatoes','fa-bowl-food'],['Biber','red-pepper','fa-pepper-hot'],['Sarımsak','garlic','fa-plant-wilt'],['Havuç','carrots','fa-carrot'],['Patlıcan','aubergine','fa-seedling'],['Kabak','courgette','fa-seedling'],['Mantar','mushrooms','fa-seedling'],['Brokoli','broccoli','fa-seedling'],['Lahana','cabbage','fa-seedling'],['Pırasa','leek','fa-seedling'],['Bezelye','peas','fa-seedling'],['Taze fasulye','green-beans','fa-seedling'],['Mısır','sweetcorn','fa-seedling']]},
     {key:'yesillik',name:'Salata & Yeşillik',icon:'fa-leaf',color:'#6B9E3E',items:[
@@ -2449,18 +2451,12 @@ document.addEventListener('click',function(e){
       ['Balık','fish','fa-fish'],['Somon','salmon','fa-fish'],['Levrek',null,'fa-fish'],['Hamsi',null,'fa-fish'],['Karides','prawns','fa-shrimp'],['Midye',null,'fa-shrimp']]},
     {key:'sut',name:'Süt & Yumurta',icon:'fa-cheese',color:'#5B8DBE',items:[
       ['Yumurta','egg','fa-egg'],['Süt','milk','fa-bottle-water'],['Peynir','cheese','fa-cheese'],['Yoğurt','yogurt','fa-bowl-food'],['Tereyağı','butter','fa-cube'],['Krema','cream','fa-bottle-droplet'],['Kaşar',null,'fa-cheese']]},
-    {key:'bakliyat',name:'Bakliyat',icon:'fa-seedling',color:'#B07A3A',items:[
-      ['Kırmızı mercimek','lentils','fa-seedling'],['Nohut','chickpeas','fa-seedling'],['Kuru fasulye','kidney-beans','fa-seedling'],['Bulgur','bulgur','fa-bowl-rice'],['Barbunya',null,'fa-seedling'],['Yeşil mercimek','lentils','fa-seedling']]},
-    {key:'tahil',name:'Tahıl · Makarna · Ekmek',icon:'fa-wheat-awn',color:'#E0A23B',items:[
-      ['Pirinç','rice','fa-bowl-rice'],['Makarna','pasta','fa-plate-wheat'],['Un','flour','fa-wheat-awn'],['Ekmek','bread','fa-bread-slice'],['Bulgur','bulgur','fa-bowl-rice'],['Yulaf',null,'fa-wheat-awn'],['İrmik',null,'fa-wheat-awn']]},
+    {key:'bakliyat',name:'Bakliyat & Tahıl',icon:'fa-seedling',color:'#B07A3A',items:[
+      ['Kırmızı mercimek','lentils','fa-seedling'],['Nohut','chickpeas','fa-seedling'],['Kuru fasulye','kidney-beans','fa-seedling'],['Bulgur','bulgur','fa-bowl-rice'],['Barbunya',null,'fa-seedling'],['Yeşil mercimek','lentils','fa-seedling'],['Pirinç','rice','fa-bowl-rice'],['Makarna','pasta','fa-plate-wheat'],['Un','flour','fa-wheat-awn'],['Ekmek','bread','fa-bread-slice'],['Yulaf',null,'fa-wheat-awn'],['İrmik',null,'fa-wheat-awn']]},
     {key:'baharat',name:'Baharat & Sos',icon:'fa-mortar-pestle',color:'#C1502E',items:[
-      ['Tuz','salt','fa-cubes-stacked'],['Karabiber','black-pepper','fa-mortar-pestle'],['Pul biber','chilli-powder','fa-pepper-hot'],['Kimyon','cumin','fa-mortar-pestle'],['Kekik','oregano','fa-leaf'],['Nane','mint','fa-leaf'],['Ketçap','ketchup','fa-bottle-droplet'],['Soya sosu','soy-sauce','fa-bottle-droplet'],['Sirke','vinegar','fa-bottle-droplet'],['Salça',null,'fa-jar']]},
+      ['Tuz','salt','fa-cubes-stacked'],['Karabiber','black-pepper','fa-mortar-pestle'],['Pul biber','chilli-powder','fa-pepper-hot'],['Kimyon','cumin','fa-mortar-pestle'],['Kekik','oregano','fa-leaf'],['Nane','mint','fa-leaf'],['Tarçın',null,'fa-mortar-pestle'],['Ketçap','ketchup','fa-bottle-droplet'],['Soya sosu','soy-sauce','fa-bottle-droplet'],['Sirke','vinegar','fa-bottle-droplet'],['Salça',null,'fa-jar']]},
     {key:'yag',name:'Yağlar',icon:'fa-bottle-droplet',color:'#A38B2A',items:[
-      ['Zeytinyağı','olive-oil','fa-bottle-droplet'],['Ayçiçek yağı','sunflower-oil','fa-bottle-droplet'],['Sıvı yağ','vegetable-oil','fa-bottle-droplet'],['Tereyağı','butter','fa-cube']]},
-    {key:'kuruyemis',name:'Kuruyemiş & Kuru Meyve',icon:'fa-seedling',color:'#8A6D3B',items:[
-      ['Ceviz','walnuts','fa-seedling'],['Badem','almonds','fa-seedling'],['Antep fıstığı','pistachio','fa-seedling'],['Kuru üzüm','raisins','fa-seedling'],['Hurma','dates','fa-seedling'],['Fındık',null,'fa-seedling']]},
-    {key:'tatli',name:'Tatlı & Pastane',icon:'fa-cake-candles',color:'#B96A5C',items:[
-      ['Şeker',null,'fa-cubes-stacked'],['Bal',null,'fa-jar'],['Reçel',null,'fa-jar'],['Pekmez',null,'fa-jar'],['Tahin',null,'fa-jar'],['Çikolata',null,'fa-cookie-bite'],['Kakao',null,'fa-mug-hot'],['Vanilya',null,'fa-seedling'],['Tarçın',null,'fa-mortar-pestle'],['Maya',null,'fa-cube']]}
+      ['Zeytinyağı','olive-oil','fa-bottle-droplet'],['Ayçiçek yağı','sunflower-oil','fa-bottle-droplet'],['Sıvı yağ','vegetable-oil','fa-bottle-droplet'],['Tereyağı','butter','fa-cube']]}
   ];
   // İstemediklerim modu — hızlı alerjen satırı (abstract; EXMAP genişletir)
   var ALLERGENS=[['Gluten','fa-wheat-awn'],['Laktoz','fa-cow'],['Yumurta','fa-egg'],['Kuruyemiş','fa-bowl-food'],['Deniz ürünleri','fa-shrimp'],['Acı biber','fa-pepper-hot']];
@@ -2480,8 +2476,8 @@ document.addEventListener('click',function(e){
   // [key] = {marka+ürün, fa-ikon, img}. img boş → .mz-img placeholder; gerçek ürün
   // görseli sonra background-image ile swap edilir (.has-photo deseni). Seçilemez.
   var SPONSOR={
-    sik:{name:'Komili Zeytinyağı',icon:'fa-bottle-droplet',img:''},        // Sık Kullanılan (varsayılan açık → ilk bakışta görünür)
-    tahil:{name:'Filiz Makarna',icon:'fa-plate-wheat',img:''},             // Tahıl · Makarna · Ekmek
+    yag:{name:'Komili Zeytinyağı',icon:'fa-bottle-droplet',img:''},        // Yağlar (eski Sık Kullanılan slotu — kategori kaldırıldı)
+    bakliyat:{name:'Filiz Makarna',icon:'fa-plate-wheat',img:''},          // Bakliyat & Tahıl (eski Tahıl slotu)
     sut:{name:'Sütaş Süt',icon:'fa-bottle-water',img:''}                   // Süt & Yumurta
   };
   function sponsorCardHTML(sp){
@@ -2500,7 +2496,7 @@ document.addEventListener('click',function(e){
     }).join('');
     var sp=SPONSOR[cat.key], sponsor=sp?sponsorCardHTML(sp):'';
     var more=hasXtra?'<button type="button" class="mz-more"><i class="fa-solid fa-chevron-down"></i> Daha fazla</button>':'';
-    var openDef=cat.key==='sik'||cat.key==='sebze';  // varsayılan İLK SATIR açık (sik+sebze — satır eşi senkron kuralıyla tutarlı)
+    var openDef=cat.key==='sebze'||cat.key==='yesillik';  // varsayılan İLK SATIR açık (sebze+yesillik — satır eşi senkron kuralıyla tutarlı)
     // UF#1: 15'ten FAZLA malzemeli kategori → slider kendi içinde 2 satıra dizilir (yatay scroll korunur)
     var twoRow=cat.items.length>15?' two-row':'';
     return '<section class="mz-cat'+(openDef?' open':'')+'" id="cat-'+mode+'-'+cat.key+'" data-cat="'+cat.key+'" style="--cat:'+cat.color+'">'+
