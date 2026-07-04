@@ -1380,6 +1380,16 @@ body.is-ramazan .menu-detail,body.rmz-ask .menu-detail{scroll-margin-top:180px}
 .cp-legend i{width:22px;height:10px;border-radius:4px;display:inline-block}
 .cp-legend .lg-cook{background:var(--tomato)}
 .cp-legend .lg-rest{background:var(--tomato-tint);border:1px dashed rgba(225,72,39,.4)}
+/* Revize-3 S1: kullanıcı sıralaması — ok butonları + özel sıra uyarısı + önerilen sıraya dön */
+.cp-lbl{position:relative;padding-left:32px}
+.cp-mv{position:absolute;left:0;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:3px}
+.cp-mv button{width:24px;height:21px;display:flex;align-items:center;justify-content:center;background:#fff;border:1px solid var(--line);border-radius:var(--radius-sm);color:var(--slate-2);font-size:9.5px;cursor:pointer;padding:0;font-family:inherit;transition:border-color .15s,color .15s}
+.cp-mv button:hover{border-color:var(--tomato);color:var(--tomato)}
+.cp-mv button:disabled{opacity:.32;cursor:default;pointer-events:none}
+.cp-lbl .cp-warn{display:block;font-size:10.5px;font-weight:600;color:var(--tomato-dark,#c13a1e);line-height:1.35;margin-top:2px;max-width:225px}
+.cp-warn i{margin-right:4px;font-size:9.5px}
+.cp-reset{display:inline-flex;align-items:center;gap:7px;margin-left:auto;font-size:11px;font-weight:700;letter-spacing:.02em;color:var(--slate-2);background:#fff;border:1px solid var(--line);border-radius:var(--radius-pill);padding:6px 13px;cursor:pointer;font-family:inherit;transition:border-color .15s,color .15s}
+.cp-reset:hover{border-color:var(--tomato);color:var(--tomato)}
 @media (max-width:640px){
   .cm-plan h2{font-size:22px}
   .cp-lead{font-size:14px}
@@ -1387,6 +1397,9 @@ body.is-ramazan .menu-detail,body.rmz-ask .menu-detail{scroll-margin-top:180px}
   .cp-axis{padding-left:0}
   .cp-ruler{margin-left:0}
   .cp-lbl .cp-why{max-width:none}
+  .cp-lbl{padding-left:36px}
+  .cp-mv button{width:28px;height:25px;font-size:11px}
+  .cp-lbl .cp-warn{max-width:none}
 }
 .cm-stepbar{display:flex;align-items:center;gap:13px;margin:18px 0 20px;flex-wrap:wrap}
 .cm-stepbar .csb-lbl{font-size:11.5px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--slate-2)}
@@ -3678,8 +3691,8 @@ document.addEventListener('click',function(e){
       });
     }
     // dishes[] = servis planına göre başlama sıralı kaplar; flat[] = örgülü tek sekans
-    var dishes=[],flat=[],gIdx=0,G=0,atPlan=true,spanMin=0,sumMin=0;
-    function buildSeq(){
+    var dishes=[],flat=[],gIdx=0,G=0,atPlan=true,spanMin=0,sumMin=0,orderCustom=false,smartSpan=0;
+    function buildDishes(){
       dishes=working.courses.map(function(co){
         var r=rcp(co.ck,co.idx),sv=SERVE[co.ck]||SERVE.ana;
         return {ck:co.ck,name:r.n,img:r.img,min:r.min,d:r.d,course:COURSEDEF[co.ck].label,
@@ -3688,8 +3701,32 @@ document.addEventListener('click',function(e){
       // GERİYE DOĞRU PLANLAMA: lead (süre+pasif pay) büyük olan ÖNCE başlar;
       // eşitlikte tazeliği kritik olan (fresh büyük) sona atılır.
       dishes.sort(function(a,b){return b.lead!==a.lead?b.lead-a.lead:a.fresh-b.fresh;});
-      spanMin=dishes.reduce(function(m,d){return Math.max(m,d.lead);},0);
+      orderCustom=false;
+      computeSpans();
+    }
+    // Revize-3 S1: özel sırada kabın başlangıcı = önceki kapların ilk pasif adıma kadarki aktif
+    // dakikaları (örgüyle tutarlı); pasif adımı olmayan kap bitmeden sıradaki yola çıkamaz.
+    function activeBeforePassive(d){
+      var steps=genSteps(d),s=0;
+      for(var i=0;i<steps.length;i++){if(steps[i].p)break;s+=steps[i].min;}
+      return s;
+    }
+    function computeSpans(){
       sumMin=dishes.reduce(function(a,d){return a+d.min;},0);
+      smartSpan=dishes.reduce(function(m,d){return Math.max(m,d.lead);},0);
+      if(!orderCustom){
+        // akıllı plan: herkes serviste biter — başlangıç = servis − lead
+        spanMin=smartSpan;
+        dishes.forEach(function(d){d.start=spanMin-d.lead;});
+      }else{
+        // özel sıra: başlangıçlar kullanıcı dizilişinden türetilir
+        var clock=0;
+        dishes.forEach(function(d){d.start=clock;clock+=activeBeforePassive(d);});
+        spanMin=dishes.reduce(function(m,d){return Math.max(m,d.start+d.lead);},0);
+      }
+    }
+    function buildSeq(){buildDishes();buildWeave();}
+    function buildWeave(){
       // ADIM ÖRGÜSÜ: pasif adım (p:1) başlayınca sıradaki kabın aktif adımına geçilir;
       // bekleyen kap sırası gelince kaldığı yerden sürer. Her adıma gerekçe notu yazılır.
       var lanes=dishes.map(function(d){return {d:d,steps:genSteps(d),i:0};});
@@ -3702,11 +3739,18 @@ document.addEventListener('click',function(e){
         var s=L.steps[L.i],si=L.i;L.i++;
         var prev=flat[flat.length-1],note='';
         if(si===0){
+          // Revize-3 S1c: özel sırada algoritma gerekçesi (why) yanıltır — nötr anlatım
           note=!prev
-            ?'Plana göre ilk başlayan kap <b>'+L.d.name+'</b>: '+L.d.why+' (servisten ~'+L.d.lead+' dk önce yola çıkmalı).'
+            ?(orderCustom
+              ?'Senin sıranla ilk kap <b>'+L.d.name+'</b> — servisten ~'+Math.round(spanMin-L.d.start)+' dk önce yola çıkıyor.'
+              :'Plana göre ilk başlayan kap <b>'+L.d.name+'</b>: '+L.d.why+' (servisten ~'+L.d.lead+' dk önce yola çıkmalı).')
             :(prev.p
-              ?'<b>'+prev.dish.name+'</b> kendi kendine ilerlerken eller boş kalmasın — sıra <b>'+L.d.name+'</b>’de: '+L.d.why+'.'
-              :'<b>'+prev.dish.name+'</b> tamam sayılır — şimdi <b>'+L.d.name+'</b>’e geç: '+L.d.why+'.');
+              ?(orderCustom
+                ?'<b>'+prev.dish.name+'</b> kendi kendine ilerlerken eller boş kalmasın — senin sıranla sıradaki kap <b>'+L.d.name+'</b>.'
+                :'<b>'+prev.dish.name+'</b> kendi kendine ilerlerken eller boş kalmasın — sıra <b>'+L.d.name+'</b>’de: '+L.d.why+'.')
+              :(orderCustom
+                ?'<b>'+prev.dish.name+'</b> tamam sayılır — senin sıranla şimdi <b>'+L.d.name+'</b>’e geç.'
+                :'<b>'+prev.dish.name+'</b> tamam sayılır — şimdi <b>'+L.d.name+'</b>’e geç: '+L.d.why+'.'));
         }else if(prevLane!==cur){
           note='<b>'+L.d.name+'</b> beklemesini doldurdu — kaldığın yerden devam et.';
         }else if(s.p){
@@ -3735,15 +3779,30 @@ document.addEventListener('click',function(e){
       var ticks=[];for(var tt=step;tt<spanMin*0.94;tt+=step)ticks.push(tt);
       var tickHtml=ticks.map(function(t){return '<i class="cp-tick" style="left:'+(t/spanMin*100).toFixed(1)+'%"></i>';}).join('');
       var rows=dishes.map(function(d,i){
-        var l=spanMin?Math.round((spanMin-d.lead)/spanMin*100):0,
+        var l=spanMin?Math.round(d.start/spanMin*100):0,
             wCook=spanMin?Math.max(Math.round(d.min/spanMin*100),4):100,
             wRest=spanMin?Math.max(Math.round(d.rest/spanMin*100),0):0;
-        // M1a: sıra gerekçesi rozeti (ilk/son vurgulu) + SERVE.why notu her satırda
-        var badge=i===0?'<span class="cp-badge first">İlk başlar</span>'
-          :(i===dishes.length-1?'<span class="cp-badge last">En son</span>'
-          :'<span class="cp-badge">'+(i+1)+'. sırada</span>');
+        // M1a: sıra gerekçesi rozeti (ilk/son vurgulu) — özel sırada nötr "N. sıra" (S1b)
+        var badge=orderCustom
+          ?'<span class="cp-badge">'+(i+1)+'. sıra</span>'
+          :(i===0?'<span class="cp-badge first">İlk başlar</span>'
+            :(i===dishes.length-1?'<span class="cp-badge last">En son</span>'
+            :'<span class="cp-badge">'+(i+1)+'. sırada</span>'));
+        // S1d: engellemesiz risk uyarısı — akıllı modda SERVE.why notu
+        var note='';
+        if(orderCustom){
+          var idle=spanMin-(d.start+d.lead);
+          if(d.fresh>=4&&idle>=15)note='<small class="cp-warn"><i class="fa-solid fa-triangle-exclamation"></i>Tazelik kritik — bu sırada servisten ~'+idle+' dk önce hazır olur, beklerken tazeliğini yitirebilir.</small>';
+          else if(d.rest>=30&&i===dishes.length-1)note='<small class="cp-warn"><i class="fa-solid fa-triangle-exclamation"></i>~'+d.rest+' dk soğuma/dinlenme payı sona kalınca servis saatini uzatır.</small>';
+        }else{
+          note='<small class="cp-why">'+d.why+'</small>';
+        }
+        // S1a: yukarı/aşağı taşıma butonları (uçlarda pasif)
+        var mv='<span class="cp-mv">'+
+          '<button type="button" data-mv="-1" data-i="'+i+'" aria-label="'+d.name+' bir üst sıraya taşı"'+(i===0?' disabled':'')+'><i class="fa-solid fa-chevron-up"></i></button>'+
+          '<button type="button" data-mv="1" data-i="'+i+'" aria-label="'+d.name+' bir alt sıraya taşı"'+(i===dishes.length-1?' disabled':'')+'><i class="fa-solid fa-chevron-down"></i></button></span>';
         return '<div class="cp-row">'+
-          '<div class="cp-lbl"><b>'+(i+1)+'. '+d.name+' '+badge+'</b><small>'+d.course+' · ~'+d.min+' dk'+(d.rest?' + ~'+d.rest+' dk bekleme':'')+'</small><small class="cp-why">'+d.why+'</small></div>'+
+          '<div class="cp-lbl">'+mv+'<b>'+(i+1)+'. '+d.name+' '+badge+'</b><small>'+d.course+' · ~'+d.min+' dk'+(d.rest?' + ~'+d.rest+' dk bekleme':'')+'</small>'+note+'</div>'+
           '<div class="cp-track">'+tickHtml+
           '<span class="cp-seg cook" style="left:'+l+'%;width:'+wCook+'%" title="~'+d.min+' dk aktif pişirme">'+(wCook>=12?'<em>'+d.min+' dk</em>':'')+'</span>'+
           (wRest?'<span class="cp-seg rest" style="left:'+Math.min(l+wCook,97)+'%;width:'+wRest+'%" title="~'+d.rest+' dk bekleme / soğuma / dinlenme">'+(wRest>=12?'<em>'+d.rest+' dk</em>':'')+'</span>':'')+
@@ -3751,22 +3810,45 @@ document.addEventListener('click',function(e){
       }).join('');
       // M1b: şerit sütunuyla hizalı dakika cetveli (tick etiketleri) + uçlarda dakikalı eksen
       var ruler='<div class="cp-ruler">'+ticks.map(function(t){return '<span style="left:'+(t/spanMin*100).toFixed(1)+'%">'+t+' dk</span>';}).join('')+'</div>';
+      // S1b: özel sırada başlık/özet değişir; gecikme varsa sayısal not düşülür
+      var delay=orderCustom?Math.max(0,spanMin-smartSpan):0;
+      var lead=orderCustom
+        ?'Sırayı sen belirledin — kaplar senin dizilişinle yola çıkar, fırın/kaynama beklemelerinde diğer kapların adımları yine araya girer'+(delay?'. Bu sıra servisi önerilen plana göre ~'+delay+' dk geciktirir':'')+'.'
+        :'Uzun pişen ve soğuması gereken kaplar önce başlar; salata gibi tazeliği önemli kaplar en sona kalır. Fırın/kaynama beklemelerinde diğer kapların adımları araya girer'+(sumMin>spanMin?' — toplam ~'+sumMin+' dakikalık iş tek akışta ~'+spanMin+' dakikaya iner':'')+'.';
       cmInner.innerHTML=
         '<div class="cm-plan">'+
-        '<div class="cm-dishhead"><span class="cdh-tag"><i class="fa-solid fa-chess-board"></i> Pişirme Planı</span><span class="cdh-meta">'+dishes.length+' kap · tek servis anı</span></div>'+
-        '<h2>Sofra tek seferde kurulacak şekilde sıraladık</h2>'+
-        '<p class="cp-lead">Uzun pişen ve soğuması gereken kaplar önce başlar; salata gibi tazeliği önemli kaplar en sona kalır. Fırın/kaynama beklemelerinde diğer kapların adımları araya girer'+(sumMin>spanMin?' — toplam ~'+sumMin+' dakikalık iş tek akışta ~'+spanMin+' dakikaya iner':'')+'.</p>'+
+        '<div class="cm-dishhead"><span class="cdh-tag"><i class="fa-solid fa-chess-board"></i> Pişirme Planı</span><span class="cdh-meta">'+dishes.length+' kap · '+(orderCustom?'özel sıra':'tek servis anı')+'</span>'+
+        (orderCustom?'<button type="button" class="cp-reset" id="cpReset"><i class="fa-solid fa-rotate-left"></i> Önerilen sıraya dön</button>':'')+'</div>'+
+        '<h2>'+(orderCustom?'Sıra sende — planı senin dizilişine kurduk':'Sofra tek seferde kurulacak şekilde sıraladık')+'</h2>'+
+        '<p class="cp-lead">'+lead+'</p>'+
         '<div class="cp-list">'+rows+'</div>'+
         ruler+
         '<div class="cp-axis"><span>İlk tencere ocakta · 0 dk</span><span>Servis · ~'+spanMin+' dk</span></div>'+
         '<div class="cp-legend"><span><i class="lg-cook"></i> Aktif pişirme</span><span><i class="lg-rest"></i> Bekleme / soğuma / dinlenme</span></div>'+
         '</div>';
+      // S1a: taşı + önerilen sıraya dön aksiyonları
+      cmInner.querySelectorAll('.cp-mv button').forEach(function(b){
+        b.addEventListener('click',function(){moveDish(parseInt(b.getAttribute('data-i'),10),parseInt(b.getAttribute('data-mv'),10));});
+      });
+      var rb=document.getElementById('cpReset');
+      if(rb)rb.addEventListener('click',function(){buildDishes();buildWeave();renderPlan();});
       cmCount.textContent='Plan';
       cmBar.style.width='0%';
       [].forEach.call(cmRail.children,function(c){c.className='cm-chip';});
       cmPrev.disabled=true;
       cmNext.innerHTML='Pişirmeye Başla <i class="fa-solid fa-fire-burner"></i>';
       cmTimer.style.display='none';
+    }
+    // S1a: kap taşıma — sırayı değiştir, süreleri/örgüyü yeniden kur, planı tazele.
+    // innerHTML yeniden basıldığı için focus taşınan kabın butonuna geri verilir (klavye erişimi).
+    function moveDish(i,dir){
+      var j=i+dir;if(j<0||j>=dishes.length)return;
+      var t=dishes[i];dishes[i]=dishes[j];dishes[j]=t;
+      orderCustom=true;
+      computeSpans();buildWeave();renderPlan();
+      var fb=cmInner.querySelector('.cp-mv button[data-i="'+j+'"][data-mv="'+dir+'"]');
+      if(!fb||fb.disabled)fb=cmInner.querySelector('.cp-mv button[data-i="'+j+'"][data-mv="'+(-dir)+'"]');
+      if(fb)fb.focus();
     }
     function render(){
       atPlan=false;
