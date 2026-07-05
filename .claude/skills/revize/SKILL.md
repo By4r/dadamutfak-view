@@ -39,43 +39,35 @@ Akış beş adımdır; sırayla uygula, adım atlama. **Onay gelmeden kod deği�
 2. Nav/header değişikliği çıkarsa **UYAR:** bu bloklar hardcoded'dır ve tüm marka
    sayfalarına yayılması gerekir — kapsamı Beyar'a onaylat, **kendiliğinden yayma.**
 
-## ADIM 4 — QA + RAPOR (kademeli protokol)
+## ADIM 4 — QA + RAPOR (minimal protokol)
 
-QA maliyeti değişikliğin kapsamına göre seçilir; **varsayılan SMOKE'tur.**
-Script sıfırdan yazılmaz: `tasks/_qa-lib.mjs` helper'ı import edilir
-(yoksa bir kez oluştur; tur scriptleri yalnız sayfaya özgü assert'leri içerir).
+### NONE+console (varsayılan — her iş)
 
-### SMOKE (varsayılan — küçük/tek-dosya, linke dokunmayan değişiklik)
+1. Uygulama bitince sayfayı headless'ta **BİR KEZ** aç (`?cb=<timestamp>`
+   cache-bust), console error sayısını kontrol et (0 mu?), kapat.
+   Playwright'ta `networkidle` KULLANMA (video/uzak görselli sayfalarda
+   asla inmiyor) — `domcontentloaded` + sabit bekleme.
+2. **SS yok, görsel self-verify yok, link crawl yok, assert scripti yok.**
+3. Rapor: tek satır **"Console: temiz"** (veya hata dökümü) + ne değiştiğinin
+   kısa özeti + **localhost linki**. Görsel kontrol tamamen Beyar'da.
 
-1. Console error taraması (değişen sayfa, `?cb=<timestamp>` cache-bust).
-2. Değişikliğin **PROGRAMATİK assert'i** (computed style / DOM ölçümü) —
-   birincil kanıt budur, SS değil.
-3. SADECE değişen bölgenin **clip'li SS'i** (element bbox + pay, TEK clip).
-   Görsel self-verify YALNIZ görsel/polish maddesinde; davranış maddesinde
-   assert yeter. Crop-zoom DÖNGÜSÜ yine yasak: tek clip çek, tek bak;
-   hâlâ emin değilsen grep/kod ile teyit.
-4. **Link tıkla-doğrulama YOK.** Salt CSS/metin değişikliği ölü link üretemez;
-   CLAUDE.md "Bağlantı & Akış Bütünlüğü" denetiminin tetikleyicisi linke
-   dokunan iştir → o iş zaten FULL'dür.
+### FULL (yalnız öneriyle — otomatik DEĞİL)
 
-### FULL (yalnız şu durumlarda)
+Şu işlerde raporda FULL QA **öner ve Beyar'ın onayını bekle**; onaysız
+çalıştırma:
 
-- href/CTA/nav değişikliği veya yeni link/akış ekleme
 - Çok dosyalı yayılım / sweep
-- Kabuk işi (header/footer/shell)
-- Yeni sayfa
+- Kabuk/shell transplantı (header/footer)
+- href/nav toplu değişikliği
 
-O zaman: dokunulan sayfanın giden linklerini tıkla-doğrula + TAM SAYFA SS
-(1440, gerekiyorsa 390) + görsel self-verify + console taraması + etkilenen
-akışı uçtan uca yürüt.
+Onay gelirse `tasks/_qa-lib.mjs` ile link crawl + SS yapılır
+(SS'ler gitignore'lu `outputs/` altına).
 
 ### Ortak
 
-- Screenshot'lar gitignore'lu klasöre (`outputs/`).
-- Playwright'ta `networkidle` KULLANMA (video/uzak görselli sayfalarda asla
-  inmiyor) — `domcontentloaded` + sabit bekleme.
-- Rapora zorunlu satır: **"QA modu: SMOKE/FULL + tek cümle gerekçe."**
-- Kısa **YAZILI** rapor: madde madde ne yapıldı + QA sonucu.
+- Rapora zorunlu satır: **"QA modu: NONE+console"** (veya FULL önerisi
+  + tek cümle gerekçe).
+- Kısa **YAZILI** rapor: madde madde ne yapıldı + console sonucu.
 - **COMMIT/PUSH YOK** — kapanışı Beyar `handoff` ile yapar. Raporu ver, DUR.
 
 ## Kurallar
