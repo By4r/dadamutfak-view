@@ -568,3 +568,27 @@ handoff commit attı ama push atlandı (4252efa) — lokal main origin'den 1 com
 rapor "senkron" dedi. **Kural:** push sonrası `git status --short --branch` ile ahead/behind
 doğrulaması ŞART; `[ahead N]` görünüyorsa tekrar push et. "Origin ile senkron" ifadesi ancak
 doğrulama temiz çıkınca yazılır. (SKILL.md ADIM 2/4'e eklendi.)
+
+## QA maliyeti değişikliğin kapsamıyla ölçeklenir — minimal NONE+console (2026-07-05, Rev20 sonrası denetim; aynı gün ikinci karar ile sadeleşti)
+
+**Kural:** Varsayılan QA modu NONE+console'dur: uygulama bitince sayfa
+headless'ta BİR KEZ açılır, console error kontrolü (0 mu?) yapılır, kapatılır.
+SS yok, görsel self-verify yok, link crawl yok, assert scripti yok. Rapor tek
+satır "Console: temiz" + değişiklik özeti + localhost linki — görsel kontrol
+tamamen Beyar'da. FULL QA (link crawl + SS, `tasks/_qa-lib.mjs` ile) OTOMATİK
+DEĞİL: yalnız çok dosyalı yayılım/sweep, kabuk/shell transplantı ve href/nav
+toplu değişikliğinde raporda ÖNERİLİR, Beyar onaylarsa koşulur.
+
+**Why:** 20 oturumda QA pratiği kapsam-körü sabitlenmişti: TEK SATIR CSS
+değişikliği bile 60+ linklik seri tıkla-doğrulama, 8000px tam sayfa SS
+(+model tarafında görsel okuma maliyeti) ve her tur sıfırdan yazılan Playwright
+scripti (tasks/ altında 158 tek-kullanımlık _*.mjs birikti) alıyordu. Yavaşlamanın
+kök nedeni tek tek işler değil, orantısız sabit QA maliyetiydi. Önce kademeli
+SMOKE/FULL kuruldu (`6f08635`); aynı gün Beyar görsel doğrulamayı tamamen kendine
+alarak varsayılanı NONE+console'a indirdi (`d00ae26`) — assert/clip-SS bile
+varsayılandan çıktı.
+
+**How to apply:** revize SKILL.md ADIM 4 güncel protokolü içeriyor; rapora
+"QA modu: NONE+console" (veya FULL önerisi + gerekçe) satırı zorunlu.
+Playwright'ta networkidle kullanma (portal gibi sayfalarda asla inmiyor) —
+`domcontentloaded` + sabit bekleme.
