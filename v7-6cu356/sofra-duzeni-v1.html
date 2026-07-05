@@ -901,6 +901,28 @@ html,body{overflow-x:clip}
 .swz-list{list-style:none;margin:16px 0 0;padding:0;display:grid;gap:9px}
 .swz-list li{display:flex;align-items:flex-start;gap:10px;font-size:15.5px;font-weight:600;color:var(--slate-2)}
 .swz-list li i{color:var(--green);font-size:13px;margin-top:4px}
+/* kuşbakışı kuver şeması — yerleştirme adımlarında foto yerine tek parametrik SVG (svgKuver).
+   Kümülatif kurgu: o adımda eklenen parça domates vurgulu, önceki adımlardan gelenler soluk kum,
+   kontrol adımında tam kuver koyu nötr. Renkler palet-içi: tomato + cream türevi nötrler. */
+.swz-sema{margin-top:24px;max-width:720px;background:var(--cream-2);border:1px solid var(--line);border-radius:var(--radius-lg);padding:16px 18px 4px;box-shadow:var(--sh-sm)}
+.swz-sema svg{display:block;width:100%;height:auto}
+.swz-sema .pc{fill:none;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
+.swz-sema .pc-o{stroke:#cbc1ac}
+.swz-sema .pc-o .fl{fill:#f4eee0}
+.swz-sema .pc-t{stroke:#6f6753}
+.swz-sema .pc-t .fl{fill:var(--paper)}
+.swz-sema .pc-y{stroke:var(--tomato)}
+.swz-sema .pc-y .fl{fill:var(--tomato-tint)}
+.swz-sema text{font-family:inherit}
+.swz-sema .pl{font-size:12px;font-weight:700;fill:var(--tomato);letter-spacing:.02em}
+.swz-sema .mk{stroke:#d5cbb5;stroke-width:2;stroke-dasharray:2 7;stroke-linecap:round}
+.swz-sema .mkl{font-size:9.5px;font-weight:700;letter-spacing:.14em;fill:#a89e87}
+.swz-sema-leg{display:flex;flex-wrap:wrap;gap:6px 20px;align-items:center;padding:12px 4px 10px;font-size:12px;font-weight:600;color:var(--muted)}
+.swz-sema-leg span{display:inline-flex;align-items:center;gap:7px}
+.swz-sema-leg i{width:12px;height:12px;border-radius:4px;flex:none}
+.swz-sema-leg .ly i{background:var(--tomato-tint);border:2px solid var(--tomato)}
+.swz-sema-leg .lo i{background:#f4eee0;border:2px solid #cbc1ac}
+.swz-sema-leg .lt i{background:var(--paper);border:2px solid #6f6753}
 /* tip seçici (giriş ekranı) — 8 sofra karosu; sayfadaki kategori vitrininin kompakt aynası */
 .swz-pick{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:22px}
 .swz-pick button{display:flex;flex-direction:column;align-items:flex-start;gap:10px;padding:18px 16px;border:1px solid var(--line);border-radius:var(--radius-lg);background:var(--paper);cursor:pointer;text-align:left;font-family:inherit;transition:.2s var(--ease)}
@@ -2243,6 +2265,79 @@ window.__bottomStrips=window.__bottomStrips||[];
 (function(){
   var wiz=document.getElementById('swz'); if(!wiz) return;
   function img(id){return "https://images.unsplash.com/photo-"+id+"?w=900&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5"}
+  /* ===== KUŞBAKIŞI KUVER ŞEMASI — tek parametrik builder =====
+     Yerleştirme adımlarında foto yerine inline SVG; parça görünürlüğü/vurgusu adım verisinden
+     (SEMA) gelir, elle adım-başı çizim yok. Durumlar: yeni=domates vurgu · önceki=soluk kum ·
+     kontrol (tam:true)=koyu nötr. Etiket yalnız o adımda eklenen parçada. */
+  function fkP(x,y,len,ang){ // çatal: baş (x,y), sap aşağı; ang ile döner (90=baş sağa)
+    var t='<path d="M'+(x-9)+' '+y+' v20 M'+x+' '+y+' v24 M'+(x+9)+' '+y+' v20"/>'
+      +'<path d="M'+(x-9)+' '+(y+18)+' Q'+x+' '+(y+36)+' '+(x+9)+' '+(y+18)+'"/>'
+      +'<line x1="'+x+'" y1="'+(y+32)+'" x2="'+x+'" y2="'+(y+len)+'"/>';
+    return ang?'<g transform="rotate('+ang+' '+x+' '+y+')">'+t+'</g>':t;
+  }
+  function kfP(x,y,len,ang){ // bıçak: düz (keskin) ağız solda — tabağa dönük
+    var t='<path d="M'+(x-5)+' '+y+' L'+(x-5)+' '+(y+64)+' Q'+(x+9)+' '+(y+50)+' '+(x+5)+' '+(y+16)+' Q'+(x+3)+' '+(y+3)+' '+(x-5)+' '+y+' Z"/>'
+      +'<line x1="'+x+'" y1="'+(y+64)+'" x2="'+x+'" y2="'+(y+len)+'"/>';
+    return ang?'<g transform="rotate('+ang+' '+x+' '+y+')">'+t+'</g>':t;
+  }
+  function spP(x,y,len,ang,rx,ry){ // kaşık: çukur baş (x,y)'den başlar
+    rx=rx||10;ry=ry||17;
+    var t='<ellipse cx="'+x+'" cy="'+(y+ry)+'" rx="'+rx+'" ry="'+ry+'"/>'
+      +'<line x1="'+x+'" y1="'+(y+ry*2)+'" x2="'+x+'" y2="'+(y+len)+'"/>';
+    return ang?'<g transform="rotate('+ang+' '+x+' '+y+')">'+t+'</g>':t;
+  }
+  function crP(cx,cy,r,ir){return '<circle class="fl" cx="'+cx+'" cy="'+cy+'" r="'+r+'"/>'+(ir?'<circle cx="'+cx+'" cy="'+cy+'" r="'+ir+'"/>':'')}
+  var PARCA={
+    servisTabagi:{lbl:"Servis Tabağı",lx:380,ly:392,d:function(){return crP(380,252,112)}},
+    tabak:{lbl:"Yemek Tabağı",lx:380,ly:330,d:function(){return crP(380,252,92)}},
+    tabakKahvalti:{lbl:"Kahvaltı Tabağı",lx:380,ly:346,d:function(){return crP(380,252,74)}},
+    pastaTabagi:{lbl:"Pasta/Tatlı Tabağı",lx:380,ly:258,d:function(){return crP(380,252,70)}},
+    tabakBolmeli:{lbl:"Bölmeli Tabak",lx:380,ly:300,d:function(){return '<rect class="fl" x="290" y="170" width="180" height="164" rx="22"/><path d="M380 170 V254 M290 254 H470"/>'}},
+    derinKase:{lbl:"Çorba Kâsesi",lx:380,ly:248,d:function(){return crP(380,252,56,36)}},
+    salataKayik:{lbl:"Salata Kayığı",lx:225,ly:96,d:function(){return '<ellipse class="fl" cx="225" cy="140" rx="48" ry="26"/><ellipse cx="225" cy="140" rx="30" ry="14"/>'}},
+    recelTabagi:{lbl:"Reçel/Tatlı Tabağı",lx:225,ly:76,d:function(){return crP(225,128,36,22)}},
+    anaCatal:{lbl:"Ana Çatal",lx:252,ly:348,d:function(){return fkP(252,178,150)}},
+    salataCatal:{lbl:"Salata Çatalı",lx:208,ly:370,d:function(){return fkP(208,178,150)}},
+    balikCatal:{lbl:"Balık Çatalı",lx:208,ly:370,d:function(){return fkP(208,178,150)}},
+    anaBicak:{lbl:"Ana Bıçak",lx:508,ly:348,d:function(){return kfP(508,178,150)}},
+    balikBicak:{lbl:"Balık Bıçağı",lx:550,ly:370,d:function(){return kfP(550,182,142)}},
+    corbaKasigi:{lbl:"Çorba Kaşığı",lx:550,ly:370,d:function(){return spP(550,178,150)}},
+    corbaKasigiDis:{lbl:"Çorba Kaşığı",lx:592,ly:392,d:function(){return spP(592,178,150)}},
+    tatliCatalY:{lbl:"Tatlı Çatalı — sapı sola",lx:380,ly:160,d:function(){return fkP(452,134,146,90)}},
+    tatliKasikY:{lbl:"Tatlı Kaşığı — sapı sağa",lx:380,ly:90,d:function(){return spP(308,110,146,-90)}},
+    tatliCatalSag:{lbl:"Tatlı Çatalı",lx:478,ly:348,d:function(){return fkP(478,190,130)}},
+    suBardagi:{lbl:"Su Bardağı",lx:516,ly:56,d:function(){return crP(516,100,28,20)}},
+    mesrubatBardagi:{lbl:"Meşrubat",lx:585,ly:180,d:function(){return crP(585,140,22,15)}},
+    ikinciBardak:{lbl:"2. Bardak (45°)",lx:585,ly:180,d:function(){return crP(585,140,22,15)}},
+    serbetBardagi:{lbl:"Şerbet/Ayran",lx:585,ly:180,d:function(){return crP(585,140,22,15)}},
+    cayBardagi:{lbl:"Çay Bardağı — kulp sağa",lx:516,ly:56,d:function(){return crP(516,102,26,18)+'<path d="M542 96 a10 10 0 1 1 0 12"/>'}},
+    cocukBardak:{lbl:"Devrilmez Bardak",lx:498,ly:50,d:function(){return crP(498,96,24,16)+'<circle cx="498" cy="96" r="31"/>'}},
+    pecete:{lbl:"Peçete",lx:143,ly:348,d:function(){return '<rect class="fl" x="116" y="190" width="54" height="124" rx="8"/><line x1="134" y1="190" x2="134" y2="314"/>'}},
+    peceteTabak:{lbl:"Peçete",lx:380,ly:328,d:function(){return '<rect class="fl" x="352" y="196" width="56" height="112" rx="8"/><line x1="370" y1="196" x2="370" y2="308"/>'}},
+    ekmekTabagi:{lbl:"Ekmek Tabağı",lx:168,ly:140,d:function(){return crP(168,80,40,28)}},
+    tereyagBicagi:{lbl:"Tereyağı Bıçağı",lx:168,ly:28,d:function(){return kfP(188,70,46,105)}},
+    yerKarti:{lbl:"Yer Kartı",lx:436,ly:44,la:"start",d:function(){return '<rect class="fl" x="334" y="36" width="92" height="42" rx="6"/><path d="M348 52 H412 M348 63 H392"/>'}},
+    cocukCatal:{lbl:"Küt Uçlu Çatal",lx:258,ly:352,d:function(){return fkP(258,205,118)}},
+    cocukKasik:{lbl:"Küçük Kaşık",lx:502,ly:352,d:function(){return spP(502,205,118,0,9,14)}}
+  };
+  function svgKuver(sm){
+    var h='<svg viewBox="0 0 760 440" role="img" aria-label="Kuşbakışı sofra yerleşim şeması">';
+    sm.parts.forEach(function(id){
+      var pr=PARCA[id];if(!pr)return;
+      var st=sm.yeni.indexOf(id)>-1?'pc-y':(sm.tam?'pc-t':'pc-o');
+      h+='<g class="pc '+st+'">'+pr.d()+'</g>';
+    });
+    sm.parts.forEach(function(id){
+      var pr=PARCA[id];
+      if(pr&&sm.yeni.indexOf(id)>-1)h+='<text class="pl" x="'+pr.lx+'" y="'+pr.ly+'" text-anchor="'+(pr.la||'middle')+'">'+pr.lbl+'</text>';
+    });
+    h+='<line class="mk" x1="60" y1="408" x2="700" y2="408"/><text class="mkl" x="380" y="430" text-anchor="middle">MASA KENARI</text></svg>';
+    var leg='';
+    if(sm.yeni.length)leg+='<span class="ly"><i></i> Bu adımda eklenen</span>';
+    if(sm.tam)leg+='<span class="lt"><i></i> Tam kuver — kontrol</span>';
+    else if(sm.parts.length>sm.yeni.length)leg+='<span class="lo"><i></i> Önceki adımlardan</span>';
+    return '<div class="swz-sema">'+h+'<div class="swz-sema-leg">'+leg+'</div></div>';
+  }
   /* konu-eşleşmeli görsel havuzu — hepsi projede halihazırda kullanılan ID'ler */
   var IMG={ortu:"1603298573248-3e98441a0d6d",tabak:"1517870662726-c1d98ee36250",takim:"1681338764024-e6977bfd18db",
     bardak:"1773314863076-835e0bdbe3ea",pecete:"1642267877584-1fcb61638cc4",sunum:"1606660023296-81d67734170a",
@@ -2424,6 +2519,53 @@ window.__bottomStrips=window.__bottomStrips||[];
        list:["Akış tek yönlü: tabak → soğuk → sıcak → tatlı → takım","Her kapta kendi servis takımı","Etiketler yerinde, alerjenler yazılı","İçecek istasyonu ayrı masada","Geçiş aralıkları en az 90 cm"]}
     ]}
   ];
+  /* SEMA — onaylı adım × parça matrisi (0-index adım → kümülatif parça listesi).
+     ŞEMA = kişilik kuvere parça ekleyen adımlar · FOTO = masa-geneli/lojistik adımlar.
+     Kontrol adımları tam kümülatif şema (tam:true). Açık büfe istisna: kuver yok, foto kalır. */
+  var SEMA={
+    gunluk:{
+      1:{parts:["tabak","derinKase","salataKayik"],yeni:["tabak","derinKase","salataKayik"]},
+      2:{parts:["tabak","derinKase","salataKayik","anaCatal","anaBicak","corbaKasigi"],yeni:["anaCatal","anaBicak","corbaKasigi"]},
+      3:{parts:["tabak","derinKase","salataKayik","anaCatal","anaBicak","corbaKasigi","suBardagi","mesrubatBardagi"],yeni:["suBardagi","mesrubatBardagi"]},
+      5:{parts:["tabak","derinKase","salataKayik","anaCatal","anaBicak","corbaKasigi","suBardagi","mesrubatBardagi","pecete"],yeni:["pecete"],tam:true}
+    },
+    misafir:{
+      1:{parts:["servisTabagi","tabak"],yeni:["servisTabagi","tabak"]},
+      2:{parts:["servisTabagi","tabak","salataCatal","anaCatal","anaBicak","corbaKasigi","tatliCatalY","tatliKasikY"],yeni:["salataCatal","anaCatal","anaBicak","corbaKasigi","tatliCatalY","tatliKasikY"]},
+      3:{parts:["servisTabagi","tabak","salataCatal","anaCatal","anaBicak","corbaKasigi","tatliCatalY","tatliKasikY","suBardagi","mesrubatBardagi"],yeni:["suBardagi","mesrubatBardagi"]},
+      4:{parts:["servisTabagi","tabak","salataCatal","anaCatal","anaBicak","corbaKasigi","tatliCatalY","tatliKasikY","suBardagi","mesrubatBardagi","peceteTabak","ekmekTabagi","tereyagBicagi"],yeni:["peceteTabak","ekmekTabagi","tereyagBicagi"]},
+      6:{parts:["servisTabagi","tabak","salataCatal","anaCatal","anaBicak","corbaKasigi","tatliCatalY","tatliKasikY","suBardagi","mesrubatBardagi","peceteTabak","ekmekTabagi","tereyagBicagi"],yeni:[],tam:true}
+    },
+    kahvalti:{
+      1:{parts:["tabakKahvalti","anaCatal","anaBicak","recelTabagi"],yeni:["tabakKahvalti","anaCatal","anaBicak","recelTabagi"]},
+      3:{parts:["tabakKahvalti","anaCatal","anaBicak","recelTabagi","cayBardagi"],yeni:["cayBardagi"]},
+      5:{parts:["tabakKahvalti","anaCatal","anaBicak","recelTabagi","cayBardagi","pecete"],yeni:["pecete"],tam:true}
+    },
+    resmi:{
+      1:{parts:["servisTabagi","tabak","derinKase"],yeni:["servisTabagi","tabak","derinKase"]},
+      2:{parts:["servisTabagi","tabak","derinKase","balikCatal","anaCatal","anaBicak","balikBicak","corbaKasigiDis","tatliCatalY","tatliKasikY"],yeni:["balikCatal","anaCatal","anaBicak","balikBicak","corbaKasigiDis","tatliCatalY","tatliKasikY"]},
+      3:{parts:["servisTabagi","tabak","derinKase","balikCatal","anaCatal","anaBicak","balikBicak","corbaKasigiDis","tatliCatalY","tatliKasikY","suBardagi","ikinciBardak"],yeni:["suBardagi","ikinciBardak"]},
+      4:{parts:["servisTabagi","tabak","derinKase","balikCatal","anaCatal","anaBicak","balikBicak","corbaKasigiDis","tatliCatalY","tatliKasikY","suBardagi","ikinciBardak","peceteTabak","ekmekTabagi","tereyagBicagi"],yeni:["peceteTabak","ekmekTabagi","tereyagBicagi"]},
+      5:{parts:["servisTabagi","tabak","derinKase","balikCatal","anaCatal","anaBicak","balikBicak","corbaKasigiDis","tatliCatalY","tatliKasikY","suBardagi","ikinciBardak","peceteTabak","ekmekTabagi","tereyagBicagi","yerKarti"],yeni:["yerKarti"]},
+      6:{parts:["servisTabagi","tabak","derinKase","balikCatal","anaCatal","anaBicak","balikBicak","corbaKasigiDis","tatliCatalY","tatliKasikY","suBardagi","ikinciBardak","peceteTabak","ekmekTabagi","tereyagBicagi","yerKarti"],yeni:[],tam:true}
+    },
+    ramazan:{
+      1:{parts:["tabak","derinKase","corbaKasigi","anaCatal","anaBicak"],yeni:["tabak","derinKase","corbaKasigi"]},
+      3:{parts:["tabak","derinKase","corbaKasigi","anaCatal","anaBicak","suBardagi","serbetBardagi"],yeni:["suBardagi","serbetBardagi"]},
+      5:{parts:["tabak","derinKase","corbaKasigi","anaCatal","anaBicak","suBardagi","serbetBardagi"],yeni:[],tam:true}
+    },
+    bayram:{
+      1:{parts:["pastaTabagi","tatliCatalSag"],yeni:["pastaTabagi","tatliCatalSag"]},
+      5:{parts:["pastaTabagi","tatliCatalSag","cayBardagi"],yeni:["cayBardagi"],tam:true}
+    },
+    cocuklu:{
+      1:{parts:["tabakBolmeli"],yeni:["tabakBolmeli"]},
+      2:{parts:["tabakBolmeli","cocukCatal","cocukKasik"],yeni:["cocukCatal","cocukKasik"]},
+      3:{parts:["tabakBolmeli","cocukCatal","cocukKasik","cocukBardak"],yeni:["cocukBardak"]},
+      4:{parts:["tabakBolmeli","cocukCatal","cocukKasik","cocukBardak"],yeni:[],tam:true}
+    }
+  };
+  SOFRALAR.forEach(function(s){var m=SEMA[s.id];if(m)Object.keys(m).forEach(function(i){s.steps[+i].sema=m[i]})});
   var inner=document.getElementById('swzInner'),count=document.getElementById('swzCount'),
       bar=document.getElementById('swzBar'),dotsEl=document.getElementById('swzDots'),
       prev=document.getElementById('swzPrev'),next=document.getElementById('swzNext'),
@@ -2455,7 +2597,8 @@ window.__bottomStrips=window.__bottomStrips||[];
     h+='<h2>'+s.t+'</h2><p>'+s.p+'</p>';
     if(s.list){h+='<ul class="swz-list">'+s.list.map(function(x){return '<li><i class="fa-solid fa-check"></i><span>'+x+'</span></li>'}).join('')+'</ul>'}
     if(s.tip){h+='<div class="swz-tip"><i class="fa-solid fa-lightbulb"></i><span>'+s.tip+'</span></div>'}
-    if(s.img){h+='<div class="cm-figs"><div class="cm-fig" style="background-image:url(\''+img(s.img)+'\')"></div></div>'}
+    if(s.sema){h+=svgKuver(s.sema)}
+    else if(s.img){h+='<div class="cm-figs"><div class="cm-fig" style="background-image:url(\''+img(s.img)+'\')"></div></div>'}
     inner.innerHTML=h;
     title.textContent=cur.ad;
     count.textContent='Adım '+(idx+1)+' / '+n;
