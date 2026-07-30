@@ -79,6 +79,122 @@
   });
 })();
 
+/* B11 (2026-07-30 revizyon) — müfredat akordeonu toggle mekanizması. sss/
+   faq-list'in .qa/.qa-head/.qa-body toggle desenini (sss.js openQa/closeQa,
+   max-height okuma) İKİ SEVİYE için tekrar üretir: .cur-sec (bölüm) VE
+   .cur-row (adım). FAQ'dan FARK: burada "tek kart açık" davranışı YOK —
+   birden çok bölüm/adım aynı anda açık kalabilir (müfredat gezinme, soru-
+   cevap değil) + "Tüm bölümleri genişlet" tüm .cur-sec'leri (adım satırlarını
+   DEĞİL — bölüm başlıkları "tüm BÖLÜMLERİ genişlet" der) tek tıkla açar/kapar. */
+(function () {
+  var list = document.getElementById('curList');
+  if (!list) return;
+
+  function openPanel(toggle, panel) {
+    toggle.closest('.cur-sec, .cur-row').classList.add('open');
+    toggle.setAttribute('aria-expanded', 'true');
+    panel.style.maxHeight = panel.scrollHeight + 'px';
+  }
+  function closePanel(toggle, panel) {
+    toggle.closest('.cur-sec, .cur-row').classList.remove('open');
+    toggle.setAttribute('aria-expanded', 'false');
+    panel.style.maxHeight = '0px';
+  }
+  function bindToggle(head, panel) {
+    head.addEventListener('click', function () {
+      var isOpen = head.closest('.cur-sec, .cur-row').classList.contains('open');
+      if (isOpen) {
+        closePanel(head, panel);
+      } else {
+        openPanel(head, panel);
+      }
+      // Bir adım satırı genişlerse İÇİNDE bulunduğu bölümün de yüksekliği
+      // büyür — dış .cur-sec-body'nin max-height'ı bir üst kapsayıcı için
+      // yeniden hesaplanmalı, yoksa yeni açılan adım gövdesi kırpılır.
+      var parentSecBody = head.closest('.cur-sec-body');
+      if (parentSecBody && parentSecBody.parentElement.classList.contains('open')) {
+        parentSecBody.style.maxHeight = parentSecBody.scrollHeight + 'px';
+      }
+    });
+  }
+
+  list.querySelectorAll('.cur-sec').forEach(function (sec) {
+    bindToggle(sec.querySelector(':scope > .cur-sec-head'), sec.querySelector(':scope > .cur-sec-body'));
+  });
+  // Kilitli maskeli satırlar (.cur-row-locked) .cur-row-body TAŞIMAZ (gizleyecek
+  // gerçek içerik yok — lead KARARI, kararlar.md MGR-3); bağlama atlanır, yoksa
+  // tıklamada panel=null'a maxHeight yazmaya çalışıp hata atardı.
+  list.querySelectorAll('.cur-row:not(.cur-row-locked)').forEach(function (row) {
+    var head = row.querySelector('.cur-row-head');
+    var panel = row.querySelector('.cur-row-body');
+    if (head && panel) bindToggle(head, panel);
+  });
+
+  var expandAllBtn = document.getElementById('curExpandAll');
+  if (expandAllBtn) {
+    expandAllBtn.addEventListener('click', function () {
+      var allOpen = expandAllBtn.getAttribute('aria-pressed') === 'true';
+      var label = expandAllBtn.querySelector('span');
+      list.querySelectorAll('.cur-sec').forEach(function (sec) {
+        var head = sec.querySelector(':scope > .cur-sec-head');
+        var body = sec.querySelector(':scope > .cur-sec-body');
+        if (allOpen) {
+          closePanel(head, body);
+        } else {
+          openPanel(head, body);
+        }
+      });
+      expandAllBtn.setAttribute('aria-pressed', allOpen ? 'false' : 'true');
+      if (label) {
+        label.textContent = allOpen ? label.getAttribute('data-label-collapsed') : label.getAttribute('data-label-expanded');
+      }
+    });
+  }
+})();
+
+/* B9 — Etiket rayı okları + Paylaş popover'ı (gurme-lezzetler/show.blade.php
+   satır 203-244 BİREBİR taşındı — "sayfa-JS davranışı da kaynak-transfer
+   kapsamındadır" dersi, docs/lessons.md). */
+(function () {
+  document.querySelectorAll('.ptr .row-nav button').forEach(function (b) {
+    b.addEventListener('click', function () {
+      var t = document.getElementById(b.getAttribute('data-track'));
+      if (t) t.scrollBy({ left: b.getAttribute('data-dir') === 'prev' ? -220 : 220, behavior: 'smooth' });
+    });
+  });
+
+  var sh = document.getElementById('ptrShare');
+  if (sh) {
+    var btn = document.getElementById('pshBtn');
+    btn.addEventListener('click', function (e) {
+      e.preventDefault();
+      var open = sh.classList.toggle('open');
+      btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+    });
+    document.addEventListener('click', function (e) {
+      if (!e.target.closest('#ptrShare')) {
+        sh.classList.remove('open');
+        btn.setAttribute('aria-expanded', 'false');
+      }
+    });
+    var cp = document.getElementById('pshCopy');
+    if (cp) {
+      cp.addEventListener('click', function (e) {
+        e.preventDefault();
+        var url = cp.getAttribute('data-copy') || location.href;
+        try { navigator.clipboard.writeText(url); } catch (err) { /* pano erişimi yok — sessiz */ }
+        cp.classList.add('ok');
+        var icon = cp.querySelector('i');
+        if (icon) icon.className = 'fa-solid fa-check';
+        setTimeout(function () {
+          cp.classList.remove('ok');
+          if (icon) icon.className = 'fa-solid fa-link';
+        }, 1500);
+      });
+    }
+  }
+})();
+
 (function () {
   var box = document.getElementById('lsCompleteBox');
   if (!box) return;

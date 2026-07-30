@@ -20,6 +20,14 @@
 .lst-back{display:inline-flex;align-items:center;gap:8px;margin-top:16px;font-size:13.5px;font-weight:700;color:#e7edf1;transition:.2s var(--ease)}
 .lst-back:hover{color:#ff8763}
 
+/* ---- A1 (Beyar bulgusu) — akış renk yardımcıları. index.blade.php §8.2-§8.8
+   arası bölümler koşullu render edildiği için (boş olan bölüm hiç basılmaz)
+   sabit sınıf yerine bu iki jenerik sınıf, GERÇEK render sırasına göre PHP
+   toggle'ıyla atanır (bkz. index.blade.php $flow yorumu) — hiçbir ardışık
+   ikili aynı zemini paylaşmaz, kombinasyondan bağımsız. Yalnız tokens. ---- */
+.flow-white{background:var(--bg-white)}
+.flow-cream{background:var(--bg-cream)}
+
 /* ---- §8.1 üst karşılama aksiyon satırı ---- */
 .hero-ctas{display:flex;flex-wrap:wrap;gap:12px;margin-top:22px}
 
@@ -33,11 +41,24 @@
 .continue-card .cc-meta{display:flex;flex-wrap:wrap;gap:16px;font-size:13px;color:var(--muted);font-weight:500;margin:12px 0 16px}
 .continue-card .cc-meta span{display:inline-flex;align-items:center;gap:6px}
 
-/* ---- ilerleme çubuğu (kart + konu kartı + devam-et ortak) ---- */
+/* ---- ilerleme çubuğu (kart + konu kartı + devam-et ortak) ----
+   A5 (Beyar bulgusu): max-width:220px çubuğu kart genişliğinin çok altında
+   kesiyordu ("stop short"); flex:1 zaten kapsayıcı genişliğe göre büyüyor,
+   sabit üst sınır KALDIRILDI. */
 .lc-progress{display:flex;align-items:center;gap:10px;margin:10px 0}
-.lc-progress-bar{flex:1;height:6px;border-radius:var(--radius-pill);background:var(--line);overflow:hidden;max-width:220px}
+.lc-progress-bar{flex:1;height:6px;border-radius:var(--radius-pill);background:var(--line);overflow:hidden}
 .lc-progress-bar i{display:block;height:100%;background:linear-gradient(90deg,var(--tomato),var(--tomato-dark));border-radius:inherit}
 .lc-progress-txt{font-size:12px;font-weight:700;color:var(--slate-2);white-space:nowrap}
+
+/* ---- A6 (Beyar bulgusu) — ilerleme çubuğu rezerve slotu: .lc-card kutu
+   yüksekliği zaten eşit (490px×9 ölçüldü), asıl kırık olan İÇ ritimdi —
+   bazı kartlarda çubuk var bazısında yok, altındaki disc-meta/CTA o farkla
+   kayıyordu. Slot boşken de AYNI yüksekliği tutar (min-height), dolu/boş
+   fark etmeksizin her kartın alt bölümü aynı temel çizgide oturur. Boşluk
+   TEK sahipte (slot) toplanır — iç .lc-progress'in kendi margin'i burada
+   sıfırlanır, çift boşluk birikmesin. */
+.lc-progress-slot{min-height:24px;margin:10px 0;display:flex;align-items:center}
+.lc-progress-slot .lc-progress{margin:0;width:100%}
 
 /* ---- §8.4 konu kartları ---- */
 .topic-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:20px}
@@ -50,11 +71,64 @@
 .topic-card .topic-go i{font-size:11px;transition:transform .2s var(--ease)}
 .topic-card:hover .topic-go i{transform:translateX(3px)}
 
+/* ---- A3 (Beyar direktifi) — dama tahtası dolgu, (satır+sütun)%2'den
+   türetilmiş, index%2 DEĞİL: çift sütun sayısında naif index%2 dikey şerit
+   üretir, tek sütun sayısında diyagonali bozar (lead brifi). Grid'in HER
+   genişlikteki gerçek sütun sayısı bir CSS gerçeği (.topic-grid media
+   query'leri) — formül o sütun sayısına göre ayrı yazılır. Her breakpoint
+   bloğu KENDİ İÇİNDE tam (dolu+boş) — önceki breakpoint'in kalıntısı
+   sızmasın diye reset + yeniden atama sırayla yapılır. Renk yalnız tokens:
+   dolu = var(--tomato-tint), boş = var(--paper) (mevcut varsayılan). */
+.topic-card:nth-child(8n+1),
+.topic-card:nth-child(8n+3),
+.topic-card:nth-child(8n+6),
+.topic-card:nth-child(8n){background:var(--tomato-tint)}
+
+@media (max-width:1024px){
+  /* .topic-grid burada 2 sütuna düşer (aşağıdaki TABLET bloğu) — periyot 4. */
+  .topic-card:nth-child(8n+1),
+  .topic-card:nth-child(8n+3),
+  .topic-card:nth-child(8n+6),
+  .topic-card:nth-child(8n){background:var(--paper)}
+  .topic-card:nth-child(4n+1),
+  .topic-card:nth-child(4n){background:var(--tomato-tint)}
+}
+
+@media (max-width:640px){
+  /* .topic-grid burada tek sütuna düşer (aşağıdaki MOBİL bloğu) — satır=index,
+     sütun HER ZAMAN 1, dama deseni düz tek-çift alternasyona indirgenir. */
+  .topic-card:nth-child(4n+1),
+  .topic-card:nth-child(4n){background:var(--paper)}
+  .topic-card:nth-child(odd){background:var(--tomato-tint)}
+}
+
+/* ---- A4 (Beyar bulgusu, lead kök-neden ölçümü) — portal.css .disc-cat{color:
+   var(--gourmet)} (satır 1006) bu sayfada da .disc-cat kullandığı için moru
+   (rgb(177,79,197)) sızdırıyordu. liste.css/beceriler.css'in ZATEN uyguladığı
+   "marka rengi düzeltmesi" AYNI kopyayla burada: bu sayfa gourmet DEĞİL,
+   tomato marka rengini kullanır (her tüketen sayfa kendi kopyasını taşır
+   emsali, docs/lessons.md "sistematik CSS sızıntısı"). Sayfada .discover/.dt
+   scoped kuralları (portal.css 980/981/1017-1018/1753) HİÇ kullanılmıyor —
+   bu markup'ta .discover kapsayıcısı/.dt sekmesi yok, sızıntı yaratmazlar. */
+.disc-cat{color:var(--tomato)}
+
 /* ---- ders kartı (_lesson-card.blade.php) — disc-card temelli ek ---- */
 .lc-card{display:flex;flex-direction:column}
 .lc-card .lc-fig-link{display:block}
 .lc-card.lc-locked .disc-fig .bg{filter:grayscale(.4) brightness(.94)}
 .lc-lock-msg{font-size:13px;color:var(--muted);font-weight:500;display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:10px 0}
+/* ---- A8 (Beyar bulgusu) — ücretsiz-üye kart altı notu: eski hâli
+   $decision->message'ın TAM cümlesiydi (paragraf gibi kart düzenini
+   bozuyordu). Tek satır, sessiz, kartın EN ALTINDA (lc-acts'ten hemen önce);
+   kısıtlamanın nedenini hâlâ anlatır (§20), yalnız kompakt.
+   .lc-note-slot A6'nın AYNI mantığı (rezerve slot) — bir SETTEKİ kartlar
+   arasında $needsLogin değişken olabilir (bir kart public, komşusu free),
+   slot boşken de aynı yüksekliği tutar. white-space:nowrap + kısaltılmış
+   metin garantiler tek satır (768px dar kartta bile). ---- */
+.lc-note-slot{min-height:18px;margin-top:10px}
+.lc-note{font-size:12px;color:var(--muted);font-weight:500;display:flex;align-items:center;gap:6px;line-height:1.4;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lc-note i{flex:none;color:var(--tomato);font-size:11px}
+.lc-note a{color:var(--tomato);font-weight:700;text-decoration:underline;text-underline-offset:2px;overflow:hidden;text-overflow:ellipsis}
 .lc-prereq{font-size:12.5px;color:var(--muted);font-weight:500;margin-top:6px;display:flex;align-items:center;gap:7px}
 .lc-prereq i{color:var(--tomato);font-size:11px}
 .lc-acts{display:flex;align-items:center;gap:10px;margin-top:14px}
@@ -80,11 +154,24 @@
 .rota-grid .rstep{width:auto}
 .rota-next-cta{margin-top:32px;text-align:center}
 
-/* ---- §8.8 sorun-cozme teaser (hub) ---- */
-.problem-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
-.problem-card{display:flex;align-items:center;gap:12px;background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-md);padding:16px 18px;font-size:14px;font-weight:600;color:var(--slate);transition:.2s var(--ease)}
-.problem-card:hover{border-color:var(--tomato);color:var(--tomato);transform:translateY(-2px)}
-.problem-card i{flex:none;color:var(--tomato);font-size:15px}
+/* ---- A7 (Beyar bulgusu) — §8.8 sorun-cozme teaser yeniden kuruldu. Eski
+   hâli tek düz .problem-grid (2 sütun, konu/kaynak ilişkisi YOK) — "flat FAQ
+   row list" olarak reddedildi. Yeni yapı sorun-cozme.blade.php'nin (aşağıda)
+   KENDİ diliyle TUTARLI: konuya göre gruplanmış sütunlar (.problem-groups,
+   sayısı gerçek veriye göre değiştiği için auto-fill — sabit sütun sayısı
+   İCAT EDİLMEZ) + AYNI .problem-links/.chip kaynak rozeti (aşağıda zaten
+   tanımlı, burada YENİDEN TANIMLANMAZ) — teaser'daki kaynak linki de doğrudan
+   derse/püf noktasına gider, genel aramaya değil (gerçek $problem->content/
+   ->tip varlığına bakar, uydurma yok). .lib-head/.lb-cnt hub.css'te kanonik,
+   burada da AYNI sınıf kullanılır. ---- */
+.problem-groups{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:28px;align-items:start}
+.problem-list{display:flex;flex-direction:column;gap:10px;margin-top:12px}
+.problem-card{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-md);padding:13px 15px;transition:.2s var(--ease)}
+.problem-card:hover{border-color:var(--tomato)}
+.problem-q-link{display:flex;align-items:flex-start;gap:10px;font-size:13.5px;font-weight:600;color:var(--slate);line-height:1.4}
+.problem-q-link:hover{color:var(--tomato)}
+.problem-q-link i{flex:none;color:var(--tomato);font-size:13px;margin-top:2px}
+.problem-card .problem-links{margin-top:10px;padding-left:23px}
 
 /* ---- /sorun-cozme sayfası ---- */
 .sorun-search{display:flex;gap:10px;margin-top:22px;max-width:560px}
@@ -123,7 +210,9 @@
 @media (max-width:1024px){
   .topic-grid{grid-template-columns:repeat(2,1fr)}
   .rota-grid{grid-template-columns:repeat(2,1fr)}
-  .problem-grid,.problem-answer-grid{grid-template-columns:1fr}
+  /* .problem-groups artık auto-fill (minmax 260px) — sabit sütun sayısı yok,
+     genişliğe göre kendiliğinden daralır, breakpoint kuralına gerek yok. */
+  .problem-answer-grid{grid-template-columns:1fr}
   .dersler-layout{grid-template-columns:1fr}
   .dersler-results{grid-column:1}
 }

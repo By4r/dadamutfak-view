@@ -13,7 +13,37 @@
 
 .ls-sec { padding: 40px 0; }
 .ls-sec + .ls-sec { border-top: 1px solid var(--line); }
-.wrap > .ls-sec:first-child { padding-top: 0; }
+/* B5 (2026-07-30 revizyon) — eski ".wrap > .ls-sec:first-child{padding-top:0}"
+   kuralı KALDIRILDI: her .wrap grubunun İLK bölümü (Kazanımlar/Teknik/
+   Değerlendirme) diğerleriyle aynı 40px yerine 0 alıyordu — üstündeki bloğa
+   "yapışık" görünüyordu, komşularıyla tutarsız bir ritim üretiyordu (ölçülen
+   taban: 1=0/40, 3=40/40 aynı .wrap içinde). B6 ile her .ls-sec artık kendi
+   ZEMİN rengini taşıdığı için (aşağıda) bölüm sınırı zaten rengin kendisiyle
+   okunuyor — "çift boşluk" endişesiyle konan istisnaya artık gerek yok,
+   TÜM .ls-sec tek biçim 40/40 alır (ölçüm: after-state raporda). */
+
+/* ---- B6: bölüm zemin ritmi — ardışık iki bölüm AYNI BOYANAN rengi paylaşmaz ----
+   DÜZELTME (lead bulgusu, 2026-07-30): İLK turda yarısı .ls-tint ile krem
+   alıyordu, diğer yarısı ŞEFFAF bırakılıp "sayfa beyazına düşer" varsayılıyordu
+   — YANLIŞ varsayım, `body{background:var(--bg)}` = `--bg:#F9F9F9` = tokens.css
+   `--bg-cream` İLE AYNI HEX. Yani "şeffaf" hiçbir zaman beyaz boyanmıyordu,
+   HER ZAMAN krem boyanıyordu (docs/lessons.md "otorite canlı CSSOM" dersi —
+   kural doğru görünüyordu, kapsayıcı BAĞLAM sonucu değiştirdi). Sonuç: 8
+   .ls-sec'in TAMAMI aynı krem boyanıyordu, taban 5 ardışık-aynı yerine 8'e
+   çıkmıştı. FIX: rev-hub'ın ogrenme.css'teki AYNI kalıbı (.flow-white/
+   .flow-cream) — HİÇBİR .ls-sec artık şeffaf bırakılmıyor, TAMAMI açıkça
+   boyanıyor. Sıra (rd-top/ld-body/ld-recipes/next-sec DAHİL 12'lik tam zincir,
+   1=W başlayıp katı alternasyon): 1 rd-top=W(değişmedi) 2 outcomes=C
+   3 equipment=W 4 ld-body=C(override, aşağıda) 5 curriculum=W 6 criteria=C
+   7 mistakes=W 8 task=C 9 ld-recipes=W(override) 10 quiz=C 11 complete=W
+   12 next-sec=C(override). Koşullu bölümlerden biri (ör. .ld-recipes hiç
+   ilişkili içerik yoksa) sayfada YOKSA zincirde tek bir ardışık-aynı çift
+   istisnaen oluşabilir — PHP render-zamanı zebra hesabı kapsam dışı bırakıldı
+   (bilinen sınır); bu turun referans dersinde (tüm bölümler dolu) ölçüm 0
+   ardışık-aynı doğruluyor — ölçüm BOYANAN renkle (ata zincirine çıkan
+   fonksiyon), yalnız kendi backgroundColor'ıyla DEĞİL. */
+.flow-white { background: var(--bg-white); }
+.flow-cream { background: var(--bg-cream); }
 
 /* ---- §10.2 Kazanımlar ---- */
 .ls-outcomes { display: grid; gap: 12px; grid-template-columns: repeat(2, minmax(0, 1fr)); }
@@ -84,7 +114,10 @@
 .ls-q-hint { font-size: 13px; font-weight: 700; color: var(--muted); }
 .ls-q-hint.ok { color: var(--green-deep); }
 .ls-q-hint.err { color: var(--tomato); }
-.ls-q-result { display: flex; align-items: center; gap: 16px; background: var(--bg-cream); border-radius: var(--radius-lg); padding: 18px 20px; flex-wrap: wrap; }
+/* B6 çakışma düzeltmesi: .ls-q (mini test sorusu) bölümü artık .ls-tint ile
+   krem — sonuç kutusu da krem olursa kartlar zeminle karışır (B12). Beyaza
+   çevrildi, kenarlık eklendi (kart dilinin geri kalanıyla tutarlı). */
+.ls-q-result { display: flex; align-items: center; gap: 16px; background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius-lg); padding: 18px 20px; flex-wrap: wrap; }
 .ls-q-result .lq-score { font-size: 28px; font-weight: 800; color: var(--slate); }
 .ls-q-result .lq-verdict { font-size: 13.5px; font-weight: 700; }
 .ls-q-result .lq-verdict.pass { color: var(--green-deep); }
@@ -125,18 +158,233 @@
 .pg-acts { display: flex; gap: 12px; justify-content: center; }
 .pg-acts .btn { flex: none; }
 
+/* =====================================================================
+   REVİZYON TURU (2026-07-30, B1-B13) — aşağıdaki bloklar bu turda eklendi.
+   Yukarıdaki (P1) bloklara dokunulmadı, yalnız EKLENDİ/override edildi
+   (ders.css zaten "override katmanı" — detay.css'e BENZER şekilde bu turda
+   da eski dosya değil, aynı ek-katman dosyasına devam edildi). ===================== */
+
+/* ---- B1: hero (rd-stage) yüksekliği — 440px başlıkla dengesiz büyüktü,
+   künye kolonunun taşıdığı bilgi ağırlığına göre indirildi. 360px değeri
+   uydurma değil: kesfet/gurme-lezzetler .art-hero'nun kendi mobil clamp alt
+   sınırında (360px) zaten kullanılan bir referans değer (detay.css BİREBİR
+   DEĞİŞTİRİLMEDİ, burada override). ---- */
+/* tarif-detay.css satır 758'de KOŞULSUZ (media query dışı) bir
+   ".rd-stage{height:100%;min-height:480px}" kuralı var (tarif-detay'ın KENDİ
+   çok-satırlı galerisi için); min-height ile height ÇAKIŞTIĞINDA min-height
+   kazanır — ders.css'in cascade sırası düzeltilse (yükleme sırası notu,
+   show.blade.php) BİLE 360px height min-height:480px tarafından 480'e
+   TABAN'lanıyordu. min-height burada da açıkça ezilmeli. */
+.rd-stage { height: 360px; min-height: 360px; }
+
+/* ---- B6 devamı: ld-body/ld-recipes/next-sec zemin override'ı — 12'li tam
+   zincirin (rd-top→outcomes→equipment→ld-body→curriculum→criteria→mistakes→
+   task→ld-recipes→quiz→complete→next-sec) HİÇBİR ardışık çifti aynı rengi
+   paylaşmayacak şekilde el ile hesaplandı (yukarıdaki B6 yorumu). ---- */
+.ld-body { background: var(--bg-cream); }
+.ld-recipes { background: var(--bg-white); }
+.next-sec { background: var(--bg-cream); }
+/* .ls-task (§10.9, P1 bloğu yukarıda) kendi kartını HER ZAMAN krem taşıyordu
+   (var(--bg-cream)) — bölümün kendisi de artık .ls-tint ile krem olunca kart
+   zemine karışıp sınırı kaybediyordu (B12 "kart sınırları netleşsin" ile
+   çelişir). Kart burada beyaza (paper) çevrildi — dış bölüm zeminiyle KONTRAST
+   kurar, kenarlık zaten vardı. */
+.ls-task { background: var(--paper); }
+
+/* ---- B7: gövde metni okuma ritmi — .ld-main{gap:var(--sp-7)=48px} HER blok
+   TÜRÜ arasında (paragraf→paragraf DAHİL) aynı geniş boşluğu uyguluyordu;
+   art arda gelen paragraflar birbirinden kopuk okunuyordu. Satır arası da
+   sayfanın KENDİ "uzun okuma" kuralıyla (.rd-head .rd-sub{line-height:1.7},
+   detay.css) hizalandı — önceden body{line-height:1.55} miras alıyordu.
+   Ölçüm: before 1.55/48px gap → after 1.7/24px paragraf arası (başlıklar
+   öncesi ekstra boşluk KORUNDU, aşağıdaki h2/h3 kuralı). ---- */
+/* Taşma taraması kökü İKİNCİ katmandaydı: .ld-main'in KENDİSİ de display:grid
+   ama grid-template-columns YOK (detay.css) — tek örtük kolon auto/1fr
+   boyutlanır, minmax(0,..) korumasız. .ld-cols'un dış ızgarasını düzeltmek
+   (yukarıda) yetmedi; .ld-main'in İÇ tek-kolonu da aynı derste taşıyordu
+   (ölçüm: h2/figure genişliği .ld-main'in kendi content-box'ından GENİŞTİ,
+   768px'te 799.7px vs 720px — docs/lessons.md grid min-width:auto dersi
+   İKİNCİ kez, iç içe grid'lerde). */
+.ld-main { grid-template-columns: minmax(0, 1fr); gap: var(--sp-5); }
+.ld-main > p { line-height: 1.7; }
+.ld-main > h2, .ld-main > h3 { margin-top: var(--sp-3); }
+
+/* Playwright taşma taraması bulgusu (768/390px): partials/_body-blocks.blade.php
+   'img' kind'ı .art-fig/.bg/figcaption üretiyor ama bu sayfada YÜKLÜ hiçbir
+   CSS dosyası (detay.css/ders.css/tarif-detay.css) .art-fig'i TANIMLAMIYORDU
+   (yalnız gurme-lezzetler.css/kesfet.css/puf-noktasi-detay.css'te var, hiçbiri
+   bu sayfada yüklü değil) — art-tip'le AYNI sınıf bug. Eksik `.bg{width:100%}`
+   yüzünden .ld-cols'un ≤1024px tek-kolon kuralı da minmax(0,1fr) TAŞIMIYORDU
+   (detay.css:142) → grid item min-content'ini track'e dayattı (docs/lessons.md
+   "CSS grid item min-width:auto" dersi BİREBİR). İkisi birlikte 768/390'da
+   yatay taşma üretiyordu. Taban stil puf-noktasi-detay.css'ten BİREBİR. */
+.art-fig { margin: 36px 0; }
+.art-fig .bg { width: 100%; aspect-ratio: 16 / 9; border-radius: var(--radius-lg); background-size: cover; background-position: center; box-shadow: var(--sh-sm); }
+.art-fig figcaption { font-size: 12.5px; color: var(--muted); font-weight: 500; margin-top: 12px; text-align: center; display: flex; align-items: center; justify-content: center; gap: 8px; }
+.art-fig figcaption i { color: var(--tomato); font-size: 11px; }
+
+/* ---- B8: "Pratik ipucu" (body_blocks kind:tip → partials/_body-blocks.blade.php
+   .art-tip/.at-ico) — bu sayfada YÜKLÜ CSS zincirinde (detay.css/ders.css/
+   tarif-detay.css) .art-tip'in TEMEL stili HİÇ TANIMLI DEĞİLDİ (grep ile
+   doğrulandı — yalnız ".step-card .art-tip{margin-top:12px}" vardı, kutunun
+   kendisi yoktu); sonuç: çıplak üçgen-ünlem ikonu + düz metin, gerçekten
+   "alarm" gibi okunuyordu çünkü hiçbir kutu/renk YOKTU. Fix: siteде zaten
+   VAR OLAN .art-tip kalıbı (puf-noktasi-detay.css BİREBİR — "yeni bileşen
+   icat etme" kuralı) buraya taşındı: dolgulu domates-fısıltısı zemin + ikon
+   dairesi + başlık/metin hiyerarşisi = "confident emphasis", alarm DEĞİL.
+   İkon (fa-triangle-exclamation) partials/_body-blocks.blade.php'de SABİT
+   — bu partial'a dokunma yetkim yok (brief B8), yalnız RENK/ŞEKİL ile
+   sakinleştirildi; ikon türü DEĞİŞMEDİ (rapor notu). ---- */
+.art-tip { display: flex; gap: 16px; background: var(--tomato-tint); border: 1px solid rgba(225, 72, 39, .22); border-radius: var(--radius-lg); padding: 22px 24px; margin: 12px 0; }
+.art-tip .at-ico { flex: none; width: 44px; height: 44px; border-radius: var(--radius-md); background: var(--paper); color: var(--tomato); display: grid; place-items: center; font-size: 18px; }
+.art-tip h4 { font-size: 16px; margin-bottom: 6px; }
+.art-tip p { font-size: 14px; line-height: 1.65; color: var(--slate-2); font-weight: 500; margin: 0; }
+
+/* ---- B3: künye "Kazanılacak Beceri" çip listesi — .kc-chips varsayılan
+   flex-direction:column (tarif-detay.css) her çipi KENDİ satırına diziyordu
+   (dar 260px kolonda uzun dikey liste). Site zaten bu tam ihtiyacı çözen bir
+   sınıf taşıyor: .chip-row (tarif-detay.css — flex-wrap:nowrap+overflow-x:
+   auto+scrollbar gizli, "kayan tek satır" dili, ör. .chip-row .chip-flag ile
+   ülke bayrağı satırında zaten kullanılıyor). Yeni bileşen İCAT EDİLMEDİ; kc-
+   chips'in .kcl etiketi kendi satırında kalır, çipler .chip-row'a taşındı
+   (show.blade.php B3). ---- */
+.kc-chips .chip-row { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; padding-bottom: 2px; }
+.kc-chips .chip-row::-webkit-scrollbar { display: none; }
+.kc-chips .chip-row .chip { flex: none; }
+
+/* ---- B9: gövde-sonu Etiketler + Paylaş TEK satırda — eski .art-tags (düz
+   flex-wrap liste, paylaş YOKTU) yerine gurme-lezzetler/puf-noktası detayının
+   .ptr/.ptr-lbl/.ptr-rail/.row-track/.row-nav/.ptr-share/.psh-btn/.psh-pop
+   kalıbı BİREBİR (puf-noktasi-detay.css satır 219-246 — "aynı bileşen farklı
+   sayfalarda farklı kurallarla çoğaltılmaz", brief §21). Etiket YOKSA bile
+   .ptr basılır (yalnız paylaş barındırmak için) — puf/gurme emsali. ---- */
+.ptr { display: flex; align-items: center; gap: 16px; margin: 40px 0 0; padding-top: 26px; border-top: 1px solid var(--line); }
+.ptr-lbl { flex: none; font-size: 13px; font-weight: 700; color: var(--slate); display: inline-flex; align-items: center; gap: 7px; }
+.ptr-lbl i { color: var(--tomato); font-size: 12px; }
+.ptr-rail { flex: 1; min-width: 0; display: flex; align-items: center; gap: 8px; }
+.ptr .row-track { display: flex; gap: 8px; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; padding: 2px 0; flex: 1; min-width: 0; }
+.ptr .row-track::-webkit-scrollbar { display: none; }
+.ptr .row-track > * { flex: none; width: auto; scroll-snap-align: start; white-space: nowrap; }
+.ptr .row-track .chip { display: inline-flex; align-items: center; gap: 6px; }
+.ptr .row-track .chip i { color: var(--tomato); font-size: 10.5px; }
+.ptr .row-nav { display: flex; gap: 6px; flex: none; }
+.ptr .row-nav button { width: 34px; height: 34px; font-size: 11px; border-radius: var(--radius-sm); border: 1px solid var(--line); background: var(--paper); color: var(--slate); cursor: pointer; transition: .2s var(--ease); }
+.ptr .row-nav button:hover { background: var(--tomato); border-color: var(--tomato); color: #fff; }
+.ptr-share { position: relative; flex: none; }
+.psh-btn { display: inline-flex; align-items: center; gap: 9px; height: 42px; padding: 0 18px; border-radius: var(--radius-md); border: 1px solid var(--line); background: var(--paper); color: var(--slate); font-family: inherit; font-weight: 700; font-size: 13.5px; cursor: pointer; transition: .2s var(--ease); }
+.psh-btn i { font-size: 14px; color: var(--tomato); transition: color .2s var(--ease); }
+.ptr-share:hover .psh-btn, .ptr-share.open .psh-btn { background: var(--tomato); border-color: var(--tomato); color: #fff; }
+.ptr-share:hover .psh-btn i, .ptr-share.open .psh-btn i { color: #fff; }
+.psh-pop { position: absolute; right: 0; bottom: calc(100% + 10px); display: flex; gap: 8px; background: #fff; border: 1px solid var(--line); border-radius: var(--radius-md); box-shadow: var(--sh-lg); padding: 9px; opacity: 0; visibility: hidden; transform: translateY(8px); transition: .2s var(--ease); z-index: 20; }
+.psh-pop::after { content: ""; position: absolute; right: 20px; bottom: -6px; width: 12px; height: 12px; background: #fff; border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); transform: rotate(45deg); }
+.ptr-share:hover .psh-pop, .ptr-share.open .psh-pop { opacity: 1; visibility: visible; transform: translateY(0); }
+.psh-pop a, .psh-pop button.cp { width: 40px; height: 40px; border-radius: var(--radius-circle); border: 1px solid var(--line); display: grid; place-items: center; font-size: 15px; color: var(--slate-2); background: var(--paper); transition: .2s var(--ease); cursor: pointer; font-family: inherit; }
+.psh-pop a.xx:hover { background: #111; border-color: #111; color: #fff; transform: translateY(-2px); }
+.psh-pop a.wa:hover { background: #25D366; border-color: #25D366; color: #fff; transform: translateY(-2px); }
+.psh-pop a.ml:hover { background: var(--tomato); border-color: var(--tomato); color: #fff; transform: translateY(-2px); }
+.psh-pop button.cp:hover { background: var(--slate); border-color: var(--slate); color: #fff; transform: translateY(-2px); }
+.psh-pop button.cp.ok, .psh-pop button.cp.ok:hover { background: var(--green); border-color: var(--green); color: #fff; }
+
+/* ---- B10: "Adım Adım Teknik" üstünde nefes payı — standart 40px .ls-sec
+   dolgusu üstüne ek boşluk (curriculum bir önceki bölümden görsel olarak daha
+   belirgin ayrılsın istendi — brief B10 AYRI madde, B5'in genel eşitlemesinden
+   bağımsız bir vurgu). ---- */
+.ls-sec.cur-wrap { padding-top: 64px; }
+
+/* ---- B11: müfredat akordeonu (YENİ .cur-* ailesi) — akordeon toggle
+   mekanizması sitenin KENDİ sss/faq-list .qa/.qa-head/.qa-body/.qa-car
+   deseninden türetildi (sss.css BİREBİR taban: dolgu/radius/renk/geçiş
+   değerleri), iki seviyeli (bölüm+adım) olduğu için sınıflar .cur-sec/
+   .cur-row olarak ikiye ayrıldı. Udemy'nin renk/tipografi/buton dili
+   ALINMADI — yalnız YAPI (özet satırı/bölüm başlığı/adım satırı sırası). ---- */
+.cur-summary { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; margin-bottom: 16px; }
+.cur-summary-txt { font-size: 13.5px; font-weight: 700; color: var(--slate-2); display: inline-flex; align-items: center; gap: 8px; }
+.cur-dot { width: 3px; height: 3px; border-radius: 50%; background: var(--muted); display: inline-block; }
+.cur-expand-all { display: inline-flex; align-items: center; gap: 8px; font-family: inherit; font-size: 12.5px; font-weight: 700; color: var(--slate); background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius-sm); padding: 8px 14px; cursor: pointer; transition: .2s var(--ease); }
+.cur-expand-all:hover { border-color: var(--tomato); color: var(--tomato); }
+.cur-expand-all i { font-size: 11px; color: var(--tomato); }
+
+.cur-list { display: flex; flex-direction: column; gap: 12px; }
+.cur-sec { background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius-lg); overflow: hidden; transition: border-color .25s var(--ease), box-shadow .25s var(--ease); }
+.cur-sec.open { border-color: rgba(225, 72, 39, .3); box-shadow: var(--sh-sm); }
+.cur-sec-head { display: flex; align-items: center; gap: 14px; width: 100%; background: var(--bg-cream); border: none; border-bottom: 1px solid transparent; font-family: inherit; font-size: 14.5px; font-weight: 700; color: var(--slate); padding: 16px 20px; cursor: pointer; text-align: left; transition: color .2s var(--ease); }
+.cur-sec.open .cur-sec-head { border-bottom-color: var(--line); color: var(--tomato); }
+.cur-sec-head:hover { color: var(--tomato); }
+.cur-sec-title { flex: 1; min-width: 0; }
+.cur-sec-meta { flex: none; font-size: 12px; font-weight: 600; color: var(--muted); display: inline-flex; align-items: center; gap: 6px; }
+.cur-car { flex: none; font-size: 12px; color: var(--muted); transition: transform .25s var(--ease); }
+.cur-sec.open > .cur-sec-head > .cur-car { transform: rotate(180deg); color: var(--tomato); }
+.cur-sec-body { max-height: 0; overflow: hidden; transition: max-height .32s var(--ease); background: var(--paper); }
+.cur-rows { display: flex; flex-direction: column; }
+
+.cur-row { border-top: 1px solid var(--line); }
+.cur-row:first-child { border-top: none; }
+.cur-row-head { display: flex; align-items: center; gap: 12px; width: 100%; background: none; border: none; font-family: inherit; font-size: 13.5px; font-weight: 600; color: var(--slate-2); padding: 13px 20px 13px 16px; cursor: pointer; text-align: left; transition: color .18s var(--ease), background .18s var(--ease); }
+.cur-row-head:hover { background: var(--bg-cream); color: var(--slate); }
+.cur-row.open .cur-row-head { color: var(--slate); font-weight: 700; }
+.cur-row-ico { flex: none; width: 26px; height: 26px; border-radius: var(--radius-circle); background: var(--tomato-tint); color: var(--tomato); display: grid; place-items: center; font-size: 10px; }
+.cur-row-title { flex: 1; min-width: 0; }
+.cur-preview-badge { flex: none; display: inline-flex; align-items: center; gap: 5px; font-size: 10.5px; font-weight: 800; letter-spacing: .03em; text-transform: uppercase; color: var(--tomato); background: var(--tomato-tint); padding: 3px 9px; border-radius: var(--radius-pill); }
+.cur-row-time { flex: none; font-size: 12px; font-weight: 600; color: var(--muted); }
+.cur-row .cur-car { font-size: 11px; }
+.cur-row.open > .cur-row-head > .cur-car { transform: rotate(180deg); color: var(--tomato); }
+.cur-row-body { max-height: 0; overflow: hidden; transition: max-height .28s var(--ease); }
+.cur-row-detail { padding: 0 20px 18px 54px; display: flex; flex-direction: column; gap: 10px; }
+.cur-row-detail > p { font-size: 13.5px; color: var(--slate-2); font-weight: 500; line-height: 1.6; margin: 0; }
+.cur-row-img { width: 100%; max-width: 320px; height: 160px; border-radius: var(--radius-md); background-size: cover; background-position: center; }
+.cur-row-detail .art-tip { margin: 4px 0 0; padding: 16px 18px; }
+.cur-row-detail .art-tip .at-ico { width: 34px; height: 34px; font-size: 14px; }
+
+/* ---- Kilitli ders maskeli iskelet (lead KARARI, 2026-07-30, kararlar.md
+   MGR-3) — bölüm başına TEK kilit notu + tıklanamaz maskeli satırlar. Satırın
+   KENDİSİ .cur-row-head DEĞİL düz <span> (gerçek buton yok, gizleyecek içerik
+   yok — vurgu/hover/cursor da YOK, "tıklanabilir görünüp açılmıyor" yanılgısı
+   önlenir). ---- */
+.cur-lock-note { display: flex; align-items: center; gap: 10px; padding: 12px 20px 12px 16px; margin: 0; font-size: 12.5px; font-weight: 600; color: var(--muted); background: var(--bg-cream); border-bottom: 1px solid var(--line); }
+.cur-lock-note i { color: var(--tomato); font-size: 12px; }
+.cur-row-locked { border-top: 1px solid var(--line); }
+.cur-row-locked:first-child { border-top: none; }
+.cur-row-locked .cur-row-head { display: flex; align-items: center; gap: 12px; width: 100%; padding: 13px 20px 13px 16px; cursor: default; }
+.cur-row-locked .cur-row-ico { background: var(--line); color: var(--muted); }
+.cur-row-title-masked { flex: 1; min-width: 0; font-size: 13.5px; font-weight: 500; color: var(--muted); font-style: italic; }
+
+/* ---- B12: kart sınırları/gruplama netliği — mistake/sense kartları arası
+   boşluk hafif artırıldı + hover'da hafif yükselti (künye/next-card ile aynı
+   dil), künye satırları arası ayrım netleştirildi. ---- */
+.ls-mistakes { gap: 18px; }
+.ls-mistake, .ls-sense { transition: border-color .2s var(--ease), box-shadow .2s var(--ease); }
+.ls-mistake:hover, .ls-sense:hover { border-color: rgba(225, 72, 39, .25); box-shadow: var(--sh-sm); }
+.kc-card .rdf { transition: background .18s var(--ease); }
+.kc-card .rdf:hover { background: var(--bg-cream); }
+
 /* ===================== TABLET (<=1024px) ===================== */
 @media (max-width: 1024px) {
   .ls-outcomes { grid-template-columns: 1fr; }
   .ls-equip-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .rd-stage { height: 320px; min-height: 320px; }
+  /* detay.css:142 .ld-cols{grid-template-columns:1fr} minmax(0,..) taşımıyordu
+     — bkz. yukarıdaki .art-fig notu, taşma taraması bulgusu. ders.css artık
+     detay.css'ten SONRA yüklendiği için (bkz. show.blade.php sıralama notu)
+     düz özgüllük yeterli, !important gerekmiyor. */
+  .ld-cols { grid-template-columns: minmax(0, 1fr); }
 }
 /* ===================== MOBİL (<=640px) ===================== */
 @media (max-width: 640px) {
   .ls-sec { padding: 28px 0; }
+  .ls-sec.cur-wrap { padding-top: 40px; }
   .ls-equip-grid { grid-template-columns: 1fr; gap: 20px; }
   .ls-senses { grid-template-columns: 1fr; }
   .ls-mistakes { grid-template-columns: 1fr; }
   .kc-cta { flex-direction: column; align-items: stretch; }
   .kc-cta-start { width: 100%; }
   .ls-q-foot { flex-direction: column; align-items: flex-start; }
+  .rd-stage { height: 260px; min-height: 260px; }
+  .ptr { flex-wrap: wrap; gap: 12px; }
+  .ptr-rail { flex: 1 1 100%; order: 2; }
+  .ptr-lbl { order: 1; }
+  .ptr-share { order: 1; margin-left: auto; }
+  .psh-pop { right: 0; }
+  .cur-summary { flex-direction: column; align-items: flex-start; }
+  .cur-row-detail { padding-left: 20px; }
+  .cur-row-img { max-width: 100%; }
 }
