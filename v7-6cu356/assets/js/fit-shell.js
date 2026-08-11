@@ -59,14 +59,19 @@ var NAV = [
 
   /* 3 · FİT PLANIM — kişisel alan. Ziyaretçide örnek görünüm, üyede kişisel veri (belge §9).
      NOT: kabuğun 10 kalemi Faz 2'de kurulur; bu listede yalnız BUGÜN VAR OLAN hedefler durur. */
-  { key:'fit-planim', label:'Fit Planım', href:'enerji-defteri-v1.html', icon:'fa-solid fa-bolt',
-    match:['enerji-defteri-v1','dadafit-kopru-v1'],
+  { key:'fit-planim', label:'Fit Planım', href:'fit-planim-v1.html', icon:'fa-solid fa-bolt',
+    match:['fit-planim-v1','enerji-defteri-v1','dadafit-kopru-v1','fit-planim-programim-v1',
+           'fit-planim-gecmis-v1','fit-planim-ilerleme-v1','fit-planim-rozetler-v1',
+           'fit-planim-kaydettiklerim-v1','fit-planim-randevular-v1',
+           'fit-planim-saglik-profil-v1','fit-planim-veri-izin-v1'],
     dd:[
+      {label:'Bugün', desc:'Bugünkü plan, sıradaki antrenman', href:'fit-planim-v1.html', icon:'fa-solid fa-sun'},
       {label:'Enerji Defteri', desc:'Aldığın · harcadığın · denge', href:'enerji-defteri-v1.html', icon:'fa-solid fa-bolt'},
-      {label:'Enerji Köprüsü', desc:'Beslenme ile hareketin buluştuğu yer', href:'dadafit-kopru-v1.html', icon:'fa-solid fa-arrow-right-arrow-left'},
-      {group:'Kaydettiklerin'},
-      {label:'Rozetlerim', desc:'Kilometre taşların', href:'rozetler-v1.html', icon:'fa-solid fa-medal'},
-      {label:'Ayarlar / Hesabım', desc:'Profil, bildirim, izinler', href:'hesabim-v1.html', icon:'fa-solid fa-gear'}
+      {label:'Programım', desc:'Aktif programın ve takvimi', href:'fit-planim-programim-v1.html', icon:'fa-solid fa-clipboard-list'},
+      {label:'İlerlemem', desc:'Süre, seri, gelişim', href:'fit-planim-ilerleme-v1.html', icon:'fa-solid fa-chart-line'},
+      {label:'Kaydettiklerim', desc:'Hareket, program, rehber', href:'fit-planim-kaydettiklerim-v1.html', icon:'fa-solid fa-bookmark'},
+      {group:'Kavram'},
+      {label:'Enerji Köprüsü', desc:'Beslenme ile hareketin buluştuğu yer', href:'dadafit-kopru-v1.html', icon:'fa-solid fa-arrow-right-arrow-left'}
     ] },
 
   /* 4 · ANTRENÖRLER — ticari dönüşüm nedeniyle bağımsız başlık (belge §1) */
@@ -86,7 +91,7 @@ var BOTTOM = [
   {label:'Ana Sayfa',  href:'dadafit-hub-v1.html',        icon:'fa-solid fa-house',           match:['dadafit-hub-v1']},
   {label:'Hareket',    href:'hareket-merkezi-v1.html',    icon:'fa-solid fa-person-running',  match:['hareket-merkezi-v1','egzersiz-kutuphane-v1','egzersiz-detay-v1','hareket-rehberi-v1','hareket-yeni-baslayanlar-v1','hareket-dogru-form-v1','hareket-sureye-gore-v1','hareket-hedefe-gore-v1','hareket-bolgeye-gore-v1','hareket-masa-basi-v1','hareket-isinma-soguma-v1','hareket-sozluk-v1']},
   {label:'Programlar', href:'programlar-merkezi-v1.html', icon:'fa-solid fa-dumbbell', center:true, match:['programlar-merkezi-v1','program-liste-v1','program-detay-v1','challenge-v1']},
-  {label:'Fit Planım', href:'enerji-defteri-v1.html',     icon:'fa-solid fa-bolt',            match:['enerji-defteri-v1','dadafit-kopru-v1']},
+  {label:'Fit Planım', href:'fit-planim-v1.html',         icon:'fa-solid fa-bolt',            match:['fit-planim-v1','enerji-defteri-v1','dadafit-kopru-v1','fit-planim-programim-v1','fit-planim-gecmis-v1','fit-planim-ilerleme-v1','fit-planim-rozetler-v1','fit-planim-kaydettiklerim-v1','fit-planim-randevular-v1','fit-planim-saglik-profil-v1','fit-planim-veri-izin-v1']},
   {label:'Hesabım',    href:'giris-v1.html',              icon:'fa-solid fa-user', id:'bnAccount'}
 ];
 
@@ -95,7 +100,7 @@ var FOOTER_COLS = [
   { title:'DadaFit', links:[
       {label:'Hareket',     href:'hareket-merkezi-v1.html'},
       {label:'Programlar',  href:'programlar-merkezi-v1.html'},
-      {label:'Fit Planım',  href:'enerji-defteri-v1.html'},
+      {label:'Fit Planım',  href:'fit-planim-v1.html'},
       {label:'Antrenörler', href:'antrenorler-v1.html'}
   ]},
   { title:'Hızlı Erişim', links:[
@@ -115,12 +120,32 @@ var FOOTER_COLS = [
   ]}
 ];
 
+/* ============================================================
+   FİT PLANIM — kişisel alan alt menüsü (belge §9.1, on kalem)
+   Kalem eklemek = bu dizide TEK SATIR. Sayfa yalnız
+   <div id="fitPlanTop" data-plan-page="…" data-plan-title="…"
+        data-plan-sub="…"></div> yazar; başlık, breadcrumb ve
+   sekme rayı buradan üretilir.
+   ============================================================ */
+var PLAN_NAV = [
+  {key:'bugun',        label:'Bugün',                     href:'fit-planim-v1.html',                icon:'fa-solid fa-sun'},
+  {key:'defter',       label:'Enerji Defteri',            href:'enerji-defteri-v1.html',            icon:'fa-solid fa-bolt'},
+  {key:'programim',    label:'Programım',                 href:'fit-planim-programim-v1.html',      icon:'fa-solid fa-clipboard-list'},
+  {key:'gecmis',       label:'Antrenman Geçmişim',        href:'fit-planim-gecmis-v1.html',         icon:'fa-solid fa-clock-rotate-left'},
+  {key:'ilerleme',     label:'İlerlemem',                 href:'fit-planim-ilerleme-v1.html',       icon:'fa-solid fa-chart-line'},
+  {key:'rozetler',     label:'Challenge ve Rozetler',     href:'fit-planim-rozetler-v1.html',       icon:'fa-solid fa-medal'},
+  {key:'kaydettiklerim',label:'Kaydettiklerim',           href:'fit-planim-kaydettiklerim-v1.html', icon:'fa-solid fa-bookmark'},
+  {key:'randevular',   label:'Randevularım ve Mesajlar',  href:'fit-planim-randevular-v1.html',     icon:'fa-solid fa-calendar-check'},
+  {key:'saglik',       label:'Sağlık ve Hareket Profilim',href:'fit-planim-saglik-profil-v1.html',  icon:'fa-solid fa-heart-pulse'},
+  {key:'veri',         label:'Veri ve İzinlerim',         href:'fit-planim-veri-izin-v1.html',      icon:'fa-solid fa-shield-halved'}
+];
+
 /* Hesap menüsü — belge §3.3: Dada Gastro hesap aksiyonları (Mutfak Defterim /
    Tarif Ekle / Alışveriş Listem …) DadaFit hesap menüsünde DURMAZ; onlara
    ekosistem değiştiriciden (üst bant marka barı · drawer "DadaMutfak'a dön")
    geçilir. Burada yalnız DadaFit kalemleri var. */
 var ACCOUNT = [
-  {label:'Fit Planım',        href:'enerji-defteri-v1.html', icon:'fa-solid fa-bolt'},
+  {label:'Fit Planım',        href:'fit-planim-v1.html',     icon:'fa-solid fa-bolt'},
   {label:'Enerji Köprüsü',    href:'dadafit-kopru-v1.html',  icon:'fa-solid fa-arrow-right-arrow-left'},
   {label:'Programım',         href:'program-liste-v1.html',  icon:'fa-solid fa-clipboard-list'},
   {label:'Rozetlerim',        href:'rozetler-v1.html',       icon:'fa-solid fa-medal'},
@@ -280,14 +305,14 @@ function drawerHtml(){
 '      <div class="da-info">\n'+
 '        <b>Elif Şahin</b>\n'+
 '        <div class="da-links">\n'+
-'          <a href="enerji-defteri-v1.html">Fit Planım</a>\n'+
+'          <a href="fit-planim-v1.html">Fit Planım</a>\n'+
 '          <a href="bildirimler-v1.html">Bildirimler</a>\n'+
 '          <a href="hesabim-v1.html">Ayarlar</a>\n'+
 '          <a href="anasayfa-portal-v3a.html?auth=0">Çıkış</a>\n'+
 '        </div>\n'+
 '      </div>\n'+
 '    </div>\n'+
-'    <a href="enerji-defteri-v1.html" class="drawer-add"><i class="fa-solid fa-bolt"></i> Fit Planım</a>\n'+
+'    <a href="fit-planim-v1.html" class="drawer-add"><i class="fa-solid fa-bolt"></i> Fit Planım</a>\n'+
 '    <a href="antrenorler-v1.html" class="drawer-add"><i class="fa-solid fa-user-tie"></i> Antrenör Bul</a>\n'+
 '    <a href="anasayfa-portal-v3a.html" class="drawer-add"><i class="fa-solid fa-arrow-left-long"></i> DadaMutfak\'a dön</a>\n'+
 '    <div class="drawer-lang" id="drawerLang">\n'+
@@ -548,6 +573,53 @@ var _bot = document.getElementById('fitShellBottom');
 if(_bot){
   _bot.outerHTML = LGGATE_HTML + '\n' + footerHtml() + '\n' + MENTOR_HTML +
     '\n<button class="to-top" id="toTop" type="button" aria-label="Basa don"><i class="fa-solid fa-arrow-up" aria-hidden="true"></i></button>';
+}
+
+/* ---- FİT PLANIM kişisel kabuğu: banner + breadcrumb + sekme rayı ---- */
+var _plan = document.getElementById('fitPlanTop');
+if(_plan){
+  var pk    = _plan.getAttribute('data-plan-page') || 'bugun';
+  var ptit  = _plan.getAttribute('data-plan-title') || 'Fit Planım';
+  var psub  = _plan.getAttribute('data-plan-sub') || '';
+  var cur   = null;
+  for(var pi=0;pi<PLAN_NAV.length;pi++){ if(PLAN_NAV[pi].key===pk) cur=PLAN_NAV[pi]; }
+  var tabs = PLAN_NAV.map(function(it){
+    var on = it.key===pk;
+    return '<a class="dt'+(on?' active':'')+'" href="'+it.href+'"'+(on?' aria-current="page"':'')+
+           '><i class="'+it.icon+'"></i> '+it.label+'</a>';
+  }).join('\n        ');
+  _plan.outerHTML =
+   '<section class="lib-top fp-top">\n'+
+   '  <div class="wrap">\n'+
+   '    <nav class="lib-crumb" aria-label="Sayfa yolu">\n'+
+   '      <a href="dadafit-hub-v1.html"><i class="fa-solid fa-house"></i> DadaFit</a>\n'+
+   '      <i class="fa-solid fa-chevron-right"></i>\n'+
+   '      <a href="fit-planim-v1.html">Fit Planım</a>\n'+
+   '      <i class="fa-solid fa-chevron-right"></i>\n'+
+   '      <span class="cur">'+(cur?cur.label:ptit)+'</span>\n'+
+   '    </nav>\n'+
+   '    <span class="eyebrow"><i class="fa-solid fa-bolt"></i> Fit Planım · kişisel alanın</span>\n'+
+   '    <h1>'+ptit+'</h1>\n'+
+   (psub? '    <p class="lib-sub">'+psub+'</p>\n' : '')+
+   '    <div class="fp-who">\n'+
+   '      <span class="fp-ava" style="background-image:url(\''+AVA+'\')"></span>\n'+
+   '      <span class="fp-who-txt"><b class="fp-name">Elif Şahin</b><small class="fp-state">Ücretsiz üye · 3 haftadır burada</small></span>\n'+
+   '      <span class="demo-tag fp-demo"><i class="fa-solid fa-eye"></i> Örnek görünüm</span>\n'+
+   '    </div>\n'+
+   '  </div>\n'+
+   '</section>\n'+
+   '<div class="pf-tabbar fp-tabbar">\n'+
+   '  <div class="wrap">\n'+
+   '    <nav class="pf-tabs" aria-label="Fit Planım bölümleri">\n        '+tabs+'\n    </nav>\n'+
+   '  </div>\n'+
+   '</div>\n'+
+   '<div class="wrap fp-gate" data-lg-only>\n'+
+   '  <div class="fp-gate-in">\n'+
+   '    <i class="fa-solid fa-circle-info"></i>\n'+
+   '    <p>Bu sayfadaki veriler <b>örnektir</b> — Fit Planım\'ın nasıl çalıştığını göstermek için. Giriş yaptığında burada kendi verin olur.</p>\n'+
+   '    <span class="fp-gate-acts"><a class="btn btn-primary" href="giris-v1.html"><i class="fa-regular fa-user"></i> Giriş Yap</a><a class="btn btn-ghost" href="giris-v1.html?tab=kayit">Ücretsiz hesap oluştur</a></span>\n'+
+   '  </div>\n'+
+   '</div>';
 }
 
 /* hero'lu sayfa: body[data-fit-hero="1"] → header hero uzerinde seffaf baslar */
@@ -1008,5 +1080,22 @@ setTimeout(function(){
   window.addEventListener('resize',upd);
   upd();
 })();
+/* ---- Ziyaretçi ↔ üye: "örnek görünüm" işaretleri (belge §9.3 · §19) ----
+   Giriş yapılmışsa demo etiketleri ve giriş şeridi kalkar. Her sayfada tekrar
+   yazılmasın diye kabukta. */
+(function(){
+  function sync(){
+    var authed = document.body.classList.contains('is-auth');
+    document.querySelectorAll('[data-lg-only]').forEach(function(el){ el.style.display = authed ? 'none' : ''; });
+    document.querySelectorAll('.fp-demo').forEach(function(el){ el.style.display = authed ? 'none' : ''; });
+    var st = document.querySelector('.fp-state');
+    if(st && authed) st.textContent = 'Ücretsiz üye · kendi verin';
+  }
+  sync();
+  window.addEventListener('storage', sync);
+  window.FIT_SHELL = window.FIT_SHELL || {};
+  window.FIT_SHELL.syncAuthView = sync;
+})();
+
 
 })();
