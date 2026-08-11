@@ -416,46 +416,28 @@ body.df-searching #kutuphane .df-filterbar,body.df-searching #kutuphane .df-fcar
 <!-- SAYFA İÇERİĞİ — GÜNLÜK ENERJİ DEFTERİ (dashboard, 7 modül alt alta) -->
 
 <!-- ===== HERO + MODÜL 1 · BUGÜNKÜ DENGE (df-ledger genişletilmiş signature) ===== -->
-<section class="df-top">
-  <div class="df-hero-media" aria-hidden="true">
-    <video autoplay muted loop playsinline preload="auto" poster="https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=1680&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-16&high=8&vib=3">
-      <source src="assets/video/dadafit-hero-web.mp4" type="video/mp4" />
-    </video>
-  </div>
-  <div class="wrap">
-    <nav class="df-crumb" aria-label="Sayfa yolu">
-      <a href="dadafit-hub-v1.html"><i class="fa-solid fa-house"></i> DadaFit</a>
-      <i class="fa-solid fa-chevron-right"></i>
-      <b>Fit Planım · Enerji Defteri</b>
-    </nav>
-    <div class="df-hero">
-      <div class="df-hmain">
-        <span class="eyebrow"><i class="fa-solid fa-bolt"></i> DadaFit · Günlük Enerji Defteri</span>
-        <h1>Bugün ne yediğini, ne harcadığını ve enerjini nasıl dengelediğini <span class="accent">tek ekranda</span> gör.</h1>
-        <p class="lead">Defter seni yargılamaz. Burada kalori baskısı yok — yeme ile hareketi yan yana koyar, dengeni görünür kılar.</p>
-        <div class="df-hcta">
-          <a class="btn btn-fit" href="#yediklerim" data-lg-gate data-lg-title="Deftere eklemek için giriş yap" data-lg-desc="Kendi enerji defterini tutmak, öğün ve hareket eklemek için DadaMutfak hesabına giriş yapman gerekiyor."><i class="fa-solid fa-plus"></i> Bugüne Ekle</a>
-          <a class="btn btn-line" href="#dengele"><i class="fa-solid fa-scale-balanced"></i> Yediğini Dengele</a>
-        </div>
-        <div class="df-htrust">
-          <span><i class="fa-solid fa-circle-check"></i> Kalori baskısı yok</span>
-          <span><i class="fa-solid fa-circle-check"></i> Denge odaklı</span>
-          <span><i class="fa-solid fa-circle-check"></i> Dada Gastro'ya bağlı</span>
-        </div>
-        <div class="ed-demo">
-          <i class="fa-solid fa-circle-info"></i> Bu bir örnek defter görünümü.
-          <a href="giris-v1.html">Kendi defterini tut →</a>
-        </div>
-      </div>
+<!-- FİT PLANIM kabuğu: banner + breadcrumb + sekme rayı (ortak kabuk JS basar) -->
+<div id="fitPlanTop" data-plan-page="defter" data-plan-title="Enerji Defteri"
+     data-plan-sub="Defter seni yargılamaz. Burada kalori baskısı yok — yeme ile hareketi yan yana koyar, dengeni görünür kılar."></div>
 
-      <!-- MODÜL 1 · BUGÜNKÜ DENGE -->
-      
+<!-- sayfa aksiyon şeridi (eski hero CTA'sı, kişisel kabuğa taşındı) -->
+<div class="wrap fp-actions">
+  <div class="fp-actions-in">
+    <div class="df-hcta">
+      <a class="btn btn-fit" href="#yediklerim" data-lg-gate data-lg-title="Deftere eklemek için giriş yap" data-lg-desc="Kendi enerji defterini tutmak, öğün ve hareket eklemek için DadaMutfak hesabına giriş yapman gerekiyor."><i class="fa-solid fa-plus"></i> Bugüne Ekle</a>
+      <a class="btn btn-ghost" href="#dengele"><i class="fa-solid fa-scale-balanced"></i> Yediğini Dengele</a>
+      <a class="btn btn-ghost" href="dadafit-kopru-v1.html"><i class="fa-solid fa-arrow-right-arrow-left"></i> Enerji Köprüsü</a>
+    </div>
+    <div class="ed-pref">
+      <span class="txt"><b>Kalori rakamlarını gizle</b><small>Yalnız denge göstergesi kalır; sayılar görünmez.</small></span>
+      <span class="fp-sw-lbl" id="kcalLbl">Kapalı</span>
+      <button class="fp-sw" id="kcalSw" role="switch" aria-checked="false" aria-label="Kalori rakamlarını gizle"></button>
     </div>
   </div>
-</section>
+</div>
 
 <!-- BANNER KURALI: ikincil panel bandın dışına alındı (banner ≤ %50 ekran) -->
-<div class="wrap fit-band-panel">
+<div class="wrap fit-band-panel fp-inflow">
 <aside class="df-ledger reveal" aria-label="Bugünkü denge">
         <div class="dl-head">
           <h3>Bugünkü Denge</h3>
@@ -788,6 +770,29 @@ body.df-searching #kutuphane .df-filterbar,body.df-searching #kutuphane .df-fcar
 
 <!-- DadaFit ortak kabuk JS (tek kaynak): markup + davranis -->
 <script src="assets/js/fit-shell.js"></script>
+<script>
+/* ===== §9.3 — kalori rakamlarını gizleme tercihi (yalnız denge göstergesi) ===== */
+(function(){
+  var sw=document.getElementById('kcalSw'), lbl=document.getElementById('kcalLbl');
+  if(!sw)return;
+  var KEY='dm_fit_kcal_hidden';
+  function paint(on){
+    document.body.classList.toggle('kcal-off',on);
+    sw.setAttribute('aria-checked',on?'true':'false');
+    if(lbl)lbl.textContent=on?'Açık':'Kapalı';
+  }
+  var saved=false;
+  try{ saved=localStorage.getItem(KEY)==='1'; }catch(e){}
+  paint(saved);
+  function flip(){
+    var on=sw.getAttribute('aria-checked')!=='true';
+    paint(on);
+    try{ localStorage.setItem(KEY,on?'1':'0'); }catch(e){}
+  }
+  sw.addEventListener('click',flip);
+  sw.addEventListener('keydown',function(e){ if(e.key===' '||e.key==='Enter'){e.preventDefault();flip();} });
+})();
+</script>
 <script>
 /* ===== SAYFA JS — sayfa-spesifik script BU İŞARETİN ALTINA eklenir ===== */
 
