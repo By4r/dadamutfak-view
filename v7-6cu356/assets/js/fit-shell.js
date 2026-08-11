@@ -1092,7 +1092,7 @@ setTimeout(function(){
    ============================================================ */
 (function(){
   var KEY='dm_fit';
-  var BOS = { program:null, challenge:null, randevular:[],
+  var BOS = { program:null, challenge:null,
               bugun:{dk:0,kcal:0,tamam:false}, gecmis:[], hafta:[62,74,90,96,118,142] };
   function clone(o){ return JSON.parse(JSON.stringify(o)); }
   function read(){
@@ -1165,24 +1165,6 @@ setTimeout(function(){
       return write(s);
     },
     challengeBirak:function(){ var s=read(); if(s.challenge)s.challenge.durum='birakildi'; return write(s); },
-
-    /* ---- randevu yaşam döngüsü (belge §11, 9 adım) ---- */
-    randevuAl:function(r){
-      var s=read();
-      s.randevular = s.randevular || [];
-      s.randevular.unshift({antrenor:r.antrenor, slug:r.slug, hizmet:r.hizmet, fiyat:r.fiyat,
-                            tarih:r.tarih, saat:r.saat, durum:'onay-bekliyor'});
-      return write(s);
-    },
-    randevuDurum:function(i,d){ var s=read(); if(s.randevular&&s.randevular[i])s.randevular[i].durum=d; return write(s); },
-    randevuEtiket:function(d){
-      return {'onay-bekliyor':'Onay bekliyor','onaylandi':'Onaylandı','tamamlandi':'Tamamlandı',
-              'iptal':'İptal edildi','ertelendi':'Ertelendi','gelmedi':'Gelinmedi'}[d]||d;
-    },
-    randevuRozet:function(d){
-      return {'onay-bekliyor':'wait','onaylandi':'ok','tamamlandi':'ok',
-              'iptal':'off','ertelendi':'wait','gelmedi':'stop'}[d]||'off';
-    },
 
     /* durum → okunur etiket (renge EK OLARAK metin — belge §14.3) */
     etiket:function(d){
