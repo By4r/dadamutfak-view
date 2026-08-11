@@ -95,5 +95,27 @@
 
 <!-- DadaFit ortak kabuk JS (tek kaynak): markup + davranis -->
 <script src="assets/js/fit-shell.js"></script>
+<script>
+/* ===== Fit Planım · Antrenman Geçmişim — tamamlanan antrenmanlar listeye işlenir ===== */
+(function(){
+  var S=window.FIT_SHELL && window.FIT_SHELL.state; if(!S)return;
+  function paint(){
+    var st=S.read();
+    var list=document.querySelector('.fp-card .fp-list'); if(!list)return;
+    list.querySelectorAll('.fp-row[data-live]').forEach(function(r){r.remove();});
+    (st.gecmis||[]).slice(0,5).reverse().forEach(function(g){
+      var row=document.createElement('div');
+      row.className='fp-row'; row.setAttribute('data-live','1');
+      row.innerHTML='<span class="ico"><i class="fa-solid fa-check"></i></span>'+
+        '<span class="txt"><b>'+g.ad+'</b><small>'+g.tarih+' · '+g.dk+' dk</small></span>'+
+        '<span class="end">'+g.kcal+' kcal<br><span class="fp-badge ok">Tamamlandı</span></span>';
+      list.insertBefore(row, list.firstChild);
+    });
+    var stats=document.querySelectorAll('.fp-stats .fp-stat b');
+    if(stats.length && st.gecmis) stats[0].textContent = 23 + st.gecmis.length;
+  }
+  document.addEventListener('fit:state',paint); paint();
+})();
+</script>
 </body>
 </html>

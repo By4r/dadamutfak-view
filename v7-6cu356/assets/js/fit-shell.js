@@ -47,11 +47,11 @@ var NAV = [
 
   /* 2 · PROGRAMLAR — Challenge burada özel bir program türüdür (belge §8.4) */
   { key:'programlar', label:'Programlar', href:'programlar-merkezi-v1.html', icon:'fa-solid fa-clipboard-list',
-    match:['programlar-merkezi-v1','program-liste-v1','program-detay-v1','challenge-v1'],
+    match:['programlar-merkezi-v1','program-liste-v1','program-detay-v1','challenge-merkezi-v1','challenge-v1'],
     dd:[
       {label:'Programlar Merkezi', desc:'Hedefe, süreye, seviyeye göre', href:'programlar-merkezi-v1.html', icon:'fa-solid fa-compass'},
       {label:'Tüm Programlar', desc:'4 · 8 · 12 haftalık planlar', href:'program-liste-v1.html', icon:'fa-solid fa-clipboard-list'},
-      {label:"Challenge'lar", desc:'7 · 21 · 30 günlük kısa meydan okumalar', href:'challenge-v1.html', icon:'fa-solid fa-trophy'},
+      {label:"Challenge Merkezi", desc:'Aktif · yaklaşan · tamamlanan', href:'challenge-merkezi-v1.html', icon:'fa-solid fa-trophy'},
       {group:'Süreye göre'},
       {label:'Tek günlük rutin', desc:'Bugün bir şey yap', href:'hareket-merkezi-v1.html#sure', icon:'fa-solid fa-bolt'},
       {label:'Ücretsiz ve Pro', desc:'Neyin ücretsiz olduğunu gör', href:'program-liste-v1.html#pro', icon:'fa-solid fa-crown'}
@@ -90,7 +90,7 @@ var NAV = [
 var BOTTOM = [
   {label:'Ana Sayfa',  href:'dadafit-hub-v1.html',        icon:'fa-solid fa-house',           match:['dadafit-hub-v1']},
   {label:'Hareket',    href:'hareket-merkezi-v1.html',    icon:'fa-solid fa-person-running',  match:['hareket-merkezi-v1','egzersiz-kutuphane-v1','egzersiz-detay-v1','hareket-rehberi-v1','hareket-yeni-baslayanlar-v1','hareket-dogru-form-v1','hareket-sureye-gore-v1','hareket-hedefe-gore-v1','hareket-bolgeye-gore-v1','hareket-masa-basi-v1','hareket-isinma-soguma-v1','hareket-sozluk-v1']},
-  {label:'Programlar', href:'programlar-merkezi-v1.html', icon:'fa-solid fa-dumbbell', center:true, match:['programlar-merkezi-v1','program-liste-v1','program-detay-v1','challenge-v1']},
+  {label:'Programlar', href:'programlar-merkezi-v1.html', icon:'fa-solid fa-dumbbell', center:true, match:['programlar-merkezi-v1','program-liste-v1','program-detay-v1','challenge-merkezi-v1','challenge-v1']},
   {label:'Fit Planım', href:'fit-planim-v1.html',         icon:'fa-solid fa-bolt',            match:['fit-planim-v1','enerji-defteri-v1','dadafit-kopru-v1','fit-planim-programim-v1','fit-planim-gecmis-v1','fit-planim-ilerleme-v1','fit-planim-rozetler-v1','fit-planim-kaydettiklerim-v1','fit-planim-randevular-v1','fit-planim-saglik-profil-v1','fit-planim-veri-izin-v1']},
   {label:'Hesabım',    href:'giris-v1.html',              icon:'fa-solid fa-user', id:'bnAccount'}
 ];
@@ -1080,6 +1080,105 @@ setTimeout(function(){
   window.addEventListener('resize',upd);
   upd();
 })();
+/* ============================================================
+   FİT DURUM MODÜLÜ — program ve challenge yaşam döngüsü (belge §11 · §8.4)
+   Tek kayıt: localStorage['dm_fit'] = {
+     program:{slug,ad,durum,hafta,gun,toplam,biten,kacan},
+     challenge:{slug,ad,durum,gun,toplam,seri,telafi},
+     bugun:{dk,kcal,tamam}, gecmis:[…], hafta:[dk…]
+   }
+   durum ∈ devam · duraklatildi · birakildi · tamamlandi
+   Sayfalar bu modülü çağırır; her sayfa kendi state'ini kurmaz.
+   ============================================================ */
+(function(){
+  var KEY='dm_fit';
+  var BOS = { program:null, challenge:null,
+              bugun:{dk:0,kcal:0,tamam:false}, gecmis:[], hafta:[62,74,90,96,118,142] };
+  function clone(o){ return JSON.parse(JSON.stringify(o)); }
+  function read(){
+    try{ var r=localStorage.getItem(KEY); return r?JSON.parse(r):clone(BOS); }
+    catch(e){ return clone(BOS); }
+  }
+  function write(v){
+    try{ localStorage.setItem(KEY,JSON.stringify(v)); }catch(e){}
+    document.dispatchEvent(new CustomEvent('fit:state',{detail:v}));
+    return v;
+  }
+  var API = {
+    read:read, write:write, reset:function(){ return write(clone(BOS)); },
+
+    /* ---- program yaşam döngüsü (belge §8.3 · §11) ---- */
+    programBasla:function(p){
+      var s=read();
+      s.program={slug:p.slug,ad:p.ad,durum:'devam',hafta:1,gun:1,
+                 toplam:p.toplam||12,biten:0,kacan:0};
+      return write(s);
+    },
+    programDurakla:function(){ var s=read(); if(s.program)s.program.durum='duraklatildi'; return write(s); },
+    programDevam:function(){   var s=read(); if(s.program)s.program.durum='devam';        return write(s); },
+    programBirak:function(){   var s=read(); if(s.program)s.program.durum='birakildi';    return write(s); },
+    programYenidenBasla:function(){
+      var s=read();
+      if(s.program){ s.program.durum='devam'; s.program.hafta=1; s.program.gun=1; s.program.biten=0; s.program.kacan=0; }
+      return write(s);
+    },
+    /* kaçırılan gün: kaydır = planı ötele · atla = günü tüket. İkisinde de suçluluk dili yok. */
+    gunKaydir:function(){ var s=read(); if(s.program){ s.program.kacan=(s.program.kacan||0)+1; } return write(s); },
+    gunAtla:function(){   var s=read(); if(s.program){ s.program.gun++; } return write(s); },
+
+    /* ---- tamamlanan antrenman → Enerji Defteri + ilerleme (belge §19) ---- */
+    antrenmanTamamla:function(a){
+      var s=read(), dk=(a&&a.dk)||25, kcal=(a&&a.kcal)||280, ad=(a&&a.ad)||'Antrenman';
+      s.bugun.dk += dk; s.bugun.kcal += kcal; s.bugun.tamam = true;
+      s.gecmis.unshift({tarih:'bugün',ad:ad,dk:dk,kcal:kcal});
+      if(s.hafta && s.hafta.length) s.hafta[s.hafta.length-1] += dk;
+      if(s.program && s.program.durum==='devam'){
+        s.program.biten++;
+        if(s.program.biten>=s.program.toplam){ s.program.durum='tamamlandi'; }
+        else { s.program.gun++; if(s.program.gun>7){ s.program.gun=1; s.program.hafta++; } }
+      }
+      return write(s);
+    },
+
+    /* ---- challenge (belge §8.4) ---- */
+    challengeKatil:function(c){
+      var s=read();
+      s.challenge={slug:c.slug,ad:c.ad,durum:'devam',gun:1,toplam:c.toplam||30,seri:1,telafi:0};
+      return write(s);
+    },
+    challengeGunTamamla:function(){
+      var s=read();
+      if(s.challenge && s.challenge.durum==='devam'){
+        s.challenge.gun++; s.challenge.seri++;
+        if(s.challenge.gun>s.challenge.toplam){ s.challenge.gun=s.challenge.toplam; s.challenge.durum='tamamlandi'; }
+      }
+      return write(s);
+    },
+    /* esnek seri kuralı: ayda iki telafi; üçüncüde seri baştan (belge §15) */
+    challengeGunKacir:function(){
+      var s=read();
+      if(s.challenge && s.challenge.durum==='devam'){
+        if((s.challenge.telafi||0) < 2){ s.challenge.telafi=(s.challenge.telafi||0)+1; }
+        else { s.challenge.seri=0; }
+        s.challenge.gun++;
+      }
+      return write(s);
+    },
+    challengeBirak:function(){ var s=read(); if(s.challenge)s.challenge.durum='birakildi'; return write(s); },
+
+    /* durum → okunur etiket (renge EK OLARAK metin — belge §14.3) */
+    etiket:function(d){
+      return {devam:'Devam ediyor', duraklatildi:'Duraklatıldı', birakildi:'Bırakıldı',
+              tamamlandi:'Tamamlandı'}[d] || 'Başlanmadı';
+    },
+    rozet:function(d){
+      return {devam:'ok', duraklatildi:'wait', birakildi:'off', tamamlandi:'ok'}[d] || 'off';
+    }
+  };
+  window.FIT_SHELL = window.FIT_SHELL || {};
+  window.FIT_SHELL.state = API;
+})();
+
 /* ---- Ziyaretçi ↔ üye: "örnek görünüm" işaretleri (belge §9.3 · §19) ----
    Giriş yapılmışsa demo etiketleri ve giriş şeridi kalkar. Her sayfada tekrar
    yazılmasın diye kabukta. */

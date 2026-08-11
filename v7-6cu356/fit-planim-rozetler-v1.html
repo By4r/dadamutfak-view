@@ -105,5 +105,34 @@
 
 <!-- DadaFit ortak kabuk JS (tek kaynak): markup + davranis -->
 <script src="assets/js/fit-shell.js"></script>
+<script>
+/* ===== Fit Planım · Challenge ve Rozetler — gerçek duruma bağlanır ===== */
+(function(){
+  var S=window.FIT_SHELL && window.FIT_SHELL.state; if(!S)return;
+  function paint(){
+    var c=S.read().challenge;
+    var card=document.querySelector('.fp-card.is-dark'); if(!card)return;
+    var badge=card.querySelector('.fp-badge');
+    if(!c || c.durum==='birakildi'){
+      badge.className='fp-badge off';
+      badge.innerHTML='<i class="fa-solid fa-circle"></i> Katıldığın challenge yok';
+      card.querySelector('b').textContent='Henüz bir challenge’a katılmadın';
+      card.querySelector('p').textContent='Challenge Merkezi’nden birini seç; katıldığın an ilerlemen burada birikmeye başlar.';
+      card.querySelector('.fp-bar>span').style.width='0%';
+      card.querySelector('.fp-meta').innerHTML='<span>Challenge Merkezi’ne git.</span>';
+      return;
+    }
+    badge.className='fp-badge '+S.rozet(c.durum);
+    badge.innerHTML='<i class="fa-solid fa-circle"></i> '+S.etiket(c.durum);
+    card.querySelector('b').textContent=c.ad;
+    card.querySelector('.fp-bar>span').style.width=Math.round(c.gun/c.toplam*100)+'%';
+    card.querySelector('.fp-meta').innerHTML=
+      '<span><b>'+c.gun+' / '+c.toplam+'</b> gün</span>'+
+      '<span><b>'+c.seri+' gün</b> üst üste</span>'+
+      '<span>Telafi hakkı: <b>'+Math.max(0,2-(c.telafi||0))+'</b> / 2</span>';
+  }
+  document.addEventListener('fit:state',paint); paint();
+})();
+</script>
 </body>
 </html>
