@@ -112,5 +112,24 @@
 
 <!-- DadaFit ortak kabuk JS (tek kaynak): markup + davranis -->
 <script src="assets/js/fit-shell.js"></script>
+<script>
+/* ===== Fit Planım · Randevularım — alınan randevular duruma işlenir (belge §11) ===== */
+(function(){
+  var S=window.FIT_SHELL && window.FIT_SHELL.state; if(!S)return;
+  var list=document.querySelector('.fp-card.span-2 .fp-list'); if(!list)return;
+  function paint(){
+    list.querySelectorAll('.fp-row[data-live]').forEach(function(r){r.remove();});
+    (S.read().randevular||[]).forEach(function(r,i){
+      var row=document.createElement('div');
+      row.className='fp-row'; row.setAttribute('data-live','1');
+      row.innerHTML='<span class="ico"><i class="fa-solid fa-calendar-check"></i></span>'+
+        '<span class="txt"><b>'+r.antrenor+' · '+r.hizmet+'</b><small>'+r.tarih+' · '+r.saat+' · '+r.fiyat+'</small></span>'+
+        '<span class="end"><span class="fp-badge '+S.randevuRozet(r.durum)+'">'+S.randevuEtiket(r.durum)+'</span></span>';
+      list.insertBefore(row, list.firstChild);
+    });
+  }
+  document.addEventListener('fit:state',paint); paint();
+})();
+</script>
 </body>
 </html>
