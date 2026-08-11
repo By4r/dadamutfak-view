@@ -26,111 +26,64 @@
    1 · TEK MENÜ LİSTESİ
    ============================================================ */
 var NAV = [
-  /* 1 · HAREKET — Egzersiz Kütüphanesi ile Hareket Rehberi bu şemsiye altında (belge §3.1) */
-  { key:'hareket', label:'Hareket', href:'hareket-merkezi-v1.html', icon:'fa-solid fa-person-running',
-    match:['hareket-merkezi-v1','egzersiz-kutuphane-v1','egzersiz-detay-v1','hareket-rehberi-v1',
-           'hareket-yeni-baslayanlar-v1','hareket-dogru-form-v1','hareket-sureye-gore-v1',
-           'hareket-hedefe-gore-v1','hareket-bolgeye-gore-v1','hareket-masa-basi-v1',
-           'hareket-isinma-soguma-v1','hareket-sozluk-v1'],
+  { key:'egzersizler', label:'Egzersizler', href:'egzersiz-kutuphane-v1.html', icon:'fa-solid fa-person-running',
+    match:['egzersiz-kutuphane-v1','egzersiz-detay-v1'],
     dd:[
-      {label:'Hareket Merkezi', desc:'Nereden başlayacağını seç', href:'hareket-merkezi-v1.html', icon:'fa-solid fa-compass'},
-      {label:'Egzersiz Kütüphanesi', desc:'Tek tek hareketleri bul ve uygula', href:'egzersiz-kutuphane-v1.html', icon:'fa-solid fa-dumbbell'},
-      {label:'Hareket Rehberi', desc:'Nasıl ve neden — öğretici içerik', href:'hareket-rehberi-v1.html', icon:'fa-solid fa-book-open'},
-      {label:'Hareket Sözlüğü', desc:'Set, tekrar, core, mobilite…', href:'hareket-sozluk-v1.html', icon:'fa-solid fa-spell-check'},
-      {group:'Kısa rutinler'},
-      {label:'Bugün kaç dakikan var?', desc:'5 · 10 · 15 · 20 · 30 dakika', href:'hareket-merkezi-v1.html#sure', icon:'fa-solid fa-stopwatch'},
-      {group:'Vücut bölgesi'},
+      {label:'Antrenör Bul', desc:'Uzmanla çalış', href:'antrenorler-v1.html', icon:'fa-solid fa-dumbbell', ddOnly:true},
+      {label:'Tüm Egzersizler', desc:'Kategoriye göre keşfet', href:'egzersiz-kutuphane-v1.html', icon:'fa-solid fa-person-running'},
+      {group:'Vücut Bölgesi'},
       {label:'Üst Vücut', desc:'Kol, omuz, sırt, göğüs', href:'egzersiz-kutuphane-v1.html?bolge=ust-vucut', icon:'fa-solid fa-dumbbell'},
       {label:'Alt Vücut', desc:'Bacak, kalça, kalf', href:'egzersiz-kutuphane-v1.html?bolge=alt-vucut', icon:'fa-solid fa-person-walking'},
-      {label:'Karın & Core', desc:'Merkez bölge, denge', href:'egzersiz-kutuphane-v1.html?bolge=karin', icon:'fa-solid fa-child-reaching'}
+      {label:'Karın & Core', desc:'Merkez bölge, denge', href:'egzersiz-kutuphane-v1.html?bolge=karin', icon:'fa-solid fa-child-reaching'},
+      {group:'Ekipman'},
+      {label:'Ev / Ekipmansız', desc:'Vücut ağırlığı hareketleri', href:'egzersiz-kutuphane-v1.html?ekipman=vucut-agirligi', icon:'fa-solid fa-house'},
+      {label:'Ağırlık', desc:'Dumbbell, barbell, kettlebell', href:'egzersiz-kutuphane-v1.html?ekipman=agirlik', icon:'fa-solid fa-dumbbell'}
     ] },
-
-  /* 2 · PROGRAMLAR — Challenge burada özel bir program türüdür (belge §8.4) */
-  { key:'programlar', label:'Programlar', href:'programlar-merkezi-v1.html', icon:'fa-solid fa-clipboard-list',
-    match:['programlar-merkezi-v1','program-liste-v1','program-detay-v1','challenge-v1'],
-    dd:[
-      {label:'Programlar Merkezi', desc:'Hedefe, süreye, seviyeye göre', href:'programlar-merkezi-v1.html', icon:'fa-solid fa-compass'},
-      {label:'Tüm Programlar', desc:'4 · 8 · 12 haftalık planlar', href:'program-liste-v1.html', icon:'fa-solid fa-clipboard-list'},
-      {label:"Challenge'lar", desc:'7 · 21 · 30 günlük kısa meydan okumalar', href:'challenge-v1.html', icon:'fa-solid fa-trophy'},
-      {group:'Süreye göre'},
-      {label:'Tek günlük rutin', desc:'Bugün bir şey yap', href:'hareket-merkezi-v1.html#sure', icon:'fa-solid fa-bolt'},
-      {label:'Ücretsiz ve Pro', desc:'Neyin ücretsiz olduğunu gör', href:'program-liste-v1.html#pro', icon:'fa-solid fa-crown'}
-    ] },
-
-  /* 3 · FİT PLANIM — kişisel alan. Ziyaretçide örnek görünüm, üyede kişisel veri (belge §9).
-     NOT: kabuğun 10 kalemi Faz 2'de kurulur; bu listede yalnız BUGÜN VAR OLAN hedefler durur. */
-  { key:'fit-planim', label:'Fit Planım', href:'enerji-defteri-v1.html', icon:'fa-solid fa-bolt',
-    match:['enerji-defteri-v1','dadafit-kopru-v1'],
-    dd:[
-      {label:'Enerji Defteri', desc:'Aldığın · harcadığın · denge', href:'enerji-defteri-v1.html', icon:'fa-solid fa-bolt'},
-      {label:'Enerji Köprüsü', desc:'Beslenme ile hareketin buluştuğu yer', href:'dadafit-kopru-v1.html', icon:'fa-solid fa-arrow-right-arrow-left'},
-      {group:'Kaydettiklerin'},
-      {label:'Rozetlerim', desc:'Kilometre taşların', href:'rozetler-v1.html', icon:'fa-solid fa-medal'},
-      {label:'Ayarlar / Hesabım', desc:'Profil, bildirim, izinler', href:'hesabim-v1.html', icon:'fa-solid fa-gear'}
-    ] },
-
-  /* 4 · ANTRENÖRLER — ticari dönüşüm nedeniyle bağımsız başlık (belge §1) */
+  { key:'programlar', label:'Programlar', href:'program-liste-v1.html', icon:'fa-solid fa-clipboard-list',
+    match:['program-liste-v1','program-detay-v1'] },
+  { key:'enerji-defteri', label:'Enerji Defteri', href:'enerji-defteri-v1.html', icon:'fa-solid fa-bolt',
+    match:['enerji-defteri-v1'] },
+  { key:'hareket-rehberi', label:'Hareket Rehberi', href:'hareket-rehberi-v1.html', icon:'fa-solid fa-book-open',
+    match:['hareket-rehberi-v1','hareket-yeni-baslayanlar-v1','hareket-dogru-form-v1','hareket-sureye-gore-v1',
+           'hareket-hedefe-gore-v1','hareket-bolgeye-gore-v1','hareket-masa-basi-v1','hareket-isinma-soguma-v1',
+           'hareket-sozluk-v1'] },
+  { key:'challenge', label:'Challenge', href:'challenge-v1.html', icon:'fa-solid fa-trophy',
+    match:['challenge-v1'] },
   { key:'antrenorler', label:'Antrenörler', href:'antrenorler-v1.html', icon:'fa-solid fa-user-tie',
-    match:['antrenorler-v1','antrenor-detay-v1','antrenor-ol-v1'],
-    dd:[
-      {label:'Antrenör Bul', desc:'Uzmanlık, çalışma şekli, uygunluk', href:'antrenorler-v1.html', icon:'fa-solid fa-user-tie'},
-      {label:'Online destek', desc:'Uzaktan çalışan antrenörler', href:'antrenorler-v1.html?calisma=online', icon:'fa-solid fa-video'},
-      {label:'Yüz yüze çalışma', desc:'Şehrindeki antrenörler', href:'antrenorler-v1.html?calisma=yuzyuze', icon:'fa-solid fa-location-dot'},
-      {group:'Uzman tarafı'},
-      {label:'Antrenör Ol', desc:'Başvuru ve belge doğrulama', href:'antrenor-ol-v1.html', icon:'fa-solid fa-id-badge'}
-    ] }
+    match:['antrenorler-v1','antrenor-detay-v1','antrenor-ol-v1'] }
 ];
 
-/* Mobil alt bar — belge §3.2 / §19: BEŞTEN FAZLA sabit öğe olamaz. */
+/* Mobil alt bar — belge §19: BEŞTEN FAZLA sabit öğe olamaz. */
 var BOTTOM = [
-  {label:'Ana Sayfa',  href:'dadafit-hub-v1.html',        icon:'fa-solid fa-house',           match:['dadafit-hub-v1']},
-  {label:'Hareket',    href:'hareket-merkezi-v1.html',    icon:'fa-solid fa-person-running',  match:['hareket-merkezi-v1','egzersiz-kutuphane-v1','egzersiz-detay-v1','hareket-rehberi-v1','hareket-yeni-baslayanlar-v1','hareket-dogru-form-v1','hareket-sureye-gore-v1','hareket-hedefe-gore-v1','hareket-bolgeye-gore-v1','hareket-masa-basi-v1','hareket-isinma-soguma-v1','hareket-sozluk-v1']},
-  {label:'Programlar', href:'programlar-merkezi-v1.html', icon:'fa-solid fa-dumbbell', center:true, match:['programlar-merkezi-v1','program-liste-v1','program-detay-v1','challenge-v1']},
-  {label:'Fit Planım', href:'enerji-defteri-v1.html',     icon:'fa-solid fa-bolt',            match:['enerji-defteri-v1','dadafit-kopru-v1']},
-  {label:'Hesabım',    href:'giris-v1.html',              icon:'fa-solid fa-user', id:'bnAccount'}
+  {label:'Hareket',    href:'dadafit-hub-v1.html',       icon:'fa-solid fa-bolt',           match:['dadafit-hub-v1','dadafit-kopru-v1']},
+  {label:'Egzersiz',   href:'egzersiz-kutuphane-v1.html',icon:'fa-solid fa-person-running', match:['egzersiz-kutuphane-v1','egzersiz-detay-v1']},
+  {label:'Programlar', href:'program-liste-v1.html',     icon:'fa-solid fa-dumbbell', center:true, match:['program-liste-v1','program-detay-v1']},
+  {label:'Challenge',  href:'challenge-v1.html',         icon:'fa-solid fa-trophy',         match:['challenge-v1']},
+  {label:'Hesap',      href:'giris-v1.html',             icon:'fa-solid fa-user', id:'bnAccount'}
 ];
 
-/* Footer — belge §3.3'ün saydığı kalemler */
 var FOOTER_COLS = [
   { title:'DadaFit', links:[
-      {label:'Hareket',     href:'hareket-merkezi-v1.html'},
-      {label:'Programlar',  href:'programlar-merkezi-v1.html'},
-      {label:'Fit Planım',  href:'enerji-defteri-v1.html'},
-      {label:'Antrenörler', href:'antrenorler-v1.html'}
+      {label:'Egzersizler',    href:'egzersiz-kutuphane-v1.html'},
+      {label:'Programlar',     href:'program-liste-v1.html'},
+      {label:'Enerji Defteri', href:'enerji-defteri-v1.html'},
+      {label:'Hareket Rehberi',href:'hareket-rehberi-v1.html'},
+      {label:'Challenge',      href:'challenge-v1.html'},
+      {label:'Antrenörler',    href:'antrenorler-v1.html'}
   ]},
   { title:'Hızlı Erişim', links:[
       {label:'Hakkımızda', href:'hakkimizda-v1.html'},
       {label:'Künye',      href:'hakkimizda-v1.html#kunye'},
       {label:'S.S.S.',     href:'sss-v1.html'}
   ]},
-  { title:'İletişim & İş Birliği', links:[
-      {label:'Bize Ulaşın',       href:'iletisim-v1.html'},
-      {label:'Öneri ve Şikayet',  href:'#', fb:true},
-      {label:'İş Birliği',        href:'reklam-ver-v1.html'}
+  { title:'İletişim', links:[
+      {label:'Bize Ulaşın',      href:'iletisim-v1.html'},
+      {label:'Öneri ve Şikayet', href:'#', fb:true}
   ]},
-  { title:'Yasal & Sağlık', links:[
-      {label:'Kullanım Koşulları',   href:'yasal-v1.html?metin=kullanim'},
-      {label:'Gizlilik (KVKK)',      href:'yasal-v1.html?metin=kvkk'},
-      {label:'Sağlık Bilgilendirmesi', href:'saglik-bilgilendirme-v1.html'}
+  { title:'İş Birliği', links:[
+      {label:'Reklam Vermek İçin',      href:'reklam-ver-v1.html'},
+      {label:'Sponsorlar ve Partnerler',href:'reklam-ver-v1.html'}
   ]}
-];
-
-/* Hesap menüsü — belge §3.3: Dada Gastro hesap aksiyonları (Mutfak Defterim /
-   Tarif Ekle / Alışveriş Listem …) DadaFit hesap menüsünde DURMAZ; onlara
-   ekosistem değiştiriciden (üst bant marka barı · drawer "DadaMutfak'a dön")
-   geçilir. Burada yalnız DadaFit kalemleri var. */
-var ACCOUNT = [
-  {label:'Fit Planım',        href:'enerji-defteri-v1.html', icon:'fa-solid fa-bolt'},
-  {label:'Enerji Köprüsü',    href:'dadafit-kopru-v1.html',  icon:'fa-solid fa-arrow-right-arrow-left'},
-  {label:'Programım',         href:'program-liste-v1.html',  icon:'fa-solid fa-clipboard-list'},
-  {label:'Rozetlerim',        href:'rozetler-v1.html',       icon:'fa-solid fa-medal'},
-  {label:'Bildirimler',       href:'bildirimler-v1.html',    icon:'fa-solid fa-bell'},
-  {sep:true},
-  {label:"Pro'ya Yükselt",    href:'pro-v1.html',            icon:'fa-solid fa-crown', cls:'acct-pro'},
-  {label:'Ayarlar / Hesabım', href:'hesabim-v1.html',        icon:'fa-solid fa-gear'},
-  {sep:true},
-  {label:'DadaMutfak\'a dön', href:'anasayfa-portal-v3a.html', icon:'fa-solid fa-arrow-left-long'},
-  {label:'Çıkış',             href:'anasayfa-portal-v3a.html?auth=0', icon:'fa-solid fa-right-from-bracket', cls:'acct-logout'}
 ];
 
 /* ============================================================
@@ -225,13 +178,6 @@ var TOPBAR = ''+
 '  </div>\n'+
 '</div>';
 
-function accountHtml(){
-  return ACCOUNT.map(function(a){
-    if(a.sep) return '<div class="acct-div"></div>';
-    return '<a href="'+a.href+'"'+(a.cls?' class="'+a.cls+'"':'')+'><i class="'+a.icon+'"></i> <span>'+a.label+'</span></a>';
-  }).join('\n            ');
-}
-
 function headerHtml(){
   return ''+
 '<header class="header">\n'+
@@ -242,6 +188,13 @@ function headerHtml(){
 '      <div class="head-actions">\n'+
 '        <button class="icon-btn" aria-label="Ara" onclick="location.href=\'arama-fit-v1.html\'"><i class="fa-solid fa-magnifying-glass"></i></button>\n'+
 '        <button class="btn-login" onclick="location.href=\'giris-v1.html\'"><i class="fa-regular fa-user"></i> Giriş Yap</button>\n'+
+'        <div class="acct-item head-add">\n'+
+'          <button class="icon-btn" aria-label="Ekle" aria-haspopup="true"><i class="fa-solid fa-plus"></i></button>\n'+
+'          <div class="acct-menu">\n'+
+'            <a href="tarif-ekle-v1.html"><i class="fa-solid fa-utensils"></i> <span>Tarif Ekle<small>Yeni bir tarif paylaş</small></span></a>\n'+
+'            <a href="puf-noktasi-ekle-v1.html"><i class="fa-solid fa-lightbulb"></i> <span>Püf Noktası Ekle<small>Küçük bir mutfak sırrı</small></span></a>\n'+
+'          </div>\n'+
+'        </div>\n'+
 '        <a class="icon-btn head-bell" href="bildirimler-v1.html" aria-label="Bildirimler"><i class="fa-solid fa-bell"></i><span class="hb-badge">3</span></a>\n'+
 '        <div class="acct-item acct-wrap">\n'+
 '          <button class="acct-btn" aria-label="Hesabım" aria-haspopup="true">\n'+
@@ -254,7 +207,18 @@ function headerHtml(){
 '              <span class="acct-id-txt"><b>Elif Şahin</b><small>@elifsahin</small></span>\n'+
 '            </div>\n'+
 '            <div class="acct-div"></div>\n'+
-'            '+accountHtml()+'\n'+
+'            <a href="mutfak-defteri-v1.html"><i class="fa-solid fa-book-bookmark"></i> <span>Mutfak Defterim</span></a>\n'+
+'            <a href="rozetler-v1.html"><i class="fa-solid fa-medal"></i> <span>Rozetlerim</span></a>\n'+
+'            <a href="mutfak-defteri-v1.html?tab=tarifler"><i class="fa-solid fa-utensils"></i> <span>Tariflerim</span></a>\n'+
+'            <a href="mutfak-defteri-v1.html?tab=kaydedilenler"><i class="fa-solid fa-bookmark"></i> <span>Kaydedilenler</span></a>\n'+
+'            <a href="mutfak-defteri-v1.html?tab=menuler"><i class="fa-solid fa-layer-group"></i> <span>Menülerim</span></a>\n'+
+'            <a href="pro-v1.html" class="acct-promenu"><i class="fa-solid fa-calendar-week"></i> <span>Pro Menü</span> <span class="pm-badge"><i class="fa-solid fa-crown"></i> Pro</span></a>\n'+
+'            <a href="alisveris-listesi-v1.html"><i class="fa-solid fa-basket-shopping"></i> <span>Alışveriş Listem</span></a>\n'+
+'            <a href="rezervasyonlarim-v1.html"><i class="fa-solid fa-calendar-check"></i> <span>Rezervasyonlarım</span></a>\n'+
+'            <a href="pro-v1.html" class="acct-pro"><i class="fa-solid fa-crown"></i> <span>Pro\'ya Yükselt</span></a>\n'+
+'            <a href="hesabim-v1.html"><i class="fa-solid fa-gear"></i> <span>Ayarlar / Hesabım</span></a>\n'+
+'            <div class="acct-div"></div>\n'+
+'            <a href="anasayfa-portal-v3a.html?auth=0" class="acct-logout"><i class="fa-solid fa-right-from-bracket"></i> <span>Çıkış</span></a>\n'+
 '          </div>\n'+
 '        </div>\n'+
 '        <button class="icon-btn hamburger" id="hamburger" aria-label="Menü"><i class="fa-solid fa-bars"></i></button>\n'+
@@ -280,15 +244,15 @@ function drawerHtml(){
 '      <div class="da-info">\n'+
 '        <b>Elif Şahin</b>\n'+
 '        <div class="da-links">\n'+
-'          <a href="enerji-defteri-v1.html">Fit Planım</a>\n'+
+'          <a href="mutfak-defteri-v1.html">Defterim</a>\n'+
 '          <a href="bildirimler-v1.html">Bildirimler</a>\n'+
 '          <a href="hesabim-v1.html">Ayarlar</a>\n'+
 '          <a href="anasayfa-portal-v3a.html?auth=0">Çıkış</a>\n'+
 '        </div>\n'+
 '      </div>\n'+
 '    </div>\n'+
-'    <a href="enerji-defteri-v1.html" class="drawer-add"><i class="fa-solid fa-bolt"></i> Fit Planım</a>\n'+
-'    <a href="antrenorler-v1.html" class="drawer-add"><i class="fa-solid fa-user-tie"></i> Antrenör Bul</a>\n'+
+'    <a href="tarif-ekle-v1.html" class="drawer-add"><i class="fa-solid fa-circle-plus"></i> Tarif Ekle</a>\n'+
+'    <a href="puf-noktasi-ekle-v1.html" class="drawer-add"><i class="fa-solid fa-lightbulb"></i> Püf Noktası Ekle</a>\n'+
 '    <a href="anasayfa-portal-v3a.html" class="drawer-add"><i class="fa-solid fa-arrow-left-long"></i> DadaMutfak\'a dön</a>\n'+
 '    <div class="drawer-lang" id="drawerLang">\n'+
 '      <button class="drawer-lang-toggle" type="button" aria-haspopup="true" aria-expanded="false">\n'+
@@ -604,8 +568,7 @@ var HERO_MODE = document.body.getAttribute('data-fit-hero') === '1';
     if(u.level)b.setAttribute('data-level',String(u.level));
   }
   var bnA=document.getElementById('bnAccount');   // M6 — bottom-nav Hesap hedefi
-  /* belge §3.3: Fit alt barında hesap kalemi Gastro defterine değil hesaba gider */
-  if(bnA)bnA.setAttribute('href', authed?'hesabim-v1.html':'giris-v1.html');
+  if(bnA)bnA.setAttribute('href', authed?'mutfak-defteri-v1.html':'giris-v1.html');
 })();
 
 if(location.search.indexOf('dd=1')>-1){document.querySelector('.nav-item').classList.add('open');var _l=document.getElementById('tbLang');if(_l)_l.classList.add('open');}
