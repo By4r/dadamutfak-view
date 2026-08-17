@@ -1161,6 +1161,11 @@ html.reveal-ready .reveal.in{opacity:1;transform:none}
 .mp-opt.active{background:var(--bc,var(--tomato));border-color:transparent;color:#fff;box-shadow:0 5px 18px color-mix(in srgb,var(--bc,var(--tomato)) 42%,transparent)}
 .mp-mini-overlay{display:flex;position:absolute;inset:0;z-index:5;align-items:center;justify-content:flex-start;gap:11px;padding:0 22px 0 8px;cursor:pointer;opacity:0;pointer-events:none;transition:opacity .3s var(--ease)}
 .mp-mini-overlay .mav{width:40px;height:40px;border-radius:var(--r-circle);background:var(--tomato);color:#fff;display:grid;place-items:center;font-size:17px;flex:none;box-shadow:0 0 0 3px rgba(var(--tomato-rgb),.26);transform:scale(.55);transition:transform .45s var(--ease-spring)}
+/* §22 yetki sınırı satırı — panel dilinin küçük varyantı, yeni aile değil */
+.mp-sinir{position:relative;z-index:3;display:flex;align-items:flex-start;gap:7px;margin-top:2px;
+  font-weight:500;font-size:11.5px;line-height:1.5;color:rgba(255,255,255,.72)}
+.mp-sinir i{flex:none;margin-top:3px;font-size:10px;color:var(--tomato)}
+.mentor-panel.mini .mp-sinir{opacity:0;pointer-events:none}
 .mp-mini-lbl{font-weight:800;font-size:14.5px;letter-spacing:-.01em;color:#fff;white-space:nowrap;opacity:0;transform:translateX(-6px);transition:opacity .3s var(--ease) .05s,transform .35s var(--ease-spring) .05s}
 .mentor-panel.mini .mp-mini-lbl{opacity:1;transform:none}
 .mentor-panel.floating{position:fixed;left:24px;right:auto;bottom:24px;top:auto;width:var(--panel-fl) !important;height:min(72vh,540px);z-index:94;border-radius:var(--r-xl);box-shadow:0 28px 80px rgba(16,14,9,.46);animation:floatIn .5s var(--ease-spring)}
@@ -2577,12 +2582,19 @@ a.drs-row:hover{color:var(--tomato)}
       </span>
     </div>
     <div class="mp-bubble" id="mpBubble">Bugün sana nasıl yardımcı olayım?</div>
-    <div class="mp-row">
-      <a class="mp-opt" href="dadacampus-egitimler-v1.html">Eğitimler</a>
-      <a class="mp-opt" href="dadacampus-programlar-v1.html">Programlar</a>
-      <a class="mp-opt" href="dadacampus-kurumlar-v1.html">Kurumlar</a>
-      <a class="mp-opt w-gastro" href="anasayfa-portal-v3a.html"><span class="bd">Dada</span><span class="sf">Gastro</span></a>
-    </div>
+    <!-- §22 — DadaMentor AYRI BİR ANA MENÜ DEĞİLDİR; öğrenme ve yardım akışlarına
+         bağlanan asistandır. Seçenekler bu yüzden genel gezinme değil, dokümanın
+         saydığı işlevlerdir: hedefe göre yönlendirme · onaylı ders içeriğine dayalı
+         soru-cevap · ders ve takvim hatırlatması · teslim ön kontrolü.
+         Girişli kullanıcıda kişisel akışa, ziyaretçide keşfe döner (JS doldurur). -->
+    <div class="mp-row" id="mpRow"></div>
+    <!-- §22 son madde: asistanın YETKİ SINIRI kullanıcıya görünür yazılır.
+         Akademik başarı, sertifika, kabul/red ve disiplin kararını TEK BAŞINA almaz. -->
+    <p class="mp-sinir" id="mpSinir">
+      <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
+      Yanıtlar onaylı ders içeriğine dayanır. Not, belge, kabul ve disiplin kararı
+      her zaman yetkili kişide kalır.
+    </p>
   </div>
 </aside>
 <button class="to-top" id="toTop" type="button" aria-label="Başa dön"><i class="fa-solid fa-arrow-up" aria-hidden="true"></i></button>
@@ -3162,6 +3174,108 @@ window.__bottomStrips=window.__bottomStrips||[];
     var m = document.getElementById('pageMain');
     if(m) setTimeout(function(){ m.focus(); }, 40);
   });
+})();
+</script>
+
+<script>
+/* ============================================================================
+   KABUK JS — DADAMENTOR BAĞLAMI (§22), Faz 7
+   ----------------------------------------------------------------------------
+   §22: "DadaMentor, DadaCampus içinde AYRI BİR ANA MENÜ OLMAMALI; öğrenme ve
+   yardım akışlarına bağlanan asistan olarak çalışmalıdır."
+
+   Panel eskiden genel gezinme menüsüydü (Eğitimler · Programlar · Kurumlar ·
+   DadaGastro) — bu, dokümanın istemediği "ayrı menü" davranışıydı. Artık
+   seçenekler §22'nin saydığı İŞLEVLER: hedefe göre yönlendirme · onaylı
+   içeriğe dayalı soru-cevap · ders ve takvim hatırlatması · teslim ön kontrolü.
+
+   Bağlam iki eksende kurulur:
+   1) OTURUM — girişliyse kişisel akış (kaldığın ders, takvim, bekleyen teslim),
+      ziyaretçiyse keşif ve yardım.
+   2) SAYFA — hangi sayfadaysan oradaki akışa bağlanır (ders ekranında
+      transkript/soru-cevap, kurum sayfalarında iş birliği, panelde değerlendirme).
+
+   🔴 SINIR (§22 son madde): asistan akademik başarı, sertifika verme,
+   öğrenci kabul/red veya disiplin kararını TEK BAŞINA ALMAZ. Bu cümle panelde
+   `.mp-sinir` olarak KULLANICIYA GÖRÜNÜR yazılır — yalnız yorumda kalmaz.
+   🔴 §22: kuruma özel gizli içerik başka kullanıcıların yanıtlarında kullanılmaz;
+   asistan içeriğin dışına çıktığında kaynağa ya da eğitmene yönlendirir.
+   ========================================================================= */
+(function(){
+  var row = document.getElementById('mpRow');
+  var bubble = document.getElementById('mpBubble');
+  if(!row) return;
+
+  var D = window.DC;
+  var girisli = document.body.classList.contains('is-auth');
+  var sayfa = (location.pathname.split('/').pop() || 'akademi-v1.html');
+
+  function opt(href, metin, ikon){
+    return '<a class="mp-opt" href="' + href + '">' +
+      (ikon ? '<i class="fa-solid ' + ikon + '" aria-hidden="true" style="margin-right:6px"></i>' : '') +
+      metin + '</a>';
+  }
+
+  /* --- sayfa bağlamı: bulunduğun akışa bağlanan tek seçenek ---------------- */
+  var BAGLAM = [
+    /* ders ekranında §22'nin "onaylı ders içeriğine dayalı soru-cevap" işlevi
+       sayfanın kendi Q&A bloğudur — asistan oraya bağlanır, ayrı bir yüzey açmaz */
+    { es: /^dadacampus-ders-/,            href: '#drQaBlok', metin: 'Bu derse soru sor', ikon: 'fa-comments' },
+    { es: /^dadacampus-egitim-detay-/,    href: 'dadacampus-yardim-v1.html?konu=kayit', metin: 'Bu eğitim bana uygun mu?', ikon: 'fa-circle-question' },
+    { es: /^dadacampus-program-detay-/,   href: 'dadacampus-yardim-v1.html?konu=kayit', metin: 'Başvuru koşullarını açıkla', ikon: 'fa-circle-question' },
+    { es: /^dadacampus-(kurumlar|kurum-)/,href: 'dadacampus-kurumlar-v1.html#modeller', metin: 'Hangi model bize uygun?', ikon: 'fa-handshake' },
+    { es: /^dadacampus-(egitmen-panel|kurum-panel)/, href: 'dadacampus-yardim-v1.html?konu=kalite-sureci', metin: 'Değerlendirme nasıl işler?', ikon: 'fa-clipboard-check' },
+    { es: /^dadacampus-sertifika-dogrula/,href: 'dadacampus-yardim-v1.html?konu=sertifika', metin: 'Belge türleri nedir?', ikon: 'fa-certificate' },
+    { es: /^dadacampus-takvim-/,          href: 'dadacampus-kampusum-v1.html?bolum=takvimim', metin: 'Bana hatırlat', ikon: 'fa-bell' }
+  ];
+  var baglam = null;
+  for(var i=0;i<BAGLAM.length;i++){ if(BAGLAM[i].es.test(sayfa)){ baglam = BAGLAM[i]; break; } }
+
+  var secenekler = [];
+  /* 🔴 §3.3 — roller aynı ekranda KARIŞMAZ. Eğitmen ve kurum panelinde
+     "kaldığın ders / teslim ön kontrolü" gibi ÖĞRENCİ akışları gösterilmez;
+     asistan o ekranın kendi rolüne bağlanır. (Ölçümde yakalandı: panelde
+     öğrenci seçenekleri çıkıyordu.) */
+  var panelSayfasi = /^dadacampus-(egitmen-panel|kurum-panel)/.test(sayfa);
+
+  if(girisli && !panelSayfasi){
+    /* §22: ders ve takvim hatırlatması + teslim ön kontrolü — kişisel akış */
+    bubble.textContent = 'Kaldığın yerden devam edelim mi?';
+    /* kaldığın ders: veri katmanından, ilerlemesi tamamlanmamış ilk kayıtlı eğitim */
+    var devam = null;
+    if(D && D.ilerlemeler){
+      for(var k=0;k<D.ilerlemeler.length;k++){
+        var il = D.ilerlemeler[k];
+        if(il.kayitli && D.yuzde(il.egitimId) < 100){
+          var e = D.egitim(il.egitimId);
+          if(e){ devam = D.link.ders(e.slug, il.sonDers); break; }
+        }
+      }
+    }
+    if(devam) secenekler.push(opt(devam, 'Kaldığın ders', 'fa-play'));
+    secenekler.push(opt('dadacampus-kampusum-v1.html?bolum=takvimim', 'Takvimim', 'fa-calendar-days'));
+    secenekler.push(opt('dadacampus-kampusum-v1.html?bolum=odevler', 'Teslim ön kontrolü', 'fa-clipboard-check'));
+  } else if(panelSayfasi){
+    /* panel bağlamı: §22 rapor açıklaması ve riskli ilerleme sinyali */
+    bubble.textContent = 'Panelde ne yapmak istiyorsun?';
+    secenekler.push(opt('dadacampus-raporlar-v1.html', 'Raporu açıkla', 'fa-chart-line'));
+  } else {
+    /* §22: kullanıcının hedefine göre eğitim/program yönlendirme */
+    bubble.textContent = 'Hedefini söyle, sana uygun başlangıcı bulayım.';
+    secenekler.push(opt('dadacampus-egitimler-v1.html?sihirbaz=1', 'Bana uygun eğitim', 'fa-wand-magic-sparkles'));
+    secenekler.push(opt('dadacampus-programlar-v1.html?sihirbaz=1', 'Bana uygun program', 'fa-diagram-project'));
+  }
+
+  /* Bulunduğun sayfanın akışına bağlanan seçenek ÖNCE gelir: asistanın değeri
+     "nerede olduğunu bilmesi"; genel seçenekler onun ardından sıralanır. */
+  if(baglam && baglam.href) secenekler.unshift(opt(baglam.href, baglam.metin, baglam.ikon));
+
+  /* §22: içeriğin dışına çıkıldığında kaynağa ya da eğitmene yönlendirme —
+     her bağlamda Yardım Merkezi son seçenek olarak durur */
+  secenekler.push(opt('dadacampus-yardim-v1.html', 'Yardım Merkezi', 'fa-circle-question'));
+
+  /* En fazla 4 seçenek: panel dar, beşinci satır taşırıyor (ölçüm) */
+  row.innerHTML = secenekler.slice(0, 4).join('');
 })();
 </script>
 
