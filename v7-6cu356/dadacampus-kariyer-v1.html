@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Kurum Profili — DadaCampus | DadaMutfak</title>
-<meta name="description" content="Partner kurum profili: ortak programlar, atanan eğitmenler, açık etkinlikler ve kurum onaylı etki göstergeleri." />
+<title>Kariyer ve Fırsatlar — DadaCampus | DadaMutfak</title>
+<meta name="description" content="Doğrulanmış kurum ve işletmelerden staj ve iş ilanları, mentor görüşmeleri, portfolyo günleri ve sektör etkinlikleri." />
 <link rel="shortcut icon" type="image/x-icon"
       href="assets/img/favicon.ico" />
 <!-- FontAwesome 6.5.2 (kilitli ikon seti) -->
@@ -1189,7 +1189,7 @@ html.reveal-ready .reveal.in{opacity:1;transform:none}
 </style>
 
 <style>
-/* ===== SAYFA CSS — dadacampus-kurum-v1.html ===== */
+/* ===== SAYFA CSS — dadacampus-kariyer-v1.html ===== */
 /* ===================== MERKEZ SAYFASI HERO DÜZELTMESİ =====================
    🔴 Kabuktaki .lst-top ANA SAYFA için `min-height:100vh/100svh` taşır — hub'ın
    hero'su bilerek tam ekrandır. Merkez/katalog sayfaları bu kabuğu devralınca
@@ -1786,22 +1786,24 @@ a.drs-row:hover{color:var(--tomato)}
   .turd{padding:20px 18px}
 }
 
-/* ============== SAYFA CSS — Kurum Profili (§10.1) ==============
-   İskelet `_detay.css` (.dt-*). İçerik aileleri `_ortak.css` ve kabuk.
-   🔴 §10.1: yalnız kurum onayıyla yayımlanan sonuç ve etki göstergeleri
-   gösterilir; yetkisiz iletişim veya kişisel veri GÖSTERİLMEZ.
-   Bu sayfaya özgü tek ek: etki göstergesi kutusu.
-   ============================================================== */
+/* ============== SAYFA CSS — Kariyer ve Fırsatlar (§16.3) ==============
+   Kabuk + `_ortak.css` (.bsv .pstat .mad .inf .kurum-gate .chips .lst-empty).
+   🔴 §16.3: staj ve iş ilanları YALNIZ kurum/işletme doğrulamasıyla yayımlanır
+   → `DC.yayindakiFirsatlar()`. Onaysız kurumun ilanı listeye girmez.
+   🔴 Kurum öğrencisi için kurumun belirlediği görünürlük ve izin kuralları
+   geçerlidir; başvuru durumu Kampüsüm içinde takip edilir.
+   Bu sayfaya özgü ek: fırsat satırındaki tarih kutusu.
+   ==================================================================== */
 
-/* etki göstergesi — sayı + etiket; yalnız onay kaydı olan kurumda basılır */
-.etki{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
-.etki-kart{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-md);padding:18px 20px}
-.etki-kart b{display:block;font-size:26px;font-weight:800;letter-spacing:-.02em;color:var(--tomato);line-height:1.1}
-.etki-kart span{display:block;font-size:12.5px;font-weight:600;color:var(--muted);margin-top:5px}
-.etki-kart small{display:block;font-size:11.5px;font-weight:500;color:var(--muted);margin-top:8px;line-height:1.5}
-
-@media (max-width:1024px){ .etki{grid-template-columns:repeat(2,minmax(0,1fr))} }
-@media (max-width:640px){  .etki{grid-template-columns:1fr} }
+/* fırsat satırı — .bsv-row'un tarih kutulu varyantı (.tkv-tar ailesinden) */
+.frs-row .frs-tar{flex:none;width:64px;text-align:center;background:var(--tomato-tint);
+  border:1px solid rgba(var(--tomato-rgb),.2);border-radius:var(--radius-sm);padding:8px 4px}
+.frs-row .frs-tar b{display:block;font-size:19px;font-weight:700;color:var(--tomato);line-height:1.1}
+.frs-row .frs-tar span{display:block;font-size:10.5px;font-weight:700;letter-spacing:.06em;
+  text-transform:uppercase;color:var(--tomato);opacity:.8}
+.frs-nitelik{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.frs-nitelik span{font-size:11.5px;font-weight:600;color:var(--muted);background:var(--bg);
+  border:1px solid var(--line);padding:4px 9px;border-radius:var(--radius-sm)}
 </style>
 </head>
 <body data-brand="campus">
@@ -1907,7 +1909,7 @@ a.drs-row:hover{color:var(--tomato)}
         <!-- 3) KURUMLAR (§4.4) — YENİ ana menü. Faz 1'de kurum türleri Kurumlar Merkezi
              içindeki bölümlere gider; Faz 4'te her tür kendi sayfasını alır. -->
         <div class="nav-item">
-          <a href="dadacampus-kurumlar-v1.html" class="active">Kurumlar <i class="fa-solid fa-chevron-down"></i></a>
+          <a href="dadacampus-kurumlar-v1.html">Kurumlar <i class="fa-solid fa-chevron-down"></i></a>
           <div class="dropdown ak-tracks">
             <div class="dd-head">Kurum Türüne Göre</div>
             <div class="dd-grid">
@@ -2231,318 +2233,279 @@ a.drs-row:hover{color:var(--tomato)}
 <!-- ===== ANA İÇERİK (footer reveal perdesi) ===== -->
 <main class="page-main" id="pageMain" tabindex="-1">
 <!-- ============================================================================
-     HERKESE AÇIK KURUM PROFİLİ (§10.1) — DadaCampus
-     ?kurum=<slug> ile campus-data.js'ten okur (§26.7 benzersiz slug + doğru
-     detay bağlantısı). İskelet eğitim/program/atölye detayla AYNI: `.dt-*`
-     koyu hero + yapı şeridi + iki kolon + yapışkan yan panel (§23.1).
+     KARİYER VE FIRSATLAR (§16.3) — DadaCampus
+     §16.3'ün altı maddesi bu sayfada sırayla karşılanır:
+       1) Staj ve iş ilanları; kurum/işletme DOĞRULAMASIYLA  → #firsatlar listesi
+       2) Mentor görüşmeleri ve portfolyo günleri            → #firsatlar (tür süzgeci)
+       3) Sektör etkinlikleri                                → #firsatlar (tür süzgeci)
+       4) Seçili portfolyo çalışmalarını paylaşma            → #portfolyo
+       5) Başvuru durumunun Kampüsüm içinde takibi           → #basvurularim
+       6) Kurum öğrencisinde görünürlük ve izin kuralları    → #izin
 
-     §10.1'in sekiz maddesi sırayla:
-       1 ad/logo/tür/şehir/doğrulanmış partner  → koyu hero
-       2 kısa tanıtım + iş birliği kapsamı      → #isbirligi
-       3 aktif ve tamamlanmış ortak programlar  → #programlar
-       4 kurumun atadığı eğitmen/koordinatör    → #kadro
-       5 yaklaşan açık etkinlikler              → #etkinlikler
-       6 kurum onayıyla yayımlanan göstergeler  → #etki
-       7 kurumsal web sitesine doğrulanmış bağ. → #iletisim
-       8 yetkisiz iletişim / kişisel veri YOK   → #iletisim + .kurum-gate
+     🔴 EN KRİTİK KURAL (§16.3, §26.13): liste `DC.yayindakiFirsatlar()` ile
+     alınır. Bu fonksiyon `kurumId` dolu ama onay kaydı (onayKaydi.belgeRef)
+     olmayan ilanı DÜŞÜRÜR. `DC.firsatlar`'a doğrudan erişilmez — erişilirse
+     doğrulanmamış bir kurumun ilanı "doğrulanmış" başlığı altında yayımlanmış
+     olur. Veride böyle bir kayıt duruyor ve bu sayfada GÖRÜNMEZ; adı da
+     hiçbir yerde geçmez.
 
-     🔴 ONAY KAYDI KAPISI (§26.13, §15.1, §20): D.onayliMi() false ise profil
-     YAYIMLANMAZ. Kurum adı, etki göstergeleri ve program listesi gösterilmez;
-     yerine #kuOnaysiz bilgi ekranı çıkar. Partner adı/markası hiçbir yerde
-     akademik onay göstergesi gibi sunulmaz.
-     🔴 KİŞİSEL VERİ (§10.1 md.8, §24.2): katılımcı adı, e-posta, telefon ve
-     yetkili kişinin kişisel iletişimi bu sayfada YOKTUR. Yetkili yalnız BİRİM
-     adıyla anılır; iletişim iş birliği başvuru formu üzerinden yürür.
+     🔴 TERİM (§8.1): buradaki "Sektör Etkinliği" bir KARİYER FIRSATI türüdür
+     (işveren/üretici buluşması). §13.1'in "Etkinlik" varlığı (seminer, söyleşi,
+     panel, yarışma) AYRI bir kavramdır ve Akademik Takvim'de yaşar. İkisi
+     metinde birbirinin yerine kullanılmaz; sayfa bunu açıkça yazar.
+
+     🔴 İLAN DETAY SAYFASI YOK: fırsat satırı `<a>` DEĞİL `<div>`'dir. Satırın
+     kendisi bir yere gitmez; içindeki kurum ve mentor bağlantıları var olan
+     detay sayfalarına gider. Böylece ölü bağlantı (404) üretilmez.
+
+     Süzgeçler adres satırına yansır ve geri tuşunda korunur (§17.2):
+       dadacampus-kariyer-v1.html?tur=staj&q=izmir
      ========================================================================= -->
 
-<!-- ===== KAYIT BULUNAMADI (§26.15 boş durum) ===== -->
-<section class="below-header ak-sec" id="kuBos" hidden>
-  <div class="wrap">
-    <nav class="rd-crumb" aria-label="Sayfa yolu">
-      <a href="akademi-v1.html"><i class="fa-solid fa-house" aria-hidden="true"></i></a>
-      <i class="fa-solid fa-chevron-right" aria-hidden="true"></i>
-      <a href="dadacampus-kurumlar-v1.html">Kurumlar</a>
-    </nav>
-    <div class="lst-empty show" style="margin-top:20px">
-      <span class="le-ico"><i class="fa-regular fa-circle-question" aria-hidden="true"></i></span>
-      <h3>Bu kurum profili bulunamadı</h3>
-      <p>Bağlantı eski olabilir ya da kurum kaydı yayından kaldırılmış olabilir. Partner kurumların tamamı Kurumlar Merkezi'nde listelenir.</p>
-      <div class="ak-hero-cta" style="justify-content:center;margin-top:0">
-        <a class="btn btn-primary" href="dadacampus-kurumlar-v1.html"><i class="fa-solid fa-building-columns"></i> Kurumlar Merkezi</a>
-        <a class="btn btn-ghost" href="arama-campus-v1.html"><i class="fa-solid fa-magnifying-glass"></i> Arama</a>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ===== 🔴 ONAY KAYDI YOK → PROFİL YAYIMLANMAZ (§10.1, §26.13, §20) =====
-     Kurum kaydı sistemde var ama protokol/onay kaydı tamamlanmamış. Bu ekranda
-     kurumun ADI, etki göstergeleri, program listesi ve iş birliği ayrıntısı
-     GÖSTERİLMEZ — aksi hâlde tamamlanmamış bir görüşme, yayımlanmış bir
-     ortaklık gibi okunur (§20 ticari şeffaflık). -->
-<section class="below-header ak-sec" id="kuOnaysiz" hidden>
-  <div class="wrap">
-    <nav class="rd-crumb" aria-label="Sayfa yolu">
-      <a href="akademi-v1.html"><i class="fa-solid fa-house" aria-hidden="true"></i></a>
-      <i class="fa-solid fa-chevron-right" aria-hidden="true"></i>
-      <a href="dadacampus-kurumlar-v1.html">Kurumlar</a>
-      <i class="fa-solid fa-chevron-right" aria-hidden="true"></i>
-      <b>Yayımlanmamış kurum profili</b>
-    </nav>
-    <div class="lst-empty show" style="margin-top:20px">
-      <span class="le-ico"><i class="fa-solid fa-file-signature" aria-hidden="true"></i></span>
-      <h3>Bu kurum profili henüz yayımlanmadı</h3>
-      <p>Görüşme ve teklif aşamasındaki kurumların adı, programları ve etki göstergeleri yayımlanmaz. Profil, iş birliği protokolü ve onay kaydı tamamlandığında açılır.</p>
-      <div class="ak-hero-cta" style="justify-content:center;margin-top:0">
-        <a class="btn btn-primary" href="dadacampus-kurumlar-v1.html"><i class="fa-solid fa-building-columns"></i> Partner Kurumlar</a>
-        <a class="btn btn-ghost" href="dadacampus-isbirligi-basvuru-v1.html"><i class="fa-solid fa-handshake"></i> İş Birliği Başlat</a>
-      </div>
-    </div>
-    <div class="kurum-gate" style="margin-top:22px">
-      <span class="kg-ico"><i class="fa-solid fa-shield-halved" aria-hidden="true"></i></span>
-      <div class="kg-txt">
-        <b>Neden ad ve gösterge gösterilmiyor?</b>
-        <p>Bir kurumun adı, logosu ve sonuç göstergeleri yalnız o kurumun onay kaydı kapsamında yayımlanır. Onay kaydı olmadan partner adı kullanmak, tamamlanmamış bir görüşmeyi yürürlükteki bir ortaklık gibi göstermek olurdu. Aynı kural sponsorluk için de geçerlidir: sponsorluk akademik onay anlamına gelmez.</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<div id="kuIcerik">
-
-<!-- ===== 1) KİMLİK — koyu hero (§10.1 md.1: ad, logo, tür, şehir, partner etiketi) =====
-     Logo dosyası veride YOK (kurum.logo = null): uydurma görsel basılmaz, eşit
-     boyutlu bir kutuda `monogram` gösterilir. Hero arkaplanı da kuruma ait bir
-     fotoğraf DEĞİLDİR — `.lst-hero-media`nın kabuktan gelen varsayılan zemini
-     kullanılır (kuruma ait olmayan görseli kurumun görseli gibi sunmamak için). -->
-<section class="below-header lst-top dt-top">
+<section class="below-header lst-top">
   <div class="lst-hero-media" aria-hidden="true"></div>
   <div class="wrap">
     <nav class="rd-crumb" aria-label="Sayfa yolu">
       <a href="akademi-v1.html"><i class="fa-solid fa-house" aria-hidden="true"></i></a>
       <i class="fa-solid fa-chevron-right" aria-hidden="true"></i>
-      <a href="dadacampus-kurumlar-v1.html">Kurumlar</a>
-      <i class="fa-solid fa-chevron-right" aria-hidden="true"></i>
-      <a id="kuTurLink" href="dadacampus-kurumlar-v1.html">Kurum türü</a>
-      <i class="fa-solid fa-chevron-right" aria-hidden="true"></i>
-      <b id="kuCrumbAd">Kurum</b>
+      <b>Kariyer ve Fırsatlar</b>
     </nav>
     <div class="lst-hero">
       <div class="lh-main">
-        <!-- KİMLİK KİLİDİ: monogram + tür etiketi AYNI SATIRDA.
-             Monogram önce ayrı satırdaydı; hero 756px'e çıkıyor ve ekranın
-             %80'ini kaplıyordu (ölçüm). Yan yana dizilim aynı bilgiyi 72px
-             daha kısa veriyor — banner yüksekliği kuralı (kalite kapısı ≤0,75)
-             içerik kısılmadan sağlanıyor.
-             `.dt-mono` ailesi açık zemine göre tanımlı; koyu hero için renk
-             satır içi geçiliyor (yeni sınıf üretilmedi). -->
-        <span style="display:flex;align-items:center;gap:13px;margin-bottom:8px">
-          <span class="dt-mono" id="kuMono" aria-hidden="true"
-                style="width:50px;height:50px;flex:none;margin:0;border-radius:var(--radius-md);
-                       background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.24);
-                       color:#fff;display:grid;place-items:center;
-                       font-size:17px;font-weight:800;letter-spacing:-.01em"></span>
-          <span class="eyebrow" id="kuEyebrow" style="margin:0"></span>
-        </span>
-        <h1 id="kuAd"></h1>
-        <!-- doğrulanmış partner etiketi: renk TEK BAŞINA durum anlatmaz (§23.3),
-             ikon + metin taşır -->
-        <div id="kuRozet" style="display:flex;flex-wrap:wrap;gap:8px;margin:2px 0 12px"></div>
-        <p class="lead" id="kuTanitim"></p>
-        <div class="dt-yapi" id="kuYapi" role="group" aria-label="Kurum künyesi"></div>
-        <div class="ak-hero-cta" id="kuCta"></div>
-        <p class="dt-erisim" id="kuErisim"></p>
+        <span class="eyebrow"><i class="fa-solid fa-briefcase"></i> Kariyer ve Fırsatlar</span>
+        <h1>Staj, iş ve mentor fırsatları — <span class="accent">doğrulanmış kurumlardan</span></h1>
+        <p class="lead">Burada yayımlanan staj ve iş ilanları yalnız DadaCampus ile arasında onay kaydı bulunan kurum ve işletmelerden gelir. Mentor görüşmeleri ve portfolyo günleri DadaCampus'un kendi programıdır. Başvurduğun her fırsatın durumunu Kampüsüm içinden takip edersin.</p>
+
+        <label class="crs-search" id="crsSearch">
+          <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+          <input type="search" id="crsSearchInput" placeholder="Fırsat, şehir veya konu ara… (ör. staj, İzmir, pastane)" aria-label="Fırsatlarda ara" autocomplete="off" />
+          <button type="button" class="cs-clear" id="crsSearchClear" aria-label="Aramayı temizle"><i class="fa-solid fa-xmark"></i></button>
+        </label>
+
+        <div class="chips lh-chips" role="group" aria-label="Hızlı erişim">
+          <span class="lbl">Hızlı:</span>
+          <a class="chip" href="?tur=staj" data-t="staj" data-jump="1"><i class="fa-solid fa-user-graduate" aria-hidden="true"></i> Staj</a>
+          <a class="chip" href="?tur=is" data-t="is" data-jump="1"><i class="fa-solid fa-briefcase" aria-hidden="true"></i> İş İlanı</a>
+          <a class="chip" href="?tur=mentor" data-t="mentor" data-jump="1"><i class="fa-solid fa-compass" aria-hidden="true"></i> Mentor Görüşmesi</a>
+          <a class="chip" href="dadacampus-portfolyo-v1.html"><i class="fa-solid fa-images" aria-hidden="true"></i> Mutfak Portfolyom</a>
+          <a class="chip" href="dadacampus-kampusum-v1.html?bolum=genel"><i class="fa-solid fa-clipboard-check" aria-hidden="true"></i> Başvurularım</a>
+        </div>
       </div>
-      <div class="lst-stats" id="kuStats" role="group" aria-label="İş birliği özeti"></div>
+      <div class="lst-stats" id="krStats" role="group" aria-label="Fırsat özeti"></div>
     </div>
   </div>
 </section>
 
-<section class="dt-sec">
-  <div class="wrap">
-    <div class="dt-layout">
-      <div class="dt-ana">
-
-        <!-- ===== 2) KISA TANITIM VE İŞ BİRLİĞİ KAPSAMI (§10.1 md.2, §9.2) ===== -->
-        <div class="dt-blok derin" id="isbirligi">
-          <h2><i class="fa-solid fa-handshake"></i> İş birliği kapsamı</h2>
-          <p class="dt-alt" id="kuIsbirligiAlt"></p>
-          <div class="kurum-gate">
-            <span class="kg-ico"><i class="fa-solid fa-file-contract" aria-hidden="true"></i></span>
-            <div class="kg-txt">
-              <b>Protokolde tanımlı kapsam</b>
-              <p id="kuKapsam"></p>
-            </div>
-          </div>
-          <div class="dt-h3"><i class="fa-solid fa-diagram-project" aria-hidden="true"></i> Kullanılan iş birliği modelleri</div>
-          <!-- modeller Kurumlar Merkezi'ndeki tanıma bağlanır (§17.3 çapraz bağlantı) -->
-          <div class="koll-track" id="kuModeller"></div>
-          <div class="fk-help" style="margin-top:10px">
-            <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
-            <span><b>Ticari şeffaflık (§20):</b> iş birliği modeli, sponsorluk, içerik üretimi ve akademik onay birbirinden ayrı şeylerdir. Bir kurumun bu sayfada yer alması, DadaCampus içeriğini akademik olarak onayladığı anlamına gelmez; her programın onay durumu kendi sayfasında ayrı yazılır.</span>
-          </div>
-        </div>
-
-        <!-- ===== 3) AKTİF VE TAMAMLANMIŞ PROGRAMLAR (§10.1 md.3, §17.3) =====
-             🔴 "Ortak program" ifadesi yalnız D.ortakBelgeGosterilirMi(p) true
-             ise kullanılır; değilse kurum "Partner kurum" olarak anılır. -->
-        <div class="dt-blok derin" id="programlar">
-          <h2><i class="fa-solid fa-layer-group"></i> Bu kurumla yürütülen programlar</h2>
-          <p class="dt-alt" id="kuProgramAlt"></p>
-          <div class="crs-grid" id="kuProgramlar"></div>
-          <!-- `.dt-h3` display:flex taşır; `hidden` özniteliği onu yenemez —
-               gizleme satır içi display:none ile yapılır (cascade tuzağı) -->
-          <div class="dt-h3" id="kuRolBaslik" style="display:none"><i class="fa-solid fa-scale-balanced" aria-hidden="true"></i> Kurumun program içindeki rolü</div>
-          <div class="ptable-wrap" id="kuRolSarmal" style="display:none">
-            <table class="ptable">
-              <caption class="sr-only">Kurumun her programdaki rolü, belge türü ve program durumu</caption>
-              <thead>
-                <tr>
-                  <th scope="col">Program</th>
-                  <th scope="col">Kurumun rolü</th>
-                  <th scope="col">Belge</th>
-                  <th scope="col">Durum</th>
-                </tr>
-              </thead>
-              <tbody id="kuRoller"></tbody>
-            </table>
-          </div>
-          <div class="kurum-gate" id="kuProgramYok" style="display:none">
-            <span class="kg-ico"><i class="fa-regular fa-folder-open" aria-hidden="true"></i></span>
-            <div class="kg-txt">
-              <b>Bu kurumla yürüyen program henüz yayımlanmadı</b>
-              <p>Protokol tamamlandı, program kurulumu sürüyor. Yayımlanan programlar Programlar Merkezi'nde ve bu sayfada listelenir.</p>
-            </div>
-            <a class="btn btn-ghost" href="dadacampus-programlar-v1.html"><i class="fa-solid fa-diagram-project"></i> Programlar Merkezi</a>
-          </div>
-        </div>
-
-        <!-- ===== KURUM KOHORTLARI (§8.1) =====
-             🔴 Kohort, programdan AYRI varlıktır: belirli bir kuruma özel
-             katılımcı grubudur. Bu herkese açık sayfada katılımcı ADI ve
-             kişisel verisi GÖSTERİLMEZ (§24.2); yalnız kohort adı, dönem,
-             kontenjan ve devam oranı yayımlanır. -->
-        <div class="dt-blok derin" id="kohortlar">
-          <h2><i class="fa-solid fa-users-rectangle"></i> Kurum kohortları</h2>
-          <p class="dt-alt">Kurum kohortu, bu kuruma özel katılımcı grubudur; programın kendisiyle aynı şey değildir. Aynı program birden fazla kohortla yürütülebilir. Katılımcı listesi ve kişisel veriler herkese açık profilde yayımlanmaz.</p>
-          <div class="bsv" id="kuKohortlar"></div>
-          <div class="kurum-gate" id="kuKohortYok" style="display:none">
-            <span class="kg-ico"><i class="fa-solid fa-user-group" aria-hidden="true"></i></span>
-            <div class="kg-txt">
-              <b>Bu kurum için açılmış kohort yok</b>
-              <p>Katılımcılar bireysel başvuruyla kabul edilir. Kuruma özel kapalı bir kohort kurulmasını istiyorsanız iş birliği başvurusundan başlayın.</p>
-            </div>
-            <a class="btn btn-ghost" href="dadacampus-isbirligi-basvuru-v1.html"><i class="fa-solid fa-handshake"></i> İş Birliği Başlat</a>
-          </div>
-        </div>
-
-        <!-- ===== 4) KURUMUN ATADIĞI EĞİTMEN VE KOORDİNATÖRLER (§10.1 md.4) =====
-             Eğitmen ve koordinatör, platformda kamuya açık akademik kadrodur
-             (§11.1 eğitmen dizini) — kişisel iletişim bilgisi değil, yalnız ad,
-             unvan ve profil bağlantısı yayımlanır. -->
-        <div class="dt-blok derin" id="kadro">
-          <h2><i class="fa-solid fa-chalkboard-user"></i> Kurumun atadığı kadro</h2>
-          <p class="dt-alt" id="kuKadroAlt"></p>
-          <div class="dt-kadro" id="kuKadro"></div>
-          <div class="kurum-gate" id="kuKadroYok" style="display:none">
-            <span class="kg-ico"><i class="fa-solid fa-user-plus" aria-hidden="true"></i></span>
-            <div class="kg-txt">
-              <b>Kurum tarafından atanmış kadro yayımlanmadı</b>
-              <p>Programlar DadaCampus eğitmen havuzuyla yürütülüyor. Kurum kendi akademik veya mesleki kadrosunu atadığında bu bölümde görünür.</p>
-            </div>
-            <a class="btn btn-ghost" href="dadacampus-egitmenler-v1.html"><i class="fa-solid fa-chalkboard-user"></i> Eğitmenler</a>
-          </div>
-          <div class="fk-help" style="margin-top:16px">
-            <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
-            <span>Akademik onay yetkisi yalnız protokolde tanımlı yetkilidedir; kadroda yer almak tek başına onay yetkisi anlamına gelmez (§10.3).</span>
-          </div>
-        </div>
-
-        <!-- ===== 5) YAKLAŞAN AÇIK ETKİNLİKLER (§10.1 md.5, §13.1) =====
-             🔴 tur='kapali-oturum' olan oturum bu herkese açık profilde ad,
-             tarih ve konumuyla listelenmez (§24.2 kuruma özel verinin
-             görünmemesi); yalnız "kuruma özel kapalı oturum" olarak sayılır. -->
-        <div class="dt-blok derin" id="etkinlikler">
-          <h2><i class="fa-regular fa-calendar"></i> Yaklaşan açık etkinlikler</h2>
-          <p class="dt-alt" id="kuEtkinlikAlt"></p>
-          <div class="tkv" id="kuEtkinlikler"></div>
-          <div class="bsv" id="kuKapali" style="margin-top:12px"></div>
-          <a class="see-all" href="dadacampus-takvim-v1.html" style="margin-top:14px">Akademik Takvim <i class="fa-solid fa-arrow-right"></i></a>
-          <div class="kurum-gate" id="kuEtkinlikYok" style="display:none">
-            <span class="kg-ico"><i class="fa-regular fa-calendar-xmark" aria-hidden="true"></i></span>
-            <div class="kg-txt">
-              <b>Bu kurumun yaklaşan açık etkinliği yok</b>
-              <p>Programlar çevrim içi eğitim ve teslimlerle yürüyor. Yeni açık oturum tarihleri Akademik Takvim'de duyurulur.</p>
-            </div>
-            <a class="btn btn-ghost" href="dadacampus-takvim-v1.html"><i class="fa-regular fa-calendar"></i> Akademik Takvim</a>
-          </div>
-        </div>
-
-        <!-- ===== 6) SONUÇ VE ETKİ GÖSTERGELERİ (§10.1 md.6) =====
-             🔴 Göstergeler YALNIZ kurumun onay kaydı kapsamında yayımlanır;
-             DadaCampus tek taraflı sonuç yayımlamaz (§26.13, §21.2). -->
-        <div class="dt-blok derin" id="etki">
-          <h2><i class="fa-solid fa-chart-simple"></i> Sonuç ve etki göstergeleri</h2>
-          <p class="dt-alt">Aşağıdaki göstergeler kurumun onay kaydında tanımlı kapsam çerçevesinde yayımlanmıştır. Kurum onayı olmayan hiçbir sonuç verisi bu sayfada gösterilmez.</p>
-          <div class="etki" id="kuEtki"></div>
-          <div class="kurum-gate" id="kuEtkiYok" style="display:none">
-            <span class="kg-ico"><i class="fa-regular fa-chart-bar" aria-hidden="true"></i></span>
-            <div class="kg-txt">
-              <b>Bu kurum için yayımlanmış gösterge yok</b>
-              <p>Protokol yürürlükte, ancak kurum henüz sonuç ve etki verisinin yayımlanmasına onay vermedi. Onay verildiğinde göstergeler burada, kapsamıyla birlikte yayımlanır.</p>
-            </div>
-          </div>
-          <div class="fk-help" id="kuEtkiNot" style="margin-top:16px"></div>
-        </div>
-
-        <!-- ===== 7 + 8) DOĞRULANMIŞ BAĞLANTI VE VERİ İLKESİ (§10.1 md.7–8, §24.2–24.3) ===== -->
-        <div class="dt-blok derin" id="iletisim">
-          <h2><i class="fa-solid fa-shield-halved"></i> Bağlantı, iletişim ve veri ilkesi</h2>
-          <div class="inf" id="kuBaglanti"></div>
-          <!-- §10.1 md.8 — kuralın AÇIKÇA yazıldığı yer -->
-          <div class="kurum-gate" style="margin-top:20px">
-            <span class="kg-ico"><i class="fa-solid fa-user-shield" aria-hidden="true"></i></span>
-            <div class="kg-txt">
-              <b>Bu profilde kişisel veri ve yetkisiz iletişim bilgisi yayımlanmaz</b>
-              <p>Kurum yetkilisinin adı-soyadı, kurumsal veya kişisel e-postası ve telefonu bu sayfada gösterilmez; yetkili yalnız birim adıyla anılır. Katılımcı listesi, katılımcı adı ve katılımcıya ait hiçbir veri herkese açık profilde yer almaz — kuruma özel veri başka kuruma ve ziyaretçiye görünmez (§24.2). Kurumla iletişim, kaydı tutulan iş birliği başvuru formu üzerinden yürür.</p>
-            </div>
-            <a class="btn btn-primary" href="dadacampus-isbirligi-basvuru-v1.html"><i class="fa-solid fa-handshake"></i> İş Birliği Başlat</a>
-          </div>
-          <!-- §24.3 telif ve marka izni -->
-          <div class="fk-help" style="margin-top:16px">
-            <i class="fa-solid fa-copyright" aria-hidden="true"></i>
-            <span><b>Marka kullanımı (§24.3):</b> kurumun adı, logosu ve markası yalnız protokolde tanımlı kapsam, süre ve kanallarda kullanılır. Kapsam dışı kullanım için ayrı yazılı izin gerekir. Sponsorluk, içerik üretim ortaklığı ve akademik onay ayrı izinlerdir; biri diğerinin yerine geçmez (§20).</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- ===== YAN PANEL: onay kaydı künyesi · kurum türü köprüsü ===== -->
-      <aside class="dt-yan">
-        <div class="form-card dt-kayit" id="kuKayitKart"></div>
-        <div class="form-card dt-kurum" id="kuTurKart"></div>
-      </aside>
-    </div>
-  </div>
-</section>
-
-<!-- ===== DİĞER PARTNER KURUMLAR (§9.1, §17.3) — yalnız onay kaydı olanlar ===== -->
-<section class="ak-sec derin" id="partnerler" style="background:var(--bg-cream)">
+<!-- ===== FIRSAT TÜRLERİ (§16.3 md. 1-2-3) =====================================
+     Beş fırsat türü + portfolyo yolu = ALTI kart. Altı, ızgaranın her kırılımına
+     tam oturur (3/2/1 sütun) → yarım satır kalmaz (§23.2). Altıncı kart dolgu
+     değil: §16.3 md. 4 "öğrencinin seçili portfolyo çalışmalarını paylaşması"
+     bu sayfadan portfolyoya bir yol istemektedir. -->
+<section class="ak-sec">
   <div class="wrap">
     <div class="sec-head">
       <div>
-        <span class="eyebrow"><i class="fa-solid fa-building-columns"></i> Partner Kurumlar</span>
-        <h2>Birlikte program yürüttüğümüz diğer kurumlar</h2>
-        <p class="lead">Listede yalnız onay kaydı tamamlanmış kurumlar yer alır; görüşme ve teklif aşamasındaki kurumlar yayımlanmaz.</p>
+        <span class="eyebrow"><i class="fa-solid fa-compass"></i> Ne Var?</span>
+        <h2>Beş fırsat türü, tek liste</h2>
+        <p class="lead">Staj ve iş ilanı doğrulanmış kurum ve işletmelerden gelir. Mentor görüşmesi ve portfolyo günü DadaCampus'un kendi programıdır. <b>Sektör etkinliği</b> burada bir kariyer fırsatıdır — işveren, üretici ve mezunla buluşma anlamına gelir; seminer, söyleşi, panel ve yarışma anlamındaki <b>Etkinlik</b> ayrı bir kavramdır ve Akademik Takvim'de yer alır.</p>
       </div>
       <div class="sec-tools">
-        <a class="see-all" href="dadacampus-kurumlar-v1.html">Kurumlar Merkezi <i class="fa-solid fa-arrow-right"></i></a>
+        <a class="see-all" href="dadacampus-takvim-v1.html">Akademik Takvim <i class="fa-solid fa-arrow-right"></i></a>
       </div>
     </div>
-    <div class="ak-grid is-3" id="kuDigerler"></div>
+    <div class="ak-grid is-3" id="krTurGrid"></div>
   </div>
 </section>
 
-</div><!-- /#kuIcerik -->
+<!-- ===== FIRSAT LİSTESİ (§16.3 md. 1-2-3, §17.2) ===== -->
+<section class="ak-sec derin" id="firsatlar" style="background:var(--bg-cream)">
+  <div class="wrap">
+
+    <!-- §16.3 doğrulama notu — DadaCampus neyi doğrular, neyi doğrulamaz.
+         "Doğrulanmış kurum" ifadesi onay kaydına dayanır; ne anlama geldiği
+         burada tek cümleyle yazılıdır (§26.13 kritik ifade kuralı). -->
+    <div class="kurum-gate">
+      <span class="kg-ico"><i class="fa-solid fa-shield-halved" aria-hidden="true"></i></span>
+      <div class="kg-txt">
+        <b>Bu listede neden yalnız doğrulanmış kurumlar var?</b>
+        <p>Bir staj ya da iş ilanının yayımlanabilmesi için ilanı veren kurumun DadaCampus ile imzalı bir protokol veya sözleşmeye dayanan onay kaydı bulunması gerekir. Onay kaydı olmayan kurumun ilanı bu sayfada görünmez. DadaCampus kurumun kimliğini ve iş birliği kaydını doğrular; <b>iş ilişkisinin kendisi kurum ile katılımcı arasındadır, DadaCampus bu ilişkide taraf değildir</b> ve işe alım kararını vermez.</p>
+      </div>
+      <a class="btn btn-ghost" href="dadacampus-kurumlar-v1.html"><i class="fa-solid fa-building-columns" aria-hidden="true"></i> Partner Kurumlar</a>
+    </div>
+
+    <div class="sec-head" style="margin-top:34px">
+      <div>
+        <span class="eyebrow"><i class="fa-solid fa-list-ul"></i> Fırsatlar</span>
+        <h2>Açık ve yaklaşan fırsatlar</h2>
+        <p class="lead">Tür süzgeci ve arama adres satırına yansır; tarayıcının geri tuşu bir önceki süzgece döner.</p>
+      </div>
+      <div class="sec-tools">
+        <!-- §17.2: temizleme yolu HER ZAMAN görünür; kullanıcı aramak zorunda kalmaz -->
+        <a class="see-all" href="dadacampus-kariyer-v1.html" id="krTemiz">Süzgeci Temizle <i class="fa-solid fa-rotate-left"></i></a>
+      </div>
+    </div>
+
+    <div class="chips" id="krTurRay" role="group" aria-label="Fırsat türü süzgeci"></div>
+
+    <!-- §17.2: sonuç sayısı anlık güncellenir; ekran okuyucuya da bildirilir (§23.3) -->
+    <p class="crs-count show" id="krSayac" role="status" aria-live="polite"></p>
+
+    <div class="lst-load show" id="krLoad"><i class="fa-solid fa-circle-notch fa-spin" aria-hidden="true"></i> Fırsatlar yükleniyor…</div>
+
+    <div class="bsv" id="krListe"></div>
+
+    <div class="lst-empty" id="krBos">
+      <span class="le-ico"><i class="fa-regular fa-face-frown" aria-hidden="true"></i></span>
+      <h3>Bu süzgeçle fırsat bulunamadı</h3>
+      <p>Süzgeci gevşetmeyi dene. Yeni ilanlar kurum doğrulaması tamamlandıkça yayımlanır; portfolyonu hazır tutmak başvuru anında işini kolaylaştırır.</p>
+      <div class="ak-hero-cta" style="justify-content:center;margin-top:0">
+        <a class="btn btn-primary" href="dadacampus-kariyer-v1.html" id="krBosTemiz"><i class="fa-solid fa-rotate-left" aria-hidden="true"></i> Süzgeci Temizle</a>
+        <a class="btn btn-ghost" href="dadacampus-portfolyo-v1.html"><i class="fa-solid fa-images" aria-hidden="true"></i> Portfolyona Bak</a>
+      </div>
+    </div>
+
+    <p class="pagi-note">
+      İlanın ayrıntısı ve başvuru koşulları ilanı veren kurumla paylaşılır. Bu sayfada başvuran kişiye ait hiçbir bilgi (ad, e-posta, telefon) gösterilmez (§24.2).
+    </p>
+
+    <!-- §16.3 md. 5 — BAŞVURU DURUMU: takibin asıl yeri Kampüsüm.
+         Kişisel veri olduğu için YALNIZ girişli kullanıcıya açılır (.kisi-sec). -->
+    <div class="kisi-sec" id="basvurularim">
+      <div class="sec-head" style="margin-top:48px">
+        <div>
+          <span class="eyebrow"><i class="fa-solid fa-clipboard-check"></i> Sana Ait</span>
+          <h2>Başvurularının durumu</h2>
+          <p class="lead">Durum akışı: Başvuruldu → İnceleniyor → Kabul. Başvurularının tamamı ve bildirimleri Kampüsüm içinde tutulur; buradaki liste son durumun özetidir.</p>
+        </div>
+        <div class="sec-tools">
+          <a class="see-all" href="dadacampus-kampusum-v1.html?bolum=genel">Kampüsüm'de Aç <i class="fa-solid fa-arrow-right"></i></a>
+        </div>
+      </div>
+      <div class="bsv" id="krBasvuru"></div>
+    </div>
+
+    <!-- ziyaretçi karşılığı: kişisel veri gösterilmez, giriş yolu gösterilir (§26.15) -->
+    <div class="misafir-sec">
+      <div class="kurum-gate" style="margin-top:34px">
+        <span class="kg-ico"><i class="fa-solid fa-right-to-bracket" aria-hidden="true"></i></span>
+        <div class="kg-txt">
+          <b>Başvurularını takip etmek için giriş yap</b>
+          <p>Fırsatları giriş yapmadan da görebilirsin. Başvuru durumun, portfolyonun ve kurum kohortuna bağlı görünürlük ayarların yalnız giriş yaptığında açılır.</p>
+        </div>
+        <a class="btn btn-primary" href="giris-v1.html?tab=giris"><i class="fa-solid fa-right-to-bracket" aria-hidden="true"></i> Giriş Yap</a>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ===== §16.3 md. 4 — SEÇİLİ PORTFOLYO ÇALIŞMALARINI PAYLAŞMA ===== -->
+<section class="ak-sec derin" id="portfolyo">
+  <div class="wrap">
+    <div class="sec-head">
+      <div>
+        <span class="eyebrow"><i class="fa-solid fa-images"></i> Portfolyo ile Başvuru</span>
+        <h2>Başvuruna seçili çalışmalarını ekle</h2>
+        <p class="lead">Başvuruya portfolyonun tamamı gitmez. Hangi çalışmaların görüneceğini sen seçersin; seçilmeyen çalışma kurumda görünmez. Portfolyo günlerinde de aynı seçim geçerlidir.</p>
+      </div>
+      <div class="sec-tools">
+        <a class="see-all" href="dadacampus-portfolyo-v1.html">Mutfak Portfolyom <i class="fa-solid fa-arrow-right"></i></a>
+      </div>
+    </div>
+
+    <ul class="mad is-2">
+      <li><i class="fa-solid fa-check" aria-hidden="true"></i> Başvuruya yalnız <b>kabul edilmiş</b> uygulama teslimlerin eklenebilir; taslak ve inceleme bekleyen çalışmalar seçilemez.</li>
+      <li><i class="fa-solid fa-check" aria-hidden="true"></i> Her çalışmada program, kurum ve kazanım etiketi taşınır; eğitmen geri bildirimi ise ancak sen izin verirsen görünür (§14.4).</li>
+      <li><i class="fa-solid fa-check" aria-hidden="true"></i> Paylaşılabilir portfolyo bağlantısını istediğin an gizleyebilirsin; gizlenen bağlantı yeni başvurularda kullanılmaz.</li>
+      <li><i class="fa-solid fa-check" aria-hidden="true"></i> Portfolyo Günü'nde çalışmalarını sektör temsilcilerine sunarsın; hangi çalışmayı sunacağını yine sen belirlersin.</li>
+    </ul>
+
+    <!-- girişli kullanıcıya portfolyo hazırlık özeti — veriden hesaplanır -->
+    <div class="kisi-sec" id="krPortfolyoDurum"></div>
+
+    <div class="misafir-sec">
+      <div class="kurum-gate" style="margin-top:26px">
+        <span class="kg-ico"><i class="fa-solid fa-folder-open" aria-hidden="true"></i></span>
+        <div class="kg-txt">
+          <b>Portfolyon giriş yaptığında burada özetlenir</b>
+          <p>Kabul edilmiş kaç çalışman olduğunu ve portfolyo günü koşulunu karşılayıp karşılamadığını giriş yaptıktan sonra görebilirsin.</p>
+        </div>
+        <a class="btn btn-ghost" href="dadacampus-portfolyo-v1.html"><i class="fa-solid fa-images" aria-hidden="true"></i> Portfolyo Nasıl İşler?</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== §16.3 md. 6 — KURUM ÖĞRENCİSİNDE GÖRÜNÜRLÜK VE İZİN (§10.3, §24.2) ===== -->
+<section class="ak-sec derin" id="izin" style="background:var(--bg-cream)">
+  <div class="wrap">
+    <div class="sec-head">
+      <div>
+        <span class="eyebrow"><i class="fa-solid fa-user-shield"></i> Görünürlük ve İzin</span>
+        <h2>Bir kurum kohortundaysan kural kurumun kuralıdır</h2>
+        <p class="lead">Kurum kohortuna bağlı katılımcının profil ve portfolyo görünürlüğü, kurumun tanımladığı izinlere bağlıdır. Kurum dışına paylaşım kurumun kuralına tabidir; DadaCampus bu izinleri kurum adına genişletmez.</p>
+      </div>
+      <div class="sec-tools">
+        <a class="see-all" href="dadacampus-kampusum-v1.html?bolum=portfolyo">Görünürlük Ayarların <i class="fa-solid fa-arrow-right"></i></a>
+      </div>
+    </div>
+
+    <div class="kurum-gate">
+      <span class="kg-ico"><i class="fa-solid fa-building-shield" aria-hidden="true"></i></span>
+      <div class="kg-txt">
+        <b>Kurumun belirlediği kurallar</b>
+        <p>Kurum yöneticisi yalnız kendi kurumuna bağlı katılımcıyı görür; bir kurumun verisi başka kuruma açılmaz (§10.3, §24.2). Kohort katılımcısının profili varsayılan olarak <b>kurum içi</b> görünürlükte tutulabilir. Kurum dışı bir işverene portfolyo paylaşımı, kurumun izin kuralı buna açıksa mümkündür.</p>
+      </div>
+    </div>
+
+    <ul class="mad is-2" style="margin-top:22px">
+      <li><i class="fa-solid fa-lock" aria-hidden="true"></i> <b>Özel:</b> çalışma yalnız sana ve değerlendiren eğitmene görünür.</li>
+      <li><i class="fa-solid fa-building-columns" aria-hidden="true"></i> <b>Kurum içi:</b> çalışma kurumun yetkili kullanıcılarına ve kohort arkadaşlarına görünür.</li>
+      <li><i class="fa-solid fa-globe" aria-hidden="true"></i> <b>Herkese açık:</b> paylaşılabilir bağlantıyla kurum dışına açılır; kurum kohortundaysan bu seçenek kurumun iznine bağlıdır.</li>
+      <li><i class="fa-solid fa-user-minus" aria-hidden="true"></i> <b>Her an geri alınabilir:</b> görünürlüğü daralttığında bağlantı kapanır ve yeni başvurularda kullanılmaz.</li>
+    </ul>
+
+    <div class="ak-hero-cta">
+      <a class="btn btn-ghost" href="yasal-v1.html?metin=kvkk"><i class="fa-solid fa-scale-balanced" aria-hidden="true"></i> KVKK Metni</a>
+      <a class="btn btn-ghost" href="yasal-v1.html?metin=aydinlatma"><i class="fa-solid fa-file-lines" aria-hidden="true"></i> Aydınlatma Metni</a>
+      <a class="btn btn-ghost" href="dadacampus-yardim-v1.html"><i class="fa-solid fa-circle-question" aria-hidden="true"></i> Yardım Merkezi</a>
+    </div>
+  </div>
+</section>
+
+<!-- ===== SIK SORULANLAR — akordeon kabuk JS'iyle çalışır (delegasyon) ===== -->
+<section class="ak-sec derin">
+  <div class="wrap">
+    <div class="sec-head">
+      <div>
+        <span class="eyebrow"><i class="fa-solid fa-circle-question"></i> Sık Sorulanlar</span>
+        <h2>Kariyer alanı nasıl işler?</h2>
+      </div>
+    </div>
+    <div class="faq-list">
+      <div class="faq-item">
+        <button class="faq-q" type="button" aria-expanded="false">Bir ilanın "doğrulanmış kurum"dan geldiği ne demek? <i class="fa-solid fa-chevron-down" aria-hidden="true"></i></button>
+        <div class="faq-a"><p>İlanı veren kurumun DadaCampus ile arasında tarih, yetkili ve kapsam bilgisi taşıyan bir onay kaydı (protokol ya da sözleşme referansı) bulunduğu anlamına gelir. Onay kaydı olmayan kurumun ilanı yayımlanmaz. Bu doğrulama kurumun kimliğine ve iş birliği kaydına ilişkindir; ilanın içeriğine ya da işe alım kararına ilişkin bir garanti değildir.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" type="button" aria-expanded="false">Başvurumu kim görüyor, hangi bilgilerim gidiyor? <i class="fa-solid fa-chevron-down" aria-hidden="true"></i></button>
+        <div class="faq-a"><p>Başvurun ilanı veren kuruma iletilir. Portfolyondan yalnız senin seçtiğin çalışmalar paylaşılır. Bu sayfada başvuran kişilere ait hiçbir bilgi listelenmez; kendi başvuru durumunu yalnız sen ve yetkili kurum kullanıcısı görür.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" type="button" aria-expanded="false">"Sektör etkinliği" ile Akademik Takvim'deki "Etkinlik" aynı şey mi? <i class="fa-solid fa-chevron-down" aria-hidden="true"></i></button>
+        <div class="faq-a"><p>Hayır. Bu sayfadaki <b>Sektör Etkinliği</b> bir kariyer fırsatı türüdür: işveren, üretici ve mezunlarla buluşma. Akademik Takvim'deki <b>Etkinlik</b> ise seminer, söyleşi, panel, yarışma veya tanıtım oturumudur ve öğrenme takvimine aittir. İki kavram birbirinin yerine kullanılmaz.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" type="button" aria-expanded="false">Kurum kohortundayım; portfolyomu kurum dışına paylaşabilir miyim? <i class="fa-solid fa-chevron-down" aria-hidden="true"></i></button>
+        <div class="faq-a"><p>Bu, kurumunun tanımladığı görünürlük ve izin kurallarına bağlıdır. Kurum profilini kurum içi görünürlükte tutuyorsa kurum dışına paylaşım için kurumun izni gerekir. Geçerli ayarını Kampüsüm içindeki portfolyo bölümünden görebilirsin.</p></div>
+      </div>
+    </div>
+    <div class="ak-hero-cta">
+      <a class="btn btn-ghost" href="dadacampus-topluluk-v1.html"><i class="fa-solid fa-comments" aria-hidden="true"></i> Topluluğa Sor</a>
+      <a class="btn btn-ghost" href="dadacampus-projeler-v1.html"><i class="fa-solid fa-diagram-project" aria-hidden="true"></i> Ortak Projeler</a>
+    </div>
+  </div>
+</section>
 
 </main><!-- /.page-main -->
 
@@ -3243,446 +3206,449 @@ window.__bottomStrips=window.__bottomStrips||[];
 </script>
 
 <script>
-/* ===== SAYFA JS — dadacampus-kurum-v1.html ===== */
+/* ===== SAYFA JS — dadacampus-kariyer-v1.html ===== */
 /* ============================================================================
-   Kurum Profili (herkese açık) — sayfa JS (§10.1)
-   ?kurum=<slug> → DC.bul('kurumlar', slug). Kayıt yoksa boş durum.
+   Kariyer ve Fırsatlar — sayfa JS (§16.3)
+   ?tur=staj|is|mentor|portfolyo-gunu|etkinlik  &  ?q=<arama>
 
-   🔴 ONAY KAYDI KAPISI — bu sayfanın en kritik kuralı (§26.13, §15.1, §20):
-   D.onayliMi(k.id) false ise profil YAYIMLANMAZ. Kurum adı, etki göstergeleri
-   ve program listesi basılmaz; #kuOnaysiz bilgi ekranı gösterilir. Onay kaydı
-   olmadan "üniversite onaylı", "resmî geçerli", "ortak sertifika" ifadeleri
-   hiçbir koşulda yazılmaz; partner adı akademik onay göstergesi gibi sunulmaz.
+   🔴 DOĞRULANMIŞ KURUM SÜZGECİ — bu dosyanın en kritik satırı:
+   liste `D.yayindakiFirsatlar()` ile alınır, `D.firsatlar`'a DOĞRUDAN
+   ERİŞİLMEZ. yayindakiFirsatlar(), `kurumId` dolu olup onay kaydı
+   (onayKaydi.belgeRef) bulunmayan ilanı düşürür (§16.3 "kurum/işletme
+   doğrulamasıyla", §26.13 onay ifadesi kuralı). Veride onay kaydı olmayan
+   bir kurumdan gelen iş ilanı duruyor; bu sayfada ne kendisi ne de kurumun
+   adı geçer.
 
-   🔴 KİŞİSEL VERİ (§10.1 md.8, §24.2): bu sayfada e-posta, telefon, yetkili
-   kişinin adı-soyadı ve katılımcı verisi YOKTUR. onayKaydi.yetkili zaten BİRİM
-   adıdır (ör. "Sürekli Eğitim Merkezi Müdürlüğü") — kişi adı değildir.
+   🔴 TERİM (§8.1): `tur: 'etkinlik'` burada bir KARİYER FIRSATI türüdür
+   ("Sektör Etkinliği" — işveren/üretici buluşması). §13.1'in "Etkinlik"
+   varlığı (seminer, söyleşi, panel, yarışma) AYRI kavramdır ve Akademik
+   Takvim'de yaşar. Bu dosyada `firsatTurleri` dışında bir "etkinlik"
+   koleksiyonu okunmaz.
 
-   🔴 TERİM DİSİPLİNİ (§8.1): Eğitim · Program · Atölye · Ortak Program ·
-   Kurum Kohortu · Etkinlik birbirinin yerine kullanılmaz.
+   🔴 İLAN DETAY SAYFASI YOK: satır `<a>` değil `<div>` olarak çizilir; ölü
+   bağlantı üretilmez. Satır içindeki kurum ve mentor bağlantıları var olan
+   detay sayfalarına gider.
+
+   🔴 KİŞİSEL VERİ (§24.2): başvuran kişiye ait ad/e-posta/telefon hiçbir
+   yerde basılmaz. Kullanıcının KENDİ başvuru durumu yalnız girişliyken
+   (.kisi-sec / D.girisli()) görünür.
    ========================================================================= */
 (function () {
   var D = window.DC;
   if (!D) return;
-  var esc = D.esc, img = D.img;
+  var esc = D.esc;
   var $ = function (s) { return document.querySelector(s); };
 
-  /* Sabit "bugün" — demo verisi sabit tarihlidir, new Date() kullanılmaz;
-     aksi hâlde ölçüm günü değiştikçe "yaklaşan etkinlik" listesi kayar. */
+  /* new Date()/Date.now() kullanılmaz — demo verisi sabit tarihli; "geçti"
+     ayrımı bu sabit güne göre yapılır. */
   var BUGUN = '2026-08-17';
-  var AY_KISA = ['OCA', 'ŞUB', 'MAR', 'NİS', 'MAY', 'HAZ', 'TEM', 'AĞU', 'EYL', 'EKİ', 'KAS', 'ARA'];
 
-  var slug = D.qs().kurum || '';
-  var k = slug ? D.bul('kurumlar', slug) : null;
+  var AY_KISA = ['OCA', 'ŞUB', 'MAR', 'NİS', 'MAY', 'HAZ',
+                 'TEM', 'AĞU', 'EYL', 'EKİ', 'KAS', 'ARA'];
 
-  /* ---- 1. kapı: kayıt var mı? (§26.15 boş durum) ----------------------- */
-  if (!k) {
-    document.getElementById('kuBos').hidden = false;
-    document.getElementById('kuIcerik').hidden = true;
-    document.title = 'Kurum bulunamadı — DadaCampus | DadaMutfak';
-    return;
+  var SAHIP = ['tur', 'q'];                  /* bu sayfanın yönettiği URL anahtarları */
+
+  /* ---- 🔴 TEK VERİ KAPISI ------------------------------------------------- */
+  var TUMU = D.yayindakiFirsatlar();
+
+  var girisli = D.girisli();
+
+  var st = { tur: '', q: '' };
+
+  /* ---- yardımcılar -------------------------------------------------------- */
+
+  /* Süzgeç durumunu koruyan adres — çip href'leri ve "temizle" bağlantısı için. */
+  function adres(yeni) {
+    var tur = ('tur' in yeni) ? yeni.tur : st.tur;
+    var q   = ('q'   in yeni) ? yeni.q   : st.q;
+    var p = [];
+    if (tur) p.push('tur=' + encodeURIComponent(tur));
+    if (q)   p.push('q=' + encodeURIComponent(q));
+    return p.length ? '?' + p.join('&') : 'dadacampus-kariyer-v1.html';
   }
 
-  /* ---- 2. kapı: 🔴 ONAY KAYDI (§10.1, §26.13, §20) ---------------------
-     Kayıt var ama protokol/onay kaydı yok → profil yayımlanmaz. Kurumun ADI
-     bile yazılmaz: sayfa başlığı, meta açıklaması ve ekran metni tamamen
-     kurumdan bağımsızdır. Veride bu davranışın iki örneği var:
-     altinkum-universitesi (teklif) ve yesilova-mesleki-egitim-merkezi
-     (ihtiyaç analizi). Aşama bilgisi de kuruma bağlanmadan, genel ifadeyle
-     verilir — tamamlanmamış bir görüşmenin ayrıntısı ticari veridir (§20). */
-  if (!D.onayliMi(k.id)) {
-    document.getElementById('kuOnaysiz').hidden = false;
-    document.getElementById('kuIcerik').hidden = true;
-    document.title = 'Kurum profili yayımlanmadı — DadaCampus | DadaMutfak';
-    var mdo = document.querySelector('meta[name="description"]');
-    if (mdo) {
-      mdo.setAttribute('content', 'Görüşme ve teklif aşamasındaki kurumların profili yayımlanmaz. ' +
-        'Kurum profilleri iş birliği protokolü ve onay kaydı tamamlandığında açılır.');
-    }
-    return;
-  }
-
-  /* ====================================================================== */
-  /* Buradan sonrası YALNIZ onay kaydı olan kurum için çalışır.             */
-  /* ====================================================================== */
-
-  document.title = k.ad + ' — DadaCampus | DadaMutfak';
-  var md = document.querySelector('meta[name="description"]');
-  if (md) md.setAttribute('content', k.tanitim + ' İş birliği kapsamı: ' + k.isbirligiKapsami + '.');
-
-  /* ---- ortak çözümlemeler ---------------------------------------------- */
-  var onay = k.onayKaydi;
-  var turKaydi = (D.kurumTurleri || []).filter(function (t) { return t.slug === k.tur; })[0] || null;
-
-  var programlar = (k.programIds || []).map(function (id) { return D.program(id); })
-    .filter(function (p) { return !!p; });
-
-  /* Kurum kohortları: programın kohortlarından bu kuruma ait olanlar (§8.1) */
-  var kohortlar = [];
-  programlar.forEach(function (p) {
-    D.programKohortlari(p.id).forEach(function (ko) {
-      if (ko.kurumId === k.id && kohortlar.indexOf(ko) === -1) kohortlar.push(ko);
+  /* Arama: ad, açıklama ve şehirde; TR-duyarlı normalizasyon (D.norm). */
+  function suz(tur, q) {
+    var n = D.norm(q || '');
+    return TUMU.filter(function (f) {
+      if (tur && f.tur !== tur) return false;
+      if (!n) return true;
+      return D.norm(f.ad).indexOf(n) > -1 ||
+             D.norm(f.aciklama).indexOf(n) > -1 ||
+             D.norm(f.sehir).indexOf(n) > -1;
     });
-  });
-
-  /* Etkinlik havuzu: kurumun kendi etkinlikIds'i + partner olduğu etkinlik ve
-     atölyeler. Atölye ve etkinlik AYRI varlıklardır (§8.1); tek eksende
-     gösterilirken tipleri korunur, bağlantı hedefleri farklıdır. */
-  var oturumlar = [];
-  function oturumEkle(tip, kayit) {
-    if (!kayit) return;
-    for (var i = 0; i < oturumlar.length; i++) {
-      if (oturumlar[i].k.id === kayit.id) return;                 /* tekrar etme */
-    }
-    oturumlar.push({ tip: tip, k: kayit });
   }
-  (k.etkinlikIds || []).forEach(function (id) { oturumEkle('etkinlik', D.etkinlik(id)); });
-  (D.etkinlikler || []).forEach(function (e) { if (e.partnerKurumId === k.id) oturumEkle('etkinlik', e); });
-  (D.atolyeler || []).forEach(function (a) { if (a.partnerKurumId === k.id) oturumEkle('atolye', a); });
 
-  /* 🔴 §24.2 — kuruma özel KAPALI oturum herkese açık profilde ad, tarih ve
-     konumuyla listelenmez; yalnız sayılır. */
-  var kapali = oturumlar.filter(function (o) { return o.k.tur === 'kapali-oturum'; });
-  var acik = oturumlar.filter(function (o) { return o.k.tur !== 'kapali-oturum'; })
-    .filter(function (o) { return o.k.tarih >= BUGUN; })          /* yaklaşan */
-    .sort(function (a, b) { return a.k.tarih.localeCompare(b.k.tarih); });
+  /* En yakın tarih önce; aynı gün varsa veri sırası korunur. */
+  function sirala(liste) {
+    return liste.slice().sort(function (a, b) {
+      return a.tarih < b.tarih ? -1 : (a.tarih > b.tarih ? 1 : 0);
+    });
+  }
 
-  /* ---- 1) KİMLİK — hero (§10.1 md.1) ----------------------------------- */
-  $('#kuMono').textContent = k.monogram;
-  $('#kuCrumbAd').textContent = k.ad;
-  $('#kuTurLink').textContent = D.etiket('kurumTurleri', k.tur);
-  $('#kuTurLink').setAttribute('href', D.link.kurumTur(k.tur));
-  $('#kuEyebrow').innerHTML = '<i class="fa-solid ' + esc(k.ikon || 'fa-building-columns') + '"></i> ' +
-    esc(D.etiket('kurumTurleri', k.tur));
-  $('#kuAd').textContent = k.ad;
+  /* ---- HERO İSTATİSTİĞİ — sayılar VERİDEN türetilir ----------------------- */
+  var acikSayi = TUMU.filter(function (f) { return f.durum === 'acik'; }).length;
+  var kurumSet = {}, turSet = {};
+  TUMU.forEach(function (f) {
+    if (f.kurumId) kurumSet[f.kurumId] = 1;
+    turSet[f.tur] = 1;
+  });
+  $('#krStats').innerHTML =
+    '<div class="st"><b>' + acikSayi + '</b><span>Başvurusu açık fırsat</span></div>' +
+    '<div class="st"><b>' + Object.keys(kurumSet).length + '</b><span>Doğrulanmış kurum</span></div>' +
+    '<div class="st"><b>' + Object.keys(turSet).length + '</b><span>Fırsat türü</span></div>';
 
-  /* Doğrulanmış partner etiketi — §23.3: renk tek başına durum anlatmaz,
-     ikon + metin taşır. Etiket "akademik onay" demek DEĞİLDİR: yalnız kurum
-     kimliğinin ve protokolün doğrulandığını söyler (§20). */
-  $('#kuRozet').innerHTML = (k.dogrulanmisPartner
-    ? '<span class="pstat ok"><i class="fa-solid fa-circle-check" aria-hidden="true"></i> Doğrulanmış partner kurum</span>'
-    : '') +
-    '<span class="pstat off"><i class="fa-solid fa-file-contract" aria-hidden="true"></i> Onay kaydı ' + esc(onay.belgeRef) + '</span>';
-
-  $('#kuTanitim').textContent = k.tanitim;
-
-  $('#kuYapi').innerHTML = [
-    [k.ikon || 'fa-building-columns', D.etiket('kurumTurleri', k.tur)],
-    ['fa-location-dot', k.sehir + ', ' + k.ulke],
-    ['fa-handshake', k.isbirligiKapsami],
-    ['fa-file-signature', 'Protokol ' + D.tarih(onay.tarih)]
-  ].map(function (x) {
-    return '<span><i class="fa-solid ' + x[0] + '"></i> ' + esc(x[1]) + '</span>';
-  }).join('');
-
-  $('#kuCta').innerHTML =
-    '<a class="btn btn-primary" href="dadacampus-isbirligi-basvuru-v1.html">' +
-      '<i class="fa-solid fa-handshake"></i> İş Birliği Başlat</a>' +
-    '<a class="btn-glassy" href="' + esc(D.link.kurumTur(k.tur)) + '">' +
-      esc(turKaydi ? turKaydi.ad + ' Çözümleri' : 'Kurum Türü Çözümleri') + ' <i class="fa-solid fa-arrow-right"></i></a>';
-
-  /* §10.1 md.8 hero'da da bir kez söylenir — kural sayfanın en görünür
-     yerinde başlar, ayrıntısı #iletisim bölümünde. */
-  $('#kuErisim').innerHTML = '<b>Onay kaydı ' + esc(onay.belgeRef) + '</b> · ' +
-    esc(D.tarih(onay.tarih)) + ' · yetkili birim ' + esc(onay.yetkili) +
-    ' · bu profilde kişisel iletişim bilgisi yayımlanmaz';
-
-  $('#kuStats').innerHTML =
-    '<div class="st"><b>' + programlar.length + '</b><span>Bağlı program</span></div>' +
-    '<div class="st"><b>' + kohortlar.length + '</b><span>Kurum kohortu</span></div>' +
-    '<div class="st"><b>' + acik.length + '</b><span>Yaklaşan açık etkinlik</span></div>';
-
-  /* ---- 2) İŞ BİRLİĞİ KAPSAMI VE MODELLER (§10.1 md.2, §9.2) ------------ */
-  $('#kuIsbirligiAlt').textContent = k.tanitim +
-    ' Aşağıdaki kapsam ve modeller, kurumla imzalanan protokolde tanımlıdır.';
-  $('#kuKapsam').textContent = k.isbirligiKapsami + ' — onay kapsamı: ' + onay.kapsam + '.';
-
-  /* Modeller Kurumlar Merkezi'ndeki tanıma derin bağlanır (§17.3). */
-  $('#kuModeller').innerHTML = (k.isbirligiModelleri || []).map(function (s) {
-    var m = (D.isbirligiModelleri || []).filter(function (x) { return x.slug === s; })[0];
-    if (!m) return '';
-    return '<a class="koll" href="dadacampus-kurumlar-v1.html#model-' + esc(m.slug) + '">' +
-      '<i class="fa-solid ' + esc(m.ikon) + '" aria-hidden="true"></i>' +
-      '<span>' + esc(m.ad) + '<small>' + esc(m.kapsam) + '</small></span></a>';
-  }).join('');
-
-  /* ---- 3) PROGRAMLAR (§10.1 md.3, §17.3) -------------------------------
-     🔴 "Ortak program" ifadesi D.ortakBelgeGosterilirMi(p) izin vermeden
-     yazılmaz — belge türü gerçekten ortak program sertifikası olmalı VE
-     veren tüm kurumların onay kaydı bulunmalı (§15.1, §26.13). Aksi hâlde
-     kurum "Partner kurum" olarak anılır. */
-  var PDURUM = {
-    'kayit-acik':    { ad: 'Başvurusu açık', ikon: 'fa-door-open',      sinif: 'ok' },
-    'aktif':         { ad: 'Yürüyor',        ikon: 'fa-circle-play',    sinif: 'wait' },
-    'onay-bekliyor': { ad: 'Yakında',        ikon: 'fa-hourglass-half', sinif: 'off' },
-    'tamamlandi':    { ad: 'Tamamlandı',     ikon: 'fa-circle-check',   sinif: 'off' }
+  /* ---- FIRSAT TÜRÜ KARTLARI (§16.3 md. 1-2-3) ----------------------------
+     5 tür kartı + portfolyo yolu = 6 kart → 3/2/1 sütunda tam satır (§23.2).
+     Kart açıklaması türün ne olduğunu yazar; "Sektör Etkinliği" kartı §13.1'in
+     "Etkinlik" varlığından AYRI olduğunu açıkça söyler (§8.1 terim disiplini). */
+  var TUR_ACIKLAMA = {
+    'staj':            'Doğrulanmış işletme ve kurum mutfaklarında belirli süreli uygulama.',
+    'is':              'Doğrulanmış kurumun açık pozisyonu. İş ilişkisi kurum ile aranızdadır.',
+    'mentor':          'Bir mentorla birebir görüşme. DadaCampus\'un kendi programıdır.',
+    'portfolyo-gunu':  'Seçtiğin çalışmaları sektör temsilcilerine sunduğun gün.',
+    'etkinlik':        'İşveren, üretici ve mezunlarla buluşma. Akademik Takvim\'deki seminer/panel anlamındaki Etkinlik\'ten farklıdır.'
   };
 
-  if (programlar.length) {
-    var ortakSayi = programlar.filter(function (p) { return D.ortakBelgeGosterilirMi(p); }).length;
-    $('#kuProgramAlt').textContent = programlar.length + ' program bu kurumla birlikte yürütülüyor. ' +
-      (ortakSayi
-        ? ortakSayi + ' tanesinde ortak program belgesi düzenlenir; belge üzerinde her iki kurumun rolü ayrı yazılır.'
-        : 'Bu programlarda ortak belge düzenlenmez; kurum programın partneridir, belge DadaCampus sorumluluğundadır.');
+  /* 6. kart §16.3 md. 4'ün yoludur: başvuruya portfolyo eklemek. Beş tür + bu
+     kart = 6 → 3/2/1 sütunda tam satır. */
+  var TUR_KARTLARI = D.firsatTurleri.concat([{
+    slug: '', ad: 'Portfolyo ile Başvur', ikon: 'fa-images', ozel: 1,
+    metin: 'Başvuruna seçili çalışmalarını ekle. Hangi çalışmanın görüneceğine sen karar verirsin.',
+    adres: 'dadacampus-portfolyo-v1.html', alt: 'Mutfak Portfolyom'
+  }]);
 
-    D.sigdir(document.getElementById('kuProgramlar'), programlar, function (p) {
-      var ortak = D.ortakBelgeGosterilirMi(p);
-      var pd = PDURUM[p.durum] || { ad: p.durum, ikon: 'fa-circle', sinif: 'off' };
-      return '<a class="crs-card" href="' + esc(D.link.program(p.slug)) + '">' +
-        '<div class="crs-fig" style="background-image:url(\'' + esc(img(p.kapak, 600)) + '\')">' +
-          '<span class="crs-lvl">' + esc(D.etiket('programTurleri', p.tur)) + '</span>' +
-          '<span class="crs-soon"><i class="fa-solid ' + pd.ikon + '" aria-hidden="true"></i> ' + esc(pd.ad) + '</span>' +
-          '<span class="crs-track-lbl">' + esc(p.donem) + '</span>' +
-        '</div><div class="crs-body"><h3>' + esc(p.ad) + '</h3>' +
-        '<div class="crs-chef"><span class="cc-ava" style="display:grid;place-items:center;background:var(--tomato-tint);color:var(--tomato);font-size:11px;font-weight:800">' +
-          esc(k.monogram) + '</span><span><b>' + esc(k.ad) + '</b><span>' +
-          esc(ortak ? 'Ortak program · onay kaydı var' : 'Partner kurum') + '</span></span></div>' +
-        '<div class="crs-meta">' +
-          '<span><i class="fa-solid fa-layer-group"></i> ' + p.modulSayisi + ' modül</span>' +
-          '<span><i class="fa-solid fa-circle-play"></i> ' + p.egitimSayisi + ' eğitim</span>' +
-          '<span><i class="fa-solid fa-users"></i> ' + p.kontenjan + ' kontenjan</span>' +
-        '</div></div></a>';
-    }, { min: 1, max: 3 });
-
-    /* Rol matrisi — kartın söyleyemediği bilgi: kurumun bu programdaki
-       sorumluluğu ve belge iddiasının dayanağı. §23.3: sr-only caption,
-       th scope, mobil kart görünümü için td data-l. */
-    document.getElementById('kuRolBaslik').style.display = '';
-    document.getElementById('kuRolSarmal').style.display = '';
-    $('#kuRoller').innerHTML = programlar.map(function (p) {
-      var ortak = D.ortakBelgeGosterilirMi(p);
-      var pd = PDURUM[p.durum] || { ad: p.durum, ikon: 'fa-circle', sinif: 'off' };
-      var rol = (p.kurumRolleri || {})[k.id] || k.isbirligiKapsami;
-      return '<tr>' +
-        '<td data-l="Program"><b><a href="' + esc(D.link.program(p.slug)) + '">' + esc(p.ad) + '</a></b></td>' +
-        '<td data-l="Kurumun rolü">' + esc(rol) +
-          '<br><small style="color:var(--muted)">Rol, kurumun bu programdaki sorumluluğudur; tek başına akademik onay anlamına gelmez.</small></td>' +
-        '<td data-l="Belge">' + esc(D.etiket('belgeTurleri', p.belgeTuru)) +
-          '<br><small style="color:var(--muted)">' +
-          (ortak ? 'Ortak program belgesi — onay kaydı var' : 'Ortak belge iddiası taşımaz') + '</small></td>' +
-        '<td data-l="Durum"><span class="pstat ' + pd.sinif + '"><i class="fa-solid ' + pd.ikon +
-          '" aria-hidden="true"></i> ' + esc(pd.ad) + '</span></td>' +
-      '</tr>';
-    }).join('');
-  } else {
-    $('#kuProgramAlt').textContent = 'Protokol yürürlükte, ancak bu kurumla yayımlanmış bir program henüz yok.';
-    document.getElementById('kuProgramlar').style.display = 'none';
-    document.getElementById('kuProgramYok').style.display = '';
-  }
-
-  /* ---- KURUM KOHORTLARI (§8.1) -----------------------------------------
-     🔴 §24.2 — katılımcı ADI ve kişisel verisi GÖSTERİLMEZ. Yalnız kohort
-     adı, dönem, kontenjan ve devam oranı yayımlanır; bunlar kurum onayı
-     kapsamındaki toplu (kişiye indirgenemeyen) verilerdir. */
-  if (kohortlar.length) {
-    $('#kuKohortlar').innerHTML = kohortlar.map(function (ko) {
-      var p = D.program(ko.programId);
-      var kd = ko.durum === 'aktif'
-        ? { ad: 'Yürüyor', ikon: 'fa-circle-play', sinif: 'wait' }
-        : { ad: 'Tamamlandı', ikon: 'fa-circle-check', sinif: 'ok' };
-      var y = Math.round(ko.dolulukOrani * 100);
-      return '<div class="bsv-row">' +
-        '<div class="bsv-info">' +
-          '<b>' + esc(ko.ad) + '</b>' +
-          '<span>' + esc(ko.donem) + ' · ' + esc(D.tarih(ko.baslangic)) + ' – ' + esc(D.tarih(ko.bitis)) +
-            (ko.devamOrani != null ? ' · devam oranı %' + Math.round(ko.devamOrani * 100) : '') +
-            (p ? ' · ' + esc(p.ad) : '') + '</span>' +
-          '<div class="prg-lbl"><span>' + ko.kontenjan + ' kontenjan (katılımcı listesi yayımlanmaz)</span><b>%' + y + '</b></div>' +
-          '<span class="prg"><span style="width:' + y + '%"></span></span>' +
-        '</div>' +
-        '<span class="pstat ' + kd.sinif + '"><i class="fa-solid ' + kd.ikon + '" aria-hidden="true"></i> ' + esc(kd.ad) + '</span>' +
-        (p ? '<a class="btn btn-ghost" href="' + esc(D.link.program(p.slug)) + '"><i class="fa-solid fa-diagram-project"></i> Program</a>' : '') +
-      '</div>';
-    }).join('');
-  } else {
-    document.getElementById('kuKohortlar').style.display = 'none';
-    document.getElementById('kuKohortYok').style.display = '';
-  }
-
-  /* ---- 4) KURUMUN ATADIĞI KADRO (§10.1 md.4, §17.3) --------------------
-     Kaynaklar: kurumun kendi kadrosu (k.egitmenIds), programın yöneticisi ve
-     koordinatörü, kohortun koordinatörü ve eğitmenleri. Aynı kişi birden çok
-     rolde görünebilir; roller karıştırılmaz (§3.3).
-     Kişisel iletişim bilgisi YOK — yalnız ad, unvan ve profil bağlantısı. */
-  var kadro = [];
-  function rolEkle(id, rol) {
-    if (!id) return;
-    var e = D.egitmen(id);
-    if (!e) return;
-    var v = kadro.filter(function (x) { return x.egitmen.id === id; })[0];
-    if (v) { if (v.roller.indexOf(rol) === -1) v.roller.push(rol); }
-    else kadro.push({ egitmen: e, roller: [rol] });
-  }
-  (k.egitmenIds || []).forEach(function (id) { rolEkle(id, 'Kurum kadrosu'); });
-  programlar.forEach(function (p) {
-    rolEkle(p.yoneticiId, 'Program yöneticisi');
-    rolEkle(p.koordinatorId, 'Koordinatör');
-  });
-  kohortlar.forEach(function (ko) {
-    rolEkle(ko.koordinatorId, 'Koordinatör');           /* kohort koordinatörü aynı rol ailesi */
-    (ko.egitmenIds || []).forEach(function (id) { rolEkle(id, 'Eğitmen'); });
-  });
-
-  if (kadro.length) {
-    $('#kuKadroAlt').textContent = 'Bu kurumun program ve kohortlarında görevli ' + kadro.length +
-      ' kişi. Rol, kişinin bu kurumdaki görevidir; akademik onay yetkisiyle aynı şey değildir.';
-    $('#kuKadro').innerHTML = kadro.map(function (x) {
-      var e = x.egitmen;
-      /* "Kurum kadrosu" yalnız başka rolü olmayan kişide gösterilir —
-         program rolü varken bilgi katmayan bir rozet daha eklemez. */
-      var roller = x.roller.length > 1
-        ? x.roller.filter(function (r) { return r !== 'Kurum kadrosu'; })
-        : x.roller;
-      return '<div class="dt-kadro-row">' +
-        '<span class="kd-ava" style="background-image:url(\'' + esc(img(e.foto, 120)) + '\')" role="img" aria-label="' + esc(e.ad) + '"></span>' +
-        '<div class="kd-txt">' +
-          '<b><a href="' + esc(D.link.egitmen(e.slug)) + '">' + esc(e.ad) + '</a></b>' +
-          '<span>' + esc(e.unvan) + '</span>' +
-          '<div class="kd-rol">' + roller.map(function (r) {
-            return '<span>' + esc(r) + '</span>';
-          }).join('') + '</div>' +
-        '</div>' +
-      '</div>';
-    }).join('');
-  } else {
-    $('#kuKadroAlt').textContent = 'Bu kurum için ayrı bir kadro ataması yayımlanmadı.';
-    document.getElementById('kuKadro').style.display = 'none';
-    document.getElementById('kuKadroYok').style.display = '';
-  }
-
-  /* ---- 5) YAKLAŞAN AÇIK ETKİNLİKLER (§10.1 md.5, §13.1) ---------------- */
-  if (acik.length) {
-    $('#kuEtkinlikAlt').textContent = acik.length +
-      ' açık oturum herkesin kaydına açık. Atölye uygulamalı bir oturumdur; etkinlik seminer, söyleşi, panel veya proje sunumudur — ikisi ayrı varlıklardır.';
-    $('#kuEtkinlikler').innerHTML = acik.map(function (o) {
-      var x = o.k;
-      var g = x.tarih.split('-');
-      var hedef = o.tip === 'atolye' ? D.link.atolye(x.slug) : D.link.etkinlik(x.slug);
-      var yer = x.format === 'yuz-yuze' ? (x.konum || 'Yüz yüze') : 'Canlı, çevrim içi';
-      return '<a class="tkv-row" href="' + esc(hedef) + '">' +
-        '<span class="tkv-tar"><b>' + parseInt(g[2], 10) + '</b><span>' + esc(AY_KISA[parseInt(g[1], 10) - 1]) + '</span></span>' +
-        '<span class="tkv-body"><b>' + esc(x.ad) + '</b>' +
-          '<span>' + esc(x.saat) + ' · ' + esc(D.sure(x.sureDk)) + ' · ' + esc(yer) +
-          ' · ' + esc(x.ucret === 0 ? 'Ücretsiz' : (x.ucret == null ? 'Kurum erişimi' : D.fiyat(x.ucret))) + '</span></span>' +
-        '<span class="tkv-tur">' + esc(D.etiket('etkinlikTurleri', x.tur)) + '</span>' +
+  function turKarti(t) {
+    if (t.ozel) {
+      return '<a class="ak-card" href="' + esc(t.adres) + '">' +
+        '<span class="ak-ico"><i class="fa-solid ' + esc(t.ikon) + '" aria-hidden="true"></i></span>' +
+        '<h3>' + esc(t.ad) + '</h3>' +
+        '<p>' + esc(t.metin) + '<br><b style="color:var(--tomato)">' + esc(t.alt) + '</b></p>' +
+        '</a>';
+    }
+    var n = suz(t.slug, '').length;
+    return '<a class="ak-card" href="' + esc(adres({ tur: t.slug, q: '' })) + '" data-t="' + esc(t.slug) + '" data-jump="1">' +
+      '<span class="ak-ico"><i class="fa-solid ' + esc(t.ikon) + '" aria-hidden="true"></i></span>' +
+      '<h3>' + esc(t.ad) + '</h3>' +
+      '<p>' + esc(TUR_ACIKLAMA[t.slug] || '') +
+        (n ? '<br><b style="color:var(--tomato)">' + n + ' fırsat</b>' : '') + '</p>' +
       '</a>';
-    }).join('');
-  } else {
-    $('#kuEtkinlikAlt').textContent = 'Bu kurum için planlanmış yaklaşan açık oturum bulunmuyor.';
-    document.getElementById('kuEtkinlikler').style.display = 'none';
-    document.getElementById('kuEtkinlikYok').style.display = '';
   }
 
-  /* 🔴 Kapalı oturum SAYILIR, ayrıntılandırılmaz: ad, tarih ve konum yalnız
-     kohort üyesine görünür (§24.2). */
-  if (kapali.length) {
-    $('#kuKapali').innerHTML =
-      '<div class="bsv-row">' +
-        '<div class="bsv-info"><b>Kuruma özel kapalı oturum</b>' +
-          '<span>' + kapali.length + ' oturum · ad, tarih ve konum yalnız ilgili kohortun üyelerine görünür</span></div>' +
-        '<span class="pstat off"><i class="fa-solid fa-lock" aria-hidden="true"></i> Kapalı oturum</span>' +
-      '</div>';
-  } else {
-    document.getElementById('kuKapali').style.display = 'none';
+  /* §23.2 — yarım satır bırakılmaz: kart sayısı sütun sayısına göre kırpılır.
+     Altı kart her kırılıma tam otururken kırpma olmaz; kural yine de motorla
+     uygulanır, veri büyürse kendiliğinden doğru kalır. */
+  var turGrid = $('#krTurGrid');
+  if (turGrid) D.sigdir(turGrid, TUR_KARTLARI, turKarti, { min: 6, max: 6 });
+
+  /* ---- TÜR SÜZGECİ (.chip) ------------------------------------------------
+     🔴 §23.3: seçili çip yalnız RENKLE anlatılmaz — kabukta `.chip.is-on` için
+     görsel kural da yok. Seçilide ikon `fa-check`e döner, `aria-current` ve
+     ekran okuyucuya gizli "(seçili)" metni eklenir. */
+  function turRayCiz() {
+    var h = '<span class="lbl">Tür:</span>';
+    var hepsi = [{ slug: '', ad: 'Tümü', ikon: 'fa-layer-group' }].concat(D.firsatTurleri);
+    hepsi.forEach(function (t) {
+      var acik = st.tur === t.slug;
+      var say = suz(t.slug, st.q).length;
+      h += '<a class="chip' + (acik ? ' is-on' : '') + '" href="' + esc(adres({ tur: t.slug })) +
+           '" data-t="' + esc(t.slug) + '"' + (acik ? ' aria-current="true"' : '') + '>' +
+        '<i class="fa-solid ' + (acik ? 'fa-check' : esc(t.ikon)) + '" aria-hidden="true"></i> ' +
+        esc(t.ad) + ' <b>' + say + '</b>' +
+        (acik ? '<span class="sr-only">(seçili)</span>' : '') +
+      '</a>';
+    });
+    $('#krTurRay').innerHTML = h;
+
+    /* hero'daki hızlı erişim çipleri de arama durumunu taşısın (yeni sekmede
+       açıldığında süzgeç kaybolmasın) */
+    [].slice.call(document.querySelectorAll('.lh-chips a.chip[data-t]')).forEach(function (a) {
+      a.setAttribute('href', adres({ tur: a.getAttribute('data-t') }));
+    });
+    /* Tür kartlarının href'i st'ye bağlı değil (aramayı bilerek sıfırlarlar),
+       bu yüzden burada güncellenmez. */
   }
 
-  /* ---- 6) ETKİ GÖSTERGELERİ (§10.1 md.6) -------------------------------
-     🔴 Göstergeler yalnız onay kaydı kapsamında yayımlanır. Kapsam her
-     kartın altında AÇIKÇA yazılır ki gösterge, kurumun onaylamadığı bir
-     iddia gibi okunmasın (§21.2, §26.13). */
-  var gostergeler = k.etkiGostergeleri || [];
-  if (gostergeler.length) {
-    $('#kuEtki').innerHTML = gostergeler.map(function (g) {
-      return '<div class="etki-kart">' +
-        '<b>' + esc(g.deger) + '</b>' +
-        '<span>' + esc(g.ad) + '</span>' +
-        '<small>Onay kapsamı: ' + esc(onay.kapsam) + '</small>' +
-      '</div>';
-    }).join('');
-    $('#kuEtkiNot').innerHTML = '<i class="fa-solid fa-circle-info" aria-hidden="true"></i>' +
-      '<span>Göstergeler ' + esc(onay.yetkili) + ' onayıyla, ' + esc(onay.belgeRef) +
-      ' referanslı kayıt kapsamında yayımlanmıştır. Bu veriler programın etkisini anlatır; ' +
-      'DadaCampus içeriğinin akademik olarak onaylandığı anlamına gelmez (§20).</span>';
-  } else {
-    document.getElementById('kuEtki').style.display = 'none';
-    document.getElementById('kuEtkiYok').style.display = '';
-    $('#kuEtkiNot').innerHTML = '<i class="fa-solid fa-circle-info" aria-hidden="true"></i>' +
-      '<span>Sonuç ve etki verisi kurumun ayrı onayına bağlıdır; protokolün varlığı tek başına ' +
-      'veri yayımlama izni vermez (§10.1, §24.2).</span>';
+  /* ---- FIRSAT SATIRI ------------------------------------------------------
+     Satır `<div class="bsv-row frs-row">`. İçindeki bağlantılar gerçek hedefe
+     gider; satırın kendisi tıklanabilir DEĞİLDİR (ilan detay sayfası yok).
+
+     `.frs-nitelik` `.bsv-info`nun DIŞINDA, `.bsv-row`un doğrudan çocuğu olarak
+     çizilir: `_ortak.css`teki `.bsv-row .bsv-info span` kuralı (0,3,0) sayfa
+     CSS'indeki `.frs-nitelik span` (0,2,0) kuralını yenip pill'leri blok hâline
+     getiriyor. `flex-basis:100%` ile satırın altına kendi hattında iner. */
+
+  /* Tarih kutusu: gün + kısa ay. */
+  function tarihKutusu(iso) {
+    var p = String(iso).split('-');
+    var ay = AY_KISA[parseInt(p[1], 10) - 1] || '';
+    return '<span class="frs-tar"><b>' + parseInt(p[2], 10) + '</b><span>' + ay + '</span></span>';
   }
 
-  /* ---- 7 + 8) DOĞRULANMIŞ BAĞLANTI VE VERİ İLKESİ (§10.1 md.7–8) -------
-     🔴 EKSİK VERİ: kurum.web veride null. Uydurma bir adres yazmak, §10.1'in
-     "kurumsal web sitesine DOĞRULANMIŞ bağlantı" koşulunu doğrudan ihlal
-     ederdi; bağlantı yerine doğrulama notu basılır. */
-  $('#kuBaglanti').innerHTML = [
-    ['Kurumsal web adresi',
-      k.web
-        ? '<a href="' + esc(k.web) + '" rel="noopener noreferrer" target="_blank">' + esc(k.web) + '</a>'
-        : 'Protokolde doğrulanınca yayımlanır',
-      k.web
-        ? 'Adres protokol kapsamında doğrulanmıştır'
-        : 'Doğrulanmamış adres yayımlanmaz — yanlış bir adrese bağlantı vermek kurum kimliğini yanıltıcı biçimde temsil eder'],
-    ['Kurum türü sayfası',
-      '<a href="' + esc(D.link.kurumTur(k.tur)) + '">' + esc(D.etiket('kurumTurleri', k.tur)) + '</a>',
-      turKaydi ? esc(turKaydi.vaat) : null],
-    ['İletişim kanalı',
-      '<a href="dadacampus-isbirligi-basvuru-v1.html">İş birliği başvuru formu</a>',
-      'Kişi bazlı e-posta ve telefon yayımlanmaz; başvuru kaydı tarih ve kullanıcıyla birlikte tutulur (§24.2)'],
-    ['Yetkili birim', esc(onay.yetkili),
-      'Yetkili yalnız birim adıyla anılır; kişi adı ve unvanı yayımlanmaz'],
-    ['Onay kaydı', esc(onay.belgeRef),
-      esc(D.tarih(onay.tarih)) + ' · ' + esc(onay.kapsam)]
-  ].map(function (r) {
-    return '<div class="inf-row"><span>' + r[0] + '</span><b>' + r[1] +
-      (r[2] ? '<small>' + r[2] + '</small>' : '') + '</b></div>';
-  }).join('');
+  /* İlanı veren taraf: doğrulanmış kurum ya da DadaCampus mentoru.
+     🔴 §26.13: kurum adı YALNIZ D.onayliMi() true ise yazılır. Liste zaten
+     yayindakiFirsatlar()'tan geliyor; bu ikinci kontrol savunma amaçlıdır. */
+  function verenSatiri(f) {
+    if (f.kurumId && D.onayliMi(f.kurumId)) {
+      var k = D.kurum(f.kurumId);
+      if (k) {
+        return '<a href="' + esc(D.link.kurum(k.slug)) + '" style="color:var(--tomato);font-weight:700">' +
+               esc(k.ad) + '</a>';
+      }
+    }
+    if (f.mentorId) {
+      var e = D.egitmen(f.mentorId);
+      /* Mentorun bağlı olduğu kurum burada YAZILMAZ: görüşme DadaCampus'un
+         kendi programıdır, kurumun bir ilanı değildir — karışmasın. */
+      if (e) {
+        return '<a href="' + esc(D.link.egitmen(e.slug)) + '" style="color:var(--tomato);font-weight:700">' +
+               esc(e.ad) + '</a> · ' + esc(e.unvan);
+      }
+    }
+    return 'DadaCampus';
+  }
 
-  /* ---- YAN PANEL: onay kaydı künyesi (§10.1 md.6, §10.3, §24.1) -------- */
-  $('#kuKayitKart').innerHTML =
-    '<div class="dt-fiyat"><b>Onaylı</b><span>iş birliği protokolü</span></div>' +
-    '<p class="dt-fiyat-alt">' + esc(onay.belgeRef) + ' · ' + esc(D.tarih(onay.tarih)) + '</p>' +
-    '<a class="btn btn-primary" href="dadacampus-isbirligi-basvuru-v1.html">' +
-      '<i class="fa-solid fa-handshake"></i> İş Birliği Başlat</a>' +
-    '<a class="btn btn-ghost" href="dadacampus-kurum-panel-v1.html">' +
-      '<i class="fa-solid fa-building-shield"></i> Kurum Paneli</a>' +
-    '<div class="inf">' + [
-      ['Protokol referansı', esc(onay.belgeRef)],
-      ['Onay tarihi', esc(D.tarih(onay.tarih))],
-      ['Yetkili birim', esc(onay.yetkili)],
-      ['Onay kapsamı', esc(onay.kapsam)]
-    ].map(function (r) {
-      return '<div class="inf-row"><span>' + r[0] + '</span><b>' + r[1] + '</b></div>';
-    }).join('') + '</div>' +
-    /* §10.3 — panel yetkisi kuruma bağlıdır ve rol bazlıdır */
-    '<p class="dt-kayit-not">Kurum paneline yalnız bu kuruma tanımlı yetkililer erişir; her yetkili ' +
-    'kendi kurumunun program ve katılımcılarını görür. Rapor görüntüleme, belge onayı ve finans ayrı ' +
-    'izinlerdir ve her kritik işlem tarih, kullanıcı ve eski-yeni değerle kayda geçer (§10.3).</p>';
+  /* Doğrulama rozeti — renk YANINDA ikon + metin (§23.3). */
+  function dogrulamaRozeti(f) {
+    if (f.kurumId && D.onayliMi(f.kurumId)) {
+      return '<span class="pstat ok"><i class="fa-solid fa-shield-halved" aria-hidden="true"></i> Doğrulanmış kurum</span>';
+    }
+    return '<span class="pstat ok"><i class="fa-solid fa-graduation-cap" aria-hidden="true"></i> DadaCampus programı</span>';
+  }
 
-  /* ---- YAN PANEL: kurum türü köprüsü (§9.3) ---------------------------- */
-  $('#kuTurKart').innerHTML =
-    '<div class="dt-mono"><i class="fa-solid ' + esc(turKaydi ? turKaydi.ikon : (k.ikon || 'fa-building-columns')) + '" aria-hidden="true"></i></div>' +
-    '<h4>' + esc(turKaydi ? turKaydi.ad : D.etiket('kurumTurleri', k.tur)) + '</h4>' +
-    '<p>' + esc(turKaydi ? turKaydi.vaat : k.isbirligiKapsami) +
-      (turKaydi ? '<br><br>' + esc(turKaydi.hedefBirim) : '') + '</p>' +
-    '<a class="see-all" href="' + esc(D.link.kurumTur(k.tur)) + '" style="margin-top:12px">' +
-      'Bu kurum türü için çözümler <i class="fa-solid fa-arrow-right"></i></a>';
+  /* Durum rozeti. `.wait` görsel varyanttır (petrol) — "beklemede" demek değil. */
+  function durumRozeti(f) {
+    if (f.tarih < BUGUN) {
+      return '<span class="pstat off"><i class="fa-regular fa-clock" aria-hidden="true"></i> Tarihi geçti</span>';
+    }
+    if (f.durum === 'acik') {
+      return '<span class="pstat wait"><i class="fa-solid fa-door-open" aria-hidden="true"></i> Başvuru açık</span>';
+    }
+    return '<span class="pstat off"><i class="fa-regular fa-hourglass" aria-hidden="true"></i> Yakında</span>';
+  }
 
-  /* ---- DİĞER PARTNER KURUMLAR (§9.1, §17.3) ---------------------------
-     🔴 D.onayliKurumlar() zaten onay kaydı süzgecinden geçer: görüşme ve
-     teklif aşamasındaki kurumlar bu rayda hiçbir koşulda görünmez. */
-  var digerler = D.onayliKurumlar().filter(function (x) { return x.id !== k.id; });
-  if (digerler.length) {
-    D.sigdir(document.getElementById('kuDigerler'), digerler, function (x) {
-      return '<a class="ak-card" href="' + esc(D.link.kurum(x.slug)) + '">' +
-        '<span class="ak-ico" style="font-size:15px;font-weight:800;letter-spacing:-.01em">' + esc(x.monogram) + '</span>' +
-        '<h3>' + esc(x.ad) + '</h3>' +
-        '<p>' + esc(D.etiket('kurumTurleri', x.tur)) + ' · ' + esc(x.sehir) + '<br>' +
-        esc(x.isbirligiKapsami) + '<br><b style="color:var(--tomato)">Protokol ' +
-        esc(D.tarih(x.onayKaydi.tarih)) + '</b></p></a>';
-    }, { min: 2, max: 4 });
-  } else {
-    document.getElementById('partnerler').hidden = true;
+  /* §16.3 md. 5 — kullanıcının bu fırsata başvurusu. Kişisel bilgi olduğu için
+     YALNIZ girişliyken basılır (§24.2, §26.15). */
+  var BASVURU_DURUM = {
+    'inceleniyor': { ad: 'Başvurun inceleniyor', ikon: 'fa-hourglass-half', sinif: 'wait' },
+    'kabul':       { ad: 'Başvurun kabul edildi', ikon: 'fa-circle-check',  sinif: 'ok' }
+  };
+
+  function basvuruRozeti(f) {
+    if (!girisli) return '';
+    var b = D.firsatBasvurusu(f.id);
+    if (!b) return '';
+    var d = BASVURU_DURUM[b.durum];
+    if (!d) return '';
+    return '<span class="pstat ' + d.sinif + '"><i class="fa-solid ' + d.ikon +
+           '" aria-hidden="true"></i> ' + esc(d.ad) + '</span>';
+  }
+
+  function satir(f) {
+    var meta = [verenSatiri(f), esc(f.sehir), esc(f.sure), esc(D.tarih(f.tarih))].join(' · ');
+    var nitelik = (f.nitelik || []).length
+      ? '<div class="frs-nitelik" style="flex-basis:100%">' +
+          '<span><i class="fa-solid fa-list-check" aria-hidden="true"></i> Aranan nitelikler</span>' +
+          f.nitelik.map(function (n) { return '<span>' + esc(n) + '</span>'; }).join('') +
+        '</div>'
+      : '';
+    return '<div class="bsv-row frs-row" data-t="' + esc(f.tur) + '">' +
+      tarihKutusu(f.tarih) +
+      '<div class="bsv-info">' +
+        '<b>' + esc(f.ad) + '</b>' +
+        '<span>' + meta + '</span>' +
+        '<span>' + esc(f.aciklama) + '</span>' +
+      '</div>' +
+      '<span class="pstat off"><i class="fa-solid fa-tag" aria-hidden="true"></i> ' +
+        esc(D.etiket('firsatTurleri', f.tur)) + '</span>' +
+      dogrulamaRozeti(f) +
+      durumRozeti(f) +
+      basvuruRozeti(f) +
+      nitelik +
+    '</div>';
+  }
+
+  /* ---- ÇİZ ---------------------------------------------------------------- */
+  function ciz() {
+    var liste = sirala(suz(st.tur, st.q));
+
+    turRayCiz();
+
+    var load = $('#krLoad');
+    if (load) load.classList.remove('show');
+
+    $('#krListe').innerHTML = liste.map(satir).join('');
+    $('#krBos').classList.toggle('show', liste.length === 0);
+
+    /* §17.2 sonuç sayısı anlık güncellenir; §23.3 aria-live ile duyurulur */
+    var parca = [];
+    if (st.tur) parca.push(D.etiket('firsatTurleri', st.tur));
+    if (st.q)   parca.push('"' + st.q + '" araması');
+    $('#krSayac').innerHTML = '<b>' + liste.length + '</b> fırsat' +
+      (parca.length ? ' · ' + esc(parca.join(' · ')) : ' · tümü') +
+      ' · yalnız doğrulanmış kurum ve DadaCampus programları';
+
+    /* temizleme bağlantıları güncel adresi taşısın */
+    ['#krTemiz', '#krBosTemiz'].forEach(function (s) {
+      var el = $(s);
+      if (el) el.setAttribute('href', 'dadacampus-kariyer-v1.html');
+    });
+  }
+
+  /* ---- URL <-> durum (§17.2) ---------------------------------------------- */
+  function urlYaz(degistir) {
+    D.qsSahipli(SAHIP, { tur: st.tur, q: st.q }, degistir);
+  }
+
+  function urldenOku() {
+    var q = D.qs();
+    var tur = q.tur || '';
+    /* bilinmeyen tür yok sayılır — uydurma süzgeç boş liste üretmesin */
+    var gecerli = D.firsatTurleri.some(function (t) { return t.slug === tur; });
+    st.tur = gecerli ? tur : '';
+    st.q = q.q || '';
+
+    var inp = document.getElementById('crsSearchInput');
+    if (inp) {
+      inp.value = st.q;
+      var kutu = document.getElementById('crsSearch');
+      if (kutu) kutu.classList.toggle('has-q', !!st.q);
+    }
+  }
+
+  urldenOku();
+  urlYaz(true);                                /* replaceState — normalizasyon */
+  ciz();
+
+  /* ---- tıklama: tür çipleri, tür kartları, temizleme ---------------------- */
+  document.addEventListener('click', function (ev) {
+    if (!ev.target.closest) return;
+    var turEl = ev.target.closest('a.chip[data-t], a.ak-card[data-t]');
+    var temizEl = ev.target.closest('#krTemiz, #krBosTemiz');
+    if (!turEl && !temizEl) return;
+    /* yeni sekmede açma / orta tık davranışı bozulmasın */
+    if (ev.metaKey || ev.ctrlKey || ev.shiftKey || ev.button) return;
+    ev.preventDefault();
+
+    if (temizEl) {
+      st.tur = ''; st.q = '';
+      var inp = document.getElementById('crsSearchInput');
+      if (inp) inp.value = '';
+      var kutu = document.getElementById('crsSearch');
+      if (kutu) kutu.classList.remove('has-q');
+    } else {
+      st.tur = turEl.getAttribute('data-t') || '';
+      /* tür kartından gelindiğinde arama sıfırlanır (kart "türün tamamı" der) */
+      if (turEl.classList.contains('ak-card')) {
+        st.q = '';
+        var inp2 = document.getElementById('crsSearchInput');
+        if (inp2) inp2.value = '';
+        var kutu2 = document.getElementById('crsSearch');
+        if (kutu2) kutu2.classList.remove('has-q');
+      }
+    }
+
+    urlYaz(false);                             /* pushState → geri tuşu çalışır */
+    ciz();
+
+    /* süzgeç listenin üstündeyse kullanıcı sonucu görmeli */
+    if ((turEl && turEl.getAttribute('data-jump')) || temizEl) {
+      var hedef = document.getElementById('firsatlar');
+      if (hedef) hedef.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  });
+
+  /* ---- arama (ad · açıklama · şehir) -------------------------------------- */
+  var inp = document.getElementById('crsSearchInput');
+  if (inp) {
+    inp.addEventListener('input', function () {
+      st.q = this.value.trim();
+      var kutu = document.getElementById('crsSearch');
+      if (kutu) kutu.classList.toggle('has-q', !!st.q);
+      urlYaz(true);                            /* yazarken geçmiş şişmesin */
+      ciz();
+    });
+  }
+  var temizBtn = document.getElementById('crsSearchClear');
+  if (temizBtn && inp) {
+    temizBtn.addEventListener('click', function () {
+      inp.value = '';
+      inp.dispatchEvent(new Event('input'));
+      inp.focus();
+    });
+  }
+
+  /* geri/ileri tuşu: URL süzgeci geri yükler (§17.2 zorunlu) */
+  window.addEventListener('popstate', function () { urldenOku(); ciz(); });
+
+  /* ======================================================================
+     §16.3 md. 5 — BAŞVURU DURUMUNUN TAKİBİ
+     Takibin asıl yeri Kampüsüm; burası son durumun özetidir. Blok `.kisi-sec`
+     içinde olduğu için ziyaretçiye CSS ile de kapalıdır; veri de hesaplanmaz.
+     ====================================================================== */
+  if (girisli) {
+    var basvuruEl = $('#krBasvuru');
+    if (basvuruEl) {
+      /* 🔴 Yalnız YAYINDAKİ fırsatların başvurusu listelenir: yayından düşmüş
+         (kurum doğrulaması olmayan) bir ilanın adı başvuru satırında da
+         görünmemeli. */
+      var benim = TUMU.filter(function (f) { return !!D.firsatBasvurusu(f.id); });
+
+      basvuruEl.innerHTML = benim.length ? sirala(benim).map(function (f) {
+        var b = D.firsatBasvurusu(f.id);
+        var d = BASVURU_DURUM[b.durum] || { ad: b.durum, ikon: 'fa-circle', sinif: 'off' };
+        return '<div class="bsv-row frs-row">' +
+          tarihKutusu(f.tarih) +
+          '<div class="bsv-info">' +
+            '<b>' + esc(f.ad) + '</b>' +
+            '<span>' + esc(D.etiket('firsatTurleri', f.tur)) + ' · ' + verenSatiri(f) +
+              ' · ' + esc(D.tarih(b.tarih)) + ' tarihinde başvurdun</span>' +
+          '</div>' +
+          '<span class="pstat ' + d.sinif + '"><i class="fa-solid ' + d.ikon +
+            '" aria-hidden="true"></i> ' + esc(d.ad) + '</span>' +
+          '<a href="dadacampus-kampusum-v1.html?bolum=genel" style="color:var(--tomato);font-weight:700;font-size:13px">' +
+            'Kampüsüm\'de aç <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>' +
+        '</div>';
+      }).join('')
+        : '<p class="fk-help"><i class="fa-solid fa-circle-info" aria-hidden="true"></i>' +
+          '<span>Henüz bir fırsata başvurmadın. Başvurduğunda durumu burada ve ' +
+          '<a href="dadacampus-kampusum-v1.html?bolum=genel">Kampüsüm</a> bildirimlerinde ' +
+          'takip edebilirsin.</span></p>';
+    }
+
+    /* ==================================================================
+       §16.3 md. 4 — PORTFOLYO HAZIRLIĞI
+       Kabul edilmiş teslim sayısı VERİDEN gelir; §14.4 "kariyer başvurusunda
+       seçili çalışmalarla portfolyo oluşturma" maddesinin ölçülebilir hâli.
+       §23.3: ilerleme çubuğunun yanında sayı METİN olarak da yazılır.
+       ================================================================== */
+    var pfEl = $('#krPortfolyoDurum');
+    if (pfEl) {
+      var kabul = D.teslimler.filter(function (t) { return t.durum === 'kabul'; }).length;
+      var toplam = D.teslimler.length;
+      var yuzde = toplam ? Math.round(kabul / toplam * 100) : 0;
+
+      pfEl.innerHTML =
+        '<div class="prg-lbl" style="margin-top:26px">' +
+          '<span>Başvuruya eklenebilir çalışma (kabul edilmiş teslim)</span>' +
+          '<b>' + kabul + ' / ' + toplam + '</b>' +
+        '</div>' +
+        '<span class="prg"><span style="width:' + yuzde + '%"></span></span>' +
+        '<div class="kurum-gate" style="margin-top:20px">' +
+          '<span class="kg-ico"><i class="fa-solid ' + (kabul ? 'fa-folder-open' : 'fa-folder-plus') +
+            '" aria-hidden="true"></i></span>' +
+          '<div class="kg-txt">' +
+            '<b>' + (kabul
+              ? 'Portfolyonda başvuruya eklenebilir ' + kabul + ' çalışma var'
+              : 'Henüz kabul edilmiş bir çalışman yok') + '</b>' +
+            '<p>' + (kabul
+              ? 'Başvururken bu çalışmalar arasından seçim yaparsın; seçmediğin çalışma kuruma gitmez. Portfolyo Günü gibi bazı fırsatlar en az belirli sayıda kabul edilmiş çalışma ister — koşul her ilanın "Aranan nitelikler" bölümünde yazılıdır.'
+              : 'Teslimlerin değerlendirildikçe kabul edilen çalışmalar portfolyona düşer ve başvurularda seçilebilir hâle gelir. Revizyon istenen teslimini yeni sürümle güncelleyebilirsin.') + '</p>' +
+          '</div>' +
+          '<a class="btn btn-primary" href="dadacampus-portfolyo-v1.html">' +
+            '<i class="fa-solid fa-images" aria-hidden="true"></i> Çalışmalarını Seç</a>' +
+        '</div>';
+    }
   }
 })();
 </script>

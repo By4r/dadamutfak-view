@@ -1227,6 +1227,17 @@ html.reveal-ready .reveal.in{opacity:1;transform:none}
 .lst-hero .crs-search{max-width:620px;margin-top:22px}
 .lst-hero .crs-search input{font-size:15px}
 
+/* ---- KOYU HERO'DAKİ ÇİP ŞERİDİ (`.chips.lh-chips`)
+   🔴 Faz 1'den beri markup'ta duruyordu ama CSS'i HİÇ YAZILMAMIŞTI (Faz 6
+   denetiminde tanımsız sınıf taramasıyla yakalandı). Sonuç: şeridin "Hızlı:" /
+   "Sık aranan:" etiketi kabuğun `.chips .lbl` kuralından `var(--muted)` (#7E7E7E)
+   alıyor ve koyu hero (#101B1F) üzerinde 4,32:1 kontrastta kalıyordu — 13px
+   metin için AA eşiği 4,5:1 (§23.3). Açık petrol tonuna alındı: 12,65:1.
+   Çipin kendisi beyaz zemin/koyu metin olduğu için zaten 16,64:1 — dokunulmadı. */
+.lh-chips .lbl{color:#cadfe2}
+.lh-chips .chip{background:rgba(255,255,255,.94)}
+.lh-chips .chip:hover{background:#fff;border-color:var(--tomato)}
+
 /* ---- KOLEKSİYON / TÜR / BÖLÜM KEŞİF RAYI — .cat-track/.cat-card kompakt varyantı */
 .koll-track{display:flex;gap:12px;overflow-x:auto;padding:2px 2px 12px;scrollbar-width:none;margin-bottom:6px}
 .koll-track::-webkit-scrollbar{display:none}
@@ -2448,8 +2459,10 @@ a.drs-row:hover{color:var(--tomato)}
           <div class="up-list" id="epParcaListe"></div>
         </div>
         <div class="fk-field">
-          <label class="fk-label" for="epParcaEk">Parçaya eklenecekler</label>
-          <div class="fk-checks" id="epParcaEk">
+          <!-- onay kutusu GRUBU tek bir alana bağlanamaz: `for` yerine
+               role="group" + aria-label kullanıldı (§23.3 form etiketi) -->
+          <span class="fk-label" id="epParcaEkLbl">Parçaya eklenecekler</span>
+          <div class="fk-checks" id="epParcaEk" role="group" aria-labelledby="epParcaEkLbl">
             <label><input type="checkbox" name="epEk" value="altyazi" /><span class="cbx" aria-hidden="true"></span> Altyazı ve transkript</label>
             <label><input type="checkbox" name="epEk" value="quiz" /><span class="cbx" aria-hidden="true"></span> Ders sonu quiz</label>
             <label><input type="checkbox" name="epEk" value="odev" /><span class="cbx" aria-hidden="true"></span> Uygulama ödevi</label>
@@ -2872,7 +2885,6 @@ a.drs-row:hover{color:var(--tomato)}
         <div>
           <h2 class="pn-h2"><i class="fa-regular fa-address-card" aria-hidden="true"></i> Herkese açık profiliniz</h2>
           <div class="inf" id="epProfilKunye"></div>
-          <div class="chips" id="epProfilUzman" role="group" aria-label="Uzmanlık alanları" style="margin-top:16px"></div>
           <div class="ak-hero-cta" style="margin-top:18px">
             <a class="btn btn-primary" id="epProfilBag" href="dadacampus-egitmenler-v1.html"><i class="fa-regular fa-address-card" aria-hidden="true"></i> Profili Görüntüle</a>
             <a class="btn btn-ghost" href="dadacampus-egitmenler-v1.html"><i class="fa-solid fa-users" aria-hidden="true"></i> Eğitmen Dizini</a>
@@ -4698,13 +4710,12 @@ window.__bottomStrips=window.__bottomStrips||[];
       '<div class="inf-row"><span>Rol</span><b>' + esc(D.etiket('egitmenRolleri', eg.rol)) + '</b></div>' +
       '<div class="inf-row"><span>Kurum</span><b>' + esc(bagliKurum || 'Bağımsız eğitmen') + '</b></div>' +
       '<div class="inf-row"><span>Eğitim dilleri</span><b>' + esc((eg.diller || []).join(', ')) + '</b></div>' +
+      /* uzmanlıklar `.chip` DEĞİL künye satırı: `.chip` cursor:pointer taşıyor,
+         tıklanmayan bir etiketi tıklanır göstermek yanıltıcı olurdu */
+      '<div class="inf-row"><span>Uzmanlıklar</span><b>' + esc((eg.uzmanliklar || []).join(' · ')) + '</b></div>' +
+      '<div class="inf-row"><span>Öğretim yaklaşımı</span><b>' + esc(eg.ogretimYaklasimi) + '</b></div>' +
       '<div class="inf-row"><span>Verdiği eğitim</span><b>' + E.egitimler.length + ' eğitim' +
         '<small>' + E.programlar.length + ' programda görevli</small></b></div>';
-
-    byId('epProfilUzman').innerHTML = '<span class="lbl">Uzmanlık:</span>' +
-      (eg.uzmanliklar || []).map(function (u) {
-        return '<span class="chip">' + esc(u) + '</span>';
-      }).join('');
 
     byId('epProfilBag').setAttribute('href', D.link.egitmen(eg.slug));
   }
