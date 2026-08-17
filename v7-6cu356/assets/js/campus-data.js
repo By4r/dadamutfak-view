@@ -865,36 +865,65 @@
   /* ======================================================================
      8. ETKİNLİKLER (§13.1) — seminer, söyleşi, panel, yarışma
      ====================================================================== */
+  /* Faz 3: §13.2 etkinlik detay sayfası atölyeyle AYNI bilgi bloklarını istiyor
+     (konum/bağlantı, kayıt kapanışı, ön hazırlık, katılım belgesi, iptal kuralı,
+     kayıt erişim süresi). Alanlar bu yüzden atölye şemasıyla hizalandı — iki
+     varlık §8.1'de AYRI kalır, yalnız detay şablonu ortaktır. */
   var etkinlikler = [
     {
       id: 'et-01', slug: 'yerel-urunler-paneli',
       ad: 'Yerel Ürünler Paneli', tur: 'panel',
+      ozet: 'Yerel üreticiyle çalışan şeflerin tedarik, mevsim ve fiyat gerçeğini konuştuğu açık panel.',
       konu: 'Yerel üretici–mutfak ilişkisi ve tedarik',
       hedefKitle: 'Öğrenciler, üreticiler, işletme sahipleri',
-      tarih: '2026-10-08', saat: '19:00', sureDk: 90, format: 'canli',
+      tarih: '2026-10-08', saat: '19:00', saatDilimi: 'Europe/Istanbul', sureDk: 90,
+      format: 'canli', konum: null, onlineBaglanti: true,
       konusmaciId: 'eg-04', partnerKurumId: 'ku-02', programId: null,
-      kontenjan: 300, ucret: 0, kayitAlinacak: true,
-      durum: 'kayit-acik'
+      kontenjan: 300, kayitliSayisi: 186, kayitKapanis: '2026-10-07',
+      malzeme: [], ekipman: [],
+      onHazirlik: 'Ön hazırlık gerekmez; soru göndermek isteyenler kayıt formundaki alanı kullanabilir.',
+      ucret: 0, kurumErisimi: false,
+      kayitAlinacak: true, erisimSuresi: '90 gün',
+      katilimBelgesi: { verilir: false, kosul: null },
+      iptalKurali: 'Oturum ertelenirse kayıtlı katılımcılara yeni tarih bildirilir; ücret alınmadığı için iade söz konusu değildir.',
+      durum: 'kayit-acik', kapak: F.baharat
     },
     {
       id: 'et-02', slug: 'duyusal-analiz-soylesisi',
       ad: 'Duyusal Analizde Panel Eğitimi Söyleşisi', tur: 'soylesi',
+      ozet: 'Duyusal değerlendirme panelinin nasıl kurulduğu ve panelistin nasıl eğitildiği üzerine söyleşi.',
       konu: 'Duyusal değerlendirme panelleri nasıl kurulur',
       hedefKitle: 'Gastronomi öğrencileri ve sektör profesyonelleri',
-      tarih: '2027-01-11', saat: '20:00', sureDk: 75, format: 'canli',
+      tarih: '2027-01-11', saat: '20:00', saatDilimi: 'Europe/Istanbul', sureDk: 75,
+      format: 'canli', konum: null, onlineBaglanti: true,
       konusmaciId: 'eg-05', partnerKurumId: 'ku-01', programId: 'pr-02',
-      kontenjan: 200, ucret: 0, kayitAlinacak: true,
-      durum: 'yakinda'
+      kontenjan: 200, kayitliSayisi: 74, kayitKapanis: '2027-01-10',
+      malzeme: [], ekipman: ['Not almak için kâğıt veya dijital defter'],
+      onHazirlik: 'Programın duyusal değerlendirme modülünü izlemiş olmak konuşmayı kolaylaştırır.',
+      ucret: 0, kurumErisimi: false,
+      kayitAlinacak: true, erisimSuresi: '90 gün',
+      katilimBelgesi: { verilir: false, kosul: null },
+      iptalKurali: 'Erteleme durumunda kayıtlı katılımcılara bildirim gönderilir.',
+      durum: 'yakinda', kapak: F.sunum
     },
     {
       id: 'et-03', slug: 'ogrenci-proje-sunum-gunu',
       ad: 'Öğrenci Proje Sunum Günü', tur: 'yarisma',
+      ozet: 'Kooperatif mutfağı programının bitirme projelerinin jüri ve kurum yetkilileri önünde sunulduğu gün.',
       konu: 'Kooperatif mutfağı bitirme projeleri sergisi',
       hedefKitle: 'Program katılımcıları, kurum yetkilileri, kamuya açık',
-      tarih: '2026-11-30', saat: '14:00', sureDk: 180, format: 'yuz-yuze',
+      tarih: '2026-11-30', saat: '14:00', saatDilimi: 'Europe/Istanbul', sureDk: 180,
+      format: 'yuz-yuze', konum: 'Yeşilova Belediyesi Kültür Merkezi', onlineBaglanti: false,
       konusmaciId: null, partnerKurumId: 'ku-03', programId: 'pr-03',
-      kontenjan: 120, ucret: 0, kayitAlinacak: false,
-      durum: 'yakinda'
+      kontenjan: 120, kayitliSayisi: 120, kayitKapanis: '2026-11-25',
+      malzeme: ['Sunum yapacak katılımcılar tabaklarını kendileri getirir'],
+      ekipman: ['Sunum masaları ve servis ekipmanı kurum tarafından sağlanır'],
+      onHazirlik: 'Katılımcılar proje özetini bir hafta önce koordinatöre iletir.',
+      ucret: 0, kurumErisimi: true,
+      kayitAlinacak: false, erisimSuresi: null,
+      katilimBelgesi: { verilir: true, kosul: 'Projeyi sunmak ve jüri değerlendirmesini tamamlamak.' },
+      iptalKurali: 'Tarih değişikliği kurum koordinatörü tarafından duyurulur.',
+      durum: 'kontenjan-doldu', kapak: F.dunya
     }
   ];
 
@@ -1466,6 +1495,134 @@
     egitiminAtolyeleri: function (egitimId) {
       var pids = DC.egitiminProgramlari(egitimId).map(function (p) { return p.id; });
       return atolyeler.filter(function (a) { return a.programId && pids.indexOf(a.programId) > -1; });
+    },
+
+    /* --- program / kohort / takvim (Faz 3) -------------------------------- */
+
+    atolye:   function (id) { return DC.bulId('atolyeler', id); },
+    etkinlik: function (id) { return DC.bulId('etkinlikler', id); },
+    kohort:   function (id) { return DC.bulId('kohortlar', id); },
+
+    /** Programın kurum kohortları (§8.1 — kohort programdan AYRI varlıktır). */
+    programKohortlari: function (programId) {
+      return kohortlar.filter(function (k) { return k.programId === programId; });
+    },
+
+    /**
+     * Programın eğitmen kadrosu, ROLE göre ayrılmış (§8.3).
+     * yonetici · koordinator · egitmen · degerlendirici · akademik danışman.
+     * Aynı kişi birden fazla rolde görünebilir; roller karıştırılmaz (§3.3).
+     */
+    programKadro: function (p) {
+      if (!p) return [];
+      var out = [], ekle = function (id, rol) {
+        if (!id) return;
+        var e = DC.egitmen(id);
+        if (!e) return;
+        var v = out.filter(function (x) { return x.egitmen.id === id; })[0];
+        if (v) { if (v.roller.indexOf(rol) === -1) v.roller.push(rol); }
+        else out.push({ egitmen: e, roller: [rol] });
+      };
+      ekle(p.yoneticiId, 'Program yöneticisi');
+      ekle(p.koordinatorId, 'Koordinatör');
+      (p.egitmenIds || []).forEach(function (id) { ekle(id, 'Eğitmen'); });
+      (p.degerlendiriciIds || []).forEach(function (id) { ekle(id, 'Değerlendirici'); });
+      /* akademik onay rolü olan eğitmen partner kurumdan gelir */
+      (p.partnerKurumIds || []).forEach(function (kid) {
+        var k = DC.kurum(kid);
+        (k && k.egitmenIds || []).forEach(function (id) {
+          var e = DC.egitmen(id);
+          if (e && (e.kurulRolleri || []).indexOf('akademik-onay') > -1) ekle(id, 'Akademik danışman');
+        });
+      });
+      return out;
+    },
+
+    /** Programa bağlı atölyeler + etkinlikler, tarih sırasıyla. */
+    programOturumlari: function (programId) {
+      var a = atolyeler.filter(function (x) { return x.programId === programId; })
+        .map(function (x) { return { tip: 'atolye', k: x }; });
+      var e = etkinlikler.filter(function (x) { return x.programId === programId; })
+        .map(function (x) { return { tip: 'etkinlik', k: x }; });
+      return a.concat(e).sort(function (x, y) { return x.k.tarih.localeCompare(y.k.tarih); });
+    },
+
+    /**
+     * GENEL AKADEMİK TAKVİM (§13) — tarihli her kayıt tek eksende.
+     * Kayıt biçimi: { tarih, saat, ad, alt, tur, etiket, href, kurumId, programId }
+     * `tur`: program-adimi | atolye | etkinlik | son-tarih
+     * 🔴 Kuruma özel KAPALI oturum (tur='kapali-oturum') herkese açık takvimde
+     *    ad ve konumuyla listelenmez — yalnız kohort üyesine görünür (§24.2).
+     */
+    takvim: function (opt) {
+      opt = opt || {};
+      var out = [];
+      programlar.forEach(function (p) {
+        (p.akademikTakvim || []).forEach(function (t) {
+          out.push({ tarih: t.tarih, saat: null, ad: t.ad, alt: p.ad, tur: 'program-adimi',
+            etiket: 'Program adımı', href: DC.link.program(p.slug),
+            programId: p.id, kurumId: (p.partnerKurumIds || [])[0] || null });
+        });
+        if (p.basvuruBitis) {
+          out.push({ tarih: p.basvuruBitis, saat: '23:59', ad: 'Başvuru kapanışı', alt: p.ad,
+            tur: 'son-tarih', etiket: 'Son tarih', href: DC.link.program(p.slug),
+            programId: p.id, kurumId: (p.partnerKurumIds || [])[0] || null });
+        }
+      });
+      atolyeler.forEach(function (a) {
+        var kapali = a.tur === 'kapali-oturum';
+        if (kapali && !opt.kohortUyesi) {
+          out.push({ tarih: a.tarih, saat: a.saat, ad: 'Kuruma özel kapalı oturum',
+            alt: 'Ayrıntılar yalnız kohort üyelerine görünür', tur: 'atolye',
+            etiket: 'Kapalı oturum', href: null, kapali: true,
+            programId: a.programId, kurumId: a.partnerKurumId });
+          return;
+        }
+        out.push({ tarih: a.tarih, saat: a.saat, ad: a.ad,
+          alt: DC.etiket('etkinlikTurleri', a.tur) +
+            (a.format === 'yuz-yuze' ? ' · ' + (a.konum || 'yüz yüze') : ' · canlı, çevrim içi'),
+          tur: 'atolye', etiket: DC.etiket('etkinlikTurleri', a.tur),
+          href: DC.link.atolye(a.slug), programId: a.programId, kurumId: a.partnerKurumId });
+      });
+      etkinlikler.forEach(function (x) {
+        out.push({ tarih: x.tarih, saat: x.saat, ad: x.ad,
+          alt: DC.etiket('etkinlikTurleri', x.tur) +
+            (x.format === 'yuz-yuze' ? ' · ' + (x.konum || 'yüz yüze') : ' · canlı, çevrim içi'),
+          tur: 'etkinlik', etiket: DC.etiket('etkinlikTurleri', x.tur),
+          href: DC.link.etkinlik(x.slug), programId: x.programId, kurumId: x.partnerKurumId });
+      });
+      return out.sort(function (a, b) { return a.tarih.localeCompare(b.tarih) || String(a.saat).localeCompare(String(b.saat)); });
+    },
+
+    /** 'YYYY-MM' → o ayın kayıtları. */
+    takvimAy: function (ay, opt) {
+      return DC.takvim(opt).filter(function (o) { return o.tarih.slice(0, 7) === ay; });
+    },
+
+    /** Takvimde geçen ayların sıralı listesi ['2026-08', …] */
+    takvimAylari: function (opt) {
+      var g = {}, out = [];
+      DC.takvim(opt).forEach(function (o) {
+        var a = o.tarih.slice(0, 7);
+        if (!g[a]) { g[a] = 1; out.push(a); }
+      });
+      return out.sort();
+    },
+
+    /** '2026-09' → 'Eylül 2026' */
+    ayAdi: function (ay) {
+      var AY = ['Ocak', 'Şubat', 'Mart', 'Nisan', 'Mayıs', 'Haziran',
+                'Temmuz', 'Ağustos', 'Eylül', 'Ekim', 'Kasım', 'Aralık'];
+      var p = String(ay).split('-');
+      return AY[parseInt(p[1], 10) - 1] + ' ' + p[0];
+    },
+
+    /** Programın belge kaydı (varsa) — sertifikalar koleksiyonundan örnek. */
+    programBelgesi: function (programId) {
+      for (var i = 0; i < sertifikalar.length; i++) {
+        if (sertifikalar[i].programId === programId) return sertifikalar[i];
+      }
+      return null;
     },
 
     /* --- ızgara tamlama (§23.2) ------------------------------------------- */
