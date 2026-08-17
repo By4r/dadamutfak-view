@@ -3,7 +3,8 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>DadaCampus — Arama | DadaMutfak</title>
+<title>Arama — DadaCampus | DadaMutfak</title>
+<meta name="description" content="DadaCampus genel arama: eğitim, program, atölye, etkinlik, eğitmen, kurum ve rehber içeriğinde sonuç türü etiketiyle ara." />
 <link rel="shortcut icon" type="image/x-icon"
       href="assets/img/favicon.ico" />
 <!-- FontAwesome 6.5.2 (kilitli ikon seti) -->
@@ -11,6 +12,10 @@
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
       integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A=="
       crossorigin="anonymous" referrerpolicy="no-referrer" />
+<!-- DADACAMPUS VERİ MODELİ — head'de yüklenir ki gövdedeki render ve mevcut
+     DOM-okuyan eğitim filtresinden ÖNCE hazır olsun (docs/lessons.md §4 tuzağı).
+     Kabuk/CSS inline kalır; bu TEK ortak dosyadır (docs/PLAN.md §0). -->
+<script src="assets/js/campus-data.js"></script>
 <style>
 /* =====================================================================
    _SHELL.HTML — KANONİK İSKELET (anasayfa-portal-v3a.html'den BİREBİR)
@@ -693,138 +698,17 @@ html,body{overflow-x:hidden}
   .cookie-actions button{flex:1;padding:12px 8px;font-size:12.5px}
 }
 
+/* ---- ERİŞİLEBİLİRLİK YARDIMCISI (§23.3) — yalnız ekran okuyucuya görünen metin.
+   Kabukta yoktu; tablo caption'ı, bölüm başlığı ve buton adı gibi görsel olarak
+   gereksiz ama sesli okumada zorunlu metinler için. Faz 7'de atlama bağlantısı
+   ve genel odak göstergesi bunun yanına eklenir. */
+.sr-only{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;
+  overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+
 /* =====================================================================
    SAYFA CSS — sayfa-spesifik stiller BU İŞARETİN ALTINA eklenir.
    Yukarıdaki chrome katmanına DOKUNMA (mega menü KİLİTLİ).
    ===================================================================== */
-
-/* ============ DADACAMPUS ARAMA (arama-campus) — anatomi Fit pilotundan, petrol token remap ============
-   Campus shell'inde --tomato = #006072; arama motoru --camp-* (petrol) ailesine bağlı → Fit yeşili/Gastro hue'su/mint YOK.
-   Petrol token ailesi (Fit aksan ailesi muadili): */
-:root{
-  --camp:#006072; --camp-deep:#003E49; --camp-tint:#E2EFF1;
-  --camp-line:#cfe0e3; --camp-bright:#3d97a6; --camp-dark:#101b1f;
-}
-
-/* ---- arama hero (koyu petrol bandı + mutfak/eğitim görseli) — solid header altında ---- */
-.fs-top{position:relative;padding:126px 0 56px;background-image:linear-gradient(180deg,rgba(9,27,32,.92) 0%,rgba(12,34,40,.80) 52%,rgba(10,24,28,.88) 100%),url('https://images.unsplash.com/photo-1556910103-1c02745aae4d?w=1680&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-12&high=8&vib=3');background-size:cover;background-position:center;overflow:hidden}
-.fs-top::before{content:"";position:absolute;inset:0;background:radial-gradient(1100px 460px at 16% -10%,rgba(0,96,114,.36),transparent 60%);pointer-events:none;z-index:1}
-.fs-top::after{content:"";position:absolute;right:-120px;bottom:-140px;width:420px;height:420px;border-radius:50%;background:radial-gradient(circle,rgba(61,151,166,.26),transparent 70%);pointer-events:none;z-index:1}
-.fs-top .wrap{position:relative;z-index:2}
-.fs-top .eyebrow{color:var(--camp-bright)}
-.fs-top h1{font-size:33px;letter-spacing:-.02em;color:#fff;margin:10px 0 12px;text-shadow:0 2px 22px rgba(0,0,0,.28)}
-.fs-top h1 .accent{color:var(--camp-bright)}
-.fs-lead{font-size:15.5px;font-weight:500;color:#d3e5e8;max-width:600px;line-height:1.6;margin-bottom:26px}
-/* arama kutusu */
-.fs-box{position:relative;background:var(--paper);border:1px solid var(--camp-line);border-radius:var(--radius-lg);box-shadow:var(--sh-lg);padding:10px;max-width:680px}
-.fs-row{display:flex;gap:8px;padding:6px}
-.fs-input{flex:1;display:flex;align-items:center;gap:12px;background:var(--bg);border:1px solid var(--line);border-radius:var(--radius-md);padding:0 18px}
-.fs-input i{color:var(--camp-deep)}
-.fs-input input{flex:1;min-width:0;border:none;background:transparent;font-family:inherit;font-weight:500;font-size:15.5px;color:var(--slate);padding:16px 0;outline:none}
-.fs-input input::placeholder{color:#a7a7a7;font-weight:500}
-.fs-row .btn{flex:none;padding:0 26px}
-.fs-sum{margin-top:18px;font-size:14.5px;color:#cadfe2;font-weight:500}
-.fs-sum b{color:#fff;font-weight:700}
-.fs-sum .q{color:var(--camp-bright);font-weight:700}
-
-/* ---- autocomplete dropdown ---- */
-.fs-ac{position:absolute;left:6px;right:6px;top:calc(100% - 4px);z-index:60;background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-md);box-shadow:var(--sh-lg);padding:8px;max-height:min(440px,72vh);overflow-y:auto;opacity:0;visibility:hidden;transform:translateY(-6px);transition:opacity .18s var(--ease),transform .18s var(--ease),visibility .18s;scrollbar-width:thin;scrollbar-color:#d9d9d9 transparent}
-.fs-ac::-webkit-scrollbar{width:8px}
-.fs-ac::-webkit-scrollbar-thumb{background:#dcdcdc;border-radius:var(--radius-pill);border:2px solid var(--paper)}
-.fs-box.ac-open .fs-ac{opacity:1;visibility:visible;transform:translateY(0)}
-.fs-ac .ac-grp{display:flex;align-items:center;gap:8px;padding:11px 12px 6px;font-size:11.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--muted)}
-.fs-ac .ac-grp i{font-size:11px;color:var(--camp)}
-.fs-ac .ac-grp .ac-clear{margin-left:auto;font-size:11px;font-weight:600;letter-spacing:0;text-transform:none;color:var(--muted);cursor:pointer;border:none;background:none;font-family:inherit;padding:2px 4px;border-radius:var(--radius-sm)}
-.fs-ac .ac-grp .ac-clear:hover{color:var(--camp)}
-.fs-ac .ac-opt{display:flex;align-items:center;gap:13px;padding:10px 12px;border-radius:var(--radius-md);cursor:pointer;transition:background .14s var(--ease)}
-.fs-ac .ac-opt .ac-ico{flex:none;width:38px;height:38px;border-radius:var(--radius-sm);background:var(--bg);border:1px solid var(--line);display:grid;place-items:center;color:var(--slate-2);font-size:15px;background-size:cover;background-position:center;overflow:hidden}
-.fs-ac .ac-opt .ac-main{min-width:0;flex:1}
-.fs-ac .ac-opt .ac-ttl{display:block;font-size:14.5px;font-weight:600;color:var(--slate);line-height:1.25;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.fs-ac .ac-opt .ac-ttl mark{background:none;color:var(--camp);font-weight:700;padding:0}
-.fs-ac .ac-opt .ac-sub{display:block;margin-top:1px;font-size:12px;font-weight:500;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.fs-ac .ac-opt .ac-badge{flex:none;display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:700;padding:4px 9px;border-radius:var(--radius-pill);background:var(--camp-tint);color:var(--camp-deep);border:1px solid var(--camp-line)}
-.fs-ac .ac-opt .ac-badge i{font-size:9.5px}
-.fs-ac .ac-opt:hover,.fs-ac .ac-opt.is-active{background:var(--camp-tint)}
-.fs-ac .ac-opt:hover .ac-ttl,.fs-ac .ac-opt.is-active .ac-ttl{color:var(--camp-deep)}
-.fs-ac .ac-query .ac-ico{background:var(--camp);border-color:var(--camp);color:#fff}
-.fs-ac .ac-none{padding:18px 14px;text-align:center;font-size:13.5px;color:var(--muted);font-weight:500}
-
-/* ---- sekme barı ---- */
-.fs-tabbar{position:sticky;top:112px;z-index:40;background:rgba(255,255,255,.93);-webkit-backdrop-filter:blur(10px) saturate(150%);backdrop-filter:blur(10px) saturate(150%);border-bottom:1px solid var(--line);padding:12px 0}
-.fs-tabs{display:flex;gap:4px;background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-md);padding:4px;overflow-x:auto;scrollbar-width:none}
-.fs-tabs::-webkit-scrollbar{display:none}
-.fs-tabs .dt{font-family:inherit;font-weight:700;font-size:13px;color:var(--muted);background:transparent;border:none;border-radius:var(--radius-sm);padding:9px 16px;cursor:pointer;display:inline-flex;align-items:center;gap:7px;transition:.2s var(--ease);white-space:nowrap;flex:none}
-.fs-tabs .dt:hover{color:var(--camp-deep)}
-.fs-tabs .dt.active{background:var(--camp);color:#fff}
-.fs-tabs .dt .cnt{font-size:11px;font-weight:700;opacity:.6}
-
-/* ---- sonuç bölgesi ---- */
-.fs-results{padding:34px 0 60px;background:var(--bg-cream)}
-.fs-pane{animation:fadeUp .35s var(--ease)}
-.fs-pane[hidden]{display:none}
-.fs-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:24px}
-.fs-cnt-note{font-size:13.5px;color:var(--muted);font-weight:500;margin:0 0 20px}
-.fs-cnt-note b{color:var(--camp-deep);font-weight:700}
-
-/* ---- sonuç kartı (POOL-driven, tek şablon) ---- */
-.fs-card{display:flex;flex-direction:column;background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-lg);overflow:hidden;cursor:pointer;transition:.28s var(--ease)}
-.fs-card:hover{transform:translateY(-6px);border-color:var(--camp-line);box-shadow:var(--sh-md)}
-.fs-media{position:relative;height:158px;background-size:cover;background-position:center}
-.fs-media::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(33,30,22,0) 55%,rgba(20,18,12,.34))}
-.fs-badge{position:absolute;top:11px;left:11px;z-index:2;display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:700;padding:5px 11px;border-radius:var(--radius-pill);background:rgba(255,255,255,.95);color:var(--camp-deep)}
-.fs-badge i{font-size:10px}
-.fs-tile{height:120px;display:grid;place-items:center;background:var(--camp-tint);color:var(--camp);font-size:34px;position:relative}
-.fs-tile .fs-badge{background:#fff;box-shadow:var(--sh-sm)}
-/* "Örnek" (preview eğitim) rozeti — canlı hedefi olmayan iskelet içeriği işaretler */
-.fs-badge.is-ornek{background:#FBEFD8;color:#8a5a12}
-.fs-tile.tile-ornek{background:#FBF4E6;color:#b98525}
-.fs-cbody{padding:15px 16px 17px;display:flex;flex-direction:column;flex:1}
-.fs-cbody h4{font-size:16px;letter-spacing:-.01em;line-height:1.3;margin-bottom:6px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;transition:color .2s var(--ease)}
-.fs-card:hover .fs-cbody h4{color:var(--camp-deep)}
-.fs-cbody p{font-size:12.5px;color:var(--muted);font-weight:500;line-height:1.45;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-.fs-cgo{margin-top:auto;padding-top:13px;font-size:12.5px;font-weight:700;color:var(--camp-deep);display:inline-flex;align-items:center;gap:7px}
-.fs-cgo i{font-size:10px;transition:transform .2s var(--ease)}
-.fs-card:hover .fs-cgo i{transform:translateX(3px)}
-
-/* ---- boş durum ---- */
-.fs-empty{display:none;text-align:center;background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-lg);padding:70px 30px;margin-top:8px}
-.fs-empty.show{display:block;animation:fadeUp .35s var(--ease)}
-.fs-empty-ico{width:74px;height:74px;border-radius:var(--radius-lg);background:var(--camp-tint);color:var(--camp);display:grid;place-items:center;font-size:29px;margin:0 auto 20px}
-.fs-empty h3{font-size:22px;margin-bottom:9px}
-.fs-empty p{font-size:14.5px;color:var(--muted);font-weight:500;max-width:420px;margin:0 auto 22px;line-height:1.6}
-
-/* ---- popüler & son aramalar ---- */
-.fs-pop{padding:52px 0 68px;background:var(--bg-white)}
-.fs-pop-grid{display:grid;grid-template-columns:1.25fr 1fr;gap:48px;align-items:start}
-.fs-pop h3{font-size:18px;display:inline-flex;align-items:center;gap:10px;margin-bottom:18px}
-.fs-pop h3 i{color:var(--camp);font-size:15px}
-.fs-chips{display:flex;flex-wrap:wrap;gap:10px}
-.fs-chips .chip{font-family:inherit;font-size:13px;font-weight:600;color:var(--slate-2);background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-pill);padding:9px 16px;cursor:pointer;transition:.18s var(--ease)}
-.fs-chips .chip:hover{border-color:var(--camp);color:var(--camp-deep);background:var(--camp-tint)}
-.fs-recent{display:flex;flex-direction:column}
-.fs-rrow{display:flex;align-items:center;gap:12px;padding:12px 4px;border-bottom:1px solid var(--line);font-size:14px;font-weight:500;color:var(--slate-2);cursor:pointer;transition:.18s var(--ease)}
-.fs-rrow:last-child{border-bottom:none}
-.fs-rrow>i:first-child{color:var(--muted);font-size:13px;flex:none;width:18px;text-align:center}
-.fs-rrow .term{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.fs-rrow .go{margin-left:auto;flex:none;font-size:11px;color:#c7c7c7;transition:.18s var(--ease)}
-.fs-rrow:hover{color:var(--camp-deep)}
-.fs-rrow:hover .go{color:var(--camp);transform:translateX(3px)}
-
-.is-off{display:none!important}
-.sr-vh{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
-
-@media (max-width:1024px){
-  .fs-grid{grid-template-columns:1fr 1fr}
-  .fs-pop-grid{grid-template-columns:1fr;gap:34px}
-}
-@media (max-width:640px){
-  .fs-top{padding:104px 0 40px}
-  .fs-top h1{font-size:25px}
-  .fs-tabbar{top:62px}
-  .fs-grid{display:flex;gap:14px;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;padding-bottom:6px}
-  .fs-grid::-webkit-scrollbar{display:none}
-  .fs-grid>*{flex:none;width:74vw;max-width:280px;scroll-snap-align:start}
-}
 
 /* ============ F11 — DADA AKADEMİ · "YAKINDA" landing ============
    Eski karşılığı YOK. Miras: rd-crumb · lst-top/lst-hero koyu-overlay
@@ -892,6 +776,35 @@ html,body{overflow-x:hidden}
 /* ---- akış adımları (koyu zemin yok — krem şerit) ---- */
 .ak-how{padding:0 0 64px;background:var(--bg-white)}
 .ak-how-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+/* ZORUNLU ÜRETİLEN MODİFİER (Faz 1, raporda yazılı): öğrenme modeli BEŞ adımdır
+   (§6.2 #5). 3'lü ızgarada 5 kart 3+2 = yarım satır bırakır. Yeni bileşen/aile
+   ÜRETİLMEDİ; mevcut .ak-how-step'in yalnız kolon sayısı ve yön modifier'ı.
+   ≤1024'te mevcut media query tek kolona düşürür — ek kural gerekmez. */
+.ak-how-grid.is-5{grid-template-columns:repeat(5,minmax(0,1fr));gap:14px}
+.ak-how-grid.is-5 .ak-how-step{flex-direction:column;gap:13px;padding:20px 18px}
+/* 🔴 SPECIFICITY TUZAĞI: aşağıdaki ≤1024 bloğundaki `.ak-how-grid{1fr}` kuralı
+   TEK class'tır (0,1,0); `.ak-how-grid.is-5` İKİ class (0,2,0) olduğu için media
+   query içinde olmasına rağmen ONU YENER ve 5 kolon mobilde de kalır. Bu yüzden
+   responsive override AYNI specificity ile ve base kuraldan SONRA verilir.
+   ≤1024'te tek kolon + satır yönü = numaralı süreç listesi; yarım satır yok. */
+@media (max-width:1024px){
+  .ak-how-grid.is-5{grid-template-columns:1fr;gap:12px}
+  .ak-how-grid.is-5 .ak-how-step{flex-direction:row;gap:16px;padding:22px}
+}
+/* ZORUNLU ÜRETİLEN MODİFİER (Faz 1, raporda yazılı): .ak-grid varsayılan 4
+   koloneli; kapanış bölümünde ÜÇ kart var (§6.2 #11) ve 4'lükte 3+boşluk =
+   yarım satır bırakır. Inline style KULLANILMAZ — inline, media query'leri de
+   yener ve mobilde 3 kolon sıkışması yapar (yukarıdaki specificity dersi).
+   Tablette de 3 kolon kalır (976px / 3 ≈ 316px, .ak-card için yeterli); 2 kolona
+   düşmek 2+1 yarım satır üretirdi. ≤640'ta tek kolon. */
+.ak-grid.is-3{grid-template-columns:repeat(3,minmax(0,1fr))}
+/* 🔴 SPECIFICITY TUZAĞI (ölçümle yakalandı): `.ak-grid.is-3` (0,2,0) aşağıdaki
+   `@media (max-width:1024px){.ak-grid{1fr 1fr}}` kuralını (0,1,0) YENİYOR →
+   1024 VE 768'de 3 sütunda kalıyordu (768'de kart genişliği ~230px, sıkışık).
+   §23.2 tablette iki sütun ister. Aynı specificity'de, media query İÇİNDE
+   override — düşük specificity'li kurala güvenmek yetmiyor. */
+@media (max-width:1024px){ .ak-grid.is-3{grid-template-columns:repeat(2,minmax(0,1fr))} }
+@media (max-width:640px){ .ak-grid.is-3{grid-template-columns:1fr} }
 .ak-how-step{display:flex;gap:16px;align-items:flex-start;background:var(--bg-cream);border:1px solid var(--line);border-radius:var(--radius-lg);padding:22px}
 .ak-how-step .num{flex:none;font-size:15px;font-weight:700;color:var(--tomato);width:42px;height:42px;border-radius:var(--radius-md);background:var(--tomato-tint);border:1px solid rgba(0,96,114,.22);display:grid;place-items:center}
 .ak-how-step h4{font-size:15.5px;margin-bottom:4px}
@@ -1238,6 +1151,385 @@ html.reveal-ready .reveal.in{opacity:1;transform:none}
 .foot-bottom .fb-left b{color:#fff;font-weight:700}
 .foot-bottom .fb-left b .bd,.foot-bottom .fb-left b .sf{color:#fff}
 </style>
+
+<style>
+/* ===== SAYFA CSS — arama-campus-v1.html ===== */
+/* ===================== MERKEZ SAYFASI HERO DÜZELTMESİ =====================
+   🔴 Kabuktaki .lst-top ANA SAYFA için `min-height:100vh/100svh` taşır — hub'ın
+   hero'su bilerek tam ekrandır. Merkez/katalog sayfaları bu kabuğu devralınca
+   hero de tam ekran oluyor (ölçüm: oran 1,00) ve kullanıcı sonuçlara ulaşmak için
+   bir ekran boyu kaydırmak zorunda kalıyor. Merkez sayfalarında hero yüksekliği
+   İÇERİĞE bırakılır; hub'ın tam ekran istisnası DEĞİŞMEZ (ayrı dosya).
+   Hedef oran ~0,50–0,60 (ölçümle doğrulanır). */
+.lst-top{min-height:0}
+.lst-hero{padding-bottom:52px}
+@media (max-width:1024px){ .lst-hero{padding-bottom:40px} }
+@media (max-width:640px){  .lst-hero{padding-bottom:30px} }
+
+/* ============================================================================
+   DadaCampus — ORTAK SAYFA CSS EKİ (üretilen TÜM sayfalara girer)
+   ----------------------------------------------------------------------------
+   NEDEN VAR: Faz 1'de bu bloklar üç sayfada BİREBİR kopyalanmıştı (.koll rayı,
+   .kisi-sec, .lst-load, .pstat, .bsv, .tkv, form kiti eksikleri, .kurum-gate).
+   Kopya = divergans borcu (docs/lessons.md §3). Kabuk external dosyaya taşınmaz
+   ama SAYFA CSS'i üreticide birleştirilebilir — tek kaynak burada, çıktı inline.
+
+   Yükleme sırası (tasks/campus-sayfa-uret.py):
+     _merkez.css → _ortak.css → [_facet.css] → [_panel.css] → <sayfa>.css
+   Sayfa CSS'i en sonda = son söz onda.
+
+   🔴 Renk: yalnız var(--tomato) ve türevleri (docs/lessons.md §1).
+   🔴 Yeni bileşen ailesi icat edilmez; her aile mevcut bir kaynaktan taşındı,
+      kaynağı yorumda yazılı.
+   ========================================================================= */
+
+/* .lst-main'in CSS'i kaynakta yok — grid çocuğu olarak min-width:0 şart
+   (1fr + min-width:auto uzun metinde 390 taşması; sefler-v1 dersi) */
+.lst-main{min-width:0}
+
+/* hero içindeki büyük arama alanı — mevcut .crs-search ailesi koyu zeminde */
+.lst-hero .crs-search{max-width:620px;margin-top:22px}
+.lst-hero .crs-search input{font-size:15px}
+
+/* ---- KOLEKSİYON / TÜR / BÖLÜM KEŞİF RAYI — .cat-track/.cat-card kompakt varyantı */
+.koll-track{display:flex;gap:12px;overflow-x:auto;padding:2px 2px 12px;scrollbar-width:none;margin-bottom:6px}
+.koll-track::-webkit-scrollbar{display:none}
+.koll{flex:none;display:inline-flex;align-items:center;gap:10px;background:var(--paper);border:1px solid var(--line);
+  border-radius:var(--radius-md);padding:11px 15px;font-size:13.5px;font-weight:700;color:var(--slate);white-space:nowrap;transition:.2s var(--ease)}
+.koll i{color:var(--tomato);font-size:13px}
+.koll small{display:block;font-size:11.5px;font-weight:500;color:var(--muted)}
+.koll:hover{border-color:var(--tomato);color:var(--tomato);transform:translateY(-2px)}
+.koll.is-on{border-color:var(--tomato);background:var(--tomato-tint);color:var(--tomato)}
+
+/* ---- KİŞİSEL ŞERİTLER — YALNIZ giriş yapınca (§7.1, §26.15) */
+.kisi-sec{display:none}
+body.is-auth .kisi-sec{display:block}
+/* tersi: yalnız ziyaretçiye görünen blok */
+.misafir-sec{display:block}
+body.is-auth .misafir-sec{display:none}
+
+/* ---- YÜKLENİYOR DURUMU (§26.15) */
+.lst-load{display:none;text-align:center;padding:60px 20px;color:var(--muted);font-size:14px;font-weight:500}
+.lst-load.show{display:block}
+.lst-load i{display:block;font-size:26px;color:var(--tomato);opacity:.6;margin-bottom:12px}
+
+/* ---- BOŞ / HATA DURUMU (§26.15) — kaynak tarif-liste-v1.html; _facet.css'ten
+   buraya alındı, çünkü katalog olmayan sayfalar da boş durum gösteriyor. */
+.lst-empty{display:none;text-align:center;background:var(--paper);border:1px solid var(--line);
+  border-radius:var(--radius-lg);padding:78px 30px;margin-top:24px}
+.lst-empty.show{display:block;animation:fadeUp .35s var(--ease)}
+.le-ico{width:76px;height:76px;border-radius:var(--radius-lg);background:var(--tomato-tint);color:var(--tomato);
+  display:grid;place-items:center;font-size:30px;margin:0 auto 20px}
+.lst-empty h3{font-size:23px;margin-bottom:9px}
+.lst-empty p{font-size:14.5px;color:var(--muted);font-weight:500;max-width:420px;margin:0 auto 24px;line-height:1.6}
+.pagi-note{width:100%;font-size:12.5px;color:var(--muted);font-weight:500;margin-top:6px}
+
+/* 🔴 DERİN BAĞLANTI OFSETİ — scroll-margin EKLENMEZ.
+   Kabuk zaten `html{scroll-padding-top:128px}` taşıyor; scroll-padding-top
+   (container) ile scroll-margin-top (hedef) TOPLANIR → hedef 256px aşağıda
+   durur (ölçümle yakalandı). `.derin` yalnız anlamsal işaret. */
+.derin{}
+
+/* ---- DURUM ROZETİ — panel-shell.html .pstat public karşılığı (radius-sm; pill YASAK)
+   §23.3: renk tek başına durum anlatmaz → her rozette İKON + METİN birlikte. */
+.pstat{display:inline-flex;align-items:center;gap:6px;flex:none;font-size:12px;font-weight:700;
+  padding:6px 10px;border-radius:var(--radius-sm);border:1px solid transparent;white-space:nowrap}
+.pstat i{font-size:10px}
+.pstat.ok{background:#EAF7F0;color:var(--green-deep);border-color:rgba(59,183,126,.32)}
+.pstat.wait{background:var(--tomato-tint);color:var(--tomato);border-color:rgba(0,96,114,.28)}
+.pstat.off{background:var(--bg);color:var(--muted);border-color:var(--line)}
+.pstat.warm{background:#FBE9E3;color:#C43D20;border-color:rgba(196,61,32,.28)}
+
+/* ---- DURUM/BAŞVURU SATIRI — .appt-row (panel) deseninin sadeleşmişi */
+.bsv{display:flex;flex-direction:column;gap:10px}
+.bsv-row{display:flex;align-items:center;gap:16px;flex-wrap:wrap;background:var(--paper);
+  border:1px solid var(--line);border-radius:var(--radius-md);padding:16px 18px;transition:.2s var(--ease)}
+.bsv-row:hover{border-color:var(--tomato)}
+.bsv-row .bsv-info{min-width:0;flex:1}
+.bsv-row .bsv-info b{display:block;font-size:15px;color:var(--slate);font-weight:700}
+.bsv-row .bsv-info span{display:block;font-size:12.5px;color:var(--muted);font-weight:500;margin-top:2px}
+
+/* ---- TAKVİM SATIRI — .appt-row (panel) deseninin public karşılığı */
+.tkv{display:flex;flex-direction:column;gap:10px}
+.tkv-gun{font-size:12px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--muted);padding:14px 2px 4px}
+.tkv-row{display:flex;align-items:center;gap:16px;background:var(--paper);border:1px solid var(--line);
+  border-radius:var(--radius-md);padding:14px 18px;transition:.2s var(--ease)}
+.tkv-row:hover{border-color:var(--tomato)}
+.tkv-tar{flex:none;width:64px;text-align:center;background:var(--tomato-tint);border:1px solid rgba(0,96,114,.2);
+  border-radius:var(--radius-sm);padding:8px 4px}
+.tkv-tar b{display:block;font-size:19px;font-weight:700;color:var(--tomato);line-height:1.1}
+.tkv-tar span{display:block;font-size:10.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--tomato);opacity:.8}
+.tkv-body{min-width:0;flex:1}
+.tkv-body b{display:block;font-size:15px;color:var(--slate);font-weight:700}
+.tkv-body span{display:block;font-size:12.5px;color:var(--muted);font-weight:500;margin-top:2px}
+.tkv-tur{flex:none;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;
+  color:var(--muted);background:var(--bg);border:1px solid var(--line);padding:5px 9px;border-radius:var(--radius-sm);white-space:nowrap}
+
+/* ---- YETKİSİZ / KURUMA ÖZEL ERİŞİM BLOĞU (§7.1, §24.2, §26.15)
+   Yetkisiz kullanıcıya İÇERİK GÖSTERMEZ, yalnız nasıl erişileceğini anlatır. */
+.kurum-gate{display:flex;align-items:center;gap:20px;flex-wrap:wrap;justify-content:space-between;
+  background:var(--paper);border:1px dashed #cfd9dc;border-radius:var(--radius-lg);padding:22px 26px}
+.kurum-gate .kg-ico{flex:none;width:46px;height:46px;border-radius:var(--radius-md);background:var(--tomato-tint);
+  color:var(--tomato);display:grid;place-items:center;font-size:18px}
+.kurum-gate .kg-txt{min-width:0;flex:1}
+.kurum-gate .kg-txt b{display:block;font-size:16px;color:var(--slate);font-weight:700;margin-bottom:3px}
+.kurum-gate .kg-txt p{font-size:13.5px;color:var(--muted);font-weight:500;line-height:1.55}
+
+/* ---- FORM KİTİ EKSİKLERİ — kabuk .fk-field/.fk-label/.req/.opt/.fk-input/
+   .fk-select/.fk-grid(.c2)/.ak-send/.ak-success'i ZATEN taşıyor (petrol sürümü).
+   Aşağıdakiler kabukta OLMAYAN parçalar; kaynak tarif-ekle-v1.html form kiti,
+   oradaki domates literalleri token diline (var(--tomato)=petrol) çevrildi. */
+.fk-textarea{width:100%;background:var(--bg);border:1px solid var(--line);border-radius:var(--radius-md);
+  padding:13px 15px;font-family:inherit;font-size:14px;font-weight:500;color:var(--ink);
+  min-height:120px;resize:vertical;line-height:1.6;transition:.2s var(--ease)}
+.fk-textarea::placeholder{color:#a7a7a7}
+.fk-textarea:focus{border-color:var(--tomato);box-shadow:0 0 0 3px rgba(var(--tomato-rgb),.10);outline:none}
+.fk-help{display:flex;align-items:flex-start;gap:7px;font-size:12.5px;color:var(--muted);
+  font-weight:500;margin-top:8px;line-height:1.5}
+.fk-help i{color:var(--tomato);font-size:12px;margin-top:2px;flex:none}
+.fk-error{display:none;align-items:center;gap:7px;font-size:12.5px;font-weight:700;color:var(--tomato);margin-top:8px}
+.fk-error.show{display:flex}
+select.fk-select[multiple]{height:auto;padding:10px;background-image:none}
+select.fk-select[multiple] option{padding:7px 9px;border-radius:var(--radius-sm)}
+
+/* çoklu onay kutusu ızgarası — .fct-row/.cbx dilinden türetildi (yeni kutu YOK) */
+.fk-checks{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px 18px}
+.fk-checks.is-1{grid-template-columns:1fr}
+.fk-checks label{position:relative;display:flex;align-items:center;gap:10px;padding:8px 0;
+  cursor:pointer;font-size:14px;font-weight:500;color:var(--slate-2);transition:color .15s}
+.fk-checks input{position:absolute;opacity:0;pointer-events:none}
+.fk-checks .cbx{flex:none;width:20px;height:20px;border-radius:var(--radius-sm);border:1.5px solid #d8d8d8;
+  background:var(--paper);display:grid;place-items:center;transition:.18s var(--ease)}
+.fk-checks .cbx::after{content:"\f00c";font-family:"Font Awesome 6 Free";font-weight:900;font-size:10px;
+  color:#fff;transform:scale(0);transition:transform .15s var(--ease)}
+.fk-checks input:checked ~ .cbx{background:var(--tomato);border-color:var(--tomato)}
+.fk-checks input:checked ~ .cbx::after{transform:scale(1)}
+.fk-checks label:hover{color:var(--tomato)}
+.fk-checks label:hover .cbx{border-color:var(--tomato)}
+.fk-checks input:focus-visible ~ .cbx{outline:3px solid var(--tomato-tint);outline-offset:2px}
+
+/* dosya yükleme alanı — tarif-ekle mirası, token diline çevrildi */
+.up-zone{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:6px;text-align:center;background:var(--tomato-tint);border:1.5px dashed rgba(var(--tomato-rgb),.34);
+  border-radius:var(--radius-lg);padding:28px 20px;cursor:pointer;transition:.2s var(--ease)}
+.up-zone i{font-size:27px;color:var(--tomato)}
+.up-zone b{font-size:14.5px;font-weight:700;color:var(--slate)}
+.up-zone span{font-size:12px;font-weight:500;color:var(--slate-2)}
+.up-zone input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer}
+.up-zone:hover{border-color:var(--tomato);background:#D9EAEE}
+.up-list{display:flex;flex-direction:column;gap:8px;margin-top:12px}
+.up-list .up-row{display:flex;align-items:center;gap:11px;background:var(--paper);border:1px solid var(--line);
+  border-radius:var(--radius-md);padding:11px 14px;font-size:13.5px;font-weight:500;color:var(--slate)}
+.up-list .up-row i{color:var(--tomato)}
+.up-list .up-row .up-boy{margin-left:auto;font-size:12px;color:var(--muted)}
+.up-list .up-row button{border:none;background:none;color:var(--muted);cursor:pointer;font-size:13px;padding:4px}
+.up-list .up-row button:hover{color:var(--tomato)}
+
+/* ---- İLERLEME ÇUBUĞU — panel-shell.html .cl-prog/.cl-bar public karşılığı.
+   §23.3: yüzde METİN olarak da yazılır (renk/dolgu tek başına durum anlatmaz). */
+.prg{display:block;height:6px;background:var(--line);border-radius:999px;overflow:hidden}
+.prg > span{display:block;height:100%;background:var(--tomato);border-radius:999px;transition:width .3s var(--ease)}
+.prg-lbl{display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:12px;
+  font-weight:700;color:var(--muted);margin-bottom:6px}
+.prg-lbl b{color:var(--tomato);font-weight:700}
+
+/* ---- SEKME AİLESİ — kaynak mutfak-defteri-v1.html .pf-tabbar/.pf-tabs/.pf-pane.
+   Kampüsüm, kurum profili ve paneller aynı sekme dilini kullanır (§23.1). */
+.pf-tabbar{border-bottom:1px solid var(--line);margin-bottom:26px}
+.pf-tabs{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none}
+.pf-tabs::-webkit-scrollbar{display:none}
+.pf-tabs a,.pf-tabs button{flex:none;display:inline-flex;align-items:center;gap:8px;background:none;border:none;
+  border-bottom:2px solid transparent;padding:13px 16px;font-family:inherit;font-size:14px;font-weight:700;
+  color:var(--muted);cursor:pointer;white-space:nowrap;transition:.18s var(--ease)}
+.pf-tabs a i,.pf-tabs button i{font-size:13px}
+.pf-tabs a:hover,.pf-tabs button:hover{color:var(--tomato)}
+.pf-tabs a.active,.pf-tabs button.active{color:var(--tomato);border-bottom-color:var(--tomato)}
+.pf-pane{display:none}
+.pf-pane.active{display:block}
+
+/* ---- BİLGİ SATIRI (detay sayfalarında künye/koşul listeleri) ---- */
+.inf{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 26px}
+.inf-row{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;
+  padding:12px 0;border-bottom:1px solid var(--line)}
+.inf-row > span{flex:none;font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.inf-row > b{text-align:right;font-size:14px;font-weight:700;color:var(--slate);line-height:1.5}
+.inf-row > b small{display:block;font-size:12.5px;font-weight:500;color:var(--muted);margin-top:2px}
+
+/* ---- MADDE LİSTESİ (kazanım, ön koşul, malzeme) — .cert-points dilinden ---- */
+.mad{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:9px}
+.mad li{display:flex;align-items:flex-start;gap:10px;font-size:14px;font-weight:500;color:var(--slate-2);line-height:1.6}
+.mad li i{flex:none;color:var(--tomato);font-size:11px;margin-top:5px}
+.mad.is-2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px 24px}
+
+/* ---- TABLO → KART (§23.2: mobilde tablolar kart görünümü) ---- */
+.ptable{width:100%;border-collapse:collapse;font-size:13.5px}
+.ptable th{text-align:left;font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--muted);padding:10px 14px;border-bottom:1px solid var(--line);white-space:nowrap}
+.ptable td{padding:13px 14px;border-bottom:1px solid var(--line);color:var(--slate-2);font-weight:500;vertical-align:top}
+.ptable tr:last-child td{border-bottom:none}
+.ptable td b{color:var(--slate);font-weight:700}
+.ptable-wrap{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-lg);padding:6px 10px}
+
+@media (max-width:1024px){
+  .inf{grid-template-columns:1fr}
+}
+@media (max-width:640px){
+  .kurum-gate{padding:18px}
+  .lst-hero .crs-search{margin-top:18px}
+  .tkv-row{flex-wrap:wrap;gap:12px}
+  .tkv-tur{order:3}
+  .bsv-row{gap:12px}
+  .fk-checks{grid-template-columns:1fr}
+  .mad.is-2{grid-template-columns:1fr}
+  .lst-empty{padding:54px 20px}
+  .lst-empty h3{font-size:19px}
+  /* §23.2 — tablo kart görünümüne döner */
+  .ptable-wrap{padding:0;background:none;border:none;border-radius:0}
+  .ptable,.ptable tbody,.ptable tr,.ptable td{display:block;width:100%}
+  .ptable thead{display:none}
+  .ptable tr{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-md);
+    padding:14px 16px;margin-bottom:10px}
+  .ptable td{border:none;padding:5px 0;display:flex;gap:12px;justify-content:space-between;align-items:flex-start}
+  .ptable td::before{content:attr(data-l);flex:none;font-size:11px;font-weight:700;letter-spacing:.06em;
+    text-transform:uppercase;color:var(--muted);padding-top:2px}
+  .ptable tr:last-child td{border-bottom:none}
+}
+
+/* ============ SAYFA CSS — DADACAMPUS ARAMA (§17.1 global arama) ============
+   Anatomi Fit/Diet arama pilotundan devralındı; sayfa kanonik Campus kabuğundan
+   ÜRETİLİR (eskiden kendi kabuk kopyası vardı: nav'ı 5 öğeli eski sürümdü,
+   25 bağlantı akademi-v1.html#setler'e çöküyordu).
+
+   🔴 RENK: eski kopya kendi `--camp / --camp-deep / --camp-tint / --camp-line /
+   --camp-bright` ailesini tanımlıyordu; değerleri petrol paletinin AYNISIYDI.
+   docs/lessons.md §1 gereği yeni renk tokenı üretilmez → hepsi kabuk tokenlarına
+   bağlandı: --camp→var(--tomato) · --camp-deep→var(--tomato-deep) ·
+   --camp-tint→var(--tomato-tint) · --camp-line→rgba(var(--tomato-rgb),.22) ·
+   --camp-bright→#4FB8C9 (kabuğun koyu hero aksanı, `.lst-hero h1 .accent`).
+   ========================================================================= */
+
+/* ---- arama hero (koyu petrol bandı) — sabit header altında ---- */
+.fs-top{position:relative;padding:126px 0 56px;background-image:linear-gradient(180deg,rgba(9,27,32,.92) 0%,rgba(12,34,40,.80) 52%,rgba(10,24,28,.88) 100%),url('https://images.unsplash.com/photo-1556910103-1c02745aae4d?w=1680&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-12&high=8&vib=3');background-size:cover;background-position:center;overflow:hidden}
+.fs-top::before{content:"";position:absolute;inset:0;background:radial-gradient(1100px 460px at 16% -10%,rgba(var(--tomato-rgb),.36),transparent 60%);pointer-events:none;z-index:1}
+.fs-top::after{content:"";position:absolute;right:-120px;bottom:-140px;width:420px;height:420px;border-radius:50%;background:radial-gradient(circle,rgba(79,184,201,.26),transparent 70%);pointer-events:none;z-index:1}
+.fs-top .wrap{position:relative;z-index:2}
+.fs-top .eyebrow{color:#4FB8C9}
+.fs-top h1{font-size:33px;letter-spacing:-.02em;color:#fff;margin:10px 0 12px;text-shadow:0 2px 22px rgba(0,0,0,.28)}
+.fs-top h1 .accent{color:#4FB8C9}
+.fs-top .rd-crumb{margin-bottom:14px}
+.fs-lead{font-size:15.5px;font-weight:500;color:#d3e5e8;max-width:600px;line-height:1.6;margin-bottom:26px}
+
+/* arama kutusu */
+.fs-box{position:relative;background:var(--paper);border:1px solid rgba(var(--tomato-rgb),.22);border-radius:var(--radius-lg);box-shadow:var(--sh-lg);padding:10px;max-width:680px}
+.fs-row{display:flex;gap:8px;padding:6px}
+.fs-input{flex:1;display:flex;align-items:center;gap:12px;background:var(--bg);border:1px solid var(--line);border-radius:var(--radius-md);padding:0 18px;min-width:0}
+.fs-input i{color:var(--tomato-deep)}
+.fs-input input{flex:1;min-width:0;border:none;background:transparent;font-family:inherit;font-weight:500;font-size:15.5px;color:var(--slate);padding:16px 0;outline:none}
+.fs-input input::placeholder{color:#a7a7a7;font-weight:500}
+.fs-row .btn{flex:none;padding:0 26px}
+.fs-sum{margin-top:18px;font-size:14.5px;color:#cadfe2;font-weight:500}
+.fs-sum b{color:#fff;font-weight:700}
+.fs-sum .q{color:#4FB8C9;font-weight:700}
+
+/* ---- autocomplete dropdown ---- */
+.fs-ac{position:absolute;left:6px;right:6px;top:calc(100% - 4px);z-index:60;background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-md);box-shadow:var(--sh-lg);padding:8px;max-height:min(440px,72vh);overflow-y:auto;opacity:0;visibility:hidden;transform:translateY(-6px);transition:opacity .18s var(--ease),transform .18s var(--ease),visibility .18s;scrollbar-width:thin;scrollbar-color:#d9d9d9 transparent}
+.fs-ac::-webkit-scrollbar{width:8px}
+.fs-ac::-webkit-scrollbar-thumb{background:#dcdcdc;border-radius:var(--radius-pill);border:2px solid var(--paper)}
+.fs-box.ac-open .fs-ac{opacity:1;visibility:visible;transform:translateY(0)}
+.fs-ac .ac-grp{display:flex;align-items:center;gap:8px;padding:11px 12px 6px;font-size:11.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--muted)}
+.fs-ac .ac-grp i{font-size:11px;color:var(--tomato)}
+.fs-ac .ac-grp .ac-clear{margin-left:auto;font-size:11px;font-weight:600;letter-spacing:0;text-transform:none;color:var(--muted);cursor:pointer;border:none;background:none;font-family:inherit;padding:2px 4px;border-radius:var(--radius-sm)}
+.fs-ac .ac-grp .ac-clear:hover{color:var(--tomato)}
+.fs-ac .ac-opt{display:flex;align-items:center;gap:13px;padding:10px 12px;border-radius:var(--radius-md);cursor:pointer;transition:background .14s var(--ease)}
+.fs-ac .ac-opt .ac-ico{flex:none;width:38px;height:38px;border-radius:var(--radius-sm);background:var(--bg);border:1px solid var(--line);display:grid;place-items:center;color:var(--slate-2);font-size:15px;background-size:cover;background-position:center;overflow:hidden}
+.fs-ac .ac-opt .ac-main{min-width:0;flex:1}
+.fs-ac .ac-opt .ac-ttl{display:block;font-size:14.5px;font-weight:600;color:var(--slate);line-height:1.25;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.fs-ac .ac-opt .ac-ttl mark{background:none;color:var(--tomato);font-weight:700;padding:0}
+.fs-ac .ac-opt .ac-sub{display:block;margin-top:1px;font-size:12px;font-weight:500;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.fs-ac .ac-opt .ac-badge{flex:none;display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:700;padding:4px 9px;border-radius:var(--radius-pill);background:var(--tomato-tint);color:var(--tomato-deep);border:1px solid rgba(var(--tomato-rgb),.22)}
+.fs-ac .ac-opt .ac-badge i{font-size:9.5px}
+.fs-ac .ac-opt:hover,.fs-ac .ac-opt.is-active{background:var(--tomato-tint)}
+.fs-ac .ac-opt:hover .ac-ttl,.fs-ac .ac-opt.is-active .ac-ttl{color:var(--tomato-deep)}
+.fs-ac .ac-query .ac-ico{background:var(--tomato);border-color:var(--tomato);color:#fff}
+.fs-ac .ac-none{padding:18px 14px;text-align:center;font-size:13.5px;color:var(--muted);font-weight:500}
+
+/* ---- sekme barı (§17.1 sonuç türü) ---- */
+.fs-tabbar{position:sticky;top:112px;z-index:40;background:rgba(255,255,255,.93);-webkit-backdrop-filter:blur(10px) saturate(150%);backdrop-filter:blur(10px) saturate(150%);border-bottom:1px solid var(--line);padding:12px 0}
+.fs-tabs{display:flex;gap:4px;background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-md);padding:4px;overflow-x:auto;scrollbar-width:none}
+.fs-tabs::-webkit-scrollbar{display:none}
+.fs-tabs .dt{font-family:inherit;font-weight:700;font-size:13px;color:var(--muted);background:transparent;border:none;border-radius:var(--radius-sm);padding:9px 16px;cursor:pointer;display:inline-flex;align-items:center;gap:7px;transition:.2s var(--ease);white-space:nowrap;flex:none}
+.fs-tabs .dt:hover{color:var(--tomato-deep)}
+.fs-tabs .dt.active{background:var(--tomato);color:#fff}
+.fs-tabs .dt .cnt{font-size:11px;font-weight:700;opacity:.6}
+/* §23.3 — sekme durumu renk dışında da okunur: aktif sekmede ikon işareti */
+.fs-tabs .dt.active::before{content:"\f00c";font-family:"Font Awesome 6 Free";font-weight:900;font-size:9px;opacity:.9}
+
+/* ---- sonuç bölgesi ---- */
+.fs-results{padding:34px 0 60px;background:var(--bg-cream)}
+.fs-pane{animation:fadeUp .35s var(--ease)}
+.fs-pane[hidden]{display:none}
+.fs-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:24px}
+.fs-grid>*{min-width:0}
+.fs-cnt-note{font-size:13.5px;color:var(--muted);font-weight:500;margin:0 0 20px}
+.fs-cnt-note b{color:var(--tomato-deep);font-weight:700}
+
+/* ---- sonuç kartı (POOL-driven, tek şablon) ---- */
+.fs-card{display:flex;flex-direction:column;background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-lg);overflow:hidden;cursor:pointer;transition:.28s var(--ease)}
+.fs-card:hover{transform:translateY(-6px);border-color:rgba(var(--tomato-rgb),.22);box-shadow:var(--sh-md)}
+.fs-media{position:relative;height:158px;background-size:cover;background-position:center}
+.fs-media::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(33,30,22,0) 55%,rgba(20,18,12,.34))}
+.fs-badge{position:absolute;top:11px;left:11px;z-index:2;display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:700;padding:5px 11px;border-radius:var(--radius-pill);background:rgba(255,255,255,.95);color:var(--tomato-deep)}
+.fs-badge i{font-size:10px}
+.fs-tile{height:120px;display:grid;place-items:center;background:var(--tomato-tint);color:var(--tomato);font-size:34px;position:relative}
+.fs-tile .fs-badge{background:#fff;box-shadow:var(--sh-sm)}
+.fs-cbody{padding:15px 16px 17px;display:flex;flex-direction:column;flex:1}
+.fs-cbody h4{font-size:16px;letter-spacing:-.01em;line-height:1.3;margin-bottom:6px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;transition:color .2s var(--ease)}
+.fs-card:hover .fs-cbody h4{color:var(--tomato-deep)}
+.fs-cbody p{font-size:12.5px;color:var(--muted);font-weight:500;line-height:1.45;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.fs-cgo{margin-top:auto;padding-top:13px;font-size:12.5px;font-weight:700;color:var(--tomato-deep);display:inline-flex;align-items:center;gap:7px}
+.fs-cgo i{font-size:10px;transition:transform .2s var(--ease)}
+.fs-card:hover .fs-cgo i{transform:translateX(3px)}
+
+/* ---- boş durum ---- */
+.fs-empty{display:none;text-align:center;background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-lg);padding:70px 30px;margin-top:8px}
+.fs-empty.show{display:block;animation:fadeUp .35s var(--ease)}
+.fs-empty-ico{width:74px;height:74px;border-radius:var(--radius-lg);background:var(--tomato-tint);color:var(--tomato);display:grid;place-items:center;font-size:29px;margin:0 auto 20px}
+.fs-empty h3{font-size:22px;margin-bottom:9px}
+.fs-empty p{font-size:14.5px;color:var(--muted);font-weight:500;max-width:420px;margin:0 auto 22px;line-height:1.6}
+
+/* ---- popüler & son aramalar ---- */
+.fs-pop{padding:52px 0 68px;background:var(--bg-white)}
+.fs-pop-grid{display:grid;grid-template-columns:1.25fr 1fr;gap:48px;align-items:start}
+.fs-pop h3{font-size:18px;display:inline-flex;align-items:center;gap:10px;margin-bottom:18px}
+.fs-pop h3 i{color:var(--tomato);font-size:15px}
+.fs-chips{display:flex;flex-wrap:wrap;gap:10px}
+.fs-chips .chip{font-family:inherit;font-size:13px;font-weight:600;color:var(--slate-2);background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-pill);padding:9px 16px;cursor:pointer;transition:.18s var(--ease)}
+.fs-chips .chip:hover{border-color:var(--tomato);color:var(--tomato-deep);background:var(--tomato-tint)}
+.fs-recent{display:flex;flex-direction:column}
+.fs-rrow{display:flex;align-items:center;gap:12px;padding:12px 4px;border-bottom:1px solid var(--line);font-size:14px;font-weight:500;color:var(--slate-2);cursor:pointer;transition:.18s var(--ease)}
+.fs-rrow:last-child{border-bottom:none}
+.fs-rrow>i:first-child{color:var(--muted);font-size:13px;flex:none;width:18px;text-align:center}
+.fs-rrow .term{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.fs-rrow .go{margin-left:auto;flex:none;font-size:11px;color:#c7c7c7;transition:.18s var(--ease)}
+.fs-rrow:hover{color:var(--tomato-deep)}
+.fs-rrow:hover .go{color:var(--tomato);transform:translateX(3px)}
+
+.is-off{display:none!important}
+
+@media (max-width:1024px){
+  .fs-grid{grid-template-columns:1fr 1fr}
+  .fs-pop-grid{grid-template-columns:1fr;gap:34px}
+}
+@media (max-width:640px){
+  .fs-top{padding:104px 0 40px}
+  .fs-top h1{font-size:25px}
+  .fs-tabbar{top:62px}
+  .fs-grid{display:flex;gap:14px;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;padding-bottom:6px}
+  .fs-grid::-webkit-scrollbar{display:none}
+  .fs-grid>*{flex:none;width:74vw;max-width:280px;scroll-snap-align:start}
+}
+</style>
 </head>
 <body data-brand="campus">
 
@@ -1245,7 +1537,7 @@ html.reveal-ready .reveal.in{opacity:1;transform:none}
 <div class="topbar">
   <div class="wrap">
     <div class="tb-left">
-      <a href="#setler"><i class="fa-solid fa-graduation-cap" style="color:var(--tomato)"></i> <b>12+</b> eğitim seti hazırlanıyor</a>
+      <a href="dadacampus-egitimler-v1.html"><i class="fa-solid fa-graduation-cap" style="color:var(--tomato)"></i> <b id="tbEgitimSayi">6</b> eğitim yayında · kayıtlar açık</a>
       <span class="tb-div"></span>
       <div class="tb-soc">
         <a href="#"><i class="fa-brands fa-instagram"></i></a>
@@ -1282,33 +1574,136 @@ html.reveal-ready .reveal.in{opacity:1;transform:none}
         <svg class="ak-mark" viewBox="0 0 44 44" aria-hidden="true"><path d="M22 9 L40 16.5 L22 24 L4 16.5 Z" fill="#006072"/><path d="M12.5 20.2 L22 24 L31.5 20.2 V27.6 C31.5 30.5 27.2 32.6 22 32.6 C16.8 32.6 12.5 30.5 12.5 27.6 Z" fill="#006072"/><path d="M22 13.7 L31 16.5 L22 19.3 L13 16.5 Z" fill="#fff" opacity=".92"/><line x1="40" y1="16.5" x2="40" y2="27.2" stroke="#006072" stroke-width="2.1" stroke-linecap="round"/><circle cx="40" cy="29" r="2.4" fill="#006072"/></svg>
         <span class="ak-word"><b>Dada</b><span class="ak-st">Campus</span></span>
       </a>
+      <!-- DÖRT KAMUSAL ANA MENÜ (§4.1) — "Campus" tekrar menüsü KALDIRILDI, logo ana sayfa linki.
+           Tüm açılır menüler mevcut .dropdown.ak-tracks 2-kolon dilinde; .mega ailesi KİLİTLİ, kullanılmaz. -->
       <nav class="nav">
-        <div class="nav-item"><a href="akademi-v1.html" class="active">Campus</a></div>
+
+        <!-- 1) EĞİTİMLER (§4.2) — 10 konu alanı + ücretsiz başlangıç + yönlendirme -->
         <div class="nav-item">
-          <a href="#setler">Eğitimler <i class="fa-solid fa-chevron-down"></i></a>
+          <a href="dadacampus-egitimler-v1.html">Eğitimler <i class="fa-solid fa-chevron-down"></i></a>
           <div class="dropdown ak-tracks">
+            <div class="dd-head">Konu Alanları</div>
             <div class="dd-grid">
-              <a href="#setler"><i class="fa-solid fa-utensils"></i> <span>Temel Mutfak<small>Sıfırdan başlayanlar</small></span></a>
-              <a href="#setler"><i class="fa-solid fa-bread-slice"></i> <span>Ekmek &amp; Hamur<small>Mayalı hamur, fırın</small></span></a>
-              <!-- satır 1→2 arası ayraç -->
+              <a href="dadacampus-egitimler-v1.html?konu=temel-mutfak"><i class="fa-solid fa-kitchen-set"></i> <span>Temel Mutfak<small>Bıçak becerileri, mise en place</small></span></a>
+              <a href="dadacampus-egitimler-v1.html?konu=pisirme-soslar"><i class="fa-solid fa-fire-burner"></i> <span>Pişirme &amp; Soslar<small>Teknikler, fonlar</small></span></a>
               <div class="dd-sep" role="separator" aria-hidden="true"></div>
-              <a href="#setler"><i class="fa-solid fa-fire-burner"></i> <span>Et &amp; Izgara<small>Pişirme dereceleri</small></span></a>
-              <a href="#setler"><i class="fa-solid fa-cake-candles"></i> <span>Pasta &amp; Tatlı<small>Pastane sanatı</small></span></a>
-              <!-- satır 2→3 arası ayraç -->
+              <a href="dadacampus-egitimler-v1.html?konu=turk-mutfagi"><i class="fa-solid fa-bowl-food"></i> <span>Türk &amp; Yerel Mutfaklar<small>Bölgesel teknikler</small></span></a>
+              <a href="dadacampus-egitimler-v1.html?konu=dunya-mutfaklari"><i class="fa-solid fa-earth-americas"></i> <span>Dünya Mutfakları<small>Akdeniz, Uzakdoğu</small></span></a>
               <div class="dd-sep" role="separator" aria-hidden="true"></div>
-              <a href="#setler"><i class="fa-solid fa-earth-americas"></i> <span>Dünya Mutfakları<small>Akdeniz, Uzakdoğu</small></span></a>
-              <a href="#setler"><i class="fa-solid fa-briefcase"></i> <span>Profesyonel Gelişim<small>Sertifikalı program</small></span></a>
+              <a href="dadacampus-egitimler-v1.html?konu=ekmek-fermantasyon"><i class="fa-solid fa-bread-slice"></i> <span>Ekmek &amp; Fermantasyon<small>Maya, fırın</small></span></a>
+              <a href="dadacampus-egitimler-v1.html?konu=pastacilik"><i class="fa-solid fa-cake-candles"></i> <span>Pastacılık &amp; Tatlı<small>Pasta, tart, plating</small></span></a>
+              <div class="dd-sep" role="separator" aria-hidden="true"></div>
+              <a href="dadacampus-egitimler-v1.html?konu=gida-guvenligi"><i class="fa-solid fa-shield-halved"></i> <span>Gıda Güvenliği<small>Hijyen, saklama</small></span></a>
+              <a href="dadacampus-egitimler-v1.html?konu=menu-yonetimi"><i class="fa-solid fa-list-check"></i> <span>Menü &amp; Mutfak Yönetimi<small>Maliyet, planlama</small></span></a>
+              <div class="dd-sep" role="separator" aria-hidden="true"></div>
+              <a href="dadacampus-egitimler-v1.html?konu=surdurulebilirlik"><i class="fa-solid fa-leaf"></i> <span>Sürdürülebilirlik<small>Atıksız mutfak</small></span></a>
+              <a href="dadacampus-egitimler-v1.html?konu=girisimcilik"><i class="fa-solid fa-briefcase"></i> <span>Girişimcilik &amp; Gelişim<small>Sunum, marka, işletme</small></span></a>
+              <div class="dd-sep" role="separator" aria-hidden="true"></div>
+              <a href="dadacampus-egitimler-v1.html?ucret=ucretsiz"><i class="fa-solid fa-gift"></i> <span>Ücretsiz Başlangıç<small>Kayıt olmadan izle</small></span></a>
+              <a href="dadacampus-egitimler-v1.html?sihirbaz=1"><i class="fa-solid fa-wand-magic-sparkles"></i> <span>Bana Uygun Eğitimi Bul<small>Seviye ve hedefe göre</small></span></a>
             </div>
-            <a class="dd-all" href="#setler"><i class="fa-solid fa-clapperboard"></i> <span>Tüm Eğitim Setleri<small>12+ set hazırlanıyor</small></span></a>
+            <a class="dd-all" href="dadacampus-egitimler-v1.html"><i class="fa-solid fa-clapperboard"></i> <span>Tüm Eğitimler<small>Seviye, format, dil ve süre filtreleriyle</small></span></a>
           </div>
         </div>
-        <div class="nav-item"><a href="#egitmenler">Eğitmenler</a></div>
-        <div class="nav-item"><a href="#sertifika">Sertifika</a></div>
-        <div class="nav-item"><a href="#sss">SSS</a></div>
+
+        <!-- 2) PROGRAMLAR (§4.3) — Sertifika buraya taşındı (§26.4) -->
+        <div class="nav-item">
+          <a href="dadacampus-programlar-v1.html">Programlar <i class="fa-solid fa-chevron-down"></i></a>
+          <div class="dropdown ak-tracks">
+            <div class="dd-head">Program Türleri</div>
+            <div class="dd-grid">
+              <a href="dadacampus-programlar-v1.html?tur=sertifika"><i class="fa-solid fa-certificate"></i> <span>Sertifika Programları<small>Değerlendirmeli, belgeli</small></span></a>
+              <a href="dadacampus-programlar-v1.html?tur=universite-ortak"><i class="fa-solid fa-building-columns"></i> <span>Üniversite Ortak Programları<small>Ortak müfredat ve belge</small></span></a>
+              <div class="dd-sep" role="separator" aria-hidden="true"></div>
+              <a href="dadacampus-programlar-v1.html?tur=mutfak-okulu"><i class="fa-solid fa-utensils"></i> <span>Mutfak Okulu Programları<small>Hibrit atölye modeli</small></span></a>
+              <a href="dadacampus-programlar-v1.html?tur=kamu"><i class="fa-solid fa-landmark"></i> <span>Kamu &amp; Sosyal Etki<small>Meslek edindirme</small></span></a>
+              <div class="dd-sep" role="separator" aria-hidden="true"></div>
+              <a href="dadacampus-programlar-v1.html?tur=kurumsal"><i class="fa-solid fa-briefcase"></i> <span>Kurumsal Mesleki Gelişim<small>Kurum içi yetkinlik</small></span></a>
+              <a href="dadacampus-programlar-v1.html?bolum=atolyeler"><i class="fa-solid fa-video"></i> <span>Canlı Atölyeler &amp; Etkinlikler<small>Belirli tarihli oturumlar</small></span></a>
+              <div class="dd-sep" role="separator" aria-hidden="true"></div>
+              <a href="dadacampus-programlar-v1.html?bolum=takvim"><i class="fa-regular fa-calendar-days"></i> <span>Akademik Takvim<small>Dönem, son tarih, oturum</small></span></a>
+              <a href="dadacampus-sertifika-dogrula-v1.html"><i class="fa-solid fa-shield-halved"></i> <span>Sertifika Doğrula<small>Belge kimliği veya QR ile</small></span></a>
+            </div>
+            <a class="dd-all" href="dadacampus-programlar-v1.html"><i class="fa-solid fa-diagram-project"></i> <span>Tüm Programlar<small>Hedef, süre, kurum ve belge filtreleriyle</small></span></a>
+          </div>
+        </div>
+
+        <!-- 3) KURUMLAR (§4.4) — YENİ ana menü. Faz 1'de kurum türleri Kurumlar Merkezi
+             içindeki bölümlere gider; Faz 4'te her tür kendi sayfasını alır. -->
+        <div class="nav-item">
+          <a href="dadacampus-kurumlar-v1.html">Kurumlar <i class="fa-solid fa-chevron-down"></i></a>
+          <div class="dropdown ak-tracks">
+            <div class="dd-head">Kurum Türüne Göre</div>
+            <div class="dd-grid">
+              <a href="dadacampus-kurumlar-v1.html#tur-universite"><i class="fa-solid fa-building-columns"></i> <span>Üniversiteler İçin<small>Ders desteği, ortak sertifika</small></span></a>
+              <a href="dadacampus-kurumlar-v1.html#tur-mutfak-okulu"><i class="fa-solid fa-utensils"></i> <span>Mutfak Sanatları Okulları İçin<small>Hibrit eğitim, içerik lisansı</small></span></a>
+              <div class="dd-sep" role="separator" aria-hidden="true"></div>
+              <a href="dadacampus-kurumlar-v1.html#tur-kamu"><i class="fa-solid fa-landmark"></i> <span>Kamu ve Belediyeler İçin<small>Meslek edindirme, sosyal etki</small></span></a>
+              <a href="dadacampus-kurumlar-v1.html#tur-meslek"><i class="fa-solid fa-school"></i> <span>Mesleki Eğitim Kurumları İçin<small>Tamamlayıcı eğitim</small></span></a>
+              <div class="dd-sep" role="separator" aria-hidden="true"></div>
+              <a href="dadacampus-kurumlar-v1.html#tur-isletme"><i class="fa-solid fa-hotel"></i> <span>İşletmeler ve Sektör İçin<small>Kurum içi yetkinlik</small></span></a>
+              <a href="dadacampus-kurumlar-v1.html#modeller"><i class="fa-solid fa-handshake"></i> <span>İş Birliği Modelleri<small>On model, kapsam ve değer</small></span></a>
+              <div class="dd-sep" role="separator" aria-hidden="true"></div>
+              <a href="dadacampus-kurumlar-v1.html#partnerler"><i class="fa-solid fa-circle-check"></i> <span>Partner Kurumlar<small>Yalnız onay kaydı olanlar</small></span></a>
+              <a href="dadacampus-kurumlar-v1.html#ornekler"><i class="fa-solid fa-chart-line"></i> <span>Kurumsal Başarı Örnekleri<small>Kurum onaylı çıktılar</small></span></a>
+              <div class="dd-sep" role="separator" aria-hidden="true"></div>
+              <a href="dadacampus-kurumlar-v1.html#basvuru"><i class="fa-solid fa-file-signature"></i> <span>İş Birliği Başlat<small>Kurum başvuru formu</small></span></a>
+              <a href="giris-v1.html?tab=giris"><i class="fa-solid fa-right-to-bracket"></i> <span>Kurum Portalı Girişi<small>Koordinatör erişimi</small></span></a>
+            </div>
+            <a class="dd-all" href="dadacampus-kurumlar-v1.html"><i class="fa-solid fa-building-columns"></i> <span>Kurumlar Merkezi<small>Modeller, süreç ve başvuru</small></span></a>
+          </div>
+        </div>
+
+        <!-- 4) EĞİTMENLER (§4.5) — Faz 1'de üç GERÇEK hedef; rol filtreleri Faz 5'te
+             Eğitmen Dizini sayfasıyla birlikte açılacak (tek anchor'a yığma YOK). -->
+        <div class="nav-item">
+          <a href="akademi-v1.html#egitmenler">Eğitmenler <i class="fa-solid fa-chevron-down"></i></a>
+          <div class="dropdown">
+            <a href="akademi-v1.html#egitmenler"><i class="fa-solid fa-chalkboard-user"></i> <span>Tüm Eğitmenler<small>Şef, akademisyen ve mentorlar</small></span></a>
+            <a href="dadacampus-yardim-v1.html?konu=egitmen"><i class="fa-solid fa-user-plus"></i> <span>Eğitmen Ol<small>Roller, yeterlilik ve başvuru adımları</small></span></a>
+            <a href="giris-v1.html?tab=giris"><i class="fa-solid fa-right-to-bracket"></i> <span>Eğitmen Paneli Girişi<small>İçerik ve değerlendirme</small></span></a>
+          </div>
+        </div>
       </nav>
+
+      <!-- SAĞ ALAN (§4.1) — arama · bildirim · Kampüsüm · hesap (Rol Değiştirici) / Giriş Yap.
+           .head-bell ve .acct-wrap YALNIZ body.is-auth ile görünür (kabuk CSS 229-234);
+           demo için ?auth=1 · rol için ?role=… -->
       <div class="head-actions">
-        <!-- Revize C: brand=akademi param ile arama sayfasına git -->
-        <button class="icon-btn" aria-label="DadaCampus içeriğinde ara" title="DadaCampus içeriğinde ara" onclick="location.href='arama-campus-v1.html'"><i class="fa-solid fa-magnifying-glass"></i></button>
+        <button class="icon-btn" aria-label="Eğitim, program, kurum veya eğitmen ara" id="hdrSearchBtn" title="DadaCampus'ta ara"><i class="fa-solid fa-magnifying-glass"></i></button>
+
+        <button class="icon-btn head-bell" id="hdrBell" aria-label="Bildirimler — 2 okunmamış" title="Bildirimler" onclick="location.href='bildirimler-v1.html'">
+          <i class="fa-regular fa-bell"></i><span class="hb-badge" aria-hidden="true">2</span>
+        </button>
+
+        <a class="btn btn-primary head-add" id="hdrKampusum" href="dadacampus-kampusum-v1.html"><i class="fa-solid fa-graduation-cap"></i> Kampüsüm</a>
+
+        <div class="acct-wrap acct-item" id="acctItem">
+          <button class="acct-btn" aria-haspopup="true" aria-expanded="false" aria-label="Hesabım ve rol değiştirici">
+            <span class="acct-ava" style="background-image:url('https://images.unsplash.com/photo-1577219491135-ce391730fb2c?w=120&amp;q=80&amp;auto=format&amp;fit=crop&amp;exp=7&amp;gam=6&amp;sat=-9&amp;high=8&amp;vib=5')"></span>
+            <i class="fa-solid fa-chevron-down acct-caret"></i>
+          </button>
+          <div class="acct-menu" role="menu">
+            <div class="acct-id">
+              <span class="acct-ava" style="background-image:url('https://images.unsplash.com/photo-1577219491135-ce391730fb2c?w=120&amp;q=80&amp;auto=format&amp;fit=crop&amp;exp=7&amp;gam=6&amp;sat=-9&amp;high=8&amp;vib=5')"></span>
+              <span class="acct-id-txt"><b>Beyar Güneş</b><small id="acctRoleLbl">Öğrenci</small></span>
+            </div>
+            <div class="acct-div"></div>
+            <a role="menuitem" href="dadacampus-kampusum-v1.html"><i class="fa-solid fa-gauge-high"></i> <span>Kampüsüm<small>Genel bakış ve sıradaki görev</small></span></a>
+            <a role="menuitem" href="dadacampus-kampusum-v1.html?bolum=egitimlerim"><i class="fa-solid fa-circle-play"></i> <span>Eğitimlerim<small>Devam eden ve tamamlanan</small></span></a>
+            <a role="menuitem" href="dadacampus-kampusum-v1.html?bolum=takvimim"><i class="fa-regular fa-calendar-days"></i> <span>Takvimim<small>Canlı oturum ve son tarihler</small></span></a>
+            <a role="menuitem" href="dadacampus-kampusum-v1.html?bolum=sertifikalarim"><i class="fa-solid fa-award"></i> <span>Sertifikalarım<small>Belgeler ve rozetler</small></span></a>
+            <div class="acct-div"></div>
+            <!-- ROL DEĞİŞTİRİCİ (§3.3) — her rol kendi panel kabuğunu açar; roller aynı ekranda karışmaz -->
+            <div class="dd-head">Rol Değiştir</div>
+            <a role="menuitem" href="dadacampus-egitmen-panel-v1.html"><i class="fa-solid fa-chalkboard-user"></i> <span>Eğitmen Paneli<small>İçerik, kohort, değerlendirme</small></span></a>
+            <a role="menuitem" href="dadacampus-kurum-panel-v1.html"><i class="fa-solid fa-building-columns"></i> <span>Kurum Paneli<small>Program, katılımcı, rapor</small></span></a>
+            <div class="acct-div"></div>
+            <a role="menuitem" href="hesabim-v1.html"><i class="fa-solid fa-gear"></i> <span>Hesap, Veri ve İzinler</span></a>
+            <a role="menuitem" class="acct-logout" href="akademi-v1.html?auth=0"><i class="fa-solid fa-arrow-right-from-bracket"></i> <span>Çıkış Yap</span></a>
+          </div>
+        </div>
+
         <button class="btn-login" onclick="location.href='giris-v1.html'"><i class="fa-regular fa-user"></i> Giriş Yap</button>
         <button class="icon-btn hamburger" id="hamburger" aria-label="Menü"><i class="fa-solid fa-bars"></i></button>
       </div>
@@ -1318,32 +1713,90 @@ html.reveal-ready .reveal.in{opacity:1;transform:none}
 
 <!-- ===== MOBİL DRAWER (≤1024px) ===== -->
 <div class="drawer-overlay" id="drawerOverlay"></div>
-<aside class="drawer" id="drawer" aria-label="Akademi menüsü">
+<aside class="drawer" id="drawer" aria-label="DadaCampus menüsü">
   <div class="drawer-head">
     <a class="drawer-brand" href="akademi-v1.html" aria-label="DadaCampus"><svg class="ak-mark" viewBox="0 0 44 44" aria-hidden="true"><path d="M22 9 L40 16.5 L22 24 L4 16.5 Z" fill="#006072"/><path d="M12.5 20.2 L22 24 L31.5 20.2 V27.6 C31.5 30.5 27.2 32.6 22 32.6 C16.8 32.6 12.5 30.5 12.5 27.6 Z" fill="#006072"/><path d="M22 13.7 L31 16.5 L22 19.3 L13 16.5 Z" fill="#fff" opacity=".92"/><line x1="40" y1="16.5" x2="40" y2="27.2" stroke="#006072" stroke-width="2.1" stroke-linecap="round"/><circle cx="40" cy="29" r="2.4" fill="#006072"/></svg><span class="ak-word"><b>Dada</b><span class="ak-st">Campus</span></span></a>
     <button class="drawer-close" id="drawerClose" aria-label="Menüyü kapat"><i class="fa-solid fa-xmark"></i></button>
   </div>
   <nav class="drawer-nav">
-    <div class="d-item"><a class="d-link" href="akademi-v1.html"><i class="fa-solid fa-graduation-cap"></i> Campus</a></div>
+    <!-- Giriş yapmış kimlik satırı — body.is-auth ile açılır (kabuk CSS 265-267) -->
+    <div class="drawer-acct">
+      <span class="da-ava" style="background-image:url('https://images.unsplash.com/photo-1577219491135-ce391730fb2c?w=120&amp;q=80&amp;auto=format&amp;fit=crop&amp;exp=7&amp;gam=6&amp;sat=-9&amp;high=8&amp;vib=5')"></span>
+      <span class="da-info">
+        <b>Beyar Güneş</b>
+        <span class="da-links">
+          <a href="dadacampus-kampusum-v1.html">Kampüsüm</a>
+          <a href="hesabim-v1.html">Hesabım</a>
+        </span>
+      </span>
+    </div>
+
+    <!-- Masaüstü açılır menüler mobilde AKORDEON grubuna döner (§4.6) -->
     <div class="d-item d-has-sub">
-      <button class="d-link">Eğitimler <i class="fa-solid fa-chevron-down"></i></button>
+      <button class="d-link"><i class="fa-solid fa-clapperboard"></i> Eğitimler <i class="fa-solid fa-chevron-down"></i></button>
       <div class="d-sub">
-        <a href="#setler"><i class="fa-solid fa-utensils"></i> Temel Mutfak</a>
-        <a href="#setler"><i class="fa-solid fa-bread-slice"></i> Ekmek &amp; Hamur</a>
-        <a href="#setler"><i class="fa-solid fa-fire-burner"></i> Et &amp; Izgara</a>
-        <a href="#setler"><i class="fa-solid fa-cake-candles"></i> Pasta &amp; Tatlı</a>
-        <a href="#setler"><i class="fa-solid fa-earth-americas"></i> Dünya Mutfakları</a>
-        <a href="#setler"><i class="fa-solid fa-briefcase"></i> Profesyonel Gelişim</a>
-        <a href="#setler"><i class="fa-solid fa-clapperboard"></i> Tüm Eğitim Setleri</a>
+        <a href="dadacampus-egitimler-v1.html"><i class="fa-solid fa-list"></i> Tüm Eğitimler</a>
+        <a href="dadacampus-egitimler-v1.html?konu=temel-mutfak"><i class="fa-solid fa-kitchen-set"></i> Temel Mutfak</a>
+        <a href="dadacampus-egitimler-v1.html?konu=pisirme-soslar"><i class="fa-solid fa-fire-burner"></i> Pişirme &amp; Soslar</a>
+        <a href="dadacampus-egitimler-v1.html?konu=turk-mutfagi"><i class="fa-solid fa-bowl-food"></i> Türk &amp; Yerel Mutfaklar</a>
+        <a href="dadacampus-egitimler-v1.html?konu=dunya-mutfaklari"><i class="fa-solid fa-earth-americas"></i> Dünya Mutfakları</a>
+        <a href="dadacampus-egitimler-v1.html?konu=ekmek-fermantasyon"><i class="fa-solid fa-bread-slice"></i> Ekmek &amp; Fermantasyon</a>
+        <a href="dadacampus-egitimler-v1.html?konu=pastacilik"><i class="fa-solid fa-cake-candles"></i> Pastacılık &amp; Tatlı</a>
+        <a href="dadacampus-egitimler-v1.html?konu=gida-guvenligi"><i class="fa-solid fa-shield-halved"></i> Gıda Güvenliği</a>
+        <a href="dadacampus-egitimler-v1.html?konu=menu-yonetimi"><i class="fa-solid fa-list-check"></i> Menü &amp; Mutfak Yönetimi</a>
+        <a href="dadacampus-egitimler-v1.html?konu=surdurulebilirlik"><i class="fa-solid fa-leaf"></i> Sürdürülebilirlik</a>
+        <a href="dadacampus-egitimler-v1.html?konu=girisimcilik"><i class="fa-solid fa-briefcase"></i> Girişimcilik &amp; Gelişim</a>
+        <a href="dadacampus-egitimler-v1.html?ucret=ucretsiz"><i class="fa-solid fa-gift"></i> Ücretsiz Başlangıç</a>
+        <a href="dadacampus-egitimler-v1.html?sihirbaz=1"><i class="fa-solid fa-wand-magic-sparkles"></i> Bana Uygun Eğitimi Bul</a>
       </div>
     </div>
-    <div class="d-item"><a class="d-link" href="#egitmenler"><i class="fa-solid fa-chalkboard-user"></i> Eğitmenler</a></div>
-    <div class="d-item"><a class="d-link" href="#konular"><i class="fa-solid fa-diagram-project"></i> Konular &amp; Yol Haritası</a></div>
-    <div class="d-item"><a class="d-link" href="#sertifika"><i class="fa-solid fa-certificate"></i> Sertifika Programları</a></div>
-    <div class="d-item"><a class="d-link" href="#sss"><i class="fa-solid fa-circle-question"></i> Sıkça Sorulanlar</a></div>
+
+    <div class="d-item d-has-sub">
+      <button class="d-link"><i class="fa-solid fa-diagram-project"></i> Programlar <i class="fa-solid fa-chevron-down"></i></button>
+      <div class="d-sub">
+        <a href="dadacampus-programlar-v1.html"><i class="fa-solid fa-list"></i> Tüm Programlar</a>
+        <a href="dadacampus-programlar-v1.html?tur=sertifika"><i class="fa-solid fa-certificate"></i> Sertifika Programları</a>
+        <a href="dadacampus-programlar-v1.html?tur=universite-ortak"><i class="fa-solid fa-building-columns"></i> Üniversite Ortak Programları</a>
+        <a href="dadacampus-programlar-v1.html?tur=mutfak-okulu"><i class="fa-solid fa-utensils"></i> Mutfak Okulu Programları</a>
+        <a href="dadacampus-programlar-v1.html?tur=kamu"><i class="fa-solid fa-landmark"></i> Kamu &amp; Sosyal Etki</a>
+        <a href="dadacampus-programlar-v1.html?tur=kurumsal"><i class="fa-solid fa-briefcase"></i> Kurumsal Mesleki Gelişim</a>
+        <a href="dadacampus-programlar-v1.html?bolum=atolyeler"><i class="fa-solid fa-video"></i> Canlı Atölyeler &amp; Etkinlikler</a>
+        <a href="dadacampus-programlar-v1.html?bolum=takvim"><i class="fa-regular fa-calendar-days"></i> Akademik Takvim</a>
+        <a href="dadacampus-sertifika-dogrula-v1.html"><i class="fa-solid fa-shield-halved"></i> Sertifika Doğrula</a>
+      </div>
+    </div>
+
+    <div class="d-item d-has-sub">
+      <button class="d-link"><i class="fa-solid fa-building-columns"></i> Kurumlar <i class="fa-solid fa-chevron-down"></i></button>
+      <div class="d-sub">
+        <a href="dadacampus-kurumlar-v1.html"><i class="fa-solid fa-list"></i> Kurumlar Merkezi</a>
+        <a href="dadacampus-kurumlar-v1.html#tur-universite"><i class="fa-solid fa-building-columns"></i> Üniversiteler İçin</a>
+        <a href="dadacampus-kurumlar-v1.html#tur-mutfak-okulu"><i class="fa-solid fa-utensils"></i> Mutfak Sanatları Okulları İçin</a>
+        <a href="dadacampus-kurumlar-v1.html#tur-kamu"><i class="fa-solid fa-landmark"></i> Kamu ve Belediyeler İçin</a>
+        <a href="dadacampus-kurumlar-v1.html#tur-meslek"><i class="fa-solid fa-school"></i> Mesleki Eğitim Kurumları İçin</a>
+        <a href="dadacampus-kurumlar-v1.html#tur-isletme"><i class="fa-solid fa-hotel"></i> İşletmeler ve Sektör İçin</a>
+        <a href="dadacampus-kurumlar-v1.html#modeller"><i class="fa-solid fa-handshake"></i> İş Birliği Modelleri</a>
+        <a href="dadacampus-kurumlar-v1.html#partnerler"><i class="fa-solid fa-circle-check"></i> Partner Kurumlar</a>
+        <a href="dadacampus-kurumlar-v1.html#ornekler"><i class="fa-solid fa-chart-line"></i> Kurumsal Başarı Örnekleri</a>
+        <a href="dadacampus-kurumlar-v1.html#basvuru"><i class="fa-solid fa-file-signature"></i> İş Birliği Başlat</a>
+        <a href="giris-v1.html?tab=giris"><i class="fa-solid fa-right-to-bracket"></i> Kurum Portalı Girişi</a>
+      </div>
+    </div>
+
+    <div class="d-item d-has-sub">
+      <button class="d-link"><i class="fa-solid fa-chalkboard-user"></i> Eğitmenler <i class="fa-solid fa-chevron-down"></i></button>
+      <div class="d-sub">
+        <a href="akademi-v1.html#egitmenler"><i class="fa-solid fa-chalkboard-user"></i> Tüm Eğitmenler</a>
+        <a href="dadacampus-yardim-v1.html?konu=egitmen"><i class="fa-solid fa-user-plus"></i> Eğitmen Ol</a>
+        <a href="giris-v1.html?tab=giris"><i class="fa-solid fa-right-to-bracket"></i> Eğitmen Paneli Girişi</a>
+      </div>
+    </div>
+
+    <div class="d-item"><a class="d-link" href="dadacampus-yardim-v1.html"><i class="fa-solid fa-circle-question"></i> Yardım Merkezi</a></div>
   </nav>
   <div class="drawer-foot">
-    <a href="#kayit" class="btn btn-primary" style="width:100%"><i class="fa-regular fa-bell"></i> Açılınca Haber Ver</a>
+    <a href="dadacampus-egitimler-v1.html" class="btn btn-primary" style="width:100%"><i class="fa-solid fa-graduation-cap"></i> Eğitimleri Keşfet</a>
+    <a href="giris-v1.html" class="drawer-login btn btn-ghost" style="width:100%"><i class="fa-regular fa-user"></i> Giriş Yap</a>
     <a href="anasayfa-portal-v3a.html" class="drawer-add"><i class="fa-solid fa-arrow-left-long"></i> DadaMutfak'a Dön</a>
     <div class="drawer-lang" id="drawerLang">
       <button class="drawer-lang-toggle" type="button" aria-haspopup="true" aria-expanded="false">
@@ -1358,13 +1811,17 @@ html.reveal-ready .reveal.in{opacity:1;transform:none}
   </div>
 </aside>
 
-<!-- ===== MOBİL BOTTOM NAV (≤640px) ===== -->
+<!-- ===== MOBİL BOTTOM NAV (≤640px) — EN FAZLA 5 SABİT ÖĞE (§4.6) =====
+     Ana Sayfa · Eğitimler · Kampüsüm (FAB) · Programlar · Hesabım
+     FAB merkez slotu birincil KİŞİSEL aksiyona verildi; Kurumlar ve Eğitmenler
+     drawer'da ve merkez sayfa kartlarında. #bnAccount hedefi auth durumuna göre
+     JS'te ayarlanır (kabuk auth IIFE'si). -->
 <nav class="bottom-nav" aria-label="Mobil alt navigasyon">
-  <a href="akademi-v1.html" class="bn-item"><i class="fa-solid fa-graduation-cap"></i><span>Campus</span></a>
-  <a href="#setler" class="bn-item"><i class="fa-solid fa-clapperboard"></i><span>Eğitimler</span></a>
-  <a href="#kayit" class="bn-item bn-center"><span class="bn-fab"><i class="fa-regular fa-bell"></i></span><span>Haber Ver</span></a>
-  <a href="#egitmenler" class="bn-item"><i class="fa-solid fa-chalkboard-user"></i><span>Eğitmenler</span></a>
-  <a href="anasayfa-portal-v3a.html" class="bn-item"><i class="fa-solid fa-house"></i><span>Ana Site</span></a>
+  <a href="akademi-v1.html" class="bn-item"><i class="fa-solid fa-house"></i><span>Ana Sayfa</span></a>
+  <a href="dadacampus-egitimler-v1.html" class="bn-item"><i class="fa-solid fa-clapperboard"></i><span>Eğitimler</span></a>
+  <a href="dadacampus-kampusum-v1.html" class="bn-item bn-center" id="bnKampusum"><span class="bn-fab"><i class="fa-solid fa-graduation-cap"></i></span><span>Kampüsüm</span></a>
+  <a href="dadacampus-programlar-v1.html" class="bn-item"><i class="fa-solid fa-diagram-project"></i><span>Programlar</span></a>
+  <a href="giris-v1.html" class="bn-item" id="bnAccount"><i class="fa-regular fa-user"></i><span>Hesabım</span></a>
 </nav>
 
 <!-- ===== GÖRÜŞ BİLDİR (sağ kenar sabit etiket) ===== -->
@@ -1497,37 +1954,52 @@ html.reveal-ready .reveal.in{opacity:1;transform:none}
 
 <!-- ===== ANA İÇERİK (footer reveal perdesi) ===== -->
 <main class="page-main" id="pageMain">
-<!-- SAYFA İÇERİĞİ — DADACAMPUS ARAMA (arama-campus) -->
+<!-- ============================================================================
+     DADACAMPUS GLOBAL ARAMA (§17.1) — sonuç TÜRÜ etiketiyle birlikte döner:
+     Eğitim · Program · Atölye · Etkinlik · Eğitmen · Kurum · Rehber (konu,
+     malzeme, terim). Eğitim/program/oturum/eğitmen/kurum sonuçları
+     `campus-data.js`'ten üretilir; rehber sonuçları gerçek DadaGastro rehber
+     sayfalarına gider. Eskiden 6 eğitim sonucu `akademi-v1.html#setler`e
+     çöküyordu — artık her sonuç kendi detay slug'ına gider (§26.7).
+     ========================================================================= -->
 
 <!-- ===== ARAMA HERO ===== -->
-<section class="fs-top">
+<section class="fs-top below-header">
   <div class="wrap">
+    <nav class="rd-crumb" aria-label="Sayfa yolu">
+      <a href="akademi-v1.html"><i class="fa-solid fa-house" aria-hidden="true"></i></a>
+      <i class="fa-solid fa-chevron-right" aria-hidden="true"></i>
+      <b>Arama</b>
+    </nav>
     <span class="eyebrow"><i class="fa-solid fa-graduation-cap"></i> DadaCampus · Arama</span>
     <h1 id="fsTitle">DadaCampus'ta <span class="accent">ara</span></h1>
-    <p class="fs-lead" id="fsLead">Mutfağa giriş konuları, malzeme ansiklopedisi ve mutfak sözlüğü — tek kutudan tüm DadaCampus içeriğinde ara.</p>
+    <p class="fs-lead" id="fsLead">Eğitim, program, atölye, etkinlik, eğitmen, kurum ve rehber içeriği — tek kutudan tüm DadaCampus'ta ara. Her sonuç türüyle birlikte gösterilir.</p>
     <form class="fs-box" id="fsForm" role="search" autocomplete="off">
       <div class="fs-row">
         <div class="fs-input">
           <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
-          <input id="fsInput" type="text" role="combobox" aria-expanded="false" aria-autocomplete="list" aria-controls="fsAcList" aria-haspopup="listbox" placeholder="Konu, malzeme veya terim ara… (ör. doğrama, avokado, benmari)" aria-label="DadaCampus içeriğinde ara" />
+          <input id="fsInput" type="text" role="combobox" aria-expanded="false" aria-autocomplete="list" aria-controls="fsAcList" aria-haspopup="listbox" placeholder="Eğitim, program, eğitmen, kurum veya terim ara…" aria-label="DadaCampus içeriğinde ara" />
         </div>
         <button class="btn btn-primary" type="submit"><i class="fa-solid fa-magnifying-glass"></i> Ara</button>
       </div>
       <div class="fs-ac" id="fsAc"><div class="fs-ac-list" id="fsAcList" role="listbox" aria-label="Arama önerileri"></div></div>
-      <span class="sr-vh" id="fsAcStatus" role="status" aria-live="polite"></span>
+      <span class="sr-only" id="fsAcStatus" role="status" aria-live="polite"></span>
     </form>
     <p class="fs-sum" id="fsSum"></p>
   </div>
 </section>
 
-<!-- ===== SEKME BARI (4 sekme) ===== -->
+<!-- ===== SEKME BARI — §17.1 sonuç türleri ===== -->
 <div class="fs-tabbar" id="fsTabbar">
   <div class="wrap">
-    <div class="fs-tabs" role="tablist" aria-label="İçerik türü">
-      <button class="dt active" type="button" role="tab" data-tab="tumu">Tümü <span class="cnt" data-cnt="tumu"></span></button>
-      <button class="dt" type="button" role="tab" data-tab="giris">Mutfağa Giriş <span class="cnt" data-cnt="giris"></span></button>
-      <button class="dt" type="button" role="tab" data-tab="ansiklopedi">Ansiklopedi <span class="cnt" data-cnt="ansiklopedi"></span></button>
-      <button class="dt" type="button" role="tab" data-tab="sozluk">Sözlük <span class="cnt" data-cnt="sozluk"></span></button>
+    <div class="fs-tabs" role="tablist" aria-label="Sonuç türü">
+      <button class="dt active" type="button" role="tab" aria-selected="true" data-tab="tumu">Tümü <span class="cnt" data-cnt="tumu"></span></button>
+      <button class="dt" type="button" role="tab" aria-selected="false" data-tab="egitim">Eğitim <span class="cnt" data-cnt="egitim"></span></button>
+      <button class="dt" type="button" role="tab" aria-selected="false" data-tab="program">Program <span class="cnt" data-cnt="program"></span></button>
+      <button class="dt" type="button" role="tab" aria-selected="false" data-tab="oturum">Atölye &amp; Etkinlik <span class="cnt" data-cnt="oturum"></span></button>
+      <button class="dt" type="button" role="tab" aria-selected="false" data-tab="egitmen">Eğitmen <span class="cnt" data-cnt="egitmen"></span></button>
+      <button class="dt" type="button" role="tab" aria-selected="false" data-tab="kurum">Kurum <span class="cnt" data-cnt="kurum"></span></button>
+      <button class="dt" type="button" role="tab" aria-selected="false" data-tab="rehber">Rehber <span class="cnt" data-cnt="rehber"></span></button>
     </div>
   </div>
 </div>
@@ -1537,13 +2009,20 @@ html.reveal-ready .reveal.in{opacity:1;transform:none}
   <div class="wrap">
     <p class="fs-cnt-note" id="fsCntNote"></p>
     <div class="fs-pane" data-pane="tumu"></div>
-    <div class="fs-pane" data-pane="giris" hidden></div>
-    <div class="fs-pane" data-pane="ansiklopedi" hidden></div>
-    <div class="fs-pane" data-pane="sozluk" hidden></div>
+    <div class="fs-pane" data-pane="egitim" hidden></div>
+    <div class="fs-pane" data-pane="program" hidden></div>
+    <div class="fs-pane" data-pane="oturum" hidden></div>
+    <div class="fs-pane" data-pane="egitmen" hidden></div>
+    <div class="fs-pane" data-pane="kurum" hidden></div>
+    <div class="fs-pane" data-pane="rehber" hidden></div>
     <div class="fs-empty" id="fsEmpty">
       <div class="fs-empty-ico"><i class="fa-solid fa-magnifying-glass"></i></div>
       <h3>&ldquo;<span id="fsEmptyQ"></span>&rdquo; için sonuç yok</h3>
-      <p>Farklı bir kelime dene — mutfağa giriş konusu, malzeme ya da mutfak terimi.</p>
+      <p>Farklı bir kelime dene — eğitim adı, konu alanı, eğitmen, kurum ya da mutfak terimi. Aradığın bir programsa Programlar Merkezi'nin filtreleri daha iyi sonuç verir.</p>
+      <div class="ak-hero-cta" style="justify-content:center;margin:0 0 20px">
+        <a class="btn btn-primary" href="dadacampus-egitimler-v1.html"><i class="fa-solid fa-clapperboard"></i> Eğitimler Merkezi</a>
+        <a class="btn btn-ghost" href="dadacampus-yardim-v1.html"><i class="fa-solid fa-circle-question"></i> Yardım Merkezi</a>
+      </div>
       <div class="fs-chips" id="fsEmptyChips"></div>
     </div>
   </div>
@@ -1556,14 +2035,14 @@ html.reveal-ready .reveal.in{opacity:1;transform:none}
       <div>
         <h3><i class="fa-solid fa-fire"></i> Popüler aramalar</h3>
         <div class="fs-chips" id="fsPopChips">
+          <button class="chip" type="button" data-q="sertifika">sertifika</button>
+          <button class="chip" type="button" data-q="pastacılık">pastacılık</button>
+          <button class="chip" type="button" data-q="ekmek">ekmek</button>
+          <button class="chip" type="button" data-q="üniversite">üniversite</button>
+          <button class="chip" type="button" data-q="hijyen">hijyen</button>
           <button class="chip" type="button" data-q="doğrama">doğrama</button>
           <button class="chip" type="button" data-q="benmari">benmari</button>
-          <button class="chip" type="button" data-q="jülyen">jülyen</button>
-          <button class="chip" type="button" data-q="hijyen">hijyen</button>
-          <button class="chip" type="button" data-q="fırın">fırın</button>
-          <button class="chip" type="button" data-q="avokado">avokado</button>
-          <button class="chip" type="button" data-q="sote">sote</button>
-          <button class="chip" type="button" data-q="hamur">hamur</button>
+          <button class="chip" type="button" data-q="atölye">atölye</button>
         </div>
       </div>
       <div id="fsRecentCol" style="display:none">
@@ -1573,318 +2052,8 @@ html.reveal-ready .reveal.in{opacity:1;transform:none}
     </div>
   </div>
 </section>
+
 </main><!-- /.page-main -->
-<script>
-/* ===== DadaCampus ARAMA (arama-campus) — POOL-driven motor · anatomi Fit/Diet pilotundan, petrol (--camp-*) ===== */
-(function(){
-  /* ---- POOL: yalnız GERÇEK DadaCampus içeriği (uydurma yok) ----
-     giris → mutfaga-giris-detay?konu=<slug> (grep-teyitli) · ansiklopedi → ansiklopedi-detay
-     · sozluk → sozluk-v1#t-<slug> (grep-teyitli anchor) · egitim → akademi#setler ("Örnek": canlı hedef yok, iskelet preview) */
-  var G='mutfaga-giris-detay-v1.html?konu=';
-  var POOL=[
-    /* Mutfağa Giriş (12) → konu detay (ikon-tile) */
-    {type:'giris',t:'Mutfak Düzeni ve Çalışma Alanı',sub:'Tezgah kurulumu · iş akışı',href:G+'mutfak-duzeni-ve-calisma-alani',ico:'fa-kitchen-set'},
-    {type:'giris',t:'Gıda Güvenliği ve Hijyen Kuralları',sub:'Saklama · çapraz bulaşma',href:G+'gida-guvenligi-ve-hijyen-kurallari',ico:'fa-shield-halved'},
-    {type:'giris',t:'Mutfakta Kullanılan Temel Araçlar',sub:'Alet-edevat tanıtımı',href:G+'mutfakta-kullanilan-temel-araclar',ico:'fa-blender'},
-    {type:'giris',t:'Temel Bıçak Türleri ve Kullanımları',sub:'Şef bıçağı · doğrama bıçağı',href:G+'temel-bicak-turleri-ve-kullanimlari',ico:'fa-utensils'},
-    {type:'giris',t:'Doğrama Teknikleri',sub:'Jülyen · brunoise · dilim',href:G+'dograma-teknikleri',ico:'fa-scissors'},
-    {type:'giris',t:'Temel Pişirme Yöntemleri',sub:'Haşlama · buğulama · kızartma',href:G+'temel-pisirme-yontemleri',ico:'fa-fire-burner'},
-    {type:'giris',t:'Tavada Pişirme Teknikleri',sub:'Soteleme · mühürleme',href:G+'tavada-pisirme-teknikleri',ico:'fa-fire'},
-    {type:'giris',t:'Fırında Pişirme Teknikleri',sub:'Isı · süre · konum',href:G+'firinda-pisirme-teknikleri',ico:'fa-temperature-arrow-up'},
-    {type:'giris',t:'Marine Etme Temelleri',sub:'Terbiye · bekletme',href:G+'marine-etme-temelleri',ico:'fa-jar'},
-    {type:'giris',t:'Sos ve Karışım Hazırlıkları',sub:'Temel soslar · emülsiyon',href:G+'sos-ve-karisim-hazirliklari',ico:'fa-mortar-pestle'},
-    {type:'giris',t:'Baharatların Doğru Kullanımı',sub:'Aroma eşleştirme · zamanlama',href:G+'baharatlarin-dogru-kullanimi',ico:'fa-pepper-hot'},
-    {type:'giris',t:'Temel Tabak Süsleme Teknikleri',sub:'Sunum · renk · doku',href:G+'temel-tabak-susleme-teknikleri',ico:'fa-plate-wheat'},
-    {type:'giris',t:'Mutfağa Giriş — Tüm Konular',sub:'Konu dizini · adım adım yol',href:'mutfaga-giris-liste-v1.html',ico:'fa-list-check'},
-    /* Ansiklopedi (16 + dizin) → ansiklopedi-detay (ikon-tile, latin alt başlık) */
-    {type:'ansiklopedi',t:'Ispanak',sub:'Sebze · Spinacia oleracea',href:'ansiklopedi-detay-v1.html',ico:'fa-leaf'},
-    {type:'ansiklopedi',t:'Avokado',sub:'Meyve · Persea americana',href:'ansiklopedi-detay-v1.html',ico:'fa-apple-whole'},
-    {type:'ansiklopedi',t:'Barbunya',sub:'Bakliyat · Phaseolus vulgaris',href:'ansiklopedi-detay-v1.html',ico:'fa-seedling'},
-    {type:'ansiklopedi',t:'Kırmızı Mercimek',sub:'Bakliyat · Lens culinaris',href:'ansiklopedi-detay-v1.html',ico:'fa-bowl-rice'},
-    {type:'ansiklopedi',t:'Kinoa',sub:'Tahıl · Chenopodium quinoa',href:'ansiklopedi-detay-v1.html',ico:'fa-wheat-awn'},
-    {type:'ansiklopedi',t:'Zencefil',sub:'Kök baharat · Zingiber officinale',href:'ansiklopedi-detay-v1.html',ico:'fa-mortar-pestle'},
-    {type:'ansiklopedi',t:'Hamsi',sub:'Balık · Engraulis encrasicolus',href:'ansiklopedi-detay-v1.html',ico:'fa-fish'},
-    {type:'ansiklopedi',t:'Levrek',sub:'Balık · Dicentrarchus labrax',href:'ansiklopedi-detay-v1.html',ico:'fa-fish'},
-    {type:'ansiklopedi',t:'Yeşil Çay',sub:'Çay · Camellia sinensis',href:'ansiklopedi-detay-v1.html',ico:'fa-mug-hot'},
-    {type:'ansiklopedi',t:'Bitter Çikolata',sub:'Çikolata · Theobroma cacao',href:'ansiklopedi-detay-v1.html',ico:'fa-cookie-bite'},
-    {type:'ansiklopedi',t:'Çeri Domates',sub:'Domates · Solanum lycopersicum',href:'ansiklopedi-detay-v1.html',ico:'fa-leaf'},
-    {type:'ansiklopedi',t:'Dana Eti',sub:'Et · Bos taurus',href:'ansiklopedi-detay-v1.html',ico:'fa-drumstick-bite'},
-    {type:'ansiklopedi',t:'Ceviz',sub:'Kuruyemiş · Juglans regia',href:'ansiklopedi-detay-v1.html',ico:'fa-seedling'},
-    {type:'ansiklopedi',t:'Kültür Mantarı',sub:'Mantar · Agaricus bisporus',href:'ansiklopedi-detay-v1.html',ico:'fa-seedling'},
-    {type:'ansiklopedi',t:'Maydanoz',sub:'Yeşillik · Petroselinum crispum',href:'ansiklopedi-detay-v1.html',ico:'fa-leaf'},
-    {type:'ansiklopedi',t:'Badem',sub:'Kuruyemiş · Prunus dulcis',href:'ansiklopedi-detay-v1.html',ico:'fa-seedling'},
-    {type:'ansiklopedi',t:'Malzeme Ansiklopedisi',sub:'39 malzeme · A–Z dizin',href:'ansiklopedi-v1.html',ico:'fa-book-open'},
-    /* Sözlük (14 + dizin) → sozluk-v1#t-<slug> (ikon-tile, yabancı karşılık alt başlık) */
-    {type:'sozluk',t:'Benmari',sub:'bain-marie · su banyosunda eritme',href:'sozluk-v1.html#t-benmari',ico:'fa-book'},
-    {type:'sozluk',t:'Beşamel',sub:'temel beyaz sos',href:'sozluk-v1.html#t-besamel',ico:'fa-book'},
-    {type:'sozluk',t:'Blanşe Etmek',sub:'blanching · ön haşlama',href:'sozluk-v1.html#t-blanse-etmek',ico:'fa-book'},
-    {type:'sozluk',t:'Flambe',sub:'flamber · alevleme',href:'sozluk-v1.html#t-flambe',ico:'fa-book'},
-    {type:'sozluk',t:'Jülyen',sub:'julienne · kibrit çöpü doğrama',href:'sozluk-v1.html#t-julyen',ico:'fa-book'},
-    {type:'sozluk',t:'Karamelize Etmek',sub:'şekerin altın dönüşümü',href:'sozluk-v1.html#t-karamelize-etmek',ico:'fa-book'},
-    {type:'sozluk',t:'Marine Etmek',sub:'terbiyede bekletme',href:'sozluk-v1.html#t-marine-etmek',ico:'fa-book'},
-    {type:'sozluk',t:'Meyane',sub:'roux · un-yağ kıvam temeli',href:'sozluk-v1.html#t-meyane',ico:'fa-book'},
-    {type:'sozluk',t:'Mühürlemek',sub:'searing · yüzey kapatma',href:'sozluk-v1.html#t-muhurlemek',ico:'fa-book'},
-    {type:'sozluk',t:'Pane',sub:'galeta kaplamada kızartma',href:'sozluk-v1.html#t-pane',ico:'fa-book'},
-    {type:'sozluk',t:'Redüksiyon',sub:'reduction · sos koyulaştırma',href:'sozluk-v1.html#t-reduksiyon',ico:'fa-book'},
-    {type:'sozluk',t:'Sote',sub:'sauté · az yağda hızlı çevirme',href:'sozluk-v1.html#t-sote',ico:'fa-book'},
-    {type:'sozluk',t:'Şoklamak',sub:'buzlu suda durdurma',href:'sozluk-v1.html#t-soklamak',ico:'fa-book'},
-    {type:'sozluk',t:'Zeste',sub:'narenciye kabuğu rendesi',href:'sozluk-v1.html#t-zeste',ico:'fa-book'},
-    {type:'sozluk',t:'Mutfak Sözlüğü',sub:'480 terim · harfe/kategoriye göre',href:'sozluk-v1.html',ico:'fa-spell-check'},
-    /* Eğitimler (6) → akademi#setler · "Örnek" rozeti (canlı sayfa YOK; preview iskelet) */
-    {type:'egitim',t:'Sıfırdan Mutfak: Temel Teknikler Atölyesi',sub:'Şef Mehmet Aydın · Temel Mutfak',href:'akademi-v1.html#setler',ico:'fa-circle-play'},
-    {type:'egitim',t:'Mayalı Hamurun Sırrı: Ekmek & Fırın',sub:'Şef Burak Demirtaş · Ekmek & Hamur',href:'akademi-v1.html#setler',ico:'fa-circle-play'},
-    {type:'egitim',t:'Et & Izgara Teknikleri: Dereceyi Tutturmak',sub:'Şef Mehmet Aydın · Et & Izgara',href:'akademi-v1.html#setler',ico:'fa-circle-play'},
-    {type:'egitim',t:'Pastane Sanatı: Pasta, Tart & Tatlı',sub:'Pastane Şefi Selin Korkmaz · Pasta & Tatlı',href:'akademi-v1.html#setler',ico:'fa-circle-play'},
-    {type:'egitim',t:'Dünya Mutfakları: Akdeniz’den Uzakdoğu’ya',sub:'Şef Ayşe Yıldız · Dünya Mutfakları',href:'akademi-v1.html#setler',ico:'fa-circle-play'},
-    {type:'egitim',t:'Profesyonel Sunum & Tabak Tasarımı',sub:'Pastane Şefi Selin Korkmaz · Profesyonel Gelişim',href:'akademi-v1.html#setler',ico:'fa-circle-play'}
-  ];
-
-  var TYPE={
-    giris:{lbl:'Konu',ico:'fa-utensils'},
-    ansiklopedi:{lbl:'Malzeme',ico:'fa-carrot'},
-    sozluk:{lbl:'Terim',ico:'fa-book'},
-    egitim:{lbl:'Örnek',ico:'fa-graduation-cap'}
-  };
-  var TABS=['tumu','giris','ansiklopedi','sozluk'];   // egitim AYRI SEKME DEĞİL — yalnız Tümü'de "Örnek" rozetiyle
-
-  var trMap={'ı':'i','İ':'i','I':'i','Ş':'s','ş':'s','Ğ':'g','ğ':'g','Ü':'u','ü':'u','Ö':'o','ö':'o','Ç':'c','ç':'c','â':'a','î':'i','û':'u'};
-  function norm(s){return (s||'').replace(/[ıİIŞşĞğÜüÖöÇçâîû]/g,function(m){return trMap[m]||m;}).toLowerCase().replace(/\s+/g,' ').trim();}
-  function esc(s){return (s||'').replace(/[&<>"]/g,function(m){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m];});}
-  function hi(text,qn){
-    if(!qn)return esc(text);
-    var tn=norm(text),i=tn.indexOf(qn);
-    if(i<0)return esc(text);
-    return esc(text.slice(0,i))+'<mark>'+esc(text.slice(i,i+qn.length))+'</mark>'+esc(text.slice(i+qn.length));
-  }
-  function tmeta(t){return TYPE[t]||{lbl:'',ico:'fa-magnifying-glass'};}
-
-  /* ---- sonuç kartı (POOL-driven) ---- */
-  function card(r){
-    var m=tmeta(r.type);
-    var ornek=r.type==='egitim';
-    var badge='<span class="fs-badge'+(ornek?' is-ornek':'')+'"><i class="fa-solid '+m.ico+'"></i> '+m.lbl+'</span>';
-    var head=r.img
-      ? '<div class="fs-media" style="background-image:url(\''+r.img+'\')">'+badge+'</div>'
-      : '<div class="fs-tile'+(ornek?' tile-ornek':'')+'"><i class="fa-solid '+(r.ico||m.ico)+'"></i>'+badge+'</div>';
-    return '<a class="fs-card" href="'+r.href+'">'+head
-      +'<div class="fs-cbody"><h4>'+esc(r.t)+'</h4><p>'+esc(r.sub)+'</p>'
-      +'<span class="fs-cgo">İncele <i class="fa-solid fa-arrow-right"></i></span></div></a>';
-  }
-
-  var panes={}, cnts={};
-  TABS.forEach(function(n){
-    panes[n]=document.querySelector('.fs-pane[data-pane="'+n+'"]');
-    cnts[n]=document.querySelector('.cnt[data-cnt="'+n+'"]');
-  });
-  var tabbar=document.getElementById('fsTabbar');
-  var note=document.getElementById('fsCntNote');
-  var emptyEl=document.getElementById('fsEmpty');
-  var popEl=document.getElementById('fsPop');
-
-  function renderResults(q){
-    var qn=q?norm(q):'';
-    var matched=qn?POOL.filter(function(r){return norm(r.t).indexOf(qn)>=0||norm(r.sub).indexOf(qn)>=0;}):POOL.slice();
-    var by={tumu:matched,giris:[],ansiklopedi:[],sozluk:[]};
-    matched.forEach(function(r){if(by[r.type])by[r.type].push(r);});   // egitim: bucket yok → yalnız Tümü'de görünür
-    TABS.forEach(function(n){
-      var arr=by[n];
-      if(cnts[n])cnts[n].textContent=arr.length;
-      if(!panes[n])return;
-      if(arr.length){
-        panes[n].innerHTML='<div class="fs-grid">'+arr.map(card).join('')+'</div>';
-      }else{
-        panes[n].innerHTML='<p class="fs-cnt-note" style="margin:6px 0 0">Bu türde eşleşme yok.</p>';
-      }
-    });
-    return matched.length;
-  }
-
-  var tabEls=document.querySelectorAll('#fsTabbar .dt');
-  function activate(name){
-    tabEls.forEach(function(t){t.classList.toggle('active',t.getAttribute('data-tab')===name);});
-    TABS.forEach(function(n){if(panes[n])panes[n].hidden=n!==name;});
-  }
-  tabEls.forEach(function(t){
-    t.addEventListener('click',function(){
-      var name=t.getAttribute('data-tab');
-      activate(name);
-      var uu=new URLSearchParams(location.search);
-      if(name==='tumu')uu.delete('tab');else uu.set('tab',name);
-      history.replaceState(null,'',location.pathname+(uu.toString()?'?'+uu.toString():''));
-    });
-  });
-
-  var input=document.getElementById('fsInput');
-  var titleEl=document.getElementById('fsTitle');
-  var leadEl=document.getElementById('fsLead');
-  var sum=document.getElementById('fsSum');
-
-  /* ---- SON ARAMALAR: gerçek localStorage geçmişi (uydurma YOK; boşsa sadece Popüler) ---- */
-  var RKEY='dm_campus_recent';
-  function readRecentLS(){try{var r=JSON.parse(localStorage.getItem(RKEY)||'[]');return Array.isArray(r)?r.filter(function(x){return x&&x.q;}):[];}catch(e){return [];}}
-  function writeRecent(qq){
-    qq=(qq||'').trim();if(!qq)return;
-    try{
-      var arr=readRecentLS().filter(function(x){return norm(x.q)!==norm(qq);});
-      arr.unshift({q:qq,t:Date.now()});
-      localStorage.setItem(RKEY,JSON.stringify(arr.slice(0,6)));
-    }catch(e){}
-  }
-  function relTime(t){var d=Date.now()-(t||0),day=86400000;if(d<3600000)return 'az önce';if(d<day)return 'bugün';if(d<2*day)return 'dün';return Math.floor(d/day)+' gün önce';}
-  function renderRecent(){
-    var col=document.getElementById('fsRecentCol'),boxr=document.getElementById('fsRecent');
-    if(!boxr)return;
-    var arr=readRecentLS();
-    if(!arr.length){if(col)col.style.display='none';boxr.innerHTML='';return;}
-    if(col)col.style.display='';
-    boxr.innerHTML=arr.map(function(r){
-      return '<div class="fs-rrow" data-q="'+esc(r.q)+'"><i class="fa-solid fa-clock-rotate-left" aria-hidden="true"></i><span class="term">'+esc(r.q)+'</span><span class="cnt">'+relTime(r.t)+'</span><i class="fa-solid fa-arrow-right go" aria-hidden="true"></i></div>';
-    }).join('');
-  }
-  renderRecent();
-
-  /* ---- durum makinesi ---- */
-  var p=new URLSearchParams(location.search);
-  var q=p.get('q');
-  var tab=p.get('tab')||'tumu';
-  if(q){
-    input.value=q;
-    var total=renderResults(q);
-    if(total>0){
-      titleEl.innerHTML='&ldquo;<span class="q"></span>&rdquo; için sonuçlar';
-      titleEl.querySelector('.q').textContent=q;
-      leadEl.classList.add('is-off');
-      sum.innerHTML='<b>'+total+' sonuç</b> bulundu · <span class="q">'+esc(q)+'</span> için.';
-      note.innerHTML='Aradığın: <b>'+esc(q)+'</b> — türlere göz atmak için sekmeleri kullan.';
-      popEl.classList.add('is-off');
-      activate(tab);
-    }else{
-      titleEl.innerHTML='&ldquo;<span class="q"></span>&rdquo; için sonuç yok';
-      titleEl.querySelector('.q').textContent=q;
-      leadEl.classList.add('is-off');
-      sum.innerHTML='<b>0 sonuç</b> — yazımı kontrol et ya da önerilere göz at.';
-      tabbar.classList.add('is-off');
-      note.classList.add('is-off');
-      TABS.forEach(function(n){if(panes[n])panes[n].hidden=true;});
-      document.getElementById('fsEmptyQ').textContent=q;
-      var ec=document.getElementById('fsEmptyChips');
-      document.querySelectorAll('#fsPopChips .chip').forEach(function(c){
-        var b=document.createElement('button');b.type='button';b.className='chip';
-        b.setAttribute('data-q',c.getAttribute('data-q'));b.textContent=c.textContent;
-        ec.appendChild(b);
-      });
-      emptyEl.classList.add('show');
-    }
-    document.title='DadaCampus — Arama: '+q;
-  }else{
-    /* arama-first (Gastro paritesi): sorgu yokken kart yok — popüler + son aramalar */
-    sum.innerHTML='<span style="color:#cadfe2">Mutfağa giriş konusu, malzeme ya da mutfak terimi — aramak için yukarıya yaz.</span>';
-    tabbar.classList.add('is-off');
-    document.getElementById('fsResults').classList.add('is-off');
-    note.classList.add('is-off');
-    document.title='DadaCampus — Arama';
-  }
-
-  /* ===================================================================== AUTOCOMPLETE ===================================================================== */
-  (function(){
-    var box=document.getElementById('fsForm');
-    var ac=document.getElementById('fsAc');
-    var list=document.getElementById('fsAcList');
-    var status=document.getElementById('fsAcStatus');
-    if(!box||!ac||!list||!input)return;
-
-    function readPopular(){var out=[];document.querySelectorAll('#fsPop #fsPopChips .chip[data-q]').forEach(function(c){out.push(c.getAttribute('data-q'));});return out.slice(0,8);}
-    function readRecent(){return readRecentLS().map(function(r){return r.q;});}
-
-    var items=[],active=-1;
-    function render(groups){
-      items=[];active=-1;
-      var html='';
-      groups.forEach(function(g){
-        if(!g.rows.length)return;
-        html+='<div class="ac-grp" aria-hidden="true"><i class="fa-solid '+g.icon+'"></i>'+esc(g.label);
-        if(g.clear)html+='<button type="button" class="ac-clear" data-clear="1">Temizle</button>';
-        html+='</div>';
-        g.rows.forEach(function(r){
-          var idx=items.length;items.push(r);
-          var m=tmeta(r.type);
-          var icoStyle=r.img?' style="background-image:url(\''+r.img+'\');border-color:transparent"':'';
-          var icoInner=r.img?'':'<i class="fa-solid '+(r.icon||r.ico||m.ico)+'"></i>';
-          var badge=(r.type&&TYPE[r.type])?'<span class="ac-badge"><i class="fa-solid '+m.ico+'"></i>'+m.lbl+'</span>':'';
-          var sub=r.sub?'<span class="ac-sub">'+esc(r.sub)+'</span>':'';
-          html+='<div class="ac-opt'+(r.cls||'')+'" role="option" id="fs-opt-'+idx+'" data-type="'+(r.type||'q')+'" data-idx="'+idx+'" aria-selected="false">'
-              +'<span class="ac-ico"'+icoStyle+'>'+icoInner+'</span>'
-              +'<span class="ac-main"><span class="ac-ttl">'+(r.html||esc(r.t))+'</span>'+sub+'</span>'+badge+'</div>';
-        });
-      });
-      if(!groups.some(function(g){return g.rows.length;})){
-        html='<div class="ac-none">Eşleşen öneri yok — yazmaya devam et ya da <b>Enter</b> ile ara.</div>';
-      }
-      list.innerHTML=html;
-    }
-    function buildQuery(qq){
-      var qn=norm(qq);
-      var matched=POOL.filter(function(r){return norm(r.t).indexOf(qn)>=0||(r.sub&&norm(r.sub).indexOf(qn)>=0);});
-      matched.sort(function(a,b){var as=norm(a.t).indexOf(qn)===0?0:1,bs=norm(b.t).indexOf(qn)===0?0:1;return as-bs;});
-      matched=matched.slice(0,7).map(function(r){return {type:r.type,t:r.t,html:hi(r.t,qn),sub:r.sub,img:r.img,ico:r.ico,href:r.href,q:r.t};});
-      var rows=[{type:'q',cls:' ac-query',icon:'fa-magnifying-glass',t:qq,html:'<b>'+esc(qq)+'</b> için ara',sub:'Tüm sonuçları gör',q:qq}];
-      render([{label:'Arama',icon:'fa-magnifying-glass',rows:rows},{label:'Öneriler',icon:'fa-wand-magic-sparkles',rows:matched}]);
-    }
-    function buildDefault(){
-      var recent=readRecent().map(function(qq){return {type:'q',icon:'fa-clock-rotate-left',t:qq,q:qq};});
-      var pop=readPopular().map(function(qq){return {type:'q',icon:'fa-fire',t:qq,q:qq};});
-      render([{label:'Son aramalar',icon:'fa-clock-rotate-left',clear:recent.length>0,rows:recent},{label:'Popüler öneriler',icon:'fa-fire',rows:pop}]);
-    }
-    function announce(){status.textContent=items.length?(items.length+' öneri listelendi.'):'Öneri yok.';}
-    function open(){box.classList.add('ac-open');input.setAttribute('aria-expanded','true');announce();}
-    function close(){box.classList.remove('ac-open');input.setAttribute('aria-expanded','false');input.setAttribute('aria-activedescendant','');setActive(-1);}
-    function isOpen(){return box.classList.contains('ac-open');}
-    function setActive(i){
-      var opts=list.querySelectorAll('.ac-opt');
-      if(active>=0&&opts[active]){opts[active].classList.remove('is-active');opts[active].setAttribute('aria-selected','false');}
-      active=i;
-      if(i>=0&&opts[i]){opts[i].classList.add('is-active');opts[i].setAttribute('aria-selected','true');input.setAttribute('aria-activedescendant',opts[i].id);opts[i].scrollIntoView({block:'nearest'});}
-      else{input.setAttribute('aria-activedescendant','');}
-    }
-    function go(qq){location.href='arama-campus-v1.html'+(qq?'?q='+encodeURIComponent(qq):'');}
-    function choose(i){var r=items[i];if(!r)return;var qq=r.q||r.t;writeRecent(qq);if(r.href){location.href=r.href;return;}go(qq);}
-    var deb;
-    function onInput(){clearTimeout(deb);deb=setTimeout(function(){var v=input.value.trim();if(v.length>=1)buildQuery(v);else buildDefault();open();},150);}
-    input.addEventListener('input',onInput);
-    input.addEventListener('focus',function(){var v=input.value.trim();if(v.length>=1)buildQuery(v);else buildDefault();open();});
-    input.addEventListener('keydown',function(e){
-      var n=items.length;
-      if(e.key==='ArrowDown'){e.preventDefault();if(!isOpen()){onInput();return;}if(n)setActive((active+1)%n);}
-      else if(e.key==='ArrowUp'){e.preventDefault();if(n)setActive(active<=0?n-1:active-1);}
-      else if(e.key==='Enter'){if(isOpen()&&active>=0){e.preventDefault();choose(active);}}
-      else if(e.key==='Escape'){if(isOpen()){e.preventDefault();close();}}
-      else if(e.key==='Home'){if(isOpen()&&n){e.preventDefault();setActive(0);}}
-      else if(e.key==='End'){if(isOpen()&&n){e.preventDefault();setActive(n-1);}}
-    });
-    list.addEventListener('mousemove',function(e){var opt=e.target.closest('.ac-opt');if(!opt)return;var i=+opt.getAttribute('data-idx');if(i!==active)setActive(i);});
-    list.addEventListener('mousedown',function(e){
-      if(e.target.closest('[data-clear]')){e.preventDefault();try{localStorage.removeItem(RKEY);}catch(e2){}renderRecent();buildDefault();return;}
-      var opt=e.target.closest('.ac-opt');if(!opt)return;e.preventDefault();choose(+opt.getAttribute('data-idx'));
-    });
-    document.addEventListener('mousedown',function(e){if(!box.contains(e.target))close();});
-
-    var dp=new URLSearchParams(location.search);
-    if(dp.get('demo')==='1'||location.hash==='#demo'){var dq=dp.get('q');if(dq){input.value=dq;buildQuery(dq);}else buildDefault();open();var di=parseInt(dp.get('ai'),10);if(!isNaN(di))setActive(di);}
-  })();
-
-  /* form gönderimi + çip / son arama köprüleri */
-  document.getElementById('fsForm').addEventListener('submit',function(e){
-    e.preventDefault();
-    var v=input.value.trim();
-    if(v)writeRecent(v);
-    location.href='arama-campus-v1.html'+(v?'?q='+encodeURIComponent(v):'');
-  });
-  document.addEventListener('click',function(e){
-    var c=e.target.closest('[data-q]');
-    if(c&&!c.closest('.ac-opt')){var dq=c.getAttribute('data-q');writeRecent(dq);location.href='arama-campus-v1.html?q='+encodeURIComponent(dq);}
-  });
-})();
-</script>
 
 <!-- ===== LG-GATE (giriş kapısı) — logged-out mikro-aksiyon (yorum/kaydet/takip) =====
      Markup </main> SONRASINA (lessons: fixed overlay page-main stacking context'ine girmez).
@@ -1920,28 +2089,44 @@ html.reveal-ready .reveal.in{opacity:1;transform:none}
           <a href="#" aria-label="LinkedIn"><i class="fa-brands fa-linkedin-in"></i></a>
         </div>
       </div>
+      <!-- §4.7 FOOTER YAPISI — 6 gerçek href="#" borcu burada kapandı -->
       <div class="foot-col">
         <h5>DadaCampus</h5>
-        <a href="#">Eğitim Setleri</a>
-        <a href="#">Eğitmenler</a>
-        <a href="#">Sertifika Programları</a>
+        <a href="dadacampus-egitimler-v1.html">Eğitimler</a>
+        <a href="dadacampus-programlar-v1.html">Programlar</a>
+        <a href="dadacampus-kurumlar-v1.html">Kurumlar</a>
+        <a href="akademi-v1.html#egitmenler">Eğitmenler</a>
       </div>
       <div class="foot-col">
-        <h5>Hızlı Erişim</h5>
+        <h5>Kurumsal</h5>
         <a href="hakkimizda-v1.html">Hakkımızda</a>
+        <a href="dadacampus-yardim-v1.html?konu=akademik-yaklasim">Akademik Yaklaşım</a>
+        <a href="dadacampus-yardim-v1.html?konu=kalite-sureci">Kalite Süreci</a>
         <a href="hakkimizda-v1.html#kunye">Künye</a>
-        <a href="sss-v1.html">S.S.S.</a>
       </div>
       <div class="foot-col">
-        <h5>İletişim</h5>
-        <a href="iletisim-v1.html">Bize Ulaşın</a>
-        <a href="#" onclick="document.getElementById('fbTab').click();return false;">Öneri ve Şikayet</a>
+        <h5>Destek</h5>
+        <a href="dadacampus-yardim-v1.html">Yardım Merkezi</a>
+        <a href="dadacampus-yardim-v1.html#sss">SSS</a>
+        <a href="iletisim-v1.html">İletişim</a>
+        <a href="#" onclick="document.getElementById('fbTab').click();return false;">Görüş Bildir</a>
       </div>
       <div class="foot-col">
         <h5>İş Birliği</h5>
-        <a href="reklam-ver-v1.html">Reklam Vermek İçin</a>
-        <a href="reklam-ver-v1.html">Sponsorlar ve Partnerler</a>
+        <a href="dadacampus-kurumlar-v1.html#basvuru">İş Birliği Başvurusu</a>
+        <a href="dadacampus-yardim-v1.html?konu=egitmen">Eğitmen Başvurusu</a>
+        <a href="giris-v1.html?tab=giris">Kurum Portalı</a>
+        <a href="dadacampus-sertifika-dogrula-v1.html">Sertifika Doğrula</a>
       </div>
+    </div>
+    <div class="foot-legal">
+      <a href="yasal-v1.html?metin=kullanim">Kullanım Koşulları</a><span class="sep"></span>
+      <a href="yasal-v1.html?metin=cerez">Gizlilik ve Çerez</a><span class="sep"></span>
+      <a href="yasal-v1.html?metin=kvkk">KVKK</a><span class="sep"></span>
+      <a href="yasal-v1.html?metin=aydinlatma">Aydınlatma Metni</a><span class="sep"></span>
+      <a href="yasal-v1.html?metin=uyelik">Üyelik Sözleşmesi</a><span class="sep"></span>
+      <a href="yasal-v1.html?metin=mesafeli">Mesafeli Satış</a><span class="sep"></span>
+      <a href="yasal-v1.html?metin=iade">İptal, İade ve Erteleme</a>
     </div>
     <div class="foot-bottom">
       <span class="fb-left">© 2026 <b><span class="bd">Dada</span><span class="sf">Campus</span></b> · Tüm hakları saklıdır.</span>
@@ -1979,9 +2164,9 @@ html.reveal-ready .reveal.in{opacity:1;transform:none}
     </div>
     <div class="mp-bubble" id="mpBubble">Bugün sana nasıl yardımcı olayım?</div>
     <div class="mp-row">
-      <a class="mp-opt" href="#">Eğitimler</a>
-      <a class="mp-opt" href="#">Eğitmenler</a>
-      <a class="mp-opt" href="#">Sertifika</a>
+      <a class="mp-opt" href="dadacampus-egitimler-v1.html">Eğitimler</a>
+      <a class="mp-opt" href="dadacampus-programlar-v1.html">Programlar</a>
+      <a class="mp-opt" href="dadacampus-kurumlar-v1.html">Kurumlar</a>
       <a class="mp-opt w-gastro" href="anasayfa-portal-v3a.html"><span class="bd">Dada</span><span class="sf">Gastro</span></a>
     </div>
   </div>
@@ -2036,7 +2221,19 @@ html.reveal-ready .reveal.in{opacity:1;transform:none}
     if(u.level)b.setAttribute('data-level',String(u.level));
   }
   var bnA=document.getElementById('bnAccount');   // M6 — bottom-nav Hesap hedefi
-  if(bnA)bnA.setAttribute('href', authed?'mutfak-defteri-v1.html':'giris-v1.html');
+  if(bnA)bnA.setAttribute('href', authed?'hesabim-v1.html':'giris-v1.html');
+  // Kampüsüm KİŞİSEL alandır: giriş yapmamış kullanıcı önce girişe gider (§12).
+  // Faz 1'de dadacampus-kampusum-v1.html HENÜZ YOK → yalnız demo ?auth=1 durumunda hedeflenir.
+  ['bnKampusum','hdrKampusum'].forEach(function(id){
+    var el=document.getElementById(id);
+    if(el&&!authed)el.setAttribute('href','giris-v1.html?tab=giris');
+  });
+  // Rol Değiştirici etiketi: aktif rolü hesap menüsünde göster (§3.3)
+  var rl=document.getElementById('acctRoleLbl');
+  if(rl&&authed){
+    var AD={kullanici:'Öğrenci',antrenor:'Eğitmen',diyetisyen:'Değerlendirici',isletme:'Kurum Koordinatörü'};
+    rl.textContent=AD[u.roles[u.roles.length-1]]||'Öğrenci';
+  }
 })();
 
 if(location.search.indexOf('dd=1')>-1){document.querySelector('.nav-item').classList.add('open');var _l=document.getElementById('tbLang');if(_l)_l.classList.add('open');}
@@ -2046,7 +2243,7 @@ if(location.search.indexOf('drawer=1')>-1){window.addEventListener('DOMContentLo
 // ~60px scroll sonrası katı (v3a davranışı; ?hdr=solid ile yine zorla katı)
 (function(){
   var header=document.querySelector('.header');
-  var heroMode=false;                                  // arama sayfası: solid header (içerik sayfası davranışı)
+  var heroMode=true;                                   // full-viewport hero — header şeffaf, ~60px scroll'da katı
   var forceSolid=location.search.indexOf('hdr=solid')>-1;
   if(!heroMode||forceSolid)return;                     // katı kal — at-top hiç eklenmez
   function onScroll(){ if(window.scrollY<60){header.classList.add('at-top');} else {header.classList.remove('at-top');} }
@@ -2324,50 +2521,40 @@ document.addEventListener('click',function(e){
   document.getElementById('cookieReject').addEventListener('click',function(){dismiss('rejected');});
 })();
 
-/* ===== SAYFA JS — sayfa-spesifik script BU İŞARETİN ALTINA eklenir ===== */
-
-/* ===== SAYFA JS — AKADEMİ: ilgi formu → teşekkür (?sent=1) ===== */
-(function(){
-  var form=document.getElementById('akForm');
-  var success=document.getElementById('akSuccess');
-  if(!form)return;
-  function showSent(push){
-    form.style.display='none';
-    success.classList.add('show');
-    if(push!==false){ try{history.pushState({sent:1},'','?sent=1');}catch(e){} }
-  }
-  function showForm(){
-    form.style.display='';
-    success.classList.remove('show');
-  }
-  form.addEventListener('submit',function(e){
-    e.preventDefault();
-    showSent();
-    document.getElementById('kayit').scrollIntoView({behavior:'smooth'});
-  });
-  window.addEventListener('popstate',function(){
-    if(location.search.indexOf('sent=1')>-1) showSent(false); else showForm();
-  });
-  if(new URLSearchParams(location.search).get('sent')==='1'){
-    showSent(false);
-    window.addEventListener('load',function(){
-      document.getElementById('kayit').scrollIntoView();
-    });
-  }
-})();
-
-/* ===== SAYFA JS — AKADEMİ: SSS akordeon (tek-açık) ===== */
-document.querySelectorAll('.faq-item .faq-q').forEach(function(q){
-  q.addEventListener('click',function(){
-    var item=q.parentElement;
-    var wasOpen=item.classList.contains('open');
-    document.querySelectorAll('.faq-item.open').forEach(function(o){o.classList.remove('open');});
-    if(!wasOpen)item.classList.add('open');
+/* ===== KABUK JS — SSS/akordeon (tek-açık, DELEGASYON) =====
+   🔴 Neden delegasyon: üretilen sayfalarda içerik JS'i bu blokTAN SONRA çalışır;
+   parse anında querySelectorAll ile bağlamak sonradan render edilen maddeleri
+   ıskalıyordu (Faz 1'de yakalandı). document üzerinde tek dinleyici → statik ve
+   dinamik .faq-item birlikte çalışır. Kapsam bir .faq-list ile sınırlı: aynı
+   sayfada iki ayrı akordeon listesi birbirini kapatmaz. */
+document.addEventListener('click',function(ev){
+  var q=ev.target.closest&&ev.target.closest('.faq-item .faq-q');
+  if(!q)return;
+  var item=q.parentElement;
+  var kapsam=item.closest('.faq-list')||document;
+  var wasOpen=item.classList.contains('open');
+  kapsam.querySelectorAll('.faq-item.open').forEach(function(o){o.classList.remove('open');});
+  if(!wasOpen)item.classList.add('open');
+  /* §23.3 — durum ekran okuyucuya da bildirilir; renk/ok tek başına yetmez */
+  kapsam.querySelectorAll('.faq-item .faq-q[aria-expanded]').forEach(function(b){
+    b.setAttribute('aria-expanded', b.parentElement.classList.contains('open')?'true':'false');
   });
 });
 
-/* NOT: header büyüteci (hdrSearchBtn) bu sayfada zaten arama-campus'a inline
-   onclick ile bağlı — ayrı handler gerekmez (arama sayfasının kendisi). */
+
+/* ===== KABUK JS — header arama → arama-campus-v1.html (crsSearchInput q'yu ?q= taşı) ===== */
+(function(){
+  var btn=document.getElementById('hdrSearchBtn');
+  if(!btn)return;
+  btn.addEventListener('click',function(){
+    /* sayfa-içi eğitim arama kutusunda q varsa onu taşı */
+    var inline=document.getElementById('crsSearchInput');
+    var q=inline&&inline.value.trim();
+    var url='arama-campus-v1.html';
+    if(q) url+='?q='+encodeURIComponent(q);
+    location.href=url;
+  });
+})();
 
 </script>
 <script>
@@ -2395,6 +2582,8 @@ window.__bottomStrips=window.__bottomStrips||[];
   document.addEventListener('click',function(){setTimeout(update,60);},true);
   window.__bnUpdate=update;update();
 })();
+</script>
+<script>
 </script>
 <script>
 /* ===== Faz3 — işletme-sahibi rolü (has-business): is-auth kardeşi =====
@@ -2463,6 +2652,397 @@ window.__bottomStrips=window.__bottomStrips||[];
   window.addEventListener('scroll',upd,{passive:true});
   window.addEventListener('resize',upd);
   upd();
+})();
+</script>
+
+<script>
+/* ===== SAYFA JS — arama-campus-v1.html ===== */
+/* ============================================================================
+   DadaCampus GLOBAL ARAMA (§17.1) — POOL-driven motor
+   ----------------------------------------------------------------------------
+   Motor anatomisi Fit/Diet arama pilotundan devralındı; DEĞİŞEN: havuz artık
+   `campus-data.js`'ten üretiliyor ve her sonuç KENDİ detay slug'ına gidiyor.
+   Eskiden 6 eğitim sonucu `akademi-v1.html#setler`e çöküyordu (docs/lessons.md
+   §8 "#setler sendromu").
+
+   Sonuç türleri (§17.1): Eğitim · Program · Atölye · Etkinlik · Eğitmen ·
+   Kurum · Rehber (Konu / Malzeme / Terim). Rehber içerikleri gerçek DadaGastro
+   rehber sayfalarıdır; uydurma hedef yok.
+   ========================================================================= */
+(function(){
+  var D = window.DC;
+
+  /* ---- TÜR TANIMLARI: etiket + ikon + hangi sekmeye düşer ---------------- */
+  var TYPE={
+    egitim:      {lbl:'Eğitim',    ico:'fa-clapperboard',      tab:'egitim'},
+    program:     {lbl:'Program',   ico:'fa-diagram-project',   tab:'program'},
+    atolye:      {lbl:'Atölye',    ico:'fa-video',             tab:'oturum'},
+    etkinlik:    {lbl:'Etkinlik',  ico:'fa-users',             tab:'oturum'},
+    egitmen:     {lbl:'Eğitmen',   ico:'fa-chalkboard-user',   tab:'egitmen'},
+    kurum:       {lbl:'Kurum',     ico:'fa-building-columns',  tab:'kurum'},
+    giris:       {lbl:'Konu',      ico:'fa-utensils',          tab:'rehber'},
+    ansiklopedi: {lbl:'Malzeme',   ico:'fa-carrot',            tab:'rehber'},
+    sozluk:      {lbl:'Terim',     ico:'fa-book',              tab:'rehber'},
+    yardim:      {lbl:'Yardım',    ico:'fa-circle-question',   tab:'rehber'}
+  };
+  var TABS=['tumu','egitim','program','oturum','egitmen','kurum','rehber'];
+
+  /* ---- REHBER HAVUZU: gerçek DadaGastro rehber sayfaları (grep-teyitli) --- */
+  var G='mutfaga-giris-detay-v1.html?konu=';
+  var REHBER=[
+    {type:'giris',t:'Mutfak Düzeni ve Çalışma Alanı',sub:'Tezgah kurulumu · iş akışı',href:G+'mutfak-duzeni-ve-calisma-alani',ico:'fa-kitchen-set'},
+    {type:'giris',t:'Gıda Güvenliği ve Hijyen Kuralları',sub:'Saklama · çapraz bulaşma',href:G+'gida-guvenligi-ve-hijyen-kurallari',ico:'fa-shield-halved'},
+    {type:'giris',t:'Mutfakta Kullanılan Temel Araçlar',sub:'Alet-edevat tanıtımı',href:G+'mutfakta-kullanilan-temel-araclar',ico:'fa-blender'},
+    {type:'giris',t:'Temel Bıçak Türleri ve Kullanımları',sub:'Şef bıçağı · doğrama bıçağı',href:G+'temel-bicak-turleri-ve-kullanimlari',ico:'fa-utensils'},
+    {type:'giris',t:'Doğrama Teknikleri',sub:'Jülyen · brunoise · dilim',href:G+'dograma-teknikleri',ico:'fa-scissors'},
+    {type:'giris',t:'Temel Pişirme Yöntemleri',sub:'Haşlama · buğulama · kızartma',href:G+'temel-pisirme-yontemleri',ico:'fa-fire-burner'},
+    {type:'giris',t:'Tavada Pişirme Teknikleri',sub:'Soteleme · mühürleme',href:G+'tavada-pisirme-teknikleri',ico:'fa-fire'},
+    {type:'giris',t:'Fırında Pişirme Teknikleri',sub:'Isı · süre · konum',href:G+'firinda-pisirme-teknikleri',ico:'fa-temperature-arrow-up'},
+    {type:'giris',t:'Marine Etme Temelleri',sub:'Terbiye · bekletme',href:G+'marine-etme-temelleri',ico:'fa-jar'},
+    {type:'giris',t:'Sos ve Karışım Hazırlıkları',sub:'Temel soslar · emülsiyon',href:G+'sos-ve-karisim-hazirliklari',ico:'fa-mortar-pestle'},
+    {type:'giris',t:'Baharatların Doğru Kullanımı',sub:'Aroma eşleştirme · zamanlama',href:G+'baharatlarin-dogru-kullanimi',ico:'fa-pepper-hot'},
+    {type:'giris',t:'Temel Tabak Süsleme Teknikleri',sub:'Sunum · renk · doku',href:G+'temel-tabak-susleme-teknikleri',ico:'fa-plate-wheat'},
+    {type:'giris',t:'Mutfağa Giriş — Tüm Konular',sub:'Konu dizini · adım adım yol',href:'mutfaga-giris-liste-v1.html',ico:'fa-list-check'},
+    {type:'ansiklopedi',t:'Ispanak',sub:'Sebze · Spinacia oleracea',href:'ansiklopedi-detay-v1.html',ico:'fa-leaf'},
+    {type:'ansiklopedi',t:'Avokado',sub:'Meyve · Persea americana',href:'ansiklopedi-detay-v1.html',ico:'fa-apple-whole'},
+    {type:'ansiklopedi',t:'Barbunya',sub:'Bakliyat · Phaseolus vulgaris',href:'ansiklopedi-detay-v1.html',ico:'fa-seedling'},
+    {type:'ansiklopedi',t:'Kırmızı Mercimek',sub:'Bakliyat · Lens culinaris',href:'ansiklopedi-detay-v1.html',ico:'fa-bowl-rice'},
+    {type:'ansiklopedi',t:'Kinoa',sub:'Tahıl · Chenopodium quinoa',href:'ansiklopedi-detay-v1.html',ico:'fa-wheat-awn'},
+    {type:'ansiklopedi',t:'Zencefil',sub:'Kök baharat · Zingiber officinale',href:'ansiklopedi-detay-v1.html',ico:'fa-mortar-pestle'},
+    {type:'ansiklopedi',t:'Hamsi',sub:'Balık · Engraulis encrasicolus',href:'ansiklopedi-detay-v1.html',ico:'fa-fish'},
+    {type:'ansiklopedi',t:'Levrek',sub:'Balık · Dicentrarchus labrax',href:'ansiklopedi-detay-v1.html',ico:'fa-fish'},
+    {type:'ansiklopedi',t:'Yeşil Çay',sub:'Çay · Camellia sinensis',href:'ansiklopedi-detay-v1.html',ico:'fa-mug-hot'},
+    {type:'ansiklopedi',t:'Bitter Çikolata',sub:'Çikolata · Theobroma cacao',href:'ansiklopedi-detay-v1.html',ico:'fa-cookie-bite'},
+    {type:'ansiklopedi',t:'Çeri Domates',sub:'Domates · Solanum lycopersicum',href:'ansiklopedi-detay-v1.html',ico:'fa-leaf'},
+    {type:'ansiklopedi',t:'Dana Eti',sub:'Et · Bos taurus',href:'ansiklopedi-detay-v1.html',ico:'fa-drumstick-bite'},
+    {type:'ansiklopedi',t:'Ceviz',sub:'Kuruyemiş · Juglans regia',href:'ansiklopedi-detay-v1.html',ico:'fa-seedling'},
+    {type:'ansiklopedi',t:'Kültür Mantarı',sub:'Mantar · Agaricus bisporus',href:'ansiklopedi-detay-v1.html',ico:'fa-seedling'},
+    {type:'ansiklopedi',t:'Maydanoz',sub:'Yeşillik · Petroselinum crispum',href:'ansiklopedi-detay-v1.html',ico:'fa-leaf'},
+    {type:'ansiklopedi',t:'Badem',sub:'Kuruyemiş · Prunus dulcis',href:'ansiklopedi-detay-v1.html',ico:'fa-seedling'},
+    {type:'ansiklopedi',t:'Malzeme Ansiklopedisi',sub:'39 malzeme · A–Z dizin',href:'ansiklopedi-v1.html',ico:'fa-book-open'},
+    {type:'sozluk',t:'Benmari',sub:'bain-marie · su banyosunda eritme',href:'sozluk-v1.html#t-benmari',ico:'fa-book'},
+    {type:'sozluk',t:'Beşamel',sub:'temel beyaz sos',href:'sozluk-v1.html#t-besamel',ico:'fa-book'},
+    {type:'sozluk',t:'Blanşe Etmek',sub:'blanching · ön haşlama',href:'sozluk-v1.html#t-blanse-etmek',ico:'fa-book'},
+    {type:'sozluk',t:'Flambe',sub:'flamber · alevleme',href:'sozluk-v1.html#t-flambe',ico:'fa-book'},
+    {type:'sozluk',t:'Jülyen',sub:'julienne · kibrit çöpü doğrama',href:'sozluk-v1.html#t-julyen',ico:'fa-book'},
+    {type:'sozluk',t:'Karamelize Etmek',sub:'şekerin altın dönüşümü',href:'sozluk-v1.html#t-karamelize-etmek',ico:'fa-book'},
+    {type:'sozluk',t:'Marine Etmek',sub:'terbiyede bekletme',href:'sozluk-v1.html#t-marine-etmek',ico:'fa-book'},
+    {type:'sozluk',t:'Meyane',sub:'roux · un-yağ kıvam temeli',href:'sozluk-v1.html#t-meyane',ico:'fa-book'},
+    {type:'sozluk',t:'Mühürlemek',sub:'searing · yüzey kapatma',href:'sozluk-v1.html#t-muhurlemek',ico:'fa-book'},
+    {type:'sozluk',t:'Pane',sub:'galeta kaplamada kızartma',href:'sozluk-v1.html#t-pane',ico:'fa-book'},
+    {type:'sozluk',t:'Redüksiyon',sub:'reduction · sos koyulaştırma',href:'sozluk-v1.html#t-reduksiyon',ico:'fa-book'},
+    {type:'sozluk',t:'Sote',sub:'sauté · az yağda hızlı çevirme',href:'sozluk-v1.html#t-sote',ico:'fa-book'},
+    {type:'sozluk',t:'Şoklamak',sub:'buzlu suda durdurma',href:'sozluk-v1.html#t-soklamak',ico:'fa-book'},
+    {type:'sozluk',t:'Zeste',sub:'narenciye kabuğu rendesi',href:'sozluk-v1.html#t-zeste',ico:'fa-book'},
+    {type:'sozluk',t:'Mutfak Sözlüğü',sub:'480 terim · harfe/kategoriye göre',href:'sozluk-v1.html',ico:'fa-spell-check'}
+  ];
+
+  /* ---- CAMPUS HAVUZU: campus-data.js'ten (§26.14 — sabit HTML çoğaltma yok) */
+  function campusHavuzu(){
+    if(!D) return [];
+    var out=[];
+
+    D.egitimler.forEach(function(e){
+      var eg=D.egitmen(e.egitmenId);
+      out.push({type:'egitim',t:e.ad,
+        sub:(eg?eg.ad+' · ':'')+D.etiket('konuAlanlari',e.kategori)+' · '+D.etiket('seviyeler',e.seviye),
+        href:D.link.egitim(e.slug), img:D.img(e.kapak,520)});
+    });
+
+    D.programlar.forEach(function(p){
+      var partner=p.partnerKurumIds.length?D.kurum(p.partnerKurumIds[0]):null;
+      /* 🔴 "Ortak program" ifadesi yalnız onay kaydı + ortak belge türü birlikte
+         varsa yazılır; yoksa yalnız "Partner kurum" (§26.13) */
+      var ek=partner?(D.ortakBelgeGosterilirMi(p)?' · Ortak program: '+partner.ad
+                                                 :' · Partner kurum: '+partner.ad):'';
+      out.push({type:'program',t:p.ad,
+        sub:D.etiket('programTurleri',p.tur)+' · '+p.donem+ek,
+        href:D.link.program(p.slug), img:D.img(p.kapak,520)});
+    });
+
+    D.atolyeler.forEach(function(a){
+      var eg=D.egitmen(a.egitmenId);
+      out.push({type:'atolye',t:a.ad,
+        sub:D.tarih(a.tarih)+' · '+D.etiket('etkinlikTurleri',a.tur)+(eg?' · '+eg.ad:''),
+        href:D.link.atolye(a.slug), ico:'fa-video'});
+    });
+
+    D.etkinlikler.forEach(function(x){
+      var ks=x.konusmaciId?D.egitmen(x.konusmaciId):null;
+      out.push({type:'etkinlik',t:x.ad,
+        sub:D.tarih(x.tarih)+' · '+D.etiket('etkinlikTurleri',x.tur)+(ks?' · '+ks.ad:''),
+        href:D.link.etkinlik(x.slug), ico:'fa-users'});
+    });
+
+    D.egitmenler.forEach(function(e){
+      /* kurum adı YALNIZ onay kaydı varsa (§26.13) */
+      var kurum=(e.kurumId&&D.onayliMi(e.kurumId))?D.kurum(e.kurumId):null;
+      out.push({type:'egitmen',t:e.ad,
+        sub:e.unvan+(kurum?' · '+kurum.ad:'')+' · '+e.uzmanliklar.slice(0,2).join(', '),
+        href:D.link.egitmen(e.slug), img:D.img(e.foto,240)});
+    });
+
+    /* 🔴 KURUM sonuçları: yalnız ONAY KAYDI OLANLAR aranabilir/görünür olur.
+       Onaysız kurum (aday/teklif aşaması) arama sonucunda partner gibi
+       görünmemeli (§26.13, §10.1, §20 ticari şeffaflık). */
+    D.onayliKurumlar().forEach(function(k){
+      out.push({type:'kurum',t:k.ad,
+        sub:D.etiket('kurumTurleri',k.tur)+' · '+k.sehir+' · '+k.isbirligiKapsami,
+        href:D.link.kurum(k.slug), ico:k.ikon});
+    });
+
+    /* Yardım Merkezi konuları da aranabilir (§17.1 "rehber içeriği") */
+    D.yardimKonulari.forEach(function(y){
+      out.push({type:'yardim',t:y.ad,sub:y.ozet,href:D.link.yardim(y.slug),ico:y.ikon});
+    });
+
+    return out;
+  }
+
+  var POOL=campusHavuzu().concat(REHBER);
+
+  /* ---- TR-duyarlı normalizasyon (veri katmanıyla AYNI davranış) ---------- */
+  var trMap={'ı':'i','İ':'i','I':'i','Ş':'s','ş':'s','Ğ':'g','ğ':'g','Ü':'u','ü':'u','Ö':'o','ö':'o','Ç':'c','ç':'c','â':'a','î':'i','û':'u'};
+  function norm(s){return (s||'').replace(/[ıİIŞşĞğÜüÖöÇçâîû]/g,function(m){return trMap[m]||m;}).toLowerCase().replace(/\s+/g,' ').trim();}
+  function esc(s){return (s||'').replace(/[&<>"]/g,function(m){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m];});}
+  function hi(text,qn){
+    if(!qn)return esc(text);
+    var tn=norm(text),i=tn.indexOf(qn);
+    if(i<0)return esc(text);
+    return esc(text.slice(0,i))+'<mark>'+esc(text.slice(i,i+qn.length))+'</mark>'+esc(text.slice(i+qn.length));
+  }
+  function tmeta(t){return TYPE[t]||{lbl:'',ico:'fa-magnifying-glass',tab:'rehber'};}
+
+  /* ---- sonuç kartı (tek şablon, tür etiketi ZORUNLU — §17.1) ------------ */
+  function card(r){
+    var m=tmeta(r.type);
+    var badge='<span class="fs-badge"><i class="fa-solid '+m.ico+'"></i> '+m.lbl+'</span>';
+    var head=r.img
+      ? '<div class="fs-media" style="background-image:url(\''+r.img+'\')">'+badge+'</div>'
+      : '<div class="fs-tile"><i class="fa-solid '+(r.ico||m.ico)+'"></i>'+badge+'</div>';
+    return '<a class="fs-card" href="'+esc(r.href)+'">'+head
+      +'<div class="fs-cbody"><h4>'+esc(r.t)+'</h4><p>'+esc(r.sub)+'</p>'
+      +'<span class="fs-cgo">İncele <i class="fa-solid fa-arrow-right"></i></span></div></a>';
+  }
+
+  var panes={}, cnts={};
+  TABS.forEach(function(n){
+    panes[n]=document.querySelector('.fs-pane[data-pane="'+n+'"]');
+    cnts[n]=document.querySelector('.cnt[data-cnt="'+n+'"]');
+  });
+  var tabbar=document.getElementById('fsTabbar');
+  var note=document.getElementById('fsCntNote');
+  var emptyEl=document.getElementById('fsEmpty');
+  var popEl=document.getElementById('fsPop');
+
+  function renderResults(q){
+    var qn=q?norm(q):'';
+    var matched=qn?POOL.filter(function(r){return norm(r.t).indexOf(qn)>=0||norm(r.sub).indexOf(qn)>=0;}):POOL.slice();
+    var by={tumu:matched};
+    TABS.forEach(function(n){ if(n!=='tumu') by[n]=[]; });
+    matched.forEach(function(r){ var t=tmeta(r.type).tab; if(by[t])by[t].push(r); });
+    TABS.forEach(function(n){
+      var arr=by[n];
+      if(cnts[n])cnts[n].textContent=arr.length;
+      if(!panes[n])return;
+      if(arr.length){
+        panes[n].innerHTML='<div class="fs-grid">'+arr.map(card).join('')+'</div>';
+      }else{
+        panes[n].innerHTML='<p class="fs-cnt-note" style="margin:6px 0 0">Bu türde eşleşme yok.</p>';
+      }
+    });
+    return matched.length;
+  }
+
+  var tabEls=document.querySelectorAll('#fsTabbar .dt');
+  function activate(name){
+    tabEls.forEach(function(t){
+      var on=t.getAttribute('data-tab')===name;
+      t.classList.toggle('active',on);
+      t.setAttribute('aria-selected',on?'true':'false');
+    });
+    TABS.forEach(function(n){if(panes[n])panes[n].hidden=n!==name;});
+  }
+  tabEls.forEach(function(t){
+    t.addEventListener('click',function(){
+      var name=t.getAttribute('data-tab');
+      activate(name);
+      var uu=new URLSearchParams(location.search);
+      if(name==='tumu')uu.delete('tab');else uu.set('tab',name);
+      history.replaceState(null,'',location.pathname+(uu.toString()?'?'+uu.toString():''));
+    });
+  });
+
+  var input=document.getElementById('fsInput');
+  var titleEl=document.getElementById('fsTitle');
+  var leadEl=document.getElementById('fsLead');
+  var sum=document.getElementById('fsSum');
+
+  /* ---- SON ARAMALAR: gerçek localStorage geçmişi (uydurma YOK) ---------- */
+  var RKEY='dm_campus_recent';
+  function readRecentLS(){try{var r=JSON.parse(localStorage.getItem(RKEY)||'[]');return Array.isArray(r)?r.filter(function(x){return x&&x.q;}):[];}catch(e){return [];}}
+  function writeRecent(qq){
+    qq=(qq||'').trim();if(!qq)return;
+    try{
+      var arr=readRecentLS().filter(function(x){return norm(x.q)!==norm(qq);});
+      arr.unshift({q:qq,t:Date.now()});
+      localStorage.setItem(RKEY,JSON.stringify(arr.slice(0,6)));
+    }catch(e){}
+  }
+  function relTime(t){var d=Date.now()-(t||0),day=86400000;if(d<3600000)return 'az önce';if(d<day)return 'bugün';if(d<2*day)return 'dün';return Math.floor(d/day)+' gün önce';}
+  function renderRecent(){
+    var col=document.getElementById('fsRecentCol'),boxr=document.getElementById('fsRecent');
+    if(!boxr)return;
+    var arr=readRecentLS();
+    if(!arr.length){if(col)col.style.display='none';boxr.innerHTML='';return;}
+    if(col)col.style.display='';
+    boxr.innerHTML=arr.map(function(r){
+      return '<div class="fs-rrow" data-q="'+esc(r.q)+'"><i class="fa-solid fa-clock-rotate-left" aria-hidden="true"></i><span class="term">'+esc(r.q)+'</span><span class="cnt">'+relTime(r.t)+'</span><i class="fa-solid fa-arrow-right go" aria-hidden="true"></i></div>';
+    }).join('');
+  }
+  renderRecent();
+
+  /* ---- durum makinesi --------------------------------------------------- */
+  var p=new URLSearchParams(location.search);
+  var q=p.get('q');
+  var tab=p.get('tab')||'tumu';
+  if(TABS.indexOf(tab)===-1) tab='tumu';
+  if(q){
+    input.value=q;
+    var total=renderResults(q);
+    if(total>0){
+      titleEl.innerHTML='&ldquo;<span class="q"></span>&rdquo; için sonuçlar';
+      titleEl.querySelector('.q').textContent=q;
+      leadEl.classList.add('is-off');
+      sum.innerHTML='<b>'+total+' sonuç</b> bulundu · <span class="q">'+esc(q)+'</span> için.';
+      note.innerHTML='Aradığın: <b>'+esc(q)+'</b> — sonuçlar türüne göre etiketli; sekmelerle daralt.';
+      popEl.classList.add('is-off');
+      activate(tab);
+    }else{
+      titleEl.innerHTML='&ldquo;<span class="q"></span>&rdquo; için sonuç yok';
+      titleEl.querySelector('.q').textContent=q;
+      leadEl.classList.add('is-off');
+      sum.innerHTML='<b>0 sonuç</b> — yazımı kontrol et ya da önerilere göz at.';
+      tabbar.classList.add('is-off');
+      note.classList.add('is-off');
+      TABS.forEach(function(n){if(panes[n])panes[n].hidden=true;});
+      document.getElementById('fsEmptyQ').textContent=q;
+      var ec=document.getElementById('fsEmptyChips');
+      document.querySelectorAll('#fsPopChips .chip').forEach(function(c){
+        var b=document.createElement('button');b.type='button';b.className='chip';
+        b.setAttribute('data-q',c.getAttribute('data-q'));b.textContent=c.textContent;
+        ec.appendChild(b);
+      });
+      emptyEl.classList.add('show');
+    }
+    document.title='DadaCampus — Arama: '+q;
+  }else{
+    /* arama-first: sorgu yokken kart yok — popüler + son aramalar */
+    sum.innerHTML='<span style="color:#cadfe2">Eğitim, program, eğitmen, kurum ya da mutfak terimi — aramak için yukarıya yaz.</span>';
+    tabbar.classList.add('is-off');
+    document.getElementById('fsResults').classList.add('is-off');
+    note.classList.add('is-off');
+    document.title='DadaCampus — Arama';
+  }
+
+  /* ============================== AUTOCOMPLETE ============================ */
+  (function(){
+    var box=document.getElementById('fsForm');
+    var ac=document.getElementById('fsAc');
+    var list=document.getElementById('fsAcList');
+    var status=document.getElementById('fsAcStatus');
+    if(!box||!ac||!list||!input)return;
+
+    function readPopular(){var out=[];document.querySelectorAll('#fsPop #fsPopChips .chip[data-q]').forEach(function(c){out.push(c.getAttribute('data-q'));});return out.slice(0,8);}
+    function readRecent(){return readRecentLS().map(function(r){return r.q;});}
+
+    var items=[],active=-1;
+    function render(groups){
+      items=[];active=-1;
+      var html='';
+      groups.forEach(function(g){
+        if(!g.rows.length)return;
+        html+='<div class="ac-grp" aria-hidden="true"><i class="fa-solid '+g.icon+'"></i>'+esc(g.label);
+        if(g.clear)html+='<button type="button" class="ac-clear" data-clear="1">Temizle</button>';
+        html+='</div>';
+        g.rows.forEach(function(r){
+          var idx=items.length;items.push(r);
+          var m=tmeta(r.type);
+          var icoStyle=r.img?' style="background-image:url(\''+r.img+'\');border-color:transparent"':'';
+          var icoInner=r.img?'':'<i class="fa-solid '+(r.icon||r.ico||m.ico)+'"></i>';
+          var badge=(r.type&&TYPE[r.type])?'<span class="ac-badge"><i class="fa-solid '+m.ico+'"></i>'+m.lbl+'</span>':'';
+          var sub=r.sub?'<span class="ac-sub">'+esc(r.sub)+'</span>':'';
+          html+='<div class="ac-opt'+(r.cls||'')+'" role="option" id="fs-opt-'+idx+'" data-type="'+(r.type||'q')+'" data-idx="'+idx+'" aria-selected="false">'
+              +'<span class="ac-ico"'+icoStyle+'>'+icoInner+'</span>'
+              +'<span class="ac-main"><span class="ac-ttl">'+(r.html||esc(r.t))+'</span>'+sub+'</span>'+badge+'</div>';
+        });
+      });
+      if(!groups.some(function(g){return g.rows.length;})){
+        html='<div class="ac-none">Eşleşen öneri yok — yazmaya devam et ya da <b>Enter</b> ile ara.</div>';
+      }
+      list.innerHTML=html;
+    }
+    function buildQuery(qq){
+      var qn=norm(qq);
+      var matched=POOL.filter(function(r){return norm(r.t).indexOf(qn)>=0||(r.sub&&norm(r.sub).indexOf(qn)>=0);});
+      matched.sort(function(a,b){var as=norm(a.t).indexOf(qn)===0?0:1,bs=norm(b.t).indexOf(qn)===0?0:1;return as-bs;});
+      matched=matched.slice(0,7).map(function(r){return {type:r.type,t:r.t,html:hi(r.t,qn),sub:r.sub,img:r.img,ico:r.ico,href:r.href,q:r.t};});
+      var rows=[{type:'q',cls:' ac-query',icon:'fa-magnifying-glass',t:qq,html:'<b>'+esc(qq)+'</b> için ara',sub:'Tüm sonuçları gör',q:qq}];
+      render([{label:'Arama',icon:'fa-magnifying-glass',rows:rows},{label:'Öneriler',icon:'fa-wand-magic-sparkles',rows:matched}]);
+    }
+    function buildDefault(){
+      var recent=readRecent().map(function(qq){return {type:'q',icon:'fa-clock-rotate-left',t:qq,q:qq};});
+      var pop=readPopular().map(function(qq){return {type:'q',icon:'fa-fire',t:qq,q:qq};});
+      render([{label:'Son aramalar',icon:'fa-clock-rotate-left',clear:recent.length>0,rows:recent},{label:'Popüler öneriler',icon:'fa-fire',rows:pop}]);
+    }
+    function announce(){status.textContent=items.length?(items.length+' öneri listelendi.'):'Öneri yok.';}
+    function open(){box.classList.add('ac-open');input.setAttribute('aria-expanded','true');announce();}
+    function close(){box.classList.remove('ac-open');input.setAttribute('aria-expanded','false');input.setAttribute('aria-activedescendant','');setActive(-1);}
+    function isOpen(){return box.classList.contains('ac-open');}
+    function setActive(i){
+      var opts=list.querySelectorAll('.ac-opt');
+      if(active>=0&&opts[active]){opts[active].classList.remove('is-active');opts[active].setAttribute('aria-selected','false');}
+      active=i;
+      if(i>=0&&opts[i]){opts[i].classList.add('is-active');opts[i].setAttribute('aria-selected','true');input.setAttribute('aria-activedescendant',opts[i].id);opts[i].scrollIntoView({block:'nearest'});}
+      else{input.setAttribute('aria-activedescendant','');}
+    }
+    function go(qq){location.href='arama-campus-v1.html'+(qq?'?q='+encodeURIComponent(qq):'');}
+    function choose(i){var r=items[i];if(!r)return;var qq=r.q||r.t;writeRecent(qq);if(r.href){location.href=r.href;return;}go(qq);}
+    var deb;
+    function onInput(){clearTimeout(deb);deb=setTimeout(function(){var v=input.value.trim();if(v.length>=1)buildQuery(v);else buildDefault();open();},150);}
+    input.addEventListener('input',onInput);
+    input.addEventListener('focus',function(){var v=input.value.trim();if(v.length>=1)buildQuery(v);else buildDefault();open();});
+    input.addEventListener('keydown',function(e){
+      var n=items.length;
+      if(e.key==='ArrowDown'){e.preventDefault();if(!isOpen()){onInput();return;}if(n)setActive((active+1)%n);}
+      else if(e.key==='ArrowUp'){e.preventDefault();if(n)setActive(active<=0?n-1:active-1);}
+      else if(e.key==='Enter'){if(isOpen()&&active>=0){e.preventDefault();choose(active);}}
+      else if(e.key==='Escape'){if(isOpen()){e.preventDefault();close();}}
+      else if(e.key==='Home'){if(isOpen()&&n){e.preventDefault();setActive(0);}}
+      else if(e.key==='End'){if(isOpen()&&n){e.preventDefault();setActive(n-1);}}
+    });
+    list.addEventListener('mousemove',function(e){var opt=e.target.closest('.ac-opt');if(!opt)return;var i=+opt.getAttribute('data-idx');if(i!==active)setActive(i);});
+    list.addEventListener('mousedown',function(e){
+      if(e.target.closest('[data-clear]')){e.preventDefault();try{localStorage.removeItem(RKEY);}catch(e2){}renderRecent();buildDefault();return;}
+      var opt=e.target.closest('.ac-opt');if(!opt)return;e.preventDefault();choose(+opt.getAttribute('data-idx'));
+    });
+    document.addEventListener('mousedown',function(e){if(!box.contains(e.target))close();});
+
+    var dp=new URLSearchParams(location.search);
+    if(dp.get('demo')==='1'||location.hash==='#demo'){var dq=dp.get('q');if(dq){input.value=dq;buildQuery(dq);}else buildDefault();open();var di=parseInt(dp.get('ai'),10);if(!isNaN(di))setActive(di);}
+  })();
+
+  /* form gönderimi + çip / son arama köprüleri */
+  document.getElementById('fsForm').addEventListener('submit',function(e){
+    e.preventDefault();
+    var v=input.value.trim();
+    if(v)writeRecent(v);
+    location.href='arama-campus-v1.html'+(v?'?q='+encodeURIComponent(v):'');
+  });
+  document.addEventListener('click',function(e){
+    var c=e.target.closest('[data-q]');
+    if(c&&!c.closest('.ac-opt')){var dq=c.getAttribute('data-q');writeRecent(dq);location.href='arama-campus-v1.html?q='+encodeURIComponent(dq);}
+  });
 })();
 </script>
 </body>

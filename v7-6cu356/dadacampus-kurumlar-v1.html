@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>DadaCampus — Online Gastronomi Akademisi | DadaMutfak</title>
-<meta name="description" content="DadaCampus; şeflerden video eğitimler, sertifika programları, canlı atölyeler ve üniversite/kamu kurumlarıyla ortak programlar sunan online gastronomi akademisidir." />
+<title>Kurumlar Merkezi — DadaCampus | DadaMutfak</title>
+<meta name="description" content="Üniversite, mutfak sanatları okulu, kamu kurumu, mesleki eğitim ve işletmeler için iş birliği modelleri ve başvuru." />
 <link rel="shortcut icon" type="image/x-icon"
       href="assets/img/favicon.ico" />
 <!-- FontAwesome 6.5.2 (kilitli ikon seti) -->
@@ -1151,6 +1151,310 @@ html.reveal-ready .reveal.in{opacity:1;transform:none}
 .foot-bottom .fb-left b{color:#fff;font-weight:700}
 .foot-bottom .fb-left b .bd,.foot-bottom .fb-left b .sf{color:#fff}
 </style>
+
+<style>
+/* ===== SAYFA CSS — dadacampus-kurumlar-v1.html ===== */
+/* ===================== MERKEZ SAYFASI HERO DÜZELTMESİ =====================
+   🔴 Kabuktaki .lst-top ANA SAYFA için `min-height:100vh/100svh` taşır — hub'ın
+   hero'su bilerek tam ekrandır. Merkez/katalog sayfaları bu kabuğu devralınca
+   hero de tam ekran oluyor (ölçüm: oran 1,00) ve kullanıcı sonuçlara ulaşmak için
+   bir ekran boyu kaydırmak zorunda kalıyor. Merkez sayfalarında hero yüksekliği
+   İÇERİĞE bırakılır; hub'ın tam ekran istisnası DEĞİŞMEZ (ayrı dosya).
+   Hedef oran ~0,50–0,60 (ölçümle doğrulanır). */
+.lst-top{min-height:0}
+.lst-hero{padding-bottom:52px}
+@media (max-width:1024px){ .lst-hero{padding-bottom:40px} }
+@media (max-width:640px){  .lst-hero{padding-bottom:30px} }
+
+/* ============================================================================
+   DadaCampus — ORTAK SAYFA CSS EKİ (üretilen TÜM sayfalara girer)
+   ----------------------------------------------------------------------------
+   NEDEN VAR: Faz 1'de bu bloklar üç sayfada BİREBİR kopyalanmıştı (.koll rayı,
+   .kisi-sec, .lst-load, .pstat, .bsv, .tkv, form kiti eksikleri, .kurum-gate).
+   Kopya = divergans borcu (docs/lessons.md §3). Kabuk external dosyaya taşınmaz
+   ama SAYFA CSS'i üreticide birleştirilebilir — tek kaynak burada, çıktı inline.
+
+   Yükleme sırası (tasks/campus-sayfa-uret.py):
+     _merkez.css → _ortak.css → [_facet.css] → [_panel.css] → <sayfa>.css
+   Sayfa CSS'i en sonda = son söz onda.
+
+   🔴 Renk: yalnız var(--tomato) ve türevleri (docs/lessons.md §1).
+   🔴 Yeni bileşen ailesi icat edilmez; her aile mevcut bir kaynaktan taşındı,
+      kaynağı yorumda yazılı.
+   ========================================================================= */
+
+/* .lst-main'in CSS'i kaynakta yok — grid çocuğu olarak min-width:0 şart
+   (1fr + min-width:auto uzun metinde 390 taşması; sefler-v1 dersi) */
+.lst-main{min-width:0}
+
+/* hero içindeki büyük arama alanı — mevcut .crs-search ailesi koyu zeminde */
+.lst-hero .crs-search{max-width:620px;margin-top:22px}
+.lst-hero .crs-search input{font-size:15px}
+
+/* ---- KOLEKSİYON / TÜR / BÖLÜM KEŞİF RAYI — .cat-track/.cat-card kompakt varyantı */
+.koll-track{display:flex;gap:12px;overflow-x:auto;padding:2px 2px 12px;scrollbar-width:none;margin-bottom:6px}
+.koll-track::-webkit-scrollbar{display:none}
+.koll{flex:none;display:inline-flex;align-items:center;gap:10px;background:var(--paper);border:1px solid var(--line);
+  border-radius:var(--radius-md);padding:11px 15px;font-size:13.5px;font-weight:700;color:var(--slate);white-space:nowrap;transition:.2s var(--ease)}
+.koll i{color:var(--tomato);font-size:13px}
+.koll small{display:block;font-size:11.5px;font-weight:500;color:var(--muted)}
+.koll:hover{border-color:var(--tomato);color:var(--tomato);transform:translateY(-2px)}
+.koll.is-on{border-color:var(--tomato);background:var(--tomato-tint);color:var(--tomato)}
+
+/* ---- KİŞİSEL ŞERİTLER — YALNIZ giriş yapınca (§7.1, §26.15) */
+.kisi-sec{display:none}
+body.is-auth .kisi-sec{display:block}
+/* tersi: yalnız ziyaretçiye görünen blok */
+.misafir-sec{display:block}
+body.is-auth .misafir-sec{display:none}
+
+/* ---- YÜKLENİYOR DURUMU (§26.15) */
+.lst-load{display:none;text-align:center;padding:60px 20px;color:var(--muted);font-size:14px;font-weight:500}
+.lst-load.show{display:block}
+.lst-load i{display:block;font-size:26px;color:var(--tomato);opacity:.6;margin-bottom:12px}
+
+/* ---- BOŞ / HATA DURUMU (§26.15) — kaynak tarif-liste-v1.html; _facet.css'ten
+   buraya alındı, çünkü katalog olmayan sayfalar da boş durum gösteriyor. */
+.lst-empty{display:none;text-align:center;background:var(--paper);border:1px solid var(--line);
+  border-radius:var(--radius-lg);padding:78px 30px;margin-top:24px}
+.lst-empty.show{display:block;animation:fadeUp .35s var(--ease)}
+.le-ico{width:76px;height:76px;border-radius:var(--radius-lg);background:var(--tomato-tint);color:var(--tomato);
+  display:grid;place-items:center;font-size:30px;margin:0 auto 20px}
+.lst-empty h3{font-size:23px;margin-bottom:9px}
+.lst-empty p{font-size:14.5px;color:var(--muted);font-weight:500;max-width:420px;margin:0 auto 24px;line-height:1.6}
+.pagi-note{width:100%;font-size:12.5px;color:var(--muted);font-weight:500;margin-top:6px}
+
+/* 🔴 DERİN BAĞLANTI OFSETİ — scroll-margin EKLENMEZ.
+   Kabuk zaten `html{scroll-padding-top:128px}` taşıyor; scroll-padding-top
+   (container) ile scroll-margin-top (hedef) TOPLANIR → hedef 256px aşağıda
+   durur (ölçümle yakalandı). `.derin` yalnız anlamsal işaret. */
+.derin{}
+
+/* ---- DURUM ROZETİ — panel-shell.html .pstat public karşılığı (radius-sm; pill YASAK)
+   §23.3: renk tek başına durum anlatmaz → her rozette İKON + METİN birlikte. */
+.pstat{display:inline-flex;align-items:center;gap:6px;flex:none;font-size:12px;font-weight:700;
+  padding:6px 10px;border-radius:var(--radius-sm);border:1px solid transparent;white-space:nowrap}
+.pstat i{font-size:10px}
+.pstat.ok{background:#EAF7F0;color:var(--green-deep);border-color:rgba(59,183,126,.32)}
+.pstat.wait{background:var(--tomato-tint);color:var(--tomato);border-color:rgba(0,96,114,.28)}
+.pstat.off{background:var(--bg);color:var(--muted);border-color:var(--line)}
+.pstat.warm{background:#FBE9E3;color:#C43D20;border-color:rgba(196,61,32,.28)}
+
+/* ---- DURUM/BAŞVURU SATIRI — .appt-row (panel) deseninin sadeleşmişi */
+.bsv{display:flex;flex-direction:column;gap:10px}
+.bsv-row{display:flex;align-items:center;gap:16px;flex-wrap:wrap;background:var(--paper);
+  border:1px solid var(--line);border-radius:var(--radius-md);padding:16px 18px;transition:.2s var(--ease)}
+.bsv-row:hover{border-color:var(--tomato)}
+.bsv-row .bsv-info{min-width:0;flex:1}
+.bsv-row .bsv-info b{display:block;font-size:15px;color:var(--slate);font-weight:700}
+.bsv-row .bsv-info span{display:block;font-size:12.5px;color:var(--muted);font-weight:500;margin-top:2px}
+
+/* ---- TAKVİM SATIRI — .appt-row (panel) deseninin public karşılığı */
+.tkv{display:flex;flex-direction:column;gap:10px}
+.tkv-gun{font-size:12px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--muted);padding:14px 2px 4px}
+.tkv-row{display:flex;align-items:center;gap:16px;background:var(--paper);border:1px solid var(--line);
+  border-radius:var(--radius-md);padding:14px 18px;transition:.2s var(--ease)}
+.tkv-row:hover{border-color:var(--tomato)}
+.tkv-tar{flex:none;width:64px;text-align:center;background:var(--tomato-tint);border:1px solid rgba(0,96,114,.2);
+  border-radius:var(--radius-sm);padding:8px 4px}
+.tkv-tar b{display:block;font-size:19px;font-weight:700;color:var(--tomato);line-height:1.1}
+.tkv-tar span{display:block;font-size:10.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--tomato);opacity:.8}
+.tkv-body{min-width:0;flex:1}
+.tkv-body b{display:block;font-size:15px;color:var(--slate);font-weight:700}
+.tkv-body span{display:block;font-size:12.5px;color:var(--muted);font-weight:500;margin-top:2px}
+.tkv-tur{flex:none;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;
+  color:var(--muted);background:var(--bg);border:1px solid var(--line);padding:5px 9px;border-radius:var(--radius-sm);white-space:nowrap}
+
+/* ---- YETKİSİZ / KURUMA ÖZEL ERİŞİM BLOĞU (§7.1, §24.2, §26.15)
+   Yetkisiz kullanıcıya İÇERİK GÖSTERMEZ, yalnız nasıl erişileceğini anlatır. */
+.kurum-gate{display:flex;align-items:center;gap:20px;flex-wrap:wrap;justify-content:space-between;
+  background:var(--paper);border:1px dashed #cfd9dc;border-radius:var(--radius-lg);padding:22px 26px}
+.kurum-gate .kg-ico{flex:none;width:46px;height:46px;border-radius:var(--radius-md);background:var(--tomato-tint);
+  color:var(--tomato);display:grid;place-items:center;font-size:18px}
+.kurum-gate .kg-txt{min-width:0;flex:1}
+.kurum-gate .kg-txt b{display:block;font-size:16px;color:var(--slate);font-weight:700;margin-bottom:3px}
+.kurum-gate .kg-txt p{font-size:13.5px;color:var(--muted);font-weight:500;line-height:1.55}
+
+/* ---- FORM KİTİ EKSİKLERİ — kabuk .fk-field/.fk-label/.req/.opt/.fk-input/
+   .fk-select/.fk-grid(.c2)/.ak-send/.ak-success'i ZATEN taşıyor (petrol sürümü).
+   Aşağıdakiler kabukta OLMAYAN parçalar; kaynak tarif-ekle-v1.html form kiti,
+   oradaki domates literalleri token diline (var(--tomato)=petrol) çevrildi. */
+.fk-textarea{width:100%;background:var(--bg);border:1px solid var(--line);border-radius:var(--radius-md);
+  padding:13px 15px;font-family:inherit;font-size:14px;font-weight:500;color:var(--ink);
+  min-height:120px;resize:vertical;line-height:1.6;transition:.2s var(--ease)}
+.fk-textarea::placeholder{color:#a7a7a7}
+.fk-textarea:focus{border-color:var(--tomato);box-shadow:0 0 0 3px rgba(var(--tomato-rgb),.10);outline:none}
+.fk-help{display:flex;align-items:flex-start;gap:7px;font-size:12.5px;color:var(--muted);
+  font-weight:500;margin-top:8px;line-height:1.5}
+.fk-help i{color:var(--tomato);font-size:12px;margin-top:2px;flex:none}
+.fk-error{display:none;align-items:center;gap:7px;font-size:12.5px;font-weight:700;color:var(--tomato);margin-top:8px}
+.fk-error.show{display:flex}
+select.fk-select[multiple]{height:auto;padding:10px;background-image:none}
+select.fk-select[multiple] option{padding:7px 9px;border-radius:var(--radius-sm)}
+
+/* çoklu onay kutusu ızgarası — .fct-row/.cbx dilinden türetildi (yeni kutu YOK) */
+.fk-checks{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px 18px}
+.fk-checks.is-1{grid-template-columns:1fr}
+.fk-checks label{position:relative;display:flex;align-items:center;gap:10px;padding:8px 0;
+  cursor:pointer;font-size:14px;font-weight:500;color:var(--slate-2);transition:color .15s}
+.fk-checks input{position:absolute;opacity:0;pointer-events:none}
+.fk-checks .cbx{flex:none;width:20px;height:20px;border-radius:var(--radius-sm);border:1.5px solid #d8d8d8;
+  background:var(--paper);display:grid;place-items:center;transition:.18s var(--ease)}
+.fk-checks .cbx::after{content:"\f00c";font-family:"Font Awesome 6 Free";font-weight:900;font-size:10px;
+  color:#fff;transform:scale(0);transition:transform .15s var(--ease)}
+.fk-checks input:checked ~ .cbx{background:var(--tomato);border-color:var(--tomato)}
+.fk-checks input:checked ~ .cbx::after{transform:scale(1)}
+.fk-checks label:hover{color:var(--tomato)}
+.fk-checks label:hover .cbx{border-color:var(--tomato)}
+.fk-checks input:focus-visible ~ .cbx{outline:3px solid var(--tomato-tint);outline-offset:2px}
+
+/* dosya yükleme alanı — tarif-ekle mirası, token diline çevrildi */
+.up-zone{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:6px;text-align:center;background:var(--tomato-tint);border:1.5px dashed rgba(var(--tomato-rgb),.34);
+  border-radius:var(--radius-lg);padding:28px 20px;cursor:pointer;transition:.2s var(--ease)}
+.up-zone i{font-size:27px;color:var(--tomato)}
+.up-zone b{font-size:14.5px;font-weight:700;color:var(--slate)}
+.up-zone span{font-size:12px;font-weight:500;color:var(--slate-2)}
+.up-zone input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer}
+.up-zone:hover{border-color:var(--tomato);background:#D9EAEE}
+.up-list{display:flex;flex-direction:column;gap:8px;margin-top:12px}
+.up-list .up-row{display:flex;align-items:center;gap:11px;background:var(--paper);border:1px solid var(--line);
+  border-radius:var(--radius-md);padding:11px 14px;font-size:13.5px;font-weight:500;color:var(--slate)}
+.up-list .up-row i{color:var(--tomato)}
+.up-list .up-row .up-boy{margin-left:auto;font-size:12px;color:var(--muted)}
+.up-list .up-row button{border:none;background:none;color:var(--muted);cursor:pointer;font-size:13px;padding:4px}
+.up-list .up-row button:hover{color:var(--tomato)}
+
+/* ---- İLERLEME ÇUBUĞU — panel-shell.html .cl-prog/.cl-bar public karşılığı.
+   §23.3: yüzde METİN olarak da yazılır (renk/dolgu tek başına durum anlatmaz). */
+.prg{display:block;height:6px;background:var(--line);border-radius:999px;overflow:hidden}
+.prg > span{display:block;height:100%;background:var(--tomato);border-radius:999px;transition:width .3s var(--ease)}
+.prg-lbl{display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:12px;
+  font-weight:700;color:var(--muted);margin-bottom:6px}
+.prg-lbl b{color:var(--tomato);font-weight:700}
+
+/* ---- SEKME AİLESİ — kaynak mutfak-defteri-v1.html .pf-tabbar/.pf-tabs/.pf-pane.
+   Kampüsüm, kurum profili ve paneller aynı sekme dilini kullanır (§23.1). */
+.pf-tabbar{border-bottom:1px solid var(--line);margin-bottom:26px}
+.pf-tabs{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none}
+.pf-tabs::-webkit-scrollbar{display:none}
+.pf-tabs a,.pf-tabs button{flex:none;display:inline-flex;align-items:center;gap:8px;background:none;border:none;
+  border-bottom:2px solid transparent;padding:13px 16px;font-family:inherit;font-size:14px;font-weight:700;
+  color:var(--muted);cursor:pointer;white-space:nowrap;transition:.18s var(--ease)}
+.pf-tabs a i,.pf-tabs button i{font-size:13px}
+.pf-tabs a:hover,.pf-tabs button:hover{color:var(--tomato)}
+.pf-tabs a.active,.pf-tabs button.active{color:var(--tomato);border-bottom-color:var(--tomato)}
+.pf-pane{display:none}
+.pf-pane.active{display:block}
+
+/* ---- BİLGİ SATIRI (detay sayfalarında künye/koşul listeleri) ---- */
+.inf{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 26px}
+.inf-row{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;
+  padding:12px 0;border-bottom:1px solid var(--line)}
+.inf-row > span{flex:none;font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.inf-row > b{text-align:right;font-size:14px;font-weight:700;color:var(--slate);line-height:1.5}
+.inf-row > b small{display:block;font-size:12.5px;font-weight:500;color:var(--muted);margin-top:2px}
+
+/* ---- MADDE LİSTESİ (kazanım, ön koşul, malzeme) — .cert-points dilinden ---- */
+.mad{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:9px}
+.mad li{display:flex;align-items:flex-start;gap:10px;font-size:14px;font-weight:500;color:var(--slate-2);line-height:1.6}
+.mad li i{flex:none;color:var(--tomato);font-size:11px;margin-top:5px}
+.mad.is-2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px 24px}
+
+/* ---- TABLO → KART (§23.2: mobilde tablolar kart görünümü) ---- */
+.ptable{width:100%;border-collapse:collapse;font-size:13.5px}
+.ptable th{text-align:left;font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--muted);padding:10px 14px;border-bottom:1px solid var(--line);white-space:nowrap}
+.ptable td{padding:13px 14px;border-bottom:1px solid var(--line);color:var(--slate-2);font-weight:500;vertical-align:top}
+.ptable tr:last-child td{border-bottom:none}
+.ptable td b{color:var(--slate);font-weight:700}
+.ptable-wrap{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-lg);padding:6px 10px}
+
+@media (max-width:1024px){
+  .inf{grid-template-columns:1fr}
+}
+@media (max-width:640px){
+  .kurum-gate{padding:18px}
+  .lst-hero .crs-search{margin-top:18px}
+  .tkv-row{flex-wrap:wrap;gap:12px}
+  .tkv-tur{order:3}
+  .bsv-row{gap:12px}
+  .fk-checks{grid-template-columns:1fr}
+  .mad.is-2{grid-template-columns:1fr}
+  .lst-empty{padding:54px 20px}
+  .lst-empty h3{font-size:19px}
+  /* §23.2 — tablo kart görünümüne döner */
+  .ptable-wrap{padding:0;background:none;border:none;border-radius:0}
+  .ptable,.ptable tbody,.ptable tr,.ptable td{display:block;width:100%}
+  .ptable thead{display:none}
+  .ptable tr{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-md);
+    padding:14px 16px;margin-bottom:10px}
+  .ptable td{border:none;padding:5px 0;display:flex;gap:12px;justify-content:space-between;align-items:flex-start}
+  .ptable td::before{content:attr(data-l);flex:none;font-size:11px;font-weight:700;letter-spacing:.06em;
+    text-transform:uppercase;color:var(--muted);padding-top:2px}
+  .ptable tr:last-child td{border-bottom:none}
+}
+
+/* ===================== SAYFA CSS — Kurumlar Merkezi =====================
+   Kabuk zaten şunları taşıyor, TEKRAR TANIMLANMADI: .fk-field .fk-label .req
+   .opt .fk-input .fk-select .fk-grid(.c2) .fb-kvkk .ak-send .ak-success
+   .form-card .fc-head .ak-chef-cta .ak-grid(.is-3) .lst-top .lst-hero
+   .lst-stats .cert-band .chips .btn .btn-ghost .rd-crumb.
+   Form kiti eksikleri (.fk-textarea .fk-checks .up-zone .up-list), .kurum-gate,
+   .bsv/.pstat, .pagi-note ve .derin → `_ortak.css`.  Hero → `_merkez.css`.
+
+   Aşağıdakiler YALNIZ bu sayfada kullanılan üç aile.
+   ========================================================================= */
+
+/* ---- kurum türü ayrıntı bloğu (§9.3) ---- */
+.turd{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-lg);
+  padding:26px 28px;margin-top:20px}
+.turd-head{display:flex;align-items:center;gap:14px;margin-bottom:18px}
+.turd-ico{flex:none;width:46px;height:46px;border-radius:var(--radius-md);background:var(--tomato-tint);
+  color:var(--tomato);display:grid;place-items:center;font-size:19px}
+.turd-head h3{font-size:19px}
+.turd-head span{display:block;font-size:13px;color:var(--muted);font-weight:500;margin-top:2px}
+.turd-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:22px}
+.turd-grid h4{font-size:12px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--muted);margin-bottom:11px}
+.turd-grid ul{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:8px}
+.turd-grid li{display:flex;align-items:flex-start;gap:9px;font-size:13.5px;font-weight:500;
+  color:var(--slate-2);line-height:1.55}
+.turd-grid li i{color:var(--tomato);font-size:11px;margin-top:5px;flex:none}
+.turd-foot{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;
+  margin-top:20px;padding-top:18px;border-top:1px solid var(--line)}
+.turd-foot .tf-note{font-size:12.5px;color:var(--muted);font-weight:500}
+
+/* ---- iş birliği modeli satırı (§9.2) ---- */
+.mdl{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.mdl-row{display:flex;align-items:flex-start;gap:14px;background:var(--paper);border:1px solid var(--line);
+  border-radius:var(--radius-md);padding:18px 20px;transition:.2s var(--ease)}
+.mdl-row:hover{border-color:var(--tomato);transform:translateY(-2px);box-shadow:var(--sh-sm)}
+.mdl-ico{flex:none;width:40px;height:40px;border-radius:var(--radius-sm);background:var(--tomato-tint);
+  color:var(--tomato);display:grid;place-items:center;font-size:16px}
+.mdl-body{min-width:0}
+.mdl-body b{display:block;font-size:15px;color:var(--slate);font-weight:700;margin-bottom:4px}
+.mdl-body p{font-size:13px;color:var(--muted);font-weight:500;line-height:1.55}
+.mdl-body .mdl-deger{display:block;font-size:12.5px;font-weight:700;color:var(--tomato);margin-top:7px}
+
+/* ---- süreç adımları (§19.1) ---- */
+.surec{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px 26px;counter-reset:sr}
+.surec-row{display:flex;align-items:flex-start;gap:14px;padding:12px 0;border-bottom:1px solid var(--line)}
+.surec-row:last-child,.surec-row:nth-last-child(2){border-bottom:none}
+.surec-no{flex:none;width:30px;height:30px;border-radius:var(--radius-sm);background:var(--tomato-tint);
+  color:var(--tomato);display:grid;place-items:center;font-size:12.5px;font-weight:700}
+.surec-row p{font-size:14px;font-weight:500;color:var(--slate-2);line-height:1.5;padding-top:5px}
+
+@media (max-width:1024px){
+  .mdl,.surec{grid-template-columns:1fr}
+  .surec-row:nth-last-child(2){border-bottom:1px solid var(--line)}
+  .turd-grid{grid-template-columns:1fr;gap:18px}
+}
+@media (max-width:640px){
+  .turd{padding:20px 18px}
+}
+</style>
 </head>
 <body data-brand="campus">
 
@@ -1252,7 +1556,7 @@ html.reveal-ready .reveal.in{opacity:1;transform:none}
         <!-- 3) KURUMLAR (§4.4) — YENİ ana menü. Faz 1'de kurum türleri Kurumlar Merkezi
              içindeki bölümlere gider; Faz 4'te her tür kendi sayfasını alır. -->
         <div class="nav-item">
-          <a href="dadacampus-kurumlar-v1.html">Kurumlar <i class="fa-solid fa-chevron-down"></i></a>
+          <a href="dadacampus-kurumlar-v1.html" class="active">Kurumlar <i class="fa-solid fa-chevron-down"></i></a>
           <div class="dropdown ak-tracks">
             <div class="dd-head">Kurum Türüne Göre</div>
             <div class="dd-grid">
@@ -1438,7 +1742,7 @@ html.reveal-ready .reveal.in{opacity:1;transform:none}
      drawer'da ve merkez sayfa kartlarında. #bnAccount hedefi auth durumuna göre
      JS'te ayarlanır (kabuk auth IIFE'si). -->
 <nav class="bottom-nav" aria-label="Mobil alt navigasyon">
-  <a href="akademi-v1.html" class="bn-item active" aria-current="page"><i class="fa-solid fa-house"></i><span>Ana Sayfa</span></a>
+  <a href="akademi-v1.html" class="bn-item"><i class="fa-solid fa-house"></i><span>Ana Sayfa</span></a>
   <a href="dadacampus-egitimler-v1.html" class="bn-item"><i class="fa-solid fa-clapperboard"></i><span>Eğitimler</span></a>
   <a href="dadacampus-kampusum-v1.html" class="bn-item bn-center" id="bnKampusum"><span class="bn-fab"><i class="fa-solid fa-graduation-cap"></i></span><span>Kampüsüm</span></a>
   <a href="dadacampus-programlar-v1.html" class="bn-item"><i class="fa-solid fa-diagram-project"></i><span>Programlar</span></a>
@@ -1575,534 +1879,334 @@ html.reveal-ready .reveal.in{opacity:1;transform:none}
 
 <!-- ===== ANA İÇERİK (footer reveal perdesi) ===== -->
 <main class="page-main" id="pageMain">
-
-<!-- SAYFA İÇERİĞİ -->
-<!-- İlk section'a .below-header class'ı ver (fixed header offseti: 112px / mobil 62px).
-     Örnek:
-     <section class="below-header" style="background:var(--bg-white)">
-       <div class="wrap"> ... </div>
-     </section>
--->
-
-
 <!-- ============================================================================
-     SAYFA İÇERİĞİ — DADACAMPUS ANA SAYFASI
-     Bölüm sırası §6.2'ye göre kuruldu; ürün durumu KAYIT DÖNEMİ (§6.3 satır 2).
-     Liste içerikleri assets/js/campus-data.js'ten render edilir — sabit HTML YOK
-     (§26.14). Kart/rozet/buton aileleri mevcut kabuktan; yeni bileşen üretilmedi.
+     KURUMLAR MERKEZİ (§9) — DadaCampus
+     §28: DadaCampus için en değerli YENİ ana menü budur.
+     §9.1: yalnızca logo galerisi OLMAZ — her kurum türüne uygun çözümü anlatır ve
+     ölçülebilir bir iş birliği başvurusuna dönüştürür.
+     🔴 Partner kurumlar ve etki göstergeleri YALNIZ onay kaydı varsa (§26.13).
      ========================================================================= -->
 
-<!-- ===== 1) HERO + 2) BİRİNCİL ÇAĞRILAR (§6.2 #1-2) ===== -->
 <section class="below-header lst-top">
   <div class="lst-hero-media" aria-hidden="true"></div>
   <div class="wrap">
+    <nav class="rd-crumb" aria-label="Sayfa yolu">
+      <a href="akademi-v1.html"><i class="fa-solid fa-house" aria-hidden="true"></i></a>
+      <i class="fa-solid fa-chevron-right" aria-hidden="true"></i>
+      <b>Kurumlar Merkezi</b>
+    </nav>
     <div class="lst-hero">
       <div class="lh-main">
-        <span class="eyebrow" style="color:#8fd4de"><i class="fa-solid fa-graduation-cap"></i> Online Gastronomi Akademisi</span>
-        <h1>Gastronomiyi öğren, uygula ve <span class="accent">kurumlarla birlikte geliştir</span></h1>
-        <p class="lead">Şeflerden video eğitimler, değerlendirmeli sertifika programları ve canlı atölyeler. Üniversite, mutfak okulu ve kamu kurumlarıyla ortak programlar tek çatı altında.</p>
+        <span class="eyebrow"><i class="fa-solid fa-building-columns"></i> Kurumlar Merkezi</span>
+        <h1>Kurumunuzla birlikte <span class="accent">program tasarlayalım</span></h1>
+        <p class="lead">Üniversite, mutfak sanatları okulu, kamu kurumu, mesleki eğitim kurumu ve işletmeler için müfredat, eğitmen, kohort, değerlendirme ve raporlamayı birlikte kuruyoruz.</p>
         <div class="ak-hero-cta">
-          <a class="btn btn-primary" href="dadacampus-egitimler-v1.html"><i class="fa-solid fa-clapperboard"></i> Eğitimleri Keşfet</a>
-          <a class="btn-glassy" href="dadacampus-kurumlar-v1.html"><i class="fa-solid fa-building-columns"></i> Kurumlar İçin İş Birliği</a>
+          <a class="btn btn-primary" href="#basvuru"><i class="fa-solid fa-file-signature"></i> İş Birliği Başlat</a>
+          <a class="btn-glassy" href="#modeller">İş Birliği Modelleri <i class="fa-solid fa-arrow-down"></i></a>
         </div>
       </div>
-      <div class="lst-stats" id="heroStats" role="group" aria-label="DadaCampus özeti"></div>
+      <div class="lst-stats" id="heroStats" role="group" aria-label="İş birliği özeti"></div>
     </div>
   </div>
 </section>
 
-<!-- ===== 3) DÖRT HEDEF KİTLE KARTI (§6.2 #3) =====
-     Ziyaretçiyi ilk iki bölüm içinde doğru akışa yönlendirir (§6.1). -->
-<section class="ak-sec" id="kimler">
+<!-- ===== 1) KURUM TÜRÜNE GÖRE ÇÖZÜM (§9.1, §9.3) =====
+     Beş tür; her biri kendi bölümüne derin bağlanır (menüden #tur-… ile gelinir).
+     Faz 4'te her tür kendi sayfasını alır (dadacampus-kurum-tur-v1.html?tur=…). -->
+<section class="ak-sec derin" id="turler">
   <div class="wrap">
     <div class="sec-head">
       <div>
-        <span class="eyebrow"><i class="fa-solid fa-compass"></i> Nereden Başlanır</span>
-        <h2>Sen hangisisin?</h2>
-        <p class="lead">Her rol kendi akışında ilerler — öğrenme, ortaklık ve öğretme ayrı yollardır.</p>
+        <span class="eyebrow"><i class="fa-solid fa-diagram-project"></i> Kurum Türüne Göre</span>
+        <h2>Hangi kurumsunuz?</h2>
+        <p class="lead">Her kurum türünün çözdüğü problem, uygun iş birliği modeli ve ölçülebilir göstergeleri farklıdır.</p>
       </div>
     </div>
-    <div class="ak-grid">
-      <a class="ak-card" href="dadacampus-egitimler-v1.html">
-        <span class="ak-ico"><i class="fa-solid fa-user"></i></span>
-        <h3>Bireysel Öğrenen</h3>
-        <p>Hobiden başla, tek tek eğitim al, kendi hızında ilerle. Uygulamanı yükle, şeften geri bildirim al.</p>
-      </a>
-      <a class="ak-card" href="dadacampus-programlar-v1.html?tur=sertifika">
-        <span class="ak-ico"><i class="fa-solid fa-user-graduate"></i></span>
-        <h3>Öğrenci</h3>
-        <p>Çok dersli sertifika programına başvur; modül, takvim ve değerlendirmeyle uzmanlığını belgele.</p>
-      </a>
-      <a class="ak-card" href="dadacampus-kurumlar-v1.html">
-        <span class="ak-ico"><i class="fa-solid fa-building-columns"></i></span>
-        <h3>Kurum</h3>
-        <p>Üniversite, okul, belediye veya işletme olarak ortak program tasarla; kohortunu ve raporunu yönet.</p>
-      </a>
-      <a class="ak-card" href="dadacampus-yardim-v1.html?konu=egitmen">
-        <span class="ak-ico"><i class="fa-solid fa-chalkboard-user"></i></span>
-        <h3>Eğitmen</h3>
-        <p>Şef, akademisyen veya sektör uzmanıysan içerik üret, canlı ders ver, uygulama değerlendir.</p>
-      </a>
-    </div>
+    <div class="ak-grid is-3" id="turKartlari"></div>
   </div>
 </section>
 
-<!-- ===== 4) ÖNE ÇIKAN ÜÇ EĞİTİM VE İKİ PROGRAM (§6.2 #4) =====
-     §6.4: altıdan fazla eğitim kartı gösterilmez, merkez sayfaya geçiş verilir.
-     Arama/filtre bu sayfada DEĞİL, Eğitimler Merkezi'nde (§7.1). -->
-<section class="ak-courses" id="setler">
+<!-- her kurum türü için ayrıntı bloğu (JS render eder; #tur-<slug> hedefleri) -->
+<section class="ak-sec" id="turDetaylar" style="background:var(--bg-cream);padding-top:0"></section>
+
+<!-- ===== 2) İŞ BİRLİĞİ MODELLERİ (§9.2) — on model ===== -->
+<section class="ak-sec derin" id="modeller">
   <div class="wrap">
     <div class="sec-head">
       <div>
-        <span class="eyebrow"><i class="fa-solid fa-clapperboard"></i> Öne Çıkan Eğitimler</span>
-        <h2>Şu an kayıt alan eğitimler</h2>
-        <p class="lead">Her eğitim uygulama teslimiyle biter; seviye, süre ve belge koşulu kartta yazılıdır.</p>
-      </div>
-      <div class="sec-tools">
-        <a class="see-all" href="dadacampus-egitimler-v1.html">Tüm Eğitimler <i class="fa-solid fa-arrow-right"></i></a>
+        <span class="eyebrow"><i class="fa-solid fa-handshake"></i> İş Birliği Modelleri</span>
+        <h2>On model, açık kapsam ve değer</h2>
+        <p class="lead">Modeller birleştirilebilir. Hangi modelin uygun olduğu ihtiyaç analizi görüşmesinde netleşir.</p>
       </div>
     </div>
-    <div class="crs-grid" id="oneEgitimler"></div>
-
-    <div class="sec-head" style="margin-top:44px">
-      <div>
-        <span class="eyebrow"><i class="fa-solid fa-diagram-project"></i> Öne Çıkan Programlar</span>
-        <h2>Başvurusu açık programlar</h2>
-        <p class="lead">Program birden fazla eğitim, uygulama ve değerlendirmeden oluşur — eğitimden farklıdır.</p>
-      </div>
-      <div class="sec-tools">
-        <a class="see-all" href="dadacampus-programlar-v1.html">Tüm Programlar <i class="fa-solid fa-arrow-right"></i></a>
-      </div>
-    </div>
-    <div class="crs-grid" id="oneProgramlar"></div>
+    <div class="mdl" id="modelListe"></div>
   </div>
 </section>
 
-<!-- ===== KONU ALANLARI (keşif rayı) — eski "Konular & Yol Haritası" bölümünün
-     yerini alır; 10 konu alanı §4.2 ile birebir aynı kaynaktan (DC.konuAlanlari). -->
-<section class="ak-topics" id="konular">
-  <div class="wrap">
-    <div class="cat-head sec-head">
-      <div>
-        <span class="eyebrow"><i class="fa-solid fa-diagram-project"></i> Konu Alanları</span>
-        <h2>Hangi temelleri kuracaksın?</h2>
-        <p class="lead">On konu alanı — her biri kendi eğitim ve programlarına açılır.</p>
-      </div>
-      <div class="sec-tools">
-        <div class="row-nav">
-          <button data-track="akTopicsTrack" data-dir="prev" aria-label="Önceki konu alanları"><i class="fa-solid fa-chevron-left"></i></button>
-          <button data-track="akTopicsTrack" data-dir="next" aria-label="Sonraki konu alanları"><i class="fa-solid fa-chevron-right"></i></button>
-        </div>
-      </div>
-    </div>
-    <div class="cat-track" id="akTopicsTrack"></div>
-  </div>
-</section>
-
-<!-- ===== 5) ÖĞRENME MODELİ (§6.2 #5) =====
-     İzle → Uygula → Geri bildirim al → Değerlendir → Belgelendir.
-     Eski "Neler Geliyor" (video set / canlı atölye / sertifika / şef geri bildirimi)
-     içeriği bu beş adımın içine taşındı — hiçbiri kaybolmadı (§27). -->
-<section class="ak-sec" id="model" style="background:var(--bg-cream)">
+<!-- ===== 3) UYGULAMA SÜRECİ (§19.1) ===== -->
+<section class="ak-sec derin" id="surec" style="background:var(--bg-cream)">
   <div class="wrap">
     <div class="sec-head">
       <div>
-        <span class="eyebrow"><i class="fa-solid fa-arrows-spin"></i> Öğrenme Modeli</span>
-        <h2>Beş adımda öğrenmeden belgeye</h2>
-        <p class="lead">Her eğitim ve program aynı döngüyü izler; belge bu döngünün sonucudur, tek başına bir ürün değildir.</p>
+        <span class="eyebrow"><i class="fa-solid fa-route"></i> Süreç</span>
+        <h2>Başvurudan etki raporuna</h2>
+        <p class="lead">On iki adımlı iş birliği yaşam döngüsü. Her kritik işlem tarih, kullanıcı ve eski-yeni değerle kayıt altına alınır (§10.3).</p>
       </div>
     </div>
-    <div class="ak-how-grid is-5">
-      <div class="ak-how-step">
-        <span class="num">01</span>
-        <div><h4>İzle</h4><p>Bölüm bölüm ilerleyen video dersler; altyazı, transkript ve hız kontrolüyle kendi hızında.</p></div>
-      </div>
-      <div class="ak-how-step">
-        <span class="num">02</span>
-        <div><h4>Uygula</h4><p>Her ders uygulama tarifiyle biter. Canlı atölyelerde şefle aynı anda aynı tarifi pişir.</p></div>
-      </div>
-      <div class="ak-how-step">
-        <span class="num">03</span>
-        <div><h4>Geri bildirim al</h4><p>Pişirdiğin tabağın fotoğraf veya videosunu yükle; eğitmenden birebir yorum ve revizyon önerisi al.</p></div>
-      </div>
-      <div class="ak-how-step">
-        <span class="num">04</span>
-        <div><h4>Değerlendir</h4><p>Teslimin açık bir rubrikle puanlanır — kriter, puan ve örnek baştan görünür.</p></div>
-      </div>
-      <div class="ak-how-step">
-        <span class="num">05</span>
-        <div><h4>Belgelendir</h4><p>Koşulları karşıladığında belgen doğrulanabilir kimlikle verilir; türü ve veren kurum belge üzerinde yazılıdır.</p></div>
-      </div>
+    <div class="surec" id="surecListe"></div>
+    <div class="kurum-gate" style="margin-top:26px">
+      <span class="kg-ico"><i class="fa-solid fa-circle-info"></i></span>
+      <span class="kg-txt">
+        <b>Zorunlu karar noktaları</b>
+        <p>Sertifikayı hangi kurumun hangi yetkiyle verdiği, öğrenci verisinin kim tarafından işlendiği, içerik ve marka kullanım hakları, eğitmen ücretleri, yüz yüze mutfakta iş sağlığı ve güvenliği sorumluluğu, başarısızlık/itiraz/iptal kuralı ve program bitiminde veri erişim süresi — protokol öncesi yazılı olarak netleştirilir (§19.2).</p>
+      </span>
     </div>
   </div>
 </section>
 
-<!-- ===== 6) ÜNİVERSİTE VE KURUM İŞ BİRLİĞİ MODELLERİ (§6.2 #6) =====
-     Dört öne çıkan model; on modelin tamamı Kurumlar Merkezi'nde (§9.2). -->
-<section class="ak-sec" id="isbirligi">
-  <div class="wrap">
-    <div class="sec-head">
-      <div>
-        <span class="eyebrow"><i class="fa-solid fa-handshake"></i> Kurumlar İçin</span>
-        <h2>Birlikte program tasarlayalım</h2>
-        <p class="lead">Üniversite, mutfak sanatları okulu, kamu kurumu ve işletmelerle sürdürülebilir iş birliği modelleri.</p>
-      </div>
-      <div class="sec-tools">
-        <a class="see-all" href="dadacampus-kurumlar-v1.html#modeller">Tüm Modeller <i class="fa-solid fa-arrow-right"></i></a>
-      </div>
-    </div>
-    <div class="ak-grid" id="oneModeller"></div>
-  </div>
-</section>
-
-<!-- ===== 7) CANLI ATÖLYELER VE YAKLAŞAN TAKVİM (§6.2 #7) =====
-     Atölye = belirli tarihli canlı/yüz yüze uygulama (§8.1) — eğitimle karıştırılmaz. -->
-<section class="ak-courses" id="takvim">
-  <div class="wrap">
-    <div class="sec-head">
-      <div>
-        <span class="eyebrow"><i class="fa-solid fa-video"></i> Canlı Atölyeler</span>
-        <h2>Yaklaşan oturumlar</h2>
-        <p class="lead">Belirli tarihli canlı ve yüz yüze uygulamalar; kontenjan ve kayıt kapanışı kartta.</p>
-      </div>
-      <div class="sec-tools">
-        <a class="see-all" href="dadacampus-programlar-v1.html?bolum=takvim">Akademik Takvim <i class="fa-solid fa-arrow-right"></i></a>
-      </div>
-    </div>
-    <div class="crs-grid" id="oneAtolyeler"></div>
-  </div>
-</section>
-
-<!-- ===== 8) EĞİTMENLER VE AKADEMİK/SEKTÖREL DANIŞMA YAPISI (§6.2 #8) =====
-     §6.4: en fazla dört örnek profil. Rol çeşitliliği görünür (şef, akademisyen, mentor). -->
-<section class="ak-chefs" id="egitmenler">
-  <div class="wrap">
-    <div class="sec-head">
-      <div>
-        <span class="eyebrow"><i class="fa-solid fa-chalkboard-user"></i> Eğitmenler</span>
-        <h2>Kadro: şefler, akademisyenler, uzmanlar</h2>
-        <p class="lead">Her eğitmenin rolü, bağlı kurumu ve verdiği eğitimler profilinde açıkça yazılıdır.</p>
-      </div>
-    </div>
-    <div class="chef-grid" id="oneEgitmenler"></div>
-
-    <!-- Akademik ve sektörel danışma yapısı + eğitmen ol.
-         §26.10: DadaGastro "Şef Ol" bağlantısı KALDIRILDI. -->
-    <div class="ak-chef-cta">
-      <div class="acc-txt">
-        <b>Akademik ve sektörel danışma yapısı</b>
-        <p>Program müfredatları, kazanım-değerlendirme eşleşmesi ve gıda güvenliği içerikleri akademisyen ve sektör uzmanlarının incelemesinden geçer. Kadroya katılmak istiyorsan başvuru akışı DadaCampus'a özeldir.</p>
-      </div>
-      <a class="btn btn-ghost" href="dadacampus-yardim-v1.html?konu=egitmen"><i class="fa-solid fa-user-plus"></i> Eğitmen Ol</a>
-    </div>
-  </div>
-</section>
-
-<!-- ===== 9) PORTFOLYO VE DOĞRULANABİLİR KAZANIM BELGELERİ (§6.2 #9) =====
-     §15.1 kritik ifade kuralı: belge türü + veren kurum + zorunlu açıklama gösterilir.
-     Kurum onay kaydı yoksa "üniversite onaylı / ortak sertifika" YAZILMAZ. -->
-<section class="ak-cert" id="sertifika">
-  <div class="wrap">
-    <div class="cert-band">
-      <div class="cert-left">
-        <span class="eyebrow"><i class="fa-solid fa-certificate"></i> Portfolyo ve Belge</span>
-        <h2>Yaptığın işi göster, kazanımını doğrulat</h2>
-        <p>Kabul edilen her uygulama Mutfak Portfolyona eklenir; koşulları karşıladığın programın belgesi doğrulanabilir kimlikle verilir. Belgenin türü, veren kurumu ve başarı koşulu belge üzerinde ve doğrulama sayfasında görünür.</p>
-        <ul class="cert-points">
-          <li><i class="fa-solid fa-check"></i> Beş belge türü ayrıdır: katılım, başarı, mikro kazanım, ortak program, kurum içi kayıt</li>
-          <li><i class="fa-solid fa-check"></i> Benzersiz belge kimliği ve QR kod ile herkese açık doğrulama</li>
-          <li><i class="fa-solid fa-check"></i> Kurum onayı yalnız onay kaydı varsa gösterilir — otomatik geçerlilik iddiası yok</li>
-        </ul>
-        <div class="ak-hero-cta" style="margin-top:22px">
-          <a class="btn btn-primary" href="dadacampus-sertifika-dogrula-v1.html"><i class="fa-solid fa-shield-halved"></i> Sertifika Doğrula</a>
-        </div>
-      </div>
-      <div class="cert-card" id="certOrnek"></div>
-    </div>
-  </div>
-</section>
-
-<!-- ===== 10) PARTNER KURUMLAR VE ÖLÇÜLEBİLİR ETKİ GÖSTERGELERİ (§6.2 #10) =====
-     🔴 YALNIZ onay kaydı olan kurumlar listelenir (DC.onayliKurumlar) — §26.13.
-     Logolar eşit boyutlu tek kutuda; marka hiyerarşisi bozulmaz (§6.4, §23.1). -->
-<section class="ak-sec" id="partnerler" style="background:var(--bg-cream)">
+<!-- ===== 4) PARTNER KURUMLAR (§10.1) =====
+     🔴 YALNIZ onay kaydı olanlar. Logo yerine eşit boyutlu monogram kutusu:
+     kurgusal kuruma logo uydurulmaz, marka hiyerarşisi bozulmaz (§6.4, §23.1).
+     Etki göstergesi yalnız kurum onayıyla yayımlanır. -->
+<section class="ak-sec derin" id="partnerler">
   <div class="wrap">
     <div class="sec-head">
       <div>
         <span class="eyebrow"><i class="fa-solid fa-circle-check"></i> Partner Kurumlar</span>
         <h2>Onay kaydı bulunan kurumlar</h2>
-        <p class="lead">Aşağıdaki kurumlarla iş birliği protokolü imzalanmıştır. Etki göstergeleri yalnız kurum onayıyla yayımlanır.</p>
-      </div>
-      <div class="sec-tools">
-        <a class="see-all" href="dadacampus-kurumlar-v1.html#partnerler">Tümü ve Başarı Örnekleri <i class="fa-solid fa-arrow-right"></i></a>
+        <p class="lead">Aşağıdaki kurumlarla protokol/sözleşme imzalanmıştır. Onay kaydı olmayan görüşme ve teklif aşamasındaki kurumlar burada listelenmez.</p>
       </div>
     </div>
-    <div class="ak-grid" id="onePartnerler"></div>
+    <div class="ak-grid" id="partnerGrid"></div>
+    <p class="pagi-note" style="text-align:left;margin-top:16px">
+      Sponsorluk, içerik üretimi ve akademik onay birbirinden ayrı kayıtlardır; sponsor olan bir kurum içeriği onaylayan akademik kurum olarak gösterilmez (§20).
+    </p>
   </div>
 </section>
 
-<!-- ===== 11) KAPANIŞ: EĞİTİME BAŞLA / İŞ BİRLİĞİ BAŞLAT / EĞİTMEN OL (§6.2 #11)
-     + sıkıştırılmış duyuru formu (§6.4). Eski "erken kayıt" formu, ürün canlı
-     olduğu için YENİ PROGRAM DUYURUSU bültenine dönüştü; ?sent=1 akışı korundu. -->
-<section class="ak-form-sec" id="kayit">
+<!-- ===== 5) KURUMSAL BAŞARI ÖRNEKLERİ (§9.1) =====
+     🔴 Yalnız kurum onaylı çıktı ve göstergeler. -->
+<section class="ak-sec derin" id="ornekler" style="background:var(--bg-cream)">
   <div class="wrap">
     <div class="sec-head">
       <div>
-        <span class="eyebrow"><i class="fa-solid fa-flag-checkered"></i> Başla</span>
-        <h2>Bir sonraki adımını seç</h2>
-        <p class="lead">Öğrenmeye başla, kurumunla iş birliği kur ya da kadroya katıl.</p>
+        <span class="eyebrow"><i class="fa-solid fa-chart-line"></i> Başarı Örnekleri</span>
+        <h2>Kurum onaylı çıktılar</h2>
+        <p class="lead">Aşağıdaki sonuçlar ilgili kurumun onay kaydı kapsamında yayımlanmıştır.</p>
       </div>
     </div>
-    <div class="ak-grid is-3" style="margin-bottom:40px">
-      <a class="ak-card" href="dadacampus-egitimler-v1.html">
-        <span class="ak-ico"><i class="fa-solid fa-clapperboard"></i></span>
-        <h3>Eğitime Başla</h3>
-        <p>Ücretsiz başlangıç eğitimleriyle dene, sonra seviyene uygun programa geç.</p>
-      </a>
-      <a class="ak-card" href="dadacampus-kurumlar-v1.html#basvuru">
-        <span class="ak-ico"><i class="fa-solid fa-file-signature"></i></span>
-        <h3>İş Birliği Başlat</h3>
-        <p>Kurum başvuru formunu doldur; ihtiyaç analizi görüşmesiyle model belirlenir.</p>
-      </a>
-      <a class="ak-card" href="dadacampus-yardim-v1.html?konu=egitmen">
-        <span class="ak-ico"><i class="fa-solid fa-user-plus"></i></span>
-        <h3>Eğitmen Ol</h3>
-        <p>Rolünü seç, yeterliliklerini belgele, örnek dersini paylaş.</p>
-      </a>
-    </div>
+    <div class="ak-grid is-3" id="ornekGrid"></div>
+  </div>
+</section>
 
+<!-- ===== 6) İŞ BİRLİĞİ BAŞVURU FORMU (§9.4) =====
+     §9.1: Kurumlar Merkezi ölçülebilir bir başvuruya dönüşmek ZORUNDA.
+     Form kiti fk-* (tarif-ekle-v1 mirası); Faz 4'te çok adımlı sayfaya taşınacak
+     ve kurum durum akışına (§18.3) + kurum paneline bağlanacak. -->
+<section class="ak-form-sec derin" id="basvuru">
+  <div class="wrap">
+    <div class="sec-head">
+      <div>
+        <span class="eyebrow"><i class="fa-solid fa-file-signature"></i> İş Birliği Başlat</span>
+        <h2>Kurum başvuru formu</h2>
+        <p class="lead">Formu gönderdiğinizde kurum kaydınız <b>Aday</b> durumunda oluşturulur; ardından görüşme ve ihtiyaç analizi adımına geçilir (§18.3).</p>
+      </div>
+    </div>
     <div class="ak-form-grid">
       <div class="form-card">
-        <form class="ak-form" id="akForm">
+        <form class="ak-form" id="kurumForm">
           <div class="fc-head">
             <div>
-              <h2><i class="fa-regular fa-envelope"></i> Yeni Program Duyuruları</h2>
-              <p>Yeni eğitim, program ve canlı atölye açıldığında haber ver. Spam yok, dilediğin an çıkarsın.</p>
+              <h2><i class="fa-solid fa-building-columns"></i> Kurum Bilgileri</h2>
+              <p>Yıldızlı alanlar zorunludur. Kurumsal e-posta adresi kullanmanızı rica ederiz.</p>
             </div>
           </div>
+
           <div class="fk-grid c2">
             <div class="fk-field">
-              <label class="fk-label" for="akName">Ad Soyad <span class="req">*</span></label>
-              <input class="fk-input" type="text" id="akName" name="akName" placeholder="Adın ve soyadın" autocomplete="name" required />
+              <label class="fk-label" for="kfAd">Kurum adı <span class="req">*</span></label>
+              <input class="fk-input" type="text" id="kfAd" name="kfAd" placeholder="Kurumunuzun tam adı" required />
             </div>
             <div class="fk-field">
-              <label class="fk-label" for="akMail">E-posta <span class="req">*</span></label>
-              <input class="fk-input" type="email" id="akMail" name="akMail" placeholder="ornek@eposta.com" autocomplete="email" required />
+              <label class="fk-label" for="kfTur">Kurum türü <span class="req">*</span></label>
+              <select class="fk-select" id="kfTur" name="kfTur" required>
+                <option value="" selected disabled>Seçiniz</option>
+              </select>
             </div>
           </div>
-          <div class="fk-field" style="margin-top:22px">
-            <label class="fk-label" for="akTopic">İlgi alanın <span class="req">*</span></label>
-            <select class="fk-select" id="akTopic" name="akTopic" required>
-              <option value="" selected disabled>Seç — sana uygun eğitimi önerelim</option>
-            </select>
+
+          <div class="fk-grid c2">
+            <div class="fk-field">
+              <label class="fk-label" for="kfSehir">Şehir / ülke <span class="req">*</span></label>
+              <input class="fk-input" type="text" id="kfSehir" name="kfSehir" placeholder="Örn. İzmir, Türkiye" required />
+            </div>
+            <div class="fk-field">
+              <label class="fk-label" for="kfWeb">Web sitesi <span class="opt">(varsa)</span></label>
+              <input class="fk-input" type="url" id="kfWeb" name="kfWeb" placeholder="https://" />
+            </div>
           </div>
+
+          <div class="fk-grid c2">
+            <div class="fk-field">
+              <label class="fk-label" for="kfYetkili">Yetkili kişi <span class="req">*</span></label>
+              <input class="fk-input" type="text" id="kfYetkili" name="kfYetkili" placeholder="Ad soyad" required />
+            </div>
+            <div class="fk-field">
+              <label class="fk-label" for="kfUnvan">Unvan <span class="req">*</span></label>
+              <input class="fk-input" type="text" id="kfUnvan" name="kfUnvan" placeholder="Örn. Sürekli Eğitim Merkezi Müdürü" required />
+            </div>
+          </div>
+
+          <div class="fk-grid c2">
+            <div class="fk-field">
+              <label class="fk-label" for="kfMail">Kurumsal e-posta <span class="req">*</span></label>
+              <input class="fk-input" type="email" id="kfMail" name="kfMail" placeholder="ad.soyad@kurum.edu.tr" required />
+              <span class="fk-help">Başvuru durumu bu adrese bildirilir.</span>
+            </div>
+            <div class="fk-field">
+              <label class="fk-label" for="kfTel">Telefon <span class="opt">(tercihen)</span></label>
+              <input class="fk-input" type="tel" id="kfTel" name="kfTel" placeholder="+90" />
+            </div>
+          </div>
+
+          <div class="fk-field">
+            <label class="fk-label" for="kfAmac">İş birliği amacı <span class="req">*</span></label>
+            <textarea class="fk-textarea" id="kfAmac" name="kfAmac" rows="4" required
+              placeholder="Ne yapmak istiyorsunuz? Hangi problemi çözmeyi hedefliyorsunuz?"></textarea>
+          </div>
+
+          <div class="fk-field">
+            <label class="fk-label" for="kfModel">İlgilendiğiniz model <span class="opt">(çoklu seçim)</span></label>
+            <select class="fk-select" id="kfModel" name="kfModel" multiple size="5"></select>
+            <span class="fk-help">Emin değilseniz boş bırakın — görüşmede birlikte belirleriz.</span>
+          </div>
+
+          <div class="fk-grid c2">
+            <div class="fk-field">
+              <label class="fk-label" for="kfKitle">Hedef katılımcı profili <span class="req">*</span></label>
+              <input class="fk-input" type="text" id="kfKitle" name="kfKitle" placeholder="Örn. 3. sınıf gastronomi öğrencileri" required />
+            </div>
+            <div class="fk-field">
+              <label class="fk-label" for="kfSayi">Beklenen katılımcı sayısı <span class="req">*</span></label>
+              <input class="fk-input" type="number" id="kfSayi" name="kfSayi" min="1" placeholder="Örn. 40" required />
+            </div>
+          </div>
+
+          <div class="fk-grid c2">
+            <div class="fk-field">
+              <label class="fk-label" for="kfFormat">Tercih edilen format <span class="req">*</span></label>
+              <select class="fk-select" id="kfFormat" name="kfFormat" required>
+                <option value="" selected disabled>Seçiniz</option>
+                <option value="online">Online</option>
+                <option value="hibrit">Hibrit (online teori + yüz yüze uygulama)</option>
+                <option value="yuz-yuze">Yüz yüze</option>
+              </select>
+            </div>
+            <div class="fk-field">
+              <label class="fk-label" for="kfTarih">Hedef başlangıç <span class="opt">(yaklaşık)</span></label>
+              <input class="fk-input" type="month" id="kfTarih" name="kfTarih" />
+            </div>
+          </div>
+
+          <div class="fk-grid c2">
+            <div class="fk-field">
+              <label class="fk-label" for="kfSure">Program süresi <span class="opt">(yaklaşık)</span></label>
+              <input class="fk-input" type="text" id="kfSure" name="kfSure" placeholder="Örn. 14 hafta" />
+            </div>
+            <div class="fk-field">
+              <label class="fk-label" for="kfButce">Bütçe aralığı <span class="opt">(varsa)</span></label>
+              <select class="fk-select" id="kfButce" name="kfButce">
+                <option value="" selected disabled>Belirtmek isterseniz</option>
+                <option>Henüz belirlenmedi</option>
+                <option>Kamu/proje bütçesi ile desteklenecek</option>
+                <option>250.000 ₺ altı</option>
+                <option>250.000 – 750.000 ₺</option>
+                <option>750.000 ₺ üzeri</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="fk-field">
+            <label class="fk-label" for="kfBelge">Sertifika / belge beklentiniz <span class="req">*</span></label>
+            <select class="fk-select" id="kfBelge" name="kfBelge" required>
+              <option value="" selected disabled>Seçiniz</option>
+            </select>
+            <span class="fk-help">Ortak sertifika, kurumunuzun resmî onay süreci tamamlandıktan sonra kullanılabilir (§15.1).</span>
+          </div>
+
+          <div class="fk-field">
+            <label class="fk-label">Kurumunuzun imkânları <span class="opt">(uygun olanları işaretleyin)</span></label>
+            <div class="fk-checks" id="kfImkan"></div>
+          </div>
+
+          <div class="fk-field">
+            <label class="fk-label" for="kfDosya">İlgili doküman veya ihtiyaç notu <span class="opt">(isteğe bağlı)</span></label>
+            <div class="up-zone" id="kfUpZone">
+              <i class="fa-solid fa-cloud-arrow-up" aria-hidden="true"></i>
+              <b>Dosya seçin veya buraya bırakın</b>
+              <span>PDF, DOCX, XLSX · en fazla 10 MB</span>
+              <input type="file" id="kfDosya" name="kfDosya" accept=".pdf,.doc,.docx,.xls,.xlsx" />
+            </div>
+            <div class="up-list" id="kfUpList"></div>
+          </div>
+
           <label class="fb-kvkk">
             <input type="checkbox" required />
-            <span><a href="yasal-v1.html?metin=aydinlatma">Aydınlatma Metni</a>'ni ve <a href="yasal-v1.html?metin=kvkk">KVKK Metni</a>'ni okudum; DadaCampus duyurularının e-posta ile gönderilmesini onaylıyorum.</span>
+            <span><a href="yasal-v1.html?metin=aydinlatma">Aydınlatma Metni</a>'ni ve <a href="yasal-v1.html?metin=kvkk">KVKK Metni</a>'ni okudum; başvurunun değerlendirilmesi amacıyla verilerin işlenmesini onaylıyorum.</span>
           </label>
-          <button class="btn btn-primary ak-send" type="submit"><i class="fa-regular fa-bell"></i> Duyurulara Kaydol</button>
+          <label class="fb-kvkk">
+            <input type="checkbox" required />
+            <span>Formu kurumum adına iletmeye yetkili olduğumu beyan ederim.</span>
+          </label>
+          <label class="fb-kvkk">
+            <input type="checkbox" />
+            <span>DadaCampus kurumsal duyurularını e-posta ile almak istiyorum. <span class="muted">(isteğe bağlı)</span></span>
+          </label>
+
+          <button class="btn btn-primary ak-send" type="submit"><i class="fa-solid fa-paper-plane"></i> Başvuruyu Gönder</button>
         </form>
-        <div class="ak-success" id="akSuccess" aria-live="polite">
+
+        <div class="ak-success" id="kurumSuccess" aria-live="polite">
           <span class="ok"><i class="fa-solid fa-check"></i></span>
-          <h3>Kaydoldun!</h3>
-          <p>Yeni eğitim ve program duyuruları e-postana gelecek. Şimdiden başlamak istersen <b>ücretsiz başlangıç eğitimi</b> seni bekliyor.</p>
-          <a class="btn btn-ghost" href="dadacampus-egitimler-v1.html?ucret=ucretsiz"><i class="fa-solid fa-gift"></i> Ücretsiz Eğitime Git</a>
+          <h3>Başvurunuz alındı</h3>
+          <p>Kurum kaydınız <b>Aday</b> durumunda oluşturuldu. Kurumsal e-postanıza başvuru numaranız ve sonraki adım (ihtiyaç analizi görüşmesi) bilgisi gönderildi.</p>
+          <div class="bsv" style="max-width:420px;margin:0 auto 20px;text-align:left">
+            <div class="bsv-row">
+              <span class="bsv-info"><b>Kurum durumu</b><span>Aday → Görüşme → İhtiyaç Analizi → Teklif → Protokol → Aktif</span></span>
+              <span class="pstat wait"><i class="fa-solid fa-hourglass-half"></i> Aday</span>
+            </div>
+          </div>
+          <a class="btn btn-ghost" href="dadacampus-yardim-v1.html?konu=kurum"><i class="fa-solid fa-circle-question"></i> Kurum Desteği</a>
         </div>
       </div>
+
       <aside class="seo-aside">
-        <h4>Sık sorulanlar</h4>
-        <ul class="seo-quick" id="ssTeaser"></ul>
-        <a class="see-all" href="dadacampus-yardim-v1.html" style="margin-top:16px">Yardım Merkezi <i class="fa-solid fa-arrow-right"></i></a>
+        <h4>Süreç nasıl işler?</h4>
+        <ul class="seo-quick">
+          <li><i class="fa-solid fa-1"></i><span><b>Form ve ön değerlendirme</b>Kurum türü, hedef ve katılımcı sayısı doğrulanır</span></li>
+          <li><i class="fa-solid fa-2"></i><span><b>İhtiyaç analizi görüşmesi</b>Notlar kayda alınır, model önerilir</span></li>
+          <li><i class="fa-solid fa-3"></i><span><b>Teklif ve protokol</b>Bütçe, sorumluluk, içerik hakları ve takvim</span></li>
+          <li><i class="fa-solid fa-4"></i><span><b>Kurulum ve yürütme</b>Program, eğitmen, kohort, değerlendirme</span></li>
+          <li><i class="fa-solid fa-5"></i><span><b>Belge ve etki raporu</b>Onaylar, rapor, yenileme kararı</span></li>
+        </ul>
+        <a class="see-all" href="#surec" style="margin-top:16px">Tüm adımlar <i class="fa-solid fa-arrow-right"></i></a>
       </aside>
     </div>
   </div>
 </section>
 
-<!-- ===== VERİ RENDER (SAYFA JS) =====
-     Bu blok kabuk JS'lerinden ÖNCE çalışır (kabuk script'leri footer'dan sonra),
-     böylece drag-scroll, reveal gözlemcisi ve arama filtresi rendered DOM'u görür
-     (docs/lessons.md §4 sıra tuzağı). -->
-<script>
-(function(){
-  var D = window.DC;
-  if(!D){ return; }                                   /* veri yüklenmediyse iskelet bozulmaz */
-  var esc = D.esc, img = D.img;
-
-  function el(id){ return document.getElementById(id); }
-  function fill(id, html){ var n = el(id); if(n) n.innerHTML = html; }
-
-  /* --- HERO İSTATİSTİKLERİ — sayılar veriden, elle yazılmaz ---------------- */
-  var kayitAcik = D.programlar.filter(function(p){ return p.durum === 'kayit-acik'; }).length;
-  fill('heroStats',
-    '<div class="st"><b>' + D.egitimler.length + '</b><span>Eğitim yayında</span></div>' +
-    '<div class="st"><b>' + kayitAcik + '</b><span>Programa başvuru açık</span></div>' +
-    '<div class="st"><b>' + D.onayliKurumlar().length + '</b><span>Partner kurum</span></div>');
-
-  /* --- EĞİTİM KARTI — mevcut .crs-card ailesi, artık TIKLANABİLİR ---------- */
-  function egitimKarti(e){
-    var eg = D.egitmen(e.egitmenId);
-    var ucretsiz = e.erisim === 'ucretsiz';
-    return '<a class="crs-card" href="' + esc(D.link.egitim(e.slug)) + '">' +
-      '<div class="crs-fig" style="background-image:url(\'' + esc(img(e.kapak, 600)) + '\')">' +
-        '<span class="crs-lvl">' + esc(D.etiket('seviyeler', e.seviye)) + '</span>' +
-        (ucretsiz ? '<span class="crs-soon"><i class="fa-solid fa-gift"></i> Ücretsiz</span>' : '') +
-        '<span class="crs-track-lbl">' + esc(D.etiket('konuAlanlari', e.kategori)) + '</span>' +
-      '</div>' +
-      '<div class="crs-body">' +
-        '<h3>' + esc(e.ad) + '</h3>' +
-        (eg ? '<div class="crs-chef">' +
-          '<span class="cc-ava" style="background-image:url(\'' + esc(img(eg.foto, 120)) + '\')"></span>' +
-          '<span><b>' + esc(eg.ad) + '</b><span>' + esc(eg.uzmanliklar.slice(0, 2).join(', ')) + '</span></span>' +
-        '</div>' : '') +
-        '<div class="crs-meta">' +
-          '<span><i class="fa-solid fa-circle-play"></i> ' + e.dersSayisi + ' ders</span>' +
-          '<span><i class="fa-regular fa-clock"></i> ' + esc(D.sure(e.sureDk)) + '</span>' +
-          '<span><i class="fa-solid fa-utensils"></i> ' + e.uygulamaSayisi + ' uygulama</span>' +
-        '</div>' +
-      '</div></a>';
-  }
-
-  /* --- PROGRAM KARTI — AYNI kart ailesi, bilgi alanları role göre değişir
-         (§23.1). "Ortak" etiketi YALNIZ onay kaydı varsa basılır (§26.13). --- */
-  function programKarti(p){
-    var partner = p.partnerKurumIds.length ? D.kurum(p.partnerKurumIds[0]) : null;
-    var ortak = D.ortakBelgeGosterilirMi(p);
-    return '<a class="crs-card" href="' + esc(D.link.program(p.slug)) + '">' +
-      '<div class="crs-fig" style="background-image:url(\'' + esc(img(p.kapak, 600)) + '\')">' +
-        '<span class="crs-lvl">' + esc(D.etiket('programTurleri', p.tur)) + '</span>' +
-        (p.durum === 'kayit-acik' ? '<span class="crs-soon"><i class="fa-regular fa-clock"></i> Başvuru açık</span>' : '') +
-        '<span class="crs-track-lbl">' + esc(p.donem) + '</span>' +
-      '</div>' +
-      '<div class="crs-body">' +
-        '<h3>' + esc(p.ad) + '</h3>' +
-        (partner ? '<div class="crs-chef">' +
-          '<span class="cc-ava" style="display:grid;place-items:center;background:var(--tomato-tint);color:var(--tomato);font-size:11px;font-weight:800">' + esc(partner.monogram) + '</span>' +
-          '<span><b>' + esc(partner.ad) + '</b><span>' + (ortak ? 'Ortak program · onay kaydı var' : 'Partner kurum') + '</span></span>' +
-        '</div>' : '') +
-        '<div class="crs-meta">' +
-          '<span><i class="fa-solid fa-layer-group"></i> ' + p.modulSayisi + ' modül</span>' +
-          '<span><i class="fa-solid fa-circle-play"></i> ' + p.egitimSayisi + ' eğitim</span>' +
-          '<span><i class="fa-solid fa-users"></i> ' + p.kontenjan + ' kontenjan</span>' +
-        '</div>' +
-      '</div></a>';
-  }
-
-  /* --- ATÖLYE KARTI — tarih ve kontenjan öne çıkar (§13.2) ----------------- */
-  function atolyeKarti(a){
-    var eg = D.egitmen(a.egitmenId);
-    var dolu = a.durum === 'kontenjan-doldu';
-    return '<a class="crs-card" href="' + esc(D.link.atolye(a.slug)) + '">' +
-      '<div class="crs-fig" style="background-image:url(\'' + esc(img(a.kapak, 600)) + '\')">' +
-        '<span class="crs-lvl">' + esc(D.tarih(a.tarih)) + '</span>' +
-        '<span class="crs-soon"><i class="fa-regular fa-clock"></i> ' + esc(a.saat) + '</span>' +
-        '<span class="crs-track-lbl">' + esc(D.etiket('etkinlikTurleri', a.tur)) + '</span>' +
-      '</div>' +
-      '<div class="crs-body">' +
-        '<h3>' + esc(a.ad) + '</h3>' +
-        (eg ? '<div class="crs-chef">' +
-          '<span class="cc-ava" style="background-image:url(\'' + esc(img(eg.foto, 120)) + '\')"></span>' +
-          '<span><b>' + esc(eg.ad) + '</b><span>' + esc(a.format === 'yuz-yuze' ? (a.konum || 'Yüz yüze') : 'Canlı, çevrim içi') + '</span></span>' +
-        '</div>' : '') +
-        '<div class="crs-meta">' +
-          '<span><i class="fa-regular fa-clock"></i> ' + esc(D.sure(a.sureDk)) + '</span>' +
-          '<span><i class="fa-solid fa-users"></i> ' + (dolu ? 'Kontenjan doldu' : (a.kontenjan - a.kayitliSayisi) + ' yer kaldı') + '</span>' +
-          '<span><i class="fa-solid fa-tag"></i> ' + esc(a.ucret === null ? 'Kurum erişimi' : D.fiyat(a.ucret)) + '</span>' +
-        '</div>' +
-      '</div></a>';
-  }
-
-  /* 🔴 ÖNE ÇIKAN RAYLAR — DC.sigdir() ile çizilir: kart sayısı o anki SÜTUN
-     SAYISININ tam katına oturur, hiçbir genişlikte yarım satır kalmaz (§23.2).
-     .crs-grid 1440'ta 3, ≤1024'te 2 sütun, ≤640'ta yatay ray. Ölçümle
-     doğrulandı: eskiden 3 kart / 2 sütun = 2+1 yetim satır bırakıyordu.
-     Yeni sınıf/modifier ÜRETİLMEDİ, .crs-grid'e dokunulmadı; artan örnek
-     bölümün "Tümünü Gör" bağlantısından erişilir (§6.4 tavan korunur). */
-  D.sigdir(el('oneEgitimler'), D.egitimler, egitimKarti, { min: 2, max: 4 });
-  D.sigdir(el('oneProgramlar'),
-    D.programlar.filter(function(p){ return p.durum === 'kayit-acik'; }), programKarti, { min: 2, max: 3 });
-  D.sigdir(el('oneAtolyeler'), D.atolyeler, atolyeKarti, { min: 2, max: 4 });
-
-  /* --- KONU ALANLARI RAYI (10 kayıt, §4.2 ile aynı kaynak) ---------------- */
-  fill('akTopicsTrack', D.konuAlanlari.map(function(k){
-    return '<a class="cat-card" href="' + esc(D.link.egitimler({ konu: k.slug })) + '">' +
-      '<div class="cat-thumb" style="background-image:url(\'' + esc(img(k.kapak, 400)) + '\')">' +
-        '<span class="ct-ico"><i class="fa-solid ' + esc(k.ikon) + '"></i></span></div>' +
-      '<b>' + esc(k.ad) + '</b><span>' + esc(k.ozet) + '</span></a>';
-  }).join(''));
-
-  /* --- İŞ BİRLİĞİ MODELLERİ (4 öne çıkan; onu Kurumlar Merkezi'nde) ------- */
-  fill('oneModeller', D.isbirligiModelleri.slice(0, 4).map(function(m){
-    return '<a class="ak-card" href="' + esc('dadacampus-kurumlar-v1.html#model-' + m.slug) + '">' +
-      '<span class="ak-ico"><i class="fa-solid ' + esc(m.ikon) + '"></i></span>' +
-      '<h3>' + esc(m.ad) + '</h3><p>' + esc(m.kapsam) + '</p></a>';
-  }).join(''));
-
-  /* --- EĞİTMENLER (en fazla 4, rol çeşitliliği görünür — §6.4) ------------ */
-  var kadro = [D.bul('egitmenler','mehmet-aydin'), D.bul('egitmenler','selin-korkmaz'),
-               D.bul('egitmenler','nurcan-toprak'), D.bul('egitmenler','kemal-sarikaya')].filter(Boolean);
-  fill('oneEgitmenler', kadro.map(function(e){
-    var kurum = e.kurumId ? D.kurum(e.kurumId) : null;
-    /* kurum adı YALNIZ onay kaydı varsa gösterilir (§26.13) */
-    var kurumAdi = (kurum && D.onayliMi(kurum.id)) ? kurum.ad : null;
-    return '<a class="edu-chef" href="' + esc(D.link.egitmen(e.slug)) + '">' +
-      '<div class="ec-ava" style="background-image:url(\'' + esc(img(e.foto, 240)) + '\')"></div>' +
-      '<h3>' + esc(e.ad) + '</h3>' +
-      '<div class="ec-role">' + esc(e.unvan) + (kurumAdi ? ' · ' + esc(kurumAdi) : '') + '</div>' +
-      '<div class="ec-tags">' + e.uzmanliklar.slice(0, 3).map(function(u){ return '<span>' + esc(u) + '</span>'; }).join('') + '</div>' +
-    '</a>';
-  }).join(''));
-
-  /* --- PARTNER KURUMLAR (§6.2 #10) ---------------------------------------
-     🔴 Kaynak DC.onayliKurumlar(): onay kaydı OLMAYAN kurum bu listeye GİRMEZ.
-     Etki göstergesi de yalnız onaylı kurumda yayımlanır (§26.13, §10.1).
-     Logo yerine eşit boyutlu .ak-ico kutusunda monogram — kurgusal kurumlara
-     gerçek logo uydurulmaz, marka hiyerarşisi de bozulmaz (§6.4, §23.1). ---- */
-  fill('onePartnerler', D.onayliKurumlar().map(function(k){
-    var etki = (k.etkiGostergeleri || [])[0];
-    return '<a class="ak-card" href="' + esc(D.link.kurum(k.slug)) + '">' +
-      '<span class="ak-ico" style="font-size:15px;font-weight:800;letter-spacing:-.01em">' + esc(k.monogram) + '</span>' +
-      '<h3>' + esc(k.ad) + '</h3>' +
-      '<p>' + esc(D.etiket('kurumTurleri', k.tur)) + ' · ' + esc(k.sehir) + '<br>' +
-        esc(k.isbirligiKapsami) +
-        (etki ? '<br><b style="color:var(--tomato)">' + esc(etki.deger) + '</b> ' + esc(etki.ad.toLocaleLowerCase('tr-TR')) : '') +
-      '</p></a>';
-  }).join(''));
-
-  /* --- SERTİFİKA ÖRNEĞİ — gerçek demo kayıt + §15.1 ZORUNLU açıklaması ---- */
-  var s = D.sertifikalar[1];                          /* ortak program sertifikası */
-  var verenler = D.verenKurumlar(s);
-  fill('certOrnek',
-    '<span class="cc-seal"><i class="fa-solid fa-award"></i></span>' +
-    '<div class="cc-name">' + esc(D.etiket('belgeTurleri', s.tur)) + '</div>' +
-    '<div class="cc-sub">' + esc(D.program(s.programId).ad) + '</div>' +
-    '<div class="cc-line"></div>' +
-    '<div class="cc-row"><span>Katılımcı</span><b>' + esc(s.katilimciAdi) + '</b></div>' +
-    '<div class="cc-line"></div>' +
-    '<div class="cc-row"><span>Veren kurum</span><b>DadaCampus' + (verenler.length ? ' + ' + esc(verenler[0].monogram) : '') + '</b></div>' +
-    '<div class="cc-line"></div>' +
-    '<div class="cc-row"><span>Belge kimliği</span><b>' + esc(s.id) + '</b></div>' +
-    '<div class="cc-line"></div>' +
-    '<p class="cc-sub" style="margin-top:12px;text-align:left">' + esc(D.belgeAciklamasi(s.tur)) + '</p>');
-
-  /* --- SSS TEASER (4 madde) + ilgi alanı seçenekleri --------------------- */
-  fill('ssTeaser', D.sss.slice(0, 4).map(function(q){
-    return '<li><i class="fa-solid fa-circle-question"></i><span><b>' + esc(q.soru) + '</b>' +
-           esc(q.cevap.slice(0, 78)) + '…</span></li>';
-  }).join(''));
-
-  var sel = el('akTopic');
-  if(sel){
-    D.konuAlanlari.forEach(function(k){
-      var o = document.createElement('option');
-      o.value = k.slug; o.textContent = k.ad;
-      sel.appendChild(o);
-    });
-    var oh = document.createElement('option');
-    oh.value = 'hepsi'; oh.textContent = 'Hepsi ilgimi çekiyor';
-    sel.appendChild(oh);
-  }
-})();
-</script>
+<!-- ===== 7) KURUM PORTALI GİRİŞİ ===== -->
+<section class="ak-sec" style="padding-top:0">
+  <div class="wrap">
+    <div class="ak-chef-cta">
+      <div class="acc-txt">
+        <b>Zaten partner kurumsunuz?</b>
+        <p>Kurum koordinatörü olarak programlarınızı, kohortlarınızı, katılımcılarınızı, onaylarınızı ve raporlarınızı kurum panelinden yönetin. Kurum yöneticisi yalnız kendi kurumuna bağlı program ve katılımcıları görür (§10.3).</p>
+      </div>
+      <a class="btn btn-ghost" href="giris-v1.html?tab=giris"><i class="fa-solid fa-right-to-bracket"></i> Kurum Portalı Girişi</a>
+    </div>
+  </div>
+</section>
 
 </main><!-- /.page-main -->
 
@@ -2706,97 +2810,243 @@ window.__bottomStrips=window.__bottomStrips||[];
 })();
 </script>
 
-<!-- ============================================================================
-     SAYFA JS SINIRI — tasks/campus-sayfa-uret.py kuyruğu BURADAN keser.
-     ÜSTÜ = kabuk JS'i (her Campus sayfasına kopyalanır).
-     ALTI = YALNIZ bu sayfanın (akademi-v1.html hub'ının) JS'i; üretilen
-     sayfalara KOPYALANMAZ — kendi JS'leri buranın yerine geçer.
-     🔴 Faz 1'de bu sınır yoktu: hub'ın DOM-okuyan eğitim arama filtresi merkez
-     sayfalara da sızıyor, oradaki facet arama kutusuna bağlanıp #crsCount /
-     #crsEmpty null'unda hata veriyordu. Yeni kabuk JS'i bu çizginin ÜSTÜNE,
-     sayfaya özel JS ALTINA yazılır.
-     ========================================================================= -->
 <script>
-/* ===== SAYFA JS — sayfa-spesifik script BU İŞARETİN ALTINA eklenir ===== */
-/* ===== SAYFA JS — AKADEMİ: ilgi formu → teşekkür (?sent=1) ===== */
-(function(){
-  var form=document.getElementById('akForm');
-  var success=document.getElementById('akSuccess');
-  if(!form)return;
-  function showSent(push){
-    form.style.display='none';
-    success.classList.add('show');
-    if(push!==false){ try{history.pushState({sent:1},'','?sent=1');}catch(e){} }
-  }
-  function showForm(){
-    form.style.display='';
-    success.classList.remove('show');
-  }
-  form.addEventListener('submit',function(e){
-    e.preventDefault();
-    showSent();
-    document.getElementById('kayit').scrollIntoView({behavior:'smooth'});
-  });
-  window.addEventListener('popstate',function(){
-    if(location.search.indexOf('sent=1')>-1) showSent(false); else showForm();
-  });
-  if(new URLSearchParams(location.search).get('sent')==='1'){
-    showSent(false);
-    window.addEventListener('load',function(){
-      document.getElementById('kayit').scrollIntoView();
-    });
-  }
-})();
+/* ===== SAYFA JS — dadacampus-kurumlar-v1.html ===== */
+/* Kurumlar Merkezi — veri render + form (§9). Tüm listeler campus-data.js'ten. */
+(function () {
+  var D = window.DC;
+  if (!D) return;
+  var esc = D.esc;
+  var $ = function (s) { return document.querySelector(s); };
 
-/* ===== DadaAkademi — sayfa-içi eğitim arama (canlı süzme) ===== */
-(function(){
-  var box=document.getElementById('crsSearch');
-  var input=document.getElementById('crsSearchInput');
-  var clear=document.getElementById('crsSearchClear');
-  var count=document.getElementById('crsCount');
-  var empty=document.getElementById('crsEmpty');
-  if(!input)return;
-  var cards=[].slice.call(document.querySelectorAll('.crs-grid .crs-card'));
-  // her kart için aranabilir metin: başlık + konu etiketi + şef adı
-  var index=cards.map(function(c){
-    var t=(c.querySelector('h3')||{}).textContent||'';
-    var track=(c.querySelector('.crs-track-lbl')||{}).textContent||'';
-    var chef=(c.querySelector('.crs-chef b')||{}).textContent||'';
-    var lvl=(c.querySelector('.crs-lvl')||{}).textContent||'';
-    return norm(t+' '+track+' '+chef+' '+lvl);
-  });
-  // Türkçe duyarlı normalize (İ/ı, büyük-küçük, aksan)
-  function norm(s){
-    return s.toLocaleLowerCase('tr-TR')
-      .replace(/ı/g,'i').replace(/ş/g,'s').replace(/ğ/g,'g')
-      .replace(/ü/g,'u').replace(/ö/g,'o').replace(/ç/g,'c')
-      .replace(/â/g,'a').replace(/î/g,'i').replace(/û/g,'u')
-      .replace(/\s+/g,' ').trim();
-  }
-  function apply(){
-    var q=norm(input.value);
-    box.classList.toggle('has-q',input.value.length>0);
-    if(!q){
-      cards.forEach(function(c){c.classList.remove('cs-hide');});
-      empty.classList.remove('show');
-      count.classList.remove('show');count.textContent='';
-      return;
+  /* ---- hero istatistiği --------------------------------------------------- */
+  var onayli = D.onayliKurumlar();
+  var ortakProgram = D.programlar.filter(function (p) { return p.partnerKurumIds.length; }).length;
+  var katilimci = D.kohortlar.reduce(function (t, k) { return t + k.katilimciSayisi; }, 0);
+  $('#heroStats').innerHTML =
+    '<div class="st"><b>' + onayli.length + '</b><span>Partner kurum</span></div>' +
+    '<div class="st"><b>' + ortakProgram + '</b><span>Ortak program</span></div>' +
+    '<div class="st"><b>' + katilimci + '</b><span>Kurum katılımcısı</span></div>';
+
+  /* ---- 1) kurum türü kartları (§9.1) -------------------------------------
+     Beş tür + "listede yok" yolu = ALTI kart. Altı, ızgaranın her kırılımına
+     tam oturur (3/2/1 sütun); beş kart 3 sütunda 3+2 yetim satır bırakıyordu
+     (§23.2 · ölçümle yakalandı). Altıncı kart dolgu DEĞİL: §9.1 her kurum
+     türünü ölçülebilir bir başvuruya dönüştürmeyi istiyor; listede karşılığı
+     olmayan kurum da başvuru formuna bir yol bulmalı. */
+  $('#turKartlari').innerHTML = D.kurumTurleri.map(function (t) {
+    var n = onayli.filter(function (k) { return k.tur === t.slug; }).length;
+    return '<a class="ak-card" href="#tur-' + esc(t.slug) + '">' +
+      '<span class="ak-ico"><i class="fa-solid ' + esc(t.ikon) + '"></i></span>' +
+      '<h3>' + esc(t.ad) + '</h3><p>' + esc(t.vaat) +
+      (n ? '<br><b style="color:var(--tomato)">' + n + ' partner kurum</b>' : '') + '</p></a>';
+  }).join('') +
+    '<a class="ak-card" href="#basvuru">' +
+      '<span class="ak-ico"><i class="fa-solid fa-circle-question"></i></span>' +
+      '<h3>Kurumunuz listede yok mu?</h3>' +
+      '<p>Vakıf, kooperatif, oda, sivil toplum kuruluşu ya da farklı bir yapıysanız iş birliği ' +
+      'formunda kurum türünü <b>Diğer</b> olarak seçin; ihtiyaç analizi görüşmesinde uygun model belirlenir.</p></a>';
+
+  /* ---- kurum türü ayrıntı blokları (§9.3 tek şablon) ---------------------
+     §9.3 her tür sayfasında aynı yapı: değer önerisi · çözülen problem · uygun
+     modeller · örnek program · kaynak paylaşımı · süreç · göstergeler · SSS · form.
+     Faz 1'de bu yapı Merkez içinde bölüm olarak; Faz 4'te ayrı sayfa (?tur=). */
+  var TURD = {
+    'universite': {
+      problem: ['Dijital ders materyali standardı yok', 'Uygulama saatleri fiziki mutfakla sınırlı',
+                'Sürekli eğitim programı için içerik ve eğitmen kapasitesi yetersiz'],
+      kaynak: ['Kurum: akademik kadro, onay süreci, kontenjan ve mekân',
+               'DadaCampus: içerik üretimi, platform, eğitmen havuzu, değerlendirme altyapısı'],
+      gosterge: ['Kayıt ve tamamlama oranı', 'Kazanım bazlı başarı', 'Memnuniyet ve öneri']
+    },
+    'mutfak-okulu': {
+      problem: ['Teori saatleri uygulama mutfağını meşgul ediyor', 'Uzman eğitmen erişimi dönemsel',
+                'İçerik güncelleme yükü yüksek'],
+      kaynak: ['Kurum: uygulama mutfağı, yüz yüze eğitmen, iş sağlığı ve güvenliği sorumluluğu',
+               'DadaCampus: online teori, ölçme, kohort yönetimi, içerik lisansı'],
+      gosterge: ['Yüz yüze oturum devam oranı', 'Uygulama teslimi kabul oranı', 'Dönem tamamlama']
+    },
+    'kamu': {
+      problem: ['Meslek edindirme programlarında ölçülebilir çıktı eksik',
+                'Yerel ürün ve kooperatif bilgisi dijitalleşmemiş',
+                'Kadın ve genç istihdamına yönelik içerik dağınık'],
+      kaynak: ['Kurum: katılımcı seçimi, mekân, sosyal etki raporlaması, bütçe/proje kaynağı',
+               'DadaCampus: müfredat, eğitmen, hijyen ve güvenlik içeriği, raporlama'],
+      gosterge: ['Programı tamamlayan katılımcı', 'Kurulan üretim birimi', 'İstihdam/kooperatif çıktısı']
+    },
+    'meslek': {
+      problem: ['Müfredatı tamamlayıcı dijital içerik yok', 'Öğretici kadroya dijital öğretim desteği gerekiyor',
+                'Öğrenci uygulama geri bildirimi ölçeklenmiyor'],
+      kaynak: ['Kurum: öğrenci grubu, atölye saatleri, öğretici kadro',
+               'DadaCampus: tamamlayıcı içerik, eğitici eğitimi, rubrik ve değerlendirme'],
+      gosterge: ['Derse entegrasyon oranı', 'Öğrenci tamamlama', 'Öğretici memnuniyeti']
+    },
+    'isletme': {
+      problem: ['Şubeler arası standart tarif ve teknik farkı', 'Yeni işe alımda eğitim süresi uzun',
+                'Maliyet ve porsiyon disiplini ekipçe oturmuyor'],
+      kaynak: ['Kurum: katılımcı ataması, vardiya planı, kurum içi mentor',
+               'DadaCampus: standart içerik, kohort, ölçme, kurum içi tamamlama kaydı'],
+      gosterge: ['Kurum içi tamamlama oranı', 'Standart tarif uyumu', 'Eğitim süresi kısalması']
     }
-    var n=0;
-    cards.forEach(function(c,i){
-      var hit=index[i].indexOf(q)>-1;
-      c.classList.toggle('cs-hide',!hit);
-      if(hit)n++;
+  };
+
+  $('#turDetaylar').innerHTML = '<div class="wrap">' + D.kurumTurleri.map(function (t) {
+    var d = TURD[t.slug] || { problem: [], kaynak: [], gosterge: [] };
+    var modeller = D.isbirligiModelleri.filter(function (m) { return m.kurumTurleri.indexOf(t.slug) > -1; });
+    var ornek = D.programlar.filter(function (p) {
+      return p.partnerKurumIds.some(function (id) {
+        var k = D.kurum(id); return k && k.tur === t.slug;
+      });
+    })[0];
+    return '<div class="turd derin" id="tur-' + esc(t.slug) + '">' +
+      '<div class="turd-head">' +
+        '<span class="turd-ico"><i class="fa-solid ' + esc(t.ikon) + '"></i></span>' +
+        '<div><h3>' + esc(t.ad) + ' için</h3><span>' + esc(t.vaat) + '</span></div>' +
+      '</div>' +
+      '<div class="turd-grid">' +
+        '<div><h4>Çözülen problemler</h4><ul>' +
+          d.problem.map(function (x) { return '<li><i class="fa-solid fa-circle-dot"></i> ' + esc(x) + '</li>'; }).join('') +
+        '</ul></div>' +
+        '<div><h4>Uygun iş birliği modelleri</h4><ul>' +
+          modeller.map(function (m) { return '<li><i class="fa-solid fa-check"></i> ' + esc(m.ad) + '</li>'; }).join('') +
+        '</ul></div>' +
+        '<div><h4>Kim neyi sağlar</h4><ul>' +
+          d.kaynak.map(function (x) { return '<li><i class="fa-solid fa-arrow-right-long"></i> ' + esc(x) + '</li>'; }).join('') +
+        '</ul>' +
+        '<h4 style="margin-top:16px">Ölçülecek göstergeler</h4><ul>' +
+          d.gosterge.map(function (x) { return '<li><i class="fa-solid fa-chart-simple"></i> ' + esc(x) + '</li>'; }).join('') +
+        '</ul></div>' +
+      '</div>' +
+      '<div class="turd-foot">' +
+        (ornek
+          ? '<span class="tf-note">Örnek program: <a href="' + esc(D.link.program(ornek.slug)) + '"><b>' + esc(ornek.ad) + '</b></a></span>'
+          : '<span class="tf-note">Bu tür için örnek program taslağı görüşmede birlikte hazırlanır.</span>') +
+        '<a class="btn btn-primary btn-sm" href="#basvuru"><i class="fa-solid fa-file-signature"></i> Bu tür için başvur</a>' +
+      '</div>' +
+    '</div>';
+  }).join('') + '</div>';
+
+  /* ---- 2) on iş birliği modeli (§9.2) ------------------------------------ */
+  $('#modelListe').innerHTML = D.isbirligiModelleri.map(function (m) {
+    return '<div class="mdl-row" id="model-' + esc(m.slug) + '">' +
+      '<span class="mdl-ico"><i class="fa-solid ' + esc(m.ikon) + '"></i></span>' +
+      '<div class="mdl-body"><b>' + esc(m.ad) + '</b><p>' + esc(m.kapsam) + '</p>' +
+      '<span class="mdl-deger"><i class="fa-solid fa-arrow-trend-up"></i> ' + esc(m.deger) + '</span></div>' +
+    '</div>';
+  }).join('');
+
+  /* ---- 3) süreç (§19.1 on iki adım) -------------------------------------- */
+  var SUREC = [
+    'Kurum iş birliği formunu gönderir veya yönetici kurum adayı oluşturur.',
+    'Kurum türü, hedefi, katılımcı sayısı ve zaman ihtiyacı doğrulanır.',
+    'İhtiyaç analizi görüşmesi yapılır ve notları kaydedilir.',
+    'Uygun iş birliği modeli ve taslak program hazırlanır.',
+    'Teklif, bütçe, sorumluluklar, içerik hakları ve takvim netleştirilir.',
+    'Protokol/sözleşme ve logo kullanım izinleri yüklenir.',
+    'Program, eğitmen, kohort ve değerlendirme sistemi kurulur.',
+    'Akademik ve kurumsal yetkililer onay verir.',
+    'Katılımcılar davet edilir veya sisteme entegre edilir.',
+    'Program yürütülür; devam, değerlendirme ve destek takip edilir.',
+    'Sertifika ve rapor onayları tamamlanır.',
+    'Etki raporu, memnuniyet ve yenileme kararı oluşturulur.'
+  ];
+  $('#surecListe').innerHTML = SUREC.map(function (s, i) {
+    return '<div class="surec-row"><span class="surec-no">' + (i + 1) + '</span><p>' + esc(s) + '</p></div>';
+  }).join('');
+
+  /* ---- 4) partner kurumlar — YALNIZ onay kaydı olanlar (§26.13) ---------- */
+  $('#partnerGrid').innerHTML = onayli.map(function (k) {
+    return '<a class="ak-card" href="' + esc(D.link.kurum(k.slug)) + '">' +
+      '<span class="ak-ico" style="font-size:15px;font-weight:800;letter-spacing:-.01em">' + esc(k.monogram) + '</span>' +
+      '<h3>' + esc(k.ad) + '</h3>' +
+      '<p>' + esc(D.etiket('kurumTurleri', k.tur)) + ' · ' + esc(k.sehir) + '<br>' + esc(k.isbirligiKapsami) +
+      '<br><b style="color:var(--tomato)">Protokol ' + esc(D.tarih(k.onayKaydi.tarih)) + '</b></p></a>';
+  }).join('');
+
+  /* ---- 5) başarı örnekleri — yalnız kurum onaylı göstergeler (§10.1) ----- */
+  var ornekler = [];
+  onayli.forEach(function (k) {
+    (k.etkiGostergeleri || []).forEach(function (g) {
+      ornekler.push({ k: k, g: g });
     });
-    empty.classList.toggle('show',n===0);
-    count.classList.add('show');
-    count.innerHTML=n>0
-      ? '<b>'+n+'</b> eğitim eşleşti'
-      : 'Sonuç yok';
+  });
+  $('#ornekGrid').innerHTML = ornekler.slice(0, 6).map(function (o) {
+    return '<a class="ak-card" href="' + esc(D.link.kurum(o.k.slug)) + '">' +
+      '<span class="ak-ico"><i class="fa-solid fa-chart-simple"></i></span>' +
+      '<h3>' + esc(o.g.deger) + ' — ' + esc(o.g.ad) + '</h3>' +
+      '<p>' + esc(o.k.ad) + '<br><span class="muted">' + esc(o.k.onayKaydi.kapsam) + '</span></p></a>';
+  }).join('');
+
+  /* ---- 6) form seçenekleri veriden ------------------------------------- */
+  function doldur(id, liste, deger, etiket) {
+    var s = document.getElementById(id);
+    if (!s) return;
+    liste.forEach(function (x) {
+      var o = document.createElement('option');
+      o.value = deger(x); o.textContent = etiket(x);
+      s.appendChild(o);
+    });
   }
-  input.addEventListener('input',apply);
-  clear.addEventListener('click',function(){input.value='';apply();input.focus();});
-  input.addEventListener('keydown',function(e){if(e.key==='Escape'&&input.value){input.value='';apply();}});
+  doldur('kfTur', D.kurumTurleri, function (t) { return t.slug; }, function (t) { return t.kisaAd + ' — ' + t.ad; });
+  doldur('kfModel', D.isbirligiModelleri, function (m) { return m.slug; }, function (m) { return m.ad; });
+  /* belge beklentisi: kurum içi kayıt ve ortak program dahil TÜM türler +
+     zorunlu açıklama etikette görünür (§15.1) */
+  doldur('kfBelge', D.belgeTurleri.concat([{ slug: 'belirsiz', ad: 'Henüz belirlenmedi' }]),
+         function (b) { return b.slug; }, function (b) { return b.ad; });
+
+  var IMKAN = [
+    { slug: 'mutfak', ad: 'Uygulama mutfağı' },
+    { slug: 'studyo', ad: 'Çekim stüdyosu' },
+    { slug: 'akademisyen', ad: 'Akademik kadro' },
+    { slug: 'egitmen', ad: 'Kurum içi eğitmen / şef' },
+    { slug: 'lms', ad: 'Kurum öğrenme sistemi (LMS)' },
+    { slug: 'butce', ad: 'Ayrılmış bütçe veya proje kaynağı' }
+  ];
+  $('#kfImkan').innerHTML = IMKAN.map(function (i) {
+    return '<label><input type="checkbox" name="kfImkan" value="' + esc(i.slug) + '" />' +
+           '<span class="cbx"></span><span>' + esc(i.ad) + '</span></label>';
+  }).join('');
+
+  /* ---- dosya seçimi listesi --------------------------------------------- */
+  var dosya = document.getElementById('kfDosya');
+  dosya.addEventListener('change', function () {
+    var f = dosya.files && dosya.files[0];
+    $('#kfUpList').innerHTML = f
+      ? '<div class="up-row"><i class="fa-solid fa-file-lines"></i> ' + esc(f.name) +
+        '<span class="up-boy">' + Math.max(1, Math.round(f.size / 1024)) + ' KB</span>' +
+        '<button type="button" id="kfUpDel" aria-label="Dosyayı kaldır"><i class="fa-solid fa-xmark"></i></button></div>'
+      : '';
+    var d = document.getElementById('kfUpDel');
+    if (d) d.addEventListener('click', function () { dosya.value = ''; $('#kfUpList').innerHTML = ''; });
+  });
+
+  /* ---- gönderim: ?sent=1 akışı (kabuk deseni; geri tuşu çalışır) --------- */
+  var form = $('#kurumForm'), basari = $('#kurumSuccess');
+  function gosterBasari(push) {
+    form.style.display = 'none';
+    basari.classList.add('show');
+    if (push) D.qsSahipli(['sent'], { sent: '1' }, false);
+  }
+  function gosterForm() { form.style.display = ''; basari.classList.remove('show'); }
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+    gosterBasari(true);
+    document.getElementById('basvuru').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+  window.addEventListener('popstate', function () {
+    if (D.qs().sent === '1') gosterBasari(false); else gosterForm();
+  });
+  if (D.qs().sent === '1') gosterBasari(false);
+
+  /* ---- #tur-… / #model-… derin bağlantı (kabuk scroll-padding ofseti) ---- */
+  if (location.hash) {
+    var h = document.querySelector(location.hash);
+    if (h) {
+      var git = function () { h.scrollIntoView({ behavior: 'smooth', block: 'start' }); };
+      if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { setTimeout(git, 60); });
+      else setTimeout(git, 300);
+    }
+  }
 })();
 </script>
 </body>
