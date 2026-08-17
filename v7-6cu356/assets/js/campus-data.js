@@ -1022,7 +1022,109 @@
   ];
 
   /* ======================================================================
-     12. YARDIMCILAR — tek kapı (docs/PLAN.md §1)
+     12. KULLANICI DURUMU (Faz 2) — Kampüsüm ve ders oynatıcı demo verisi
+     ----------------------------------------------------------------------
+     🔴 Bunlar KULLANICIYA AİT kayıtlardır ve YALNIZ `body.is-auth` iken
+     gösterilir (§26.15 yetkisiz erişim durumu). Ayrı bir "kullanıcı verisi"
+     dosyası açılmadı — hibrit kararı gereği tek veri dosyası var.
+     ====================================================================== */
+
+  var kullanici = {
+    ad: 'Beyar Güneş', kisaAd: 'Beyar', bas: 'B.G.',
+    foto: F.avMehmet,
+    roller: ['ogrenci'],
+    kurumId: null,                 /* kurum kohortu üyesi değil */
+    saatDilimi: 'Europe/Istanbul'
+  };
+
+  /* Eğitim ilerlemesi. tamamlanan = ders sıra numarası (1'den başlar). */
+  var ilerlemeler = [
+    { egitimId: 'ed-01', kayitli: true,  tamamlanan: [1, 2, 3, 4, 5, 6], sonDers: 7, sonErisim: '2026-08-15' },
+    { egitimId: 'ed-02', kayitli: true,  tamamlanan: [1, 2], sonDers: 3, sonErisim: '2026-08-11' },
+    { egitimId: 'ed-06', kayitli: true,  tamamlanan: [1, 2, 3, 4, 5], sonDers: 5, sonErisim: '2026-07-02' },  /* ed-06 = 5 ders → tamamlandı */
+    { egitimId: 'ed-04', kayitli: false, tamamlanan: [], sonDers: 1, sonErisim: null }  /* kaydedildi, başlanmadı */
+  ];
+
+  /* Program kayıtları — §18.3 katılımcı yaşam döngüsü */
+  var programKayitlari = [
+    { programId: 'pr-01', durum: 'devam',    modul: 2, not: 'Modül 2 · uygulama teslimi bekliyor' },
+    { programId: 'pr-02', durum: 'kabul',    modul: 0, not: 'Kayıt onayı bekleniyor · 5 Ekim 2026 başlıyor' },
+    { programId: 'pr-04', durum: 'basvurdu', modul: 0, not: 'Değerlendirme sürüyor' }
+  ];
+
+  /* §14.1–14.3 uygulama teslimleri — her durum bir kez temsil edilir */
+  var teslimler = [
+    { id: 'ts-01', egitimId: 'ed-01', programId: 'pr-01', ad: 'Sebzeli sote tabağı',
+      sonTarih: '2026-08-24', durum: 'revizyon', surum: 2, puan: null, rubrikId: 'rb-01',
+      geriBildirim: 'Doğrama boyutları tutarlı; sotelemede tava fazla dolu olduğu için buharda pişmiş. Daha az miktarla tekrar dene.',
+      degerlendiriciId: 'eg-01' },
+    { id: 'ts-02', egitimId: 'ed-01', programId: 'pr-01', ad: 'Fırında bütün tavuk',
+      sonTarih: '2026-08-31', durum: 'taslak', surum: 1, puan: null, rubrikId: 'rb-01',
+      geriBildirim: null, degerlendiriciId: null },
+    { id: 'ts-03', egitimId: 'ed-01', programId: 'pr-01', ad: 'Temel et suyu',
+      sonTarih: '2026-08-10', durum: 'kabul', surum: 1, puan: 84, rubrikId: 'rb-01',
+      geriBildirim: 'Berraklık ve tat dengesi iyi. Süzme adımında bezi iki kat kullanırsan daha temiz sonuç alırsın.',
+      degerlendiriciId: 'eg-01' },
+    { id: 'ts-04', egitimId: 'ed-02', programId: null, ad: 'Ekşi mayalı somun',
+      sonTarih: '2026-08-28', durum: 'inceleniyor', surum: 1, puan: null, rubrikId: 'rb-01',
+      geriBildirim: null, degerlendiriciId: 'eg-03' },
+    { id: 'ts-05', egitimId: 'ed-06', programId: null, ad: 'Ana yemek tabağı',
+      sonTarih: '2026-06-28', durum: 'gonderildi', surum: 1, puan: null, rubrikId: 'rb-01',
+      geriBildirim: null, degerlendiriciId: null },
+    { id: 'ts-06', egitimId: 'ed-06', programId: null, ad: 'Tatlı tabağı',
+      sonTarih: '2026-06-14', durum: 'basarisiz', surum: 2, puan: 52, rubrikId: 'rb-01',
+      geriBildirim: 'Kompozisyon dengeli değil ve sos sıcaklığı tabağı ısıtmış. Tekrar hakkın var; bir revizyon daha yükleyebilirsin.',
+      degerlendiriciId: 'eg-02' }
+  ];
+
+  /* §14.3 teslim durumları — etiket + ikon + öğrenci aksiyonu */
+  var teslimDurumlari = [
+    { slug: 'taslak',      ad: 'Taslak',           ikon: 'fa-pen',            sinif: 'off',  aksiyon: 'Düzenle ve gönder' },
+    { slug: 'gonderildi',  ad: 'Gönderildi',       ikon: 'fa-paper-plane',    sinif: 'wait', aksiyon: 'Sonucu bekle' },
+    { slug: 'inceleniyor', ad: 'İnceleniyor',      ikon: 'fa-hourglass-half', sinif: 'wait', aksiyon: 'Değişiklik yapma' },
+    { slug: 'revizyon',    ad: 'Revizyon İstendi',  ikon: 'fa-rotate-left',    sinif: 'warm', aksiyon: 'Yeni sürüm yükle' },
+    { slug: 'kabul',       ad: 'Kabul Edildi',     ikon: 'fa-circle-check',   sinif: 'ok',   aksiyon: 'Sonraki adıma geç' },
+    { slug: 'basarisiz',   ad: 'Başarısız',        ikon: 'fa-circle-xmark',   sinif: 'warm', aksiyon: 'Tekrarla veya itiraz et' }
+  ];
+
+  /* §12.4 ders içi zaman damgalı notlar */
+  var notlar = [
+    { id: 'nt-01', egitimId: 'ed-01', ders: 3, dk: 4,  metin: 'Jülyen için bıçağı 45° tutup parmak eklemini kılavuz yapıyor.' },
+    { id: 'nt-02', egitimId: 'ed-01', ders: 5, dk: 12, metin: 'Tavayı doldurmamak: buhar yerine kızarma için tek kat.' },
+    { id: 'nt-03', egitimId: 'ed-02', ders: 2, dk: 8,  metin: 'Hidrasyon %70 üstünde hamur elde tutulmuyor — kazıyıcı şart.' },
+    { id: 'nt-04', egitimId: 'ed-06', ders: 4, dk: 21, metin: 'Tabakta boşluk da bir öğe; üç noktaya yerleştir.' }
+  ];
+
+  /* §7.4 / §16.1 ders içi soru-cevap */
+  var sorular = [
+    { id: 'sr-01', egitimId: 'ed-01', ders: 5, soranBas: 'E. Y.', tarih: '2026-08-12',
+      soru: 'Döküm tava yerine çelik tava kullansam mühürleme aynı olur mu?',
+      yanitlayanId: 'eg-01', enIyi: true,
+      yanit: 'Olur, ama çelik daha hızlı ısı kaybeder. Tavayı bir tık daha uzun ısıt ve eti tek seferde koymayı bırak; iki partiye böl.' },
+    { id: 'sr-02', egitimId: 'ed-01', ders: 5, soranBas: 'M. K.', tarih: '2026-08-14',
+      soru: 'Etin dinlenme süresi kalınlığa göre değişiyor mu?',
+      yanitlayanId: null, enIyi: false, yanit: null },
+    { id: 'sr-03', egitimId: 'ed-02', ders: 3, soranBas: 'S. D.', tarih: '2026-08-09',
+      soru: 'Buzdolabında gecelik fermantasyonda hamur ekşiyor, normal mi?',
+      yanitlayanId: 'eg-03', enIyi: true,
+      yanit: 'Normal — soğuk fermantasyon asitliği artırır. İstemiyorsan süreyi 8 saate indir ya da maya oranını biraz düşür.' }
+  ];
+
+  /* §7.4 ders içi kısa kontrol soruları (quiz) */
+  var quizler = [
+    { egitimId: 'ed-01', ders: 3, soru: 'Jülyen doğramada hedeflenen kesit hangisidir?',
+      secenekler: ['2×2 mm küp', 'Kibrit çöpü şeridi', '1 cm kalınlığında dilim'], dogru: 1,
+      aciklama: 'Jülyen ince şerittir; 2×2 mm küp brunoise, kalın dilim ise dilimlemedir.' },
+    { egitimId: 'ed-01', ders: 5, soru: 'Tavada mühürleme yaparken en sık yapılan hata nedir?',
+      secenekler: ['Tavayı fazla doldurmak', 'Eti tuzlamak', 'Tavayı ön ısıtmak'], dogru: 0,
+      aciklama: 'Fazla dolu tavada sıcaklık düşer, et suyunu bırakır ve kızarmak yerine buğulanır.' },
+    { egitimId: 'ed-02', ders: 3, soru: 'Hidrasyon oranı neyi ifade eder?',
+      secenekler: ['Su / un ağırlık oranı', 'Maya / un oranı', 'Fermantasyon süresi'], dogru: 0,
+      aciklama: 'Hidrasyon, unun ağırlığına göre su ağırlığının yüzdesidir.' }
+  ];
+
+  /* ======================================================================
+     13. YARDIMCILAR — tek kapı (docs/PLAN.md §1)
      ====================================================================== */
 
   var DC = {
@@ -1038,6 +1140,16 @@
     rubrikler: rubrikler,
     sss: sss,
     yardimKonulari: yardimKonulari,
+
+    /* kullanıcı durumu (yalnız body.is-auth iken gösterilir) */
+    kullanici: kullanici,
+    ilerlemeler: ilerlemeler,
+    programKayitlari: programKayitlari,
+    teslimler: teslimler,
+    teslimDurumlari: teslimDurumlari,
+    notlar: notlar,
+    sorular: sorular,
+    quizler: quizler,
 
     /* referans listeleri */
     konuAlanlari: konuAlanlari,
@@ -1268,6 +1380,92 @@
       });
       Object.keys(yeni).forEach(function (k) { o[k] = yeni[k]; });
       DC.qsYaz(o, degistir);
+    },
+
+    /* --- öğrenme durumu (Faz 2) ------------------------------------------- */
+
+    /** Girişli mi? Kabuk `body.is-auth` ile işaretliyor; tek okuma noktası. */
+    girisli: function () {
+      return !!(w.document.body && w.document.body.classList.contains('is-auth'));
+    },
+
+    /** Eğitimin düz ders listesi: [{no, ad, sureDk, onizleme, bolum, bolumNo}] */
+    dersler: function (egitim) {
+      var out = [], no = 0;
+      (egitim && egitim.bolumler || []).forEach(function (b, bi) {
+        (b.dersler || []).forEach(function (d) {
+          no++;
+          out.push({ no: no, ad: d.ad, sureDk: d.sureDk, onizleme: !!d.onizleme,
+                     bolum: b.ad, bolumNo: bi + 1 });
+        });
+      });
+      return out;
+    },
+
+    /** Eğitim ilerleme kaydı (yoksa boş iskelet — çağıran null kontrolü yapmasın) */
+    ilerleme: function (egitimId) {
+      for (var i = 0; i < ilerlemeler.length; i++) {
+        if (ilerlemeler[i].egitimId === egitimId) return ilerlemeler[i];
+      }
+      return { egitimId: egitimId, kayitli: false, tamamlanan: [], sonDers: 1, sonErisim: null };
+    },
+
+    /** Tamamlanma yüzdesi — ders sayısından TÜRETİLİR, elle yazılmaz. */
+    yuzde: function (egitimId) {
+      var e = DC.egitim(egitimId);
+      if (!e || !e.dersSayisi) return 0;
+      return Math.round(DC.ilerleme(egitimId).tamamlanan.length / e.dersSayisi * 100);
+    },
+
+    /** Program kaydı (başvurdu/kabul/devam/tamamlandi) */
+    programKaydi: function (programId) {
+      for (var i = 0; i < programKayitlari.length; i++) {
+        if (programKayitlari[i].programId === programId) return programKayitlari[i];
+      }
+      return null;
+    },
+
+    /** §14.3 teslim durumu tanımı (etiket + ikon + sınıf + öğrenci aksiyonu) */
+    teslimDurumu: function (slug) {
+      for (var i = 0; i < teslimDurumlari.length; i++) {
+        if (teslimDurumlari[i].slug === slug) return teslimDurumlari[i];
+      }
+      return { slug: slug, ad: slug, ikon: 'fa-circle', sinif: 'off', aksiyon: '' };
+    },
+
+    /** Bir eğitimin belgesini veren kurum(lar) — onay kaydı süzgeciyle */
+    egitimVerenler: function (egitim) {
+      if (!egitim || !egitim.kurumIds) return [];
+      return egitim.kurumIds
+        .filter(function (id) { return DC.onayliMi(id); })
+        .map(function (id) { return DC.kurum(id); });
+    },
+
+    /** §17.3 — eğitimi içeren programlar (çapraz bağlantı) */
+    egitiminProgramlari: function (egitimId) {
+      return programlar.filter(function (p) { return (p.egitimIds || []).indexOf(egitimId) > -1; });
+    },
+
+    /** §17.3 — benzer eğitimler: aynı konu alanı, kendisi hariç */
+    benzerEgitimler: function (egitim, adet) {
+      var ayni = egitimler.filter(function (e) {
+        return e.id !== egitim.id && e.kategori === egitim.kategori;
+      });
+      /* aynı seviye, sonra kalan her şey — liste ASLA boş dönmez (tek kayıtlı
+         konu alanında "benzer eğitim yok" boşluğu oluşuyordu; ölçümle yakalandı) */
+      var seviye = egitimler.filter(function (e) {
+        return e.id !== egitim.id && e.kategori !== egitim.kategori && e.seviye === egitim.seviye;
+      });
+      var kalan = egitimler.filter(function (e) {
+        return e.id !== egitim.id && e.kategori !== egitim.kategori && e.seviye !== egitim.seviye;
+      });
+      return ayni.concat(seviye, kalan).slice(0, adet || 3);
+    },
+
+    /** Bir eğitime bağlı atölyeler (aynı programa bağlı canlı oturumlar) */
+    egitiminAtolyeleri: function (egitimId) {
+      var pids = DC.egitiminProgramlari(egitimId).map(function (p) { return p.id; });
+      return atolyeler.filter(function (a) { return a.programId && pids.indexOf(a.programId) > -1; });
     },
 
     /* --- ızgara tamlama (§23.2) ------------------------------------------- */

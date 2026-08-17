@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Sertifika Doğrula — DadaCampus | DadaMutfak</title>
-<meta name="description" content="DadaCampus belge kimliği veya QR kod ile sertifika doğrulama: belge türü, veren kurumlar ve geçerlilik durumu." />
+<title>Ders — DadaCampus | DadaMutfak</title>
+<meta name="description" content="Ders ekranı: bölüm-ders ağacı, altyazı ve transkript, zaman damgalı not, ders içi kontrol sorusu, uygulama teslimi ve soru-cevap." />
 <link rel="shortcut icon" type="image/x-icon"
       href="assets/img/favicon.ico" />
 <!-- FontAwesome 6.5.2 (kilitli ikon seti) -->
@@ -1153,7 +1153,7 @@ html.reveal-ready .reveal.in{opacity:1;transform:none}
 </style>
 
 <style>
-/* ===== SAYFA CSS — dadacampus-sertifika-dogrula-v1.html ===== */
+/* ===== SAYFA CSS — dadacampus-ders-v1.html ===== */
 /* ===================== MERKEZ SAYFASI HERO DÜZELTMESİ =====================
    🔴 Kabuktaki .lst-top ANA SAYFA için `min-height:100vh/100svh` taşır — hub'ın
    hero'su bilerek tam ekrandır. Merkez/katalog sayfaları bu kabuğu devralınca
@@ -1438,58 +1438,193 @@ a.drs-row:hover{color:var(--tomato)}
   .drs-row .drs-sure{order:3}
 }
 
-/* ============== SAYFA CSS — Sertifika Doğrula (§15.3) ==============
-   Kullanılan aileler: kabuk → .lst-top .lst-hero .rd-crumb .crs-search .chips
-   .ak-sec .ak-form-sec .ak-grid(.is-3) .ak-card .form-card .fc-head .fk-* .opt
-   .req .fb-kvkk .ak-send .ak-success .seo-aside .seo-quick .cert-card .cc-*
-   .cert-band · _ortak.css → .inf .mad .ptable .kurum-gate .lst-empty .lst-load
-   .up-zone .up-list .fk-textarea .fk-help .pstat · _merkez.css → hero.
-   Yeni aile üretilmedi; aşağıdakiler bu sayfaya özgü yerleşim ekleridir.
-   ================================================================== */
+/* ============== SAYFA CSS — Ders Oynatıcı (§7.4) ==============
+   Kabuk aileleri: .below-header .rd-crumb .btn .btn-primary .btn-ghost
+   .fk-textarea .ak-success .sec-head .see-all .sr-only .lst-empty
+   _ortak.css'ten gelenler: .drs* (ders listesi — eğitim detayla ORTAK tanım)
+                            .mad .prg .pf-tabbar/.pf-tabs/.pf-pane .pstat
+                            .kurum-gate .pagi-note .fk-help .lst-empty .sr-only
+   Yeni aile: `.ply` (oynatma kabuğu) ve `.dr-*` (ders ekranı yerleşimi) —
+   kabukta karşılığı YOK, ilkel parçalardan kuruldu; raporda yazılı.
+   ========================================================== */
 
-/* hero içindeki kod girişi + Doğrula butonu tek satır */
-.dgr-form{display:flex;align-items:stretch;gap:12px;margin-top:22px;max-width:620px;flex-wrap:wrap}
-.dgr-form .crs-search{flex:1;min-width:260px;margin-top:0}
-.dgr-form .btn{flex:none;white-space:nowrap}
-.dgr-hint{display:none;align-items:center;gap:8px;margin-top:12px;font-size:13px;font-weight:700;color:#FFD9CE}
-.dgr-hint.show{display:flex}
-.dgr-hint i{font-size:12px}
+/* ---- ÜST ŞERİT ---- */
+.dr-bar{position:sticky;top:112px;z-index:38;background:var(--paper);border-bottom:1px solid var(--line);padding:0}
+.dr-bar .wrap{display:flex;align-items:center;gap:20px;min-height:64px}
+.dr-geri{display:flex;align-items:center;gap:12px;min-width:0;flex:1;color:var(--slate)}
+.dr-geri i{flex:none;font-size:12px;color:var(--tomato)}
+.dr-geri small{display:block;font-size:10.5px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}
+.dr-geri b{display:block;font-size:15px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dr-geri:hover b{color:var(--tomato)}
+.dr-ilerleme{flex:none;width:210px}
+.dr-bar-cta{flex:none;display:flex;gap:9px}
 
-/* sonuç yerleşimi: künye kartı + belge önizleme (cert-card) */
-.dgr-grid{display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:40px;align-items:start}
-.dgr-ana h2{font-size:26px;margin-bottom:8px}
-.dgr-ana .lead{margin-bottom:24px}
-.dgr-h3{font-size:13px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);
-  display:flex;align-items:center;gap:9px;margin:26px 0 12px}
-.dgr-h3 i{color:var(--tomato);font-size:12px}
-.dgr-p{font-size:14px;font-weight:500;color:var(--slate-2);line-height:1.65}
-.dgr-belge{position:sticky;top:128px}
-.dgr-belge .cc-qr{width:96px;height:96px;margin:0 auto 14px;border-radius:var(--radius-sm);
-  background:var(--bg);border:1px solid var(--line);display:grid;place-items:center;color:var(--slate);font-size:44px}
-.dgr-belge .cc-qr.yok{color:var(--muted);font-size:22px;line-height:1.3;padding:10px;text-align:center}
-.dgr-belge .cc-qr.yok span{font-size:11px;font-weight:700;display:block;margin-top:6px}
+/* ---- SEKME BARI: yalnız mobil (§23.2) ---- */
+.dr-tabbar{display:none;position:sticky;top:176px;z-index:37;background:var(--paper);border-bottom:1px solid var(--line)}
+.dr-tabbar .pf-tabbar{border-bottom:none;margin:0}
 
-/* durum şeridi — .pstat ailesinin büyük varyantı; renk TEK BAŞINA durum
-   anlatmasın diye ikon + tam metin birlikte (§23.3) */
-.dgr-durum{display:inline-flex;align-items:center;gap:9px;font-size:13px;font-weight:700;
-  padding:9px 14px;border-radius:var(--radius-sm);border:1px solid transparent;margin-bottom:18px}
-.dgr-durum i{font-size:13px}
-.dgr-durum.gecerli{background:#EAF7F0;color:var(--green-deep);border-color:rgba(59,183,126,.32)}
-.dgr-durum.duzeltilmis{background:var(--tomato-tint);color:var(--tomato);border-color:rgba(var(--tomato-rgb),.28)}
-.dgr-durum.suresi-dolmus{background:var(--bg);color:var(--muted);border-color:var(--line)}
-.dgr-durum.iptal{background:#FBE9E3;color:#C43D20;border-color:rgba(196,61,32,.3)}
+/* ---- ÜÇ KOLON YERLEŞİM ---- */
+.dr-sec{padding:28px 0 60px;background:var(--bg-cream)}
+.dr-layout{display:grid;grid-template-columns:290px minmax(0,1fr) 300px;gap:26px;align-items:start}
+.dr-agac,.dr-not{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-lg);
+  padding:18px;position:sticky;top:196px;max-height:calc(100vh - 220px);overflow-y:auto;scrollbar-width:thin}
+.dr-ana{min-width:0;background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-lg);padding:24px 26px 28px}
+.dr-agac-head{display:flex;align-items:center;justify-content:space-between;gap:10px;
+  padding-bottom:13px;margin-bottom:13px;border-bottom:1px solid var(--line)}
+.dr-agac-head b{font-size:12px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}
+.dr-agac-head span{font-size:12px;font-weight:600;color:var(--tomato)}
 
-/* iptal/süresi dolmuş belgede kart soluklaşır ama METİN okunur kalır */
-.dgr-belge.pasif{opacity:.72;filter:grayscale(.55)}
+/* ---- İÇERİK AĞACINDA DERS SATIRI — aile `_ortak.css`'te (.drs*), burada
+   YALNIZ dar kolona göre küçültülüyor. Yeni sınıf/modifier üretilmedi:
+   kapsam seçicisi (.dr-agac …) kullanıldı. ---- */
+.dr-agac .drs{gap:8px}
+.dr-agac .drs-bolum{border-radius:var(--radius-sm)}
+.dr-agac .drs-head{gap:10px;padding:11px 12px}
+.dr-agac .drs-no{width:24px;height:24px;font-size:11px}
+.dr-agac .drs-head b{font-size:13px}
+.dr-agac .drs-head .drs-say{display:none}
+.dr-agac .drs-head .drs-car{font-size:10px}
+.dr-agac .drs-row{gap:10px;padding:10px 12px;font-size:13px}
+.dr-agac .drs-ico{width:22px;height:22px;font-size:9.5px}
+.dr-agac .drs-row .drs-sure{font-size:11px}
+.dr-agac .drs-row .drs-etiket{display:none}   /* dar kolonda etiket yerine ikon yeter */
+
+/* ---- OYNATMA KABUĞU (`.ply`) ---- */
+.ply{margin-bottom:22px}
+.ply-stage{position:relative;aspect-ratio:16/9;border-radius:var(--radius-md);overflow:hidden;
+  background:#101b1f center/cover no-repeat;display:grid;place-items:center}
+.ply-stage::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(10,20,24,.30),rgba(10,20,24,.62))}
+.ply-play{position:relative;z-index:2;width:74px;height:74px;border-radius:var(--radius-circle);border:none;
+  background:rgba(255,255,255,.94);color:var(--tomato);font-size:24px;cursor:pointer;
+  box-shadow:0 10px 34px rgba(0,0,0,.34);transition:.2s var(--ease)}
+.ply-play:hover{transform:scale(1.06)}
+.ply.oynuyor .ply-play i::before{content:"\f04c"}   /* pause */
+.ply-sure,.ply-rozet{position:absolute;z-index:2;font-size:11.5px;font-weight:700;padding:5px 10px;
+  border-radius:var(--radius-sm);background:rgba(10,20,24,.72);color:#fff}
+.ply-sure{right:12px;bottom:12px}
+.ply-rozet{left:12px;top:12px;background:var(--tomato)}
+.ply-bar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:var(--bg);
+  border:1px solid var(--line);border-top:none;border-radius:0 0 var(--radius-md) var(--radius-md);padding:10px 12px}
+.ply-btn{flex:none;width:34px;height:34px;border-radius:var(--radius-sm);border:1px solid var(--line);
+  background:var(--paper);color:var(--slate);font-family:inherit;font-size:12px;cursor:pointer;transition:.16s var(--ease)}
+.ply-btn:hover{border-color:var(--tomato);color:var(--tomato)}
+.ply-btn.ply-lbl{width:auto;padding:0 11px;font-weight:700;font-size:12px;display:inline-flex;align-items:center;gap:6px}
+.ply-btn.is-on{background:var(--tomato);border-color:var(--tomato);color:#fff}
+.ply-track{flex:1;min-width:120px;height:5px;border-radius:999px;background:#dcdcdc;overflow:hidden}
+.ply-track > span{display:block;height:100%;width:0;background:var(--tomato);transition:width .25s linear}
+.ply-zaman{flex:none;font-size:12px;font-weight:700;color:var(--muted);font-variant-numeric:tabular-nums}
+.ply-not{display:flex;align-items:flex-start;gap:8px;margin-top:10px;font-size:12.5px;
+  font-weight:500;color:var(--muted);line-height:1.55}
+.ply-not i{flex:none;margin-top:3px;color:var(--tomato);font-size:11px}
+
+/* ---- ders gövdesi ---- */
+.dr-ana h1{font-size:25px;letter-spacing:-.02em;margin-bottom:6px}
+.dr-yol{font-size:12.5px;font-weight:600;color:var(--muted);margin-bottom:20px}
+.dr-ic-tabbar{margin-bottom:20px}
+.dr-alt{font-size:13.5px;font-weight:500;color:var(--muted);line-height:1.6;margin-bottom:16px}
+.dr-h3{font-size:12px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);
+  display:flex;align-items:center;gap:9px;margin-bottom:13px}
+.dr-h3 i{color:var(--tomato);font-size:11px}
+.dr-blok{padding-top:26px;margin-top:26px;border-top:1px solid var(--line)}
+.dr-iki{display:grid;grid-template-columns:1fr 1fr;gap:26px}
+
+/* adım listesi */
+.dr-adim{margin:0;padding:0;list-style:none;counter-reset:da;display:flex;flex-direction:column;gap:11px}
+.dr-adim li{counter-increment:da;display:flex;gap:13px;font-size:14px;font-weight:500;color:var(--slate-2);line-height:1.65}
+.dr-adim li::before{content:counter(da);flex:none;width:26px;height:26px;border-radius:var(--radius-sm);
+  background:var(--tomato-tint);color:var(--tomato);display:grid;place-items:center;font-size:12px;font-weight:700}
+
+/* transkript */
+.dr-trans{display:flex;flex-direction:column;gap:2px;max-height:340px;overflow-y:auto;scrollbar-width:thin}
+.dr-trans button{display:flex;align-items:flex-start;gap:13px;width:100%;background:none;border:none;
+  font-family:inherit;text-align:left;padding:9px 10px;border-radius:var(--radius-sm);cursor:pointer;
+  font-size:13.5px;font-weight:500;color:var(--slate-2);line-height:1.6;transition:.14s var(--ease)}
+.dr-trans button:hover{background:var(--tomato-tint);color:var(--tomato)}
+.dr-trans .tr-dk{flex:none;font-size:11.5px;font-weight:700;color:var(--tomato);
+  font-variant-numeric:tabular-nums;padding-top:2px;width:42px}
+
+/* quiz */
+.quiz{background:var(--bg);border:1px solid var(--line);border-radius:var(--radius-md);padding:20px}
+.quiz p{font-size:15px;font-weight:700;color:var(--slate);margin-bottom:14px}
+.quiz .qz-opt{display:flex;flex-direction:column;gap:9px}
+.quiz .qz-opt button{display:flex;align-items:center;gap:11px;background:var(--paper);border:1px solid var(--line);
+  border-radius:var(--radius-sm);padding:12px 14px;font-family:inherit;font-size:14px;font-weight:500;
+  color:var(--slate-2);text-align:left;cursor:pointer;transition:.16s var(--ease)}
+.quiz .qz-opt button:hover{border-color:var(--tomato);color:var(--tomato)}
+.quiz .qz-opt button .qz-ix{flex:none;width:24px;height:24px;border-radius:var(--radius-sm);
+  background:var(--bg);border:1px solid var(--line);display:grid;place-items:center;font-size:11px;font-weight:700}
+.quiz .qz-opt button.dogru{border-color:rgba(59,183,126,.5);background:#EAF7F0;color:var(--green-deep);font-weight:700}
+.quiz .qz-opt button.dogru .qz-ix{background:var(--green);border-color:var(--green);color:#fff}
+.quiz .qz-opt button.yanlis{border-color:rgba(196,61,32,.4);background:#FBE9E3;color:#C43D20;font-weight:700}
+.quiz .qz-opt button.yanlis .qz-ix{background:#C43D20;border-color:#C43D20;color:#fff}
+.quiz .qz-sonuc{display:none;margin-top:14px;font-size:13.5px;font-weight:500;color:var(--slate-2);line-height:1.6}
+.quiz .qz-sonuc.show{display:block}
+.quiz .qz-sonuc b{color:var(--slate);font-weight:700}
+
+/* soru-cevap */
+.dr-qa{display:flex;flex-direction:column;gap:12px;margin-bottom:20px}
+.dr-qa-row{background:var(--bg);border:1px solid var(--line);border-radius:var(--radius-md);padding:15px 17px}
+.dr-qa-row.eniyi{border-color:rgba(59,183,126,.4);background:#F4FBF7}
+.dr-qa-ust{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:8px}
+.dr-qa-ust b{font-size:13px;font-weight:700;color:var(--slate)}
+.dr-qa-ust span{font-size:11.5px;color:var(--muted);font-weight:500}
+.dr-qa-row > p{font-size:14px;font-weight:500;color:var(--slate);line-height:1.6}
+.dr-qa-yanit{margin-top:12px;padding-top:12px;border-top:1px solid var(--line);display:flex;gap:12px}
+.dr-qa-yanit .qa-ava{flex:none;width:34px;height:34px;border-radius:var(--radius-circle);
+  background-size:cover;background-position:center}
+.dr-qa-yanit .qa-txt{min-width:0}
+.dr-qa-yanit .qa-txt b{display:block;font-size:12.5px;color:var(--slate);font-weight:700}
+.dr-qa-yanit .qa-txt p{font-size:13.5px;font-weight:500;color:var(--slate-2);line-height:1.6;margin-top:3px}
+.dr-qa-bekle{font-size:12.5px;font-weight:600;color:var(--muted);margin-top:10px;display:flex;align-items:center;gap:7px}
+.dr-qa-bekle i{color:var(--tomato);font-size:11px}
+.dr-qa-form{display:flex;flex-direction:column;gap:12px}
+.dr-qa-form .fk-textarea{min-height:88px}
+.dr-qa-foot{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+
+/* alt gezinme */
+.dr-gez{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;
+  padding-top:24px;margin-top:26px;border-top:1px solid var(--line)}
+
+/* notlarım paneli */
+.dr-not-form{display:flex;flex-direction:column;gap:10px;margin-bottom:16px}
+.dr-not-form .fk-textarea{min-height:78px;font-size:13.5px}
+.dr-not-foot{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.dr-damga{font-size:11.5px;font-weight:700;color:var(--tomato);background:var(--tomato-tint);
+  border:1px solid rgba(var(--tomato-rgb),.24);padding:5px 9px;border-radius:var(--radius-sm);font-variant-numeric:tabular-nums}
+.dr-not-foot .btn{padding:0 14px;height:38px;font-size:12.5px}
+.dr-not-liste{display:flex;flex-direction:column;gap:9px}
+.dr-not-kart{background:var(--bg);border:1px solid var(--line);border-radius:var(--radius-sm);padding:11px 13px}
+.dr-not-kart .nk-ust{display:flex;align-items:center;justify-content:space-between;gap:9px;margin-bottom:5px}
+.dr-not-kart .nk-dk{font-size:11px;font-weight:700;color:var(--tomato);font-variant-numeric:tabular-nums}
+.dr-not-kart .nk-sil{background:none;border:none;color:var(--muted);cursor:pointer;font-size:11px;padding:2px 4px}
+.dr-not-kart .nk-sil:hover{color:#C43D20}
+.dr-not-kart p{font-size:13px;font-weight:500;color:var(--slate-2);line-height:1.55}
+.dr-not-kart .nk-ders{display:block;font-size:11px;color:var(--muted);font-weight:600;margin-top:5px}
 
 @media (max-width:1024px){
-  .dgr-grid{grid-template-columns:1fr;gap:26px}
-  .dgr-belge{position:static;max-width:420px}
+  .dr-layout{grid-template-columns:260px minmax(0,1fr)}
+  /* notlar paneli mobil öncesi alt satıra iner, tam genişlik */
+  .dr-not{grid-column:1 / -1;position:static;max-height:none}
+  .dr-agac{top:180px}
+  .dr-iki{grid-template-columns:1fr;gap:20px}
+  .dr-ilerleme{width:150px}
 }
 @media (max-width:640px){
-  .dgr-form{gap:10px}
-  .dgr-form .btn{width:100%}
-  .dgr-ana h2{font-size:21px}
+  .dr-bar{top:62px}
+  .dr-bar .wrap{min-height:56px;gap:12px}
+  .dr-ilerleme{display:none}
+  .dr-bar-cta .btn span{display:none}
+  /* §23.2 — sekmeli düzen: üç panelden yalnız biri görünür */
+  .dr-tabbar{display:block;top:118px}
+  .dr-layout{display:block}
+  .dr-agac,.dr-not,.dr-ana{position:static;max-height:none;margin-bottom:0}
+  .dr-layout [data-dp]{display:none}
+  .dr-layout [data-dp].dr-acik{display:block}
+  .dr-ana{padding:18px 16px 22px;border-radius:var(--radius-md)}
+  .dr-agac,.dr-not{padding:16px;border-radius:var(--radius-md)}
+  .dr-ana h1{font-size:20px}
+  .ply-bar{gap:8px}
+  .ply-track{min-width:70px}
 }
 </style>
 </head>
@@ -1542,7 +1677,7 @@ a.drs-row:hover{color:var(--tomato)}
 
         <!-- 1) EĞİTİMLER (§4.2) — 10 konu alanı + ücretsiz başlangıç + yönlendirme -->
         <div class="nav-item">
-          <a href="dadacampus-egitimler-v1.html">Eğitimler <i class="fa-solid fa-chevron-down"></i></a>
+          <a href="dadacampus-egitimler-v1.html" class="active">Eğitimler <i class="fa-solid fa-chevron-down"></i></a>
           <div class="dropdown ak-tracks">
             <div class="dd-head">Konu Alanları</div>
             <div class="dd-grid">
@@ -1570,7 +1705,7 @@ a.drs-row:hover{color:var(--tomato)}
 
         <!-- 2) PROGRAMLAR (§4.3) — Sertifika buraya taşındı (§26.4) -->
         <div class="nav-item">
-          <a href="dadacampus-programlar-v1.html" class="active">Programlar <i class="fa-solid fa-chevron-down"></i></a>
+          <a href="dadacampus-programlar-v1.html">Programlar <i class="fa-solid fa-chevron-down"></i></a>
           <div class="dropdown ak-tracks">
             <div class="dd-head">Program Türleri</div>
             <div class="dd-grid">
@@ -1780,7 +1915,7 @@ a.drs-row:hover{color:var(--tomato)}
      JS'te ayarlanır (kabuk auth IIFE'si). -->
 <nav class="bottom-nav" aria-label="Mobil alt navigasyon">
   <a href="akademi-v1.html" class="bn-item"><i class="fa-solid fa-house"></i><span>Ana Sayfa</span></a>
-  <a href="dadacampus-egitimler-v1.html" class="bn-item"><i class="fa-solid fa-clapperboard"></i><span>Eğitimler</span></a>
+  <a href="dadacampus-egitimler-v1.html" class="bn-item active" aria-current="page"><i class="fa-solid fa-clapperboard"></i><span>Eğitimler</span></a>
   <a href="dadacampus-kampusum-v1.html" class="bn-item bn-center" id="bnKampusum"><span class="bn-fab"><i class="fa-solid fa-graduation-cap"></i></span><span>Kampüsüm</span></a>
   <a href="dadacampus-programlar-v1.html" class="bn-item"><i class="fa-solid fa-diagram-project"></i><span>Programlar</span></a>
   <a href="giris-v1.html" class="bn-item" id="bnAccount"><i class="fa-regular fa-user"></i><span>Hesabım</span></a>
@@ -1917,256 +2052,212 @@ a.drs-row:hover{color:var(--tomato)}
 <!-- ===== ANA İÇERİK (footer reveal perdesi) ===== -->
 <main class="page-main" id="pageMain">
 <!-- ============================================================================
-     SERTİFİKA DOĞRULAMA (§15.3) — DadaCampus
-     Sertifika ana menüden ÇIKARILDI, Programlar altına alındı; "Sertifika
-     Doğrula" hızlı erişim + footer bağlantısı olarak korunuyor (§1.1, §26.4).
-     🔴 §15.1 kritik ifade kuralı: belge türü, veren kurumlar ve zorunlu açıklama
-     her sonuçta gösterilir. "Üniversite onaylı" / "resmî geçerli" ifadesi
-     onay kaydı OLMADAN kullanılmaz — kapı DC.verenKurumlar()/DC.onayliMi().
-     Beş durum: geçerli · düzeltilmiş · süresi dolmuş · iptal · bulunamadı.
+     DERS OYNATICI / DERS EKRANI (§7.4) — DadaCampus
+     ?egitim=<slug>&ders=<n>
+     🔴 GERÇEK VİDEO YOK: repoda `assets/video/*.mp4` gitignore'lı, canlıda 404
+     veriyor (tasks/lessons.md remote-asset dersi). Bu yüzden <video> yerine
+     poster + oynatma kabuğu kullanılıyor; §23.3'ün istediği ALTYAZI, TRANSKRİPT
+     ve metinsel adım özeti gerçek içerik olarak veriliyor.
+     §23.2: ≤640'ta video, içerik ağacı ve notlar SEKMELİ düzene döner.
      ========================================================================= -->
 
-<section class="below-header lst-top">
-  <div class="lst-hero-media" aria-hidden="true"></div>
+<!-- kayıt bulunamadı (§26.15) -->
+<section class="below-header ak-sec" id="drBos" hidden>
+  <div class="wrap">
+    <div class="lst-empty show" style="margin-top:20px">
+      <span class="le-ico"><i class="fa-regular fa-circle-question" aria-hidden="true"></i></span>
+      <h3>Bu ders bulunamadı</h3>
+      <p>Bağlantıdaki eğitim ya da ders numarası geçersiz. Eğitim detayından ders listesine bakabilirsin.</p>
+      <div class="ak-hero-cta" style="justify-content:center;margin-top:0">
+        <a class="btn btn-primary" href="dadacampus-egitimler-v1.html"><i class="fa-solid fa-clapperboard"></i> Eğitimler Merkezi</a>
+        <a class="btn btn-ghost" href="dadacampus-kampusum-v1.html?bolum=egitimlerim"><i class="fa-solid fa-graduation-cap"></i> Eğitimlerim</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- yetkisiz erişim: ücretli eğitimin ön izleme OLMAYAN dersi, giriş yapılmamış (§26.15) -->
+<section class="below-header ak-sec" id="drKilit" hidden>
   <div class="wrap">
     <nav class="rd-crumb" aria-label="Sayfa yolu">
       <a href="akademi-v1.html"><i class="fa-solid fa-house" aria-hidden="true"></i></a>
       <i class="fa-solid fa-chevron-right" aria-hidden="true"></i>
-      <a href="dadacampus-programlar-v1.html">Programlar</a>
+      <a href="dadacampus-egitimler-v1.html">Eğitimler</a>
       <i class="fa-solid fa-chevron-right" aria-hidden="true"></i>
-      <b>Sertifika Doğrula</b>
+      <a id="drKilitEgitim" href="dadacampus-egitimler-v1.html">Eğitim</a>
     </nav>
-    <div class="lst-hero">
-      <div class="lh-main">
-        <span class="eyebrow"><i class="fa-solid fa-shield-halved"></i> Belge Doğrulama</span>
-        <h1>Belgenin <span class="accent">gerçek</span> olduğunu doğrula</h1>
-        <p class="lead">Belge kimliğini yaz ya da belgedeki QR kodu okut. Belge türü, veren kurumlar, kazanımlar ve geçerlilik durumu görünür. Kişi adı gizlilik kuralı gereği sınırlı gösterilir.</p>
+    <div class="lst-empty show" style="margin-top:20px">
+      <span class="le-ico"><i class="fa-solid fa-lock" aria-hidden="true"></i></span>
+      <h3>Bu ders kayıtlı katılımcılara açık</h3>
+      <p id="drKilitNot"></p>
+      <div class="ak-hero-cta" style="justify-content:center;margin-top:0" id="drKilitCta"></div>
+    </div>
+  </div>
+</section>
 
-        <form class="dgr-form" id="dgrForm" autocomplete="off">
-          <label class="crs-search" for="dgrKod">
-            <i class="fa-solid fa-hashtag" aria-hidden="true"></i>
-            <input type="text" id="dgrKod" name="kod" placeholder="Belge kimliği — ör. DC-2026-004182" aria-label="Belge kimliği" spellcheck="false" />
-            <button type="button" class="cs-clear" id="dgrClear" aria-label="Alanı temizle"><i class="fa-solid fa-xmark"></i></button>
-          </label>
-          <button class="btn btn-primary" type="submit"><i class="fa-solid fa-magnifying-glass"></i> Doğrula</button>
-        </form>
-        <p class="dgr-hint" id="dgrHata" role="alert"></p>
+<div id="drIcerik">
 
-        <div class="chips lh-chips" role="group" aria-label="Örnek belge kimlikleri">
-          <span class="lbl">Örnek:</span>
-          <a class="chip" href="?kod=DC-2026-004182">Geçerli</a>
-          <a class="chip" href="?kod=DC-2026-004183">Ortak program</a>
-          <a class="chip" href="?kod=DC-2026-003940">Düzeltilmiş</a>
-          <a class="chip" href="?kod=DC-2025-001077">Süresi dolmuş</a>
-          <a class="chip" href="?kod=DC-2026-002311">İptal</a>
+<!-- ===== ÜST ŞERİT: eğitim adı + ilerleme + çıkış ===== -->
+<section class="below-header dr-bar">
+  <div class="wrap">
+    <a class="dr-geri" id="drGeri" href="dadacampus-egitimler-v1.html">
+      <i class="fa-solid fa-chevron-left" aria-hidden="true"></i>
+      <span><small>Eğitim</small><b id="drEgitimAd"></b></span>
+    </a>
+    <div class="dr-ilerleme" id="drIlerleme"></div>
+    <div class="dr-bar-cta" id="drBarCta"></div>
+  </div>
+</section>
+
+<!-- ===== SEKME BARI — YALNIZ ≤640'ta görünür (§23.2) ===== -->
+<div class="dr-tabbar" id="drTabbar">
+  <div class="wrap">
+    <div class="pf-tabs" role="tablist" aria-label="Ders ekranı bölümleri">
+      <button class="active" type="button" role="tab" aria-selected="true" data-dt="video"><i class="fa-solid fa-play"></i> Ders</button>
+      <button type="button" role="tab" aria-selected="false" data-dt="agac"><i class="fa-solid fa-list-ol"></i> İçerik</button>
+      <button type="button" role="tab" aria-selected="false" data-dt="not"><i class="fa-regular fa-pen-to-square"></i> Notlarım</button>
+    </div>
+  </div>
+</div>
+
+<section class="dr-sec">
+  <div class="wrap">
+    <div class="dr-layout">
+
+      <!-- ---------- SOL: içerik ağacı (§7.4 bölüm-ders hiyerarşisi) ---------- -->
+      <aside class="dr-agac" id="drAgacPane" data-dp="agac">
+        <div class="dr-agac-head">
+          <b>İçerik</b>
+          <span id="drAgacSay"></span>
         </div>
-      </div>
-      <div class="lst-stats" id="heroStats" role="group" aria-label="Doğrulama özeti"></div>
-    </div>
-  </div>
-</section>
+        <div class="drs" id="drAgac"></div>
+      </aside>
 
-<!-- ===== SONUÇ ===== -->
-<section class="ak-sec derin" id="sonuc">
-  <div class="wrap">
-    <!-- yükleniyor (§26.15) -->
-    <div class="lst-load" id="dgrLoad"><i class="fa-solid fa-circle-notch fa-spin" aria-hidden="true"></i> Belge sorgulanıyor…</div>
+      <!-- ---------- ORTA: oynatıcı + ders içeriği ---------- -->
+      <div class="dr-ana" data-dp="video">
 
-    <!-- başlangıç durumu: henüz sorgu yok -->
-    <div id="dgrBos" class="kurum-gate">
-      <span class="kg-ico"><i class="fa-solid fa-qrcode"></i></span>
-      <div class="kg-txt">
-        <b>Belge kimliği bekleniyor</b>
-        <p>Kimlik belgenin sağ alt köşesinde <b>DC-YYYY-NNNNNN</b> biçiminde yazılıdır ve QR kod aynı adrese yönlendirir. Kimliği olmayan, yalnız görsel olarak paylaşılan bir belge doğrulanamaz.</p>
-      </div>
-      <a class="btn btn-ghost" href="#bildir"><i class="fa-regular fa-flag"></i> Sahte Belge Bildir</a>
-    </div>
-
-    <!-- bulunamadı durumu -->
-    <div class="lst-empty" id="dgrYok" style="margin-top:0">
-      <span class="le-ico"><i class="fa-regular fa-circle-question" aria-hidden="true"></i></span>
-      <h3>Bu kimlikle bir belge bulunamadı</h3>
-      <p>Kimliği harf-rakam ayrımına dikkat ederek yeniden yaz. Belgeyi bir kurum verdiyse kurumun kendi kaydından da doğrulanabilir. Kimlik doğruysa ve belge görünmüyorsa bunu bildir.</p>
-      <div class="ak-hero-cta" style="justify-content:center;margin-top:0">
-        <button class="btn btn-primary" type="button" id="dgrTekrar"><i class="fa-solid fa-rotate-left"></i> Yeniden Dene</button>
-        <a class="btn btn-ghost" href="#bildir"><i class="fa-regular fa-flag"></i> Sahte Belge Bildir</a>
-      </div>
-    </div>
-
-    <!-- doğrulama kartı -->
-    <div id="dgrSonuc" hidden>
-      <div class="dgr-grid">
-        <div class="form-card dgr-ana">
-          <div class="dgr-durum" id="dgrDurum"></div>
-          <h2 id="dgrBaslik"></h2>
-          <p class="lead" id="dgrAlt"></p>
-          <div class="inf" id="dgrKunye"></div>
-
-          <h3 class="dgr-h3"><i class="fa-solid fa-bullseye"></i> Kazanımlar</h3>
-          <ul class="mad" id="dgrKazanim"></ul>
-
-          <h3 class="dgr-h3"><i class="fa-solid fa-clipboard-check"></i> Başarı koşulu</h3>
-          <p class="dgr-p" id="dgrKosul"></p>
-
-          <div class="fk-help" id="dgrZorunlu" style="margin-top:20px"></div>
-          <div class="kurum-gate" id="dgrNot" style="margin-top:18px;display:none"></div>
+        <!-- oynatma kabuğu (gerçek video dosyası yok — poster + kontroller) -->
+        <div class="ply">
+          <div class="ply-stage" id="plyStage">
+            <button class="ply-play" id="plyPlay" type="button" aria-label="Dersi oynat">
+              <i class="fa-solid fa-play" aria-hidden="true"></i>
+            </button>
+            <span class="ply-sure" id="plySure"></span>
+            <span class="ply-rozet" id="plyRozet"></span>
+          </div>
+          <div class="ply-bar" role="group" aria-label="Oynatıcı kontrolleri">
+            <button class="ply-btn" id="plyPrev" type="button" aria-label="Önceki ders"><i class="fa-solid fa-backward-step"></i></button>
+            <button class="ply-btn" id="plyToggle" type="button" aria-label="Oynat / duraklat"><i class="fa-solid fa-play"></i></button>
+            <button class="ply-btn" id="plyNext" type="button" aria-label="Sonraki ders"><i class="fa-solid fa-forward-step"></i></button>
+            <span class="ply-track" aria-hidden="true"><span id="plyFill"></span></span>
+            <span class="ply-zaman" id="plyZaman">00:00</span>
+            <button class="ply-btn ply-lbl" id="plyHiz" type="button" aria-label="Oynatma hızı">1×</button>
+            <button class="ply-btn ply-lbl is-on" id="plyCc" type="button" aria-pressed="true" aria-label="Altyazı">
+              <i class="fa-solid fa-closed-captioning"></i> <span id="plyCcDil"></span>
+            </button>
+          </div>
+          <p class="ply-not">
+            <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
+            Bu bir arayüz taslağıdır; video dosyası bağlı değildir. Altyazı, transkript ve
+            adım özeti aşağıda gerçek içerik olarak yer alır.
+          </p>
         </div>
 
-        <aside class="cert-card dgr-belge" id="dgrBelge"></aside>
-      </div>
+        <h1 id="drDersAd"></h1>
+        <p class="dr-yol" id="drYol"></p>
 
-      <div class="ak-grid is-3" style="margin-top:30px">
-        <a class="ak-card" id="dgrProgramKart" href="dadacampus-programlar-v1.html">
-          <span class="ak-ico"><i class="fa-solid fa-diagram-project"></i></span>
-          <h3>Belgeyi veren program</h3>
-          <p id="dgrProgramAd">Program detayında kabul koşulları, ders yapısı, değerlendirme ve belge türü yazılıdır.</p>
-        </a>
-        <a class="ak-card" href="dadacampus-yardim-v1.html?konu=sertifika">
-          <span class="ak-ico"><i class="fa-solid fa-circle-question"></i></span>
-          <h3>Belge türleri</h3>
-          <p>Katılım belgesi, başarı sertifikası, mikro kazanım, ortak program sertifikası ve kurum içi tamamlama kaydı birbirinden ayrıdır.</p>
-        </a>
-        <a class="ak-card" href="#bildir">
-          <span class="ak-ico"><i class="fa-regular fa-flag"></i></span>
-          <h3>Şüpheli mi?</h3>
-          <p>Belgenin sahibi olmadığın hâlde adına düzenlendiğini ya da içeriğin değiştirildiğini düşünüyorsan bildir.</p>
-        </a>
-      </div>
-    </div>
-  </div>
-</section>
+        <!-- transkript / adım özeti / malzeme sekmeleri -->
+        <div class="pf-tabbar dr-ic-tabbar">
+          <div class="pf-tabs" role="tablist" aria-label="Ders içeriği">
+            <button class="active" type="button" role="tab" aria-selected="true" data-ic="adim"><i class="fa-solid fa-list-check"></i> Adımlar</button>
+            <button type="button" role="tab" aria-selected="false" data-ic="transkript"><i class="fa-solid fa-align-left"></i> Transkript</button>
+            <button type="button" role="tab" aria-selected="false" data-ic="malzeme"><i class="fa-solid fa-basket-shopping"></i> Malzeme &amp; Ekipman</button>
+            <button type="button" role="tab" aria-selected="false" data-ic="dosya"><i class="fa-regular fa-file-lines"></i> Çalışma Dosyaları</button>
+          </div>
+        </div>
 
-<!-- ===== BELGE TÜRLERİ VE ZORUNLU AÇIKLAMALARI (§15.1) ===== -->
-<section class="ak-sec derin" id="turler" style="background:var(--bg-cream)">
-  <div class="wrap">
-    <div class="sec-head">
-      <div>
-        <span class="eyebrow"><i class="fa-solid fa-certificate"></i> Belge Türleri</span>
-        <h2>Hangi belge neyi söyler?</h2>
-        <p class="lead">Her belge türünün üzerinde zorunlu bir açıklama bulunur. DadaCampus belgesi kendiliğinden akademik kredi ya da kamu geçerliliği iddiası taşımaz; kurum onayı varsa kurumun rolü ve yetkisi belgede yazılıdır.</p>
-      </div>
-      <div class="sec-tools">
-        <a class="see-all" href="dadacampus-programlar-v1.html#sertifika">Program belgesi <i class="fa-solid fa-arrow-right"></i></a>
-      </div>
-    </div>
-    <div class="ptable-wrap">
-      <table class="ptable">
-        <caption class="sr-only">Belge türleri, kullanım alanı ve zorunlu açıklamaları</caption>
-        <thead><tr><th scope="col">Belge</th><th scope="col">Kullanım</th><th scope="col">Zorunlu açıklama</th></tr></thead>
-        <tbody id="turTablo"></tbody>
-      </table>
-    </div>
-
-    <div class="ak-grid is-3" style="margin-top:30px">
-      <div class="ak-card" role="group">
-        <span class="ak-ico"><i class="fa-solid fa-list-check"></i></span>
-        <h3>Uygunluk koşulları</h3>
-        <ul class="mad" style="margin-top:10px">
-          <li><i class="fa-solid fa-check"></i> Zorunlu derslerin tamamlanması</li>
-          <li><i class="fa-solid fa-check"></i> Devam koşulunun karşılanması</li>
-          <li><i class="fa-solid fa-check"></i> Quiz/sınav başarı puanı</li>
-          <li><i class="fa-solid fa-check"></i> Uygulama teslimlerinin kabulü</li>
-          <li><i class="fa-solid fa-check"></i> Varsa canlı/yüz yüze oturuma katılım</li>
-          <li><i class="fa-solid fa-check"></i> Kimlik doğrulama ve yetkili onayı</li>
-        </ul>
-      </div>
-      <div class="ak-card" role="group">
-        <span class="ak-ico"><i class="fa-solid fa-arrow-right-arrow-left"></i></span>
-        <h3>Belge durumları</h3>
-        <ul class="mad" style="margin-top:10px">
-          <li><i class="fa-solid fa-circle-dot"></i> <b>Geçerli</b> — koşullar karşılandı, belge yürürlükte</li>
-          <li><i class="fa-solid fa-circle-dot"></i> <b>Düzeltilmiş</b> — bilgi hatası giderildi, yeniden yayımlandı</li>
-          <li><i class="fa-solid fa-circle-dot"></i> <b>Süresi dolmuş</b> — erişim/geçerlilik dönemi sona erdi</li>
-          <li><i class="fa-solid fa-circle-dot"></i> <b>İptal edildi</b> — gerekçesi kayda geçmiş biçimde geri alındı</li>
-        </ul>
-      </div>
-      <div class="ak-card" role="group">
-        <span class="ak-ico"><i class="fa-solid fa-user-shield"></i></span>
-        <h3>Gizlilik</h3>
-        <p>Doğrulama sayfasında katılımcının tam adı, iletişim bilgisi ve kimlik verisi gösterilmez. Ad baş harflerle sunulur; daha fazla bilgi yalnız belgenin sahibinin veya yetkili kurumun erişiminde bulunur.</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ===== SAHTE BELGE BİLDİRİMİ (§15.3) ===== -->
-<section class="ak-form-sec derin" id="bildir">
-  <div class="wrap">
-    <div class="sec-head">
-      <div>
-        <span class="eyebrow"><i class="fa-regular fa-flag"></i> Bildirim</span>
-        <h2>Sahte veya değiştirilmiş belge bildir</h2>
-        <p class="lead">Elindeki belgenin bu sayfadaki kayıtla uyuşmadığını gördüysen ya da bir belgenin izinsiz kullanıldığını düşünüyorsan bildir. Bildirimler kayda geçer ve şüpheli kullanım raporuna işlenir.</p>
-      </div>
-    </div>
-    <div class="ak-form-grid">
-      <div class="form-card">
-        <form class="ak-form" id="bldForm">
-          <div class="fc-head">
+        <div class="pf-pane active" data-ic-pane="adim">
+          <p class="dr-alt">Videoyu izleyemediğin durumda dersi buradan takip edebilirsin — her adım metin olarak yazılıdır (§23.3).</p>
+          <ol class="dr-adim" id="drAdim"></ol>
+        </div>
+        <div class="pf-pane" data-ic-pane="transkript">
+          <p class="dr-alt">Zaman damgalı transkript. Bir damgaya tıklayınca not alanına o an eklenir.</p>
+          <div class="dr-trans" id="drTrans"></div>
+        </div>
+        <div class="pf-pane" data-ic-pane="malzeme">
+          <div class="dr-iki">
             <div>
-              <h2><i class="fa-regular fa-flag"></i> Bildirim Formu</h2>
-              <p>Belgeyi kimin adına düzenlenmiş gördüğünü yazmana gerek yok; kimlik ve tutarsızlık bilgisi yeterli.</p>
+              <h3 class="dr-h3"><i class="fa-solid fa-carrot"></i> Malzeme</h3>
+              <ul class="mad" id="drMalzeme"></ul>
+            </div>
+            <div>
+              <h3 class="dr-h3"><i class="fa-solid fa-screwdriver-wrench"></i> Ekipman</h3>
+              <ul class="mad" id="drEkipman"></ul>
             </div>
           </div>
-          <div class="fk-grid c2">
-            <div class="fk-field">
-              <label class="fk-label" for="bldKod">Belge kimliği <span class="opt">(varsa)</span></label>
-              <input class="fk-input" type="text" id="bldKod" name="bldKod" placeholder="DC-YYYY-NNNNNN" spellcheck="false" />
-            </div>
-            <div class="fk-field">
-              <label class="fk-label" for="bldTur">Bildirim türü <span class="req">*</span></label>
-              <select class="fk-select" id="bldTur" name="bldTur" required>
-                <option value="" selected disabled>Seç</option>
-                <option value="uyusmuyor">Belge bu sayfadaki kayıtla uyuşmuyor</option>
-                <option value="degistirilmis">Belge üzerinde değişiklik yapılmış görünüyor</option>
-                <option value="izinsiz">Belgem izinsiz kullanılıyor</option>
-                <option value="kurum">Kurum adı/logosu izinsiz kullanılmış</option>
-                <option value="diger">Diğer</option>
-              </select>
-            </div>
-          </div>
-          <div class="fk-field" style="margin-top:22px">
-            <label class="fk-label" for="bldNot">Ne gördün? <span class="req">*</span></label>
-            <textarea class="fk-textarea" id="bldNot" name="bldNot" required
-              placeholder="Belgeyi nerede gördüğünü, hangi bilginin uyuşmadığını ve varsa program/kurum adını yaz."></textarea>
-            <p class="fk-help"><i class="fa-solid fa-circle-info"></i> Kişisel veri paylaşmana gerek yok. Belgenin ekran görüntüsünü ekleyebilirsin.</p>
-          </div>
-          <div class="fk-field" style="margin-top:22px">
-            <label class="fk-label" for="bldDosya">Ek dosya <span class="opt">(isteğe bağlı)</span></label>
-            <label class="up-zone" for="bldDosya">
-              <i class="fa-solid fa-cloud-arrow-up" aria-hidden="true"></i>
-              <b>Görüntü veya PDF ekle</b>
-              <span>En fazla 3 dosya · dosya başına 10 MB</span>
-              <input type="file" id="bldDosya" name="bldDosya" multiple accept="image/*,.pdf" />
-            </label>
-            <div class="up-list" id="bldDosyaListe"></div>
-          </div>
-          <div class="fk-field" style="margin-top:22px">
-            <label class="fk-label" for="bldMail">Dönüş için e-posta <span class="opt">(isteğe bağlı)</span></label>
-            <input class="fk-input" type="email" id="bldMail" name="bldMail" placeholder="ornek@eposta.com" autocomplete="email" />
-            <p class="fk-help"><i class="fa-solid fa-circle-info"></i> Boş bırakırsan bildirim isimsiz kaydedilir; sonuç bilgisi gönderilemez.</p>
-          </div>
-          <label class="fb-kvkk">
-            <input type="checkbox" required />
-            <span><a href="yasal-v1.html?metin=aydinlatma">Aydınlatma Metni</a>'ni okudum; bildirimimin incelenmesi için gerekli verinin işlenmesini onaylıyorum.</span>
-          </label>
-          <button class="btn btn-primary ak-send" type="submit"><i class="fa-regular fa-paper-plane"></i> Bildirimi Gönder</button>
-        </form>
-        <div class="ak-success" id="bldSuccess" aria-live="polite">
-          <span class="ok"><i class="fa-solid fa-check"></i></span>
-          <h3>Bildirimin alındı</h3>
-          <p>Bildirim kayda geçti. İnceleme sonucunda belge durumu <b>düzeltilmiş</b> ya da <b>iptal edildi</b> olarak güncellenirse bu sayfada görünür.</p>
-          <a class="btn btn-ghost" href="dadacampus-sertifika-dogrula-v1.html"><i class="fa-solid fa-shield-halved"></i> Yeni Doğrulama</a>
         </div>
+        <div class="pf-pane" data-ic-pane="dosya">
+          <ul class="mad" id="drDosya"></ul>
+          <p class="pagi-note">Kuruma özel kaynaklar kurum dışına paylaşılamaz; indirme izni kaynağa göre değişir (§12.4).</p>
+        </div>
+
+        <!-- ders içi kısa kontrol sorusu (§7.4) -->
+        <div class="dr-blok" id="drQuizBlok" hidden>
+          <h3 class="dr-h3"><i class="fa-solid fa-circle-question"></i> Kısa kontrol</h3>
+          <div class="quiz" id="drQuiz"></div>
+        </div>
+
+        <!-- uygulama yükleme + eğitmen geri bildirimi (§14.1) -->
+        <div class="dr-blok" id="drTeslimBlok">
+          <h3 class="dr-h3"><i class="fa-solid fa-cloud-arrow-up"></i> Uygulama teslimi</h3>
+          <div id="drTeslim"></div>
+        </div>
+
+        <!-- soru-cevap (§7.4, §16.1) -->
+        <div class="dr-blok" id="drQaBlok">
+          <h3 class="dr-h3"><i class="fa-regular fa-comments"></i> Soru &amp; cevap</h3>
+          <div class="dr-qa" id="drQa"></div>
+          <form class="dr-qa-form" id="drQaForm">
+            <label class="sr-only" for="drQaInput">Bu derse soru sor</label>
+            <textarea class="fk-textarea" id="drQaInput" placeholder="Bu dersle ilgili sorunu yaz — eğitmen ve kohort görür." required></textarea>
+            <div class="dr-qa-foot">
+              <p class="fk-help" style="margin:0"><i class="fa-solid fa-circle-info"></i> Yanıtlar eğitmen tarafından işaretlenir; en iyi yanıt üste çıkar.</p>
+              <button class="btn btn-primary" type="submit"><i class="fa-regular fa-paper-plane"></i> Gönder</button>
+            </div>
+          </form>
+          <div class="ak-success" id="drQaOk" aria-live="polite">
+            <span class="ok"><i class="fa-solid fa-check"></i></span>
+            <h3>Sorun iletildi</h3>
+            <p>Eğitmen yanıtladığında Kampüsüm'de bildirim alırsın.</p>
+          </div>
+        </div>
+
+        <!-- alt gezinme: önceki / tamamla / sonraki -->
+        <div class="dr-gez" id="drGez"></div>
       </div>
-      <aside class="seo-aside">
-        <h4>Doğrulama hakkında</h4>
-        <ul class="seo-quick" id="dgrTeaser"></ul>
-        <a class="see-all" href="dadacampus-yardim-v1.html?konu=sertifika" style="margin-top:16px">Yardım Merkezi <i class="fa-solid fa-arrow-right"></i></a>
+
+      <!-- ---------- SAĞ: notlarım (§12.4 zaman damgalı) ---------- -->
+      <aside class="dr-not" id="drNotPane" data-dp="not">
+        <div class="dr-agac-head">
+          <b>Notlarım</b>
+          <span id="drNotSay"></span>
+        </div>
+        <form class="dr-not-form" id="drNotForm">
+          <label class="sr-only" for="drNotInput">Yeni not</label>
+          <textarea class="fk-textarea" id="drNotInput" placeholder="Bu an için not al…"></textarea>
+          <div class="dr-not-foot">
+            <span class="dr-damga" id="drDamga">00:00</span>
+            <button class="btn btn-primary" type="submit"><i class="fa-solid fa-plus"></i> Ekle</button>
+          </div>
+        </form>
+        <div class="dr-not-liste" id="drNotListe"></div>
+        <a class="see-all" href="dadacampus-kampusum-v1.html?bolum=notlarim" style="margin-top:14px">Tüm notlarım <i class="fa-solid fa-arrow-right"></i></a>
       </aside>
     </div>
   </div>
 </section>
+
+</div><!-- /#drIcerik -->
 
 </main><!-- /.page-main -->
 
@@ -2771,248 +2862,463 @@ window.__bottomStrips=window.__bottomStrips||[];
 </script>
 
 <script>
-/* ===== SAYFA JS — dadacampus-sertifika-dogrula-v1.html ===== */
+/* ===== SAYFA JS — dadacampus-ders-v1.html ===== */
 /* ============================================================================
-   Sertifika Doğrula — sayfa JS (§15.3)
-   ?kod=DC-2026-004182 → belge kaydı okunur ve BEŞ durumdan biri gösterilir:
-     gecerli · duzeltilmis · suresi-dolmus · iptal · (kayıt yok → bulunamadı)
-   🔴 §15.1 kritik ifade kuralı tek kapıdan geçer: veren kurum adı yalnız
-   DC.verenKurumlar() (onay kaydı süzgeci) üzerinden yazılır; "ortak sertifika"
-   ifadesi yalnız DC.ortakBelgeGosterilirMi() true ise kullanılır.
+   Ders Oynatıcı — sayfa JS (§7.4)
+   ?egitim=<slug>&ders=<n>
+   🔴 Video dosyası yok (repo kısıtı) → oynatma kabuğu simüle edilir; altyazı,
+   transkript ve adım özeti GERÇEK içerik olarak verilir (§23.3).
+   🔴 Yetkisiz erişim: ücretli eğitimin ön izleme OLMAYAN dersi, giriş yapılmamış
+   kullanıcıya İÇERİK GÖSTERMEZ — kilit ekranı açılır (§26.15).
    ========================================================================= */
 (function () {
   var D = window.DC;
   if (!D) return;
-  var esc = D.esc;
+  var esc = D.esc, img = D.img;
   var $ = function (s) { return document.querySelector(s); };
+  var byId = function (i) { return document.getElementById(i); };
 
-  var DURUM = {
-    'gecerli':       { ad: 'Geçerli',        ikon: 'fa-circle-check',       alt: 'Belge yürürlükte; koşulları karşılanmış ve kaydı doğrulanmıştır.' },
-    'duzeltilmis':   { ad: 'Düzeltilmiş',    ikon: 'fa-pen-to-square',      alt: 'Belge üzerinde bir bilgi düzeltilmiş ve belge yeniden yayımlanmıştır. Geçerlidir.' },
-    'suresi-dolmus': { ad: 'Süresi Dolmuş',  ikon: 'fa-hourglass-end',      alt: 'Belgenin geçerlilik veya erişim dönemi sona ermiştir. Kazanım kaydı korunur.' },
-    'iptal':         { ad: 'İptal Edildi',   ikon: 'fa-ban',                alt: 'Belge geri alınmıştır ve geçerli değildir. Gerekçe kayda geçmiştir.' }
-  };
+  var p = D.qs();
+  var e = p.egitim ? D.bul('egitimler', p.egitim) : null;
+  var dersler = e ? D.dersler(e) : [];
+  var no = Math.max(1, parseInt(p.ders, 10) || 1);
+  var ders = dersler[no - 1] || null;
 
-  /* ---- hero özeti ------------------------------------------------------- */
-  $('#heroStats').innerHTML =
-    '<div class="st"><b>' + D.belgeTurleri.length + '</b><span>Belge türü</span></div>' +
-    '<div class="st"><b>4</b><span>Geçerlilik durumu</span></div>' +
-    '<div class="st"><b>QR</b><span>Kod ile doğrulama</span></div>';
+  function gizle(id) { var el = byId(id); if (el) el.hidden = true; }
+  function goster(id) { var el = byId(id); if (el) el.hidden = false; }
 
-  /* ---- §15.1 belge türleri tablosu -------------------------------------- */
-  $('#turTablo').innerHTML = D.belgeTurleri.map(function (b) {
-    return '<tr>' +
-      '<td data-l="Belge"><b>' + esc(b.ad) + '</b></td>' +
-      '<td data-l="Kullanım">' + esc(b.kullanim || '') + '</td>' +
-      '<td data-l="Zorunlu açıklama">' + esc(b.zorunluAciklama) + '</td>' +
-    '</tr>';
-  }).join('');
-
-  /* ---- yan panel: doğrulama hakkında ----------------------------------- */
-  $('#dgrTeaser').innerHTML = [
-    { i: 'fa-hashtag',  b: 'Benzersiz kimlik', p: 'Her belgenin tek bir kimliği vardır; aynı kimlik iki belgeye verilmez.' },
-    { i: 'fa-qrcode',   b: 'QR kod', p: 'Belgedeki QR bu sayfaya, kimlik parametresiyle birlikte yönlendirir.' },
-    { i: 'fa-user-shield', b: 'Sınırlı gösterim', p: 'Katılımcı adı baş harflerle gösterilir; iletişim ve kimlik verisi yayımlanmaz.' },
-    { i: 'fa-building-columns', b: 'Veren kurum', p: 'Kurum adı yalnız onay kaydı varsa yazılır; partner logosu akademik onay göstergesi değildir.' }
-  ].map(function (x) {
-    return '<li><i class="fa-solid ' + x.i + '"></i><span><b>' + esc(x.b) + '</b>' + esc(x.p) + '</span></li>';
-  }).join('');
-
-  /* ---- doğrulama akışı -------------------------------------------------- */
-  var kodEl = $('#dgrKod'), hataEl = $('#dgrHata');
-  var bosEl = $('#dgrBos'), yokEl = $('#dgrYok'), sonucEl = $('#dgrSonuc'), loadEl = $('#dgrLoad');
-
-  function gizleHepsi() {
-    bosEl.style.display = 'none';
-    yokEl.classList.remove('show');
-    sonucEl.hidden = true;
-    loadEl.classList.remove('show');
+  if (!e || !ders) {
+    goster('drBos'); gizle('drIcerik');
+    document.title = 'Ders bulunamadı — DadaCampus | DadaMutfak';
+    return;
   }
 
-  function belgeBul(kod) {
-    var k = String(kod || '').trim().toUpperCase();
-    if (!k) return null;
-    for (var i = 0; i < D.sertifikalar.length; i++) {
-      if (D.sertifikalar[i].id.toUpperCase() === k) return D.sertifikalar[i];
+  var ilerleme = D.ilerleme(e.id);
+  var girisli = D.girisli();
+  var ucretsiz = !e.fiyat;
+  var acik = ders.onizleme || ucretsiz || (girisli && ilerleme.kayitli);
+
+  /* ---- yetkisiz erişim kapısı ------------------------------------------ */
+  if (!acik) {
+    goster('drKilit'); gizle('drIcerik');
+    byId('drKilitEgitim').textContent = e.ad;
+    byId('drKilitEgitim').setAttribute('href', D.link.egitim(e.slug));
+    byId('drKilitNot').innerHTML =
+      '<b>' + esc(ders.ad) + '</b> dersi bu eğitime kayıtlı katılımcılara açıktır. ' +
+      (e.onizlemeSayisi
+        ? 'Eğitimin <b>' + e.onizlemeSayisi + ' dersi</b> kayıt olmadan izlenebilir; içerikten emin olmak için onlarla başlayabilirsin.'
+        : 'İçeriği görmek için eğitim detayındaki bölüm listesine bakabilirsin.');
+    var kcta = '<a class="btn btn-primary" href="' + esc(D.link.egitim(e.slug)) + '">' +
+               '<i class="fa-solid fa-circle-info"></i> Eğitim Detayı</a>';
+    var ilkOn = dersler.filter(function (d) { return d.onizleme; })[0];
+    if (ilkOn) {
+      kcta += '<a class="btn btn-ghost" href="' + esc(D.link.ders(e.slug, ilkOn.no)) + '">' +
+              '<i class="fa-regular fa-circle-play"></i> Ücretsiz Ön İzleme</a>';
     }
-    return null;
+    if (!girisli) {
+      kcta += '<a class="btn btn-ghost" href="giris-v1.html?tab=giris"><i class="fa-regular fa-user"></i> Giriş Yap</a>';
+    }
+    byId('drKilitCta').innerHTML = kcta;
+    document.title = 'Kayıt gerekli — ' + e.ad + ' | DadaCampus';
+    return;
   }
 
-  function ciz(s) {
-    var d = DURUM[s.durum] || DURUM.gecerli;
-    var pasif = (s.durum === 'iptal' || s.durum === 'suresi-dolmus');
-    var prog = s.programId ? D.program(s.programId) : null;
-    var egt  = s.egitimId ? D.egitim(s.egitimId) : null;
-    var verenler = D.verenKurumlar(s);          /* 🔴 onay kaydı süzgeci */
-    var ortak = prog ? D.ortakBelgeGosterilirMi(prog) : false;
+  document.title = ders.ad + ' — ' + e.ad + ' | DadaCampus';
 
-    $('#dgrDurum').className = 'dgr-durum ' + s.durum;
-    $('#dgrDurum').innerHTML = '<i class="fa-solid ' + d.ikon + '" aria-hidden="true"></i> ' + esc(d.ad);
+  /* ---- üst şerit -------------------------------------------------------- */
+  byId('drGeri').setAttribute('href', D.link.egitim(e.slug));
+  byId('drEgitimAd').textContent = e.ad;
 
-    $('#dgrBaslik').textContent = D.etiket('belgeTurleri', s.tur);
-    $('#dgrAlt').textContent = d.alt;
+  var y = D.yuzde(e.id);
+  byId('drIlerleme').innerHTML =
+    '<div class="prg-lbl"><span>' + ilerleme.tamamlanan.length + '/' + e.dersSayisi + ' ders</span><b>%' + y + '</b></div>' +
+    '<span class="prg"><span style="width:' + y + '%"></span></span>';
 
-    /* künye — veren kurum satırı yalnız onaylı kurum varsa yazılır */
-    var satir = [
-      ['Belge kimliği', esc(s.id), null],
-      ['Belge türü', esc(D.etiket('belgeTurleri', s.tur)), null],
-      ['Katılımcı', esc(s.katilimciAdi || '—'), 'Gizlilik kuralı gereği sınırlı gösterim'],
-      ['Program / eğitim', esc(prog ? prog.ad : (egt ? egt.ad : '—')), prog ? esc(prog.donem) : null],
-      ['Düzenleme tarihi', esc(D.tarih(s.tarih)), null]
-    ];
-    if (verenler.length) {
-      satir.push(['Veren kurumlar',
-        'DadaCampus + ' + verenler.map(function (k) { return esc(k.ad); }).join(' + '),
-        verenler.map(function (k) {
-          return esc(k.onayKaydi.yetkili) + ' · onay kaydı ' + esc(k.onayKaydi.belgeRef) + ' (' + esc(D.tarih(k.onayKaydi.tarih)) + ')';
-        }).join(' · ')]);
-      if (ortak) {
-        satir.push(['Ortaklık kapsamı',
-          esc(prog.kurumRolleri && prog.kurumRolleri[verenler[0].id] ? prog.kurumRolleri[verenler[0].id] : 'Ortak program'),
-          'Her kurumun rolü ve yetkisi protokolde tanımlıdır']);
-      }
-    } else {
-      satir.push(['Veren kurum', 'DadaCampus', 'Bu belgede partner kurum onayı bulunmuyor']);
-    }
-    if (s.puan != null) satir.push(['Değerlendirme puanı', esc(String(s.puan)), null]);
+  byId('drBarCta').innerHTML =
+    '<a class="btn btn-ghost" href="dadacampus-kampusum-v1.html?bolum=egitimlerim">' +
+      '<i class="fa-solid fa-graduation-cap"></i> <span>Kampüsüm</span></a>';
 
-    $('#dgrKunye').innerHTML = satir.map(function (r) {
-      return '<div class="inf-row"><span>' + r[0] + '</span><b>' + r[1] +
-        (r[2] ? '<small>' + r[2] + '</small>' : '') + '</b></div>';
+  /* ---- içerik ağacı (aktif ders işaretli) ------------------------------- */
+  byId('drAgacSay').textContent = e.dersSayisi + ' ders';
+  var sira = 0;
+  byId('drAgac').innerHTML = e.bolumler.map(function (b) {
+    var bolumAktif = false;
+    var satir = (b.dersler || []).map(function (d) {
+      sira++;
+      var bu = sira === no;
+      if (bu) bolumAktif = true;
+      var bitti = ilerleme.tamamlanan.indexOf(sira) > -1;
+      var dAcik = d.onizleme || ucretsiz || (girisli && ilerleme.kayitli);
+      var ikon = bu ? 'fa-play' : (bitti ? 'fa-check' : (dAcik ? 'fa-circle' : 'fa-lock'));
+      var sinif = 'drs-row' + (bu ? ' aktif' : '') + (bitti ? ' bitti' : '') +
+                  (d.onizleme ? ' onizleme' : '') + (dAcik ? '' : ' kilitli');
+      var ic = '<span class="drs-ico"><i class="fa-solid ' + ikon + '" aria-hidden="true"></i></span>' +
+               '<span class="drs-ad">' + esc(d.ad) + '</span>' +
+               '<span class="drs-sure">' + esc(D.sure(d.sureDk)) + '</span>';
+      return dAcik
+        ? '<a class="' + sinif + '" href="' + esc(D.link.ders(e.slug, sira)) + '"' +
+          (bu ? ' aria-current="true"' : '') + '>' + ic + '</a>'
+        : '<div class="' + sinif + '">' + ic + '</div>';
     }).join('');
+    return '<div class="drs-bolum' + (bolumAktif ? ' open' : '') + '">' +
+      '<button class="drs-head" type="button" aria-expanded="' + (bolumAktif ? 'true' : 'false') + '">' +
+        '<span class="drs-no">' + (b === e.bolumler[0] ? 1 : e.bolumler.indexOf(b) + 1) + '</span>' +
+        '<b>' + esc(b.ad) + '</b>' +
+        '<i class="fa-solid fa-chevron-down drs-car" aria-hidden="true"></i>' +
+      '</button><div class="drs-list">' + satir + '</div></div>';
+  }).join('');
 
-    $('#dgrKazanim').innerHTML = (s.kazanimlar && s.kazanimlar.length)
-      ? s.kazanimlar.map(function (k) { return '<li><i class="fa-solid fa-check"></i> ' + esc(k) + '</li>'; }).join('')
-      : '<li><i class="fa-solid fa-minus"></i> Bu belgede yayımlanmış kazanım kaydı bulunmuyor.</li>';
+  byId('drAgac').addEventListener('click', function (ev) {
+    var h = ev.target.closest('.drs-head');
+    if (!h) return;
+    var b = h.parentElement;
+    h.setAttribute('aria-expanded', b.classList.toggle('open') ? 'true' : 'false');
+  });
 
-    $('#dgrKosul').textContent = s.basariKosulu || 'Bu belge için başarı koşulu kaydı bulunmuyor.';
+  /* ---- oynatıcı --------------------------------------------------------- */
+  byId('plyStage').style.backgroundImage = 'url(\'' + img(e.kapak, 1200) + '\')';
+  byId('plySure').textContent = D.sure(ders.sureDk);
+  byId('plyRozet').innerHTML = ders.onizleme
+    ? '<i class="fa-solid fa-gift"></i> Ücretsiz ön izleme'
+    : '<i class="fa-solid fa-play"></i> Ders ' + no;
+  byId('plyCcDil').textContent = (e.altyazi && e.altyazi[0]) || e.dil;
 
-    /* §15.1 — belge türünün ZORUNLU açıklaması her sonuçta gösterilir */
-    $('#dgrZorunlu').innerHTML =
-      '<i class="fa-solid fa-circle-info"></i><span><b>Zorunlu açıklama:</b> ' +
-      esc(D.belgeAciklamasi(s.tur)) +
-      ' DadaCampus belgesi kendiliğinden akademik kredi veya kamu geçerliliği iddiası taşımaz.</span>';
+  var toplamSn = (ders.sureDk || 1) * 60;
+  var sn = 0, oynuyor = false, tik = null, hiz = 1;
+  var HIZLAR = [1, 1.25, 1.5, 2, 0.75];
 
-    /* düzeltme / iptal notu */
-    var not = $('#dgrNot');
-    var notMetin = s.duzeltmeNotu || s.iptalNotu;
-    if (notMetin) {
-      not.style.display = '';
-      not.innerHTML = '<span class="kg-ico"><i class="fa-solid ' +
-        (s.iptalNotu ? 'fa-ban' : 'fa-pen-to-square') + '"></i></span>' +
-        '<div class="kg-txt"><b>' + (s.iptalNotu ? 'İptal gerekçesi' : 'Düzeltme kaydı') + '</b>' +
-        '<p>' + esc(notMetin) + '</p></div>';
-    } else {
-      not.style.display = 'none';
-      not.innerHTML = '';
-    }
+  function ss(x) {
+    var m = Math.floor(x / 60), s = Math.floor(x % 60);
+    return (m < 10 ? '0' : '') + m + ':' + (s < 10 ? '0' : '') + s;
+  }
+  function ciz() {
+    byId('plyFill').style.width = Math.min(100, sn / toplamSn * 100) + '%';
+    byId('plyZaman').textContent = ss(sn);
+    byId('drDamga').textContent = ss(sn);
+  }
+  function durdur() {
+    oynuyor = false; clearInterval(tik); tik = null;
+    document.querySelector('.ply').classList.remove('oynuyor');
+    byId('plyToggle').innerHTML = '<i class="fa-solid fa-play"></i>';
+  }
+  function oynat() {
+    oynuyor = true;
+    document.querySelector('.ply').classList.add('oynuyor');
+    byId('plyToggle').innerHTML = '<i class="fa-solid fa-pause"></i>';
+    /* dosya yok — ilerleme simüle edilir; 1 tik = 5 sn × hız */
+    tik = setInterval(function () {
+      sn = Math.min(toplamSn, sn + 5 * hiz);
+      ciz();
+      if (sn >= toplamSn) durdur();
+    }, 500);
+  }
+  function cevir() { oynuyor ? durdur() : oynat(); }
+  byId('plyPlay').addEventListener('click', cevir);
+  byId('plyToggle').addEventListener('click', cevir);
+  byId('plyHiz').addEventListener('click', function () {
+    hiz = HIZLAR[(HIZLAR.indexOf(hiz) + 1) % HIZLAR.length];
+    this.textContent = hiz + '×';
+  });
+  byId('plyCc').addEventListener('click', function () {
+    var on = this.classList.toggle('is-on');
+    this.setAttribute('aria-pressed', on ? 'true' : 'false');
+  });
+  ciz();
 
-    /* belge önizleme kartı */
-    $('#dgrBelge').className = 'cert-card dgr-belge' + (pasif ? ' pasif' : '');
-    $('#dgrBelge').innerHTML =
-      (s.qr
-        ? '<div class="cc-qr" aria-label="Belge QR kodu"><i class="fa-solid fa-qrcode" aria-hidden="true"></i></div>'
-        : '<div class="cc-qr yok" aria-label="QR kod yok"><i class="fa-solid fa-qrcode" aria-hidden="true"></i><span>QR üretilmedi</span></div>') +
-      '<span class="cc-seal"><i class="fa-solid fa-award"></i></span>' +
-      '<div class="cc-name">' + esc(D.etiket('belgeTurleri', s.tur)) + '</div>' +
-      '<div class="cc-sub">' + esc(prog ? prog.ad : (egt ? egt.ad : 'DadaCampus')) + '</div>' +
-      '<div class="cc-line"></div>' +
-      '<div class="cc-row"><span>Kimlik</span><b>' + esc(s.id) + '</b></div>' +
-      '<div class="cc-line"></div>' +
-      '<div class="cc-row"><span>Katılımcı</span><b>' + esc(s.katilimciAdi || '—') + '</b></div>' +
-      '<div class="cc-line"></div>' +
-      '<div class="cc-row"><span>Durum</span><b>' + esc(d.ad) + '</b></div>' +
-      '<div class="cc-line"></div>' +
-      '<div class="cc-row"><span>Tarih</span><b>' + esc(D.tarih(s.tarih)) + '</b></div>';
+  /* önceki / sonraki */
+  function gitDers(n) {
+    if (n < 1 || n > dersler.length) return null;
+    return D.link.ders(e.slug, n);
+  }
+  var oncekiUrl = gitDers(no - 1), sonrakiUrl = gitDers(no + 1);
+  byId('plyPrev').disabled = !oncekiUrl;
+  byId('plyNext').disabled = !sonrakiUrl;
+  byId('plyPrev').addEventListener('click', function () { if (oncekiUrl) location.href = oncekiUrl; });
+  byId('plyNext').addEventListener('click', function () { if (sonrakiUrl) location.href = sonrakiUrl; });
 
-    /* program kartı doğru detaya bağlanır (§26.7) */
-    var pk = $('#dgrProgramKart');
-    if (prog) {
-      pk.setAttribute('href', D.link.program(prog.slug));
-      $('#dgrProgramAd').textContent = prog.ad + ' — ' + prog.donem +
-        '. Kabul koşulları, ders yapısı, değerlendirme ve belge türü program detayında yazılıdır.';
-    } else if (egt) {
-      pk.setAttribute('href', D.link.egitim(egt.slug));
-      $('#dgrProgramAd').textContent = egt.ad +
-        ' — bu belge bir programa değil tek eğitime bağlı mikro kazanımdır.';
-    } else {
-      pk.setAttribute('href', 'dadacampus-programlar-v1.html');
-      $('#dgrProgramAd').textContent = 'Bu belge için program kaydı bulunmuyor.';
-    }
+  /* klavye: boşluk oynat/durdur, ← → ders değiştir (§23.3) */
+  document.addEventListener('keydown', function (ev) {
+    if (/^(INPUT|TEXTAREA|SELECT)$/.test(ev.target.tagName)) return;
+    if (ev.key === ' ') { ev.preventDefault(); cevir(); }
+    else if (ev.key === 'ArrowRight' && sonrakiUrl) location.href = sonrakiUrl;
+    else if (ev.key === 'ArrowLeft' && oncekiUrl) location.href = oncekiUrl;
+  });
 
-    gizleHepsi();
-    sonucEl.hidden = false;
+  /* ---- ders başlığı ve yol ---------------------------------------------- */
+  byId('drDersAd').textContent = ders.ad;
+  byId('drYol').innerHTML =
+    esc(D.etiket('konuAlanlari', e.kategori)) + ' · Bölüm ' + ders.bolumNo + ' — ' + esc(ders.bolum) +
+    ' · Ders ' + no + '/' + e.dersSayisi + ' · ' + esc(D.sure(ders.sureDk)) +
+    (ders.onizleme ? ' · <b style="color:var(--tomato)">ücretsiz ön izleme</b>' : '');
+
+  /* ---- adım özeti (metinsel anlatım — §23.3) ---------------------------- */
+  /* Adımlar dersin adından ve eğitimin kazanımlarından türetilir; uydurma
+     tarif metni yerine dersin gerçekten kapsadığı işi anlatır. */
+  var ADIM = [
+    'Çalışma alanını hazırla: tezgahı boşalt, tahtayı sabitle, atık kabını yanına al.',
+    'Bu dersin malzemelerini tartıp ayrı kaplara al (mise en place) — pişirmeye başlamadan hepsi hazır olsun.',
+    'Eğitmen tekniği yavaş tempoda bir kez gösterir; sen izlerken uygulamaya başlama.',
+    'Tekniği tek başına, malzemesiz tekrar et; el hafızası oluşana kadar üç–beş tur.',
+    'Malzemeyle uygula. İlk denemede hız değil doğruluk hedefle.',
+    'Sonucu kontrol listesiyle karşılaştır: ' + esc(ders.ad.toLocaleLowerCase('tr-TR')) + ' için beklenen görünüm ve doku.',
+    'Uygulamanın fotoğrafını çek ve bu sayfadaki teslim alanından yükle; eğitmen rubrikle değerlendirir.'
+  ];
+  byId('drAdim').innerHTML = ADIM.map(function (a) { return '<li>' + a + '</li>'; }).join('');
+
+  /* ---- transkript (zaman damgalı) -------------------------------------- */
+  var parca = Math.max(4, Math.min(9, Math.round(ders.sureDk / 5)));
+  var TR = [];
+  for (var i = 0; i < parca; i++) {
+    var dk = Math.round(i * ders.sureDk / parca);
+    TR.push({ sn: dk * 60, metin: [
+      'Bu bölümde ' + ders.ad.toLocaleLowerCase('tr-TR') + ' konusuna giriyoruz; önce neden bu sırayla çalıştığımıza bakalım.',
+      'Dikkat edilecek ilk nokta ölçü ve sıcaklık: gözle tahmin yerine teraziyi ve termometreyi kullanın.',
+      'Şimdi tekniği ağır tempoda gösteriyorum. Elin duruşuna ve bıçağın açısına bakın.',
+      'Bu aşamada en sık yapılan hata acele etmek. Yüzey değişimini gördükten sonra ilerleyin.',
+      'Ara kontrol: dokunun ve rengin bu noktada nasıl olması gerektiğini karşılaştırın.',
+      'Sıcaklığı düşürüp dinlendirme adımına geçiyoruz; bu adım atlanırsa sonuç dağılır.',
+      'Sunum aşaması: tabakta boşluk bırakmak da bir tercih; her yeri doldurmak zorunda değilsiniz.',
+      'Kendi denemenizde farklı sonuç alırsanız hangi değişkeni değiştirdiğinizi not edin.',
+      'Bölümü kapatıyoruz. Uygulamayı yükleyin; geri bildirimi rubrik üzerinden alacaksınız.'
+    ][i % 9] });
+  }
+  byId('drTrans').innerHTML = TR.map(function (t) {
+    return '<button type="button" data-sn="' + t.sn + '">' +
+      '<span class="tr-dk">' + ss(t.sn) + '</span><span>' + esc(t.metin) + '</span></button>';
+  }).join('');
+  byId('drTrans').addEventListener('click', function (ev) {
+    var b = ev.target.closest('button[data-sn]');
+    if (!b) return;
+    sn = Math.min(toplamSn, parseInt(b.getAttribute('data-sn'), 10));
+    ciz();
+    byId('drNotInput').focus();
+  });
+
+  /* ---- malzeme / ekipman / dosya --------------------------------------- */
+  byId('drMalzeme').innerHTML = [
+    'Bu dersin uygulama tarifi: ' + ((e.uygulamalar || [])[ders.bolumNo - 1] || (e.uygulamalar || [])[0] || 'ders içi çalışma'),
+    'Temel malzemeler ders başında listelenir; ölçüler gram ve ev ölçüsüyle birlikte verilir.',
+    'Alternatif malzeme önerileri (bulunamayan ürün için) tarif altında yazılıdır.'
+  ].map(function (m) { return '<li><i class="fa-solid fa-circle-dot"></i> ' + esc(m) + '</li>'; }).join('');
+  byId('drEkipman').innerHTML = [
+    'Mutfak terazisi (1 g hassasiyet)',
+    'Şef bıçağı ve sabit doğrama tahtası',
+    'Termometre (iç sıcaklık ölçümü için)',
+    'Ölçü kabı ve kâse seti'
+  ].map(function (m) { return '<li><i class="fa-solid fa-check"></i> ' + esc(m) + '</li>'; }).join('');
+  byId('drDosya').innerHTML = [
+    { ad: 'Ders notu — ' + ders.ad, tur: 'PDF', boy: '420 KB' },
+    { ad: 'Uygulama kontrol listesi', tur: 'PDF', boy: '180 KB' },
+    { ad: 'Rubrik özeti', tur: 'PDF', boy: '95 KB' }
+  ].map(function (f) {
+    /* dosya gerçekten yok — ölü bağlantı üretmemek için <li>, <a> DEĞİL */
+    return '<li><i class="fa-regular fa-file-pdf"></i> <span>' + esc(f.ad) +
+      ' <b style="color:var(--muted);font-weight:600">· ' + f.tur + ' · ' + f.boy + '</b></span></li>';
+  }).join('');
+
+  /* ---- ders içi quiz --------------------------------------------------- */
+  var qz = D.quizler.filter(function (q) { return q.egitimId === e.id && q.ders === no; })[0];
+  if (qz) {
+    byId('drQuizBlok').hidden = false;
+    byId('drQuiz').innerHTML =
+      '<p>' + esc(qz.soru) + '</p>' +
+      '<div class="qz-opt">' + qz.secenekler.map(function (s, i) {
+        return '<button type="button" data-i="' + i + '">' +
+          '<span class="qz-ix">' + String.fromCharCode(65 + i) + '</span>' + esc(s) + '</button>';
+      }).join('') + '</div>' +
+      '<div class="qz-sonuc" id="qzSonuc"></div>';
+    byId('drQuiz').addEventListener('click', function (ev) {
+      var b = ev.target.closest('button[data-i]');
+      if (!b || byId('qzSonuc').classList.contains('show')) return;
+      var i = parseInt(b.getAttribute('data-i'), 10);
+      var dogru = i === qz.dogru;
+      /* §23.3 — sonuç renk YANINDA ikon ve metinle bildirilir */
+      b.classList.add(dogru ? 'dogru' : 'yanlis');
+      b.querySelector('.qz-ix').innerHTML = '<i class="fa-solid ' + (dogru ? 'fa-check' : 'fa-xmark') + '"></i>';
+      if (!dogru) {
+        var d = byId('drQuiz').querySelectorAll('.qz-opt button')[qz.dogru];
+        d.classList.add('dogru');
+        d.querySelector('.qz-ix').innerHTML = '<i class="fa-solid fa-check"></i>';
+      }
+      var s = byId('qzSonuc');
+      s.innerHTML = '<b>' + (dogru ? 'Doğru.' : 'Doğru yanıt işaretlendi.') + '</b> ' + esc(qz.aciklama);
+      s.classList.add('show');
+    });
   }
 
-  function dogrula(kod, degistir) {
-    hataEl.classList.remove('show');
-    var temiz = String(kod || '').trim();
-    if (!temiz) {
-      gizleHepsi();
-      bosEl.style.display = '';
-      D.qsSahipli(['kod'], {}, degistir);
-      return;
-    }
-    /* biçim kontrolü — hata mesajı alanın yanında ve METİNLE (renk tek başına değil) */
-    if (!/^DC-\d{4}-\d{4,6}$/i.test(temiz)) {
-      gizleHepsi();
-      bosEl.style.display = '';
-      hataEl.innerHTML = '<i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i> ' +
-        'Kimlik biçimi <b>DC-YYYY-NNNNNN</b> olmalı. Örnek: DC-2026-004182';
-      hataEl.classList.add('show');
-      return;
-    }
-    gizleHepsi();
-    loadEl.classList.add('show');
-    D.qsSahipli(['kod'], { kod: temiz.toUpperCase() }, degistir);
-    /* yükleniyor durumu görünür kalsın diye kısa gecikme (§26.15) */
-    setTimeout(function () {
-      var s = belgeBul(temiz);
-      if (s) { ciz(s); }
-      else { gizleHepsi(); yokEl.classList.add('show'); }
-    }, 260);
-  }
-
-  $('#dgrForm').addEventListener('submit', function (e) {
-    e.preventDefault();
-    dogrula(kodEl.value, false);
-  });
-  $('#dgrClear').addEventListener('click', function () {
-    kodEl.value = ''; dogrula('', false); kodEl.focus();
-  });
-  $('#dgrTekrar').addEventListener('click', function () {
-    kodEl.value = ''; dogrula('', false);
-    kodEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    kodEl.focus();
-  });
-
-  /* ---- sahte belge bildirim formu -------------------------------------- */
-  (function () {
-    var f = $('#bldForm'), ok = $('#bldSuccess');
-    var dosya = $('#bldDosya'), liste = $('#bldDosyaListe');
-    dosya.addEventListener('change', function () {
-      var d = [].slice.call(dosya.files).slice(0, 3);
-      liste.innerHTML = d.map(function (x) {
-        return '<div class="up-row"><i class="fa-regular fa-file"></i> ' + esc(x.name) +
-          '<span class="up-boy">' + Math.max(1, Math.round(x.size / 1024)) + ' KB</span></div>';
+  /* ---- uygulama teslimi (§14.1, §14.3) --------------------------------- */
+  var tesl = D.teslimler.filter(function (t) { return t.egitimId === e.id; });
+  if (!girisli) {
+    byId('drTeslim').innerHTML =
+      '<div class="kurum-gate"><span class="kg-ico"><i class="fa-solid fa-lock"></i></span>' +
+      '<div class="kg-txt"><b>Teslim için giriş gerekiyor</b>' +
+      '<p>Uygulamanı yükleyip eğitmenden birebir geri bildirim almak için hesabına giriş yap. ' +
+      'Teslimlerin, geri bildirimlerin ve belgen Kampüsüm\'de toplanır.</p></div>' +
+      '<a class="btn btn-primary" href="giris-v1.html?tab=giris"><i class="fa-regular fa-user"></i> Giriş Yap</a></div>';
+  } else if (tesl.length) {
+    byId('drTeslim').innerHTML =
+      '<div class="bsv">' + tesl.map(function (t) {
+        var d = D.teslimDurumu(t.durum);
+        var deg = t.degerlendiriciId ? D.egitmen(t.degerlendiriciId) : null;
+        return '<div class="bsv-row">' +
+          '<span class="bsv-info"><b>' + esc(t.ad) + '</b>' +
+            '<span>Son tarih ' + esc(D.tarih(t.sonTarih)) + ' · sürüm ' + t.surum +
+            (t.puan != null ? ' · puan ' + t.puan : '') + ' · ' + esc(d.aksiyon) + '</span>' +
+            (t.geriBildirim
+              ? '<span style="display:block;margin-top:7px;color:var(--slate-2)"><b>' +
+                esc(deg ? deg.ad : 'Değerlendirici') + ':</b> ' + esc(t.geriBildirim) + '</span>'
+              : '') +
+          '</span>' +
+          '<span class="pstat ' + d.sinif + '"><i class="fa-solid ' + d.ikon + '"></i> ' + esc(d.ad) + '</span>' +
+        '</div>';
+      }).join('') + '</div>' +
+      '<label class="up-zone" for="drUp" style="margin-top:14px">' +
+        '<i class="fa-solid fa-cloud-arrow-up" aria-hidden="true"></i>' +
+        '<b>Yeni sürüm yükle</b><span>Fotoğraf, video veya PDF · en fazla 5 dosya</span>' +
+        '<input type="file" id="drUp" multiple accept="image/*,video/*,.pdf" /></label>' +
+      '<div class="up-list" id="drUpListe"></div>' +
+      '<p class="fk-help"><i class="fa-solid fa-circle-info"></i>' +
+        '<span>Teslimin görünürlüğünü sen belirlersin: yalnız eğitmen, kohort içi ya da portfolyonda herkese açık (§14.1).</span></p>' +
+      '<a class="see-all" href="dadacampus-kampusum-v1.html?bolum=odevler" style="margin-top:12px">' +
+        'Tüm ödevlerim <i class="fa-solid fa-arrow-right"></i></a>';
+    var up = byId('drUp');
+    if (up) up.addEventListener('change', function () {
+      byId('drUpListe').innerHTML = [].slice.call(up.files).slice(0, 5).map(function (f) {
+        return '<div class="up-row"><i class="fa-regular fa-file"></i> ' + esc(f.name) +
+          '<span class="up-boy">' + Math.max(1, Math.round(f.size / 1024)) + ' KB</span></div>';
       }).join('');
     });
-    f.addEventListener('submit', function (e) {
-      e.preventDefault();
-      f.style.display = 'none';
-      ok.classList.add('show');
-      ok.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    });
-  })();
-
-  /* ---- ilk yükleme + geri tuşu ----------------------------------------- */
-  function urldenOku() {
-    var kod = D.qs().kod || '';
-    kodEl.value = kod;
-    dogrula(kod, true);
+  } else {
+    byId('drTeslim').innerHTML =
+      '<div class="kurum-gate"><span class="kg-ico"><i class="fa-solid fa-circle-info"></i></span>' +
+      '<div class="kg-txt"><b>Bu derste teslim istenmiyor</b>' +
+      '<p>Uygulama teslimleri bölüm sonlarında açılır. Teslim edilecek uygulamalar eğitim detayındaki ' +
+      'uygulama listesinde yazılıdır.</p></div>' +
+      '<a class="btn btn-ghost" href="' + esc(D.link.egitim(e.slug)) + '#uygulama">' +
+      '<i class="fa-solid fa-kitchen-set"></i> Uygulamalar</a></div>';
   }
-  urldenOku();
-  window.addEventListener('popstate', urldenOku);
+
+  /* ---- soru-cevap ------------------------------------------------------- */
+  var sor = D.sorular.filter(function (s) { return s.egitimId === e.id && s.ders === no; })
+    .sort(function (a, b) { return (b.enIyi ? 1 : 0) - (a.enIyi ? 1 : 0); });
+  byId('drQa').innerHTML = sor.length ? sor.map(function (s) {
+    var yn = s.yanitlayanId ? D.egitmen(s.yanitlayanId) : null;
+    return '<div class="dr-qa-row' + (s.enIyi ? ' eniyi' : '') + '">' +
+      '<div class="dr-qa-ust"><b>' + esc(s.soranBas) + '</b><span>' + esc(D.tarih(s.tarih)) + '</span>' +
+        (s.enIyi ? '<span class="pstat ok"><i class="fa-solid fa-star"></i> En iyi yanıt</span>' : '') +
+      '</div>' +
+      '<p>' + esc(s.soru) + '</p>' +
+      (yn
+        ? '<div class="dr-qa-yanit"><span class="qa-ava" style="background-image:url(\'' + esc(img(yn.foto, 120)) + '\')"></span>' +
+          '<span class="qa-txt"><b>' + esc(yn.ad) + ' · ' + esc(yn.unvan) + '</b><p>' + esc(s.yanit) + '</p></span></div>'
+        : '<p class="dr-qa-bekle"><i class="fa-solid fa-hourglass-half"></i> Eğitmen yanıtı bekleniyor</p>') +
+    '</div>';
+  }).join('') : '<p class="dr-alt" style="margin:0">Bu derse henüz soru sorulmamış. İlk soruyu sen sorabilirsin.</p>';
+
+  byId('drQaForm').addEventListener('submit', function (ev) {
+    ev.preventDefault();
+    this.style.display = 'none';
+    byId('drQaOk').classList.add('show');
+  });
+
+  /* ---- notlarım (§12.4 zaman damgalı) ---------------------------------- */
+  var yerelNotlar = D.notlar.filter(function (n) { return n.egitimId === e.id; }).map(function (n) {
+    return { dk: n.dk, ders: n.ders, metin: n.metin };
+  });
+  function notCiz() {
+    byId('drNotSay').textContent = yerelNotlar.length + ' not';
+    byId('drNotListe').innerHTML = yerelNotlar.length
+      ? yerelNotlar.slice().sort(function (a, b) { return a.ders - b.ders || a.dk - b.dk; }).map(function (n, i) {
+          var d = dersler[n.ders - 1];
+          return '<div class="dr-not-kart">' +
+            '<div class="nk-ust"><span class="nk-dk">' + ss(n.dk * 60) + '</span>' +
+              '<button class="nk-sil" type="button" data-i="' + i + '" aria-label="Notu sil"><i class="fa-solid fa-xmark"></i></button></div>' +
+            '<p>' + esc(n.metin) + '</p>' +
+            '<span class="nk-ders">Ders ' + n.ders + (d ? ' · ' + esc(d.ad) : '') + '</span></div>';
+        }).join('')
+      : '<p class="dr-alt" style="margin:0">Bu eğitimde henüz not almadın. Transkriptte bir zaman damgasına tıklayıp not ekleyebilirsin.</p>';
+  }
+  notCiz();
+  byId('drNotForm').addEventListener('submit', function (ev) {
+    ev.preventDefault();
+    var t = byId('drNotInput').value.trim();
+    if (!t) return;
+    yerelNotlar.push({ dk: Math.round(sn / 60), ders: no, metin: t });
+    byId('drNotInput').value = '';
+    notCiz();
+  });
+  byId('drNotListe').addEventListener('click', function (ev) {
+    var b = ev.target.closest('.nk-sil');
+    if (!b) return;
+    var sirali = yerelNotlar.slice().sort(function (a, c) { return a.ders - c.ders || a.dk - c.dk; });
+    var hedef = sirali[parseInt(b.getAttribute('data-i'), 10)];
+    yerelNotlar.splice(yerelNotlar.indexOf(hedef), 1);
+    notCiz();
+  });
+
+  /* ---- alt gezinme: önceki / tamamla / sonraki ------------------------- */
+  var bittiBu = ilerleme.tamamlanan.indexOf(no) > -1;
+  byId('drGez').innerHTML =
+    (oncekiUrl
+      ? '<a class="btn btn-ghost" href="' + esc(oncekiUrl) + '"><i class="fa-solid fa-chevron-left"></i> Önceki Ders</a>'
+      : '<a class="btn btn-ghost" href="' + esc(D.link.egitim(e.slug)) + '"><i class="fa-solid fa-chevron-left"></i> Eğitim Detayı</a>') +
+    '<button class="btn btn-primary" type="button" id="drTamam">' +
+      '<i class="fa-solid ' + (bittiBu ? 'fa-rotate-left' : 'fa-check') + '"></i> ' +
+      (bittiBu ? 'Tamamlandı işaretini kaldır' : 'Dersi Tamamla') + '</button>' +
+    (sonrakiUrl
+      ? '<a class="btn btn-ghost" href="' + esc(sonrakiUrl) + '">Sonraki Ders <i class="fa-solid fa-chevron-right"></i></a>'
+      : '<a class="btn btn-ghost" href="dadacampus-kampusum-v1.html?bolum=sertifikalarim">Belge Uygunluğu <i class="fa-solid fa-chevron-right"></i></a>');
+
+  byId('drTamam').addEventListener('click', function () {
+    var ix = ilerleme.tamamlanan.indexOf(no);
+    if (ix > -1) ilerleme.tamamlanan.splice(ix, 1);
+    else { ilerleme.tamamlanan.push(no); ilerleme.sonDers = Math.min(dersler.length, no + 1); }
+    /* §17.3 — tamamlanan ders ilerlemeyi ve belge uygunluğunu günceller */
+    var yy = D.yuzde(e.id);
+    byId('drIlerleme').innerHTML =
+      '<div class="prg-lbl"><span>' + ilerleme.tamamlanan.length + '/' + e.dersSayisi + ' ders</span><b>%' + yy + '</b></div>' +
+      '<span class="prg"><span style="width:' + yy + '%"></span></span>';
+    var bitti = ilerleme.tamamlanan.indexOf(no) > -1;
+    this.innerHTML = '<i class="fa-solid ' + (bitti ? 'fa-rotate-left' : 'fa-check') + '"></i> ' +
+      (bitti ? 'Tamamlandı işaretini kaldır' : 'Dersi Tamamla');
+    var satir = byId('drAgac').querySelector('.drs-row.aktif');
+    if (satir) {
+      satir.classList.toggle('bitti', bitti);
+      satir.querySelector('.drs-ico i').className = 'fa-solid ' + (bitti ? 'fa-check' : 'fa-play');
+    }
+  });
+
+  /* ---- ders içi içerik sekmeleri --------------------------------------- */
+  document.querySelector('.dr-ic-tabbar .pf-tabs').addEventListener('click', function (ev) {
+    var b = ev.target.closest('button[data-ic]');
+    if (!b) return;
+    var ad = b.getAttribute('data-ic');
+    [].slice.call(this.querySelectorAll('button')).forEach(function (x) {
+      var on = x === b;
+      x.classList.toggle('active', on);
+      x.setAttribute('aria-selected', on ? 'true' : 'false');
+    });
+    [].slice.call(document.querySelectorAll('[data-ic-pane]')).forEach(function (x) {
+      x.classList.toggle('active', x.getAttribute('data-ic-pane') === ad);
+    });
+  });
+
+  /* ---- MOBİL SEKME DÜZENİ (§23.2) ------------------------------------- */
+  function panelSec(ad) {
+    [].slice.call(document.querySelectorAll('.dr-layout [data-dp]')).forEach(function (x) {
+      x.classList.toggle('dr-acik', x.getAttribute('data-dp') === ad);
+    });
+    [].slice.call(document.querySelectorAll('#drTabbar button[data-dt]')).forEach(function (x) {
+      var on = x.getAttribute('data-dt') === ad;
+      x.classList.toggle('active', on);
+      x.setAttribute('aria-selected', on ? 'true' : 'false');
+    });
+  }
+  panelSec('video');
+  byId('drTabbar').addEventListener('click', function (ev) {
+    var b = ev.target.closest('button[data-dt]');
+    if (b) panelSec(b.getAttribute('data-dt'));
+  });
 })();
 </script>
 </body>
