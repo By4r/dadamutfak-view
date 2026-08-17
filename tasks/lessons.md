@@ -592,3 +592,25 @@ varsayılandan çıktı.
 "QA modu: NONE+console" (veya FULL önerisi + gerekçe) satırı zorunlu.
 Playwright'ta networkidle kullanma (portal gibi sayfalarda asla inmiyor) —
 `domcontentloaded` + sabit bekleme.
+
+## Token-limit yaklaşınca paralel ajan turu checkpoint dosyasıyla durdurulur (2026-07-09, spec-out)
+
+**Kural:** Çok-ajanlı bir fanout token limitine yaklaşırken/iptal riski
+taşırken, ajanları TaskStop ile durdurmadan önce: (1) diske inmiş kısmi
+çıktıyı KORU (silme), (2) tek bir checkpoint dosyasına görev tanımı + ajan/
+dosya durum tablosu + bağlayıcı üst kararlar + kapsam notlarını yaz, (3)
+devam turunda checkpoint'i yeni ajanlara REFERANS olarak ver.
+
+**Why:** spec-out görevinde (6 markanın spec çıkarımı) token bitmek üzereyken
+6 ajan durduruldu; DadaMentor 3/5 dosyayla, diğer 5 ajan 0/5 ile disk'e
+inmişti. `spec-out/_devam-checkpoint.md`'ye durum yazılınca devam turunda
+Mentor'un kalan 2 dosyası (business+gap-ledger) mevcut 3 dosyanın ileri-
+referanslarını (§2, §3, §4 gibi) doğru karşılayarak tamamlandı, diğer 5 ajan
+sıfırdan başlatıldı — net kayıp sıfır (yalnız zaten yazılmış 3 dosya korundu,
+tekrar üretilmedi).
+
+**How to apply:** Uzun paralel ajan turunda token/iptal riski sezilirse
+otomatik olarak (kullanıcı istemeden de) checkpoint yazma alışkanlığı edin;
+checkpoint session-özetine değil DİSKE yazılır (sonraki oturum session'ı
+görmeyebilir). Checkpoint bitince (iş tamamlanınca) silinir — kalıcı belge
+değil, geçiş notudur.
