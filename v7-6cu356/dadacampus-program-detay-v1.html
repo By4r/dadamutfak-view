@@ -698,12 +698,48 @@ html,body{overflow-x:hidden}
   .cookie-actions button{flex:1;padding:12px 8px;font-size:12.5px}
 }
 
-/* ---- ERİŞİLEBİLİRLİK YARDIMCISI (§23.3) — yalnız ekran okuyucuya görünen metin.
-   Kabukta yoktu; tablo caption'ı, bölüm başlığı ve buton adı gibi görsel olarak
-   gereksiz ama sesli okumada zorunlu metinler için. Faz 7'de atlama bağlantısı
-   ve genel odak göstergesi bunun yanına eklenir. */
+/* ============================================================================
+   ERİŞİLEBİLİRLİK KATMANI (§23.3) — Faz 7
+   ----------------------------------------------------------------------------
+   Envanterde ölçülmüştü: kabukta `:focus-visible` yalnız 4 kuralda vardı, atlama
+   bağlantısı ve `.sr-only` yoktu. §23.3 "menü, filtre, video ve ders tamamlama
+   akışı klavyeyle kullanılabilmeli; odak göstergeleri görünür olmalı" diyor.
+   Bu blok kabukta durur → üretici tüm Campus sayfalarına çoğaltır (tek kaynak).
+   ========================================================================= */
+
+/* yalnız ekran okuyucuya görünen metin — tablo caption'ı, bölüm başlığı, buton adı */
 .sr-only{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;
   overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+
+/* ---- ATLAMA BAĞLANTISI: klavye kullanıcısı 40+ nav öğesini atlayabilsin.
+   Odaklanınca görünür olur; fare kullanıcısını hiç rahatsız etmez. */
+.skip{position:fixed;top:-100px;left:16px;z-index:200;display:inline-flex;align-items:center;gap:8px;
+  background:var(--tomato);color:#fff;font-family:inherit;font-size:14px;font-weight:700;
+  padding:12px 18px;border-radius:var(--radius-md);box-shadow:var(--sh-lg);
+  transition:top .18s var(--ease)}
+.skip:focus{top:16px;color:#fff}
+
+/* ---- GENEL ODAK GÖSTERGESİ — her etkileşimli öğede görünür halka.
+   `:focus-visible` kullanılıyor: fareyle tıklamada halka çıkmaz, klavye/okuyucu
+   gezinmesinde çıkar. Koyu zeminli bölümlerde halka açık renge döner. */
+a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,
+textarea:focus-visible,summary:focus-visible,[tabindex]:focus-visible{
+  outline:3px solid var(--tomato);outline-offset:2px;border-radius:var(--radius-sm)}
+.lst-top a:focus-visible,.lst-top button:focus-visible,
+.topbar a:focus-visible,.footer a:focus-visible,.footer button:focus-visible,
+.bottom-nav a:focus-visible,.drawer a:focus-visible,.drawer button:focus-visible{
+  outline-color:#4FB8C9}
+/* odaklanan öğe yapışkan başlığın altında kalmasın */
+:target,.pf-pane:focus,[id]:focus{scroll-margin-top:128px}
+
+/* ---- HAREKET AZALTMA: kullanıcı tercihine saygı (§23.3 ruhu + mobil kural).
+   Süslü geçişler kapanır; DURUM DEĞİŞTİREN geçişler (açılır menü, çekmece)
+   anında uygulanır — kapatmak değil, anlık yapmak doğru davranıştır. */
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;
+    transition-duration:.01ms!important;scroll-behavior:auto!important}
+  .crs-card:hover,.ak-card:hover,.mdl-row:hover,.koll:hover,.fs-card:hover{transform:none!important}
+}
 
 /* =====================================================================
    SAYFA CSS — sayfa-spesifik stiller BU İŞARETİN ALTINA eklenir.
@@ -1760,6 +1796,9 @@ a.drs-row:hover{color:var(--tomato)}
 </style>
 </head>
 <body data-brand="campus">
+<!-- ATLAMA BAĞLANTISI (§23.3) — klavye kullanıcısı topbar + 4 menü + drawer +
+     alt barı atlayıp doğrudan içeriğe geçebilsin. Odaklanınca görünür olur. -->
+<a class="skip" href="#pageMain"><i class="fa-solid fa-arrow-down" aria-hidden="true"></i> İçeriğe atla</a>
 
 <!-- ===== TOP UTILITY BAR — DADACAMPUS KABUĞU (brand-switch bandı; tb-back kaldırıldı — dönüş banttaki DadaGastro pill'i) ===== -->
 <div class="topbar">
@@ -2181,7 +2220,7 @@ a.drs-row:hover{color:var(--tomato)}
 </div>
 
 <!-- ===== ANA İÇERİK (footer reveal perdesi) ===== -->
-<main class="page-main" id="pageMain">
+<main class="page-main" id="pageMain" tabindex="-1">
 <!-- ============================================================================
      PROGRAM DETAY (§8.3) — DadaCampus
      ?program=<slug> ile campus-data.js'ten okur (§26.7 benzersiz slug + doğru
@@ -3046,6 +3085,102 @@ window.__bottomStrips=window.__bottomStrips||[];
   window.addEventListener('scroll',upd,{passive:true});
   window.addEventListener('resize',upd);
   upd();
+})();
+</script>
+
+<script>
+/* ============================================================================
+   KABUK JS — ERİŞİLEBİLİRLİK (§23.3), Faz 7
+   ----------------------------------------------------------------------------
+   §23.3 "menü, filtre, video ve ders tamamlama akışı klavyeyle kullanılabilmeli".
+   Envanterde ölçülmüştü: dialoglarda odak tuzağı yoktu — açılan çekmece/modal
+   arkasındaki bağlantılara Tab ile gidilebiliyor, Esc kapatmıyordu.
+   Bu blok kabukta durur → üretici tüm Campus sayfalarına çoğaltır.
+   ========================================================================= */
+(function(){
+  var ODAKLANABILIR = 'a[href],button:not([disabled]),input:not([disabled]),select:not([disabled]),' +
+                      'textarea:not([disabled]),[tabindex]:not([tabindex="-1"])';
+
+  /* Açık kabul edilen katmanlar: hangisi görünürse odak onun içinde kalır.
+     Sıra ÖNEMLİ — üstteki katman önce gelir (modal, çekmecenin üstünde açılır). */
+  var KATMANLAR = [
+    { sec: '.fb-panel',  acikMi: function(){ var o=document.getElementById('fbOverlay');
+        return o && o.classList.contains('show'); },
+      kapat: function(){ var b=document.getElementById('fbClose'); if(b)b.click(); } },
+    { sec: '.lg-panel',  acikMi: function(){ var g=document.getElementById('lgGate');
+        return g && g.classList.contains('show'); },
+      kapat: function(){ var b=document.getElementById('lgClose'); if(b)b.click(); } },
+    { sec: '.drawer',    acikMi: function(){ var d=document.querySelector('.drawer');
+        return d && d.classList.contains('open'); },
+      kapat: function(){ var b=document.getElementById('drawerClose'); if(b)b.click(); } },
+    { sec: '.lst-side',  acikMi: function(){ var d=document.querySelector('.lst-side');
+        return d && d.classList.contains('open'); },
+      kapat: function(){ var b=document.getElementById('sheetClose'); if(b)b.click(); } }
+  ];
+
+  function acikKatman(){
+    for(var i=0;i<KATMANLAR.length;i++){
+      try{ if(KATMANLAR[i].acikMi()){ var el=document.querySelector(KATMANLAR[i].sec);
+        if(el) return { el: el, kapat: KATMANLAR[i].kapat }; } }catch(e){}
+    }
+    return null;
+  }
+
+  /* ---- Esc: en üstteki açık katmanı kapatır ---- */
+  document.addEventListener('keydown', function(ev){
+    if(ev.key !== 'Escape') return;
+    var k = acikKatman();
+    if(k){ ev.preventDefault(); k.kapat(); }
+  });
+
+  /* ---- Tab: odak açık katmanın DIŞINA çıkamaz ---- */
+  document.addEventListener('keydown', function(ev){
+    if(ev.key !== 'Tab') return;
+    var k = acikKatman();
+    if(!k) return;
+    var alan = [].slice.call(k.el.querySelectorAll(ODAKLANABILIR)).filter(function(x){
+      return x.offsetParent !== null;              /* gizli öğe odak sırasına girmez */
+    });
+    if(!alan.length) return;
+    var ilk = alan[0], son = alan[alan.length-1];
+    /* odak katmanın dışındaysa içeri al */
+    if(!k.el.contains(document.activeElement)){ ev.preventDefault(); ilk.focus(); return; }
+    if(ev.shiftKey && document.activeElement === ilk){ ev.preventDefault(); son.focus(); }
+    else if(!ev.shiftKey && document.activeElement === son){ ev.preventDefault(); ilk.focus(); }
+  });
+
+  /* ---- Katman açılınca odağı içine taşı, kapanınca AÇANA geri ver ----
+     Geri verme olmadan klavye kullanıcısı sayfanın başına düşer (kayıp odak). */
+  var oncekiOdak = null, sonDurum = false;
+  function izle(){
+    var acik = !!acikKatman();
+    if(acik && !sonDurum){
+      oncekiOdak = document.activeElement;
+      var k = acikKatman();
+      var ilk = k.el.querySelector(ODAKLANABILIR);
+      if(ilk) setTimeout(function(){ ilk.focus(); }, 60);
+    } else if(!acik && sonDurum){
+      if(oncekiOdak && oncekiOdak.focus) setTimeout(function(){ oncekiOdak.focus(); }, 40);
+      oncekiOdak = null;
+    }
+    sonDurum = acik;
+  }
+  /* açılış/kapanış sınıf değişimiyle oluyor → MutationObserver ile izlenir */
+  try{
+    var gozlemci = new MutationObserver(izle);
+    ['.drawer','.lst-side','#lgGate','#fbOverlay'].forEach(function(sec){
+      var el = document.querySelector(sec);
+      if(el) gozlemci.observe(el, { attributes:true, attributeFilter:['class'] });
+    });
+  }catch(e){}
+
+  /* ---- Atlama bağlantısı: hedefe odağı GERÇEKTEN taşı ----
+     Yalnız href="#pageMain" ile tarayıcı kaydırır ama odak nav'da kalır. */
+  var atla = document.querySelector('.skip');
+  if(atla) atla.addEventListener('click', function(){
+    var m = document.getElementById('pageMain');
+    if(m) setTimeout(function(){ m.focus(); }, 40);
+  });
 })();
 </script>
 

@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Akademik Takvim — DadaCampus | DadaMutfak</title>
-<meta name="description" content="Program açılışları, canlı atölyeler, etkinlikler ve teslim son tarihleri ay ay akademik takvimde." />
+<title>Eğitmen Dizini — DadaCampus | DadaMutfak</title>
+<meta name="description" content="Şef, akademisyen, sektör uzmanı, mentor ve değerlendiricileri rol, uzmanlık, dil, kurum ve doğrulama filtreleriyle bul." />
 <link rel="shortcut icon" type="image/x-icon"
       href="assets/img/favicon.ico" />
 <!-- FontAwesome 6.5.2 (kilitli ikon seti) -->
@@ -1189,7 +1189,7 @@ html.reveal-ready .reveal.in{opacity:1;transform:none}
 </style>
 
 <style>
-/* ===== SAYFA CSS — dadacampus-takvim-v1.html ===== */
+/* ===== SAYFA CSS — dadacampus-egitmenler-v1.html ===== */
 /* ===================== MERKEZ SAYFASI HERO DÜZELTMESİ =====================
    🔴 Kabuktaki .lst-top ANA SAYFA için `min-height:100vh/100svh` taşır — hub'ın
    hero'su bilerek tam ekrandır. Merkez/katalog sayfaları bu kabuğu devralınca
@@ -1775,28 +1775,300 @@ a.drs-row:hover{color:var(--tomato)}
   .turd{padding:20px 18px}
 }
 
-/* ============== SAYFA CSS — Akademik Takvim (§13) ==============
-   Kabuk: .lst-top/.lst-hero (koyu hero) · .rd-crumb · .chips/.chip/.lbl
-          .sec-head · .see-all · .btn · .ak-sec · .sr-only
-   _ortak.css: .tkv/.tkv-gun/.tkv-row/.tkv-tar/.tkv-body/.tkv-tur (+ .kapali,
-               .gecmis maskeleri) · .koll-track/.koll (ay rayı) · .lst-empty
-               · .kurum-gate · .pagi-note · .pstat
-   Bu dosyada YALNIZ ay rayındaki sayaç ve gün ayracı eki var.
-   ========================================================== */
+/* ---- STICKY CLIP FIX (T3 · page-local, _shell'e DOKUNULMADI) ----
+   Shell'de html,body{overflow-x:hidden} (≈439) tarayıcıyı body'yi scroll-container
+   yapmaya zorluyor → .lst-side{position:sticky} viewport'a değil body'ye yapışıyor =
+   ölü sticky (lessons §374). overflow-x:clip yatayı keser ama scroll-container
+   üretmez, overflow-y:visible kalır → sticky GERÇEKTEN çalışır. Page-local override
+   (kaynak sırası şell'den sonra → kazanır). 390 taşmasızlık korunur. */
+html,body{overflow-x:clip}
 
-/* ay rayında kayıt sayacı */
-.koll .ay-say{display:inline-flex;align-items:center;justify-content:center;min-width:20px;height:20px;
-  padding:0 6px;border-radius:var(--radius-sm);background:var(--tomato-tint);color:var(--tomato);
-  font-size:11px;font-weight:700}
-.koll.is-on .ay-say{background:rgba(255,255,255,.22);color:#fff}
+/* ---- yerleşim: facet sidebar + sonuç kolonu ---- */
+.lst-sec{padding:38px 0 74px;background:var(--bg-cream);
+  /* hero→body seam: krem gövde hero üzerine yumuşak yükselen panel (sert kesim fix) */
+  border-radius:22px 22px 0 0;margin-top:-22px;position:relative;z-index:2;
+  box-shadow:0 -12px 32px rgba(20,16,10,.18)}
+.lst-layout{display:grid;grid-template-columns:272px minmax(0,1fr);gap:30px;align-items:start}
 
-/* gün ayracında tarih + gün adı birlikte */
-.tkv-gun .tg-gun{text-transform:none;letter-spacing:0;font-weight:500;color:#b0b0b0;margin-left:8px}
+/* ---- FACET PANELİ ---- */
+.lst-side{position:sticky;top:130px;background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-lg);padding:6px 20px 16px;max-height:calc(100vh - 154px);overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin}
+/* desktop: panel sonuç kolonuyla dikey dengelensin — içeriğe göre uzar, sticky korunur, dikey boşluk kapanır (yarım-kalmış hissi fix, T4 cila) */
+@media(min-width:1025px){
+  .lst-side{max-height:none;overflow-y:visible}
+}
+.fil-top{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:18px 0 14px;border-bottom:1px solid var(--line)}
+.fil-top h3{font-size:17px;display:inline-flex;align-items:center;gap:9px}
+.fil-top h3 i{color:var(--tomato);font-size:15px}
+.fil-clear{background:none;border:none;font-family:inherit;font-size:12.5px;font-weight:700;color:var(--muted);cursor:pointer;transition:.18s}
+.fil-clear:hover{color:var(--tomato)}
+/* facet grubu */
+.fct{border-bottom:1px solid var(--line)}
+.fct:last-child{border-bottom:none}
+.fct-head{display:flex;align-items:center;gap:9px;width:100%;background:none;border:none;font-family:inherit;font-size:14.5px;font-weight:700;color:var(--slate);padding:17px 0;cursor:pointer;text-align:left}
+.fct-head .fct-dot{display:none;flex:none;min-width:19px;height:19px;padding:0 5px;border-radius:var(--radius-circle);background:var(--tomato);color:#fff;font-size:10.5px;font-weight:700;align-items:center;justify-content:center}
+.fct.has-active .fct-dot{display:inline-flex}
+.fct-head .fct-car{margin-left:auto;font-size:11px;color:var(--muted);transition:transform .25s var(--ease)}
+.fct.open .fct-head .fct-car{transform:rotate(180deg)}
+.fct-body{display:none;padding:0 0 18px}
+.fct.open .fct-body{display:block;animation:fadeUp .25s var(--ease)}
+/* checkbox satırı */
+.fct-row{position:relative;display:flex;align-items:center;gap:10px;padding:7px 0;cursor:pointer;font-size:14px;font-weight:500;color:var(--slate-2);transition:color .15s}
+.fct-row input{position:absolute;opacity:0;pointer-events:none}
+.cbx{flex:none;width:20px;height:20px;border-radius:var(--radius-sm);border:1.5px solid #d8d8d8;background:var(--paper);display:grid;place-items:center;transition:.18s var(--ease)}
+.cbx::after{content:"\f00c";font-family:"Font Awesome 6 Free";font-weight:900;font-size:10px;color:#fff;transform:scale(0);transition:transform .15s var(--ease)}
+.fct-row input:checked ~ .cbx{background:var(--tomato);border-color:var(--tomato)}
+.fct-row input:checked ~ .cbx::after{transform:scale(1)}
+.fct-row:hover{color:var(--tomato)}
+.fct-row:hover .cbx{border-color:var(--tomato)}
+.fct-row input:checked ~ .ft{color:var(--slate);font-weight:700}
+.fct-row .ft{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.fct-row .fcnt{margin-left:auto;flex:none;font-size:12px;color:var(--muted);font-weight:500}
+.fct-row input:checked ~ .fcnt{color:var(--tomato);font-weight:700}
+/* bayraklı mutfak satırı (TD .chip-flag VERBATIM) */
+.chip-flag{width:17px;height:12px;border-radius:2px;object-fit:cover;margin-right:6px;display:inline-block;vertical-align:-1px}
+.fct-row .chip-flag{margin-right:0;flex:none}
+/* Görsel kategori facet'i — urun-liste-v1 cat-fct ve cn-thumb mirası (CİLA-2 R3) */
+.cat-fct .fct-body{padding-top:2px}
+.cat-fct .fct-row{padding:6px 6px;gap:11px;border-radius:var(--radius-md);transition:background .15s,border-color .15s;border:1px solid transparent}
+.cat-fct .fct-row:hover{background:var(--tomato-tint);border-color:rgba(225,72,39,.16)}
+.cat-fct .cbx{display:none}
+.cat-fct .cn-thumb{flex:none;width:38px;height:38px;border-radius:var(--radius-sm);background-size:cover;background-position:center;border:1px solid var(--line);box-shadow:var(--sh-sm);transition:.18s var(--ease)}
+.cat-fct .fct-row .ft{font-size:13.5px;font-weight:600;color:var(--slate)}
+.cat-fct .fct-row input:checked ~ .cn-thumb{outline:2px solid var(--tomato);outline-offset:1px;border-color:var(--tomato)}
+.cat-fct .fct-row input:checked ~ .ft{color:var(--tomato);font-weight:700}
+.cat-fct .fct-row input:checked ~ .fcnt{color:var(--tomato);font-weight:700}
+.cat-fct .fct-more{padding-left:8px}
+/* Beslenme/Tip facet — bağlama uygun FA ikonu; kart üstü .r-diet rozetiyle TUTARLI
+   (aynı tip → aynı glif). Satır sade kalsın: ikon muted; bitkisel tip (vegan/vejetaryen)
+   yeşil (kart semantiğini facet'e taşır). Düzen: [cbx] [ikon] [etiket] [sayı]. */
+.dt-fct .fct-ico{flex:none;width:19px;text-align:center;color:var(--tomato);font-size:13px;transition:color .15s}
+.dt-fct .fct-ico.fi-veg{color:var(--green)}
+.dt-fct .fct-row:hover .fct-ico:not(.fi-veg){color:var(--tomato)}
+.dt-fct .fct-row input:checked ~ .fct-ico:not(.fi-veg){color:var(--tomato)}
+/* "daha fazla" aç-kapa */
+.fct-more{background:none;border:none;font-family:inherit;font-size:12.5px;font-weight:700;color:var(--tomato);cursor:pointer;padding:7px 0 0 30px;display:inline-flex;align-items:center;gap:7px}
+.fct-more i{font-size:10px;transition:transform .25s var(--ease)}
+.fct.more-open .fct-more i{transform:rotate(180deg)}
+.fct-row.xtra{display:none}
+.fct.more-open .fct-row.xtra{display:flex}
+/* sheet başlık/alt — yalnız mobil sheet modunda görünür */
+.sheet-head,.sheet-foot{display:none}
 
-/* ay başlığı (liste üstü) */
-.tk-ay-baslik{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin:6px 0 18px}
-.tk-ay-baslik h2{font-size:24px;letter-spacing:-.02em}
-.tk-ay-baslik span{font-size:13px;font-weight:600;color:var(--muted)}
+/* ---- SONUÇ KOLONU ---- */
+/* ===== ALT-KATEGORİ / PİŞİRME-TİPİ RAYI (kategori-v1 .subcat deseni BİREBİR port — görselli, kaydırılabilir; facet'ten AYRI eksen) ===== */
+.subcat-strip{margin:0 0 22px}
+.subcat-head{display:flex;align-items:baseline;justify-content:space-between;gap:14px;margin-bottom:14px}
+.subcat-head h2{font-size:17px}
+.subcat-head .sc-note{font-size:12.5px;color:var(--muted);font-weight:500}
+/* sağ-kenar fade — kaydırılabilirlik sinyali (shelf-tabs sh-more mirası); JS sona gelince kaldırır */
+.subcat-wrap{position:relative}
+.subcat-wrap.cs-more{-webkit-mask-image:linear-gradient(90deg,#000 calc(100% - 46px),transparent);mask-image:linear-gradient(90deg,#000 calc(100% - 46px),transparent)}
+.subcat-track{display:flex;gap:12px;overflow-x:auto;-webkit-overflow-scrolling:touch;scroll-snap-type:x proximity;scrollbar-width:none;padding:4px 2px 8px}
+.subcat-track::-webkit-scrollbar{display:none}
+.subcat-track.drag-scroll{cursor:grab}
+.subcat-track.dragging{cursor:grabbing;scroll-snap-type:none}
+.subcat{flex:none;scroll-snap-align:start;display:flex;align-items:center;gap:12px;background:var(--bg-cream);border:1px solid var(--line);border-radius:var(--radius-md);padding:11px 16px 11px 11px;cursor:pointer;text-decoration:none;transition:.2s var(--ease);-webkit-user-drag:none;user-select:none}
+.subcat:hover{border-color:rgba(225,72,39,.4);background:var(--tomato-tint);transform:translateY(-2px)}
+/* RAFİNE aktif state (2026): kaba çerçeve/çift-ring YOK → ince düşük-opaklık tomato border
+   + yumuşak tomato-tint elevation gölgesi (outline değil derinlik) + ikon altında minimal
+   2px indicator accent. Tint zemin + tomato metin/ikon. Dolu-blok değil, zarif vurgu. */
+.subcat.active{
+  border-color:rgba(225,72,39,.32);
+  background:var(--tomato-tint);
+  box-shadow:0 6px 18px -8px rgba(225,72,39,.45),0 1px 3px rgba(225,72,39,.12);
+}
+.subcat .sc-ico{position:relative;flex:none;width:40px;height:40px;border-radius:var(--radius-sm);background-size:cover;background-position:center}
+/* ikon altı minimal indicator — ring yerine ince accent çubuk */
+.subcat.active .sc-ico::after{content:"";position:absolute;left:50%;bottom:-7px;transform:translateX(-50%);width:18px;height:2px;border-radius:var(--radius-pill);background:var(--tomato)}
+.subcat b{font-size:14px;font-weight:700;color:var(--slate);line-height:1.2;white-space:nowrap}
+.subcat.active b{color:var(--tomato)}
+.subcat span span{display:block;font-size:11.5px;color:var(--muted);font-weight:500;margin-top:1px;white-space:nowrap}
+.subcat.active span span{color:var(--tomato);opacity:.8}
+
+.lst-bar{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.lst-sum{font-size:15px;color:var(--muted);font-weight:500;min-width:0}
+.lst-sum b{color:var(--slate);font-weight:700;font-size:17px}
+.lst-sum .q{color:var(--tomato);font-weight:700}
+.lst-tools{display:flex;align-items:center;gap:10px;flex:none}
+/* sıralama dropdown'ı — see-all buton kabuğu + tb-lang menü dili */
+.sort-dd{position:relative}
+.sort-btn{display:inline-flex;align-items:center;gap:9px;font-family:inherit;font-weight:700;font-size:13.5px;color:var(--slate);padding:11px 16px;border:1px solid var(--line);border-radius:var(--radius-md);background:var(--paper);cursor:pointer;transition:.2s var(--ease);white-space:nowrap}
+.sort-btn i.fa-arrow-down-wide-short{color:var(--tomato);font-size:13px}
+.sort-btn .sb-car{font-size:10px;color:var(--muted);transition:transform .2s var(--ease)}
+.sort-btn:hover{border-color:var(--tomato);color:var(--tomato)}
+.sort-dd.open .sort-btn .sb-car{transform:rotate(180deg)}
+.sort-menu{position:absolute;top:calc(100% + 8px);right:0;min-width:206px;background:#fff;border:1px solid var(--line);border-radius:var(--radius-md);box-shadow:var(--sh-md);padding:6px;opacity:0;visibility:hidden;transform:translateY(-6px);transition:.2s var(--ease);z-index:40}
+.sort-dd.open .sort-menu{opacity:1;visibility:visible;transform:translateY(0)}
+.sort-menu button{display:flex;align-items:center;gap:10px;width:100%;text-align:left;background:none;border:none;font-family:inherit;color:var(--ink);font-size:13.5px;font-weight:500;padding:10px 11px;border-radius:var(--radius-sm);cursor:pointer;transition:.16s var(--ease)}
+.sort-menu button i{width:16px;text-align:center;color:var(--tomato);font-size:13px}
+.sort-menu button:hover{background:var(--tomato-tint);color:var(--tomato)}
+.sort-menu button.active{color:var(--tomato);font-weight:700}
+.sort-menu button.active::after{content:"\f00c";font-family:"Font Awesome 6 Free";font-weight:900;margin-left:auto;font-size:11px}
+/* mobil/tablet filtre butonu */
+.btn-filter{display:none;align-items:center;gap:9px;font-family:inherit;font-weight:700;font-size:13.5px;color:#fff;background:var(--tomato);border:1px solid var(--tomato);border-radius:var(--radius-md);padding:11px 16px;cursor:pointer;transition:.2s var(--ease);white-space:nowrap}
+.btn-filter:hover{background:var(--tomato-dark)}
+.btn-filter .fb-count{min-width:19px;height:19px;padding:0 5px;border-radius:var(--radius-circle);background:#fff;color:var(--tomato);font-size:11px;font-weight:700;display:grid;place-items:center}
+.btn-filter .fb-count[hidden]{display:none}
+
+/* ---- aktif filtre chip'leri ---- */
+.fchips{display:flex;flex-wrap:wrap;align-items:center;gap:9px;margin-top:16px}
+.fchips[hidden]{display:none}
+.fchip{display:inline-flex;align-items:center;gap:8px;font-size:13px;font-weight:700;color:var(--tomato);background:var(--tomato-tint);border:1px solid rgba(225,72,39,.25);padding:8px 12px;border-radius:var(--radius-sm);cursor:pointer;transition:.18s var(--ease)}
+.fchip i.fa-magnifying-glass{font-size:11px;opacity:.75}
+.fchip .x{display:grid;place-items:center;width:16px;height:16px;border-radius:var(--radius-circle);font-size:10px;transition:.15s}
+.fchip:hover{background:var(--tomato);color:#fff;border-color:var(--tomato)}
+.fchip:hover .chip-flag{filter:saturate(.0) brightness(1.6)}
+.fchips-clear{background:none;border:none;font-family:inherit;font-size:12.5px;font-weight:700;color:var(--muted);cursor:pointer;padding:8px 4px;transition:.18s;text-decoration:underline;text-underline-offset:3px}
+.fchips-clear:hover{color:var(--tomato)}
+
+/* ---- SONUÇ GRID — r-card v3a VERBATIM, 3 kolon ---- */
+/* görünüm segmenti (Kart ve Liste geçişi) — kanonik .vw-seg .vs-btn dili (kılavuz §2e) */
+.vw-seg{display:inline-flex;background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-md);padding:3px;gap:2px;flex:none}
+.vs-btn{width:38px;height:34px;display:grid;place-items:center;border:none;background:transparent;color:var(--muted);font-size:14px;border-radius:var(--radius-sm);cursor:pointer;transition:.18s var(--ease)}
+.vs-btn:hover{color:var(--tomato)}
+.vs-btn.is-on{background:var(--tomato);color:#fff}
+/* LİSTE görünümü — kart yatay satıra döner (desktop ve tablet; mobilde grid zaten satır) */
+@media (min-width:641px){
+  .lst-grid.is-list{grid-template-columns:1fr;gap:14px}
+  .lst-grid.is-list .r-card{flex-direction:row}
+  .lst-grid.is-list .r-media-wrap{width:300px;flex:none}
+  .lst-grid.is-list .r-media{height:100%;min-height:200px}
+  .lst-grid.is-list .r-body{padding:20px 26px;justify-content:center}
+  .lst-grid.is-list .r-body h4{font-size:20px}
+  .lst-grid.is-list .r-facts{margin-bottom:15px}
+}
+/* Tarif Bulucu giriş köprüsü (Faz3 #22; lead grant — yalnız bu blok, hero/facet'e dokunulmadı) */
+.lst-bridge{display:flex;align-items:center;gap:16px;background:linear-gradient(100deg,var(--tomato-tint),var(--bg-white));border:1px solid rgba(225,72,39,.2);border-radius:var(--radius-lg);padding:15px 20px;margin-top:18px;transition:.2s var(--ease)}
+.lst-bridge:hover{border-color:rgba(225,72,39,.4);box-shadow:var(--sh-sm)}
+.lst-bridge .lb-ico{flex:none;width:46px;height:46px;border-radius:var(--radius-md);background:var(--tomato);color:#fff;display:grid;place-items:center;font-size:19px}
+.lst-bridge .lb-txt{flex:1;min-width:0}
+.lst-bridge .lb-txt b{display:block;font-size:15px;font-weight:700;color:var(--slate);line-height:1.25}
+.lst-bridge .lb-txt small{display:block;font-size:12.5px;color:var(--muted);font-weight:500;margin-top:2px}
+.lst-bridge .lb-go{flex:none;display:inline-flex;align-items:center;gap:8px;font-size:13.5px;font-weight:700;color:var(--tomato);white-space:nowrap}
+.lst-bridge .lb-go i{transition:transform .2s var(--ease)}
+.lst-bridge:hover .lb-go i{transform:translateX(3px)}
+.lst-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:24px}
+/* r-card sistemi (v3a 289–312) */
+.r-media{position:relative;height:200px;background-size:cover;background-position:center;transition:.5s var(--ease)}
+.r-media-wrap{overflow:hidden}
+.r-media .r-chip{position:absolute;top:13px;left:13px}
+/* medya tipi rozet grubu (v3a 775–776) */
+.mt{display:inline-flex;align-items:center;gap:5px;background:rgba(20,18,12,.72);color:#fff;font-size:11px;font-weight:700;padding:6px 10px;border-radius:var(--radius-sm);backdrop-filter:blur(4px)}
+/* beslenme tipi GÖRSEL ikon rozeti — kart medya sol-üstte, r-chip ALTINDA dikey
+   istif (T3 #3). r-save/r-chip cam-zemin diliyle aynı yuvarlak rozet; yeşil yalnız
+   bitkisel/sağlık beslenme semantiği (kılavuz: yeşil = sağlık). Yeni sınıf .r-diet. */
+.r-diet{position:absolute;top:51px;left:13px;z-index:2;display:flex;flex-direction:column;gap:7px}
+.r-diet .rd-b{width:30px;height:30px;border-radius:var(--radius-circle);background:rgba(255,255,255,.94);display:grid;place-items:center;font-size:13px;box-shadow:var(--sh-sm);cursor:default;transition:.2s var(--ease)}
+.r-diet .rd-vegan,.r-diet .rd-vejetaryen{color:var(--green)}
+.r-diet .rd-glutensiz{color:var(--slate)}
+.r-diet .rd-laktozsuz{color:var(--c-petrol)}
+/* maliyet seviye rozeti — TL fiyat değil, 3 kademeli ₺ ölçek (Bütçe facet'iyle aynı dil:
+   ₺ Ekonomik · ₺₺ Orta · ₺₺₺ Premium). Dolu ₺ domates, boş ₺ soluk. */
+.r-cost .rc-on{color:var(--tomato)}
+.r-cost .rc-off{color:#d6d6d6}
+/* tarif kartı anatomisi (v3a 783–796) */
+/* KÖK NEDEN FIX (tarif-liste-fix): h4, .r-body'nin (display:flex) DOĞRUDAN flex
+   çocuğu → flex item blockification ile display:-webkit-box → flow-root'a düşüyor
+   ve -webkit-line-clamp ÖLÜYOR (3. satır hard-clip, ellipsis yok). Çözüm: clamp'i
+   flex item OLMAYAN iç anchor'a taşı; h4 yalnız yükseklik rezervi + güvenlik overflow. */
+/* META HİZALAMA FIX (tarif-liste-fix): 4 olgu + 3 ayraç (12px pad+12px mar=24px)
+   275px kartta taşıyordu (scrollW 257 > clientW 237). Ayraç boşluğu 24→16px,
+   font 12.5→12px, gap 6→5px; nowrap + flex:none ile son eleman (maliyet) sabit kalır. */
+
+/* ---- BOŞ DURUM (kılavuz dili: ikon + başlık + açıklama + CTA) ---- */
+
+/* ---- PAGINATION (token dili, pill yok) ---- */
+.pagi{display:flex;align-items:center;justify-content:center;gap:8px;margin-top:40px;flex-wrap:wrap}
+.pg{min-width:44px;height:44px;padding:0 13px;display:inline-flex;align-items:center;justify-content:center;font-family:inherit;font-size:14px;font-weight:700;color:var(--slate);background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-md);cursor:pointer;transition:.2s var(--ease)}
+.pg:hover{border-color:var(--tomato);color:var(--tomato)}
+.pg.active{background:var(--tomato);border-color:var(--tomato);color:#fff;cursor:default}
+.pg.arrow i{font-size:12px}
+.pg[disabled]{opacity:.4;pointer-events:none}
+.pg-dots{color:var(--muted);font-weight:700;padding:0 2px;font-size:14px}
+
+/* ---- mobil filtre sheet overlay'i ---- */
+.sheet-overlay{position:fixed;inset:0;background:rgba(20,18,12,.5);z-index:93;opacity:0;pointer-events:none;transition:opacity .3s var(--ease)}
+.sheet-overlay.open{opacity:1;pointer-events:auto}
+
+/* ===================== TABLET (≤1024px) — F2 ===================== */
+@media (max-width:1024px){
+  .lst-layout{display:block}
+  .btn-filter{display:inline-flex}
+  /* facet paneli → alttan açılan sheet */
+  .lst-side{
+    position:fixed;left:0;right:0;bottom:0;top:auto;z-index:94;
+    max-height:82vh;border-radius:var(--radius-xl) var(--radius-xl) 0 0;border:none;
+    box-shadow:0 -18px 50px rgba(33,30,22,.2);padding:0 20px;
+    transform:translateY(105%);transition:transform .34s var(--ease);
+    display:flex;flex-direction:column;overflow:hidden;
+  }
+  .lst-side.open{transform:translateY(0)}
+  .fil-top{display:none}
+  .sheet-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:18px 0 14px;border-bottom:1px solid var(--line);flex:none}
+  .sheet-head h3{font-size:18px;display:inline-flex;align-items:center;gap:10px}
+  .sheet-head h3 i{color:var(--tomato);font-size:15px}
+  .sheet-head .sh-right{display:flex;align-items:center;gap:8px}
+  .sheet-head .fil-clear{font-size:12.5px;padding:8px 10px}
+  .sheet-close{width:40px;height:40px;border-radius:var(--radius-md);border:1px solid var(--line);background:var(--paper);color:var(--slate);font-size:16px;cursor:pointer;display:grid;place-items:center;transition:.2s var(--ease)}
+  .sheet-close:hover{border-color:var(--tomato);color:var(--tomato)}
+  .sheet-body{flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;padding-bottom:10px}
+  .sheet-foot{display:block;flex:none;padding:14px 0 calc(16px + env(safe-area-inset-bottom,0px));border-top:1px solid var(--line);background:var(--paper)}
+  .sheet-foot .btn{width:100%}
+  .lst-grid{grid-template-columns:1fr 1fr}
+}
+
+/* ===================== MOBİL (≤640px) — F2 ===================== */
+@media (max-width:640px){
+  .rd-crumb{padding:14px 0 10px;font-size:12px}
+  .rd-crumb b{max-width:170px}
+  .lst-head h1{font-size:28px;margin-bottom:7px}
+  .lst-head .lead{font-size:14px}
+  .lst-sec{padding:24px 0 50px}
+  .lst-bar{align-items:flex-start}
+  .lst-sum{font-size:13.5px}
+  .lst-sum b{font-size:15px}
+  .sort-btn{padding:10px 12px;font-size:12.5px}
+  .sort-btn .sb-lbl{display:none}
+  .vw-seg{display:none}                       /* mobilde grid zaten tek-sütun satır; toggle gizli */
+  .btn-filter{padding:10px 13px;font-size:12.5px}
+  .fchips{margin-top:13px;gap:7px}
+  .fchip{font-size:12px;padding:7px 10px}
+  /* sonuç listesi: tek kolon yatay mini kart (v3a feat-side dili) —
+     sayfalı dizinde dikey akış esas, yatay snap keşif raylarına özgü */
+  .lst-grid{grid-template-columns:1fr;gap:13px;margin-top:18px}
+  .lst-grid .r-card{flex-direction:row;min-width:0}
+  .lst-grid .r-media-wrap{width:38%;flex:none}
+  .lst-grid .r-media{height:100%;min-height:128px}
+  .lst-grid .r-body{padding:12px 14px;justify-content:center;min-width:0}
+  .lst-grid .r-body h4{font-size:14.5px;margin-bottom:7px;min-height:0}
+  .lst-grid .r-facts{font-size:11.5px;margin-bottom:8px}
+  .lst-grid .r-facts span+span{padding-left:9px;margin-left:9px}
+  .lst-grid .f-serv{display:none}
+  .lst-grid .r-foot{padding-top:9px}
+  .lst-grid .r-author .av{width:24px;height:24px}
+  .lst-grid .r-author span{font-size:11.5px}
+  .lst-grid .r-stats{gap:9px}
+  .lst-grid .r-stats .r-rate{font-size:12px}
+  .lst-grid .r-views{font-size:11px}
+  .lst-grid .r-chip{font-size:10px;padding:4px 9px;top:9px;left:9px}
+  .lst-grid .r-save{width:32px;height:32px;font-size:13px;top:8px;right:8px}
+  .lst-grid .r-tried{display:none}   /* dar mini kartta m-types ile çakışır — rozet detayda görünür */
+  .lst-grid .r-diet{top:36px;left:9px;gap:5px}
+  .lst-grid .r-diet .rd-b{width:24px;height:24px;font-size:11px}
+  .lst-grid .m-types{bottom:9px;right:9px}
+  .lst-grid .mt{font-size:9.5px;padding:4px 7px}
+  .pagi{gap:6px;margin-top:30px}
+  .pg{min-width:40px;height:40px;font-size:13px}
+}
+
+/* ============== SAYFA CSS — Eğitmen Dizini (§11.1) ==============
+   Facet dili `_facet.css` (katalog sayfalarıyla ORTAK motor: `_facet-engine.js`
+   + bu sayfanın `.cfg.js`'i). Kart `.crs-card` ailesinden — §23.1 "eğitim,
+   program ve kurum kartları aynı tasarım ailesinden gelmeli; bilgi alanları
+   role göre değişmelidir".
+   `.koll` rayı, `.kisi-sec`, `.lst-empty`, `.kurum-gate` → `_ortak.css`.
+   Bu sayfaya özgü ek gerekmiyor.
+   ============================================================== */
 </style>
 </head>
 <body data-brand="campus">
@@ -1879,7 +2151,7 @@ a.drs-row:hover{color:var(--tomato)}
 
         <!-- 2) PROGRAMLAR (§4.3) — Sertifika buraya taşındı (§26.4) -->
         <div class="nav-item">
-          <a href="dadacampus-programlar-v1.html" class="active">Programlar <i class="fa-solid fa-chevron-down"></i></a>
+          <a href="dadacampus-programlar-v1.html">Programlar <i class="fa-solid fa-chevron-down"></i></a>
           <div class="dropdown ak-tracks">
             <div class="dd-head">Program Türleri</div>
             <div class="dd-grid">
@@ -1928,7 +2200,7 @@ a.drs-row:hover{color:var(--tomato)}
         <!-- 4) EĞİTMENLER (§4.5) — Faz 1'de üç GERÇEK hedef; rol filtreleri Faz 5'te
              Eğitmen Dizini sayfasıyla birlikte açılacak (tek anchor'a yığma YOK). -->
         <div class="nav-item">
-          <a href="akademi-v1.html#egitmenler">Eğitmenler <i class="fa-solid fa-chevron-down"></i></a>
+          <a href="akademi-v1.html#egitmenler" class="active">Eğitmenler <i class="fa-solid fa-chevron-down"></i></a>
           <div class="dropdown">
             <a href="akademi-v1.html#egitmenler"><i class="fa-solid fa-chalkboard-user"></i> <span>Tüm Eğitmenler<small>Şef, akademisyen ve mentorlar</small></span></a>
             <a href="dadacampus-yardim-v1.html?konu=egitmen"><i class="fa-solid fa-user-plus"></i> <span>Eğitmen Ol<small>Roller, yeterlilik ve başvuru adımları</small></span></a>
@@ -2091,7 +2363,7 @@ a.drs-row:hover{color:var(--tomato)}
   <a href="akademi-v1.html" class="bn-item"><i class="fa-solid fa-house"></i><span>Ana Sayfa</span></a>
   <a href="dadacampus-egitimler-v1.html" class="bn-item"><i class="fa-solid fa-clapperboard"></i><span>Eğitimler</span></a>
   <a href="dadacampus-kampusum-v1.html" class="bn-item bn-center" id="bnKampusum"><span class="bn-fab"><i class="fa-solid fa-graduation-cap"></i></span><span>Kampüsüm</span></a>
-  <a href="dadacampus-programlar-v1.html" class="bn-item active" aria-current="page"><i class="fa-solid fa-diagram-project"></i><span>Programlar</span></a>
+  <a href="dadacampus-programlar-v1.html" class="bn-item"><i class="fa-solid fa-diagram-project"></i><span>Programlar</span></a>
   <a href="giris-v1.html" class="bn-item" id="bnAccount"><i class="fa-regular fa-user"></i><span>Hesabım</span></a>
 </nav>
 
@@ -2226,22 +2498,15 @@ a.drs-row:hover{color:var(--tomato)}
 <!-- ===== ANA İÇERİK (footer reveal perdesi) ===== -->
 <main class="page-main" id="pageMain" tabindex="-1">
 <!-- ============================================================================
-     AKADEMİK TAKVİM (§13) — DadaCampus
-     Programlar Merkezi'ndeki takvim bölümünün DERİNLEŞMİŞ hâli: orada dönem
-     planının ilk 12 tarihi bir bölüm olarak duruyordu; burada tarihli her kayıt
-     (program adımı · atölye · etkinlik · son tarih) ay ve tür süzgeciyle
-     birlikte tek eksende.
-
-     TERİM (§8.1): Atölye = belirli tarihli canlı/yüz yüze uygulama.
-     Etkinlik = seminer, söyleşi, panel, yarışma. İkisi takvimde AYRI tür
-     etiketiyle görünür, birbirinin yerine kullanılmaz.
-
-     🔴 KAPALI OTURUM (§24.2): kuruma özel oturum takvimde yer TUTAR ama adı,
-     konumu ve bağlantısı görünmez — maskeli satır bağlantısızdır. Maskeleme
-     veri katmanında (DC.takvim) yapılır; bu sayfa maskeyi çözmez.
-
-     Süzgeçler adres satırına yansır ve geri tuşunda korunur (§17.2):
-       dadacampus-takvim-v1.html?ay=2026-09&tur=atolye
+     EĞİTMEN DİZİNİ (§11.1) — DadaCampus
+     İskelet, Eğitimler Merkezi'nin (dadacampus-egitimler-v1.main.html) facet
+     sözleşmesinden BİREBİR devralındı: aynı motor (_facet-engine.js) aynı DOM
+     id'lerini bekler; yalnız metinler ve sıralama seçenekleri eğitmen diziniyle
+     değiştirildi. Filtre grupları/kart şablonu bu sayfanın .cfg.js'inde.
+     §11.1'in yedi filtresi: rol · uzmanlık · dil · bağlı kurum ve unvan ·
+     kurul ve görev · verdiği eğitim/program · doğrulanmış belge-kurum ilişkisi.
+     🔴 §26.13: kurum adı yalnız onay kaydı varsa (kartta da, filtrede de).
+     🔴 §26.10: DadaGastro "Şef Ol" bağlantısı VERİLMEZ — ayrı roldür.
      ========================================================================= -->
 
 <section class="below-header lst-top">
@@ -2250,170 +2515,232 @@ a.drs-row:hover{color:var(--tomato)}
     <nav class="rd-crumb" aria-label="Sayfa yolu">
       <a href="akademi-v1.html"><i class="fa-solid fa-house" aria-hidden="true"></i></a>
       <i class="fa-solid fa-chevron-right" aria-hidden="true"></i>
-      <a href="dadacampus-programlar-v1.html">Programlar</a>
-      <i class="fa-solid fa-chevron-right" aria-hidden="true"></i>
-      <b>Akademik Takvim</b>
+      <b>Eğitmenler</b>
     </nav>
     <div class="lst-hero">
       <div class="lh-main">
-        <span class="eyebrow"><i class="fa-regular fa-calendar-days"></i> Akademik Takvim</span>
-        <h1>Dönemin bütün tarihleri <span class="accent">tek eksende</span></h1>
-        <p class="lead">Program açılışları ve ara adımları, başvuru son tarihleri, canlı atölyeler ve etkinlikler ay ay burada. Atölye belirli tarihli canlı ya da yüz yüze uygulamadır; etkinlik seminer, söyleşi, panel veya yarışmadır — takvimde ayrı tür etiketiyle görünürler. Saatler Europe/Istanbul saat dilimine göredir.</p>
+        <span class="eyebrow"><i class="fa-solid fa-chalkboard-user" aria-hidden="true"></i> Eğitmen Dizini</span>
+        <h1>Kimden öğrendiğin <span class="accent">ne öğrendiğini belirler</span></h1>
+        <p class="lead">Şef, akademisyen, sektör uzmanı, mentor, değerlendirici ve konuk eğitmenleri role, uzmanlığa, eğitim diline, bağlı kuruma ve doğrulama durumuna göre süz. Profillerde yalnız doğrulanmış veri yayımlanır.</p>
 
+        <!-- §17.1 büyük arama alanı — mevcut .crs-search ailesi -->
+        <label class="crs-search" id="crsSearch">
+          <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+          <input type="search" id="crsSearchInput" placeholder="Eğitmen adı, unvan veya uzmanlık ara… (ör. ekşi maya, duyusal analiz, maliyet)" aria-label="Eğitmenlerde ara" autocomplete="off" />
+          <button type="button" class="cs-clear" id="crsSearchClear" aria-label="Aramayı temizle"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button>
+        </label>
+
+        <!-- §4.5 eğitmenler mega menüsünün kısayolları; hepsi bu sayfanın
+             kendi filtre parametreleriyle çalışır (rol çoklu seçim: virgüllü) -->
         <div class="chips lh-chips" role="group" aria-label="Hızlı erişim">
           <span class="lbl">Hızlı:</span>
-          <a class="chip" href="?tur=atolye" data-t="atolye" data-jump="1"><i class="fa-solid fa-video" aria-hidden="true"></i> Canlı Atölyeler</a>
-          <a class="chip" href="?tur=etkinlik" data-t="etkinlik" data-jump="1"><i class="fa-solid fa-users" aria-hidden="true"></i> Etkinlikler</a>
-          <a class="chip" href="?tur=son-tarih" data-t="son-tarih" data-jump="1"><i class="fa-regular fa-clock" aria-hidden="true"></i> Son Tarihler</a>
-          <a class="chip" href="dadacampus-programlar-v1.html"><i class="fa-solid fa-diagram-project" aria-hidden="true"></i> Programlar Merkezi</a>
+          <a class="chip" href="?rol=sef"><i class="fa-solid fa-utensils" aria-hidden="true"></i> Şef Eğitmenler</a>
+          <a class="chip" href="?rol=akademisyen">Akademisyenler</a>
+          <a class="chip" href="?rol=uzman,mentor">Uzman ve Mentorlar</a>
+          <a class="chip" href="#kurul"><i class="fa-solid fa-users-gear" aria-hidden="true"></i> Danışma Kurulu</a>
+          <a class="chip" href="?dogrulama=dogrulandi"><i class="fa-solid fa-circle-check" aria-hidden="true"></i> Doğrulanmış Profil</a>
+          <a class="chip" href="dadacampus-egitmen-basvuru-v1.html"><i class="fa-solid fa-file-signature" aria-hidden="true"></i> Eğitmen Ol</a>
         </div>
       </div>
-      <div class="lst-stats" id="tkvStats" role="group" aria-label="Takvim özeti"></div>
+      <div class="lst-stats" id="heroStats" role="group" aria-label="Kadro özeti"></div>
     </div>
   </div>
 </section>
 
-<!-- ===== DÖNEM PLANI — ay rayı + tür süzgeci + liste (§13, §17.2) ===== -->
-<section class="ak-sec derin" id="takvim">
+<section class="lst-sec">
+  <div class="wrap">
+    <div class="lst-layout">
+
+      <!-- ---- FACET FİLTRE PANELİ (desktop sticky sidebar · ≤1024 alttan sheet) ----
+           Gruplar §11.1: rol · uzmanlık alanı · eğitim dili · bağlı kurum ·
+           kurul ve görev · verdiği içerik · doğrulama. Seçenekler .cfg.js'te
+           campus-data.js'ten türetilir; elle liste tutulmaz. -->
+      <aside class="lst-side" id="lstSide" aria-label="Filtreler">
+        <div class="sheet-head">
+          <h3><i class="fa-solid fa-sliders" aria-hidden="true"></i> Filtrele</h3>
+          <div class="sh-right">
+            <button class="fil-clear" type="button" data-clear>Temizle</button>
+            <button class="sheet-close" id="sheetClose" type="button" aria-label="Filtre panelini kapat"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button>
+          </div>
+        </div>
+        <div class="sheet-body">
+          <div class="fil-top">
+            <h3><i class="fa-solid fa-sliders" aria-hidden="true"></i> Filtreler</h3>
+            <button class="fil-clear" type="button" data-clear>Tümünü Temizle</button>
+          </div>
+          <div id="facetler"></div>
+        </div>
+        <div class="sheet-foot">
+          <button class="btn btn-primary" id="sheetApply" type="button">Sonuçları Göster</button>
+        </div>
+      </aside>
+      <div class="sheet-overlay" id="sheetOverlay"></div>
+
+      <!-- ---- SONUÇ KOLONU ---- -->
+      <div class="lst-main">
+
+        <!-- role ve göreve göre koleksiyonlar (§4.5 mega menü başlıkları) -->
+        <div class="koll-track" id="kollTrack" role="group" aria-label="Koleksiyonlar"></div>
+
+        <div class="lst-bar">
+          <p class="lst-sum" id="lstSum" role="status" aria-live="polite"></p>
+          <div class="lst-tools">
+            <button class="btn-filter" id="btnFilter" type="button"><i class="fa-solid fa-sliders" aria-hidden="true"></i> Filtrele <span class="fb-count" id="filCount" hidden>0</span></button>
+            <div class="sort-dd" id="sortDd">
+              <button class="sort-btn" id="sortBtn" type="button" aria-haspopup="true" aria-expanded="false">
+                <i class="fa-solid fa-arrow-down-wide-short" aria-hidden="true"></i><span class="sb-lbl">Sıralama:</span> <span id="sortCur">Önerilen</span> <i class="fa-solid fa-chevron-down sb-car" aria-hidden="true"></i>
+              </button>
+              <!-- seçenekler .cfg.js `sortlar` listesiyle BİREBİR eşleşir -->
+              <div class="sort-menu" role="menu">
+                <button type="button" class="active" role="menuitem" data-sort="onerilen"><i class="fa-solid fa-wand-magic-sparkles" aria-hidden="true"></i> Önerilen</button>
+                <button type="button" role="menuitem" data-sort="ad"><i class="fa-solid fa-arrow-down-a-z" aria-hidden="true"></i> Ada göre A-Z</button>
+                <button type="button" role="menuitem" data-sort="egitim"><i class="fa-solid fa-clapperboard" aria-hidden="true"></i> En çok eğitim</button>
+                <button type="button" role="menuitem" data-sort="program"><i class="fa-solid fa-diagram-project" aria-hidden="true"></i> En çok program</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- aktif filtre chip'leri (JS doldurur; "Filtreyi Temizle" her zaman görünür §17.2) -->
+        <div class="fchips" id="fchips" aria-label="Aktif filtreler"></div>
+
+        <!-- yükleniyor durumu (§26.15) -->
+        <div class="lst-load" id="lstLoad"><i class="fa-solid fa-circle-notch fa-spin" aria-hidden="true"></i> Eğitmenler yükleniyor…</div>
+
+        <!-- sonuç grid'i — .crs-card ailesi (§23.1 aynı kart ailesi, alanlar role göre) -->
+        <div class="crs-grid lst-grid" id="lstGrid"></div>
+
+        <!-- boş durum: filtre temizleme + başvuru + destek yolu (§17.2 son madde) -->
+        <div class="lst-empty" id="lstEmpty">
+          <span class="le-ico"><i class="fa-regular fa-face-frown" aria-hidden="true"></i></span>
+          <h3>Bu filtrelerle eğitmen bulunamadı</h3>
+          <p>Rol veya uzmanlık filtresini gevşetmeyi dene. Aradığın alanda henüz eğitmen yoksa bu alanı sen açabilirsin; ya da hangi eğitmeni aradığını Yardım Merkezi'nden iletebilirsin.</p>
+          <div class="ak-hero-cta" style="justify-content:center;margin-top:0">
+            <button class="btn btn-primary" type="button" data-clear><i class="fa-solid fa-rotate-left" aria-hidden="true"></i> Filtreleri Temizle</button>
+            <a class="btn btn-ghost" href="dadacampus-egitmen-basvuru-v1.html"><i class="fa-solid fa-file-signature" aria-hidden="true"></i> Eğitmen Ol</a>
+            <a class="btn btn-ghost" href="dadacampus-yardim-v1.html?konu=egitmen"><i class="fa-solid fa-circle-question" aria-hidden="true"></i> Yardım Merkezi</a>
+          </div>
+        </div>
+
+        <div class="pagi" id="pagi"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== AKADEMİK VE SEKTÖREL DANIŞMA KURULU (§4.5, §11.2) =====
+     🔴 Izgara DEĞİL, .bsv satır listesi kullanıldı: kurul üyesi sayısı azdır
+     (şu an 1 kayıt) ve üç sütunlu .ak-grid'de tek kart yarım satır bırakırdı
+     (§23.2). .bsv tek sütunlu akış olduğu için her sayıda tam görünür. -->
+<section class="ak-sec derin" id="kurul">
   <div class="wrap">
     <div class="sec-head">
       <div>
-        <span class="eyebrow"><i class="fa-solid fa-list-ul"></i> Dönem Planı</span>
-        <h2>Ay ay akademik takvim</h2>
-        <p class="lead">Ay ve tür süzgeçleri adres satırına yansır; tarayıcının geri tuşu bir önceki süzgece döner. Geçmiş tarihler listeden düşmez, "geçti" ibaresiyle işaretlenir.</p>
+        <span class="eyebrow"><i class="fa-solid fa-users-gear" aria-hidden="true"></i> Danışma Kurulu</span>
+        <h2>Akademik ve Sektörel Danışma Kurulu</h2>
+        <p class="lead">Kurul üyeleri eğitim vermekle kalmaz; müfredatı inceler ve akademik onayı verir. Bu görev, eğitmenlikten ayrı bir kayıttır ve profilde ayrıca görünür.</p>
       </div>
       <div class="sec-tools">
-        <!-- §17.2: "Filtreyi Temizle" HER ZAMAN görünür — süzgeç yokken de duruyor,
-             çünkü kullanıcı temizleme bağlantısını aramak zorunda kalmamalı. -->
-        <a class="see-all" id="tkvTemiz" href="dadacampus-takvim-v1.html">Filtreyi Temizle <i class="fa-solid fa-rotate-left" aria-hidden="true"></i></a>
+        <a class="see-all" href="?kurul=danisma-kurulu,akademik-onay">Kurulu Dizinde Süz <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
       </div>
     </div>
 
-    <!-- ay rayı: her ayda o aya düşen kayıt sayacı (.ay-say) -->
-    <div class="koll-track" id="tkvAyRay" role="group" aria-label="Ay süzgeci"></div>
+    <!-- kurulun ne yaptığı — rolün anlamı açık yazılır (§11.2) -->
+    <ul class="mad is-2">
+      <li><i class="fa-solid fa-check" aria-hidden="true"></i> <span><b>Müfredat incelemesi:</b> program ve eğitim taslağı, kazanım-değerlendirme eşleşmesi üzerinden okunur.</span></li>
+      <li><i class="fa-solid fa-check" aria-hidden="true"></i> <span><b>Akademik onay yetkisi:</b> ortak programın akademik uygunluğu kayıt altına alınarak onaylanır ya da revizyona döner.</span></li>
+      <li><i class="fa-solid fa-check" aria-hidden="true"></i> <span><b>Değerlendirme ölçütü:</b> rubrik ve başarı koşulu, uygulanmadan önce kurul görüşüyle netleşir.</span></li>
+      <li><i class="fa-solid fa-check" aria-hidden="true"></i> <span><b>İtiraz ve kalite:</b> içerik kalitesi bildirimleri ve değerlendirme itirazları kurulda görüşülür.</span></li>
+    </ul>
 
-    <!-- tür süzgeci: program adımı · atölye · etkinlik · son tarih -->
-    <div class="chips" id="tkvTurRay" role="group" aria-label="Kayıt türü süzgeci"></div>
+    <div class="bsv" id="kurulListe" style="margin-top:22px"></div>
 
-    <p class="crs-count show" id="tkvSay" role="status" aria-live="polite"></p>
-
-    <!-- §26.15 yükleniyor durumu: JS çizmeden önceki hâl; ilk çizimde kapanır -->
-    <div class="lst-load show" id="tkvLoad"><i class="fa-solid fa-circle-notch fa-spin" aria-hidden="true"></i> Takvim hazırlanıyor…</div>
-
-    <div class="tkv" id="tkvListe"></div>
-
-    <!-- §26.15 boş durum -->
-    <div class="lst-empty" id="tkvBos">
-      <span class="le-ico"><i class="fa-regular fa-calendar-xmark" aria-hidden="true"></i></span>
-      <h3>Bu süzgeçle takvimde kayıt yok</h3>
-      <p>Seçtiğin ay ve türde tarihli bir kayıt bulunmuyor. Süzgeci temizleyip dönemin tamamına bakabilir ya da ay rayından başka bir ay seçebilirsin.</p>
-      <div class="ak-hero-cta" style="justify-content:center;margin-top:0">
-        <a class="btn btn-primary" id="tkvBosTemiz" href="dadacampus-takvim-v1.html"><i class="fa-solid fa-rotate-left" aria-hidden="true"></i> Filtreleri Temizle</a>
-        <a class="btn btn-ghost" href="dadacampus-programlar-v1.html"><i class="fa-solid fa-diagram-project" aria-hidden="true"></i> Programlar Merkezi</a>
-      </div>
-    </div>
-
-    <p class="pagi-note" style="text-align:left">
-      Takvim demo verisiyle çalışır; tarihler sabittir. Kuruma özel kapalı oturumlar takvimde yer tutar, ayrıntıları yalnız o kurumun kohort üyelerine açılır (§24.2).
+    <p class="fk-help" style="margin-top:16px">
+      <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
+      <span>Kurul üyeliği, üyenin bağlı olduğu kurumun DadaCampus içeriğini onayladığı anlamına gelmez. Bir kurumun adı yalnız o kuruma ait onay kaydı varsa yayımlanır; kurum adına verilmiş bir onay her zaman ilgili programın sayfasında ayrıca belirtilir (§26.13).</span>
     </p>
   </div>
 </section>
 
-<!-- ===== CANLI OTURUM YAŞAM DÖNGÜSÜ (§13.3) — 8 adım ===== -->
-<section class="ak-sec derin" id="yasam-dongusu" style="background:var(--bg-cream)">
+<!-- ===== ROL SÖZLÜĞÜ (§11.1, §3.2) =====
+     🔴 Buradaki roller EĞİTMEN rolleridir (D.egitmenRolleri); hesap menüsündeki
+     platform rol değiştiricisiyle (D.roller: öğrenci/koordinatör/yönetici…)
+     aynı şey DEĞİLDİR ve karıştırılmaz. -->
+<section class="ak-sec derin" id="roller" style="background:var(--bg-cream)">
   <div class="wrap">
     <div class="sec-head">
       <div>
-        <span class="eyebrow"><i class="fa-solid fa-timeline"></i> Yaşam Döngüsü</span>
-        <h2>Bir canlı oturum takvime nasıl geliyor?</h2>
-        <p class="lead">Atölye ve etkinlik aynı sekiz adımdan geçer. Bir oturumun takvimde görünmesi, kaydının açık olduğu anlamına gelmez — hangi adımda olduğu oturum detayında yazılıdır.</p>
-      </div>
-      <div class="sec-tools">
-        <a class="see-all" href="dadacampus-yardim-v1.html?konu=teknik">Yardım Merkezi <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
+        <span class="eyebrow"><i class="fa-solid fa-id-card-clip" aria-hidden="true"></i> Rol Sözlüğü</span>
+        <h2>Altı eğitmen rolü, altı farklı yetki</h2>
+        <p class="lead">Dizindeki her profil bu rollerden birini taşır. Rol, kişinin ne yaptığını ve hangi yetkiyle çalıştığını belirler; karta ve profil sayfasına da aynı etiketle yazılır. Karta tıklayınca dizin o rolle süzülür.</p>
       </div>
     </div>
-    <div class="ptable-wrap">
-      <table class="ptable">
-        <caption class="sr-only">Canlı oturum yaşam döngüsünün sekiz adımı; her adımda ne olduğu ve o adımın akademik takvimde nasıl göründüğü.</caption>
-        <thead>
-          <tr>
-            <th scope="col">Adım</th>
-            <th scope="col">Ne olur</th>
-            <th scope="col">Takvimde görünürlüğü</th>
-          </tr>
-        </thead>
-        <tbody id="donguTablo"></tbody>
-      </table>
-    </div>
-  </div>
-</section>
-
-<!-- ===== ETKİNLİK VE ATÖLYE TÜRLERİ (§13.1) ===== -->
-<section class="ak-sec derin" id="turler">
-  <div class="wrap">
-    <div class="sec-head">
-      <div>
-        <span class="eyebrow"><i class="fa-solid fa-shapes"></i> Tür Sözlüğü</span>
-        <h2>Takvimde hangi tür ne demek?</h2>
-        <p class="lead">Herkese açık altı oturum türü aşağıda. Yedinci tür — kuruma özel kapalı oturum — takvimde yalnız yer tutar; nedeni bir alttaki erişim kuralı bölümünde.</p>
-      </div>
-      <div class="sec-tools">
-        <a class="see-all" href="dadacampus-programlar-v1.html?bolum=atolyeler">Yaklaşan Oturumlar <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
-      </div>
-    </div>
-    <div class="ak-grid is-3" id="turGrid"></div>
-  </div>
-</section>
-
-<!-- ===== KATILIM VE ERİŞİM KURALI (§13.2, §24.2) ===== -->
-<section class="ak-sec derin" id="katilim" style="background:var(--bg-cream)">
-  <div class="wrap">
-    <div class="sec-head">
-      <div>
-        <span class="eyebrow"><i class="fa-solid fa-shield-halved"></i> Katılım ve Erişim</span>
-        <h2>Takvimde gördüğün her satıra katılamayabilirsin</h2>
-        <p class="lead">Takvim tarihi gösterir; katılım hakkını kayıt ve yetki belirler. İki kural birlikte işler.</p>
-      </div>
-    </div>
-
-    <div class="kurum-gate" style="margin-bottom:14px">
-      <span class="kg-ico"><i class="fa-solid fa-link" aria-hidden="true"></i></span>
-      <div class="kg-txt">
-        <b>Katılım bağlantısı yalnız kayıtlı ve yetkili kullanıcıda görünür</b>
-        <p>Oturum bağlantısı ya da fiziksel konum adresi, oturuma kaydı onaylanmış kullanıcıya oturum detayında ve Kampüsüm &rsaquo; Takvimim'de açılır (§13.2). Takvim satırından oturum detayına gitmek herkese açıktır; katılım bağlantısını görmek değildir. Saatler Europe/Istanbul saat dilimine göre gösterilir.</p>
-      </div>
-      <a class="btn btn-ghost" href="dadacampus-yardim-v1.html?konu=kayit"><i class="fa-solid fa-circle-question" aria-hidden="true"></i> Kayıt Koşulları</a>
-    </div>
-
-    <div class="kurum-gate">
-      <span class="kg-ico"><i class="fa-solid fa-lock" aria-hidden="true"></i></span>
-      <div class="kg-txt">
-        <b>Kuruma özel kapalı oturumun ayrıntısı yalnız kohort üyesine açıktır</b>
-        <p>Bir kurumun kendi kohortu için düzenlediği oturum takvimde tarihiyle yer tutar; adı, konumu, eğitmeni ve bağlantısı diğer kullanıcılara gösterilmez (§24.2). Bu satırlar listede kesikli çerçeveyle ve "Kapalı oturum" etiketiyle işaretlenir, bağlantı taşımaz. Kurumunun kohortundaysan oturum Kampüsüm &rsaquo; Takvimim'de açık adıyla görünür.</p>
-      </div>
-      <a class="btn btn-ghost" href="dadacampus-kurumlar-v1.html"><i class="fa-solid fa-building-columns" aria-hidden="true"></i> Kurum İş Birliği</a>
-    </div>
-  </div>
-</section>
-
-<!-- ===== KİŞİSEL ŞERİT (§12.3) — YALNIZ body.is-auth =====
-     .kisi-sec kabuk tarafından gizlenir; ziyaretçide DOM'da durur ama görünmez. -->
-<section class="ak-sec kisi-sec derin" id="takvimim">
-  <div class="wrap">
-    <div class="sec-head">
-      <div>
-        <span class="eyebrow"><i class="fa-solid fa-user-clock"></i> Sana Ait</span>
-        <h2>Takvimindeki yaklaşan tarihler</h2>
-        <p class="lead" id="takvimimOzet"></p>
-      </div>
-      <div class="sec-tools">
-        <a class="see-all" href="dadacampus-kampusum-v1.html?bolum=takvimim">Takvimim'de Aç <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
-      </div>
-    </div>
-    <div class="bsv" id="takvimimListe"></div>
-    <p class="pagi-note" style="text-align:left">
-      Hatırlatma tercihi, takvime ekleme ve kaçırılan oturumun kayıt bilgisi Kampüsüm &rsaquo; Takvimim bölümündedir (§12.3).
+    <div class="ak-grid is-3" id="rolGrid"></div>
+    <p class="fk-help" style="margin-top:18px">
+      <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
+      <span>Bu liste eğitmen rollerini anlatır. Hesabındaki <b>rol değiştirici</b> (öğrenci, eğitmen, kurum koordinatörü) ayrı bir kavramdır; bir kişi hem öğrenci hem eğitmen olabilir, ekranlar karışmaz (§3.3).</span>
     </p>
+  </div>
+</section>
+
+<!-- ===== KİŞİSEL ŞERİT — YALNIZ GİRİŞ YAPINCA (§12.1) =====
+     CSS `.kisi-sec`i body.is-auth dışında gizler; ziyaretçi bu bölümü görmez. -->
+<section class="ak-sec derin kisi-sec" id="benim">
+  <div class="wrap">
+    <div class="sec-head">
+      <div>
+        <span class="eyebrow"><i class="fa-solid fa-bookmark" aria-hidden="true"></i> Sana Ait</span>
+        <h2>Senin eğitmenlerin</h2>
+        <p class="lead">Devam ettiğin eğitimlerin eğitmenleri ve sorularına gelen yanıtlar. Tamamı Kampüsüm'de de görünür.</p>
+      </div>
+      <div class="sec-tools">
+        <a class="see-all" href="dadacampus-kampusum-v1.html?bolum=egitimlerim">Kampüsüm'de Aç <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
+      </div>
+    </div>
+    <div class="bsv" id="kisiEgitmen"></div>
+
+    <div class="sec-head" style="margin-top:34px">
+      <div>
+        <h2 style="font-size:20px">Eğitmeninden gelen yanıtlar</h2>
+      </div>
+    </div>
+    <div class="bsv" id="kisiYanit"></div>
+  </div>
+</section>
+
+<!-- ===== EĞİTMEN OL + PANEL GİRİŞİ (§11.3, §11.4) =====
+     🔴 §26.10: DadaGastro "Şef Ol" formuna bağlantı VERİLMEZ. İki rol ayrıdır
+     ve bu ayrım metinde de açıkça yazılır. -->
+<section class="ak-sec" id="basvuru">
+  <div class="wrap">
+    <div class="ak-chef-cta">
+      <div class="acc-txt">
+        <b>DadaCampus'ta eğitmen olmak istiyorsan</b>
+        <p>Başvuruda rol (şef, akademisyen, uzman, mentor, değerlendirici), kurum ve unvan doğrulaması, öğretim dilleri, örnek ders ve mesleki belgeler istenir. Süreç <b>Taslak → Gönderildi → Ön İnceleme → Görüşme → Onay → Sözleşme → Aktif</b> adımlarıyla ilerler ve her adımı panelinden izlersin.</p>
+      </div>
+      <div class="ak-hero-cta" style="margin-top:0">
+        <a class="btn btn-primary" href="dadacampus-egitmen-basvuru-v1.html"><i class="fa-solid fa-file-signature" aria-hidden="true"></i> Eğitmen Başvurusu</a>
+        <a class="btn btn-ghost" href="dadacampus-egitmen-panel-v1.html"><i class="fa-solid fa-right-to-bracket" aria-hidden="true"></i> Eğitmen Paneli Girişi</a>
+      </div>
+    </div>
+
+    <p class="fk-help" style="margin-top:16px">
+      <i class="fa-solid fa-circle-exclamation" aria-hidden="true"></i>
+      <span><b>DadaCampus eğitmeni ile DadaGastro tarif şefi ayrı rollerdir.</b> Tarif topluluğunda şef olmak, DadaCampus'ta eğitim vermeye yetki tanımaz; başvuru, belge, sözleşme ve panel süreçleri birbirinden bağımsızdır. Bu sayfadaki form yalnız DadaCampus eğitmenliği içindir.</span>
+    </p>
+
+    <!-- §11.2 gizlilik ve bildirim notu — her profilde bulunur -->
+    <div class="kurum-gate" style="margin-top:22px">
+      <span class="kg-ico"><i class="fa-solid fa-shield-halved" aria-hidden="true"></i></span>
+      <span class="kg-txt">
+        <b>Profillerde yalnız doğrulanmış veri yayımlanır</b>
+        <p>Biyografi, unvan, kurum bağlantısı, yayın ve ödül bilgisi belge karşılığı doğrulanmadan yayımlanmaz; doğrulama düşerse alan profilden kalkar. Her eğitmen profilinde <b>uygunsuz içerik bildirimi</b> ve <b>gizlilik</b> bağlantısı bulunur; bildirim kalite ekibine ve gerektiğinde Danışma Kurulu'na iletilir.</p>
+      </span>
+      <div class="ak-hero-cta" style="margin-top:0">
+        <a class="btn btn-ghost" href="iletisim-v1.html"><i class="fa-solid fa-flag" aria-hidden="true"></i> İçerik Bildir</a>
+        <a class="btn btn-ghost" href="yasal-v1.html?metin=kvkk"><i class="fa-solid fa-lock" aria-hidden="true"></i> KVKK Metni</a>
+      </div>
+    </div>
   </div>
 </section>
 
@@ -3116,418 +3443,598 @@ window.__bottomStrips=window.__bottomStrips||[];
 </script>
 
 <script>
-/* ===== SAYFA JS — dadacampus-takvim-v1.html ===== */
+/* ===== SAYFA JS — dadacampus-egitmenler-v1.html ===== */
 /* ============================================================================
-   AKADEMİK TAKVİM — sayfa JS (§13)
+   Eğitmen Dizini — facet CONFIG (§11.1). Motor: _facet-engine.js
+   §11.1'in yedi filtresi: rol · uzmanlık alanı · bağlı kurum ve unvan · eğitim
+   dili · eğitim formatı ve uygunluk · verdiği eğitim ve programlar ·
+   doğrulanmış belge/kurum ilişkisi.
+   🔴 KURUM filtresi yalnız ONAY KAYDI olan kurumlarla kurulur (§26.13):
+   onaysız bir kurumun adı filtre seçeneği olarak bile görünmez.
+   ========================================================================= */
+window.__FACET = (function () {
+  var D = window.DC, esc = D.esc, img = D.img;
 
-   Veri: D.takvim() → tarihe göre sıralı kayıt listesi
-         { tarih, saat, ad, alt, tur, etiket, href, programId, kurumId, kapali }
-   tur ∈ program-adimi | atolye | etkinlik | son-tarih
+  /* uzmanlık ve dil listeleri VERİDEN türetilir — elle liste tutulmaz (drift yok) */
+  function benzersiz(alan) {
+    var g = {}, out = [];
+    D.egitmenler.forEach(function (e) {
+      (e[alan] || []).forEach(function (x) { if (!g[x]) { g[x] = 1; out.push({ slug: x, ad: x }); } });
+    });
+    return out.sort(function (a, b) { return a.ad.localeCompare(b.ad, 'tr'); });
+  }
 
-   🔴 KOHORT MASKESİ (§24.2): D.takvim() KOHORT ÜYESİ OLMAYAN çağırana kuruma
-   özel kapalı oturumu maskeli döner (ad gizlenir, href null, kapali=true).
-   Burada bilerek `{kohortUyesi:true}` GEÇİLMİYOR: demo kullanıcının
-   D.kullanici.kurumId değeri null, yani hiçbir kurum kohortunun üyesi değil —
-   girişli olmak kohort üyeliği DEĞİLDİR. Maskeleme bu yüzden her iki durumda da
-   doğru davranış; giriş durumuna göre maskeyi açan bir dal YAZILMADI (yazılsaydı
-   yetki kararı arayüze taşınmış olurdu).
+  return {
+    koleksiyon: 'egitmenler',
+    birim: 'eğitmen',
+    sayfaBoy: 12,
 
-   🔴 ZAMAN: demo veri sabit tarihlidir; `new Date()` KULLANILMAZ. Gerçek zamana
-   bağlanınca yalnız aşağıdaki BUGUN sabiti kaldırılıp sunucu tarihiyle
-   değiştirilecek — "geçti" işareti ve "yaklaşan" sayacı tek yerden beslenir.
+    gruplar: [
+      { key: 'rol',      alan: 'rol',         ad: 'Rol',       liste: 'egitmenRolleri', acik: true },
+      { key: 'uzmanlik', alan: 'uzmanliklar', cok: true, ad: 'Uzmanlık Alanı', acik: true,
+        secenekler: function () { return benzersiz('uzmanliklar'); } },
+      { key: 'dil',      alan: 'diller',      cok: true, ad: 'Eğitim Dili', acik: true,
+        secenekler: function () { return benzersiz('diller'); } },
+      { key: 'kurum',    alan: 'kurumId',     ad: 'Bağlı Kurum',
+        /* 🔴 yalnız onay kaydı olan kurumlar (§26.13) */
+        secenekler: function (D) {
+          return D.onayliKurumlar()
+            .filter(function (k) { return D.egitmenler.some(function (e) { return e.kurumId === k.id; }); })
+            .map(function (k) { return { slug: k.id, ad: k.ad }; });
+        } },
+      { key: 'kurul',    alan: 'kurulRolleri', cok: true, ad: 'Kurul ve Görev',
+        secenekler: function () {
+          return [
+            { slug: 'danisma-kurulu',  ad: 'Akademik/Sektörel Danışma Kurulu' },
+            { slug: 'akademik-onay',   ad: 'Akademik Onay Yetkisi' },
+            { slug: 'degerlendirici',  ad: 'Değerlendirici' },
+            { slug: 'mentor',          ad: 'Mentor' }
+          ];
+        } },
+      { key: 'katki',    ad: 'Verdiği İçerik', kovalar: [
+          { slug: 'egitim',  ad: 'Eğitim veriyor',   test: function (e) { return (e.egitimIds || []).length > 0; } },
+          { slug: 'program', ad: 'Programda görevli', test: function (e) { return (e.programIds || []).length > 0; } },
+          { slug: 'canli',   ad: 'Canlı oturum yürütüyor',
+            test: function (e) { return D.egitmenIsleri(e).oturumlar.length > 0; } }
+        ] },
+      { key: 'dogrulama', ad: 'Doğrulama', kovalar: [
+          { slug: 'dogrulandi', ad: 'Doğrulanmış profil', test: function (e) { return !!e.dogrulandi; } },
+          { slug: 'belge',      ad: 'Belgesi geçerli',    test: function (e) { return e.belgeDurumu === 'gecerli'; } },
+          { slug: 'kurumlu',    ad: 'Onaylı kuruma bağlı',
+            test: function (e) { return !!(e.kurumId && D.onayliMi(e.kurumId)); } }
+        ] }
+    ],
 
-   Süzgeç sözleşmesi (§17.2): ?ay=YYYY-MM & tur=<slug>; adres satırına yansır,
-   geri tuşunda korunur (popstate), sonuç sayısı anlık güncellenir,
-   "Filtreyi Temizle" her zaman görünür.
+    sortlar: [
+      { slug: 'onerilen', ad: 'Önerilen' },
+      { slug: 'ad',       fn: function (a, b) { return a.ad.localeCompare(b.ad, 'tr'); } },
+      { slug: 'egitim',   fn: function (a, b) { return (b.egitimIds || []).length - (a.egitimIds || []).length; } },
+      { slug: 'program',  fn: function (a, b) { return (b.programIds || []).length - (a.programIds || []).length; } }
+    ],
+
+    koleksiyonlar: [
+      { ad: 'Şef Eğitmenler',   ikon: 'fa-utensils',         kri: { rol: 'sef' } },
+      { ad: 'Akademisyenler',   ikon: 'fa-building-columns', kri: { rol: 'akademisyen' } },
+      { ad: 'Mentorlar',        ikon: 'fa-compass',          kri: { rol: 'mentor' } },
+      { ad: 'Danışma Kurulu',   ikon: 'fa-users-gear',       kri: { kurul: 'danisma-kurulu' } },
+      { ad: 'Değerlendiriciler', ikon: 'fa-clipboard-check', kri: { kurul: 'degerlendirici' } },
+      { ad: 'Doğrulanmış Profil', ikon: 'fa-circle-check',   kri: { dogrulama: 'dogrulandi' } }
+    ],
+
+    heroStat: function (D) {
+      var akademisyen = D.egitmenler.filter(function (e) { return e.rol === 'akademisyen'; }).length;
+      var kurul = D.egitmenler.filter(function (e) { return (e.kurulRolleri || []).length; }).length;
+      return '<div class="st"><b>' + D.egitmenler.length + '</b><span>Eğitmen</span></div>' +
+             '<div class="st"><b>' + akademisyen + '</b><span>Akademisyen</span></div>' +
+             '<div class="st"><b>' + kurul + '</b><span>Kurul ve görev</span></div>';
+    },
+
+    /* Eğitim/program kartıyla AYNI aile (.crs-card), bilgi alanları role göre
+       değişir (§23.1: "kartlar aynı tasarım ailesinden gelmeli"). */
+    kart: function (e, D) {
+      /* 🔴 kurum adı YALNIZ onay kaydı varsa (§26.13) */
+      var kurum = (e.kurumId && D.onayliMi(e.kurumId)) ? D.kurum(e.kurumId) : null;
+      var isler = D.egitmenIsleri(e);
+      return '<a class="crs-card" href="' + esc(D.link.egitmen(e.slug)) + '">' +
+        '<div class="crs-fig" style="background-image:url(\'' + esc(img(e.foto, 600)) + '\')">' +
+          '<span class="crs-lvl">' + esc(D.etiket('egitmenRolleri', e.rol)) + '</span>' +
+          (e.dogrulandi
+            ? '<span class="crs-soon"><i class="fa-solid fa-circle-check"></i> Doğrulanmış</span>' : '') +
+          (kurum ? '<span class="crs-track-lbl">' + esc(kurum.ad) + '</span>' : '') +
+        '</div>' +
+        '<div class="crs-body">' +
+          '<h3>' + esc(e.ad) + '</h3>' +
+          '<div class="crs-chef">' +
+            '<span class="cc-ava" style="display:grid;place-items:center;background:var(--tomato-tint);color:var(--tomato);font-size:12px">' +
+              '<i class="fa-solid fa-graduation-cap"></i></span>' +
+            '<span><b>' + esc(e.unvan) + '</b><span>' + esc((e.diller || []).join(', ')) + '</span></span>' +
+          '</div>' +
+          '<div class="crs-meta">' +
+            '<span><i class="fa-solid fa-clapperboard"></i> ' + isler.egitimler.length + ' eğitim</span>' +
+            '<span><i class="fa-solid fa-diagram-project"></i> ' + isler.programlar.length + ' program</span>' +
+            '<span><i class="fa-solid fa-video"></i> ' + isler.oturumlar.length + ' oturum</span>' +
+          '</div>' +
+        '</div></a>';
+    }
+  };
+})();
+
+/* ============================================================================
+   DadaCampus — GENEL FACET MOTORU (§7.1, §8.2, §17.2)
+   ----------------------------------------------------------------------------
+   Neden config'li: Eğitimler ve Programlar Merkezi'nin filtre davranışı yapısal
+   olarak aynıdır (enum alanlar üzerinde çoklu-seçim + serbest metin + sıralama +
+   sayfalama + URL senkronu). İki sayfaya iki ayrı motor yazmak zamanla ayrışır
+   (docs/lessons.md §3 divergence dersi). Sayfa yalnız CONFIG verir.
+
+   Sözleşme: sayfa, bu dosyadan ÖNCE `window.__FACET = {…}` tanımlar.
+   Beklenen DOM id'leri: #facetler #fchips #lstGrid #lstEmpty #lstSum #lstLoad
+                         #pagi #filCount #btnFilter #lstSide #sheetOverlay
+                         #sheetClose #sheetApply #sortDd #sortBtn #sortCur
+                         #crsSearch #crsSearchInput #crsSearchClear #heroStats
    ========================================================================= */
 (function () {
-  var D = window.DC;
-  if (!D) return;
-  var esc = D.esc;
+  var D = window.DC, C = window.__FACET;
+  if (!D || !C) return;
+  var esc = D.esc, norm = D.norm;
   var $ = function (s) { return document.querySelector(s); };
+  var $$ = function (s) { return [].slice.call(document.querySelectorAll(s)); };
 
-  /* Demo verinin "bugün"ü. Gerçek zamana bağlanınca burası değişir. */
-  var BUGUN = '2026-08-17';
+  var GRUPLAR = C.gruplar, SAYFA_BOY = C.sayfaBoy || 9;
+  var BIRIM = C.birim || 'kayıt';
 
-  var AY_KISA = ['OCA', 'ŞUB', 'MAR', 'NİS', 'MAY', 'HAZ', 'TEM', 'AĞU', 'EYL', 'EKİ', 'KAS', 'ARA'];
-  var AY_UZUN = ['Ocak', 'Şubat', 'Mart', 'Nisan', 'Mayıs', 'Haziran',
-                 'Temmuz', 'Ağustos', 'Eylül', 'Ekim', 'Kasım', 'Aralık'];
-  var GUN_AD  = ['Pazar', 'Pazartesi', 'Salı', 'Çarşamba', 'Perşembe', 'Cuma', 'Cumartesi'];
+  /* sayfanın SAHİP olduğu URL anahtarları — yabancı (kabuk demo) parametreler
+     korunur; qsSahipli olmadan ?auth=1/?sheet=1/?cc=1 silinirdi (Faz 1 hatası) */
+  var SAHIP = ['q', 'sort', 'sayfa'].concat(GRUPLAR.map(function (g) { return g.key; }))
+                                    .concat(C.bayraklar || []);
 
-  /* ISO tarihten hafta gününü ARİTMETİKLE bulur (Sakamoto). Date nesnesi
-     kullanılmaz — hem BUGUN sabiti kuralı gereği, hem de Date'in yerel saat
-     dilimine göre bir gün kayması riski olduğu için. */
-  function gunAdi(iso) {
-    var p = iso.split('-'), y = +p[0], m = +p[1], d = +p[2];
-    var t = [0, 3, 2, 5, 0, 3, 5, 1, 4, 6, 2, 4];
-    if (m < 3) y -= 1;
-    var i = (y + Math.floor(y / 4) - Math.floor(y / 100) + Math.floor(y / 400) + t[m - 1] + d) % 7;
-    return GUN_AD[i];
+  function secenekler(g) {
+    if (typeof g.secenekler === 'function') return g.secenekler(D);
+    if (g.kovalar) return g.kovalar;
+    return D[g.liste] || [];
   }
 
-  /* Takvim satırındaki tür rozeti KISA olmalı (.tkv-tur tek satır, uppercase);
-     "Canlı Uygulama Atölyesi" gibi uzun tür adı rozete sığmaz. Ayrıntılı tür adı
-     zaten satırın alt metninde (kayit.alt) duruyor.
-     §8.1: Atölye ve Etkinlik AYRI rozetlerdir, birbirinin yerine geçmez. */
-  var TUR_KISA = {
-    'program-adimi': 'Program adımı',
-    'atolye':        'Atölye',
-    'etkinlik':      'Etkinlik',
-    'son-tarih':     'Son tarih'
-  };
-  /* Tür süzgecinin sırası ve ikonu (Tümü dahil). */
-  var TUR_SUZGEC = [
-    { t: '',              ad: 'Tümü',          ikon: 'fa-layer-group' },
-    { t: 'program-adimi', ad: 'Program adımı', ikon: 'fa-diagram-project' },
-    { t: 'atolye',        ad: 'Canlı atölye',  ikon: 'fa-video' },
-    { t: 'etkinlik',      ad: 'Etkinlik',      ikon: 'fa-users' },
-    { t: 'son-tarih',     ad: 'Son tarih',     ikon: 'fa-clock' }
-  ];
-
-  /* Tüm kayıtlar — maskeli hâliyle (yukarıdaki kohort notu). */
-  var KAYITLAR = D.takvim();
-
-  /* ---- hero özeti (§13) — sayılar VERİDEN türetilir ---------------------- */
-  function turSay(t) {
-    return KAYITLAR.filter(function (k) { return k.tur === t; }).length;
+  /* --- durum ---------------------------------------------------------------- */
+  function durumOku() {
+    var q = D.qs(), st = { q: q.q || '', sort: q.sort || (C.sortlar[0] && C.sortlar[0].slug), sayfa: parseInt(q.sayfa, 10) || 1 };
+    GRUPLAR.forEach(function (g) { st[g.key] = q[g.key] ? String(q[g.key]).split(',').filter(Boolean) : []; });
+    (C.bayraklar || []).forEach(function (b) { st[b] = q[b] === '1'; });
+    return st;
   }
-  var CANLI = turSay('atolye') + turSay('etkinlik');           /* atölye + etkinlik */
-  var YAKLASAN_SON = KAYITLAR.filter(function (k) {
-    return k.tur === 'son-tarih' && k.tarih >= BUGUN;          /* ISO metin sırası = tarih sırası */
-  }).length;
 
-  $('#tkvStats').innerHTML =
-    '<div class="st"><b>' + KAYITLAR.length + '</b><span>Tarihli kayıt</span></div>' +
-    '<div class="st"><b>' + CANLI + '</b><span>Canlı oturum (atölye + etkinlik)</span></div>' +
-    '<div class="st"><b>' + YAKLASAN_SON + '</b><span>Yaklaşan son tarih</span></div>';
+  function durumYaz(st, degistir) {
+    var o = {};
+    if (st.q) o.q = st.q;
+    GRUPLAR.forEach(function (g) { if (st[g.key].length) o[g.key] = st[g.key].join(','); });
+    (C.bayraklar || []).forEach(function (b) { if (st[b]) o[b] = '1'; });
+    if (st.sort && st.sort !== C.sortlar[0].slug) o.sort = st.sort;
+    if (st.sayfa > 1) o.sayfa = st.sayfa;
+    D.qsSahipli(SAHIP, o, degistir);
+  }
 
-  /* ---- süzgeç durumu ---------------------------------------------------- */
-  var SAHIP = ['ay', 'tur'];             /* sayfanın YÖNETTİĞİ URL anahtarları */
-  var st = { ay: '', tur: '' };
+  function bosDurum() {
+    var g = {}; GRUPLAR.forEach(function (x) { g[x.key] = []; });
+    g.q = ''; (C.bayraklar || []).forEach(function (b) { g[b] = false; });
+    return g;
+  }
 
-  var AYLAR = D.takvimAylari();          /* ['2026-07', … ] sıralı */
-
-  /* Süzgeci uygularken sayaçların doğru olması için "diğer eksen serbest"
-     mantığı: ay sayacı seçili TÜRE göre, tür sayacı seçili AYA göre hesaplanır.
-     Böylece bir sayaç 0 gösteriyorsa o kombinasyon gerçekten boştur. */
-  function suz(ay, tur) {
-    return KAYITLAR.filter(function (k) {
-      if (ay && k.tarih.slice(0, 7) !== ay) return false;
-      if (tur && k.tur !== tur) return false;
+  /* --- süzme ---------------------------------------------------------------- */
+  function suz(st) {
+    return (D[C.koleksiyon] || []).filter(function (k) {
+      if (C.onSuzgec && !C.onSuzgec(k, D)) return false;
+      for (var i = 0; i < GRUPLAR.length; i++) {
+        var g = GRUPLAR[i], sec = st[g.key];
+        if (!sec.length) continue;
+        if (g.kovalar) {
+          var uydu = sec.some(function (s) {
+            var kv = g.kovalar.filter(function (x) { return x.slug === s; })[0];
+            return kv && kv.test(k, D);
+          });
+          if (!uydu) return false;
+        } else if (g.cok) {                       /* kayıt alanı DİZİ ise kesişim */
+          var dizi = (typeof g.alan === 'function' ? g.alan(k, D) : k[g.alan]) || [];
+          if (!sec.some(function (s) { return dizi.indexOf(s) > -1; })) return false;
+        } else {
+          var v = typeof g.alan === 'function' ? g.alan(k, D) : k[g.alan];
+          if (sec.indexOf(v) === -1) return false;
+        }
+      }
+      if (C.bayrakSuzgec && !C.bayrakSuzgec(k, st, D)) return false;
+      if (st.q && norm(D.aramaMetni(C.koleksiyon, k)).indexOf(norm(st.q)) === -1) return false;
       return true;
     });
   }
 
-  /* Süzgeç durumunu koruyarak bağlantı üretir. JS kapalıyken de çalışan gerçek
-     adresler — tıklama JS ile yakalanıp pushState'e çevriliyor (§17.2).
-     Boş süzgeçte sade sayfa adresi döner ki "temiz URL" görünsün. */
-  function adres(yeni) {
-    var ay  = ('ay'  in yeni) ? yeni.ay  : st.ay;
-    var tur = ('tur' in yeni) ? yeni.tur : st.tur;
-    var p = [];
-    if (ay)  p.push('ay=' + encodeURIComponent(ay));
-    if (tur) p.push('tur=' + encodeURIComponent(tur));
-    return p.length ? '?' + p.join('&') : 'dadacampus-takvim-v1.html';
+  /* seçenek sayacı: O grup hariç diğer filtreler uygulanmış küme */
+  function sayac(st, g, slug) {
+    var t = {};
+    GRUPLAR.forEach(function (x) { t[x.key] = x.key === g.key ? [slug] : st[x.key]; });
+    t.q = st.q; (C.bayraklar || []).forEach(function (b) { t[b] = st[b]; });
+    return suz(t).length;
   }
 
-  /* ---- ay rayı (.koll) --------------------------------------------------- */
-  function ayRayCiz() {
-    var h = '';
-    var tumSay = suz('', st.tur).length;
-    /* "Tümü" — dönemin tamamı */
-    h += '<a class="koll' + (st.ay ? '' : ' is-on') + '" href="' + esc(adres({ ay: '' })) + '" data-ay=""' +
-         (st.ay ? '' : ' aria-current="true"') + '>' +
-      '<i class="fa-solid ' + (st.ay ? 'fa-calendar-days' : 'fa-check') + '" aria-hidden="true"></i>' +
-      '<span>Tüm dönem<small>' + esc(D.ayAdi(AYLAR[0])) + ' – ' + esc(D.ayAdi(AYLAR[AYLAR.length - 1])) + '</small></span>' +
-      '<span class="ay-say">' + tumSay + '</span>' +
-      (st.ay ? '' : '<span class="sr-only">(seçili)</span>') +
-    '</a>';
-
-    AYLAR.forEach(function (a) {
-      var acik = st.ay === a;
-      var say = suz(a, st.tur).length;
-      var p = a.split('-');
-      h += '<a class="koll' + (acik ? ' is-on' : '') + '" href="' + esc(adres({ ay: a })) + '" data-ay="' + esc(a) + '"' +
-           (acik ? ' aria-current="true"' : '') + '>' +
-        '<i class="fa-' + (acik ? 'solid fa-check' : 'regular fa-calendar') + '" aria-hidden="true"></i>' +
-        '<span>' + esc(AY_UZUN[parseInt(p[1], 10) - 1]) + '<small>' + esc(p[0]) + '</small></span>' +
-        '<span class="ay-say">' + say + '</span>' +
-        (acik ? '<span class="sr-only">(seçili)</span>' : '') +
-      '</a>';
-    });
-    $('#tkvAyRay').innerHTML = h;
+  function sirala(list, sort) {
+    var s = C.sortlar.filter(function (x) { return x.slug === sort; })[0];
+    return s && s.fn ? list.slice().sort(function (a, b) { return s.fn(a, b, D); }) : list.slice();
   }
 
-  /* ---- tür süzgeci (.chip) -----------------------------------------------
-     🔴 Seçili çip yalnız RENKLE anlatılmıyor: `.chip.is-on` için kabukta görsel
-     kural YOK (ölçüldü) ve §23.3 zaten rengi tek başına durum göstergesi
-     saymıyor. Bu yüzden seçili çipte ikon `fa-check`e dönüyor, ekran okuyucu
-     için `aria-current` + gizli "(seçili)" metni ekleniyor. */
-  function turRayCiz() {
-    var h = '<span class="lbl">Tür:</span>';
-    TUR_SUZGEC.forEach(function (f) {
-      var acik = st.tur === f.t;
-      var say = suz(st.ay, f.t).length;
-      h += '<a class="chip' + (acik ? ' is-on' : '') + '" href="' + esc(adres({ tur: f.t })) + '" data-t="' + esc(f.t) + '"' +
-           (acik ? ' aria-current="true"' : '') + '>' +
-        '<i class="fa-solid ' + (acik ? 'fa-check' : esc(f.ikon)) + '" aria-hidden="true"></i> ' +
-        esc(f.ad) + ' <b>' + say + '</b>' +
-        (acik ? '<span class="sr-only">(seçili)</span>' : '') +
-      '</a>';
-    });
-    $('#tkvTurRay').innerHTML = h;
-  }
-
-  /* ---- liste ------------------------------------------------------------- */
-
-  /* Bir satırın alt metni: saat · veri alt metni · onaylı partner kurum ·
-     çakışma uyarısı. Partner kurum adı §26.13 kapısından geçer. */
-  function altMetin(k, gunAdet) {
-    var par = [];
-    /* satır zaten dar; saat kısa yazılır (son tarihte "…'a kadar" anlamı taşır) */
-    if (k.saat) par.push(k.tur === 'son-tarih' ? k.saat + '\'a kadar' : k.saat);
-    if (k.alt) par.push(k.alt);
-    /* 🔴 §26.13 / kural 4: kurum adı YALNIZ onay kaydı varsa yazılır. Onay kaydı
-       olmayan kurumun adı takvimde geçmez; "onaylı/resmî" gibi bir ifade de
-       kurulmaz — yalnız kurumun adı, iş birliği bilgisi olarak. */
-    if (k.kurumId && D.onayliMi(k.kurumId)) {
-      var ku = D.kurum(k.kurumId);
-      if (ku) par.push(ku.ad);
-    }
-    /* §12.3 çakışan etkinlik uyarısı — aynı güne birden fazla kayıt düşüyorsa
-       kullanıcı METİNLE uyarılır (renk/konum ipucu yeterli değil). */
-    if (gunAdet > 1) par.push('Aynı günde ' + gunAdet + ' kayıt — çakışmayı kontrol et');
-    return par.join(' · ');
-  }
-
-  function satir(k, gunAdet) {
-    var p = k.tarih.split('-');
-    var gecmis = k.tarih < BUGUN;
-    var sinif = 'tkv-row' + (k.kapali ? ' kapali' : '') + (gecmis ? ' gecmis' : '');
-    var ic =
-      '<span class="tkv-tar"><b>' + parseInt(p[2], 10) + '</b><span>' + esc(AY_KISA[parseInt(p[1], 10) - 1]) + '</span></span>' +
-      '<span class="tkv-body"><b>' + esc(k.ad) + '</b><span>' + esc(altMetin(k, gunAdet)) + '</span></span>' +
-      '<span class="tkv-tur">' + esc(k.kapali ? 'Kapalı oturum' : (TUR_KISA[k.tur] || k.tur)) + '</span>';
-    /* Maskeli kapalı oturum ve hedefi olmayan kayıt BAĞLANTI DEĞİLDİR (§24.2):
-       boş hedefli bir bağlantı üretmek yerine <div> basılır — ölü bağlantı yok. */
-    if (k.kapali || !k.href) {
-      return '<div class="' + sinif + '">' + ic + '</div>';
-    }
-    return '<a class="' + sinif + '" href="' + esc(k.href) + '">' + ic + '</a>';
-  }
-
-  /* Ay başlığının alt satırı: o ayda hangi türden kaç kayıt var. */
-  function ayOzet(liste) {
-    var g = {};
-    liste.forEach(function (k) { g[k.tur] = (g[k.tur] || 0) + 1; });
-    var par = [liste.length + ' kayıt'];
-    ['program-adimi', 'atolye', 'etkinlik', 'son-tarih'].forEach(function (t) {
-      if (g[t]) par.push(g[t] + ' ' + TUR_KISA[t].toLocaleLowerCase('tr-TR'));
-    });
-    return par.join(' · ');
-  }
-
-  function listeCiz() {
-    var liste = suz(st.ay, st.tur);
-
-    /* çakışma sayacı: tarih → o güne düşen kayıt adedi (SÜZÜLMÜŞ liste üzerinden;
-       kullanıcı gördüğü listedeki çakışmayı bilmek ister) */
-    var gunSay = {};
-    liste.forEach(function (k) { gunSay[k.tarih] = (gunSay[k.tarih] || 0) + 1; });
-
-    var h = '', ay = '', gun = '';
-    liste.forEach(function (k) {
-      var a = k.tarih.slice(0, 7);
-      if (a !== ay) {
-        ay = a; gun = '';
-        var ayKayitlari = liste.filter(function (x) { return x.tarih.slice(0, 7) === a; });
-        h += '<div class="tk-ay-baslik"><h2>' + esc(D.ayAdi(a)) + '</h2>' +
-             '<span>' + esc(ayOzet(ayKayitlari)) + '</span></div>';
-      }
-      if (k.tarih !== gun) {
-        gun = k.tarih;
-        var p = k.tarih.split('-');
-        h += '<div class="tkv-gun">' + parseInt(p[2], 10) + ' ' + esc(AY_UZUN[parseInt(p[1], 10) - 1]) +
-             '<span class="tg-gun">' + esc(gunAdi(k.tarih)) + '</span></div>';
-      }
-      h += satir(k, gunSay[k.tarih]);
-    });
-
-    $('#tkvListe').innerHTML = h;
-    $('#tkvListe').style.display = liste.length ? '' : 'none';
-    $('#tkvBos').classList.toggle('show', liste.length === 0);
-    $('#tkvLoad').classList.remove('show');           /* §26.15: yükleniyor kapanır */
-
-    /* §17.2 sonuç sayısı anlık güncellenir; role="status" ile ekran okuyucuya da
-       duyurulur. Süzgeç varsa hangi süzgeç olduğu METİNLE yazılır. */
-    var par = [];
-    if (st.ay) par.push(D.ayAdi(st.ay));
-    if (st.tur) par.push((TUR_KISA[st.tur] || st.tur).toLocaleLowerCase('tr-TR'));
-    $('#tkvSay').innerHTML = par.length
-      ? '<b>' + liste.length + '</b> kayıt · süzgeç: ' + esc(par.join(' · '))
-      : 'Dönemin tamamı — <b>' + liste.length + '</b> tarihli kayıt';
-
-    /* "Filtreyi Temizle" her zaman görünür ama süzgeç yokken pasif değil,
-       yalnız kendi sayfasına döner — kullanıcı için sürpriz yok. */
-    $('#tkvTemiz').setAttribute('href', 'dadacampus-takvim-v1.html');
-    $('#tkvBosTemiz').setAttribute('href', 'dadacampus-takvim-v1.html');
-  }
-
-  function ciz() { ayRayCiz(); turRayCiz(); listeCiz(); }
-
-  /* ---- URL yazımı (§17.2) ------------------------------------------------
-     🔴 D.qsYaz DEĞİL D.qsSahipli: qsYaz tüm query string'i baştan yazar ve
-     kabuğun demo parametrelerini (?auth=1 ?cc=1 ?drawer=1 ?sheet=1) siler.
-     Yalnız kendi anahtarlarımızı yönetiriz. */
-  function urlYaz(degistir) {
-    D.qsSahipli(SAHIP, { ay: st.ay, tur: st.tur }, degistir);
-  }
-
-  function urldenOku() {
-    var q = D.qs();
-    var ay = q.ay || '';
-    st.ay = (AYLAR.indexOf(ay) > -1) ? ay : '';       /* bilinmeyen ay yok sayılır */
-    var tur = q.tur || '';
-    st.tur = TUR_KISA[tur] ? tur : '';                /* bilinmeyen tür yok sayılır */
-  }
-
-  /* ---- tıklama: ay rayı, tür çipleri ve hero hızlı erişim çipleri --------- */
-  document.addEventListener('click', function (ev) {
-    var ayEl = ev.target.closest ? ev.target.closest('a.koll[data-ay]') : null;
-    var turEl = ev.target.closest ? ev.target.closest('a.chip[data-t]') : null;
-    var temizEl = ev.target.closest ? ev.target.closest('#tkvTemiz, #tkvBosTemiz') : null;
-    if (!ayEl && !turEl && !temizEl) return;
-    /* yeni sekmede açma / orta tık davranışı bozulmasın */
-    if (ev.metaKey || ev.ctrlKey || ev.shiftKey || ev.button) return;
-    ev.preventDefault();
-
-    if (temizEl)     { st.ay = ''; st.tur = ''; }
-    else if (ayEl)   { st.ay = ayEl.getAttribute('data-ay') || ''; }
-    else             { st.tur = turEl.getAttribute('data-t') || ''; }
-
-    urlYaz(false);                                    /* pushState → geri tuşu çalışır */
-    ciz();
-
-    /* hero'daki hızlı erişim çipleri listenin çok üstünde; süzgecin işe
-       yaradığını görmek için listeye kaydırılır. */
-    if (turEl && turEl.getAttribute('data-jump')) {
-      var hedef = document.getElementById('takvim');
-      if (hedef) hedef.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
-  });
-
-  /* geri/ileri tuşu: URL süzgeci geri yükler (§17.2 zorunlu) */
-  window.addEventListener('popstate', function () { urldenOku(); ciz(); });
-
-  /* ---- §13.3 CANLI OTURUM YAŞAM DÖNGÜSÜ — 8 adım ------------------------- */
-  var DONGU = [
-    { adim: 'Taslak etkinlik oluşturulur',
-      ne: 'Eğitmen ya da kurum koordinatörü oturumun konusunu, formatını ve hedef kitlesini yazar.',
-      tk: 'Takvimde görünmez.' },
-    { adim: 'Eğitmen, kurum, tarih ve kapasite onaylanır',
-      ne: 'Program yöneticisi tarihi, kontenjanı ve varsa partner kurumu onaylar.',
-      tk: 'Takvimde görünmez; tarih henüz kesin değildir.' },
-    { adim: 'Kayıt açılır ve hedef gruba duyurulur',
-      ne: 'Kayıt formu, ücret veya kurum erişim koşulu ve kayıt kapanış tarihi yayımlanır.',
-      tk: 'Takvimde tür etiketiyle listelenir; satır oturum detayına gider.' },
-    { adim: 'Hatırlatmalar gönderilir',
-      ne: 'Kayıtlı katılımcıya ön hazırlık, malzeme ve ekipman listesi hatırlatılır.',
-      tk: 'Satır aynı kalır; hatırlatma tercihi Kampüsüm › Takvimim\'dedir.' },
-    { adim: 'Katılım ve oturum süresi kaydedilir',
-      ne: 'Oturum yapılır; katılım ve süre kayda geçer.',
-      tk: 'Tarih geçince satır listede kalır ve "geçti" ibaresi alır.' },
-    { adim: 'Kayıt, özet ve materyal yayımlanır',
-      ne: 'Oturum kaydı, altyazı/özet ve paylaşılan kaynaklar erişime açılır.',
-      tk: 'Kaydın erişim süresi oturum detayında yazılıdır.' },
-    { adim: 'Geri bildirim alınır',
-      ne: 'Katılımcı değerlendirmesi toplanır ve eğitmenle paylaşılır.',
-      tk: 'Takvimi etkilemez.' },
-    { adim: 'Katılım ve belge uygunluğu güncellenir',
-      ne: 'Katılım koşulu karşılandıysa katılım belgesi uygunluğu işlenir.',
-      tk: 'Sonuç Kampüsüm › Belgelerim tarafında görünür.' }
-  ];
-  $('#donguTablo').innerHTML = DONGU.map(function (r, i) {
-    return '<tr>' +
-      '<td data-l="Adım"><b>' + (i + 1) + '. ' + esc(r.adim) + '</b></td>' +
-      '<td data-l="Ne olur">' + esc(r.ne) + '</td>' +
-      '<td data-l="Takvimde görünürlüğü">' + esc(r.tk) + '</td>' +
-    '</tr>';
-  }).join('');
-
-  /* ---- §13.1 TÜR SÖZLÜĞÜ -------------------------------------------------
-     Veride 7 tür var; burada HERKESE AÇIK 6 tür kart olarak çiziliyor.
-     7. tür (kuruma özel kapalı oturum) bu ızgaraya alınmadı: (a) tanımı gereği
-     ayrıntısı gösterilemez (§24.2) ve hemen alttaki erişim kuralı bölümünde
-     ayrıca anlatılıyor, (b) 7 kart hiçbir sütun sayısında tam satır vermiyor —
-     3 sütunda 3+3+1 yarım satır bırakırdı (§23.2). 6 kart 3 ve 2 sütunda tam
-     satır olur; D.sigdir zaten sütun sayısını ölçüp tam katına oturtur. */
-  var TUR_KARTLARI = D.etkinlikTurleri.filter(function (t) { return t.slug !== 'kapali-oturum'; });
-  var TUR_ACIKLAMA = {
-    'canli-uygulama': 'Şefle aynı anda uygulama yapılan canlı oturum. Malzeme ve ekipman listesi önceden verilir; takvimde "Atölye" olarak görünür.',
-    'soylesi':        'Şef ya da akademisyenle konu odaklı söyleşi. Uygulama yoktur; takvimde "Etkinlik" olarak görünür.',
-    'panel':          'Birden fazla konuşmacının bir konuyu tartıştığı açık oturum. Takvimde "Etkinlik" olarak görünür.',
-    'yuz-yuze':       'Kurumun uygulama mutfağında yapılan yüz yüze atölye. Konum satırda yazılıdır; takvimde "Atölye" olarak görünür.',
-    'yarisma':        'Öğrenci projelerinin jüri ve kurum yetkilileri önünde sunulduğu gün. Takvimde "Etkinlik" olarak görünür.',
-    'acik-ders':      'Programı ya da eğitimi tanıtan, kayıt gerektirmeyen açık oturum. Takvimde "Etkinlik" olarak görünür.'
-  };
-  D.sigdir(document.getElementById('turGrid'), TUR_KARTLARI, function (t) {
-    return '<div class="ak-card" role="group" aria-label="' + esc(t.ad) + '">' +
-      '<span class="ak-ico"><i class="fa-solid ' + esc(t.ikon) + '" aria-hidden="true"></i></span>' +
-      '<h3>' + esc(t.ad) + '</h3>' +
-      '<p>' + esc(TUR_ACIKLAMA[t.slug] || '') + '</p>' +
-    '</div>';
-  }, { min: 4, max: 6 });
-
-  /* ---- §12.3 KİŞİSEL ŞERİT — yalnız body.is-auth ------------------------
-     ⚠ EKSİK VERİ: veri katmanında "kullanıcı şu oturuma kayıtlı" diyen bir
-     oturum-kaydı koleksiyonu YOK (D.programKayitlari program düzeyinde,
-     D.ilerlemeler eğitim düzeyinde). Bu yüzden kişisel sayı UYDURULMADI;
-     kullanıcının program kayıtlarından TÜRETİLDİ ve metinde de böyle anlatıldı.
-     §18.3'e göre "Kabul" ve "Devam Ediyor" kayıtlı sayılır, "Başvurdu" sayılmaz —
-     ikisi ayrı ayrı raporlanıyor ki sayı yanıltmasın. */
-  var BENIM = KAYITLAR.filter(function (k) {
-    return k.programId && D.programKaydi(k.programId) && k.tarih >= BUGUN;
-  });
-  var kayitli = BENIM.filter(function (k) { return D.programKaydi(k.programId).durum !== 'basvurdu'; });
-  var basvuru = BENIM.length - kayitli.length;
-
-  var ozetEl = document.getElementById('takvimimOzet');
-  if (ozetEl) {
-    ozetEl.innerHTML = 'Kayıtlı olduğun programlardan takvimine <b>' + kayitli.length +
-      '</b> tarih düşüyor' +
-      (basvuru ? '; başvurun sürerken bilgi amaçlı listelenen <b>' + basvuru + '</b> tarih daha var' : '') +
-      '. Hatırlatma, takvime ekleme ve katılım bağlantıları Takvimim bölümünde.';
-  }
-
-  var PSTAT = {                                  /* §23.3: renk yanında İKON + METİN */
-    devam:      { sinif: 'ok',   ikon: 'fa-circle-play',  ad: 'Devam ediyor' },
-    kabul:      { sinif: 'wait', ikon: 'fa-circle-check', ad: 'Kabul edildi' },
-    basvurdu:   { sinif: 'off',  ikon: 'fa-hourglass-half', ad: 'Başvuru sürüyor' },
-    tamamlandi: { sinif: 'ok',   ikon: 'fa-flag-checkered', ad: 'Tamamlandı' }
-  };
-  var benimEl = document.getElementById('takvimimListe');
-  if (benimEl) {
-    /* En yakın 5 tarih; tamamı Kampüsüm › Takvimim'de. Liste (kart ızgarası
-       değil) olduğu için yarım satır kuralı işlemez. */
-    benimEl.innerHTML = BENIM.slice(0, 5).map(function (k) {
-      var kayit = D.programKaydi(k.programId);
-      var d = PSTAT[kayit.durum] || PSTAT.basvurdu;
-      var pr = D.program(k.programId);
-      var ic =
-        '<span class="bsv-info"><b>' + esc(k.ad) + '</b>' +
-        '<span>' + esc(D.tarih(k.tarih) + (k.saat ? ' · ' + k.saat : '') +
-                       (pr ? ' · ' + pr.ad : '')) + '</span></span>' +
-        '<span class="pstat ' + d.sinif + '"><i class="fa-solid ' + d.ikon + '" aria-hidden="true"></i> ' + esc(d.ad) + '</span>';
-      /* maskeli kapalı oturum burada da bağlantı taşımaz (§24.2) */
-      if (k.kapali || !k.href) return '<div class="bsv-row">' + ic + '</div>';
-      return '<a class="bsv-row" href="' + esc(k.href) + '">' + ic + '</a>';
+  /* --- facet paneli --------------------------------------------------------- */
+  function facetKur(st) {
+    $('#facetler').innerHTML = GRUPLAR.map(function (g) {
+      var ops = secenekler(g), aktif = st[g.key].length, kisalt = g.kisalt || 0;
+      var satir = ops.map(function (o, i) {
+        var n = sayac(st, g, o.slug), isaretli = st[g.key].indexOf(o.slug) > -1;
+        var xtra = (kisalt && i >= kisalt && !isaretli) ? ' xtra' : '';
+        return '<label class="fct-row' + xtra + '">' +
+          '<input type="checkbox" data-g="' + esc(g.key) + '" value="' + esc(o.slug) + '"' +
+            (isaretli ? ' checked' : '') + (n === 0 && !isaretli ? ' disabled' : '') + ' />' +
+          '<span class="cbx"></span><span class="ft">' + esc(o.ad) + '</span>' +
+          '<span class="fcnt">' + n + '</span></label>';
+      }).join('');
+      return '<div class="fct' + (g.acik || aktif ? ' open' : '') + (aktif ? ' has-active' : '') +
+             '" data-group="' + esc(g.ad) + '">' +
+        '<button class="fct-head" type="button">' + esc(g.ad) +
+          ' <span class="fct-dot">' + aktif + '</span><i class="fa-solid fa-chevron-down fct-car"></i></button>' +
+        '<div class="fct-body">' + satir +
+        (kisalt && ops.length > kisalt
+          ? '<button class="fct-more" type="button">Tümünü göster (' + ops.length + ') <i class="fa-solid fa-chevron-down"></i></button>' : '') +
+        '</div></div>';
     }).join('');
   }
 
-  /* ---- ilk yükleme ------------------------------------------------------- */
-  urldenOku();
-  urlYaz(true);          /* replaceState: bilinmeyen/eksik parametre normalize edilir */
-  ciz();
+  /* --- aktif filtre chip'leri ---------------------------------------------- */
+  function chipsKur(st) {
+    var c = [];
+    if (st.q) c.push({ t: '<i class="fa-solid fa-magnifying-glass"></i> “' + esc(st.q) + '”', g: 'q', v: '' });
+    GRUPLAR.forEach(function (g) {
+      st[g.key].forEach(function (v) {
+        var ad = v;
+        secenekler(g).forEach(function (o) { if (o.slug === v) ad = o.ad; });
+        c.push({ t: esc(g.ad) + ': ' + esc(ad), g: g.key, v: v });
+      });
+    });
+    (C.bayraklar || []).forEach(function (b) {
+      if (st[b]) c.push({ t: esc((C.bayrakAd && C.bayrakAd[b]) || b), g: b, v: '1' });
+    });
+    var el = $('#fchips');
+    if (!c.length) { el.innerHTML = ''; el.hidden = true; return; }
+    el.hidden = false;
+    el.innerHTML = c.map(function (x) {
+      return '<button class="fchip" type="button" data-rm-g="' + esc(x.g) + '" data-rm-v="' + esc(x.v) + '">' +
+        x.t + '<span class="x"><i class="fa-solid fa-xmark"></i></span></button>';
+    }).join('') + '<button class="fchips-clear" type="button" data-clear>Tümünü Temizle</button>';
+  }
+
+  /* --- sayfalama ----------------------------------------------------------- */
+  function pagiKur(st, toplam) {
+    var say = Math.max(1, Math.ceil(toplam / SAYFA_BOY)), el = $('#pagi');
+    if (!el) return;
+    if (say <= 1) { el.innerHTML = ''; return; }
+    var h = '<button class="pg arrow" type="button" data-p="' + (st.sayfa - 1) + '"' +
+            (st.sayfa === 1 ? ' disabled' : '') + ' aria-label="Önceki sayfa"><i class="fa-solid fa-chevron-left"></i></button>';
+    for (var i = 1; i <= say; i++) {
+      h += '<button class="pg' + (i === st.sayfa ? ' active' : '') + '" type="button" data-p="' + i + '"' +
+           (i === st.sayfa ? ' aria-current="page"' : '') + '>' + i + '</button>';
+    }
+    h += '<button class="pg arrow" type="button" data-p="' + (st.sayfa + 1) + '"' +
+         (st.sayfa === say ? ' disabled' : '') + ' aria-label="Sonraki sayfa"><i class="fa-solid fa-chevron-right"></i></button>' +
+         '<p class="pagi-note">' + toplam + ' ' + BIRIM + 'in ' + Math.min(toplam, (st.sayfa - 1) * SAYFA_BOY + 1) +
+         '–' + Math.min(toplam, st.sayfa * SAYFA_BOY) + ' arası gösteriliyor</p>';
+    el.innerHTML = h;
+  }
+
+  /* --- koleksiyon rayı ------------------------------------------------------ */
+  function kollKur(st) {
+    var el = $('#kollTrack');
+    if (!el || !C.koleksiyonlar) return;
+    el.innerHTML = C.koleksiyonlar.map(function (k) {
+      var anahtar = Object.keys(k.kri)[0], deger = k.kri[anahtar];
+      var bayrak = (C.bayraklar || []).indexOf(anahtar) > -1;
+      var acik = bayrak ? !!st[anahtar] : (st[anahtar] || []).indexOf(deger) > -1;
+      var g = bosDurum();
+      if (bayrak) g[anahtar] = true; else g[anahtar] = [deger];
+      return '<a class="koll' + (acik ? ' is-on' : '') + '" href="?' + anahtar + '=' + encodeURIComponent(deger) + '">' +
+        '<i class="fa-solid ' + esc(k.ikon) + '"></i><span>' + esc(k.ad) +
+        '<small>' + suz(g).length + ' ' + BIRIM + '</small></span></a>';
+    }).join('');
+  }
+
+  /* --- ana çizim ----------------------------------------------------------- */
+  var st;
+  function ciz(urlYaz, degistir) {
+    facetKur(st); chipsKur(st); kollKur(st);
+
+    var sonuc = sirala(suz(st), st.sort);
+    var say = Math.max(1, Math.ceil(sonuc.length / SAYFA_BOY));
+    if (st.sayfa > say) st.sayfa = say;
+    var dilim = sonuc.slice((st.sayfa - 1) * SAYFA_BOY, st.sayfa * SAYFA_BOY);
+
+    var yuk = $('#lstLoad'); if (yuk) yuk.classList.remove('show');
+    $('#lstGrid').innerHTML = dilim.map(function (k) { return C.kart(k, D); }).join('');
+    $('#lstEmpty').classList.toggle('show', sonuc.length === 0);
+    $('#lstGrid').style.display = sonuc.length ? '' : 'none';
+
+    $('#lstSum').innerHTML = '<b>' + sonuc.length + ' ' + BIRIM + '</b> bulundu' +
+      (st.q ? ' — <span class="q">“' + esc(st.q) + '”</span> araması için' : '');
+
+    var aktif = GRUPLAR.reduce(function (t, g) { return t + st[g.key].length; }, 0) +
+                (C.bayraklar || []).filter(function (b) { return st[b]; }).length;
+    var fc = $('#filCount');
+    if (fc) { fc.textContent = aktif; fc.hidden = aktif === 0; }
+    var sa = $('#sheetApply');
+    if (sa) sa.textContent = sonuc.length + ' Sonucu Göster';
+
+    pagiKur(st, sonuc.length);
+    if (C.cizimSonrasi) C.cizimSonrasi(st, sonuc, D);
+    if (urlYaz) durumYaz(st, degistir);
+  }
+
+  /* --- kurulum ------------------------------------------------------------- */
+  if (C.heroStat && $('#heroStats')) $('#heroStats').innerHTML = C.heroStat(D);
+
+  st = durumOku();
+  if (st.q) { $('#crsSearchInput').value = st.q; $('#crsSearch').classList.add('has-q'); }
+  $$('#sortDd .sort-menu button').forEach(function (b) {
+    var on = b.getAttribute('data-sort') === st.sort;
+    b.classList.toggle('active', on);
+    if (on) $('#sortCur').textContent = b.textContent.trim();
+  });
+  ciz(true, true);
+  if (C.kurulumSonrasi) C.kurulumSonrasi(D);
+
+  /* --- olaylar ------------------------------------------------------------- */
+  $('#facetler').addEventListener('change', function (ev) {
+    var i = ev.target;
+    if (i.tagName !== 'INPUT') return;
+    var a = st[i.getAttribute('data-g')], k = a.indexOf(i.value);
+    if (i.checked) { if (k === -1) a.push(i.value); } else if (k > -1) a.splice(k, 1);
+    st.sayfa = 1; ciz(true);
+  });
+  $('#facetler').addEventListener('click', function (ev) {
+    var h = ev.target.closest('.fct-head');
+    if (h) { h.parentNode.classList.toggle('open'); return; }
+    var m = ev.target.closest('.fct-more');
+    if (m) m.closest('.fct').classList.toggle('more-open');
+  });
+
+  document.addEventListener('click', function (ev) {
+    var rm = ev.target.closest('[data-rm-g]');
+    if (rm) {
+      var g = rm.getAttribute('data-rm-g'), v = rm.getAttribute('data-rm-v');
+      if (g === 'q') { st.q = ''; $('#crsSearchInput').value = ''; $('#crsSearch').classList.remove('has-q'); }
+      else if ((C.bayraklar || []).indexOf(g) > -1) st[g] = false;
+      else { var a = st[g], i = a.indexOf(v); if (i > -1) a.splice(i, 1); }
+      st.sayfa = 1; ciz(true); return;
+    }
+    if (ev.target.closest('[data-clear]')) {
+      var b = bosDurum();
+      Object.keys(b).forEach(function (k) { st[k] = b[k]; });
+      st.sayfa = 1;
+      $('#crsSearchInput').value = ''; $('#crsSearch').classList.remove('has-q');
+      ciz(true);
+    }
+  });
+
+  var inp = $('#crsSearchInput'), zaman;
+  inp.addEventListener('input', function () {
+    clearTimeout(zaman);
+    zaman = setTimeout(function () {
+      st.q = inp.value.trim(); st.sayfa = 1;
+      $('#crsSearch').classList.toggle('has-q', !!st.q);
+      ciz(true);
+    }, 180);
+  });
+  inp.addEventListener('keydown', function (e) { if (e.key === 'Escape') { inp.value = ''; inp.dispatchEvent(new Event('input')); } });
+  $('#crsSearchClear').addEventListener('click', function () { inp.value = ''; inp.dispatchEvent(new Event('input')); });
+
+  $('#sortBtn').addEventListener('click', function () {
+    var dd = $('#sortDd'); dd.classList.toggle('open');
+    $('#sortBtn').setAttribute('aria-expanded', dd.classList.contains('open') ? 'true' : 'false');
+  });
+  $$('#sortDd .sort-menu button').forEach(function (b) {
+    b.addEventListener('click', function () {
+      st.sort = b.getAttribute('data-sort'); st.sayfa = 1;
+      $('#sortCur').textContent = b.textContent.trim();
+      $$('#sortDd .sort-menu button').forEach(function (x) { x.classList.toggle('active', x === b); });
+      $('#sortDd').classList.remove('open');
+      $('#sortBtn').setAttribute('aria-expanded', 'false');
+      ciz(true);
+    });
+  });
+  document.addEventListener('click', function (e) {
+    if (!e.target.closest('#sortDd')) {
+      $('#sortDd').classList.remove('open');
+      $('#sortBtn').setAttribute('aria-expanded', 'false');
+    }
+  });
+
+  if ($('#pagi')) $('#pagi').addEventListener('click', function (ev) {
+    var b = ev.target.closest('.pg[data-p]');
+    if (!b || b.disabled) return;
+    st.sayfa = parseInt(b.getAttribute('data-p'), 10);
+    ciz(true);
+    $('.lst-bar').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+
+  /* ≤1024 filtre çekmecesi */
+  function sheet(ac) {
+    $('#lstSide').classList.toggle('open', ac);
+    $('#sheetOverlay').classList.toggle('open', ac);
+    document.body.style.overflow = ac ? 'hidden' : '';
+  }
+  $('#btnFilter').addEventListener('click', function () { sheet(true); });
+  $('#sheetClose').addEventListener('click', function () { sheet(false); });
+  $('#sheetOverlay').addEventListener('click', function () { sheet(false); });
+  $('#sheetApply').addEventListener('click', function () { sheet(false); });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') sheet(false); });
+  if (location.search.indexOf('sheet=1') > -1) sheet(true);
+
+  /* geri/ileri tuşu — filtreler korunur (§17.2) */
+  window.addEventListener('popstate', function () {
+    var y = durumOku();
+    Object.keys(y).forEach(function (k) { st[k] = y[k]; });
+    $('#crsSearchInput').value = st.q;
+    $('#crsSearch').classList.toggle('has-q', !!st.q);
+    ciz(false);
+  });
+})();
+
+/* Eğitmen Dizini — sayfaya özel bloklar (facet motorundan AYRI):
+   Danışma Kurulu (§4.5, §11.2) · eğitmen rol sözlüğü (§11.1) · girişli
+   kullanıcıya kişisel şerit (§12.1).
+   Filtre/sıralama/sayfalama/koleksiyon rayı `_facet-engine.js` + `.cfg.js`
+   işidir; burada TEKRARLANMAZ. */
+(function () {
+  var D = window.DC;
+  if (!D) return;
+  var esc = D.esc, img = D.img;
+  var $ = function (s) { return document.querySelector(s); };
+
+  /* Satır avatarı: `.cc-ava` yalnız `.crs-chef` içinde biçimlenir (kabuk CSS'i),
+     bu yüzden sarmalayıcı korunur; ölçü satıra göre satır içi ayarlanır.
+     Yeni sınıf üretilmedi (§26 kısıtı). */
+  function avatar(e) {
+    return '<span class="crs-chef" style="margin-bottom:0;flex:none">' +
+      '<span class="cc-ava" style="background-image:url(\'' + esc(img(e.foto, 160)) + '\');width:44px;height:44px"></span>' +
+      '</span>';
+  }
+
+  /* Kurum adı YALNIZ onay kaydı varsa yazılır (§26.13). Onay kaydı yoksa
+     unvan tek başına kalır; "üniversite onaylı" türü bir ima üretilmez. */
+  function unvanSatiri(e) {
+    var kurum = (e.kurumId && D.onayliMi(e.kurumId)) ? D.kurum(e.kurumId) : null;
+    return e.unvan + (kurum ? ' · ' + kurum.ad : '');
+  }
+
+  /* ---- 1) AKADEMİK VE SEKTÖREL DANIŞMA KURULU (§4.5, §11.2) --------------
+     Üyelik ölçütü: kurulRolleri içinde `danisma-kurulu` ya da `akademik-onay`.
+     Durum rozetleri renk YANINDA ikon+metin taşır (§23.3). */
+  var KURUL_ROL = {
+    'danisma-kurulu': { ad: 'Danışma Kurulu üyesi', ikon: 'fa-users-gear',      sinif: 'ok' },
+    'akademik-onay':  { ad: 'Akademik onay yetkisi', ikon: 'fa-stamp',          sinif: 'ok' },
+    'degerlendirici': { ad: 'Değerlendirici',        ikon: 'fa-clipboard-check', sinif: 'wait' },
+    'mentor':         { ad: 'Mentor',                ikon: 'fa-compass',         sinif: 'wait' }
+  };
+
+  function kurulRozet(slug) {
+    var r = KURUL_ROL[slug];
+    if (!r) return '';
+    return '<span class="pstat ' + r.sinif + '"><i class="fa-solid ' + r.ikon +
+           '" aria-hidden="true"></i> ' + esc(r.ad) + '</span>';
+  }
+
+  function kurulSatiri(e) {
+    var isler = D.egitmenIsleri(e);
+    return '<a class="bsv-row" href="' + esc(D.link.egitmen(e.slug)) + '">' +
+      avatar(e) +
+      '<span class="bsv-info">' +
+        '<b>' + esc(e.ad) + '</b>' +
+        '<span>' + esc(unvanSatiri(e)) + ' · ' + isler.programlar.length + ' programda görevli</span>' +
+      '</span>' +
+      (e.kurulRolleri || []).map(kurulRozet).join('') +
+      '<i class="fa-solid fa-chevron-right" aria-hidden="true" style="color:var(--muted);font-size:12px"></i>' +
+      '</a>';
+  }
+
+  var kurulUyeleri = D.egitmenler.filter(function (e) {
+    var r = e.kurulRolleri || [];
+    return r.indexOf('danisma-kurulu') > -1 || r.indexOf('akademik-onay') > -1;
+  });
+
+  var kurulEl = $('#kurulListe');
+  if (kurulEl) {
+    kurulEl.innerHTML = kurulUyeleri.length
+      ? kurulUyeleri.map(kurulSatiri).join('')
+      : '<p class="fk-help"><i class="fa-solid fa-circle-info" aria-hidden="true"></i>' +
+        '<span>Danışma Kurulu üyeleri henüz yayımlanmadı. Kurul kurulduğunda üyeler adı, ' +
+        'unvanı ve onay yetkisiyle burada listelenir.</span></p>';
+    /* diğer görev türleri dizinde süzülebilir — kurul dışı görevler kaybolmasın */
+    kurulEl.insertAdjacentHTML('beforeend',
+      '<p class="fk-help" style="margin-top:4px">' +
+      '<i class="fa-solid fa-arrow-right" aria-hidden="true"></i>' +
+      '<span>Kurul dışındaki görevler için dizini süz: ' +
+      '<a href="?kurul=degerlendirici">Değerlendiriciler</a> · ' +
+      '<a href="?kurul=mentor">Mentorlar</a></span></p>');
+  }
+
+  /* ---- 2) EĞİTMEN ROL SÖZLÜĞÜ (§11.1) -----------------------------------
+     🔴 D.egitmenRolleri — platform rol değiştiricisinin listesi (D.roller)
+     DEĞİLDİR. Kart tıklaması dizini o rolle süzer. */
+  function rolKarti(r) {
+    var adet = D.egitmenler.filter(function (e) { return e.rol === r.slug; }).length;
+    return '<a class="ak-card" href="?rol=' + encodeURIComponent(r.slug) + '">' +
+      '<div class="ak-ico"><i class="fa-solid ' + esc(r.ikon) + '" aria-hidden="true"></i></div>' +
+      '<h3>' + esc(r.ad) + '</h3>' +
+      '<p>' + esc(r.yetki) + '</p>' +
+      '<p style="margin-top:10px;color:var(--tomato);font-weight:700">' +
+        '<i class="fa-solid fa-user-group" aria-hidden="true"></i> Dizinde ' + adet + ' eğitmen</p>' +
+      '</a>';
+  }
+
+  /* §23.2: yarım satır bırakılmaz — kart sayısı sütun sayısına göre ayarlanır */
+  var rolEl = $('#rolGrid');
+  if (rolEl) D.sigdir(rolEl, D.egitmenRolleri, rolKarti, { min: 4, max: 6 });
+
+  /* ---- 3) KİŞİSEL ŞERİT — yalnız giriş yapınca (§12.1) -------------------
+     CSS `.kisi-sec`i ziyaretçiye zaten gizler; veri de boşuna hesaplanmaz. */
+  if (!document.body.classList.contains('is-auth')) return;
+
+  /* 3a) devam ettiğin eğitimlerin eğitmenleri (aynı eğitmen bir kez) */
+  var gorulen = {}, benimEgitmenler = [];
+  D.ilerlemeler.filter(function (i) { return i.kayitli; }).forEach(function (i) {
+    var eg = D.egitim(i.egitimId);
+    if (!eg) return;
+    var kisi = D.egitmen(eg.egitmenId);
+    if (!kisi || gorulen[kisi.id]) return;
+    gorulen[kisi.id] = 1;
+    benimEgitmenler.push({ kisi: kisi, egitim: eg, yuzde: D.yuzde(eg.id) });
+  });
+
+  var egEl = $('#kisiEgitmen');
+  if (egEl) {
+    egEl.innerHTML = benimEgitmenler.length ? benimEgitmenler.map(function (x) {
+      var tamam = x.yuzde >= 100;
+      return '<a class="bsv-row" href="' + esc(D.link.egitmen(x.kisi.slug)) + '">' +
+        avatar(x.kisi) +
+        '<span class="bsv-info">' +
+          '<b>' + esc(x.kisi.ad) + '</b>' +
+          '<span>' + esc(x.egitim.ad) + ' · ' + esc(D.etiket('egitmenRolleri', x.kisi.rol)) + '</span>' +
+        '</span>' +
+        '<span class="pstat ' + (tamam ? 'ok' : 'wait') + '">' +
+          '<i class="fa-solid ' + (tamam ? 'fa-circle-check' : 'fa-play') + '" aria-hidden="true"></i> ' +
+          (tamam ? 'Tamamlandı' : '%' + x.yuzde + ' tamamlandı') + '</span>' +
+        '<i class="fa-solid fa-chevron-right" aria-hidden="true" style="color:var(--muted);font-size:12px"></i>' +
+        '</a>';
+    }).join('')
+      : '<p class="fk-help"><i class="fa-solid fa-circle-info" aria-hidden="true"></i>' +
+        '<span>Henüz bir eğitime kayıtlı değilsin. Dizinden bir eğitmen seçip verdiği ' +
+        'eğitimlere bakabilir ya da <a href="dadacampus-egitimler-v1.html">Eğitimler Merkezi</a>' +
+        'nden başlayabilirsin.</span></p>';
+  }
+
+  /* 3b) eğitmeninden gelen yanıtlar — yanıtı olan sorular (§7.4/§16.1) */
+  var yanitlar = D.sorular.filter(function (s) { return s.yanitlayanId && s.yanit; });
+
+  var ynEl = $('#kisiYanit');
+  if (ynEl) {
+    ynEl.innerHTML = yanitlar.length ? yanitlar.map(function (s) {
+      var kisi = D.egitmen(s.yanitlayanId), eg = D.egitim(s.egitimId);
+      if (!kisi || !eg) return '';
+      return '<a class="bsv-row" href="' + esc(D.link.ders(eg.slug, s.ders)) + '">' +
+        avatar(kisi) +
+        '<span class="bsv-info">' +
+          '<b>' + esc(kisi.ad) + ' yanıtladı</b>' +
+          '<span>' + esc(s.soru) + '</span>' +
+        '</span>' +
+        (s.enIyi ? '<span class="pstat ok"><i class="fa-solid fa-star" aria-hidden="true"></i> En iyi yanıt</span>' : '') +
+        '<span class="pstat off"><i class="fa-solid fa-clapperboard" aria-hidden="true"></i> ' +
+          esc(eg.ad) + ' · Ders ' + s.ders + '</span>' +
+        '</a>';
+    }).join('')
+      : '<p class="fk-help"><i class="fa-solid fa-circle-info" aria-hidden="true"></i>' +
+        '<span>Eğitmenine sorduğun bir soru henüz yanıtlanmadı. Yanıt geldiğinde burada ve ' +
+        'Kampüsüm bildirimlerinde görünür.</span></p>';
+  }
 })();
 </script>
 </body>
