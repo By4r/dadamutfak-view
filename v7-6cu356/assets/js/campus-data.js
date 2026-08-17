@@ -1370,7 +1370,235 @@
   ];
 
   /* ======================================================================
-     14. YARDIMCILAR — tek kapı (docs/PLAN.md §1)
+     14. EĞİTMEN PANELİ VERİSİ (Faz 5, §11.3–11.4)
+     ----------------------------------------------------------------------
+     🔴 §26.10 / §26.2: DadaCampus eğitmeni ile DadaGastro tarif şefi AYRI
+     rollerdir; başvuru ve panel karışmaz. Buradaki başvuru akışı §11.3'ün
+     kendi durum dizisidir (Taslak → Gönderildi → Ön İnceleme → Görüşme →
+     Onay/Red → Sözleşme → Aktif) ve `sef-ol-v1.html` ile ilgisi yoktur.
+     ====================================================================== */
+
+  var egitmenKullanicisi = {
+    egitmenId: 'eg-01',                /* Şef Mehmet Aydın — panel demo kullanıcısı */
+    basvuruDurumu: 'aktif',
+    /* §11.4 — hakediş ve ödeme ayrı izindir; içerik ve değerlendirme ayrı */
+    izinler: { icerik: true, canliDers: true, kohort: true, degerlendirme: true,
+               rubrik: true, duyuru: true, analitik: true, hakedis: true, belge: true }
+  };
+
+  /* §11.3 başvuru durum dizisi — sıra ÖNEMLİ, arayüz bu sırayı gösterir */
+  var egitmenBasvuruDurumlari = [
+    { slug: 'taslak',      ad: 'Taslak',        ikon: 'fa-pen',              sinif: 'off',
+      not: 'Kaydettin, henüz göndermedin.' },
+    { slug: 'gonderildi',  ad: 'Gönderildi',    ikon: 'fa-paper-plane',      sinif: 'wait',
+      not: 'Başvurun sıraya alındı.' },
+    { slug: 'on-inceleme', ad: 'Ön İnceleme',   ikon: 'fa-magnifying-glass', sinif: 'wait',
+      not: 'Belgeler ve yeterlilik kontrol ediliyor.' },
+    { slug: 'gorusme',     ad: 'Görüşme',       ikon: 'fa-comments',         sinif: 'wait',
+      not: 'Öğretim yaklaşımı ve konu planı görüşülüyor.' },
+    { slug: 'onay',        ad: 'Onaylandı',     ikon: 'fa-circle-check',     sinif: 'ok',
+      not: 'Başvurun kabul edildi.' },
+    { slug: 'red',         ad: 'Reddedildi',    ikon: 'fa-circle-xmark',     sinif: 'warm',
+      not: 'Gerekçe yazılı olarak bildirilir; yeniden başvuru hakkın vardır.' },
+    { slug: 'sozlesme',    ad: 'Sözleşme',      ikon: 'fa-file-signature',   sinif: 'wait',
+      not: 'İçerik kullanım hakkı, telif ve süre koşulları imzalanıyor.' },
+    { slug: 'aktif',       ad: 'Aktif',         ikon: 'fa-circle-play',      sinif: 'ok',
+      not: 'Panel erişimin açık.' },
+    { slug: 'pasif',       ad: 'Pasif',         ikon: 'fa-pause',            sinif: 'off',
+      not: 'Sözleşme dönemi sona erdi veya ara verildi.' }
+  ];
+
+  /* §11.4 içerik sürüm durumları (Taslak → İnceleme → Yayında → Arşiv) */
+  var icerikDurumlari = [
+    { slug: 'taslak',     ad: 'Taslak',            ikon: 'fa-pen',            sinif: 'off' },
+    { slug: 'inceleme',   ad: 'Editoryal İnceleme', ikon: 'fa-magnifying-glass', sinif: 'wait' },
+    { slug: 'akademik',   ad: 'Akademik İnceleme',  ikon: 'fa-graduation-cap', sinif: 'wait' },
+    { slug: 'kurum-onay', ad: 'Kurum Onayı',        ikon: 'fa-building-columns', sinif: 'wait' },
+    { slug: 'planlandi',  ad: 'Planlandı',          ikon: 'fa-calendar-check', sinif: 'wait' },
+    { slug: 'yayinda',    ad: 'Yayında',            ikon: 'fa-circle-check',   sinif: 'ok' },
+    { slug: 'arsiv',      ad: 'Arşiv',              ikon: 'fa-box-archive',    sinif: 'off' }
+  ];
+
+  /* Eğitmenin içerik kalemleri — §18.3 eğitim yaşam döngüsünde farklı adımlarda */
+  var egitmenIcerikleri = [
+    { id: 'ic-01', egitmenId: 'eg-01', egitimId: 'ed-01', ad: 'Sıfırdan Mutfak: Temel Teknikler Atölyesi',
+      durum: 'yayinda', surum: '1.0', sonGuncelleme: '2026-07-28', izlenme: 1840, tamamlama: 0.61, memnuniyet: 4.6 },
+    { id: 'ic-02', egitmenId: 'eg-01', egitimId: 'ed-03', ad: 'Et & Izgara Teknikleri: Dereceyi Tutturmak',
+      durum: 'yayinda', surum: '1.0', sonGuncelleme: '2026-07-22', izlenme: 1120, tamamlama: 0.54, memnuniyet: 4.7 },
+    { id: 'ic-03', egitmenId: 'eg-01', egitimId: null, ad: 'Sous-vide ve Düşük Sıcaklık Pişirme (yeni)',
+      durum: 'akademik', surum: '0.4', sonGuncelleme: '2026-08-12', izlenme: 0, tamamlama: null, memnuniyet: null },
+    { id: 'ic-04', egitmenId: 'eg-01', egitimId: null, ad: 'Izgara Teknikleri — 2. sürüm revizyonu',
+      durum: 'taslak', surum: '2.0', sonGuncelleme: '2026-08-16', izlenme: 0, tamamlama: null, memnuniyet: null }
+  ];
+
+  /* §11.4 hazır geri bildirim şablonları (rubrik kriterine bağlı) */
+  var geriBildirimSablonlari = [
+    { id: 'gb-01', kriter: 'Teknik doğruluk',    metin: 'Tekniğin adımları doğru sırada; kesit boyutları tutarlı. Bir sonraki denemede hızını değil tutarlılığını koru.' },
+    { id: 'gb-02', kriter: 'Hijyen ve güvenlik', metin: 'Çiğ ve pişmiş için ayrı tahta kullanımı doğru. Tezgah düzeni fotoğrafta görünmüyor; bir sonraki teslimde çalışma alanını da çek.' },
+    { id: 'gb-03', kriter: 'Süreç yönetimi',     metin: 'Mise en place tamamlanmadan pişirmeye geçilmiş. Tüm malzemeyi hazırlayıp öyle başlamak sonucu belirgin biçimde değiştirir.' },
+    { id: 'gb-04', kriter: 'Sunum ve görsel düzen', metin: 'Porsiyon dengeli ancak tabak kenarında iz var. Servis öncesi kenarı silmek sunumu tek adımda düzeltir.' },
+    { id: 'gb-05', kriter: 'Revizyon talebi',    metin: 'Teslimin kriterlerin bir kısmını karşılıyor; belirtilen adımı düzeltip yeni sürüm yükleyebilirsin. Revizyon hakkın duruyor.' }
+  ];
+
+  /* §11.4 sözleşme, hakediş ve ödeme — demo kayıt */
+  var egitmenSozlesmesi = {
+    egitmenId: 'eg-01', ref: 'SOZ-2026-112', baslangic: '2026-01-15', bitis: '2027-01-14',
+    icerikLisansi: 'Platform içi kullanım · sözleşme süresi + 12 ay arşiv erişimi',
+    gelirModeli: 'Eğitim satışında gelir paylaşımı + canlı atölye başına sabit ücret',
+    belgeDurumu: 'gecerli', belgeYenileme: '2026-12-01',
+    hakedis: [
+      { donem: '2026 Haziran', tutar: 18400, durum: 'odendi',   tarih: '2026-07-05' },
+      { donem: '2026 Temmuz',  tutar: 21250, durum: 'odendi',   tarih: '2026-08-05' },
+      { donem: '2026 Ağustos', tutar: 14900, durum: 'bekliyor', tarih: null }
+    ]
+  };
+
+  /* ======================================================================
+     15. TOPLULUK · PROJE · KARİYER (Faz 6, §16)
+     ----------------------------------------------------------------------
+     🔴 §16.1: kuruma özel KAPALI topluluk vardır — kohort dışı kullanıcıya
+     başlık bile içeriğiyle gösterilmez (§24.2). `kapali:true` olan konu
+     `DC.toplulukKonulari()` süzgecinden geçmeden basılmaz.
+     ====================================================================== */
+
+  var toplulukKonulari = [
+    { id: 'tp-01', kapsam: 'egitim', hedefId: 'ed-01', kapali: false,
+      baslik: 'Bıçak bileme taşı seçimi — hangi grit ile başlamalı?',
+      acanBas: 'E. Y.', tarih: '2026-08-14', yanit: 7, sabit: false,
+      enIyiYanitId: 'eg-01',
+      ozet: 'Çift taraflı taşta 1000/6000 mu yoksa 400/1000 mi başlangıç için doğru?' },
+    { id: 'tp-02', kapsam: 'egitim', hedefId: 'ed-01', kapali: false,
+      baslik: 'Duyuru: Modül 2 uygulama teslim tarihi bir hafta uzatıldı',
+      acanBas: 'Şef Mehmet Aydın', tarih: '2026-08-10', yanit: 0, sabit: true,
+      enIyiYanitId: null,
+      ozet: 'Canlı atölye tarihi değiştiği için teslim son tarihi 31 Ağustos oldu.' },
+    { id: 'tp-03', kapsam: 'egitim', hedefId: 'ed-02', kapali: false,
+      baslik: 'Ekşi maya buzdolabında kaç gün beslenmeden dayanır?',
+      acanBas: 'S. D.', tarih: '2026-08-09', yanit: 4, sabit: false,
+      enIyiYanitId: 'eg-03',
+      ozet: 'Tatile çıkacağım, mayayı ne yapmalıyım?' },
+    { id: 'tp-04', kapsam: 'program', hedefId: 'pr-02', kapali: false,
+      baslik: 'Bitirme projesi konusu nasıl seçilir?',
+      acanBas: 'M. K.', tarih: '2026-08-06', yanit: 3, sabit: false,
+      enIyiYanitId: 'eg-05',
+      ozet: 'Duyusal analiz mi yoksa karşılaştırmalı teknik mi daha uygun?' },
+    /* 🔴 kuruma özel kapalı topluluk — kohort dışına AYRINTISIYLA gösterilmez */
+    { id: 'tp-05', kapsam: 'kohort', hedefId: 'ko-01', kurumId: 'ku-01', kapali: true,
+      baslik: 'Kohort içi değerlendirme takvimi',
+      acanBas: 'Koordinatör', tarih: '2026-08-12', yanit: 5, sabit: true,
+      enIyiYanitId: null,
+      ozet: 'Yalnız kohort üyelerine açık.' },
+    { id: 'tp-06', kapsam: 'kohort', hedefId: 'ko-02', kurumId: 'ku-03', kapali: true,
+      baslik: 'Kooperatif mutfağı vardiya planı',
+      acanBas: 'Koordinatör', tarih: '2026-08-08', yanit: 9, sabit: false,
+      enIyiYanitId: null,
+      ozet: 'Yalnız kohort üyelerine açık.' }
+  ];
+
+  /* §16.1 sabitlenmiş kaynaklar — topluluk içinde üste tutturulan içerik */
+  var toplulukKaynaklari = [
+    { id: 'tk-01', kapsam: 'egitim', hedefId: 'ed-01', ad: 'Doğrama boyutları tablosu', tur: 'PDF' },
+    { id: 'tk-02', kapsam: 'egitim', hedefId: 'ed-01', ad: 'Uygulama teslim kontrol listesi', tur: 'PDF' },
+    { id: 'tk-03', kapsam: 'egitim', hedefId: 'ed-02', ad: 'Hidrasyon hesap kâğıdı', tur: 'PDF' },
+    { id: 'tk-04', kapsam: 'program', hedefId: 'pr-02', ad: 'Duyusal analiz panel kurulum notu', tur: 'PDF' }
+  ];
+
+  /* §16.1 topluluk kuralları — moderasyon ve bildirim */
+  var toplulukKurallari = [
+    'Soru sorarken hangi derste ve hangi adımda takıldığını yaz; bu, yanıtı hızlandırır.',
+    'Başkasının teslimini izni olmadan paylaşma (§24.3 öğrenci teslimlerinin kullanımı ayrı izne bağlıdır).',
+    'Ticari tanıtım, iş ilanı ve bağlantı paylaşımı Kariyer alanına aittir.',
+    'Uygunsuz içeriği bildir; bildirim moderasyon kaydına işlenir ve içerik inceleme süresince kısıtlanabilir.',
+    'Eğitmen yanıtı "en iyi yanıt" olarak işaretlenir ve konunun üstüne çıkar.',
+    'Kuruma özel kapalı topluluk içeriği kurum dışına taşınamaz (§24.2).'
+  ];
+
+  /* §16.2 ortak projeler — altı proje türü */
+  var projeler = [
+    { id: 'pj-01', slug: 'yerel-tarif-arsivi', tur: 'arsiv', ad: 'Yerel Tarif ve Ürün Arşivi',
+      ozet: 'Kaybolmakta olan yöresel tarifleri kaynağıyla birlikte kayda geçiren açık arşiv.',
+      kurumId: 'ku-03', programId: 'pr-03', durum: 'aktif',
+      katilimci: 24, cikti: '38 tarif kaydı, 12 üretici görüşmesi',
+      kapak: F.baharat, katilimKosulu: 'Kooperatif Mutfağı programına kayıtlı olmak' },
+    { id: 'pj-02', slug: 'bolgesel-gastronomi-haritasi', tur: 'harita', ad: 'Bölgesel Gastronomi Haritası',
+      ozet: 'Yöresel ürünün nerede, hangi mevsimde ve kim tarafından üretildiğini gösteren harita çalışması.',
+      kurumId: 'ku-01', programId: 'pr-02', durum: 'aktif',
+      katilimci: 18, cikti: '3 ilçe, 46 üretici kaydı',
+      kapak: F.dunya, katilimKosulu: 'Sürekli Eğitim Programı katılımcısı olmak' },
+    { id: 'pj-03', slug: 'atiksiz-mutfak-calismasi', tur: 'surdurulebilirlik', ad: 'Atıksız Mutfak Çalışması',
+      ozet: 'Mutfak atığını ölçen, azaltan ve yeniden değerlendiren uygulama seti.',
+      kurumId: 'ku-05', programId: 'pr-05', durum: 'aktif',
+      katilimci: 31, cikti: 'Ortalama %22 atık azalması (kurum ölçümü)',
+      kapak: F.sunum, katilimKosulu: 'Kurum kohortu üyesi olmak' },
+    { id: 'pj-04', slug: 'ogrenci-proje-yarismasi', tur: 'yarisma', ad: 'Öğrenci Proje Yarışması',
+      ozet: 'Gerçek bir problem, mentor eşliğinde çözüm ve jüri önünde sunum.',
+      kurumId: null, programId: 'pr-01', durum: 'kayit-acik',
+      katilimci: 0, cikti: 'Sunum günü 30 Kasım 2026',
+      kapak: F.temelMutfak, katilimKosulu: 'Herhangi bir programa kayıtlı olmak' },
+    { id: 'pj-05', slug: 'kurum-sektor-atolyesi', tur: 'atolye', ad: 'Kurum–Sektör Problem Çözme Atölyesi',
+      ozet: 'Bir işletmenin gerçek operasyon problemine ekip hâlinde çözüm geliştirme.',
+      kurumId: 'ku-05', programId: null, durum: 'yakinda',
+      katilimci: 0, cikti: 'Dönem sonunda uygulanabilir öneri raporu',
+      kapak: F.et, katilimKosulu: 'Davet usulü; kurum koordinatörü belirler' },
+    { id: 'pj-06', slug: 'dijital-sergi', tur: 'sergi', ad: 'Dijital Sergi ve Mezuniyet Sunumu',
+      ozet: 'Tamamlanan uygulamaların herkese açık dijital sergisi.',
+      kurumId: null, programId: null, durum: 'yakinda',
+      katilimci: 0, cikti: 'Portfolyodan seçilen çalışmalar',
+      kapak: F.pasta, katilimKosulu: 'Portfolyosunda kabul edilmiş çalışma bulunmak' }
+  ];
+
+  var projeTurleri = [
+    { slug: 'arsiv',             ad: 'Yerel tarif ve ürün arşivi',        ikon: 'fa-box-archive' },
+    { slug: 'harita',            ad: 'Bölgesel gastronomi haritası',      ikon: 'fa-map-location-dot' },
+    { slug: 'surdurulebilirlik', ad: 'Sürdürülebilir mutfak ve atık azaltma', ikon: 'fa-recycle' },
+    { slug: 'yarisma',           ad: 'Öğrenci proje yarışması',           ikon: 'fa-trophy' },
+    { slug: 'atolye',            ad: 'Kurum–sektör problem çözme atölyesi', ikon: 'fa-people-group' },
+    { slug: 'sergi',             ad: 'Dijital sergi ve mezuniyet sunumu', ikon: 'fa-images' }
+  ];
+
+  /* §16.3 kariyer ve fırsatlar — 🔴 ilan yalnız DOĞRULANMIŞ kurum/işletmeden */
+  var firsatlar = [
+    { id: 'fr-01', tur: 'staj', ad: 'Mutfak Stajı — Zeytin Otelleri Grubu',
+      kurumId: 'ku-05', sehir: 'Muğla', sure: '3 ay', tarih: '2026-09-15',
+      nitelik: ['Temel mutfak eğitimi tamamlanmış olmak', 'Hijyen belgesi'],
+      aciklama: 'Otel mutfağında rotasyonlu staj; her istasyonda iki hafta.', durum: 'acik' },
+    { id: 'fr-02', tur: 'is', ad: 'Pastane Komi — Nar Mutfak Sanatları Okulu uygulama mutfağı',
+      kurumId: 'ku-02', sehir: 'İzmir', sure: 'Tam zamanlı', tarih: '2026-10-01',
+      nitelik: ['Pastacılık eğitimi', 'Vardiyalı çalışabilmek'],
+      aciklama: 'Okulun uygulama mutfağında öğrenci gruplarına destek.', durum: 'acik' },
+    { id: 'fr-03', tur: 'mentor', ad: 'Mentor Görüşmesi — Mutfak Operasyonu ve Maliyet',
+      kurumId: null, mentorId: 'eg-06', sehir: 'Çevrim içi', sure: '45 dk', tarih: '2026-09-05',
+      nitelik: ['Program katılımcısı olmak'],
+      aciklama: 'Birebir görüşme; menü maliyeti ve porsiyon disiplini.', durum: 'acik' },
+    { id: 'fr-04', tur: 'portfolyo-gunu', ad: 'Portfolyo Günü — Güz Dönemi',
+      kurumId: 'ku-01', sehir: 'Yeşilova', sure: '1 gün', tarih: '2026-12-12',
+      nitelik: ['Portfolyoda en az üç kabul edilmiş çalışma'],
+      aciklama: 'Katılımcılar çalışmalarını sektör temsilcilerine sunar.', durum: 'yakinda' },
+    { id: 'fr-05', tur: 'etkinlik', ad: 'Sektör Buluşması — Yerel Tedarik',
+      kurumId: 'ku-03', sehir: 'Yeşilova', sure: '3 saat', tarih: '2026-10-08',
+      nitelik: [], aciklama: 'Üretici ve işletme temsilcileriyle açık buluşma.', durum: 'acik' },
+    /* onaysız kurumdan gelen ilan — YAYIMLANMAZ (§16.3 "kurum/işletme doğrulamasıyla") */
+    { id: 'fr-06', tur: 'is', ad: 'Aşçı Yardımcısı — Altınkum Üniversitesi yemekhanesi',
+      kurumId: 'ku-06', sehir: 'Aydın', sure: 'Tam zamanlı', tarih: '2026-09-20',
+      nitelik: [], aciklama: 'Doğrulanmamış kurum ilanı.', durum: 'acik' }
+  ];
+
+  var firsatTurleri = [
+    { slug: 'staj',           ad: 'Staj',                ikon: 'fa-user-graduate' },
+    { slug: 'is',             ad: 'İş İlanı',            ikon: 'fa-briefcase' },
+    { slug: 'mentor',         ad: 'Mentor Görüşmesi',    ikon: 'fa-compass' },
+    { slug: 'portfolyo-gunu', ad: 'Portfolyo Günü',      ikon: 'fa-images' },
+    { slug: 'etkinlik',       ad: 'Sektör Etkinliği',    ikon: 'fa-users' }
+  ];
+
+  /* Kullanıcının kariyer başvuruları — Kampüsüm içinde takip edilir (§16.3) */
+  var firsatBasvurulari = [
+    { firsatId: 'fr-01', durum: 'inceleniyor', tarih: '2026-08-13' },
+    { firsatId: 'fr-03', durum: 'kabul',       tarih: '2026-08-05' }
+  ];
+
+  /* ======================================================================
+     16. YARDIMCILAR — tek kapı (docs/PLAN.md §1)
      ====================================================================== */
 
   var DC = {
@@ -1405,6 +1633,24 @@
     kurumDosyalari: kurumDosyalari,
     kurumLisanslari: kurumLisanslari,
     islemGecmisi: islemGecmisi,
+
+    /* eğitmen paneli (§11.3–11.4) — DadaGastro "Şef Ol" akışından AYRI (§26.10) */
+    egitmenKullanicisi: egitmenKullanicisi,
+    egitmenBasvuruDurumlari: egitmenBasvuruDurumlari,
+    icerikDurumlari: icerikDurumlari,
+    egitmenIcerikleri: egitmenIcerikleri,
+    geriBildirimSablonlari: geriBildirimSablonlari,
+    egitmenSozlesmesi: egitmenSozlesmesi,
+
+    /* topluluk · proje · kariyer (§16) */
+    toplulukKonulari: toplulukKonulari,
+    toplulukKaynaklari: toplulukKaynaklari,
+    toplulukKurallari: toplulukKurallari,
+    projeler: projeler,
+    projeTurleri: projeTurleri,
+    firsatlar: firsatlar,
+    firsatTurleri: firsatTurleri,
+    firsatBasvurulari: firsatBasvurulari,
 
     /* referans listeleri */
     konuAlanlari: konuAlanlari,
@@ -1925,6 +2171,193 @@
           return t.durum === 'gonderildi' || t.durum === 'inceleniyor';
         }).length,
         lisansKullanim: k.lisans ? k.lisans.kullanilan / k.lisans.kontenjan : 0
+      };
+    },
+
+    /* --- eğitmen paneli kapsamı (Faz 5, §11.4) ---------------------------- */
+
+    /**
+     * 🔴 EĞİTMEN KAPSAM KAPISI — panelin tek veri girişi.
+     * Eğitmen yalnız KENDİ içeriğini, kohortunu ve değerlendirme kuyruğunu görür.
+     * §3.3: öğrenci, şef, akademisyen ve kurum koordinatörü fonksiyonları aynı
+     * ekranda karışmaz. §26.2: rolleri karıştırmak yapılmaması gerekenlerde.
+     */
+    egitmenKapsami: function (egitmenId) {
+      var eid = egitmenId || (egitmenKullanicisi && egitmenKullanicisi.egitmenId);
+      var e = DC.egitmen(eid);
+      var egt = egitimler.filter(function (x) { return x.egitmenId === eid; });
+      var egtIds = egt.map(function (x) { return x.id; });
+      var prog = programlar.filter(function (p) {
+        return (p.egitmenIds || []).indexOf(eid) > -1 ||
+               (p.degerlendiriciIds || []).indexOf(eid) > -1 ||
+               p.yoneticiId === eid || p.koordinatorId === eid;
+      });
+      var progIds = prog.map(function (p) { return p.id; });
+      return {
+        egitmen: e,
+        egitimler: egt,
+        icerikler: egitmenIcerikleri.filter(function (i) { return i.egitmenId === eid; }),
+        programlar: prog,
+        kohortlar: kohortlar.filter(function (k) { return (k.egitmenIds || []).indexOf(eid) > -1 || k.koordinatorId === eid; }),
+        oturumlar: atolyeler.filter(function (a) { return a.egitmenId === eid; })
+          .concat(etkinlikler.filter(function (x) { return x.konusmaciId === eid; })),
+        /* değerlendirme kuyruğu: kendi eğitimlerinin ya da programlarının teslimleri */
+        kuyruk: teslimler.filter(function (t) {
+          return egtIds.indexOf(t.egitimId) > -1 || progIds.indexOf(t.programId) > -1;
+        }),
+        sorular: sorular.filter(function (q) { return egtIds.indexOf(q.egitimId) > -1; }),
+        sozlesme: egitmenSozlesmesi.egitmenId === eid ? egitmenSozlesmesi : null
+      };
+    },
+
+    /** §11.3 başvuru durumu tanımı. */
+    basvuruDurumu: function (slug) {
+      for (var i = 0; i < egitmenBasvuruDurumlari.length; i++) {
+        if (egitmenBasvuruDurumlari[i].slug === slug) return egitmenBasvuruDurumlari[i];
+      }
+      return { slug: slug, ad: slug, ikon: 'fa-circle', sinif: 'off', not: '' };
+    },
+
+    /** §18.3 eğitim/içerik yayın durumu tanımı. */
+    icerikDurumu: function (slug) {
+      for (var i = 0; i < icerikDurumlari.length; i++) {
+        if (icerikDurumlari[i].slug === slug) return icerikDurumlari[i];
+      }
+      return { slug: slug, ad: slug, ikon: 'fa-circle', sinif: 'off' };
+    },
+
+    /** §11.1 eğitmen dizini süzgeci — rol / uzmanlık / dil / kurum. */
+    egitmenAra: function (kri) {
+      kri = kri || {};
+      var q = kri.q ? DC.norm(kri.q) : '';
+      return egitmenler.filter(function (e) {
+        if (kri.rol && e.rol !== kri.rol) return false;
+        if (kri.uzmanlik && (e.uzmanliklar || []).indexOf(kri.uzmanlik) === -1) return false;
+        if (kri.dil && (e.diller || []).indexOf(kri.dil) === -1) return false;
+        /* 🔴 kurum süzgeci yalnız ONAY KAYDI olan kurumlar üzerinden (§26.13) */
+        if (kri.kurum && !(e.kurumId === kri.kurum && DC.onayliMi(e.kurumId))) return false;
+        if (kri.dogrulandi && !e.dogrulandi) return false;
+        if (q) {
+          var m = [e.ad, e.unvan, e.biyografi, (e.uzmanliklar || []).join(' '),
+                   (e.diller || []).join(' ')].join(' ');
+          if (DC.norm(m).indexOf(q) === -1) return false;
+        }
+        return true;
+      });
+    },
+
+    /** Eğitmenin verdiği eğitim ve programlar (§11.2 profil çapraz bağlantısı). */
+    egitmenIsleri: function (e) {
+      if (!e) return { egitimler: [], programlar: [], oturumlar: [] };
+      return {
+        egitimler: (e.egitimIds || []).map(function (id) { return DC.egitim(id); }).filter(Boolean),
+        programlar: (e.programIds || []).map(function (id) { return DC.program(id); }).filter(Boolean),
+        oturumlar: atolyeler.filter(function (a) { return a.egitmenId === e.id; })
+          .concat(etkinlikler.filter(function (x) { return x.konusmaciId === e.id; }))
+      };
+    },
+
+    /* --- topluluk / proje / kariyer (Faz 6, §16) --------------------------- */
+
+    /**
+     * 🔴 TOPLULUK KAPISI (§16.1 kuruma özel kapalı topluluk, §24.2).
+     * Kohort dışı kullanıcıya kapalı konunun BAŞLIĞI ve ÖZETİ gösterilmez;
+     * yalnız "kuruma özel kapalı topluluk var" bilgisi kalır. Kapalı konu
+     * listeden tamamen silinmez — varlığını gizlemek, kohort üyesinin
+     * göremediği bir içerik olduğunu da gizlerdi.
+     * @param opt.kohortIds kullanıcının üyesi olduğu kohort id'leri
+     */
+    topluluk: function (opt) {
+      opt = opt || {};
+      var uye = opt.kohortIds || [];
+      return toplulukKonulari.map(function (k) {
+        if (!k.kapali || uye.indexOf(k.hedefId) > -1) return k;
+        /* maskeli kopya — özgün kayıt değiştirilmez */
+        return { id: k.id, kapsam: k.kapsam, hedefId: k.hedefId, kurumId: k.kurumId,
+                 kapali: true, maskeli: true,
+                 baslik: 'Kuruma özel kapalı topluluk konusu',
+                 acanBas: '—', tarih: k.tarih, yanit: k.yanit, sabit: false,
+                 enIyiYanitId: null,
+                 ozet: 'Bu konu yalnız ilgili kurum kohortunun üyelerine açıktır.' };
+      });
+    },
+
+    /** Bir eğitim/program/kohort için topluluk konuları (sabitlenmiş üstte). */
+    toplulukKapsam: function (kapsam, hedefId, opt) {
+      return DC.topluluk(opt)
+        .filter(function (k) { return k.kapsam === kapsam && k.hedefId === hedefId; })
+        .sort(function (a, b) { return (b.sabit ? 1 : 0) - (a.sabit ? 1 : 0); });
+    },
+
+    /** Proje kaydı; kurum adı yalnız onay kaydı varsa çözülür (§26.13). */
+    projeKurumu: function (p) {
+      return (p && p.kurumId && DC.onayliMi(p.kurumId)) ? DC.kurum(p.kurumId) : null;
+    },
+
+    /**
+     * §16.3 — İlan yalnız DOĞRULANMIŞ kurum/işletmeden yayımlanır.
+     * `kurumId` varsa onay kaydı aranır; kurumsuz kayıt (mentor görüşmesi gibi)
+     * platformun kendi programıdır ve yayımlanır.
+     */
+    yayindakiFirsatlar: function () {
+      return firsatlar.filter(function (f) {
+        return !f.kurumId || DC.onayliMi(f.kurumId);
+      });
+    },
+
+    /** Kullanıcının bir fırsata başvuru durumu (yoksa null). */
+    firsatBasvurusu: function (firsatId) {
+      for (var i = 0; i < firsatBasvurulari.length; i++) {
+        if (firsatBasvurulari[i].firsatId === firsatId) return firsatBasvurulari[i];
+      }
+      return null;
+    },
+
+    /**
+     * §21.1 öğrenci raporu — sayılar VERİDEN türetilir.
+     * §14.2 rubrik sonuçları ve §15.2 belge uygunluğu birlikte.
+     */
+    ogrenciRaporu: function () {
+      var kayitli = ilerlemeler.filter(function (i) { return i.kayitli; });
+      var toplamDers = 0, bitenDers = 0;
+      kayitli.forEach(function (i) {
+        var e = DC.egitim(i.egitimId);
+        if (!e) return;
+        toplamDers += e.dersSayisi;
+        bitenDers += i.tamamlanan.length;
+      });
+      var kabul = teslimler.filter(function (t) { return t.durum === 'kabul'; });
+      var puanli = teslimler.filter(function (t) { return t.puan != null; });
+      return {
+        kayitliEgitim: kayitli.length,
+        tamamlananEgitim: kayitli.filter(function (i) { return DC.yuzde(i.egitimId) >= 100; }).length,
+        dersIlerlemesi: toplamDers ? bitenDers / toplamDers : 0,
+        toplamDers: toplamDers, bitenDers: bitenDers,
+        teslim: teslimler.length,
+        kabulEdilen: kabul.length,
+        revizyon: teslimler.filter(function (t) { return t.durum === 'revizyon'; }).length,
+        ortalamaPuan: puanli.length
+          ? Math.round(puanli.reduce(function (t, x) { return t + x.puan; }, 0) / puanli.length) : null,
+        programKaydi: programKayitlari.length,
+        belge: sertifikalar.filter(function (s) { return s.durum === 'gecerli'; }).length
+      };
+    },
+
+    /** §21.3 platform raporu — toplam görünüm (yetkiye bağlı gösterilir). */
+    platformRaporu: function () {
+      var yayinda = egitimler.filter(function (e) { return e.durum === 'yayinda'; }).length;
+      var acik = programlar.filter(function (p) { return p.durum === 'kayit-acik'; }).length;
+      return {
+        egitim: egitimler.length, yayindaEgitim: yayinda,
+        program: programlar.length, basvuruAcik: acik,
+        kurum: kurumlar.length, onayliKurum: DC.onayliKurumlar().length,
+        egitmen: egitmenler.length,
+        kohort: kohortlar.length,
+        katilimci: kohortlar.reduce(function (t, k) { return t + k.katilimciSayisi; }, 0),
+        oturum: atolyeler.length + etkinlikler.length,
+        belge: sertifikalar.length,
+        belgeGecerli: sertifikalar.filter(function (s) { return s.durum === 'gecerli'; }).length,
+        belgeIptal: sertifikalar.filter(function (s) { return s.durum === 'iptal'; }).length
       };
     },
 
