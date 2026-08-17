@@ -1265,6 +1265,17 @@ body.is-auth .misafir-sec{display:none}
 .tkv-body span{display:block;font-size:12.5px;color:var(--muted);font-weight:500;margin-top:2px}
 .tkv-tur{flex:none;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;
   color:var(--muted);background:var(--bg);border:1px solid var(--line);padding:5px 9px;border-radius:var(--radius-sm);white-space:nowrap}
+/* bağlantısı OLMAYAN takvim satırı: kuruma özel kapalı oturum maskesi (§24.2).
+   <a> değil <div> olarak basılır → imleç ve hover davranışı da bunu söyler. */
+div.tkv-row{cursor:default}
+div.tkv-row:hover{border-color:var(--line)}
+.tkv-row.kapali{background:var(--bg);border-style:dashed}
+.tkv-row.kapali .tkv-tar{background:var(--bg);border-color:var(--line)}
+.tkv-row.kapali .tkv-tar b,.tkv-row.kapali .tkv-tar span{color:var(--muted)}
+.tkv-row.kapali .tkv-body b{color:var(--muted)}
+/* bugünden ÖNCEKİ kayıt: geçmiş olduğu renk dışında da yazılır (§23.3) */
+.tkv-row.gecmis{opacity:.68}
+.tkv-row.gecmis .tkv-tur::before{content:"geçti · ";text-transform:none;letter-spacing:0}
 
 /* ---- YETKİSİZ / KURUMA ÖZEL ERİŞİM BLOĞU (§7.1, §24.2, §26.15)
    Yetkisiz kullanıcıya İÇERİK GÖSTERMEZ, yalnız nasıl erişileceğini anlatır. */
@@ -1543,110 +1554,201 @@ a.drs-row:hover{color:var(--tomato)}
   .dt-yan > *{min-width:0}
 }
 
-/* ============== SAYFA CSS — Kampüsüm (§12) ==============
-   Kabuk: .below-header .rd-crumb .eyebrow .chips/.chip/.lbl .ak-grid(.is-3)
-          .ak-card .crs-grid .crs-card .btn .see-all .sr-only .lst-empty
-   _ortak.css: .pf-tabbar/.pf-tabs/.pf-pane .bsv .pstat .tkv .prg .mad .inf
-               .ptable .kurum-gate .pagi-note .kisi-sec
-   Yeni: `.km-*` yalnız yerleşim (başlık şeridi, iki kolon, liste satırı,
-   not kartı). Bileşen ailesi üretilmedi — durum rozeti .pstat, satır .bsv-row,
-   takvim .tkv-row, ilerleme .prg olarak mevcut ailelerden geliyor.
-   ==================================================== */
+/* ============================================================================
+   DadaCampus — ORTAK PANEL / KİŞİSEL ALAN YERLEŞİMİ (`.pn-*`)
+   ----------------------------------------------------------------------------
+   Kampüsüm (§12), Kurum Paneli (§10.2) ve Eğitmen Paneli (§11.4) AYNI iskeleti
+   kullanır: kimlik şeridi + KPI kartları + yapışkan bölüm sekmeleri + iki kolon
+   gövde + kayıt satırı. §23.1: "Kişisel panel, eğitmen paneli ve kurum paneli
+   aynı tasarım sistemini kullanmalı; yalnız navigasyon ve işlevler role göre
+   değişmelidir." — bu dosya o kuralın teknik karşılığıdır.
 
-/* ---- üst başlık şeridi ---- */
-.km-top{background:var(--bg-cream);border-bottom:1px solid var(--line);padding-bottom:26px}
-.km-head{display:flex;align-items:flex-end;justify-content:space-between;gap:28px;flex-wrap:wrap}
-.km-kim{display:flex;align-items:center;gap:18px;min-width:0}
-.km-ava{flex:none;width:76px;height:76px;border-radius:var(--radius-circle);background-size:cover;
-  background-position:center;border:2px solid var(--paper);box-shadow:var(--sh-sm)}
-.km-kim h1{font-size:30px;letter-spacing:-.02em;margin:4px 0 3px}
-.km-rol{font-size:13.5px;font-weight:500;color:var(--muted)}
-.km-rol b{color:var(--tomato);font-weight:700}
+   Faz 2'de bu iskelet `.km-*` adıyla yalnız Kampüsüm'de vardı; Faz 4'te üç
+   sayfa paylaştığı için tek kaynağa alındı ve `.pn-*` olarak genelleştirildi.
 
-.km-kpi{display:flex;gap:12px;flex-wrap:wrap}
-.km-kpi .kp{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-md);
+   🔴 Yeni BİLEŞEN ailesi değildir — yalnız yerleşim. İçerik bileşenleri mevcut
+   ailelerden gelir: .pf-tabs (sekme) · .bsv + .pstat (durum satırı) · .tkv
+   (takvim) · .prg (ilerleme) · .inf (künye) · .mad (madde) · .ptable (tablo,
+   mobilde kart) · .kurum-gate (bilgi/yetki kutusu) · .crs-grid/.crs-card.
+   🔴 panel-shell.html'in `.pnl-*` ailesi Campus'a TAŞINMADI: iki kabuk bakımı
+   doğururdu (docs/KARARLAR.md Faz 4).
+   ========================================================================= */
+
+/* ---- kimlik şeridi ---- */
+.pn-top{background:var(--bg-cream);border-bottom:1px solid var(--line);padding-bottom:26px}
+.pn-head{display:flex;align-items:flex-end;justify-content:space-between;gap:28px;flex-wrap:wrap}
+.pn-kim{display:flex;align-items:center;gap:18px;min-width:0}
+.pn-ava{flex:none;width:76px;height:76px;border-radius:var(--radius-circle);background-size:cover;
+  background-position:center;border:2px solid var(--paper);box-shadow:var(--sh-sm);
+  display:grid;place-items:center;background-color:var(--tomato-tint);color:var(--tomato);
+  font-size:24px;font-weight:800}
+.pn-kim h1{font-size:30px;letter-spacing:-.02em;margin:4px 0 3px}
+.pn-rol{font-size:13.5px;font-weight:500;color:var(--muted)}
+.pn-rol b{color:var(--tomato);font-weight:700}
+
+/* ---- KPI kartları ---- */
+.pn-kpi{display:flex;gap:12px;flex-wrap:wrap}
+.pn-kpi .kp{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-md);
   padding:13px 18px;min-width:112px}
-.km-kpi .kp b{display:block;font-size:23px;font-weight:800;letter-spacing:-.02em;color:var(--tomato);line-height:1.1}
-.km-kpi .kp span{display:block;font-size:11.5px;font-weight:600;color:var(--muted);margin-top:3px}
+.pn-kpi .kp b{display:block;font-size:23px;font-weight:800;letter-spacing:-.02em;color:var(--tomato);line-height:1.1}
+.pn-kpi .kp span{display:block;font-size:11.5px;font-weight:600;color:var(--muted);margin-top:3px}
 
-/* ---- sekme barı ---- */
-.km-tabbar{position:sticky;top:112px;z-index:38;background:rgba(255,255,255,.94);
+/* ---- yapışkan bölüm sekmeleri ---- */
+.pn-tabbar{position:sticky;top:112px;z-index:38;background:rgba(255,255,255,.94);
   -webkit-backdrop-filter:blur(10px) saturate(150%);backdrop-filter:blur(10px) saturate(150%);
   border-bottom:1px solid var(--line)}
-.km-tabbar .pf-tabs{gap:2px}
+.pn-tabbar .pf-tabs{gap:2px}
 
 /* ---- gövde ---- */
-.km-sec{padding:34px 0 66px;background:var(--bg-white)}
-.km-h2{font-size:15px;display:flex;align-items:center;gap:10px;margin-bottom:14px}
-.km-h2 i{flex:none;width:30px;height:30px;border-radius:var(--radius-sm);background:var(--tomato-tint);
+.pn-sec{padding:34px 0 66px;background:var(--bg-white)}
+.pn-h2{font-size:15px;display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.pn-h2 i{flex:none;width:30px;height:30px;border-radius:var(--radius-sm);background:var(--tomato-tint);
   color:var(--tomato);display:grid;place-items:center;font-size:12px}
-.km-alt{font-size:13.5px;font-weight:500;color:var(--muted);line-height:1.65;margin-bottom:20px;max-width:820px}
-.km-alt b{color:var(--slate);font-weight:700}
-.km-iki{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:44px;align-items:start}
+.pn-alt{font-size:13.5px;font-weight:500;color:var(--muted);line-height:1.65;margin-bottom:20px;max-width:820px}
+.pn-alt b{color:var(--slate);font-weight:700}
+.pn-iki{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:44px;align-items:start}
 
-/* ---- liste satırı: kart görünümlü kayıt (eğitim/program/belge) ---- */
-.km-liste{display:flex;flex-direction:column;gap:12px}
-.km-kart{display:flex;align-items:center;gap:18px;background:var(--paper);border:1px solid var(--line);
+/* ---- kayıt satırı: kart görünümlü liste öğesi ---- */
+.pn-liste{display:flex;flex-direction:column;gap:12px}
+.pn-kart{display:flex;align-items:center;gap:18px;background:var(--paper);border:1px solid var(--line);
   border-radius:var(--radius-md);padding:16px 18px;transition:.2s var(--ease)}
-.km-kart:hover{border-color:var(--tomato);box-shadow:var(--sh-sm)}
-.km-kart .kk-fig{flex:none;width:104px;height:66px;border-radius:var(--radius-sm);background-size:cover;
+.pn-kart:hover{border-color:var(--tomato);box-shadow:var(--sh-sm)}
+.pn-kart .kk-fig{flex:none;width:104px;height:66px;border-radius:var(--radius-sm);background-size:cover;
   background-position:center;background-color:var(--bg)}
-.km-kart .kk-mono{flex:none;width:56px;height:56px;border-radius:var(--radius-md);background:var(--tomato-tint);
-  color:var(--tomato);display:grid;place-items:center;font-size:19px}
-.km-kart .kk-body{min-width:0;flex:1}
-.km-kart .kk-body h3{font-size:15.5px;margin-bottom:4px}
-.km-kart .kk-body h3 a:hover{color:var(--tomato)}
-.km-kart .kk-meta{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:12.5px;font-weight:500;color:var(--muted)}
-.km-kart .kk-meta i{color:var(--tomato);font-size:10.5px;margin-right:5px}
-.km-kart .kk-prg{margin-top:9px;max-width:340px}
-.km-kart .kk-sag{flex:none;display:flex;flex-direction:column;align-items:flex-end;gap:9px}
-.km-kart .kk-sag .btn{padding:0 15px;height:38px;font-size:13px}
+.pn-kart .kk-mono{flex:none;width:56px;height:56px;border-radius:var(--radius-md);background:var(--tomato-tint);
+  color:var(--tomato);display:grid;place-items:center;font-size:19px;font-weight:800}
+.pn-kart .kk-body{min-width:0;flex:1}
+.pn-kart .kk-body h3{font-size:15.5px;margin-bottom:4px}
+.pn-kart .kk-body h3 a:hover{color:var(--tomato)}
+.pn-kart .kk-meta{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:12.5px;font-weight:500;color:var(--muted)}
+.pn-kart .kk-meta i{color:var(--tomato);font-size:10.5px;margin-right:5px}
+.pn-kart .kk-prg{margin-top:9px;max-width:340px}
+.pn-kart .kk-not{font-size:12.5px;font-weight:500;color:var(--muted);line-height:1.55;margin-top:8px}
+.pn-kart .kk-sag{flex:none;display:flex;flex-direction:column;align-items:flex-end;gap:9px}
+.pn-kart .kk-sag .btn{padding:0 15px;height:38px;font-size:13px}
 
-/* ilerleme listesi (genel bakış sağ kolon) */
-.km-prg-liste{display:flex;flex-direction:column;gap:16px;background:var(--paper);
+/* ---- ilerleme listesi (özet kolonu) ---- */
+.pn-prg-liste{display:flex;flex-direction:column;gap:16px;background:var(--paper);
   border:1px solid var(--line);border-radius:var(--radius-md);padding:18px}
-.km-prg-satir b.pl-ad{display:block;font-size:13.5px;font-weight:700;color:var(--slate);margin-bottom:7px}
-.km-prg-satir b.pl-ad a:hover{color:var(--tomato)}
+.pn-prg-satir b.pl-ad{display:block;font-size:13.5px;font-weight:700;color:var(--slate);margin-bottom:7px}
+.pn-prg-satir b.pl-ad a:hover{color:var(--tomato)}
 
-/* portfolyo kartı — .crs-card ailesinin içinde metin bloğu */
-.km-pf-ust{display:flex;align-items:center;justify-content:space-between;gap:18px;flex-wrap:wrap;margin-bottom:20px}
-.km-pf-not{font-size:12.5px;font-weight:500;color:var(--muted);line-height:1.55;margin-top:8px}
+/* ---- üst şerit + eylem ---- */
+.pn-ust{display:flex;align-items:center;justify-content:space-between;gap:18px;flex-wrap:wrap;margin-bottom:20px}
 
-/* notlar — eğitime göre klasör */
-.km-not-liste{display:flex;flex-direction:column;gap:20px}
-.km-not-grup{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-md);padding:18px 20px}
-.km-not-grup > h3{font-size:15px;display:flex;align-items:center;gap:10px;margin-bottom:14px;
+/* ---- klasörlü not/kayıt grubu ---- */
+.pn-grup{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-md);padding:18px 20px}
+.pn-grup > h3{font-size:15px;display:flex;align-items:center;gap:10px;margin-bottom:14px;
   padding-bottom:12px;border-bottom:1px solid var(--line)}
-.km-not-grup > h3 i{color:var(--tomato);font-size:12px}
-.km-not-grup > h3 span{margin-left:auto;font-size:12px;font-weight:600;color:var(--muted)}
-.km-not-satir{display:flex;gap:14px;padding:11px 0;border-bottom:1px solid var(--line)}
-.km-not-satir:last-child{border-bottom:none;padding-bottom:0}
-.km-not-satir .ns-dk{flex:none;font-size:11.5px;font-weight:700;color:var(--tomato);background:var(--tomato-tint);
+.pn-grup > h3 i{color:var(--tomato);font-size:12px}
+.pn-grup > h3 span{margin-left:auto;font-size:12px;font-weight:600;color:var(--muted)}
+.pn-satir{display:flex;gap:14px;padding:11px 0;border-bottom:1px solid var(--line)}
+.pn-satir:last-child{border-bottom:none;padding-bottom:0}
+.pn-satir .ns-dk{flex:none;font-size:11.5px;font-weight:700;color:var(--tomato);background:var(--tomato-tint);
   border:1px solid rgba(var(--tomato-rgb),.24);padding:4px 8px;border-radius:var(--radius-sm);
   font-variant-numeric:tabular-nums;height:fit-content}
-.km-not-satir .ns-txt{min-width:0}
-.km-not-satir .ns-txt p{font-size:13.5px;font-weight:500;color:var(--slate-2);line-height:1.6}
-.km-not-satir .ns-txt span{display:block;font-size:11.5px;color:var(--muted);font-weight:600;margin-top:4px}
+.pn-satir .ns-txt{min-width:0}
+.pn-satir .ns-txt p{font-size:13.5px;font-weight:500;color:var(--slate-2);line-height:1.6}
+.pn-satir .ns-txt span{display:block;font-size:11.5px;color:var(--muted);font-weight:600;margin-top:4px}
+
+/* ---- yetki rozeti (§10.3 — izinler ayrıdır, arayüzde de ayrı görünür) ---- */
+.pn-izin{display:flex;flex-wrap:wrap;gap:8px}
+.pn-izin span{display:inline-flex;align-items:center;gap:6px;font-size:11.5px;font-weight:700;
+  padding:5px 10px;border-radius:var(--radius-sm);border:1px solid var(--line);
+  background:var(--bg);color:var(--muted)}
+.pn-izin span.var{background:#EAF7F0;color:var(--green-deep);border-color:rgba(59,183,126,.32)}
+.pn-izin span i{font-size:10px}
 
 @media (max-width:1024px){
-  .km-iki{grid-template-columns:1fr;gap:34px}
-  .km-head{align-items:flex-start}
-  .km-kim h1{font-size:25px}
+  .pn-iki{grid-template-columns:1fr;gap:34px}
+  .pn-head{align-items:flex-start}
+  .pn-kim h1{font-size:25px}
 }
 @media (max-width:640px){
-  .km-tabbar{top:62px}
-  .km-ava{width:58px;height:58px}
-  .km-kim{gap:14px}
-  .km-kim h1{font-size:21px}
-  .km-kpi{width:100%}
-  .km-kpi .kp{flex:1;min-width:0;padding:11px 12px}
-  .km-kpi .kp b{font-size:19px}
-  .km-kart{flex-wrap:wrap;gap:14px}
-  .km-kart .kk-fig{width:72px;height:48px}
-  .km-kart .kk-sag{width:100%;align-items:stretch}
-  .km-kart .kk-sag .btn{width:100%}
-  .km-kart .kk-prg{max-width:none}
+  .pn-tabbar{top:62px}
+  .pn-ava{width:58px;height:58px;font-size:18px}
+  .pn-kim{gap:14px}
+  .pn-kim h1{font-size:21px}
+  .pn-kpi{width:100%}
+  .pn-kpi .kp{flex:1;min-width:0;padding:11px 12px}
+  .pn-kpi .kp b{font-size:19px}
+  .pn-kart{flex-wrap:wrap;gap:14px}
+  .pn-kart .kk-fig{width:72px;height:48px}
+  .pn-kart .kk-sag{width:100%;align-items:stretch}
+  .pn-kart .kk-sag .btn{width:100%}
+  .pn-kart .kk-prg{max-width:none}
 }
+
+/* ============================================================================
+   DadaCampus — ORTAK KURUM MODÜLÜ CSS (`.turd` · `.mdl` · `.surec`)
+   ----------------------------------------------------------------------------
+   Kurumlar Merkezi (§9.1), kurum türü sayfası (§9.3) ve iş birliği başvurusu
+   (§9.4) aynı üç aileyi kullanır: kurum türü ayrıntı bloğu, iş birliği modeli
+   satırı, süreç adımı. Faz 1'de yalnız Kurumlar Merkezi'nde vardı; Faz 4'te üç
+   sayfa paylaştığı için tek kaynağa alındı (kopya = divergans borcu, §3).
+
+   🔴 Yeni bileşen ailesi değil — Faz 1'de ilkel parçalardan kurulmuş üç aile,
+   yeri değişti. Renk yalnız var(--tomato) ve türevleri.
+   ========================================================================= */
+
+/* ---- kurum türü ayrıntı bloğu (§9.3) ---- */
+.turd{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-lg);
+  padding:26px 28px;margin-top:20px}
+.turd-head{display:flex;align-items:center;gap:14px;margin-bottom:18px}
+.turd-ico{flex:none;width:46px;height:46px;border-radius:var(--radius-md);background:var(--tomato-tint);
+  color:var(--tomato);display:grid;place-items:center;font-size:19px}
+.turd-head h3{font-size:19px}
+.turd-head span{display:block;font-size:13px;color:var(--muted);font-weight:500;margin-top:2px}
+.turd-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:22px}
+.turd-grid h4{font-size:12px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--muted);margin-bottom:11px}
+.turd-grid ul{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:8px}
+.turd-grid li{display:flex;align-items:flex-start;gap:9px;font-size:13.5px;font-weight:500;
+  color:var(--slate-2);line-height:1.55}
+.turd-grid li i{color:var(--tomato);font-size:11px;margin-top:5px;flex:none}
+.turd-foot{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;
+  margin-top:20px;padding-top:18px;border-top:1px solid var(--line)}
+.turd-foot .tf-note{font-size:12.5px;color:var(--muted);font-weight:500}
+
+/* ---- iş birliği modeli satırı (§9.2) ---- */
+.mdl{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.mdl-row{display:flex;align-items:flex-start;gap:14px;background:var(--paper);border:1px solid var(--line);
+  border-radius:var(--radius-md);padding:18px 20px;transition:.2s var(--ease)}
+.mdl-row:hover{border-color:var(--tomato);transform:translateY(-2px);box-shadow:var(--sh-sm)}
+.mdl-ico{flex:none;width:40px;height:40px;border-radius:var(--radius-sm);background:var(--tomato-tint);
+  color:var(--tomato);display:grid;place-items:center;font-size:16px}
+.mdl-body{min-width:0}
+.mdl-body b{display:block;font-size:15px;color:var(--slate);font-weight:700;margin-bottom:4px}
+.mdl-body p{font-size:13px;color:var(--muted);font-weight:500;line-height:1.55}
+.mdl-body .mdl-deger{display:block;font-size:12.5px;font-weight:700;color:var(--tomato);margin-top:7px}
+
+/* ---- süreç adımları (§19.1) ---- */
+.surec{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px 26px;counter-reset:sr}
+.surec-row{display:flex;align-items:flex-start;gap:14px;padding:12px 0;border-bottom:1px solid var(--line)}
+.surec-row:last-child,.surec-row:nth-last-child(2){border-bottom:none}
+.surec-no{flex:none;width:30px;height:30px;border-radius:var(--radius-sm);background:var(--tomato-tint);
+  color:var(--tomato);display:grid;place-items:center;font-size:12.5px;font-weight:700}
+.surec-row p{font-size:14px;font-weight:500;color:var(--slate-2);line-height:1.5;padding-top:5px}
+
+@media (max-width:1024px){
+  .mdl,.surec{grid-template-columns:1fr}
+  .surec-row:nth-last-child(2){border-bottom:1px solid var(--line)}
+  .turd-grid{grid-template-columns:1fr;gap:18px}
+}
+@media (max-width:640px){
+  .turd{padding:20px 18px}
+}
+
+/* ============== SAYFA CSS — Kampüsüm (§12) ==============
+   İskelet `_panel.css` (.pn-* — Kurum Paneli ve Eğitmen Paneli ile ORTAK,
+   §23.1 "paneller aynı tasarım sistemini kullanır"). İçerik bileşenleri
+   `_ortak.css` (.pf-tab* .bsv .pstat .tkv .prg .mad .inf .ptable .kurum-gate
+   .lst-empty) ve kabuk (.chips .crs-grid .crs-card .ak-card .btn .see-all).
+   Bu sayfada kalan tek özel şey: notlarım listesinin klasör aralığı.
+   ========================================================== */
+
+/* notlarım: klasör grupları arası boşluk (varsayılan .pn-liste 12px) */
+#kmNotListe{gap:20px}
 </style>
 </head>
 <body data-brand="campus">
@@ -2121,29 +2223,29 @@ a.drs-row:hover{color:var(--tomato)}
 <div id="kmIcerik" hidden>
 
 <!-- ===== ÜST BAŞLIK ===== -->
-<section class="below-header km-top">
+<section class="below-header pn-top">
   <div class="wrap">
     <nav class="rd-crumb" aria-label="Sayfa yolu">
       <a href="akademi-v1.html"><i class="fa-solid fa-house" aria-hidden="true"></i></a>
       <i class="fa-solid fa-chevron-right" aria-hidden="true"></i>
       <b>Kampüsüm</b>
     </nav>
-    <div class="km-head">
-      <div class="km-kim">
-        <span class="km-ava" id="kmAva" role="img" aria-label="Profil fotoğrafı"></span>
+    <div class="pn-head">
+      <div class="pn-kim">
+        <span class="pn-ava" id="kmAva" role="img" aria-label="Profil fotoğrafı"></span>
         <div>
           <span class="eyebrow"><i class="fa-solid fa-graduation-cap"></i> Kampüsüm</span>
           <h1 id="kmAd"></h1>
-          <p class="km-rol" id="kmRol"></p>
+          <p class="pn-rol" id="kmRol"></p>
         </div>
       </div>
-      <div class="km-kpi" id="kmKpi" role="group" aria-label="Öğrenme özeti"></div>
+      <div class="pn-kpi" id="kmKpi" role="group" aria-label="Öğrenme özeti"></div>
     </div>
   </div>
 </section>
 
 <!-- ===== BÖLÜM SEKMELERİ ===== -->
-<div class="km-tabbar">
+<div class="pn-tabbar">
   <div class="wrap">
     <div class="pf-tabs" role="tablist" aria-label="Kampüsüm bölümleri">
       <a role="tab" href="?bolum=genel"          data-b="genel"><i class="fa-solid fa-gauge-high"></i> Genel Bakış</a>
@@ -2158,33 +2260,33 @@ a.drs-row:hover{color:var(--tomato)}
   </div>
 </div>
 
-<section class="km-sec">
+<section class="pn-sec">
   <div class="wrap">
 
     <!-- ---------- GENEL BAKIŞ (§12.1) ---------- -->
     <div class="pf-pane" data-b-pane="genel">
-      <div class="km-iki">
+      <div class="pn-iki">
         <div>
-          <h2 class="km-h2"><i class="fa-solid fa-forward"></i> Bugün ve sıradaki görev</h2>
+          <h2 class="pn-h2"><i class="fa-solid fa-forward"></i> Bugün ve sıradaki görev</h2>
           <div class="bsv" id="kmBugun"></div>
 
-          <h2 class="km-h2" style="margin-top:34px"><i class="fa-solid fa-video"></i> Yaklaşan canlı oturum</h2>
+          <h2 class="pn-h2" style="margin-top:34px"><i class="fa-solid fa-video"></i> Yaklaşan canlı oturum</h2>
           <div class="tkv" id="kmYaklasan"></div>
 
-          <h2 class="km-h2" style="margin-top:34px"><i class="fa-solid fa-clipboard-check"></i> Bekleyen uygulama ve geri bildirim</h2>
+          <h2 class="pn-h2" style="margin-top:34px"><i class="fa-solid fa-clipboard-check"></i> Bekleyen uygulama ve geri bildirim</h2>
           <div class="bsv" id="kmBekleyen"></div>
         </div>
         <div>
-          <h2 class="km-h2"><i class="fa-solid fa-chart-line"></i> Aktif ilerleme</h2>
-          <div class="km-prg-liste" id="kmIlerleme"></div>
+          <h2 class="pn-h2"><i class="fa-solid fa-chart-line"></i> Aktif ilerleme</h2>
+          <div class="pn-prg-liste" id="kmIlerleme"></div>
 
-          <h2 class="km-h2" style="margin-top:34px"><i class="fa-solid fa-award"></i> Belge uygunluğu</h2>
+          <h2 class="pn-h2" style="margin-top:34px"><i class="fa-solid fa-award"></i> Belge uygunluğu</h2>
           <div class="bsv" id="kmUygunluk"></div>
 
-          <h2 class="km-h2" style="margin-top:34px"><i class="fa-solid fa-bullhorn"></i> Kurum duyurusu</h2>
+          <h2 class="pn-h2" style="margin-top:34px"><i class="fa-solid fa-bullhorn"></i> Kurum duyurusu</h2>
           <div id="kmDuyuru"></div>
 
-          <h2 class="km-h2" style="margin-top:34px"><i class="fa-regular fa-comments"></i> Mesaj</h2>
+          <h2 class="pn-h2" style="margin-top:34px"><i class="fa-regular fa-comments"></i> Mesaj</h2>
           <div class="kurum-gate">
             <span class="kg-ico"><i class="fa-regular fa-paper-plane"></i></span>
             <div class="kg-txt">
@@ -2206,7 +2308,7 @@ a.drs-row:hover{color:var(--tomato)}
         <button class="chip" type="button" data-d="tamam">Tamamlanan</button>
         <button class="chip" type="button" data-d="kaydedilen">Kaydedilen</button>
       </div>
-      <div class="km-liste" id="kmEgListe"></div>
+      <div class="pn-liste" id="kmEgListe"></div>
       <div class="lst-empty" id="kmEgBos">
         <span class="le-ico"><i class="fa-regular fa-folder-open" aria-hidden="true"></i></span>
         <h3>Bu durumda eğitim yok</h3>
@@ -2217,8 +2319,8 @@ a.drs-row:hover{color:var(--tomato)}
 
     <!-- ---------- PROGRAMLARIM (§12.2, §18.3) ---------- -->
     <div class="pf-pane" data-b-pane="programlarim">
-      <p class="km-alt">Başvuru durumu akışı: <b>Başvurdu → Kabul → Kayıtlı → Devam Ediyor → Tamamladı / Başarısız / Ayrıldı</b> (§18.3). Duraklatma ve bırakma yalnız programın kuralı izin veriyorsa açıktır.</p>
-      <div class="km-liste" id="kmPrListe"></div>
+      <p class="pn-alt">Başvuru durumu akışı: <b>Başvurdu → Kabul → Kayıtlı → Devam Ediyor → Tamamladı / Başarısız / Ayrıldı</b> (§18.3). Duraklatma ve bırakma yalnız programın kuralı izin veriyorsa açıktır.</p>
+      <div class="pn-liste" id="kmPrListe"></div>
       <div class="lst-empty" id="kmPrBos">
         <span class="le-ico"><i class="fa-regular fa-folder-open" aria-hidden="true"></i></span>
         <h3>Henüz bir programa başvurmadın</h3>
@@ -2229,7 +2331,7 @@ a.drs-row:hover{color:var(--tomato)}
 
     <!-- ---------- TAKVİMİM (§12.3) ---------- -->
     <div class="pf-pane" data-b-pane="takvimim">
-      <p class="km-alt">Saatler <b id="kmTz">Europe/Istanbul</b> saat dilimine göre gösterilir. Katılım bağlantısı yalnız kayıtlı ve yetkili kullanıcıda görünür (§13.2). Çakışan etkinlikler ayrıca işaretlenir.</p>
+      <p class="pn-alt">Saatler <b id="kmTz">Europe/Istanbul</b> saat dilimine göre gösterilir. Katılım bağlantısı yalnız kayıtlı ve yetkili kullanıcıda görünür (§13.2). Çakışan etkinlikler ayrıca işaretlenir.</p>
       <div class="chips" id="kmTkFiltre" role="group" aria-label="Takvim türü">
         <span class="lbl">Tür:</span>
         <button class="chip is-on" type="button" data-t="">Tümü</button>
@@ -2248,7 +2350,7 @@ a.drs-row:hover{color:var(--tomato)}
 
     <!-- ---------- ÖDEVLER VE GERİ BİLDİRİM (§14.1–14.3) ---------- -->
     <div class="pf-pane" data-b-pane="odevler">
-      <p class="km-alt">Teslim durumları ve senin yapman gereken: her satırda durum rozeti ve aksiyon yazılıdır (§14.3).</p>
+      <p class="pn-alt">Teslim durumları ve senin yapman gereken: her satırda durum rozeti ve aksiyon yazılıdır (§14.3).</p>
       <div class="chips" id="kmOdFiltre" role="group" aria-label="Teslim durumu">
         <span class="lbl">Durum:</span>
         <button class="chip is-on" type="button" data-o="">Tümü</button>
@@ -2259,8 +2361,8 @@ a.drs-row:hover{color:var(--tomato)}
         <h3>Bu durumda teslim yok</h3>
         <p>Diğer durumlara bakabilirsin. Teslim edilecek uygulamalar eğitim detayındaki uygulama listesinde yazılıdır.</p>
       </div>
-      <h2 class="km-h2" style="margin-top:38px"><i class="fa-solid fa-table-list"></i> Değerlendirme rubriği</h2>
-      <p class="km-alt">Teslimler bu kriterlerle puanlanır; kriter, puan ve örnek baştan görünür (§14.2).</p>
+      <h2 class="pn-h2" style="margin-top:38px"><i class="fa-solid fa-table-list"></i> Değerlendirme rubriği</h2>
+      <p class="pn-alt">Teslimler bu kriterlerle puanlanır; kriter, puan ve örnek baştan görünür (§14.2).</p>
       <div class="ptable-wrap">
         <table class="ptable">
           <caption class="sr-only">Uygulama değerlendirme rubriği</caption>
@@ -2272,8 +2374,8 @@ a.drs-row:hover{color:var(--tomato)}
 
     <!-- ---------- MUTFAK PORTFOLYOM (§14.4) ---------- -->
     <div class="pf-pane" data-b-pane="portfolyo">
-      <p class="km-alt">Kabul edilen uygulamalar portfolyona eklenir. Görünürlüğü sen belirlersin: <b>özel</b>, <b>kurum içi</b> ya da <b>herkese açık</b>. Eğitmen geri bildirimi yalnız sen izin verirsen görünür.</p>
-      <div class="km-pf-ust">
+      <p class="pn-alt">Kabul edilen uygulamalar portfolyona eklenir. Görünürlüğü sen belirlersin: <b>özel</b>, <b>kurum içi</b> ya da <b>herkese açık</b>. Eğitmen geri bildirimi yalnız sen izin verirsen görünür.</p>
+      <div class="pn-ust">
         <div class="chips" id="kmPfFiltre" role="group" aria-label="Görünürlük">
           <span class="lbl">Görünürlük:</span>
           <button class="chip is-on" type="button" data-g="ozel">Özel</button>
@@ -2293,9 +2395,9 @@ a.drs-row:hover{color:var(--tomato)}
 
     <!-- ---------- SERTİFİKALARIM (§15.1, §15.2) ---------- -->
     <div class="pf-pane" data-b-pane="sertifikalarim">
-      <p class="km-alt">Belge, öğrenmenin sonucudur. Uygunluk koşulları aşağıda madde madde işaretlenir; koşul tamamlanmadan belge verilmez (§15.2).</p>
-      <div class="km-liste" id="kmStListe"></div>
-      <h2 class="km-h2" style="margin-top:38px"><i class="fa-solid fa-list-check"></i> Uygunluk durumun</h2>
+      <p class="pn-alt">Belge, öğrenmenin sonucudur. Uygunluk koşulları aşağıda madde madde işaretlenir; koşul tamamlanmadan belge verilmez (§15.2).</p>
+      <div class="pn-liste" id="kmStListe"></div>
+      <h2 class="pn-h2" style="margin-top:38px"><i class="fa-solid fa-list-check"></i> Uygunluk durumun</h2>
       <div class="bsv" id="kmUygun2"></div>
       <div class="kurum-gate" style="margin-top:22px">
         <span class="kg-ico"><i class="fa-solid fa-shield-halved"></i></span>
@@ -2309,15 +2411,15 @@ a.drs-row:hover{color:var(--tomato)}
 
     <!-- ---------- NOTLARIM VE KAYNAKLARIM (§12.4) ---------- -->
     <div class="pf-pane" data-b-pane="notlarim">
-      <p class="km-alt">Ders içinde aldığın zaman damgalı notlar eğitime göre klasörlenir. Kuruma özel kaynaklar kurum dışına paylaşılamaz.</p>
-      <div class="km-not-liste" id="kmNotListe"></div>
+      <p class="pn-alt">Ders içinde aldığın zaman damgalı notlar eğitime göre klasörlenir. Kuruma özel kaynaklar kurum dışına paylaşılamaz.</p>
+      <div class="pn-liste" id="kmNotListe"></div>
       <div class="lst-empty" id="kmNotBos">
         <span class="le-ico"><i class="fa-regular fa-pen-to-square" aria-hidden="true"></i></span>
         <h3>Henüz not almadın</h3>
         <p>Ders ekranındaki transkriptte bir zaman damgasına tıklayıp o ana not düşebilirsin.</p>
         <a class="btn btn-ghost" href="?bolum=egitimlerim"><i class="fa-solid fa-circle-play"></i> Eğitimlerim</a>
       </div>
-      <h2 class="km-h2" style="margin-top:38px"><i class="fa-regular fa-folder-open"></i> Eğitmenin paylaştığı kaynaklar</h2>
+      <h2 class="pn-h2" style="margin-top:38px"><i class="fa-regular fa-folder-open"></i> Eğitmenin paylaştığı kaynaklar</h2>
       <ul class="mad is-2" id="kmKaynak"></ul>
       <p class="pagi-note">İndirme izni kaynağa göre değişir; kuruma özel kaynaklarda erişim süresi kurumun tanımladığı dönemle sınırlıdır (§12.4).</p>
     </div>
@@ -2993,7 +3095,7 @@ window.__bottomStrips=window.__bottomStrips||[];
     var durum = !i.kayitli ? 'Kaydedilen' : (y >= 100 ? 'Tamamlandı' : 'Devam ediyor');
     var sinif = !i.kayitli ? 'off' : (y >= 100 ? 'ok' : 'wait');
     var ikon = !i.kayitli ? 'fa-bookmark' : (y >= 100 ? 'fa-circle-check' : 'fa-circle-play');
-    return '<div class="km-kart">' +
+    return '<div class="pn-kart">' +
       '<span class="kk-fig" style="background-image:url(\'' + esc(img(e.kapak, 320)) + '\')"></span>' +
       '<div class="kk-body">' +
         '<h3><a href="' + esc(D.link.egitim(e.slug)) + '">' + esc(e.ad) + '</a></h3>' +
@@ -3116,22 +3218,22 @@ window.__bottomStrips=window.__bottomStrips||[];
         '<span class="pstat ' + d.sinif + '"><i class="fa-solid ' + d.ikon + '"></i> ' + esc(d.ad) + '</span></a>');
     });
   byId('kmBugun').innerHTML = bugunListe.length ? bugunListe.join('')
-    : '<p class="km-alt" style="margin:0">Bugün için bekleyen bir görev yok. İyi bir gün — yeni bir eğitime başlayabilirsin.</p>';
+    : '<p class="pn-alt" style="margin:0">Bugün için bekleyen bir görev yok. İyi bir gün — yeni bir eğitime başlayabilirsin.</p>';
 
   var tkm = takvimKayitlari();
   var yaklasan = tkm.filter(function (o) { return o.tur === 'oturum'; }).slice(0, 3);
   byId('kmYaklasan').innerHTML = yaklasan.length ? yaklasan.map(tkSatir).join('')
-    : '<p class="km-alt" style="margin:0">Yaklaşan canlı oturum yok.</p>';
+    : '<p class="pn-alt" style="margin:0">Yaklaşan canlı oturum yok.</p>';
 
   var bekleyen = D.teslimler.filter(function (t) {
     return t.durum === 'revizyon' || t.durum === 'inceleniyor' || t.durum === 'gonderildi' || t.durum === 'basarisiz';
   });
   byId('kmBekleyen').innerHTML = bekleyen.length ? '<div class="bsv">' + bekleyen.map(teslimSatir).join('') + '</div>'
-    : '<p class="km-alt" style="margin:0">Bekleyen teslim veya geri bildirim yok.</p>';
+    : '<p class="pn-alt" style="margin:0">Bekleyen teslim veya geri bildirim yok.</p>';
 
   byId('kmIlerleme').innerHTML = kayitli.map(function (i) {
     var e = D.egitim(i.egitimId), y = D.yuzde(e.id);
-    return '<div class="km-prg-satir">' +
+    return '<div class="pn-prg-satir">' +
       '<b class="pl-ad"><a href="' + esc(D.link.egitim(e.slug)) + '">' + esc(e.ad) + '</a></b>' +
       '<div class="prg-lbl"><span>' + i.tamamlanan.length + '/' + e.dersSayisi + ' ders</span><b>%' + y + '</b></div>' +
       '<span class="prg"><span style="width:' + y + '%"></span></span></div>';
@@ -3217,7 +3319,7 @@ window.__bottomStrips=window.__bottomStrips||[];
     var partner = p.partnerKurumIds.length ? D.kurum(p.partnerKurumIds[0]) : null;
     var ortak = D.ortakBelgeGosterilirMi(p);
     var oran = p.modulSayisi ? Math.round(k.modul / p.modulSayisi * 100) : 0;
-    return '<div class="km-kart">' +
+    return '<div class="pn-kart">' +
       '<span class="kk-fig" style="background-image:url(\'' + esc(img(p.kapak, 320)) + '\')"></span>' +
       '<div class="kk-body">' +
         '<h3><a href="' + esc(D.link.program(p.slug)) + '">' + esc(p.ad) + '</a></h3>' +
@@ -3229,7 +3331,7 @@ window.__bottomStrips=window.__bottomStrips||[];
           (partner ? '<span><i class="fa-solid fa-building-columns"></i>' +
             esc(ortak ? 'Ortak program · ' + partner.ad : 'Partner kurum · ' + partner.ad) + '</span>' : '') +
         '</div>' +
-        '<p class="km-pf-not">' + esc(k.not) + '</p>' +
+        '<p class="kk-not">' + esc(k.not) + '</p>' +
         (k.durum === 'devam'
           ? '<div class="kk-prg"><div class="prg-lbl"><span>Modül ' + k.modul + '/' + p.modulSayisi + '</span><b>%' + oran + '</b></div>' +
             '<span class="prg"><span style="width:' + oran + '%"></span></span></div>'
@@ -3345,7 +3447,7 @@ window.__bottomStrips=window.__bottomStrips||[];
           (x.kurum ? '<span><i class="fa-solid fa-building-columns"></i> ' + esc(x.kurum.ad) + '</span>' : '') +
         '</div>' +
         (x.t.geriBildirim
-          ? '<p class="km-pf-not"><b>' + esc(deg ? deg.ad : 'Değerlendirici') + ':</b> ' + esc(x.t.geriBildirim) +
+          ? '<p class="kk-not"><b>' + esc(deg ? deg.ad : 'Değerlendirici') + ':</b> ' + esc(x.t.geriBildirim) +
             '<br><i class="fa-solid fa-eye-slash"></i> Geri bildirim yalnız sen izin verirsen görünür.</p>'
           : '') +
         '</div></article>';
@@ -3369,7 +3471,7 @@ window.__bottomStrips=window.__bottomStrips||[];
                 'suresi-dolmus': ['Süresi dolmuş', 'fa-hourglass-end', 'off'],
                 iptal: ['İptal edildi', 'fa-ban', 'warm'] };
     var d = DUR[s.durum] || DUR.gecerli;
-    return '<div class="km-kart">' +
+    return '<div class="pn-kart">' +
       '<span class="kk-mono"><i class="fa-solid fa-award"></i></span>' +
       '<div class="kk-body">' +
         '<h3>' + esc(D.etiket('belgeTurleri', s.tur)) + '</h3>' +
@@ -3383,9 +3485,9 @@ window.__bottomStrips=window.__bottomStrips||[];
                                 : 'DadaCampus') + '</span>' +
           (s.puan != null ? '<span><i class="fa-solid fa-star"></i>' + s.puan + ' puan</span>' : '') +
         '</div>' +
-        '<p class="km-pf-not">' + esc(D.belgeAciklamasi(s.tur)) + '</p>' +
-        (s.duzeltmeNotu ? '<p class="km-pf-not"><b>Düzeltme kaydı:</b> ' + esc(s.duzeltmeNotu) + '</p>' : '') +
-        (s.iptalNotu ? '<p class="km-pf-not"><b>İptal gerekçesi:</b> ' + esc(s.iptalNotu) + '</p>' : '') +
+        '<p class="kk-not">' + esc(D.belgeAciklamasi(s.tur)) + '</p>' +
+        (s.duzeltmeNotu ? '<p class="kk-not"><b>Düzeltme kaydı:</b> ' + esc(s.duzeltmeNotu) + '</p>' : '') +
+        (s.iptalNotu ? '<p class="kk-not"><b>İptal gerekçesi:</b> ' + esc(s.iptalNotu) + '</p>' : '') +
       '</div>' +
       '<div class="kk-sag">' +
         '<span class="pstat ' + d[2] + '"><i class="fa-solid ' + d[1] + '"></i> ' + d[0] + '</span>' +
@@ -3402,12 +3504,12 @@ window.__bottomStrips=window.__bottomStrips||[];
   byId('kmNotListe').innerHTML = gruplar.map(function (eid) {
     var e = D.egitim(eid);
     var dersler = D.dersler(e);
-    return '<div class="km-not-grup">' +
+    return '<div class="pn-grup">' +
       '<h3><i class="fa-solid fa-folder"></i> ' + esc(e.ad) + '<span>' + grup[eid].length + ' not</span></h3>' +
       grup[eid].sort(function (a, b) { return a.ders - b.ders || a.dk - b.dk; }).map(function (n) {
         var d = dersler[n.ders - 1];
         var mm = n.dk < 10 ? '0' + n.dk : n.dk;
-        return '<div class="km-not-satir">' +
+        return '<div class="pn-satir">' +
           '<span class="ns-dk">' + mm + ':00</span>' +
           '<span class="ns-txt"><p>' + esc(n.metin) + '</p>' +
           '<span>Ders ' + n.ders + (d ? ' · ' + esc(d.ad) : '') +
@@ -3436,7 +3538,7 @@ window.__bottomStrips=window.__bottomStrips||[];
     [].slice.call(document.querySelectorAll('[data-b-pane]')).forEach(function (x) {
       x.classList.toggle('active', x.getAttribute('data-b-pane') === b);
     });
-    [].slice.call(document.querySelectorAll('.km-tabbar [data-b]')).forEach(function (x) {
+    [].slice.call(document.querySelectorAll('.pn-tabbar [data-b]')).forEach(function (x) {
       var on = x.getAttribute('data-b') === b;
       x.classList.toggle('active', on);
       x.setAttribute('aria-selected', on ? 'true' : 'false');
@@ -3448,7 +3550,7 @@ window.__bottomStrips=window.__bottomStrips||[];
   }
   bolumSec(D.qs().bolum || 'genel', false);
 
-  document.querySelector('.km-tabbar .pf-tabs').addEventListener('click', function (ev) {
+  document.querySelector('.pn-tabbar .pf-tabs').addEventListener('click', function (ev) {
     var a = ev.target.closest('[data-b]');
     if (!a) return;
     ev.preventDefault();

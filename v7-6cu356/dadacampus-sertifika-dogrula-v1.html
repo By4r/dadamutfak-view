@@ -1265,6 +1265,17 @@ body.is-auth .misafir-sec{display:none}
 .tkv-body span{display:block;font-size:12.5px;color:var(--muted);font-weight:500;margin-top:2px}
 .tkv-tur{flex:none;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;
   color:var(--muted);background:var(--bg);border:1px solid var(--line);padding:5px 9px;border-radius:var(--radius-sm);white-space:nowrap}
+/* bağlantısı OLMAYAN takvim satırı: kuruma özel kapalı oturum maskesi (§24.2).
+   <a> değil <div> olarak basılır → imleç ve hover davranışı da bunu söyler. */
+div.tkv-row{cursor:default}
+div.tkv-row:hover{border-color:var(--line)}
+.tkv-row.kapali{background:var(--bg);border-style:dashed}
+.tkv-row.kapali .tkv-tar{background:var(--bg);border-color:var(--line)}
+.tkv-row.kapali .tkv-tar b,.tkv-row.kapali .tkv-tar span{color:var(--muted)}
+.tkv-row.kapali .tkv-body b{color:var(--muted)}
+/* bugünden ÖNCEKİ kayıt: geçmiş olduğu renk dışında da yazılır (§23.3) */
+.tkv-row.gecmis{opacity:.68}
+.tkv-row.gecmis .tkv-tur::before{content:"geçti · ";text-transform:none;letter-spacing:0}
 
 /* ---- YETKİSİZ / KURUMA ÖZEL ERİŞİM BLOĞU (§7.1, §24.2, §26.15)
    Yetkisiz kullanıcıya İÇERİK GÖSTERMEZ, yalnız nasıl erişileceğini anlatır. */
@@ -1541,6 +1552,191 @@ a.drs-row:hover{color:var(--tomato)}
   .dt-blok h2{font-size:19px}
   .dt-yan{flex-direction:column}
   .dt-yan > *{min-width:0}
+}
+
+/* ============================================================================
+   DadaCampus — ORTAK PANEL / KİŞİSEL ALAN YERLEŞİMİ (`.pn-*`)
+   ----------------------------------------------------------------------------
+   Kampüsüm (§12), Kurum Paneli (§10.2) ve Eğitmen Paneli (§11.4) AYNI iskeleti
+   kullanır: kimlik şeridi + KPI kartları + yapışkan bölüm sekmeleri + iki kolon
+   gövde + kayıt satırı. §23.1: "Kişisel panel, eğitmen paneli ve kurum paneli
+   aynı tasarım sistemini kullanmalı; yalnız navigasyon ve işlevler role göre
+   değişmelidir." — bu dosya o kuralın teknik karşılığıdır.
+
+   Faz 2'de bu iskelet `.km-*` adıyla yalnız Kampüsüm'de vardı; Faz 4'te üç
+   sayfa paylaştığı için tek kaynağa alındı ve `.pn-*` olarak genelleştirildi.
+
+   🔴 Yeni BİLEŞEN ailesi değildir — yalnız yerleşim. İçerik bileşenleri mevcut
+   ailelerden gelir: .pf-tabs (sekme) · .bsv + .pstat (durum satırı) · .tkv
+   (takvim) · .prg (ilerleme) · .inf (künye) · .mad (madde) · .ptable (tablo,
+   mobilde kart) · .kurum-gate (bilgi/yetki kutusu) · .crs-grid/.crs-card.
+   🔴 panel-shell.html'in `.pnl-*` ailesi Campus'a TAŞINMADI: iki kabuk bakımı
+   doğururdu (docs/KARARLAR.md Faz 4).
+   ========================================================================= */
+
+/* ---- kimlik şeridi ---- */
+.pn-top{background:var(--bg-cream);border-bottom:1px solid var(--line);padding-bottom:26px}
+.pn-head{display:flex;align-items:flex-end;justify-content:space-between;gap:28px;flex-wrap:wrap}
+.pn-kim{display:flex;align-items:center;gap:18px;min-width:0}
+.pn-ava{flex:none;width:76px;height:76px;border-radius:var(--radius-circle);background-size:cover;
+  background-position:center;border:2px solid var(--paper);box-shadow:var(--sh-sm);
+  display:grid;place-items:center;background-color:var(--tomato-tint);color:var(--tomato);
+  font-size:24px;font-weight:800}
+.pn-kim h1{font-size:30px;letter-spacing:-.02em;margin:4px 0 3px}
+.pn-rol{font-size:13.5px;font-weight:500;color:var(--muted)}
+.pn-rol b{color:var(--tomato);font-weight:700}
+
+/* ---- KPI kartları ---- */
+.pn-kpi{display:flex;gap:12px;flex-wrap:wrap}
+.pn-kpi .kp{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-md);
+  padding:13px 18px;min-width:112px}
+.pn-kpi .kp b{display:block;font-size:23px;font-weight:800;letter-spacing:-.02em;color:var(--tomato);line-height:1.1}
+.pn-kpi .kp span{display:block;font-size:11.5px;font-weight:600;color:var(--muted);margin-top:3px}
+
+/* ---- yapışkan bölüm sekmeleri ---- */
+.pn-tabbar{position:sticky;top:112px;z-index:38;background:rgba(255,255,255,.94);
+  -webkit-backdrop-filter:blur(10px) saturate(150%);backdrop-filter:blur(10px) saturate(150%);
+  border-bottom:1px solid var(--line)}
+.pn-tabbar .pf-tabs{gap:2px}
+
+/* ---- gövde ---- */
+.pn-sec{padding:34px 0 66px;background:var(--bg-white)}
+.pn-h2{font-size:15px;display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.pn-h2 i{flex:none;width:30px;height:30px;border-radius:var(--radius-sm);background:var(--tomato-tint);
+  color:var(--tomato);display:grid;place-items:center;font-size:12px}
+.pn-alt{font-size:13.5px;font-weight:500;color:var(--muted);line-height:1.65;margin-bottom:20px;max-width:820px}
+.pn-alt b{color:var(--slate);font-weight:700}
+.pn-iki{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:44px;align-items:start}
+
+/* ---- kayıt satırı: kart görünümlü liste öğesi ---- */
+.pn-liste{display:flex;flex-direction:column;gap:12px}
+.pn-kart{display:flex;align-items:center;gap:18px;background:var(--paper);border:1px solid var(--line);
+  border-radius:var(--radius-md);padding:16px 18px;transition:.2s var(--ease)}
+.pn-kart:hover{border-color:var(--tomato);box-shadow:var(--sh-sm)}
+.pn-kart .kk-fig{flex:none;width:104px;height:66px;border-radius:var(--radius-sm);background-size:cover;
+  background-position:center;background-color:var(--bg)}
+.pn-kart .kk-mono{flex:none;width:56px;height:56px;border-radius:var(--radius-md);background:var(--tomato-tint);
+  color:var(--tomato);display:grid;place-items:center;font-size:19px;font-weight:800}
+.pn-kart .kk-body{min-width:0;flex:1}
+.pn-kart .kk-body h3{font-size:15.5px;margin-bottom:4px}
+.pn-kart .kk-body h3 a:hover{color:var(--tomato)}
+.pn-kart .kk-meta{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:12.5px;font-weight:500;color:var(--muted)}
+.pn-kart .kk-meta i{color:var(--tomato);font-size:10.5px;margin-right:5px}
+.pn-kart .kk-prg{margin-top:9px;max-width:340px}
+.pn-kart .kk-not{font-size:12.5px;font-weight:500;color:var(--muted);line-height:1.55;margin-top:8px}
+.pn-kart .kk-sag{flex:none;display:flex;flex-direction:column;align-items:flex-end;gap:9px}
+.pn-kart .kk-sag .btn{padding:0 15px;height:38px;font-size:13px}
+
+/* ---- ilerleme listesi (özet kolonu) ---- */
+.pn-prg-liste{display:flex;flex-direction:column;gap:16px;background:var(--paper);
+  border:1px solid var(--line);border-radius:var(--radius-md);padding:18px}
+.pn-prg-satir b.pl-ad{display:block;font-size:13.5px;font-weight:700;color:var(--slate);margin-bottom:7px}
+.pn-prg-satir b.pl-ad a:hover{color:var(--tomato)}
+
+/* ---- üst şerit + eylem ---- */
+.pn-ust{display:flex;align-items:center;justify-content:space-between;gap:18px;flex-wrap:wrap;margin-bottom:20px}
+
+/* ---- klasörlü not/kayıt grubu ---- */
+.pn-grup{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-md);padding:18px 20px}
+.pn-grup > h3{font-size:15px;display:flex;align-items:center;gap:10px;margin-bottom:14px;
+  padding-bottom:12px;border-bottom:1px solid var(--line)}
+.pn-grup > h3 i{color:var(--tomato);font-size:12px}
+.pn-grup > h3 span{margin-left:auto;font-size:12px;font-weight:600;color:var(--muted)}
+.pn-satir{display:flex;gap:14px;padding:11px 0;border-bottom:1px solid var(--line)}
+.pn-satir:last-child{border-bottom:none;padding-bottom:0}
+.pn-satir .ns-dk{flex:none;font-size:11.5px;font-weight:700;color:var(--tomato);background:var(--tomato-tint);
+  border:1px solid rgba(var(--tomato-rgb),.24);padding:4px 8px;border-radius:var(--radius-sm);
+  font-variant-numeric:tabular-nums;height:fit-content}
+.pn-satir .ns-txt{min-width:0}
+.pn-satir .ns-txt p{font-size:13.5px;font-weight:500;color:var(--slate-2);line-height:1.6}
+.pn-satir .ns-txt span{display:block;font-size:11.5px;color:var(--muted);font-weight:600;margin-top:4px}
+
+/* ---- yetki rozeti (§10.3 — izinler ayrıdır, arayüzde de ayrı görünür) ---- */
+.pn-izin{display:flex;flex-wrap:wrap;gap:8px}
+.pn-izin span{display:inline-flex;align-items:center;gap:6px;font-size:11.5px;font-weight:700;
+  padding:5px 10px;border-radius:var(--radius-sm);border:1px solid var(--line);
+  background:var(--bg);color:var(--muted)}
+.pn-izin span.var{background:#EAF7F0;color:var(--green-deep);border-color:rgba(59,183,126,.32)}
+.pn-izin span i{font-size:10px}
+
+@media (max-width:1024px){
+  .pn-iki{grid-template-columns:1fr;gap:34px}
+  .pn-head{align-items:flex-start}
+  .pn-kim h1{font-size:25px}
+}
+@media (max-width:640px){
+  .pn-tabbar{top:62px}
+  .pn-ava{width:58px;height:58px;font-size:18px}
+  .pn-kim{gap:14px}
+  .pn-kim h1{font-size:21px}
+  .pn-kpi{width:100%}
+  .pn-kpi .kp{flex:1;min-width:0;padding:11px 12px}
+  .pn-kpi .kp b{font-size:19px}
+  .pn-kart{flex-wrap:wrap;gap:14px}
+  .pn-kart .kk-fig{width:72px;height:48px}
+  .pn-kart .kk-sag{width:100%;align-items:stretch}
+  .pn-kart .kk-sag .btn{width:100%}
+  .pn-kart .kk-prg{max-width:none}
+}
+
+/* ============================================================================
+   DadaCampus — ORTAK KURUM MODÜLÜ CSS (`.turd` · `.mdl` · `.surec`)
+   ----------------------------------------------------------------------------
+   Kurumlar Merkezi (§9.1), kurum türü sayfası (§9.3) ve iş birliği başvurusu
+   (§9.4) aynı üç aileyi kullanır: kurum türü ayrıntı bloğu, iş birliği modeli
+   satırı, süreç adımı. Faz 1'de yalnız Kurumlar Merkezi'nde vardı; Faz 4'te üç
+   sayfa paylaştığı için tek kaynağa alındı (kopya = divergans borcu, §3).
+
+   🔴 Yeni bileşen ailesi değil — Faz 1'de ilkel parçalardan kurulmuş üç aile,
+   yeri değişti. Renk yalnız var(--tomato) ve türevleri.
+   ========================================================================= */
+
+/* ---- kurum türü ayrıntı bloğu (§9.3) ---- */
+.turd{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-lg);
+  padding:26px 28px;margin-top:20px}
+.turd-head{display:flex;align-items:center;gap:14px;margin-bottom:18px}
+.turd-ico{flex:none;width:46px;height:46px;border-radius:var(--radius-md);background:var(--tomato-tint);
+  color:var(--tomato);display:grid;place-items:center;font-size:19px}
+.turd-head h3{font-size:19px}
+.turd-head span{display:block;font-size:13px;color:var(--muted);font-weight:500;margin-top:2px}
+.turd-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:22px}
+.turd-grid h4{font-size:12px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--muted);margin-bottom:11px}
+.turd-grid ul{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:8px}
+.turd-grid li{display:flex;align-items:flex-start;gap:9px;font-size:13.5px;font-weight:500;
+  color:var(--slate-2);line-height:1.55}
+.turd-grid li i{color:var(--tomato);font-size:11px;margin-top:5px;flex:none}
+.turd-foot{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;
+  margin-top:20px;padding-top:18px;border-top:1px solid var(--line)}
+.turd-foot .tf-note{font-size:12.5px;color:var(--muted);font-weight:500}
+
+/* ---- iş birliği modeli satırı (§9.2) ---- */
+.mdl{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.mdl-row{display:flex;align-items:flex-start;gap:14px;background:var(--paper);border:1px solid var(--line);
+  border-radius:var(--radius-md);padding:18px 20px;transition:.2s var(--ease)}
+.mdl-row:hover{border-color:var(--tomato);transform:translateY(-2px);box-shadow:var(--sh-sm)}
+.mdl-ico{flex:none;width:40px;height:40px;border-radius:var(--radius-sm);background:var(--tomato-tint);
+  color:var(--tomato);display:grid;place-items:center;font-size:16px}
+.mdl-body{min-width:0}
+.mdl-body b{display:block;font-size:15px;color:var(--slate);font-weight:700;margin-bottom:4px}
+.mdl-body p{font-size:13px;color:var(--muted);font-weight:500;line-height:1.55}
+.mdl-body .mdl-deger{display:block;font-size:12.5px;font-weight:700;color:var(--tomato);margin-top:7px}
+
+/* ---- süreç adımları (§19.1) ---- */
+.surec{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px 26px;counter-reset:sr}
+.surec-row{display:flex;align-items:flex-start;gap:14px;padding:12px 0;border-bottom:1px solid var(--line)}
+.surec-row:last-child,.surec-row:nth-last-child(2){border-bottom:none}
+.surec-no{flex:none;width:30px;height:30px;border-radius:var(--radius-sm);background:var(--tomato-tint);
+  color:var(--tomato);display:grid;place-items:center;font-size:12.5px;font-weight:700}
+.surec-row p{font-size:14px;font-weight:500;color:var(--slate-2);line-height:1.5;padding-top:5px}
+
+@media (max-width:1024px){
+  .mdl,.surec{grid-template-columns:1fr}
+  .surec-row:nth-last-child(2){border-bottom:1px solid var(--line)}
+  .turd-grid{grid-template-columns:1fr;gap:18px}
+}
+@media (max-width:640px){
+  .turd{padding:20px 18px}
 }
 
 /* ============== SAYFA CSS — Sertifika Doğrula (§15.3) ==============

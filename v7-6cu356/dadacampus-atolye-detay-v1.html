@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Arama — DadaCampus | DadaMutfak</title>
-<meta name="description" content="DadaCampus genel arama: eğitim, program, atölye, etkinlik, eğitmen, kurum ve rehber içeriğinde sonuç türü etiketiyle ara." />
+<title>Atölye ve Etkinlik Detayı — DadaCampus | DadaMutfak</title>
+<meta name="description" content="Tarih, saat, süre, format, konum veya bağlantı, kontenjan, malzeme, ücret, katılım belgesi ve iptal kuralıyla oturum detayı." />
 <link rel="shortcut icon" type="image/x-icon"
       href="assets/img/favicon.ico" />
 <!-- FontAwesome 6.5.2 (kilitli ikon seti) -->
@@ -1153,7 +1153,7 @@ html.reveal-ready .reveal.in{opacity:1;transform:none}
 </style>
 
 <style>
-/* ===== SAYFA CSS — arama-campus-v1.html ===== */
+/* ===== SAYFA CSS — dadacampus-atolye-detay-v1.html ===== */
 /* ===================== MERKEZ SAYFASI HERO DÜZELTMESİ =====================
    🔴 Kabuktaki .lst-top ANA SAYFA için `min-height:100vh/100svh` taşır — hub'ın
    hero'su bilerek tam ekrandır. Merkez/katalog sayfaları bu kabuğu devralınca
@@ -1739,139 +1739,16 @@ a.drs-row:hover{color:var(--tomato)}
   .turd{padding:20px 18px}
 }
 
-/* ============ SAYFA CSS — DADACAMPUS ARAMA (§17.1 global arama) ============
-   Anatomi Fit/Diet arama pilotundan devralındı; sayfa kanonik Campus kabuğundan
-   ÜRETİLİR (eskiden kendi kabuk kopyası vardı: nav'ı 5 öğeli eski sürümdü,
-   25 bağlantı akademi-v1.html#setler'e çöküyordu).
+/* ============== SAYFA CSS — Atölye / Etkinlik Detay (§13.2) ==============
+   İskelet `_detay.css` (.dt-*) · künye `.inf` · madde listeleri `.mad` ·
+   bilgi/yetki kutusu `.kurum-gate` · durum rozeti `.pstat` · ilgili oturum
+   rayı `.crs-grid/.crs-card` · yan panel `.form-card` + `.dt-kayit`.
+   Bu dosyada YALNIZ kontenjan göstergesi eki var.
+   ========================================================== */
 
-   🔴 RENK: eski kopya kendi `--camp / --camp-deep / --camp-tint / --camp-line /
-   --camp-bright` ailesini tanımlıyordu; değerleri petrol paletinin AYNISIYDI.
-   docs/lessons.md §1 gereği yeni renk tokenı üretilmez → hepsi kabuk tokenlarına
-   bağlandı: --camp→var(--tomato) · --camp-deep→var(--tomato-deep) ·
-   --camp-tint→var(--tomato-tint) · --camp-line→rgba(var(--tomato-rgb),.22) ·
-   --camp-bright→#4FB8C9 (kabuğun koyu hero aksanı, `.lst-hero h1 .accent`).
-   ========================================================================= */
-
-/* ---- arama hero (koyu petrol bandı) — sabit header altında ---- */
-.fs-top{position:relative;padding:126px 0 56px;background-image:linear-gradient(180deg,rgba(9,27,32,.92) 0%,rgba(12,34,40,.80) 52%,rgba(10,24,28,.88) 100%),url('https://images.unsplash.com/photo-1556910103-1c02745aae4d?w=1680&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-12&high=8&vib=3');background-size:cover;background-position:center;overflow:hidden}
-.fs-top::before{content:"";position:absolute;inset:0;background:radial-gradient(1100px 460px at 16% -10%,rgba(var(--tomato-rgb),.36),transparent 60%);pointer-events:none;z-index:1}
-.fs-top::after{content:"";position:absolute;right:-120px;bottom:-140px;width:420px;height:420px;border-radius:50%;background:radial-gradient(circle,rgba(79,184,201,.26),transparent 70%);pointer-events:none;z-index:1}
-.fs-top .wrap{position:relative;z-index:2}
-.fs-top .eyebrow{color:#4FB8C9}
-.fs-top h1{font-size:33px;letter-spacing:-.02em;color:#fff;margin:10px 0 12px;text-shadow:0 2px 22px rgba(0,0,0,.28)}
-.fs-top h1 .accent{color:#4FB8C9}
-.fs-top .rd-crumb{margin-bottom:14px}
-.fs-lead{font-size:15.5px;font-weight:500;color:#d3e5e8;max-width:600px;line-height:1.6;margin-bottom:26px}
-
-/* arama kutusu */
-.fs-box{position:relative;background:var(--paper);border:1px solid rgba(var(--tomato-rgb),.22);border-radius:var(--radius-lg);box-shadow:var(--sh-lg);padding:10px;max-width:680px}
-.fs-row{display:flex;gap:8px;padding:6px}
-.fs-input{flex:1;display:flex;align-items:center;gap:12px;background:var(--bg);border:1px solid var(--line);border-radius:var(--radius-md);padding:0 18px;min-width:0}
-.fs-input i{color:var(--tomato-deep)}
-.fs-input input{flex:1;min-width:0;border:none;background:transparent;font-family:inherit;font-weight:500;font-size:15.5px;color:var(--slate);padding:16px 0;outline:none}
-.fs-input input::placeholder{color:#a7a7a7;font-weight:500}
-.fs-row .btn{flex:none;padding:0 26px}
-.fs-sum{margin-top:18px;font-size:14.5px;color:#cadfe2;font-weight:500}
-.fs-sum b{color:#fff;font-weight:700}
-.fs-sum .q{color:#4FB8C9;font-weight:700}
-
-/* ---- autocomplete dropdown ---- */
-.fs-ac{position:absolute;left:6px;right:6px;top:calc(100% - 4px);z-index:60;background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-md);box-shadow:var(--sh-lg);padding:8px;max-height:min(440px,72vh);overflow-y:auto;opacity:0;visibility:hidden;transform:translateY(-6px);transition:opacity .18s var(--ease),transform .18s var(--ease),visibility .18s;scrollbar-width:thin;scrollbar-color:#d9d9d9 transparent}
-.fs-ac::-webkit-scrollbar{width:8px}
-.fs-ac::-webkit-scrollbar-thumb{background:#dcdcdc;border-radius:var(--radius-pill);border:2px solid var(--paper)}
-.fs-box.ac-open .fs-ac{opacity:1;visibility:visible;transform:translateY(0)}
-.fs-ac .ac-grp{display:flex;align-items:center;gap:8px;padding:11px 12px 6px;font-size:11.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--muted)}
-.fs-ac .ac-grp i{font-size:11px;color:var(--tomato)}
-.fs-ac .ac-grp .ac-clear{margin-left:auto;font-size:11px;font-weight:600;letter-spacing:0;text-transform:none;color:var(--muted);cursor:pointer;border:none;background:none;font-family:inherit;padding:2px 4px;border-radius:var(--radius-sm)}
-.fs-ac .ac-grp .ac-clear:hover{color:var(--tomato)}
-.fs-ac .ac-opt{display:flex;align-items:center;gap:13px;padding:10px 12px;border-radius:var(--radius-md);cursor:pointer;transition:background .14s var(--ease)}
-.fs-ac .ac-opt .ac-ico{flex:none;width:38px;height:38px;border-radius:var(--radius-sm);background:var(--bg);border:1px solid var(--line);display:grid;place-items:center;color:var(--slate-2);font-size:15px;background-size:cover;background-position:center;overflow:hidden}
-.fs-ac .ac-opt .ac-main{min-width:0;flex:1}
-.fs-ac .ac-opt .ac-ttl{display:block;font-size:14.5px;font-weight:600;color:var(--slate);line-height:1.25;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.fs-ac .ac-opt .ac-ttl mark{background:none;color:var(--tomato);font-weight:700;padding:0}
-.fs-ac .ac-opt .ac-sub{display:block;margin-top:1px;font-size:12px;font-weight:500;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.fs-ac .ac-opt .ac-badge{flex:none;display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:700;padding:4px 9px;border-radius:var(--radius-pill);background:var(--tomato-tint);color:var(--tomato-deep);border:1px solid rgba(var(--tomato-rgb),.22)}
-.fs-ac .ac-opt .ac-badge i{font-size:9.5px}
-.fs-ac .ac-opt:hover,.fs-ac .ac-opt.is-active{background:var(--tomato-tint)}
-.fs-ac .ac-opt:hover .ac-ttl,.fs-ac .ac-opt.is-active .ac-ttl{color:var(--tomato-deep)}
-.fs-ac .ac-query .ac-ico{background:var(--tomato);border-color:var(--tomato);color:#fff}
-.fs-ac .ac-none{padding:18px 14px;text-align:center;font-size:13.5px;color:var(--muted);font-weight:500}
-
-/* ---- sekme barı (§17.1 sonuç türü) ---- */
-.fs-tabbar{position:sticky;top:112px;z-index:40;background:rgba(255,255,255,.93);-webkit-backdrop-filter:blur(10px) saturate(150%);backdrop-filter:blur(10px) saturate(150%);border-bottom:1px solid var(--line);padding:12px 0}
-.fs-tabs{display:flex;gap:4px;background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-md);padding:4px;overflow-x:auto;scrollbar-width:none}
-.fs-tabs::-webkit-scrollbar{display:none}
-.fs-tabs .dt{font-family:inherit;font-weight:700;font-size:13px;color:var(--muted);background:transparent;border:none;border-radius:var(--radius-sm);padding:9px 16px;cursor:pointer;display:inline-flex;align-items:center;gap:7px;transition:.2s var(--ease);white-space:nowrap;flex:none}
-.fs-tabs .dt:hover{color:var(--tomato-deep)}
-.fs-tabs .dt.active{background:var(--tomato);color:#fff}
-.fs-tabs .dt .cnt{font-size:11px;font-weight:700;opacity:.6}
-/* §23.3 — sekme durumu renk dışında da okunur: aktif sekmede ikon işareti */
-.fs-tabs .dt.active::before{content:"\f00c";font-family:"Font Awesome 6 Free";font-weight:900;font-size:9px;opacity:.9}
-
-/* ---- sonuç bölgesi ---- */
-.fs-results{padding:34px 0 60px;background:var(--bg-cream)}
-.fs-pane{animation:fadeUp .35s var(--ease)}
-.fs-pane[hidden]{display:none}
-.fs-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:24px}
-.fs-grid>*{min-width:0}
-.fs-cnt-note{font-size:13.5px;color:var(--muted);font-weight:500;margin:0 0 20px}
-.fs-cnt-note b{color:var(--tomato-deep);font-weight:700}
-
-/* ---- sonuç kartı (POOL-driven, tek şablon) ---- */
-.fs-card{display:flex;flex-direction:column;background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-lg);overflow:hidden;cursor:pointer;transition:.28s var(--ease)}
-.fs-card:hover{transform:translateY(-6px);border-color:rgba(var(--tomato-rgb),.22);box-shadow:var(--sh-md)}
-.fs-media{position:relative;height:158px;background-size:cover;background-position:center}
-.fs-media::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(33,30,22,0) 55%,rgba(20,18,12,.34))}
-.fs-badge{position:absolute;top:11px;left:11px;z-index:2;display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:700;padding:5px 11px;border-radius:var(--radius-pill);background:rgba(255,255,255,.95);color:var(--tomato-deep)}
-.fs-badge i{font-size:10px}
-.fs-tile{height:120px;display:grid;place-items:center;background:var(--tomato-tint);color:var(--tomato);font-size:34px;position:relative}
-.fs-tile .fs-badge{background:#fff;box-shadow:var(--sh-sm)}
-.fs-cbody{padding:15px 16px 17px;display:flex;flex-direction:column;flex:1}
-.fs-cbody h4{font-size:16px;letter-spacing:-.01em;line-height:1.3;margin-bottom:6px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;transition:color .2s var(--ease)}
-.fs-card:hover .fs-cbody h4{color:var(--tomato-deep)}
-.fs-cbody p{font-size:12.5px;color:var(--muted);font-weight:500;line-height:1.45;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-.fs-cgo{margin-top:auto;padding-top:13px;font-size:12.5px;font-weight:700;color:var(--tomato-deep);display:inline-flex;align-items:center;gap:7px}
-.fs-cgo i{font-size:10px;transition:transform .2s var(--ease)}
-.fs-card:hover .fs-cgo i{transform:translateX(3px)}
-
-/* ---- boş durum ---- */
-.fs-empty{display:none;text-align:center;background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-lg);padding:70px 30px;margin-top:8px}
-.fs-empty.show{display:block;animation:fadeUp .35s var(--ease)}
-.fs-empty-ico{width:74px;height:74px;border-radius:var(--radius-lg);background:var(--tomato-tint);color:var(--tomato);display:grid;place-items:center;font-size:29px;margin:0 auto 20px}
-.fs-empty h3{font-size:22px;margin-bottom:9px}
-.fs-empty p{font-size:14.5px;color:var(--muted);font-weight:500;max-width:420px;margin:0 auto 22px;line-height:1.6}
-
-/* ---- popüler & son aramalar ---- */
-.fs-pop{padding:52px 0 68px;background:var(--bg-white)}
-.fs-pop-grid{display:grid;grid-template-columns:1.25fr 1fr;gap:48px;align-items:start}
-.fs-pop h3{font-size:18px;display:inline-flex;align-items:center;gap:10px;margin-bottom:18px}
-.fs-pop h3 i{color:var(--tomato);font-size:15px}
-.fs-chips{display:flex;flex-wrap:wrap;gap:10px}
-.fs-chips .chip{font-family:inherit;font-size:13px;font-weight:600;color:var(--slate-2);background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-pill);padding:9px 16px;cursor:pointer;transition:.18s var(--ease)}
-.fs-chips .chip:hover{border-color:var(--tomato);color:var(--tomato-deep);background:var(--tomato-tint)}
-.fs-recent{display:flex;flex-direction:column}
-.fs-rrow{display:flex;align-items:center;gap:12px;padding:12px 4px;border-bottom:1px solid var(--line);font-size:14px;font-weight:500;color:var(--slate-2);cursor:pointer;transition:.18s var(--ease)}
-.fs-rrow:last-child{border-bottom:none}
-.fs-rrow>i:first-child{color:var(--muted);font-size:13px;flex:none;width:18px;text-align:center}
-.fs-rrow .term{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.fs-rrow .go{margin-left:auto;flex:none;font-size:11px;color:#c7c7c7;transition:.18s var(--ease)}
-.fs-rrow:hover{color:var(--tomato-deep)}
-.fs-rrow:hover .go{color:var(--tomato);transform:translateX(3px)}
-
-.is-off{display:none!important}
-
-@media (max-width:1024px){
-  .fs-grid{grid-template-columns:1fr 1fr}
-  .fs-pop-grid{grid-template-columns:1fr;gap:34px}
-}
-@media (max-width:640px){
-  .fs-top{padding:104px 0 40px}
-  .fs-top h1{font-size:25px}
-  .fs-tabbar{top:62px}
-  .fs-grid{display:flex;gap:14px;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;padding-bottom:6px}
-  .fs-grid::-webkit-scrollbar{display:none}
-  .fs-grid>*{flex:none;width:74vw;max-width:280px;scroll-snap-align:start}
-}
+/* kontenjan doluluk — .prg ailesinin yan panel varyantı */
+.dt-kayit .kont{margin:4px 0 14px}
+.dt-kayit .kont .prg-lbl{margin-bottom:6px}
 </style>
 </head>
 <body data-brand="campus">
@@ -1951,7 +1828,7 @@ a.drs-row:hover{color:var(--tomato)}
 
         <!-- 2) PROGRAMLAR (§4.3) — Sertifika buraya taşındı (§26.4) -->
         <div class="nav-item">
-          <a href="dadacampus-programlar-v1.html">Programlar <i class="fa-solid fa-chevron-down"></i></a>
+          <a href="dadacampus-programlar-v1.html" class="active">Programlar <i class="fa-solid fa-chevron-down"></i></a>
           <div class="dropdown ak-tracks">
             <div class="dd-head">Program Türleri</div>
             <div class="dd-grid">
@@ -2163,7 +2040,7 @@ a.drs-row:hover{color:var(--tomato)}
   <a href="akademi-v1.html" class="bn-item"><i class="fa-solid fa-house"></i><span>Ana Sayfa</span></a>
   <a href="dadacampus-egitimler-v1.html" class="bn-item"><i class="fa-solid fa-clapperboard"></i><span>Eğitimler</span></a>
   <a href="dadacampus-kampusum-v1.html" class="bn-item bn-center" id="bnKampusum"><span class="bn-fab"><i class="fa-solid fa-graduation-cap"></i></span><span>Kampüsüm</span></a>
-  <a href="dadacampus-programlar-v1.html" class="bn-item"><i class="fa-solid fa-diagram-project"></i><span>Programlar</span></a>
+  <a href="dadacampus-programlar-v1.html" class="bn-item active" aria-current="page"><i class="fa-solid fa-diagram-project"></i><span>Programlar</span></a>
   <a href="giris-v1.html" class="bn-item" id="bnAccount"><i class="fa-regular fa-user"></i><span>Hesabım</span></a>
 </nav>
 
@@ -2298,103 +2175,247 @@ a.drs-row:hover{color:var(--tomato)}
 <!-- ===== ANA İÇERİK (footer reveal perdesi) ===== -->
 <main class="page-main" id="pageMain">
 <!-- ============================================================================
-     DADACAMPUS GLOBAL ARAMA (§17.1) — sonuç TÜRÜ etiketiyle birlikte döner:
-     Eğitim · Program · Atölye · Etkinlik · Eğitmen · Kurum · Rehber (konu,
-     malzeme, terim). Eğitim/program/oturum/eğitmen/kurum sonuçları
-     `campus-data.js`'ten üretilir; rehber sonuçları gerçek DadaGastro rehber
-     sayfalarına gider. Eskiden 6 eğitim sonucu `akademi-v1.html#setler`e
-     çöküyordu — artık her sonuç kendi detay slug'ına gider (§26.7).
+     ATÖLYE / ETKİNLİK DETAYI (§13.2) — DadaCampus
+
+     TEK ŞABLON, İKİ AYRI VARLIK.
+     ?atolye=<slug>  → DC.atolyeler   (belirli tarihli canlı/yüz yüze UYGULAMA)
+     ?etkinlik=<slug>→ DC.etkinlikler (seminer, söyleşi, panel, yarışma)
+     §8.1'de Atölye ile Etkinlik AYRI terimlerdir; burada yalnız DETAY ŞABLONU
+     ortaktır. Tür etiketi, alan kümesi ("eğitmen" ↔ "konuşmacı", "konu/hedef
+     kitle" yalnız etkinlikte) ve sayfa dili her iki varlıkta kendi kavramını
+     korur — hiçbir yerde atölyeye "etkinlik", etkinliğe "atölye" denmez.
+     Kod içindeki `ot` öneki ve "oturum" sözcüğü nötr TEKNİK addır (§13.3 "canlı
+     oturum yaşam döngüsü", §24.2 "kuruma özel oturum"); kullanıcıya görünen her
+     etikette varlığın kendi adı yazılır.
+
+     §13.2'nin on bilgi bloğu sırayla:
+       1 ad/tür/konu/hedef kitle · 2 tarih-saat-dilim-süre-format ·
+       3 online bağlantı VEYA fiziksel konum (yetki kapılı) · 4 eğitmen/konuşmacı
+       + partner kurum · 5 kontenjan + kayıt kapanışı · 6 malzeme/ekipman/ön
+       hazırlık · 7 ücret veya kurum erişim koşulu · 8 kayıt alınacak mı +
+       sonradan erişim süresi · 9 katılım belgesi koşulu · 10 iptal/erteleme/iade.
+     Ayrıca §13.3 canlı oturum yaşam döngüsü ve §17.3 bağlı program + ilgili
+     oturum köprüleri.
      ========================================================================= -->
 
-<!-- ===== ARAMA HERO ===== -->
-<section class="fs-top below-header">
+<!-- kayıt bulunamadı / parametre yok (§26.15 durum kapsaması) -->
+<section class="below-header ak-sec" id="otBos" hidden>
   <div class="wrap">
     <nav class="rd-crumb" aria-label="Sayfa yolu">
       <a href="akademi-v1.html"><i class="fa-solid fa-house" aria-hidden="true"></i></a>
       <i class="fa-solid fa-chevron-right" aria-hidden="true"></i>
-      <b>Arama</b>
+      <a href="dadacampus-programlar-v1.html">Programlar</a>
+      <i class="fa-solid fa-chevron-right" aria-hidden="true"></i>
+      <a href="dadacampus-programlar-v1.html?bolum=atolyeler">Atölyeler ve Etkinlikler</a>
     </nav>
-    <span class="eyebrow"><i class="fa-solid fa-graduation-cap"></i> DadaCampus · Arama</span>
-    <h1 id="fsTitle">DadaCampus'ta <span class="accent">ara</span></h1>
-    <p class="fs-lead" id="fsLead">Eğitim, program, atölye, etkinlik, eğitmen, kurum ve rehber içeriği — tek kutudan tüm DadaCampus'ta ara. Her sonuç türüyle birlikte gösterilir.</p>
-    <form class="fs-box" id="fsForm" role="search" autocomplete="off">
-      <div class="fs-row">
-        <div class="fs-input">
-          <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
-          <input id="fsInput" type="text" role="combobox" aria-expanded="false" aria-autocomplete="list" aria-controls="fsAcList" aria-haspopup="listbox" placeholder="Eğitim, program, eğitmen, kurum veya terim ara…" aria-label="DadaCampus içeriğinde ara" />
+    <div class="lst-empty show" style="margin-top:20px">
+      <span class="le-ico"><i class="fa-regular fa-calendar-xmark" aria-hidden="true"></i></span>
+      <h3>Bu oturum bulunamadı</h3>
+      <p>Bağlantı eski olabilir ya da tarihli oturum arşive alınmış olabilir. Yaklaşan atölye ve etkinlikleri akademik takvimden görebilirsin.</p>
+      <div class="ak-hero-cta" style="justify-content:center;margin-top:0">
+        <a class="btn btn-primary" href="dadacampus-takvim-v1.html"><i class="fa-regular fa-calendar-days"></i> Akademik Takvim</a>
+        <a class="btn btn-ghost" href="dadacampus-programlar-v1.html?bolum=atolyeler"><i class="fa-solid fa-diagram-project"></i> Atölyeler ve Etkinlikler</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div id="otIcerik">
+
+<!-- ===== 1) + 2) KİMLİK — koyu hero: ad, tür, tarih, saat, dilim, süre, format ===== -->
+<section class="below-header lst-top dt-top">
+  <div class="lst-hero-media" id="otKapak" aria-hidden="true"></div>
+  <div class="wrap">
+    <nav class="rd-crumb" aria-label="Sayfa yolu">
+      <a href="akademi-v1.html"><i class="fa-solid fa-house" aria-hidden="true"></i></a>
+      <i class="fa-solid fa-chevron-right" aria-hidden="true"></i>
+      <a href="dadacampus-programlar-v1.html">Programlar</a>
+      <i class="fa-solid fa-chevron-right" aria-hidden="true"></i>
+      <a href="dadacampus-programlar-v1.html?bolum=atolyeler">Atölyeler ve Etkinlikler</a>
+      <i class="fa-solid fa-chevron-right" aria-hidden="true"></i>
+      <b id="otCrumbAd">Oturum</b>
+    </nav>
+    <div class="lst-hero">
+      <div class="lh-main">
+        <span class="eyebrow" id="otEyebrow"></span>
+        <h1 id="otAd"></h1>
+        <p class="lead" id="otOzet"></p>
+        <!-- §13.2/2 — tarih · saat (saat dilimiyle) · süre · format · tür -->
+        <div class="dt-yapi" id="otYapi" role="group" aria-label="Oturum yapısı"></div>
+        <div class="ak-hero-cta" id="otCta"></div>
+        <p class="dt-erisim" id="otErisim"></p>
+      </div>
+      <div class="lst-stats" id="otStats" role="group" aria-label="Oturum özeti"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== KİŞİSEL ŞERİT — yalnız girişli kullanıcı (.kisi-sec, body.is-auth) ===== -->
+<section class="ak-sec kisi-sec" id="otBenimSec" style="padding:28px 0 0">
+  <div class="wrap">
+    <div class="kurum-gate" id="otBenim"></div>
+  </div>
+</section>
+
+<section class="lst-sec dt-sec">
+  <div class="wrap">
+    <div class="dt-layout">
+      <div class="dt-ana">
+
+        <!-- ===== 1) KONU VE HEDEF KİTLE ===== -->
+        <div class="dt-blok derin" id="konu">
+          <h2><i class="fa-solid fa-bullseye"></i> <span id="otKonuBaslik">Konu ve hedef kitle</span></h2>
+          <p class="dt-alt" id="otKonuAlt"></p>
+          <div class="inf" id="otKonu"></div>
         </div>
-        <button class="btn btn-primary" type="submit"><i class="fa-solid fa-magnifying-glass"></i> Ara</button>
+
+        <!-- ===== 2) ZAMAN VE BİÇİM ===== -->
+        <div class="dt-blok derin" id="zaman">
+          <h2><i class="fa-regular fa-calendar-days"></i> Tarih, saat ve biçim</h2>
+          <p class="dt-alt">Saatler katılımcının değil, oturumun saat dilimiyle yazılır; kendi saatini buna göre hesapla.</p>
+          <div class="inf" id="otZaman"></div>
+        </div>
+
+        <!-- ===== 3) KATILIM: ONLINE BAĞLANTI **VEYA** FİZİKSEL KONUM =====
+             🔴 §13.2 + §24.2 + §26.15: katılım bağlantısı ve kuruma özel oturumun
+             konum/malzeme ayrıntısı ZİYARETÇİYE GÖSTERİLMEZ. Ziyaretçi oturumun
+             var olduğunu, kime açık olduğunu ve nasıl erişileceğini görür; adres
+             ve bağlantı yalnız kayıtlı/yetkili kullanıcıya açılır (.kurum-gate). -->
+        <div class="dt-blok derin" id="katilim">
+          <h2><i class="fa-solid fa-location-dot"></i> Nasıl katılınır?</h2>
+          <p class="dt-alt" id="otKatilimAlt"></p>
+          <div class="bsv" id="otKatilim"></div>
+          <div class="kurum-gate" id="otKapi" style="margin-top:18px"></div>
+        </div>
+
+        <!-- ===== 4) EĞİTMEN / KONUŞMACI VE PARTNER KURUM (§17.3) =====
+             🔴 §26.13: partner kurum adı yalnız onay kaydı varsa yazılır. -->
+        <div class="dt-blok derin" id="kadro">
+          <h2><i class="fa-solid fa-user-tie"></i> <span id="otKadroBaslik">Kimler yürütüyor?</span></h2>
+          <p class="dt-alt" id="otKadroAlt"></p>
+          <div class="dt-kadro" id="otKadro"></div>
+        </div>
+
+        <!-- ===== 5) KONTENJAN VE KAYIT KAPANIŞI ===== -->
+        <div class="dt-blok derin" id="kontenjan">
+          <h2><i class="fa-solid fa-users"></i> Kontenjan ve kayıt kapanışı</h2>
+          <p class="dt-alt" id="otKontAlt"></p>
+          <div class="prg-lbl" id="otKontLbl"></div>
+          <span class="prg" id="otKontPrg"><span></span></span>
+          <div class="inf" id="otKontInf" style="margin-top:18px"></div>
+        </div>
+
+        <!-- ===== 6) MALZEME, EKİPMAN VE ÖN HAZIRLIK ===== -->
+        <div class="dt-blok derin" id="hazirlik">
+          <h2><i class="fa-solid fa-basket-shopping"></i> Malzeme, ekipman ve ön hazırlık</h2>
+          <p class="dt-alt" id="otHazAlt"></p>
+          <div class="dt-iki" id="otListeler">
+            <div>
+              <div class="dt-h3"><i class="fa-solid fa-carrot" aria-hidden="true"></i> Malzeme</div>
+              <ul class="mad" id="otMalzeme"></ul>
+            </div>
+            <div>
+              <div class="dt-h3"><i class="fa-solid fa-kitchen-set" aria-hidden="true"></i> Ekipman</div>
+              <ul class="mad" id="otEkipman"></ul>
+            </div>
+          </div>
+          <div class="kurum-gate" id="otHazirlik" style="margin-top:20px"></div>
+        </div>
+
+        <!-- ===== 7) + 8) ÜCRET / KURUM ERİŞİMİ · KAYIT VE SONRADAN ERİŞİM ===== -->
+        <div class="dt-blok derin" id="kayit">
+          <h2><i class="fa-solid fa-file-signature"></i> Kayıt, ücret ve sonradan erişim</h2>
+          <p class="dt-alt" id="otKosulAlt"></p>
+          <div class="inf" id="otKosul"></div>
+        </div>
+
+        <!-- ===== 9) KATILIM BELGESİ (§15.1 zorunlu açıklama) =====
+             🔴 Katılım belgesi BAŞARI belgesi değildir; belge türünün zorunlu
+             açıklaması her zaman gösterilir, "onaylı/geçerli" dili kullanılmaz. -->
+        <div class="dt-blok derin" id="belge">
+          <h2><i class="fa-solid fa-certificate"></i> Katılım belgesi</h2>
+          <div class="inf" id="otBelge"></div>
+          <div class="fk-help" id="otBelgeNot" style="margin-top:16px"></div>
+          <a class="see-all" href="dadacampus-sertifika-dogrula-v1.html" style="margin-top:14px">Belge doğrulama nasıl çalışır? <i class="fa-solid fa-arrow-right"></i></a>
+        </div>
+
+        <!-- ===== 10) İPTAL, ERTELEME VE GERİ ÖDEME ===== -->
+        <div class="dt-blok derin" id="iptal">
+          <h2><i class="fa-solid fa-rotate-left"></i> İptal, erteleme ve geri ödeme</h2>
+          <div class="inf" id="otIptal"></div>
+        </div>
+
+        <!-- ===== §13.3 CANLI OTURUM YAŞAM DÖNGÜSÜ (8 adım) =====
+             Tablo: renk tek başına durum anlatmaz — her satırda ikon + metin
+             birlikte verilir (§23.3). Mobilde .ptable kart görünümüne düşer,
+             bu yüzden her hücrede data-l etiketi var (§23.2). -->
+        <div class="dt-blok derin" id="dongu">
+          <h2><i class="fa-solid fa-timeline"></i> Bu oturum hangi aşamada?</h2>
+          <p class="dt-alt" id="otDonguAlt"></p>
+          <div class="ptable-wrap">
+            <table class="ptable">
+              <caption class="sr-only">Canlı oturum yaşam döngüsünün sekiz adımı ve bu oturumun bulunduğu aşama</caption>
+              <thead><tr><th scope="col">Adım</th><th scope="col">Ne oluyor</th><th scope="col">Durum</th></tr></thead>
+              <tbody id="otDongu"></tbody>
+            </table>
+          </div>
+        </div>
       </div>
-      <div class="fs-ac" id="fsAc"><div class="fs-ac-list" id="fsAcList" role="listbox" aria-label="Arama önerileri"></div></div>
-      <span class="sr-only" id="fsAcStatus" role="status" aria-live="polite"></span>
-    </form>
-    <p class="fs-sum" id="fsSum"></p>
+
+      <!-- ===== YAN PANEL: kayıt kartı · eğitmen/konuşmacı · partner kurum ===== -->
+      <aside class="dt-yan">
+        <div class="form-card dt-kayit" id="otKayitKart"></div>
+        <div class="form-card dt-kisi" id="otKisiKart" hidden></div>
+        <div class="form-card dt-kurum" id="otKurumKart" hidden></div>
+      </aside>
+    </div>
   </div>
 </section>
 
-<!-- ===== SEKME BARI — §17.1 sonuç türleri ===== -->
-<div class="fs-tabbar" id="fsTabbar">
+<!-- ===== BAĞLI PROGRAM (§17.3: etkinlik detayı bağlı programı göstermelidir) ===== -->
+<section class="ak-sec derin" id="programSec" style="background:var(--bg-cream)">
   <div class="wrap">
-    <div class="fs-tabs" role="tablist" aria-label="Sonuç türü">
-      <button class="dt active" type="button" role="tab" aria-selected="true" data-tab="tumu">Tümü <span class="cnt" data-cnt="tumu"></span></button>
-      <button class="dt" type="button" role="tab" aria-selected="false" data-tab="egitim">Eğitim <span class="cnt" data-cnt="egitim"></span></button>
-      <button class="dt" type="button" role="tab" aria-selected="false" data-tab="program">Program <span class="cnt" data-cnt="program"></span></button>
-      <button class="dt" type="button" role="tab" aria-selected="false" data-tab="oturum">Atölye &amp; Etkinlik <span class="cnt" data-cnt="oturum"></span></button>
-      <button class="dt" type="button" role="tab" aria-selected="false" data-tab="egitmen">Eğitmen <span class="cnt" data-cnt="egitmen"></span></button>
-      <button class="dt" type="button" role="tab" aria-selected="false" data-tab="kurum">Kurum <span class="cnt" data-cnt="kurum"></span></button>
-      <button class="dt" type="button" role="tab" aria-selected="false" data-tab="rehber">Rehber <span class="cnt" data-cnt="rehber"></span></button>
-    </div>
-  </div>
-</div>
-
-<!-- ===== SONUÇLAR (POOL-driven, JS render) ===== -->
-<section class="fs-results" id="fsResults">
-  <div class="wrap">
-    <p class="fs-cnt-note" id="fsCntNote"></p>
-    <div class="fs-pane" data-pane="tumu"></div>
-    <div class="fs-pane" data-pane="egitim" hidden></div>
-    <div class="fs-pane" data-pane="program" hidden></div>
-    <div class="fs-pane" data-pane="oturum" hidden></div>
-    <div class="fs-pane" data-pane="egitmen" hidden></div>
-    <div class="fs-pane" data-pane="kurum" hidden></div>
-    <div class="fs-pane" data-pane="rehber" hidden></div>
-    <div class="fs-empty" id="fsEmpty">
-      <div class="fs-empty-ico"><i class="fa-solid fa-magnifying-glass"></i></div>
-      <h3>&ldquo;<span id="fsEmptyQ"></span>&rdquo; için sonuç yok</h3>
-      <p>Farklı bir kelime dene — eğitim adı, konu alanı, eğitmen, kurum ya da mutfak terimi. Aradığın bir programsa Programlar Merkezi'nin filtreleri daha iyi sonuç verir.</p>
-      <div class="ak-hero-cta" style="justify-content:center;margin:0 0 20px">
-        <a class="btn btn-primary" href="dadacampus-egitimler-v1.html"><i class="fa-solid fa-clapperboard"></i> Eğitimler Merkezi</a>
-        <a class="btn btn-ghost" href="dadacampus-yardim-v1.html"><i class="fa-solid fa-circle-question"></i> Yardım Merkezi</a>
-      </div>
-      <div class="fs-chips" id="fsEmptyChips"></div>
-    </div>
-  </div>
-</section>
-
-<!-- ===== POPÜLER + SON ARAMALAR (autocomplete varsayılan kaynağı) ===== -->
-<section class="fs-pop" id="fsPop">
-  <div class="wrap">
-    <div class="fs-pop-grid">
+    <div class="sec-head">
       <div>
-        <h3><i class="fa-solid fa-fire"></i> Popüler aramalar</h3>
-        <div class="fs-chips" id="fsPopChips">
-          <button class="chip" type="button" data-q="sertifika">sertifika</button>
-          <button class="chip" type="button" data-q="pastacılık">pastacılık</button>
-          <button class="chip" type="button" data-q="ekmek">ekmek</button>
-          <button class="chip" type="button" data-q="üniversite">üniversite</button>
-          <button class="chip" type="button" data-q="hijyen">hijyen</button>
-          <button class="chip" type="button" data-q="doğrama">doğrama</button>
-          <button class="chip" type="button" data-q="benmari">benmari</button>
-          <button class="chip" type="button" data-q="atölye">atölye</button>
-        </div>
+        <span class="eyebrow"><i class="fa-solid fa-diagram-project"></i> Bağlı Program</span>
+        <h2 id="otProgramBaslik">Bu oturum hangi programın parçası?</h2>
+        <p class="lead">Program birden fazla eğitim, uygulama ve değerlendirmeden oluşur; tarihli oturumlar programın takvimine oturur.</p>
       </div>
-      <div id="fsRecentCol" style="display:none">
-        <h3><i class="fa-solid fa-clock-rotate-left"></i> Son aramaların</h3>
-        <div class="fs-recent" id="fsRecent"><!-- localStorage dm_campus_recent'ten JS ile dolar; boşsa kolon gizli --></div>
+      <div class="sec-tools">
+        <a class="see-all" href="dadacampus-programlar-v1.html">Tüm Programlar <i class="fa-solid fa-arrow-right"></i></a>
       </div>
+    </div>
+    <div class="crs-grid" id="otProgram"></div>
+    <div class="kurum-gate" id="otProgramYok" style="display:none">
+      <span class="kg-ico"><i class="fa-solid fa-circle-info" aria-hidden="true"></i></span>
+      <div class="kg-txt">
+        <b id="otProgramYokBaslik">Bu oturum tek başına alınabilir</b>
+        <p id="otProgramYokMetin"></p>
+      </div>
+      <a class="btn btn-ghost" href="dadacampus-programlar-v1.html"><i class="fa-solid fa-diagram-project"></i> Programlar</a>
     </div>
   </div>
 </section>
+
+<!-- ===== İLGİLİ DİĞER OTURUMLAR ===== -->
+<section class="ak-courses derin" id="ilgiliSec">
+  <div class="wrap">
+    <div class="sec-head">
+      <div>
+        <span class="eyebrow"><i class="fa-regular fa-calendar-days"></i> Takvimden</span>
+        <h2 id="otIlgiliBaslik">İlgili diğer oturumlar</h2>
+        <p class="lead" id="otIlgiliAlt"></p>
+      </div>
+      <div class="sec-tools">
+        <a class="see-all" href="dadacampus-takvim-v1.html">Akademik Takvim <i class="fa-solid fa-arrow-right"></i></a>
+      </div>
+    </div>
+    <div class="crs-grid" id="otIlgili"></div>
+    <p class="pagi-note" id="otIlgiliNot"></p>
+  </div>
+</section>
+
+</div><!-- /#otIcerik -->
 
 </main><!-- /.page-main -->
 
@@ -2999,393 +3020,682 @@ window.__bottomStrips=window.__bottomStrips||[];
 </script>
 
 <script>
-/* ===== SAYFA JS — arama-campus-v1.html ===== */
+/* ===== SAYFA JS — dadacampus-atolye-detay-v1.html ===== */
 /* ============================================================================
-   DadaCampus GLOBAL ARAMA (§17.1) — POOL-driven motor
-   ----------------------------------------------------------------------------
-   Motor anatomisi Fit/Diet arama pilotundan devralındı; DEĞİŞEN: havuz artık
-   `campus-data.js`'ten üretiliyor ve her sonuç KENDİ detay slug'ına gidiyor.
-   Eskiden 6 eğitim sonucu `akademi-v1.html#setler`e çöküyordu (docs/lessons.md
-   §8 "#setler sendromu").
+   Atölye / Etkinlik Detay — sayfa JS (§13.2)
 
-   Sonuç türleri (§17.1): Eğitim · Program · Atölye · Etkinlik · Eğitmen ·
-   Kurum · Rehber (Konu / Malzeme / Terim). Rehber içerikleri gerçek DadaGastro
-   rehber sayfalarıdır; uydurma hedef yok.
+   TEK ŞABLON, İKİ AYRI VARLIK (§8.1):
+     ?atolye=<slug>   → DC.atolyeler   · varlık adı "Atölye"
+     ?etkinlik=<slug> → DC.etkinlikler · varlık adı "Etkinlik"
+   Atölye ile Etkinlik birbirinin eş anlamlısı DEĞİLDİR; ortak olan yalnız detay
+   YERLEŞİMİDİR (.dt-* iskeleti). `tip` değişkeni her başlıkta, her rozette ve
+   her köprü metninde varlığın kendi adını taşır. Alan kümesi de ayrılır:
+   atölyede `egitmenId`, etkinlikte `konusmaciId` + `konu` + `hedefKitle`.
+   Koddaki `ot` öneki / "oturum" sözcüğü nötr teknik addır (§13.3, §24.2).
+
+   🔴 İKİ SESSİZ KAPI:
+   (a) ONAY KAYDI (§26.13, §15.1): partner kurum adı yalnız DC.onayliMi() true
+       ise yazılır; "üniversite onaylı / resmî geçerli / ortak sertifika" dili
+       hiçbir koşulda kurulmaz. Katılım belgesi başarı belgesi gibi sunulmaz —
+       DC.belgeAciklamasi('katilim') zorunlu açıklaması her zaman basılır.
+   (b) YETKİ (§24.2, §26.15, §13.2): katılım bağlantısı, fiziksel adres ve
+       kuruma özel oturumun malzeme/hazırlık ayrıntısı ziyaretçiye GÖSTERİLMEZ.
+       Ziyaretçi oturumun var olduğunu, kime açık olduğunu ve nasıl erişileceğini
+       görür; ayrıntı .kurum-gate arkasında kalır.
    ========================================================================= */
-(function(){
+(function () {
   var D = window.DC;
+  if (!D) return;
+  var esc = D.esc, img = D.img;
+  var $ = function (s) { return document.querySelector(s); };
 
-  /* ---- TÜR TANIMLARI: etiket + ikon + hangi sekmeye düşer ---------------- */
-  var TYPE={
-    egitim:      {lbl:'Eğitim',    ico:'fa-clapperboard',      tab:'egitim'},
-    program:     {lbl:'Program',   ico:'fa-diagram-project',   tab:'program'},
-    atolye:      {lbl:'Atölye',    ico:'fa-video',             tab:'oturum'},
-    etkinlik:    {lbl:'Etkinlik',  ico:'fa-users',             tab:'oturum'},
-    egitmen:     {lbl:'Eğitmen',   ico:'fa-chalkboard-user',   tab:'egitmen'},
-    kurum:       {lbl:'Kurum',     ico:'fa-building-columns',  tab:'kurum'},
-    giris:       {lbl:'Konu',      ico:'fa-utensils',          tab:'rehber'},
-    ansiklopedi: {lbl:'Malzeme',   ico:'fa-carrot',            tab:'rehber'},
-    sozluk:      {lbl:'Terim',     ico:'fa-book',              tab:'rehber'},
-    yardim:      {lbl:'Yardım',    ico:'fa-circle-question',   tab:'rehber'}
-  };
-  var TABS=['tumu','egitim','program','oturum','egitmen','kurum','rehber'];
+  /* ---- BUGÜN SABİT ------------------------------------------------------
+     new Date() / Date.now() KULLANILMAZ. Demo veri seti belirli tarihlere göre
+     kurgulanmıştır (kayıt açık / yakında / kontenjan doldu durumları bu tarihe
+     göre anlamlıdır); gerçek saate bağlansaydı sayfa zamanla kendiliğinden
+     "hepsi geçmiş" durumuna düşer ve §26.15 durum kapsaması ölçülemez hale
+     gelirdi. Tek doğruluk kaynağı bu sabittir. */
+  var BUGUN = '2026-08-17';
 
-  /* ---- REHBER HAVUZU: gerçek DadaGastro rehber sayfaları (grep-teyitli) --- */
-  var G='mutfaga-giris-detay-v1.html?konu=';
-  var REHBER=[
-    {type:'giris',t:'Mutfak Düzeni ve Çalışma Alanı',sub:'Tezgah kurulumu · iş akışı',href:G+'mutfak-duzeni-ve-calisma-alani',ico:'fa-kitchen-set'},
-    {type:'giris',t:'Gıda Güvenliği ve Hijyen Kuralları',sub:'Saklama · çapraz bulaşma',href:G+'gida-guvenligi-ve-hijyen-kurallari',ico:'fa-shield-halved'},
-    {type:'giris',t:'Mutfakta Kullanılan Temel Araçlar',sub:'Alet-edevat tanıtımı',href:G+'mutfakta-kullanilan-temel-araclar',ico:'fa-blender'},
-    {type:'giris',t:'Temel Bıçak Türleri ve Kullanımları',sub:'Şef bıçağı · doğrama bıçağı',href:G+'temel-bicak-turleri-ve-kullanimlari',ico:'fa-utensils'},
-    {type:'giris',t:'Doğrama Teknikleri',sub:'Jülyen · brunoise · dilim',href:G+'dograma-teknikleri',ico:'fa-scissors'},
-    {type:'giris',t:'Temel Pişirme Yöntemleri',sub:'Haşlama · buğulama · kızartma',href:G+'temel-pisirme-yontemleri',ico:'fa-fire-burner'},
-    {type:'giris',t:'Tavada Pişirme Teknikleri',sub:'Soteleme · mühürleme',href:G+'tavada-pisirme-teknikleri',ico:'fa-fire'},
-    {type:'giris',t:'Fırında Pişirme Teknikleri',sub:'Isı · süre · konum',href:G+'firinda-pisirme-teknikleri',ico:'fa-temperature-arrow-up'},
-    {type:'giris',t:'Marine Etme Temelleri',sub:'Terbiye · bekletme',href:G+'marine-etme-temelleri',ico:'fa-jar'},
-    {type:'giris',t:'Sos ve Karışım Hazırlıkları',sub:'Temel soslar · emülsiyon',href:G+'sos-ve-karisim-hazirliklari',ico:'fa-mortar-pestle'},
-    {type:'giris',t:'Baharatların Doğru Kullanımı',sub:'Aroma eşleştirme · zamanlama',href:G+'baharatlarin-dogru-kullanimi',ico:'fa-pepper-hot'},
-    {type:'giris',t:'Temel Tabak Süsleme Teknikleri',sub:'Sunum · renk · doku',href:G+'temel-tabak-susleme-teknikleri',ico:'fa-plate-wheat'},
-    {type:'giris',t:'Mutfağa Giriş — Tüm Konular',sub:'Konu dizini · adım adım yol',href:'mutfaga-giris-liste-v1.html',ico:'fa-list-check'},
-    {type:'ansiklopedi',t:'Ispanak',sub:'Sebze · Spinacia oleracea',href:'ansiklopedi-detay-v1.html',ico:'fa-leaf'},
-    {type:'ansiklopedi',t:'Avokado',sub:'Meyve · Persea americana',href:'ansiklopedi-detay-v1.html',ico:'fa-apple-whole'},
-    {type:'ansiklopedi',t:'Barbunya',sub:'Bakliyat · Phaseolus vulgaris',href:'ansiklopedi-detay-v1.html',ico:'fa-seedling'},
-    {type:'ansiklopedi',t:'Kırmızı Mercimek',sub:'Bakliyat · Lens culinaris',href:'ansiklopedi-detay-v1.html',ico:'fa-bowl-rice'},
-    {type:'ansiklopedi',t:'Kinoa',sub:'Tahıl · Chenopodium quinoa',href:'ansiklopedi-detay-v1.html',ico:'fa-wheat-awn'},
-    {type:'ansiklopedi',t:'Zencefil',sub:'Kök baharat · Zingiber officinale',href:'ansiklopedi-detay-v1.html',ico:'fa-mortar-pestle'},
-    {type:'ansiklopedi',t:'Hamsi',sub:'Balık · Engraulis encrasicolus',href:'ansiklopedi-detay-v1.html',ico:'fa-fish'},
-    {type:'ansiklopedi',t:'Levrek',sub:'Balık · Dicentrarchus labrax',href:'ansiklopedi-detay-v1.html',ico:'fa-fish'},
-    {type:'ansiklopedi',t:'Yeşil Çay',sub:'Çay · Camellia sinensis',href:'ansiklopedi-detay-v1.html',ico:'fa-mug-hot'},
-    {type:'ansiklopedi',t:'Bitter Çikolata',sub:'Çikolata · Theobroma cacao',href:'ansiklopedi-detay-v1.html',ico:'fa-cookie-bite'},
-    {type:'ansiklopedi',t:'Çeri Domates',sub:'Domates · Solanum lycopersicum',href:'ansiklopedi-detay-v1.html',ico:'fa-leaf'},
-    {type:'ansiklopedi',t:'Dana Eti',sub:'Et · Bos taurus',href:'ansiklopedi-detay-v1.html',ico:'fa-drumstick-bite'},
-    {type:'ansiklopedi',t:'Ceviz',sub:'Kuruyemiş · Juglans regia',href:'ansiklopedi-detay-v1.html',ico:'fa-seedling'},
-    {type:'ansiklopedi',t:'Kültür Mantarı',sub:'Mantar · Agaricus bisporus',href:'ansiklopedi-detay-v1.html',ico:'fa-seedling'},
-    {type:'ansiklopedi',t:'Maydanoz',sub:'Yeşillik · Petroselinum crispum',href:'ansiklopedi-detay-v1.html',ico:'fa-leaf'},
-    {type:'ansiklopedi',t:'Badem',sub:'Kuruyemiş · Prunus dulcis',href:'ansiklopedi-detay-v1.html',ico:'fa-seedling'},
-    {type:'ansiklopedi',t:'Malzeme Ansiklopedisi',sub:'39 malzeme · A–Z dizin',href:'ansiklopedi-v1.html',ico:'fa-book-open'},
-    {type:'sozluk',t:'Benmari',sub:'bain-marie · su banyosunda eritme',href:'sozluk-v1.html#t-benmari',ico:'fa-book'},
-    {type:'sozluk',t:'Beşamel',sub:'temel beyaz sos',href:'sozluk-v1.html#t-besamel',ico:'fa-book'},
-    {type:'sozluk',t:'Blanşe Etmek',sub:'blanching · ön haşlama',href:'sozluk-v1.html#t-blanse-etmek',ico:'fa-book'},
-    {type:'sozluk',t:'Flambe',sub:'flamber · alevleme',href:'sozluk-v1.html#t-flambe',ico:'fa-book'},
-    {type:'sozluk',t:'Jülyen',sub:'julienne · kibrit çöpü doğrama',href:'sozluk-v1.html#t-julyen',ico:'fa-book'},
-    {type:'sozluk',t:'Karamelize Etmek',sub:'şekerin altın dönüşümü',href:'sozluk-v1.html#t-karamelize-etmek',ico:'fa-book'},
-    {type:'sozluk',t:'Marine Etmek',sub:'terbiyede bekletme',href:'sozluk-v1.html#t-marine-etmek',ico:'fa-book'},
-    {type:'sozluk',t:'Meyane',sub:'roux · un-yağ kıvam temeli',href:'sozluk-v1.html#t-meyane',ico:'fa-book'},
-    {type:'sozluk',t:'Mühürlemek',sub:'searing · yüzey kapatma',href:'sozluk-v1.html#t-muhurlemek',ico:'fa-book'},
-    {type:'sozluk',t:'Pane',sub:'galeta kaplamada kızartma',href:'sozluk-v1.html#t-pane',ico:'fa-book'},
-    {type:'sozluk',t:'Redüksiyon',sub:'reduction · sos koyulaştırma',href:'sozluk-v1.html#t-reduksiyon',ico:'fa-book'},
-    {type:'sozluk',t:'Sote',sub:'sauté · az yağda hızlı çevirme',href:'sozluk-v1.html#t-sote',ico:'fa-book'},
-    {type:'sozluk',t:'Şoklamak',sub:'buzlu suda durdurma',href:'sozluk-v1.html#t-soklamak',ico:'fa-book'},
-    {type:'sozluk',t:'Zeste',sub:'narenciye kabuğu rendesi',href:'sozluk-v1.html#t-zeste',ico:'fa-book'},
-    {type:'sozluk',t:'Mutfak Sözlüğü',sub:'480 terim · harfe/kategoriye göre',href:'sozluk-v1.html',ico:'fa-spell-check'}
-  ];
+  /* Gün farkı — saat/dilim karışmasın diye takvim aritmetiğiyle hesaplanır
+     (Howard Hinnant days_from_civil). Date nesnesi kurulmaz. */
+  function gunNo(iso) {
+    var p = String(iso).split('-'), y = +p[0], m = +p[1], d = +p[2];
+    y -= (m <= 2 ? 1 : 0);
+    var era = Math.floor(y / 400), yoe = y - era * 400;
+    var doy = Math.floor((153 * (m + (m > 2 ? -3 : 9)) + 2) / 5) + d - 1;
+    var doe = yoe * 365 + Math.floor(yoe / 4) - Math.floor(yoe / 100) + doy;
+    return era * 146097 + doe - 719468;
+  }
+  function fark(iso) { return gunNo(iso) - gunNo(BUGUN); }   /* + ise gelecek */
 
-  /* ---- CAMPUS HAVUZU: campus-data.js'ten (§26.14 — sabit HTML çoğaltma yok) */
-  function campusHavuzu(){
-    if(!D) return [];
-    var out=[];
+  /* ---- kayıt çözümleme (§26.7 slug → doğru detay) ---------------------- */
+  var p = D.qs();
+  var tip = p.atolye ? 'atolye' : (p.etkinlik ? 'etkinlik' : null);
+  var k = tip === 'atolye'   ? D.bul('atolyeler', p.atolye)
+        : tip === 'etkinlik' ? D.bul('etkinlikler', p.etkinlik)
+        : null;
 
-    D.egitimler.forEach(function(e){
-      var eg=D.egitmen(e.egitmenId);
-      out.push({type:'egitim',t:e.ad,
-        sub:(eg?eg.ad+' · ':'')+D.etiket('konuAlanlari',e.kategori)+' · '+D.etiket('seviyeler',e.seviye),
-        href:D.link.egitim(e.slug), img:D.img(e.kapak,520)});
-    });
-
-    D.programlar.forEach(function(p){
-      var partner=p.partnerKurumIds.length?D.kurum(p.partnerKurumIds[0]):null;
-      /* 🔴 "Ortak program" ifadesi yalnız onay kaydı + ortak belge türü birlikte
-         varsa yazılır; yoksa yalnız "Partner kurum" (§26.13) */
-      var ek=partner?(D.ortakBelgeGosterilirMi(p)?' · Ortak program: '+partner.ad
-                                                 :' · Partner kurum: '+partner.ad):'';
-      out.push({type:'program',t:p.ad,
-        sub:D.etiket('programTurleri',p.tur)+' · '+p.donem+ek,
-        href:D.link.program(p.slug), img:D.img(p.kapak,520)});
-    });
-
-    D.atolyeler.forEach(function(a){
-      var eg=D.egitmen(a.egitmenId);
-      out.push({type:'atolye',t:a.ad,
-        sub:D.tarih(a.tarih)+' · '+D.etiket('etkinlikTurleri',a.tur)+(eg?' · '+eg.ad:''),
-        href:D.link.atolye(a.slug), ico:'fa-video'});
-    });
-
-    D.etkinlikler.forEach(function(x){
-      var ks=x.konusmaciId?D.egitmen(x.konusmaciId):null;
-      out.push({type:'etkinlik',t:x.ad,
-        sub:D.tarih(x.tarih)+' · '+D.etiket('etkinlikTurleri',x.tur)+(ks?' · '+ks.ad:''),
-        href:D.link.etkinlik(x.slug), ico:'fa-users'});
-    });
-
-    D.egitmenler.forEach(function(e){
-      /* kurum adı YALNIZ onay kaydı varsa (§26.13) */
-      var kurum=(e.kurumId&&D.onayliMi(e.kurumId))?D.kurum(e.kurumId):null;
-      out.push({type:'egitmen',t:e.ad,
-        sub:e.unvan+(kurum?' · '+kurum.ad:'')+' · '+e.uzmanliklar.slice(0,2).join(', '),
-        href:D.link.egitmen(e.slug), img:D.img(e.foto,240)});
-    });
-
-    /* 🔴 KURUM sonuçları: yalnız ONAY KAYDI OLANLAR aranabilir/görünür olur.
-       Onaysız kurum (aday/teklif aşaması) arama sonucunda partner gibi
-       görünmemeli (§26.13, §10.1, §20 ticari şeffaflık). */
-    D.onayliKurumlar().forEach(function(k){
-      out.push({type:'kurum',t:k.ad,
-        sub:D.etiket('kurumTurleri',k.tur)+' · '+k.sehir+' · '+k.isbirligiKapsami,
-        href:D.link.kurum(k.slug), ico:k.ikon});
-    });
-
-    /* Yardım Merkezi konuları da aranabilir (§17.1 "rehber içeriği") */
-    D.yardimKonulari.forEach(function(y){
-      out.push({type:'yardim',t:y.ad,sub:y.ozet,href:D.link.yardim(y.slug),ico:y.ikon});
-    });
-
-    return out;
+  if (!k) {
+    document.getElementById('otBos').hidden = false;
+    document.getElementById('otIcerik').hidden = true;
+    document.title = 'Oturum bulunamadı — DadaCampus | DadaMutfak';
+    return;
   }
 
-  var POOL=campusHavuzu().concat(REHBER);
+  /* Varlık adı — sayfanın her yerinde bu iki sözcükten biri geçer, karışmaz. */
+  var TIP  = tip === 'atolye' ? 'Atölye' : 'Etkinlik';
+  var tipk = tip === 'atolye' ? 'atölye' : 'etkinlik';
 
-  /* ---- TR-duyarlı normalizasyon (veri katmanıyla AYNI davranış) ---------- */
-  var trMap={'ı':'i','İ':'i','I':'i','Ş':'s','ş':'s','Ğ':'g','ğ':'g','Ü':'u','ü':'u','Ö':'o','ö':'o','Ç':'c','ç':'c','â':'a','î':'i','û':'u'};
-  function norm(s){return (s||'').replace(/[ıİIŞşĞğÜüÖöÇçâîû]/g,function(m){return trMap[m]||m;}).toLowerCase().replace(/\s+/g,' ').trim();}
-  function esc(s){return (s||'').replace(/[&<>"]/g,function(m){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m];});}
-  function hi(text,qn){
-    if(!qn)return esc(text);
-    var tn=norm(text),i=tn.indexOf(qn);
-    if(i<0)return esc(text);
-    return esc(text.slice(0,i))+'<mark>'+esc(text.slice(i,i+qn.length))+'</mark>'+esc(text.slice(i+qn.length));
+  document.title = k.ad + ' — ' + TIP + ' · DadaCampus | DadaMutfak';
+  var md = document.querySelector('meta[name="description"]');
+  if (md) md.setAttribute('content', k.ozet);
+
+  /* ---- kişi: atölyede EĞİTMEN, etkinlikte KONUŞMACI -------------------- */
+  var kisiId  = tip === 'atolye' ? k.egitmenId : k.konusmaciId;
+  var kisi    = kisiId ? D.egitmen(kisiId) : null;
+  var kisiRol = tip === 'atolye' ? 'Eğitmen' : 'Konuşmacı';
+
+  /* ---- partner kurum: 🔴 ad YALNIZ onay kaydı varsa (§26.13) ----------- */
+  var kurumOnayli = !!(k.partnerKurumId && D.onayliMi(k.partnerKurumId));
+  var kurum = kurumOnayli ? D.kurum(k.partnerKurumId) : null;
+
+  /* ---- yetki durumu (§24.2) --------------------------------------------
+     EKSİK VERİ NOTU: veri modelinde "kullanıcının bu oturuma kaydı" diye bir
+     koleksiyon yok (etkinlikKayitlari). Uydurulmadı; doğrulanabilir EN YAKIN
+     kayıt kullanıldı: bağlı programın katılımcı kaydı (kabul/devam/tamamlandı)
+     ve kullanıcının kurum kohortu üyeliği. Kaydı olmayan girişli kullanıcı da
+     "henüz kayıtlı değil" kabul edilir — kapı gevşetilmez. */
+  var girisli = D.girisli();
+  var pkayit  = k.programId ? D.programKaydi(k.programId) : null;
+  var KAYITLI_DURUM = ['kabul', 'devam', 'tamamlandi'];
+  var kayitliyim = girisli && !!pkayit && KAYITLI_DURUM.indexOf(pkayit.durum) > -1;
+  var kohortUyesi = girisli && (
+    (D.kullanici.kurumId && D.kullanici.kurumId === k.partnerKurumId) || kayitliyim
+  );
+  var kapali = k.tur === 'kapali-oturum';          /* kuruma özel kapalı oturum */
+  var kurumaOzel = kapali || k.kurumErisimi === true;
+  /* Ayrıntı (bağlantı, adres, malzeme dökümü) kimde açılır? */
+  var ayrinti = kurumaOzel ? kohortUyesi : kayitliyim;
+
+  /* ---- tür / format etiketleri ----------------------------------------- */
+  function turTanim(slug) {
+    var a = D.etkinlikTurleri;
+    for (var i = 0; i < a.length; i++) { if (a[i].slug === slug) return a[i]; }
+    return null;
   }
-  function tmeta(t){return TYPE[t]||{lbl:'',ico:'fa-magnifying-glass',tab:'rehber'};}
+  var tt = turTanim(k.tur);
+  var turAd = D.etiket('etkinlikTurleri', k.tur);
 
-  /* ---- sonuç kartı (tek şablon, tür etiketi ZORUNLU — §17.1) ------------ */
-  function card(r){
-    var m=tmeta(r.type);
-    var badge='<span class="fs-badge"><i class="fa-solid '+m.ico+'"></i> '+m.lbl+'</span>';
-    var head=r.img
-      ? '<div class="fs-media" style="background-image:url(\''+r.img+'\')">'+badge+'</div>'
-      : '<div class="fs-tile"><i class="fa-solid '+(r.ico||m.ico)+'"></i>'+badge+'</div>';
-    return '<a class="fs-card" href="'+esc(r.href)+'">'+head
-      +'<div class="fs-cbody"><h4>'+esc(r.t)+'</h4><p>'+esc(r.sub)+'</p>'
-      +'<span class="fs-cgo">İncele <i class="fa-solid fa-arrow-right"></i></span></div></a>';
+  /* `formatlar` referans listesinde 'yuz-yuze' → "Yüz Yüze Destekli" yazar; o
+     etiket VİDEO eğitimin destek biçimini anlatır, tarihli bir oturumda yanlış
+     bilgi olur. Oturum bağlamında format doğrudan yazılır — yeni terim
+     üretilmez, yalnız bağlama uygun karşılık seçilir (§8.1). */
+  function formatAd(f) {
+    if (f === 'yuz-yuze') return 'Yüz yüze';
+    if (f === 'canli')    return 'Canlı, çevrim içi';
+    return D.etiket('formatlar', f);
   }
 
-  var panes={}, cnts={};
-  TABS.forEach(function(n){
-    panes[n]=document.querySelector('.fs-pane[data-pane="'+n+'"]');
-    cnts[n]=document.querySelector('.cnt[data-cnt="'+n+'"]');
-  });
-  var tabbar=document.getElementById('fsTabbar');
-  var note=document.getElementById('fsCntNote');
-  var emptyEl=document.getElementById('fsEmpty');
-  var popEl=document.getElementById('fsPop');
+  /* ---- zaman durumu ----------------------------------------------------- */
+  var kalanGun   = fark(k.tarih);
+  var gecti      = kalanGun < 0;
+  var bugunMu    = kalanGun === 0;
+  var kayitKalan = k.kayitKapanis ? fark(k.kayitKapanis) : null;
+  var kayitKapandi = kayitKalan !== null && kayitKalan < 0;
+  var dolu = k.durum === 'kontenjan-doldu';
+  var yakinda = k.durum === 'yakinda';
+  var kayitAcik = k.durum === 'kayit-acik' && !kayitKapandi && !gecti;
 
-  function renderResults(q){
-    var qn=q?norm(q):'';
-    var matched=qn?POOL.filter(function(r){return norm(r.t).indexOf(qn)>=0||norm(r.sub).indexOf(qn)>=0;}):POOL.slice();
-    var by={tumu:matched};
-    TABS.forEach(function(n){ if(n!=='tumu') by[n]=[]; });
-    matched.forEach(function(r){ var t=tmeta(r.type).tab; if(by[t])by[t].push(r); });
-    TABS.forEach(function(n){
-      var arr=by[n];
-      if(cnts[n])cnts[n].textContent=arr.length;
-      if(!panes[n])return;
-      if(arr.length){
-        panes[n].innerHTML='<div class="fs-grid">'+arr.map(card).join('')+'</div>';
-      }else{
-        panes[n].innerHTML='<p class="fs-cnt-note" style="margin:6px 0 0">Bu türde eşleşme yok.</p>';
-      }
-    });
-    return matched.length;
+  var kalanYer = Math.max(0, (k.kontenjan || 0) - (k.kayitliSayisi || 0));
+  var doluluk = k.kontenjan ? Math.round(k.kayitliSayisi / k.kontenjan * 100) : 0;
+
+  /* Durum rozeti tanımı — renk TEK BAŞINA durum anlatmaz, ikon + metin birlikte
+     verilir (§23.3). */
+  var durumRozet = dolu    ? { sinif: 'off',  ikon: 'fa-user-slash',   ad: 'Kontenjan doldu' }
+                 : yakinda ? { sinif: 'wait', ikon: 'fa-hourglass-half', ad: 'Kayıt yakında açılacak' }
+                 : gecti   ? { sinif: 'off',  ikon: 'fa-clock-rotate-left', ad: 'Bu oturum geçti' }
+                 :           { sinif: 'ok',   ikon: 'fa-circle-check', ad: 'Kayıt açık' };
+
+  /* ---- 1) + 2) HERO ----------------------------------------------------- */
+  /* Kapak yoksa .lst-hero-media'nın kendi varsayılan zemini kalır — uydurma
+     fotoğraf kimliği yazılmaz. */
+  if (k.kapak) $('#otKapak').style.backgroundImage = 'url(\'' + img(k.kapak, 1680) + '\')';
+
+  $('#otCrumbAd').textContent = k.ad;
+  $('#otEyebrow').innerHTML = '<i class="fa-solid ' + esc(tt ? tt.ikon : 'fa-calendar-day') +
+    '" aria-hidden="true"></i> ' + esc(TIP) + ' · ' + esc(turAd);
+  $('#otAd').textContent = k.ad;
+  $('#otOzet').textContent = k.ozet;
+
+  $('#otYapi').innerHTML = [
+    ['fa-calendar-day', D.tarih(k.tarih)],
+    ['fa-clock', k.saat + ' (' + k.saatDilimi + ')'],
+    ['fa-hourglass-half', D.sure(k.sureDk)],
+    [k.format === 'yuz-yuze' ? 'fa-people-roof' : 'fa-video', formatAd(k.format)],
+    [tt ? tt.ikon : 'fa-tag', turAd]
+  ].map(function (x) {
+    return '<span><i class="fa-solid ' + x[0] + '" aria-hidden="true"></i> ' + esc(x[1]) + '</span>';
+  }).join('');
+
+  /* Hero CTA — YALNIZ gerçek hedefi olan bağlantılar. Kayıt aksiyonu yan
+     paneldeki kayıt kartında; orada durum rozetiyle birlikte duruyor. */
+  var cta = '';
+  if (kayitAcik) {
+    /* Kayıtlı kullanıcının gideceği GERÇEK bir hedef var (Takvimim). Kayıtsız
+       kullanıcıda kayıt akışı bu fazda bağlanmadığı için ölü bağlantı yerine
+       giriş kapısını açan buton kullanılır (kabuk `data-lg-gate` deseni). */
+    cta += kayitliyim
+      ? '<a class="btn btn-primary" href="dadacampus-kampusum-v1.html?bolum=takvimim"><i class="fa-regular fa-calendar-check"></i> Takvimimde Gör</a>'
+      : '<button class="btn btn-primary" type="button" data-lg-gate="1"><i class="fa-regular fa-calendar-plus"></i> Kayıt Ol</button>';
+  }
+  cta += '<a class="btn btn-glassy" href="dadacampus-takvim-v1.html"><i class="fa-regular fa-calendar-days"></i> Akademik Takvim</a>';
+  $('#otCta').innerHTML = cta;
+
+  /* Yaklaşan / geçmiş bilgisi — BUGUN sabitine göre. */
+  var zamanCumle = gecti ? 'Bu ' + tipk + ' ' + Math.abs(kalanGun) + ' gün önce yapıldı'
+                 : bugunMu ? 'Bu ' + tipk + ' <b>bugün</b>'
+                 : '<b>' + kalanGun + ' gün</b> sonra';
+  $('#otErisim').innerHTML = zamanCumle + ' · ' + esc(D.tarih(k.tarih)) + ' ' + esc(k.saat) +
+    ' · ' + esc(formatAd(k.format)) +
+    (k.kayitKapanis
+      ? ' · kayıt kapanışı ' + esc(D.tarih(k.kayitKapanis)) +
+        (kayitKapandi ? ' (kapandı)' : '')
+      : '');
+
+  $('#otStats').innerHTML =
+    '<div class="st"><b>' + esc(D.sure(k.sureDk)) + '</b><span>Süre</span></div>' +
+    '<div class="st"><b>' + (dolu ? '0' : kalanYer) + '</b><span>Kalan yer</span></div>' +
+    '<div class="st"><b>' + (gecti ? '—' : kalanGun) + '</b><span>' + (gecti ? 'Tamamlandı' : 'Gün kaldı') + '</span></div>';
+
+  /* ---- KİŞİSEL ŞERİT (yalnız girişli — .kisi-sec) ---------------------- */
+  $('#otBenim').innerHTML =
+    '<span class="kg-ico"><i class="fa-regular fa-calendar-plus" aria-hidden="true"></i></span>' +
+    '<div class="kg-txt">' +
+      '<b>' + (kayitliyim
+        ? 'Bu ' + esc(tipk) + ' takvimine ekli'
+        : 'Bu ' + esc(tipk) + 'i takvimine ekle') + '</b>' +
+      '<p>' + (kayitliyim
+        ? 'Hatırlatmalar ve katılım bilgisi Takvimim bölümünde toplanır; oturumdan sonra katılım kaydın da buradan görünür.'
+        : 'Takvimine eklediğinde oturumdan önce hatırlatma alırsın. Kayıt ile takvim ayrı adımlardır — takvime eklemek kontenjan ayırmaz.') + '</p>' +
+    '</div>' +
+    '<div class="ak-hero-cta" style="margin-top:0">' +
+      '<button class="btn btn-ghost" type="button" data-lg-gate="1"><i class="fa-regular fa-calendar-plus"></i> Takvimime ekle</button>' +
+      '<a class="btn btn-ghost" href="dadacampus-kampusum-v1.html?bolum=takvimim"><i class="fa-solid fa-arrow-right"></i> Takvimim</a>' +
+    '</div>';
+
+  /* ---- 1) KONU VE HEDEF KİTLE ------------------------------------------
+     `konu` ve `hedefKitle` alanları YALNIZ etkinlikte var (§8.1 alan ayrımı).
+     Atölyede karşılığı uygulamanın kendisidir; uydurma alan üretilmez, atölye
+     için özet + tür + seviye bilgisi yazılır. */
+  var konuSatir = [];
+  if (tip === 'etkinlik') {
+    $('#otKonuBaslik').textContent = 'Konu ve hedef kitle';
+    $('#otKonuAlt').textContent = 'Etkinlik; belirli bir konu etrafında konuşma, tartışma veya sunum oturumudur — ' +
+      'uygulamalı bir atölye değildir.';
+    konuSatir.push(['Konu', esc(k.konu), null]);
+    konuSatir.push(['Hedef kitle', esc(k.hedefKitle), null]);
+  } else {
+    $('#otKonuBaslik').textContent = 'Ne yapacağız?';
+    $('#otKonuAlt').textContent = 'Atölye; belirli tarihli, uygulamalı bir oturumdur — katılımcı izlemez, birlikte yapar.';
+    konuSatir.push(['Ne yapılır', esc(k.ozet), null]);
+  }
+  konuSatir.push([TIP + ' türü', esc(turAd), null]);
+  konuSatir.push(['Kimlere açık', kapali
+      ? 'Yalnız kurum kohortu'
+      : (k.kurumErisimi ? 'Kurum kohortu ve program katılımcıları' : 'Herkese açık'),
+    kapali ? 'Kuruma özel kapalı oturum; katılımcı listesi kurum tarafından belirlenir' : null]);
+  $('#otKonu').innerHTML = konuSatir.map(infSatir).join('');
+
+  /* ---- 2) ZAMAN VE BİÇİM ------------------------------------------------ */
+  $('#otZaman').innerHTML = [
+    ['Tarih', esc(D.tarih(k.tarih)), gecti ? 'Bu oturum geçti' : (bugunMu ? 'Bugün' : kalanGun + ' gün sonra')],
+    ['Saat', esc(k.saat), 'Saat dilimi: ' + esc(k.saatDilimi)],
+    ['Süre', esc(D.sure(k.sureDk)), null],
+    ['Format', esc(formatAd(k.format)),
+      k.format === 'yuz-yuze' ? 'Katılım yerinde, yüz yüze yapılır' : 'Oturum canlı yayınlanır'],
+    ['Tür', esc(turAd), esc(TIP)]
+  ].map(infSatir).join('');
+
+  /* ---- 3) KATILIM: BAĞLANTI **VEYA** KONUM ------------------------------ */
+  $('#otKatilimAlt').textContent = k.onlineBaglanti
+    ? 'Bu ' + tipk + ' çevrim içi yapılır. Katılım bağlantısı yalnız kayıtlı ve yetkili katılımcıya gösterilir.'
+    : 'Bu ' + tipk + ' yüz yüze yapılır. Tam adres ve giriş bilgisi yalnız kayıtlı ve yetkili katılımcıya gösterilir.';
+
+  function pstat(sinif, ikon, ad) {
+    return '<span class="pstat ' + sinif + '"><i class="fa-solid ' + ikon + '" aria-hidden="true"></i> ' + esc(ad) + '</span>';
+  }
+  function bsvRow(bas, alt, rozet) {
+    return '<div class="bsv-row"><div class="bsv-info"><b>' + bas + '</b><span>' + alt + '</span></div>' + rozet + '</div>';
   }
 
-  var tabEls=document.querySelectorAll('#fsTabbar .dt');
-  function activate(name){
-    tabEls.forEach(function(t){
-      var on=t.getAttribute('data-tab')===name;
-      t.classList.toggle('active',on);
-      t.setAttribute('aria-selected',on?'true':'false');
-    });
-    TABS.forEach(function(n){if(panes[n])panes[n].hidden=n!==name;});
+  var katilimHtml = '';
+  if (k.onlineBaglanti) {
+    katilimHtml += bsvRow('Katılım bağlantısı',
+      ayrinti ? 'Bağlantı oturumdan 30 dakika önce burada ve Takvimim sayfasında etkinleşir.'
+              : 'Kayıt tamamlandığında bu satırda görünür.',
+      ayrinti ? pstat('ok', 'fa-circle-check', 'Erişimin var')
+              : pstat('off', 'fa-lock', 'Kayıt sonrası'));
+  } else {
+    katilimHtml += bsvRow('Konum',
+      ayrinti ? esc(k.konum || 'Konum bilgisi kayıt onayında paylaşılır')
+              : 'Şehir ve mekân bilgisi kayıt onayında paylaşılır.',
+      ayrinti ? pstat('ok', 'fa-circle-check', 'Adres görünür')
+              : pstat('off', 'fa-lock', 'Kayıt sonrası'));
   }
-  tabEls.forEach(function(t){
-    t.addEventListener('click',function(){
-      var name=t.getAttribute('data-tab');
-      activate(name);
-      var uu=new URLSearchParams(location.search);
-      if(name==='tumu')uu.delete('tab');else uu.set('tab',name);
-      history.replaceState(null,'',location.pathname+(uu.toString()?'?'+uu.toString():''));
-    });
-  });
+  katilimHtml += bsvRow('Kimlere açık',
+    kapali ? 'Kuruma özel kapalı oturum — katılımcı listesi kurum koordinatörü tarafından belirlenir.'
+           : (k.kurumErisimi ? 'Kurum kohortu ve program katılımcıları.' : 'Kayıt yaptıran herkes.'),
+    kapali ? pstat('wait', 'fa-lock', 'Kuruma özel')
+           : (k.kurumErisimi ? pstat('wait', 'fa-building', 'Kurum erişimi') : pstat('ok', 'fa-globe', 'Herkese açık')));
+  katilimHtml += bsvRow('Kayıt durumu', esc(durumRozet.ad) + '.',
+    pstat(durumRozet.sinif, durumRozet.ikon, durumRozet.ad));
+  $('#otKatilim').innerHTML = katilimHtml;
 
-  var input=document.getElementById('fsInput');
-  var titleEl=document.getElementById('fsTitle');
-  var leadEl=document.getElementById('fsLead');
-  var sum=document.getElementById('fsSum');
-
-  /* ---- SON ARAMALAR: gerçek localStorage geçmişi (uydurma YOK) ---------- */
-  var RKEY='dm_campus_recent';
-  function readRecentLS(){try{var r=JSON.parse(localStorage.getItem(RKEY)||'[]');return Array.isArray(r)?r.filter(function(x){return x&&x.q;}):[];}catch(e){return [];}}
-  function writeRecent(qq){
-    qq=(qq||'').trim();if(!qq)return;
-    try{
-      var arr=readRecentLS().filter(function(x){return norm(x.q)!==norm(qq);});
-      arr.unshift({q:qq,t:Date.now()});
-      localStorage.setItem(RKEY,JSON.stringify(arr.slice(0,6)));
-    }catch(e){}
+  /* 🔴 Yetki kapısı metni — ziyaretçiye "yok" değil, "nasıl erişilir" anlatılır. */
+  var kapiBaslik, kapiMetin, kapiCta = '';
+  if (ayrinti) {
+    kapiBaslik = 'Katılım bilgilerine erişimin var';
+    kapiMetin = k.onlineBaglanti
+      ? 'Bağlantı ve hatırlatmalar Takvimim sayfasında toplanır. Oturum saatinden 30 dakika önce giriş açılır.'
+      : 'Adres, ulaşım ve giriş bilgisi Takvimim sayfasında yer alır. Yanında kimlik bulundurman gerekir.';
+    kapiCta = '<a class="btn btn-ghost" href="dadacampus-kampusum-v1.html?bolum=takvimim"><i class="fa-regular fa-calendar-days"></i> Takvimim</a>';
+  } else if (kapali) {
+    /* §24.2: kapalı oturumun VARLIĞI ve kime açık olduğu yazılır; konum,
+       bağlantı ve malzeme ayrıntısı yazılmaz. */
+    kapiBaslik = 'Bu ' + tipk + ' kuruma özel kapalı oturumdur';
+    kapiMetin = 'Oturum takvimde görünür, ancak konum, katılım bağlantısı ve hazırlık ayrıntısı yalnız ilgili kurum kohortunun üyelerine açıktır. ' +
+      'Kohort üyesiysen giriş yaptığında ayrıntılar burada görünür; değilsen kurumunun program koordinatörüne başvurman gerekir.';
+    kapiCta = girisli
+      ? '<a class="btn btn-ghost" href="dadacampus-kampusum-v1.html?bolum=programlarim"><i class="fa-solid fa-diagram-project"></i> Programlarım</a>'
+      : '<a class="btn btn-ghost" href="giris-v1.html?tab=giris"><i class="fa-regular fa-user"></i> Giriş Yap</a>';
+  } else if (kurumaOzel) {
+    kapiBaslik = 'Katılım, kurum erişimi kapsamındadır';
+    kapiMetin = 'Bu ' + tipk + ' bağlı programın katılımcılarına ve kurum kohortuna açıktır. Kayıt onayından sonra ' +
+      (k.onlineBaglanti ? 'katılım bağlantısı' : 'adres ve giriş bilgisi') + ' bu sayfada ve Takvimim sayfasında görünür.';
+    kapiCta = '<a class="btn btn-ghost" href="dadacampus-programlar-v1.html"><i class="fa-solid fa-diagram-project"></i> Programlar</a>';
+  } else {
+    kapiBaslik = girisli ? 'Kaydını tamamladığında burası açılır' : 'Katılım bilgisi kayıt sonrası görünür';
+    kapiMetin = (k.onlineBaglanti ? 'Katılım bağlantısı' : 'Tam adres ve giriş bilgisi') +
+      ' kontenjan güvenliği için herkese açık sayfada yayımlanmaz. ' +
+      (girisli ? 'Kayıt olduğunda bu satır otomatik açılır ve hatırlatma alırsın.'
+               : 'Giriş yapıp kaydını tamamladığında bu satır açılır ve hatırlatma alırsın.');
+    kapiCta = girisli
+      ? ''
+      : '<a class="btn btn-ghost" href="giris-v1.html?tab=giris"><i class="fa-regular fa-user"></i> Giriş Yap</a>';
   }
-  function relTime(t){var d=Date.now()-(t||0),day=86400000;if(d<3600000)return 'az önce';if(d<day)return 'bugün';if(d<2*day)return 'dün';return Math.floor(d/day)+' gün önce';}
-  function renderRecent(){
-    var col=document.getElementById('fsRecentCol'),boxr=document.getElementById('fsRecent');
-    if(!boxr)return;
-    var arr=readRecentLS();
-    if(!arr.length){if(col)col.style.display='none';boxr.innerHTML='';return;}
-    if(col)col.style.display='';
-    boxr.innerHTML=arr.map(function(r){
-      return '<div class="fs-rrow" data-q="'+esc(r.q)+'"><i class="fa-solid fa-clock-rotate-left" aria-hidden="true"></i><span class="term">'+esc(r.q)+'</span><span class="cnt">'+relTime(r.t)+'</span><i class="fa-solid fa-arrow-right go" aria-hidden="true"></i></div>';
+  $('#otKapi').innerHTML =
+    '<span class="kg-ico"><i class="fa-solid ' + (ayrinti ? 'fa-unlock' : 'fa-lock') + '" aria-hidden="true"></i></span>' +
+    '<div class="kg-txt"><b>' + esc(kapiBaslik) + '</b><p>' + kapiMetin + '</p></div>' + kapiCta;
+
+  /* ---- 4) EĞİTMEN/KONUŞMACI VE PARTNER KURUM (§17.3) ------------------- */
+  $('#otKadroBaslik').textContent = tip === 'atolye' ? 'Eğitmen ve partner kurum' : 'Konuşmacı ve partner kurum';
+  $('#otKadroAlt').textContent = kurumOnayli
+    ? 'Partner kurum, oturumun yürütülmesinde rol alır. Kurumun rolü ve onay kaydı aşağıda açıkça yazılır.'
+    : 'Bu oturumda kurum onay kaydı bulunmuyor; oturum DadaCampus tarafından yürütülür.';
+
+  var kadroHtml = '';
+  if (kisi) {
+    var kisiKurum = (kisi.kurumId && D.onayliMi(kisi.kurumId)) ? D.kurum(kisi.kurumId) : null;
+    kadroHtml +=
+      '<div class="dt-kadro-row">' +
+        '<span class="kd-ava" style="background-image:url(\'' + esc(img(kisi.foto, 120)) + '\')" role="img" aria-label="' + esc(kisi.ad) + '"></span>' +
+        '<div class="kd-txt">' +
+          '<b><a href="' + esc(D.link.egitmen(kisi.slug)) + '">' + esc(kisi.ad) + '</a></b>' +
+          '<span>' + esc(kisi.unvan) + (kisiKurum ? ' · ' + esc(kisiKurum.ad) : '') + '</span>' +
+          '<span class="kd-rol"><span>' + esc(kisiRol) + '</span></span>' +
+        '</div>' +
+      '</div>';
+  } else {
+    kadroHtml +=
+      '<div class="dt-kadro-row">' +
+        '<span class="kd-ava" aria-hidden="true"></span>' +
+        '<div class="kd-txt"><b>DadaCampus ekibi</b>' +
+          '<span>Bu oturum için ayrı ' + esc(kisiRol.toLocaleLowerCase('tr-TR')) + ' kaydı bulunmuyor; oturumu program koordinasyonu yürütür.</span>' +
+          '<span class="kd-rol"><span>Yürütücü</span></span>' +
+        '</div>' +
+      '</div>';
+  }
+  if (kurum) {
+    /* 🔴 §26.13: yalnız onay kaydı olan kurumun adı yazılır. Metinde "onaylı"
+       sıfatı KULLANILMAZ — yazılan şey kurumun rolü ve onay kaydının referansı. */
+    kadroHtml +=
+      '<div class="dt-kadro-row">' +
+        '<span class="kd-ava" style="display:grid;place-items:center;background:var(--tomato-tint);color:var(--tomato);font-weight:800">' +
+          esc(kurum.monogram) + '</span>' +
+        '<div class="kd-txt">' +
+          '<b><a href="' + esc(D.link.kurum(kurum.slug)) + '">' + esc(kurum.ad) + '</a></b>' +
+          '<span>' + esc(D.etiket('kurumTurleri', kurum.tur)) + ' · ' + esc(kurum.sehir) + ' · ' + esc(kurum.isbirligiKapsami) + '</span>' +
+          '<span class="kd-rol"><span>Partner kurum</span><span>Onay kaydı ' + esc(kurum.onayKaydi.belgeRef) + '</span></span>' +
+        '</div>' +
+      '</div>';
+  } else if (k.partnerKurumId) {
+    /* Kurum kaydı var ama onay kaydı YOK → kurum adı yazılmaz (§26.13). */
+    kadroHtml +=
+      '<div class="dt-kadro-row">' +
+        '<span class="kd-ava" style="display:grid;place-items:center;background:var(--bg);color:var(--muted);font-weight:800">—</span>' +
+        '<div class="kd-txt"><b>Kurum ortaklığı görüşme aşamasında</b>' +
+          '<span>Onay kaydı tamamlanmadığı için kurum adı ve iş birliği kapsamı bu sayfada yayımlanmaz.</span>' +
+          '<span class="kd-rol"><span>Onay kaydı yok</span></span>' +
+        '</div>' +
+      '</div>';
+  }
+  $('#otKadro').innerHTML = kadroHtml;
+
+  /* ---- 5) KONTENJAN VE KAYIT KAPANIŞI ---------------------------------- */
+  /* Doluluk yüzdesi renkle değil, METİNLE de yazılır (§23.3). */
+  $('#otKontAlt').textContent = dolu
+    ? 'Kontenjan doldu. Yeni tarih açıldığında akademik takvimde duyurulur.'
+    : 'Kontenjan sınırlıdır; kayıt kapanış tarihinden sonra başvuru alınmaz.';
+  $('#otKontLbl').innerHTML =
+    '<span>' + k.kayitliSayisi + ' / ' + k.kontenjan + ' kayıt · ' + kalanYer + ' yer kaldı</span>' +
+    '<b>%' + doluluk + ' dolu</b>';
+  $('#otKontPrg').firstElementChild.style.width = doluluk + '%';
+  $('#otKontPrg').setAttribute('role', 'img');
+  $('#otKontPrg').setAttribute('aria-label', 'Kontenjan doluluğu yüzde ' + doluluk);
+
+  $('#otKontInf').innerHTML = [
+    ['Kontenjan', k.kontenjan + ' kişi', null],
+    ['Kayıtlı', k.kayitliSayisi + ' kişi (%' + doluluk + ')', dolu ? 'Kontenjan doldu' : kalanYer + ' yer kaldı'],
+    ['Kayıt kapanışı', k.kayitKapanis ? esc(D.tarih(k.kayitKapanis)) : 'Belirtilmemiş',
+      k.kayitKapanis ? (kayitKapandi ? 'Kayıtlar kapandı' : Math.abs(kayitKalan) + ' gün kaldı') : null],
+    ['Kayıt durumu', esc(durumRozet.ad), null]
+  ].map(infSatir).join('');
+
+  /* ---- 6) MALZEME, EKİPMAN VE ÖN HAZIRLIK ------------------------------
+     🔴 Kuruma özel oturumda malzeme dökümü de ayrıntıdır; yetkisiz kullanıcıya
+     liste açılmaz, yalnız "kurum sağlıyor / katılımcı getiriyor" düzeyinde
+     bilgi verilir (§24.2). */
+  var malzemeVar = (k.malzeme || []).length || (k.ekipman || []).length;
+  $('#otHazAlt').textContent = !malzemeVar
+    ? 'Bu ' + tipk + ' için katılımcıdan malzeme veya ekipman beklenmiyor.'
+    : (kurumaOzel && !ayrinti
+        ? 'Malzeme ve ekipman listesi kayıt onayından sonra katılımcıya iletilir.'
+        : 'Listedeki malzeme ve ekipmanı oturumdan önce hazırla; oturum sırasında beklemeden ilerleyebilirsin.');
+
+  function madListe(dizi, ikon, bosMetin) {
+    if (!dizi || !dizi.length) {
+      return '<li><i class="fa-solid fa-minus" aria-hidden="true"></i> ' + esc(bosMetin) + '</li>';
+    }
+    return dizi.map(function (x) {
+      return '<li><i class="fa-solid ' + ikon + '" aria-hidden="true"></i> ' + esc(x) + '</li>';
     }).join('');
   }
-  renderRecent();
-
-  /* ---- durum makinesi --------------------------------------------------- */
-  var p=new URLSearchParams(location.search);
-  var q=p.get('q');
-  var tab=p.get('tab')||'tumu';
-  if(TABS.indexOf(tab)===-1) tab='tumu';
-  if(q){
-    input.value=q;
-    var total=renderResults(q);
-    if(total>0){
-      titleEl.innerHTML='&ldquo;<span class="q"></span>&rdquo; için sonuçlar';
-      titleEl.querySelector('.q').textContent=q;
-      leadEl.classList.add('is-off');
-      sum.innerHTML='<b>'+total+' sonuç</b> bulundu · <span class="q">'+esc(q)+'</span> için.';
-      note.innerHTML='Aradığın: <b>'+esc(q)+'</b> — sonuçlar türüne göre etiketli; sekmelerle daralt.';
-      popEl.classList.add('is-off');
-      activate(tab);
-    }else{
-      titleEl.innerHTML='&ldquo;<span class="q"></span>&rdquo; için sonuç yok';
-      titleEl.querySelector('.q').textContent=q;
-      leadEl.classList.add('is-off');
-      sum.innerHTML='<b>0 sonuç</b> — yazımı kontrol et ya da önerilere göz at.';
-      tabbar.classList.add('is-off');
-      note.classList.add('is-off');
-      TABS.forEach(function(n){if(panes[n])panes[n].hidden=true;});
-      document.getElementById('fsEmptyQ').textContent=q;
-      var ec=document.getElementById('fsEmptyChips');
-      document.querySelectorAll('#fsPopChips .chip').forEach(function(c){
-        var b=document.createElement('button');b.type='button';b.className='chip';
-        b.setAttribute('data-q',c.getAttribute('data-q'));b.textContent=c.textContent;
-        ec.appendChild(b);
-      });
-      emptyEl.classList.add('show');
-    }
-    document.title='DadaCampus — Arama: '+q;
-  }else{
-    /* arama-first: sorgu yokken kart yok — popüler + son aramalar */
-    sum.innerHTML='<span style="color:#cadfe2">Eğitim, program, eğitmen, kurum ya da mutfak terimi — aramak için yukarıya yaz.</span>';
-    tabbar.classList.add('is-off');
-    document.getElementById('fsResults').classList.add('is-off');
-    note.classList.add('is-off');
-    document.title='DadaCampus — Arama';
+  if (kurumaOzel && !ayrinti) {
+    /* Liste gizlenir, blok boş kalmaz. `hidden` DEĞİL style.display kullanılır:
+       .dt-iki yazar kaynaklı `display:grid` taşır ve UA'nın [hidden] kuralını
+       ezer — hidden sessizce etkisiz kalırdı. */
+    $('#otListeler').style.display = 'none';
+  } else {
+    $('#otMalzeme').innerHTML = madListe(k.malzeme, 'fa-check', 'Malzeme gerekmiyor');
+    $('#otEkipman').innerHTML = madListe(k.ekipman, 'fa-check', 'Ekipman gerekmiyor');
   }
 
-  /* ============================== AUTOCOMPLETE ============================ */
-  (function(){
-    var box=document.getElementById('fsForm');
-    var ac=document.getElementById('fsAc');
-    var list=document.getElementById('fsAcList');
-    var status=document.getElementById('fsAcStatus');
-    if(!box||!ac||!list||!input)return;
+  $('#otHazirlik').innerHTML =
+    '<span class="kg-ico"><i class="fa-solid fa-list-check" aria-hidden="true"></i></span>' +
+    '<div class="kg-txt"><b>Ön hazırlık</b><p>' +
+      esc(kurumaOzel && !ayrinti
+        ? 'Ön hazırlık adımları kayıt onayından sonra katılımcıya iletilir.'
+        : (k.onHazirlik || 'Ön hazırlık gerekmiyor.')) +
+    '</p></div>';
 
-    function readPopular(){var out=[];document.querySelectorAll('#fsPop #fsPopChips .chip[data-q]').forEach(function(c){out.push(c.getAttribute('data-q'));});return out.slice(0,8);}
-    function readRecent(){return readRecentLS().map(function(r){return r.q;});}
+  /* ---- 7) + 8) ÜCRET / KURUM ERİŞİMİ · KAYIT VE SONRADAN ERİŞİM -------- */
+  /* ucret === null → kurum erişimi (bireysel fiyat yok) · 0 → ücretsiz. */
+  var ucretMetin = k.ucret === null ? 'Kurum erişimi' : (k.ucret === 0 ? 'Ücretsiz' : D.fiyat(k.ucret));
+  var ucretAlt = k.ucret === null
+    ? 'Bireysel satış yoktur; katılım kurum iş birliği kapsamında sağlanır'
+    : (k.ucret === 0 ? 'Katılım için ücret alınmaz, kayıt gerekir' : 'Kişi başı katılım ücreti');
 
-    var items=[],active=-1;
-    function render(groups){
-      items=[];active=-1;
-      var html='';
-      groups.forEach(function(g){
-        if(!g.rows.length)return;
-        html+='<div class="ac-grp" aria-hidden="true"><i class="fa-solid '+g.icon+'"></i>'+esc(g.label);
-        if(g.clear)html+='<button type="button" class="ac-clear" data-clear="1">Temizle</button>';
-        html+='</div>';
-        g.rows.forEach(function(r){
-          var idx=items.length;items.push(r);
-          var m=tmeta(r.type);
-          var icoStyle=r.img?' style="background-image:url(\''+r.img+'\');border-color:transparent"':'';
-          var icoInner=r.img?'':'<i class="fa-solid '+(r.icon||r.ico||m.ico)+'"></i>';
-          var badge=(r.type&&TYPE[r.type])?'<span class="ac-badge"><i class="fa-solid '+m.ico+'"></i>'+m.lbl+'</span>':'';
-          var sub=r.sub?'<span class="ac-sub">'+esc(r.sub)+'</span>':'';
-          html+='<div class="ac-opt'+(r.cls||'')+'" role="option" id="fs-opt-'+idx+'" data-type="'+(r.type||'q')+'" data-idx="'+idx+'" aria-selected="false">'
-              +'<span class="ac-ico"'+icoStyle+'>'+icoInner+'</span>'
-              +'<span class="ac-main"><span class="ac-ttl">'+(r.html||esc(r.t))+'</span>'+sub+'</span>'+badge+'</div>';
-        });
-      });
-      if(!groups.some(function(g){return g.rows.length;})){
-        html='<div class="ac-none">Eşleşen öneri yok — yazmaya devam et ya da <b>Enter</b> ile ara.</div>';
-      }
-      list.innerHTML=html;
-    }
-    function buildQuery(qq){
-      var qn=norm(qq);
-      var matched=POOL.filter(function(r){return norm(r.t).indexOf(qn)>=0||(r.sub&&norm(r.sub).indexOf(qn)>=0);});
-      matched.sort(function(a,b){var as=norm(a.t).indexOf(qn)===0?0:1,bs=norm(b.t).indexOf(qn)===0?0:1;return as-bs;});
-      matched=matched.slice(0,7).map(function(r){return {type:r.type,t:r.t,html:hi(r.t,qn),sub:r.sub,img:r.img,ico:r.ico,href:r.href,q:r.t};});
-      var rows=[{type:'q',cls:' ac-query',icon:'fa-magnifying-glass',t:qq,html:'<b>'+esc(qq)+'</b> için ara',sub:'Tüm sonuçları gör',q:qq}];
-      render([{label:'Arama',icon:'fa-magnifying-glass',rows:rows},{label:'Öneriler',icon:'fa-wand-magic-sparkles',rows:matched}]);
-    }
-    function buildDefault(){
-      var recent=readRecent().map(function(qq){return {type:'q',icon:'fa-clock-rotate-left',t:qq,q:qq};});
-      var pop=readPopular().map(function(qq){return {type:'q',icon:'fa-fire',t:qq,q:qq};});
-      render([{label:'Son aramalar',icon:'fa-clock-rotate-left',clear:recent.length>0,rows:recent},{label:'Popüler öneriler',icon:'fa-fire',rows:pop}]);
-    }
-    function announce(){status.textContent=items.length?(items.length+' öneri listelendi.'):'Öneri yok.';}
-    function open(){box.classList.add('ac-open');input.setAttribute('aria-expanded','true');announce();}
-    function close(){box.classList.remove('ac-open');input.setAttribute('aria-expanded','false');input.setAttribute('aria-activedescendant','');setActive(-1);}
-    function isOpen(){return box.classList.contains('ac-open');}
-    function setActive(i){
-      var opts=list.querySelectorAll('.ac-opt');
-      if(active>=0&&opts[active]){opts[active].classList.remove('is-active');opts[active].setAttribute('aria-selected','false');}
-      active=i;
-      if(i>=0&&opts[i]){opts[i].classList.add('is-active');opts[i].setAttribute('aria-selected','true');input.setAttribute('aria-activedescendant',opts[i].id);opts[i].scrollIntoView({block:'nearest'});}
-      else{input.setAttribute('aria-activedescendant','');}
-    }
-    function go(qq){location.href='arama-campus-v1.html'+(qq?'?q='+encodeURIComponent(qq):'');}
-    function choose(i){var r=items[i];if(!r)return;var qq=r.q||r.t;writeRecent(qq);if(r.href){location.href=r.href;return;}go(qq);}
-    var deb;
-    function onInput(){clearTimeout(deb);deb=setTimeout(function(){var v=input.value.trim();if(v.length>=1)buildQuery(v);else buildDefault();open();},150);}
-    input.addEventListener('input',onInput);
-    input.addEventListener('focus',function(){var v=input.value.trim();if(v.length>=1)buildQuery(v);else buildDefault();open();});
-    input.addEventListener('keydown',function(e){
-      var n=items.length;
-      if(e.key==='ArrowDown'){e.preventDefault();if(!isOpen()){onInput();return;}if(n)setActive((active+1)%n);}
-      else if(e.key==='ArrowUp'){e.preventDefault();if(n)setActive(active<=0?n-1:active-1);}
-      else if(e.key==='Enter'){if(isOpen()&&active>=0){e.preventDefault();choose(active);}}
-      else if(e.key==='Escape'){if(isOpen()){e.preventDefault();close();}}
-      else if(e.key==='Home'){if(isOpen()&&n){e.preventDefault();setActive(0);}}
-      else if(e.key==='End'){if(isOpen()&&n){e.preventDefault();setActive(n-1);}}
-    });
-    list.addEventListener('mousemove',function(e){var opt=e.target.closest('.ac-opt');if(!opt)return;var i=+opt.getAttribute('data-idx');if(i!==active)setActive(i);});
-    list.addEventListener('mousedown',function(e){
-      if(e.target.closest('[data-clear]')){e.preventDefault();try{localStorage.removeItem(RKEY);}catch(e2){}renderRecent();buildDefault();return;}
-      var opt=e.target.closest('.ac-opt');if(!opt)return;e.preventDefault();choose(+opt.getAttribute('data-idx'));
-    });
-    document.addEventListener('mousedown',function(e){if(!box.contains(e.target))close();});
+  $('#otKosulAlt').textContent = k.kayitAlinacak
+    ? 'Oturum kaydedilir; kayıtlı katılımcılar oturum sonrasında da izleyebilir.'
+    : 'Bu oturumun kaydı alınmaz; katılım yalnız canlı olarak mümkündür.';
 
-    var dp=new URLSearchParams(location.search);
-    if(dp.get('demo')==='1'||location.hash==='#demo'){var dq=dp.get('q');if(dq){input.value=dq;buildQuery(dq);}else buildDefault();open();var di=parseInt(dp.get('ai'),10);if(!isNaN(di))setActive(di);}
-  })();
+  $('#otKosul').innerHTML = [
+    ['Ücret', esc(ucretMetin), ucretAlt],
+    ['Kurum erişimi', k.kurumErisimi ? 'Var' : 'Yok',
+      k.kurumErisimi ? 'Kurum kohortu katılımcısından ayrıca ücret alınmaz' : 'Katılım bireysel kayıtla olur'],
+    ['Kayıt alınacak mı', k.kayitAlinacak ? 'Evet, oturum kaydedilir' : 'Hayır, kayıt alınmaz',
+      k.kayitAlinacak ? 'Kayıt yayımlandığında Takvimim sayfasından bildirilir' : 'Yalnız canlı katılım'],
+    ['Sonradan erişim süresi', esc(k.erisimSuresi || (k.kayitAlinacak ? 'Belirtilmemiş' : 'Yok')),
+      k.kayitAlinacak && k.erisimSuresi ? 'Süre oturum tarihinden itibaren işler' : null],
+    ['Kayıt kapanışı', k.kayitKapanis ? esc(D.tarih(k.kayitKapanis)) : 'Belirtilmemiş', null]
+  ].map(infSatir).join('');
 
-  /* form gönderimi + çip / son arama köprüleri */
-  document.getElementById('fsForm').addEventListener('submit',function(e){
-    e.preventDefault();
-    var v=input.value.trim();
-    if(v)writeRecent(v);
-    location.href='arama-campus-v1.html'+(v?'?q='+encodeURIComponent(v):'');
-  });
-  document.addEventListener('click',function(e){
-    var c=e.target.closest('[data-q]');
-    if(c&&!c.closest('.ac-opt')){var dq=c.getAttribute('data-q');writeRecent(dq);location.href='arama-campus-v1.html?q='+encodeURIComponent(dq);}
-  });
+  /* ---- 9) KATILIM BELGESİ (§15.1) --------------------------------------
+     🔴 Katılım belgesi BAŞARI belgesi DEĞİLDİR. Belge türünün zorunlu
+     açıklaması her koşulda basılır; "onaylı", "resmî geçerli", "ortak
+     sertifika" ifadeleri kurulmaz (§26.13). */
+  var kb = k.katilimBelgesi || { verilir: false, kosul: null };
+  var belgeSatir = [
+    ['Belge veriliyor mu', kb.verilir ? 'Evet, katılım belgesi' : 'Hayır',
+      kb.verilir ? 'Belge türü: ' + esc(D.etiket('belgeTurleri', 'katilim')) : 'Bu oturum için belge düzenlenmez']
+  ];
+  if (kb.verilir) {
+    belgeSatir.push(['Koşul', esc(kb.kosul || 'Oturuma katılım'), 'Koşul karşılanmazsa belge düzenlenmez']);
+    belgeSatir.push(['Veren', kurum ? 'DadaCampus + ' + esc(kurum.ad) : 'DadaCampus',
+      kurum ? esc(kurum.onayKaydi.yetkili) + ' · onay kaydı ' + esc(kurum.onayKaydi.belgeRef)
+            : 'Bu oturumda partner kurum onay kaydı bulunmuyor']);
+    belgeSatir.push(['Doğrulama', 'Belge kodu ile', 'Belge doğrulama sayfasından kod ile sorgulanır']);
+  }
+  $('#otBelge').innerHTML = belgeSatir.map(infSatir).join('');
+  $('#otBelgeNot').innerHTML = '<i class="fa-solid fa-circle-info" aria-hidden="true"></i><span><b>Zorunlu açıklama:</b> ' +
+    esc(D.belgeAciklamasi('katilim')) +
+    ' Katılım belgesi değerlendirme sonucu göstermez ve akademik kredi ya da kamu geçerliliği iddiası taşımaz.</span>';
+
+  /* ---- 10) İPTAL, ERTELEME VE GERİ ÖDEME ------------------------------- */
+  $('#otIptal').innerHTML = [
+    ['İptal ve iade', esc(k.iptalKurali), null],
+    ['Erteleme', 'Tarih değişirse kayıtlı katılımcılara bildirim gönderilir',
+      'Yeni tarihe geçmek istemeyen katılımcı kaydını iptal edebilir'],
+    ['Geri ödeme', k.ucret ? 'İptal kuralındaki süre içinde tam iade'
+        : (k.ucret === 0 ? 'Ücret alınmadığı için iade söz konusu değildir'
+                         : 'Bireysel ödeme alınmadığı için iade söz konusu değildir'),
+      k.kurumErisimi ? 'Kurum erişimi kapsamındaki katılımda kurum kuralı geçerlidir' : null],
+    ['Katılamama', 'Kaydını oturumdan önce iptal edersen yerin bekleme listesine açılır',
+      'Bildirimsiz katılmama, kuruma özel oturumlarda kurum koordinatörüne raporlanır']
+  ].map(infSatir).join('');
+
+  /* ---- §13.3 CANLI OTURUM YAŞAM DÖNGÜSÜ (8 adım) -----------------------
+     Bu oturumun hangi adımda olduğu BUGUN sabitine ve `durum` alanına göre
+     hesaplanır; adım numarası veriye elle yazılmaz. */
+  var adim = yakinda   ? 2      /* onay aşaması, kayıt henüz açılmadı */
+           : gecti     ? 6      /* oturum yapıldı; kayıt/özet yayımı sırada */
+           : (dolu || kayitKapandi) ? 4   /* kayıt kapandı, hatırlatma dönemi */
+           :             3;     /* kayıt açık, duyuru sürüyor */
+
+  var dongu = [
+    ['Taslak ' + tipk + ' oluşturulur', 'Ad, tür, konu ve kapsam taslak olarak yazılır.'],
+    [(tip === 'atolye' ? 'Eğitmen' : 'Konuşmacı') + ', kurum, tarih ve kapasite onaylanır',
+      'Kontenjan, tarih ve varsa partner kurum kaydı kesinleşir.'],
+    ['Kayıt açılır ve hedef gruba duyuru yapılır',
+      kapali ? 'Kapalı oturumda duyuru yalnız ilgili kurum kohortuna gider.'
+             : 'Kayıt formu açılır, akademik takvimde ve ilgili program sayfasında duyurulur.'],
+    ['Hatırlatmalar gönderilir', 'Kayıtlı katılımcıya oturumdan önce hatırlatma ve hazırlık bilgisi iletilir.'],
+    ['Katılım ve oturum süresi kaydedilir', 'Katılım süresi ölçülür; belge koşulu bu kayda göre değerlendirilir.'],
+    ['Kayıt, özet ve materyal yayımlanır',
+      k.kayitAlinacak ? 'Oturum kaydı ve materyal ' + esc(k.erisimSuresi || 'belirlenen süre') + ' boyunca erişime açılır.'
+                      : 'Bu oturumun kaydı alınmaz; yalnız özet ve materyal paylaşılır.'],
+    ['Geri bildirim alınır', 'Katılımcı değerlendirmesi toplanır; sonraki oturumun kurgusuna işlenir.'],
+    ['Katılım ve belge uygunluğu güncellenir',
+      kb.verilir ? 'Koşulu karşılayan katılımcıya katılım belgesi düzenlenir.'
+                 : 'Bu oturumda belge düzenlenmez; yalnız katılım kaydı güncellenir.']
+  ];
+
+  $('#otDonguAlt').textContent = 'Her canlı oturum aynı sekiz adımdan geçer (§13.3). Bu ' + tipk +
+    ' şu an ' + adim + '. adımda.';
+  $('#otDongu').innerHTML = dongu.map(function (a, i) {
+    var no = i + 1;
+    var d = no < adim ? { s: 'ok',   i: 'fa-check',       t: 'Tamamlandı' }
+          : no === adim ? { s: 'warm', i: 'fa-circle-dot', t: 'Şu an burada' }
+          : { s: 'off', i: 'fa-hourglass-half', t: 'Sırada' };
+    return '<tr>' +
+      '<td data-l="Adım"><b>' + no + '. ' + esc(a[0]) + '</b></td>' +
+      '<td data-l="Ne oluyor">' + a[1] + '</td>' +
+      '<td data-l="Durum">' + pstat(d.s, d.i, d.t) + '</td>' +
+    '</tr>';
+  }).join('');
+
+  /* ---- YAN PANEL: kayıt kartı ------------------------------------------ */
+  /* Kapalı durumlarda ölü bağlantı yerine devre dışı buton; kabukta `.btn:disabled`
+     kuralı yok, bu yüzden sönük görünüm satır içi verilir (yeni sınıf açılmaz). */
+  var PASIF = ' style="opacity:.55;cursor:not-allowed" disabled';
+  var kayitCta;
+  if (kayitAcik) {
+    kayitCta = kayitliyim
+      ? '<a class="btn btn-primary" href="dadacampus-kampusum-v1.html?bolum=takvimim"><i class="fa-regular fa-calendar-check"></i> Kaydın Tamam — Takvimim</a>'
+      : '<button class="btn btn-primary" type="button" data-lg-gate="1"><i class="fa-regular fa-calendar-plus"></i> Kayıt Ol</button>';
+  } else if (yakinda) {
+    kayitCta = '<button class="btn btn-ghost" type="button"' + PASIF + '><i class="fa-solid fa-hourglass-half" aria-hidden="true"></i> Yakında</button>';
+  } else if (dolu) {
+    kayitCta = '<button class="btn btn-ghost" type="button"' + PASIF + '><i class="fa-solid fa-user-slash" aria-hidden="true"></i> Kontenjan doldu</button>';
+  } else {
+    kayitCta = '<button class="btn btn-ghost" type="button"' + PASIF + '><i class="fa-solid fa-clock-rotate-left" aria-hidden="true"></i> Kayıtlar kapandı</button>';
+  }
+
+  $('#otKayitKart').innerHTML =
+    '<div class="fc-head"><h2><i class="fa-regular fa-calendar-check" aria-hidden="true"></i> ' + esc(TIP) + ' kaydı</h2></div>' +
+    '<div class="dt-fiyat"><b>' + esc(ucretMetin) + '</b>' +
+      '<span>' + esc(k.ucret === null ? 'bireysel satış yok' : (k.ucret === 0 ? 'kayıt gerekir' : 'kişi başı')) + '</span></div>' +
+    '<p class="dt-fiyat-alt">' + esc(D.tarih(k.tarih)) + ' · ' + esc(k.saat) + ' · ' + esc(D.sure(k.sureDk)) + '</p>' +
+    '<div class="kont">' +
+      '<div class="prg-lbl"><span>' + k.kayitliSayisi + ' / ' + k.kontenjan + ' kayıt</span><b>%' + doluluk + '</b></div>' +
+      '<span class="prg" role="img" aria-label="Kontenjan doluluğu yüzde ' + doluluk + '"><span style="width:' + doluluk + '%"></span></span>' +
+    '</div>' +
+    '<div style="margin-bottom:12px">' + pstat(durumRozet.sinif, durumRozet.ikon, durumRozet.ad) + '</div>' +
+    kayitCta +
+    '<a class="btn btn-ghost" href="dadacampus-takvim-v1.html"><i class="fa-regular fa-calendar-days"></i> Akademik Takvim</a>' +
+    '<div class="inf">' + [
+      ['Tür', esc(TIP)],
+      ['Format', esc(formatAd(k.format))],
+      ['Kayıt kapanışı', k.kayitKapanis ? esc(D.tarih(k.kayitKapanis)) : '—'],
+      ['Belge', kb.verilir ? 'Katılım belgesi' : 'Yok']
+    ].map(function (r) { return '<div class="inf-row"><span>' + r[0] + '</span><b>' + r[1] + '</b></div>'; }).join('') +
+    '</div>' +
+    '<p class="dt-kayit-not">' + esc(kapali
+      ? 'Kapalı oturum: kayıt kurum koordinatörü üzerinden yapılır, bireysel başvuru alınmaz.'
+      : 'Kaydın onaylandığında hatırlatmalar ve katılım bilgisi Kampüsüm > Takvimim bölümünde toplanır.') + '</p>';
+
+  /* ---- YAN PANEL: eğitmen / konuşmacı ---------------------------------- */
+  if (kisi) {
+    var yanKurum = (kisi.kurumId && D.onayliMi(kisi.kurumId)) ? D.kurum(kisi.kurumId) : null;
+    $('#otKisiKart').hidden = false;
+    $('#otKisiKart').innerHTML =
+      '<div class="ec-ava" style="background-image:url(\'' + esc(img(kisi.foto, 240)) + '\')" role="img" aria-label="' + esc(kisi.ad) + '"></div>' +
+      '<h4>' + esc(kisi.ad) + '</h4>' +
+      '<div class="dt-unvan">' + esc(kisiRol) + ' · ' + esc(kisi.unvan) + (yanKurum ? ' · ' + esc(yanKurum.ad) : '') + '</div>' +
+      '<p>' + esc(kisi.biyografi) + '</p>' +
+      '<div class="ec-tags">' + (kisi.uzmanliklar || []).map(function (u) {
+        return '<span>' + esc(u) + '</span>';
+      }).join('') + '</div>' +
+      '<a class="see-all" href="' + esc(D.link.egitmen(kisi.slug)) + '" style="margin-top:12px">' +
+        esc(kisiRol) + ' profili <i class="fa-solid fa-arrow-right"></i></a>';
+  }
+
+  /* ---- YAN PANEL: partner kurum — YALNIZ onay kaydı varsa (§26.13) ----- */
+  if (kurum) {
+    $('#otKurumKart').hidden = false;
+    $('#otKurumKart').innerHTML =
+      '<div class="dt-mono">' + esc(kurum.monogram) + '</div>' +
+      '<h4>' + esc(kurum.ad) + '</h4>' +
+      '<p>' + esc(D.etiket('kurumTurleri', kurum.tur)) + ' · ' + esc(kurum.sehir) + '<br>' +
+      esc(kurum.isbirligiKapsami) + '<br><b style="color:var(--tomato)">Onay kaydı ' + esc(kurum.onayKaydi.belgeRef) +
+      '</b> · ' + esc(D.tarih(kurum.onayKaydi.tarih)) + '</p>' +
+      '<a class="see-all" href="' + esc(D.link.kurum(kurum.slug)) + '" style="margin-top:12px">Kurum profili <i class="fa-solid fa-arrow-right"></i></a>';
+  }
+
+  /* ---- BAĞLI PROGRAM (§17.3) ------------------------------------------- */
+  var prog = k.programId ? D.program(k.programId) : null;
+  if (prog) {
+    $('#otProgramBaslik').textContent = 'Bu ' + tipk + ' hangi programın parçası?';
+    D.sigdir(document.getElementById('otProgram'), [prog], function (pr) {
+      var pk = (pr.partnerKurumIds || []).length ? D.kurum(pr.partnerKurumIds[0]) : null;
+      var ortak = D.ortakBelgeGosterilirMi(pr);
+      var DR = { 'kayit-acik': 'Başvuru açık', 'aktif': 'Yürüyor', 'onay-bekliyor': 'Yakında', 'tamamlandi': 'Tamamlandı' };
+      return '<a class="crs-card" href="' + esc(D.link.program(pr.slug)) + '">' +
+        '<div class="crs-fig" style="background-image:url(\'' + esc(img(pr.kapak, 600)) + '\')">' +
+          '<span class="crs-lvl">' + esc(D.etiket('programTurleri', pr.tur)) + '</span>' +
+          '<span class="crs-soon"><i class="fa-regular fa-clock" aria-hidden="true"></i> ' + esc(DR[pr.durum] || pr.durum) + '</span>' +
+          '<span class="crs-track-lbl">' + esc(pr.donem) + '</span>' +
+        '</div><div class="crs-body"><h3>' + esc(pr.ad) + '</h3>' +
+        '<div class="crs-chef"><span class="cc-ava" style="display:grid;place-items:center;background:var(--tomato-tint);color:var(--tomato);font-size:11px;font-weight:800">' +
+          esc(pk && D.onayliMi(pk.id) ? pk.monogram : 'DC') + '</span><span><b>' +
+          esc(pk && D.onayliMi(pk.id) ? pk.ad : 'DadaCampus') + '</b><span>' +
+          esc(pk && D.onayliMi(pk.id) ? (ortak ? 'Ortak program · onay kaydı var' : 'Partner kurum') : 'Kurum ortağı yok') +
+        '</span></span></div>' +
+        '<div class="crs-meta">' +
+          '<span><i class="fa-solid fa-layer-group" aria-hidden="true"></i> ' + pr.modulSayisi + ' modül</span>' +
+          '<span><i class="fa-solid fa-circle-play" aria-hidden="true"></i> ' + pr.egitimSayisi + ' eğitim</span>' +
+          '<span><i class="fa-solid fa-tag" aria-hidden="true"></i> ' +
+            esc(pr.ucret ? D.fiyat(pr.ucret) : (pr.lisansModeli ? 'Kurum lisansı' : 'Ücretsiz')) + '</span>' +
+        '</div></div></a>';
+    }, { min: 1, max: 1 });
+  } else {
+    document.getElementById('otProgram').style.display = 'none';
+    document.getElementById('otProgramYok').style.display = '';
+    $('#otProgramYokBaslik').textContent = 'Bu ' + tipk + ' tek başına katılınabilir';
+    $('#otProgramYokMetin').textContent = 'Şu an bir programa bağlı değil. Değerlendirmeli, takvimli ve belgeli bir yol arıyorsan ' +
+      'Programlar Merkezi\'nden başvurusu açık programlara bakabilirsin.';
+  }
+
+  /* ---- İLGİLİ DİĞER OTURUMLAR ------------------------------------------
+     Öncelik: aynı programın diğer oturumları (§17.3). Program yoksa AYNI
+     TÜRDEN diğer oturumlar — atölye atölyeyle, etkinlik etkinlikle eşleşir;
+     iki varlık listede karıştırılmaz. */
+  var liste = [];
+  var kaynakMetin;
+  if (prog) {
+    liste = D.programOturumlari(prog.id).filter(function (o) { return o.k.id !== k.id; });
+    kaynakMetin = esc(prog.ad) + ' programının takvimindeki diğer atölye ve etkinlikler.';
+  }
+  if (!liste.length) {
+    liste = (tip === 'atolye' ? D.atolyeler : D.etkinlikler)
+      .filter(function (x) { return x.id !== k.id; })
+      .sort(function (a, b) { return a.tarih.localeCompare(b.tarih); })
+      .map(function (x) { return { tip: tip, k: x }; });
+    kaynakMetin = tip === 'atolye'
+      ? 'Takvimdeki diğer atölyeler — hepsi belirli tarihli, uygulamalı oturumlardır.'
+      : 'Takvimdeki diğer etkinlikler — söyleşi, panel ve proje sunumu oturumları.';
+  }
+  $('#otIlgiliBaslik').textContent = prog ? 'Aynı programın diğer oturumları' : 'Takvimdeki diğer ' + (tip === 'atolye' ? 'atölyeler' : 'etkinlikler');
+  $('#otIlgiliAlt').innerHTML = kaynakMetin;
+
+  if (liste.length) {
+    D.sigdir(document.getElementById('otIlgili'), liste, function (o) {
+      var x = o.k;
+      var xTip = o.tip === 'atolye' ? 'Atölye' : 'Etkinlik';
+      var xKisi = D.egitmen(o.tip === 'atolye' ? x.egitmenId : x.konusmaciId);
+      var xDolu = x.durum === 'kontenjan-doldu';
+      var href = o.tip === 'atolye' ? D.link.atolye(x.slug) : D.link.etkinlik(x.slug);
+      return '<a class="crs-card" href="' + esc(href) + '">' +
+        '<div class="crs-fig" style="background-image:url(\'' + esc(img(x.kapak, 600)) + '\')">' +
+          '<span class="crs-lvl">' + esc(xTip) + '</span>' +
+          '<span class="crs-soon"><i class="fa-regular fa-clock" aria-hidden="true"></i> ' + esc(D.tarih(x.tarih)) + '</span>' +
+          '<span class="crs-track-lbl">' + esc(D.etiket('etkinlikTurleri', x.tur)) + '</span>' +
+        '</div><div class="crs-body"><h3>' + esc(x.ad) + '</h3>' +
+        '<div class="crs-chef">' + (xKisi
+          ? '<span class="cc-ava" style="background-image:url(\'' + esc(img(xKisi.foto, 120)) + '\')"></span><span><b>' + esc(xKisi.ad) + '</b><span>'
+          : '<span class="cc-ava"></span><span><b>DadaCampus</b><span>') +
+          esc(formatAd(x.format)) + '</span></span></div>' +
+        '<div class="crs-meta">' +
+          '<span><i class="fa-regular fa-clock" aria-hidden="true"></i> ' + esc(D.sure(x.sureDk)) + '</span>' +
+          '<span><i class="fa-solid fa-users" aria-hidden="true"></i> ' +
+            (xDolu ? 'Kontenjan doldu' : Math.max(0, x.kontenjan - x.kayitliSayisi) + ' yer') + '</span>' +
+          '<span><i class="fa-solid fa-tag" aria-hidden="true"></i> ' +
+            esc(x.ucret === null ? 'Kurum erişimi' : D.fiyat(x.ucret)) + '</span>' +
+        '</div></div></a>';
+    }, { min: 1, max: 3 });
+    $('#otIlgiliNot').textContent = 'Tarihli oturumların tamamı akademik takvimde ay ay listelenir.';
+  } else {
+    document.getElementById('ilgiliSec').hidden = true;
+  }
+
+  /* ---- ortak satır üreteci --------------------------------------------- */
+  /* .inf-row: etiket + değer (+ isteğe bağlı küçük açıklama). Fonksiyon
+     bildirimi olduğu için yukarıdaki çağrılardan önce hoisting ile erişilir. */
+  function infSatir(r) {
+    return '<div class="inf-row"><span>' + r[0] + '</span><b>' + r[1] +
+      (r[2] ? '<small>' + r[2] + '</small>' : '') + '</b></div>';
+  }
 })();
 </script>
 </body>

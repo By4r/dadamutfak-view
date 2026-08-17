@@ -153,12 +153,143 @@
   ];
 
   /* §9.1 / §9.3 — 5 kurum türü. Her biri tek şablon + ?tur= ile açılır (§26.14). */
+  /* §9.3 her kurum türü sayfasında AYNI yapı: değer önerisi · çözülen problem ·
+     uygun modeller · örnek program · kaynak paylaşımı · süreç · göstergeler · SSS.
+     Bu içerik Faz 1'de Kurumlar Merkezi'nin JS'inde hardcoded duruyordu; Faz 4'te
+     kurum türü sayfası da aynı içeriği kullandığı için veriye taşındı (§26.14 —
+     demo içeriği sabit HTML olarak çoğaltma). */
   var kurumTurleri = [
-    { slug: 'universite',   ad: 'Üniversiteler',                      kisaAd: 'Üniversite',        ikon: 'fa-building-columns', vaat: 'Dijital ders desteği, ortak sertifika ve sürekli eğitim' },
-    { slug: 'mutfak-okulu', ad: 'Mutfak Sanatları Okulları',          kisaAd: 'Mutfak Okulu',      ikon: 'fa-utensils',         vaat: 'Hibrit eğitim, içerik lisansı ve uzman havuzu' },
-    { slug: 'kamu',         ad: 'Kamu Kurumları ve Belediyeler',      kisaAd: 'Kamu',              ikon: 'fa-landmark',         vaat: 'Meslek edindirme, yerel ürün ve sosyal etki programları' },
-    { slug: 'meslek',       ad: 'Mesleki Eğitim Kurumları',           kisaAd: 'Mesleki Eğitim',    ikon: 'fa-school',           vaat: 'Tamamlayıcı eğitim ve öğretici içerik' },
-    { slug: 'isletme',      ad: 'İşletmeler ve Sektör Kuruluşları',   kisaAd: 'İşletme',           ikon: 'fa-hotel',            vaat: 'Kurum içi yetkinlik programları' }
+    {
+      slug: 'universite', ad: 'Üniversiteler', kisaAd: 'Üniversite',
+      ikon: 'fa-building-columns',
+      vaat: 'Dijital ders desteği, ortak sertifika ve sürekli eğitim',
+      hedefBirim: 'Gastronomi ve Mutfak Sanatları bölümleri, Sürekli Eğitim Merkezleri, Turizm fakülteleri',
+      problem: ['Dijital ders materyali standardı yok', 'Uygulama saatleri fiziki mutfakla sınırlı',
+                'Sürekli eğitim programı için içerik ve eğitmen kapasitesi yetersiz'],
+      kaynak: ['Kurum: akademik kadro, onay süreci, kontenjan ve mekân',
+               'DadaCampus: içerik üretimi, platform, eğitmen havuzu, değerlendirme altyapısı'],
+      gosterge: ['Kayıt ve tamamlama oranı', 'Kazanım bazlı başarı', 'Memnuniyet ve öneri'],
+      zamanCizelgesi: [
+        { adim: 'İhtiyaç analizi ve model seçimi', sure: '2–3 hafta' },
+        { adim: 'Müfredat eşleştirme ve akademik inceleme', sure: '3–4 hafta' },
+        { adim: 'Protokol ve logo kullanım izni', sure: '2 hafta' },
+        { adim: 'Kohort kurulumu ve eğitmen ataması', sure: '2 hafta' },
+        { adim: 'İlk dönem yürütme', sure: '1 akademik dönem' }
+      ],
+      sss: [
+        { soru: 'Ortak sertifikayı kim veriyor?',
+          cevap: 'Belge, protokolde tanımlı yetkilinin onayıyla düzenlenir ve her iki kurumun rolü belge üzerinde ayrı ayrı yazılır. Onay kaydı tamamlanmadan ortak belge ifadesi kullanılmaz.' },
+        { soru: 'Mevcut ders içeriğimizle çakışır mı?',
+          cevap: 'Müfredat eşleştirme adımında kazanımlar karşılaştırılır; DadaCampus içeriği dersin yerine değil tamamlayıcısı olarak konumlanır.' },
+        { soru: 'Öğrenci verisi kimde kalır?',
+          cevap: 'Kurum yöneticisi yalnız kendi kurumunun katılımcılarını görür. Rapor görüntüleme, öğrenci verisi, belge onayı ve finans ayrı izinlerdir.' }
+      ]
+    },
+    {
+      slug: 'mutfak-okulu', ad: 'Mutfak Sanatları Okulları', kisaAd: 'Mutfak Okulu',
+      ikon: 'fa-utensils',
+      vaat: 'Hibrit eğitim, içerik lisansı ve uzman havuzu',
+      hedefBirim: 'Özel mutfak sanatları okulları, aşçılık kursları, uygulama mutfağı olan eğitim kurumları',
+      problem: ['Teori saatleri uygulama mutfağını meşgul ediyor', 'Uzman eğitmen erişimi dönemsel',
+                'İçerik güncelleme yükü yüksek'],
+      kaynak: ['Kurum: uygulama mutfağı, yüz yüze eğitmen, iş sağlığı ve güvenliği sorumluluğu',
+               'DadaCampus: online teori, ölçme, kohort yönetimi, içerik lisansı'],
+      gosterge: ['Yüz yüze oturum devam oranı', 'Uygulama teslimi kabul oranı', 'Dönem tamamlama'],
+      zamanCizelgesi: [
+        { adim: 'İhtiyaç analizi ve mutfak kapasitesi incelemesi', sure: '2 hafta' },
+        { adim: 'Hibrit program tasarımı (online teori + yüz yüze uygulama)', sure: '3 hafta' },
+        { adim: 'Protokol, lisans ve iş sağlığı sorumluluk paylaşımı', sure: '2 hafta' },
+        { adim: 'Eğitmen eşleştirme ve takvim', sure: '1–2 hafta' },
+        { adim: 'İlk kohort', sure: '8–16 hafta' }
+      ],
+      sss: [
+        { soru: 'İçerik lisansı ne kapsıyor?',
+          cevap: 'Belirli kontenjan ve dönem için içeriğe erişim, kohort yönetimi ve raporlama. Kullanım süresi, kanalı ve dönem sonunda erişimin ne olacağı sözleşmede yazılır.' },
+        { soru: 'Yüz yüze oturumda sorumluluk kimde?',
+          cevap: 'Mutfak, malzeme ve iş sağlığı/güvenliği sorumluluğu kurumdadır; bu protokolün zorunlu karar noktalarından biridir.' },
+        { soru: 'Kendi eğitmenimiz içerik üretebilir mi?',
+          cevap: 'Evet. İçerik üretim ortaklığı modelinde kurum uzmanlarıyla birlikte içerik hazırlanır; hak paylaşımı ve kullanım süresi ayrıca tanımlanır.' }
+      ]
+    },
+    {
+      slug: 'kamu', ad: 'Kamu Kurumları ve Belediyeler', kisaAd: 'Kamu',
+      ikon: 'fa-landmark',
+      vaat: 'Meslek edindirme, yerel ürün ve sosyal etki programları',
+      hedefBirim: 'Belediyeler, kalkınma ajansları, kooperatifler, halk eğitim yapıları, kamu sosyal destek birimleri',
+      problem: ['Meslek edindirme programlarında ölçülebilir çıktı eksik',
+                'Yerel ürün ve kooperatif bilgisi dijitalleşmemiş',
+                'Kadın ve genç istihdamına yönelik içerik dağınık'],
+      kaynak: ['Kurum: katılımcı seçimi, mekân, sosyal etki raporlaması, bütçe/proje kaynağı',
+               'DadaCampus: müfredat, eğitmen, hijyen ve güvenlik içeriği, raporlama'],
+      gosterge: ['Programı tamamlayan katılımcı', 'Kurulan üretim birimi', 'İstihdam/kooperatif çıktısı'],
+      zamanCizelgesi: [
+        { adim: 'İhtiyaç analizi ve hedef grup tanımı', sure: '2–3 hafta' },
+        { adim: 'Program tasarımı ve bütçe/proje eşleştirmesi', sure: '3–4 hafta' },
+        { adim: 'Protokol ve katılımcı verisi izinleri', sure: '2–3 hafta' },
+        { adim: 'Katılımcı seçimi ve kohort kurulumu', sure: '2 hafta' },
+        { adim: 'Program yürütme ve etki raporu', sure: '3–5 ay' }
+      ],
+      sss: [
+        { soru: 'Katılımcı verisi nasıl işleniyor?',
+          cevap: 'Verinin kim tarafından, hangi amaçla işleneceği protokolde yazılır. Reşit olmayan katılımcıda yaş ve veli/kurum onayı ayrıca aranır.' },
+        { soru: 'Sosyal etki nasıl ölçülüyor?',
+          cevap: 'Program başında tanımlı çıktı ve sonuç göstergeleri belirlenir; rapor yalnız kurumun onayıyla yayımlanır.' },
+        { soru: 'Katılımcıdan ücret alınıyor mu?',
+          cevap: 'Kamu bütçesi veya sponsor destekli programlarda katılımcıdan ücret alınmaz; bu, program detayında açıkça yazılır.' }
+      ]
+    },
+    {
+      slug: 'meslek', ad: 'Mesleki Eğitim Kurumları', kisaAd: 'Mesleki Eğitim',
+      ikon: 'fa-school',
+      vaat: 'Tamamlayıcı eğitim ve öğretici içerik',
+      hedefBirim: 'Meslek liseleri, halk eğitim merkezleri, mesleki eğitim merkezleri, çıraklık eğitimi birimleri',
+      problem: ['Müfredatı tamamlayıcı dijital içerik yok', 'Öğretici kadroya dijital öğretim desteği gerekiyor',
+                'Öğrenci uygulama geri bildirimi ölçeklenmiyor'],
+      kaynak: ['Kurum: öğrenci grubu, atölye saatleri, öğretici kadro',
+               'DadaCampus: tamamlayıcı içerik, eğitici eğitimi, rubrik ve değerlendirme'],
+      gosterge: ['Derse entegrasyon oranı', 'Öğrenci tamamlama', 'Öğretici memnuniyeti'],
+      zamanCizelgesi: [
+        { adim: 'Müfredat inceleme ve boşluk analizi', sure: '2 hafta' },
+        { adim: 'Tamamlayıcı içerik seçimi ve eğitici eğitimi planı', sure: '3 hafta' },
+        { adim: 'Protokol ve erişim tanımları', sure: '2 hafta' },
+        { adim: 'Öğretici eğitimi', sure: '2–3 hafta' },
+        { adim: 'Sınıfa entegrasyon ve dönem takibi', sure: '1 dönem' }
+      ],
+      sss: [
+        { soru: 'Öğretici kadromuz nasıl destekleniyor?',
+          cevap: 'Eğitici eğitimi modelinde kadroya dijital öğretim, içerik hazırlama ve rubrikle değerlendirme desteği verilir.' },
+        { soru: 'Öğrenciler kendi cihazlarından mı erişecek?',
+          cevap: 'Erişim kurum lisansı üzerinden tanımlanır; sınıf içi ortak erişim veya bireysel hesap seçenekleri protokolde belirlenir.' },
+        { soru: 'Belge veriliyor mu?',
+          cevap: 'Kurumun tercihine göre katılım belgesi veya kurum içi tamamlama kaydı düzenlenir. Kurum içi kayıt kamuya açık geçerlilik iddiası taşımaz.' }
+      ]
+    },
+    {
+      slug: 'isletme', ad: 'İşletmeler ve Sektör Kuruluşları', kisaAd: 'İşletme',
+      ikon: 'fa-hotel',
+      vaat: 'Kurum içi yetkinlik programları',
+      hedefBirim: 'Otel ve restoran grupları, gıda şirketleri, catering işletmeleri, sektör dernekleri',
+      problem: ['Şubeler arası standart tarif ve teknik farkı', 'Yeni işe alımda eğitim süresi uzun',
+                'Maliyet ve porsiyon disiplini ekipçe oturmuyor'],
+      kaynak: ['Kurum: katılımcı ataması, vardiya planı, kurum içi mentor',
+               'DadaCampus: standart içerik, kohort, ölçme, kurum içi tamamlama kaydı'],
+      gosterge: ['Kurum içi tamamlama oranı', 'Standart tarif uyumu', 'Eğitim süresi kısalması'],
+      zamanCizelgesi: [
+        { adim: 'Yetkinlik boşluğu analizi', sure: '1–2 hafta' },
+        { adim: 'Program ve kohort tasarımı (vardiyaya uygun)', sure: '2–3 hafta' },
+        { adim: 'Kurumsal lisans ve kontenjan sözleşmesi', sure: '1–2 hafta' },
+        { adim: 'Kurum içi mentor eğitimi', sure: '1 hafta' },
+        { adim: 'Yürütme ve dönemsel rapor', sure: '3–6 ay' }
+      ],
+      sss: [
+        { soru: 'Vardiyalı ekip nasıl katılıyor?',
+          cevap: 'Video içerik istenen zamanda izlenir; canlı oturum ve yüz yüze atölye takvimi kurumun vardiya planına göre kurulur.' },
+        { soru: 'Rapor kimlere açık?',
+          cevap: 'Kurum paneli katılım, ilerleme ve tamamlama raporunu yalnız yetkili kullanıcılara açar; dışa aktarma izni ayrıdır.' },
+        { soru: 'Belge kurum dışında geçerli mi?',
+          cevap: 'Kurum içi tamamlama kaydı kapalı kurumsal program kaydıdır ve kamuya açık geçerlilik iddiası taşımaz. Kamuya açık belge isteniyorsa program türü farklı kurgulanır.' }
+      ]
+    }
   ];
 
   /* §8.2 — program türleri */
@@ -1153,7 +1284,93 @@
   ];
 
   /* ======================================================================
-     13. YARDIMCILAR — tek kapı (docs/PLAN.md §1)
+     13. KURUM PANELİ VERİSİ (Faz 4, §10.2–10.3)
+     ----------------------------------------------------------------------
+     🔴 §10.3: kurum yöneticisi YALNIZ kendi kurumuna bağlı program ve
+     katılımcıyı görür. Bu yüzden panel verisi her zaman `kurumId` taşır ve
+     arayüz `DC.kurumKapsami()` süzgecinden geçmeden hiçbir kaydı basmaz.
+     Demo panel kullanıcısı Yeşilova Üniversitesi (ku-01) koordinatörüdür;
+     ku-02/03/05 kayıtları veride VARDIR ama panelde GÖRÜNMEZ — sızma testi.
+     ====================================================================== */
+
+  var kurumKullanicisi = {
+    ad: 'Dr. Elif Şahin', bas: 'E. Ş.', unvan: 'Sürekli Eğitim Merkezi Koordinatörü',
+    kurumId: 'ku-01', foto: F.avSelin,
+    /* §10.3 — rapor, öğrenci verisi, belge onayı ve finans AYRI izinlerdir */
+    izinler: { program: true, kohort: true, katilimci: true, mufredat: true, takvim: true,
+               degerlendirme: true, belgeOnay: true, rapor: true, disaAktar: true,
+               dosya: true, finans: false }
+  };
+
+  /* Katılımcılar — kohorta bağlı; §18.3 katılımcı yaşam döngüsü */
+  var katilimcilar = [
+    { id: 'ka-01', kohortId: 'ko-01', bas: 'E. Y.', durum: 'devam',     devam: 0.94, ilerleme: 0.62, sonErisim: '2026-08-16' },
+    { id: 'ka-02', kohortId: 'ko-01', bas: 'M. K.', durum: 'devam',     devam: 0.88, ilerleme: 0.71, sonErisim: '2026-08-15' },
+    { id: 'ka-03', kohortId: 'ko-01', bas: 'S. A.', durum: 'kayitli',   devam: 0.00, ilerleme: 0.00, sonErisim: null },
+    { id: 'ka-04', kohortId: 'ko-01', bas: 'B. T.', durum: 'devam',     devam: 0.79, ilerleme: 0.44, sonErisim: '2026-08-12' },
+    { id: 'ka-05', kohortId: 'ko-01', bas: 'N. D.', durum: 'ayrildi',   devam: 0.21, ilerleme: 0.08, sonErisim: '2026-07-04' },
+    { id: 'ka-06', kohortId: 'ko-01', bas: 'H. Ö.', durum: 'tamamladi', devam: 0.97, ilerleme: 1.00, sonErisim: '2026-08-09' },
+    /* başka kurumun kohortları — panelde GÖRÜNMEMELİ (§10.3 sızma testi) */
+    { id: 'ka-07', kohortId: 'ko-02', bas: 'Z. K.', durum: 'devam',     devam: 0.91, ilerleme: 0.55, sonErisim: '2026-08-14' },
+    { id: 'ka-08', kohortId: 'ko-03', bas: 'C. R.', durum: 'devam',     devam: 0.66, ilerleme: 0.39, sonErisim: '2026-08-10' }
+  ];
+
+  /* §18.3 katılımcı durumları — etiket + ikon + sınıf */
+  var katilimciDurumlari = [
+    { slug: 'basvurdu',  ad: 'Başvurdu',     ikon: 'fa-paper-plane',        sinif: 'off' },
+    { slug: 'kabul',     ad: 'Kabul',        ikon: 'fa-hourglass-half',     sinif: 'wait' },
+    { slug: 'kayitli',   ad: 'Kayıtlı',      ikon: 'fa-clipboard-check',    sinif: 'wait' },
+    { slug: 'devam',     ad: 'Devam Ediyor', ikon: 'fa-circle-play',        sinif: 'ok' },
+    { slug: 'tamamladi', ad: 'Tamamladı',    ikon: 'fa-circle-check',       sinif: 'ok' },
+    { slug: 'basarisiz', ad: 'Başarısız',    ikon: 'fa-circle-xmark',       sinif: 'warm' },
+    { slug: 'ayrildi',   ad: 'Ayrıldı',      ikon: 'fa-right-from-bracket', sinif: 'off' }
+  ];
+
+  /* §10.2 Dosyalar — protokol, sözleşme, müfredat, logo izni ve ekler */
+  var kurumDosyalari = [
+    { id: 'df-01', kurumId: 'ku-01', ad: 'İş birliği protokolü', tur: 'protokol', ref: 'PROT-2026-018',
+      tarih: '2026-03-14', gecerlilik: '2027-03-14', boy: '1,4 MB', durum: 'gecerli' },
+    { id: 'df-02', kurumId: 'ku-01', ad: 'Logo kullanım izni', tur: 'izin', ref: 'IZN-2026-007',
+      tarih: '2026-03-14', gecerlilik: '2027-03-14', boy: '320 KB', durum: 'gecerli' },
+    { id: 'df-03', kurumId: 'ku-01', ad: 'Ortak müfredat ve kazanım eşleştirmesi', tur: 'mufredat', ref: 'MUF-2026-021',
+      tarih: '2026-04-02', gecerlilik: null, boy: '860 KB', durum: 'gecerli' },
+    { id: 'df-04', kurumId: 'ku-01', ad: 'Öğrenci verisi işleme eki', tur: 'ek', ref: 'EK-2026-003',
+      tarih: '2026-04-19', gecerlilik: '2027-03-14', boy: '240 KB', durum: 'gecerli' },
+    { id: 'df-05', kurumId: 'ku-01', ad: 'Önceki dönem protokolü', tur: 'protokol', ref: 'PROT-2025-044',
+      tarih: '2025-03-10', gecerlilik: '2026-03-10', boy: '1,3 MB', durum: 'suresi-dolmus' },
+    { id: 'df-06', kurumId: 'ku-02', ad: 'Hibrit atölye protokolü', tur: 'protokol', ref: 'PROT-2026-024',
+      tarih: '2026-04-02', gecerlilik: '2027-04-02', boy: '1,1 MB', durum: 'gecerli' }
+  ];
+
+  /* §10.2 Lisans — kontenjan, erişim dönemi, faturalama ve kullanım özeti */
+  var kurumLisanslari = [
+    { kurumId: 'ku-01', model: 'Kurum koltuk lisansı', kontenjan: 40, kullanilan: 33,
+      donemBaslangic: '2026-09-01', donemBitis: '2027-08-31',
+      faturalama: 'Yıllık, dönem başında', yenileme: '2027-06-01 tarihine kadar bildirim' },
+    { kurumId: 'ku-02', model: 'İçerik lisansı', kontenjan: 25, kullanilan: 18,
+      donemBaslangic: '2026-08-01', donemBitis: '2027-07-31',
+      faturalama: 'Yıllık', yenileme: '2027-05-01 tarihine kadar bildirim' },
+    { kurumId: 'ku-05', model: 'Kurum koltuk lisansı', kontenjan: 120, kullanilan: 48,
+      donemBaslangic: '2026-09-01', donemBitis: '2027-02-28',
+      faturalama: 'Dönemlik', yenileme: '2027-01-15 tarihine kadar bildirim' }
+  ];
+
+  /* §10.3 / §24.2 — kritik işlem kaydı: tarih, kullanıcı, eski → yeni değer */
+  var islemGecmisi = [
+    { id: 'ig-01', kurumId: 'ku-01', tarih: '2026-08-14', kullanici: 'Dr. Elif Şahin',
+      islem: 'Katılımcı durumu değiştirildi', hedef: 'Katılımcı N. D.', eski: 'Devam Ediyor', yeni: 'Ayrıldı' },
+    { id: 'ig-02', kurumId: 'ku-01', tarih: '2026-08-09', kullanici: 'Doç. Dr. Nurcan Toprak',
+      islem: 'Belge uygunluğu onaylandı', hedef: 'Katılımcı H. Ö.', eski: 'Uygunluk Bekliyor', yeni: 'Onay Bekliyor' },
+    { id: 'ig-03', kurumId: 'ku-01', tarih: '2026-07-28', kullanici: 'Dr. Elif Şahin',
+      islem: 'Kohort kontenjanı güncellendi', hedef: '2026 Güz Kohortu', eski: '35', yeni: '40' },
+    { id: 'ig-04', kurumId: 'ku-01', tarih: '2026-04-19', kullanici: 'Dr. Elif Şahin',
+      islem: 'Dosya yüklendi', hedef: 'Öğrenci verisi işleme eki', eski: '—', yeni: 'EK-2026-003' },
+    { id: 'ig-05', kurumId: 'ku-02', tarih: '2026-08-11', kullanici: 'Nar Okul Müdürlüğü',
+      islem: 'Eğitmen ataması', hedef: 'Hibrit Fırıncılık Atölye Programı', eski: '—', yeni: 'Şef Burak Demirtaş' }
+  ];
+
+  /* ======================================================================
+     14. YARDIMCILAR — tek kapı (docs/PLAN.md §1)
      ====================================================================== */
 
   var DC = {
@@ -1179,6 +1396,15 @@
     notlar: notlar,
     sorular: sorular,
     quizler: quizler,
+
+    /* kurum paneli (§10.2–10.3) — panel bunlara DOĞRUDAN erişmez,
+       DC.kurumKapsami() süzgecinden geçer */
+    kurumKullanicisi: kurumKullanicisi,
+    katilimcilar: katilimcilar,
+    katilimciDurumlari: katilimciDurumlari,
+    kurumDosyalari: kurumDosyalari,
+    kurumLisanslari: kurumLisanslari,
+    islemGecmisi: islemGecmisi,
 
     /* referans listeleri */
     konuAlanlari: konuAlanlari,
@@ -1623,6 +1849,83 @@
         if (sertifikalar[i].programId === programId) return sertifikalar[i];
       }
       return null;
+    },
+
+    /* --- kurum paneli kapsamı (Faz 4, §10.3) ------------------------------ */
+
+    /**
+     * 🔴 KURUM KAPSAM KAPISI — panelin TEK veri girişi.
+     * §10.3: "Kurum yöneticisi yalnız kendi kurumuna bağlı program ve
+     * katılımcıları görmelidir." §26.2: "Kurum kullanıcılarına başka kurumların
+     * öğrenci ve raporlarını göstermek" yapılmaması gerekenler listesinde.
+     * Bu yüzden panel hiçbir koleksiyona doğrudan erişmez; her şey buradan geçer.
+     */
+    kurumKapsami: function (kurumId) {
+      var kid = kurumId || (kurumKullanicisi && kurumKullanicisi.kurumId);
+      var kurum = DC.kurum(kid);
+      var prog = programlar.filter(function (p) { return (p.partnerKurumIds || []).indexOf(kid) > -1; });
+      var progIds = prog.map(function (p) { return p.id; });
+      var koh = kohortlar.filter(function (k) { return k.kurumId === kid; });
+      var kohIds = koh.map(function (k) { return k.id; });
+      var kat = katilimcilar.filter(function (k) { return kohIds.indexOf(k.kohortId) > -1; });
+      var egt = [];
+      prog.forEach(function (p) {
+        DC.programKadro(p).forEach(function (x) {
+          if (egt.indexOf(x.egitmen) === -1) egt.push(x.egitmen);
+        });
+      });
+      return {
+        kurum: kurum,
+        programlar: prog,
+        kohortlar: koh,
+        katilimcilar: kat,
+        egitmenler: egt,
+        oturumlar: atolyeler.filter(function (a) { return a.partnerKurumId === kid || progIds.indexOf(a.programId) > -1; })
+          .concat(etkinlikler.filter(function (x) { return x.partnerKurumId === kid || progIds.indexOf(x.programId) > -1; })),
+        dosyalar: kurumDosyalari.filter(function (d) { return d.kurumId === kid; }),
+        lisans: kurumLisanslari.filter(function (l) { return l.kurumId === kid; })[0] || null,
+        gecmis: islemGecmisi.filter(function (g) { return g.kurumId === kid; }),
+        teslimler: teslimler.filter(function (t) { return progIds.indexOf(t.programId) > -1; })
+      };
+    },
+
+    /** §18.3 katılımcı durumu tanımı. */
+    katilimciDurumu: function (slug) {
+      for (var i = 0; i < katilimciDurumlari.length; i++) {
+        if (katilimciDurumlari[i].slug === slug) return katilimciDurumlari[i];
+      }
+      return { slug: slug, ad: slug, ikon: 'fa-circle', sinif: 'off' };
+    },
+
+    /**
+     * §21.2 kurum raporu — sayılar VERİDEN türetilir, elle yazılmaz.
+     * §23.2 gereği geniş tablo yerine özet kart + detay yaklaşımı kullanılır.
+     */
+    kurumRaporu: function (kurumId) {
+      var k = DC.kurumKapsami(kurumId);
+      var kat = k.katilimcilar;
+      var say = function (d) { return kat.filter(function (x) { return x.durum === d; }).length; };
+      var ort = function (alan) {
+        var v = kat.filter(function (x) { return x.durum !== 'kayitli'; });
+        if (!v.length) return 0;
+        return v.reduce(function (t, x) { return t + (x[alan] || 0); }, 0) / v.length;
+      };
+      return {
+        kayitli: kat.length,
+        aktif: say('devam'),
+        tamamlayan: say('tamamladi'),
+        ayrilan: say('ayrildi'),
+        devamOrani: ort('devam'),
+        ilerlemeOrani: ort('ilerleme'),
+        tamamlamaOrani: kat.length ? say('tamamladi') / kat.length : 0,
+        programSayisi: k.programlar.length,
+        kohortSayisi: k.kohortlar.length,
+        oturumSayisi: k.oturumlar.length,
+        bekleyenDegerlendirme: k.teslimler.filter(function (t) {
+          return t.durum === 'gonderildi' || t.durum === 'inceleniyor';
+        }).length,
+        lisansKullanim: k.lisans ? k.lisans.kullanilan / k.lisans.kontenjan : 0
+      };
     },
 
     /* --- ızgara tamlama (§23.2) ------------------------------------------- */
