@@ -90,6 +90,15 @@
     { slug: 'yuz-yuze',     ad: 'Yüz Yüze Destekli' }
   ];
 
+  /* R1/D8 — "Bana Uygun Başlangıcı Bul" sihirbazının süre sorusu.
+     Kova ELLE yazılmaz: eğitimin toplam süresi ve programın haftalık yükü
+     aşağıdaki normalizasyon bloğunda bu üç kovaya eşlenir (tek kaynak). */
+  var sureKovalari = [
+    { slug: 'az',   ad: 'Haftada 1–3 saat',        ikon: 'fa-hourglass-start', ozet: 'Yoğun bir dönemdeyim' },
+    { slug: 'orta', ad: 'Haftada 4–6 saat',        ikon: 'fa-hourglass-half',  ozet: 'Düzenli ilerleyebilirim' },
+    { slug: 'cok',  ad: 'Haftada 7 saat ve üzeri', ikon: 'fa-hourglass-end',   ozet: 'Hızlı ilerlemek istiyorum' }
+  ];
+
   /* §7.2 — erişim tipleri */
   var erisimTipleri = [
     { slug: 'ucretsiz',        ad: 'Ücretsiz' },
@@ -303,6 +312,25 @@ var egitmenRolleri = [
     { slug: 'mutfak-okulu',      ad: 'Mutfak Sanatları Okulu Programları', ikon: 'fa-utensils', kapak: F.bicak },
     { slug: 'kamu',              ad: 'Kamu ve Sosyal Etki Programları',    ikon: 'fa-landmark', kapak: F.guvenlik },
     { slug: 'kurumsal',          ad: 'Kurumsal Mesleki Gelişim Programları', ikon: 'fa-briefcase', kapak: F.baharat }
+  ];
+
+  /* §19.1 — iş birliği yaşam döngüsü (12 adım).
+     R1/D8: metin Kurumlar Merkezi'nin ve iş birliği başvurusunun sayfa JS'inde
+     İKİ AYRI KOPYA olarak duruyordu (devir notu AB-6). Tek kaynağa alındı;
+     her iki sayfa da artık bu listeyi okur. */
+  var isbirligiSureci = [
+    'Kurum iş birliği formunu gönderir veya yönetici kurum adayı oluşturur.',
+    'Kurum türü, hedefi, katılımcı sayısı ve zaman ihtiyacı doğrulanır.',
+    'İhtiyaç analizi görüşmesi yapılır ve notları kaydedilir.',
+    'Uygun iş birliği modeli ve taslak program hazırlanır.',
+    'Teklif, bütçe, sorumluluklar, içerik hakları ve takvim netleştirilir.',
+    'Protokol/sözleşme ve logo kullanım izinleri yüklenir.',
+    'Program, eğitmen, kohort ve değerlendirme sistemi kurulur.',
+    'Akademik ve kurumsal yetkililer onay verir.',
+    'Katılımcılar davet edilir veya sisteme entegre edilir.',
+    'Program yürütülür; devam, değerlendirme ve destek takip edilir.',
+    'Sertifika ve rapor onayları tamamlanır.',
+    'Etki raporu, memnuniyet ve yenileme kararı oluşturulur.'
   ];
 
   /* §13.1 — etkinlik/atölye türleri */
@@ -1730,6 +1758,7 @@ var egitmenRolleri = [
     konuAlanlari: konuAlanlari,
     seviyeler: seviyeler,
     formatlar: formatlar,
+    sureKovalari: sureKovalari,
     erisimTipleri: erisimTipleri,
     belgeTurleri: belgeTurleri,
     roller: roller,
@@ -1738,6 +1767,7 @@ var egitmenRolleri = [
     programTurleri: programTurleri,
     etkinlikTurleri: etkinlikTurleri,
     isbirligiModelleri: isbirligiModelleri,
+    isbirligiSureci: isbirligiSureci,
 
     /* görsel */
     img: img,
@@ -1763,6 +1793,79 @@ var egitmenRolleri = [
     program: function (id) { return DC.bulId('programlar', id); },
     egitim:  function (id) { return DC.bulId('egitimler', id); },
     rubrik:  function (id) { return DC.bulId('rubrikler', id); },
+
+    /* --- 🧭 "BANA UYGUN BAŞLANGICI BUL" EŞLEŞTİRMESİ (R1/D8) --------
+       Sihirbaz sayfası (dadacampus-sihirbaz-v1.html) DOM'da eşleştirme yapmaz;
+       kriterleri buraya verir ve sıralı öneri alır. Sayfa JS'ine gömülseydi
+       aynı mantık programlar tarafında ikinci kez yazılırdı (§26.14).
+
+       Kriter: { tip:'egitim'|'program', hedef:<konu slug>, seviye, sure, format }
+       Boş bırakılan kriter ELEMEZ, yalnız puan katmaz — kullanıcı dört soruyu
+       da yanıtlamak zorunda değil (§ "baskı değil denge").
+
+       Dönen kayıt: { kayit, puan, enCok, nedenler[] } — `nedenler` arayüzde
+       "neden bu öneri" satırı olarak yazılır; kapalı kutu bırakılmaz.
+       Süre toleranslıdır: haftada çok vakti olan kısa eğitimi de alabilir,
+       tersi doğru değildir (kova sırası az < orta < cok). */
+    oner: function (kri) {
+      var k = kri || {};
+      var sira = { az: 0, orta: 1, cok: 2 };
+
+      function sureUyum(kova, istek) {
+        if (!istek || !kova) return null;
+        if (kova === istek) return { p: 2, n: 'Ayırdığın süreye uygun kapsamda' };
+        if (sira[kova] < sira[istek]) return { p: 1, n: 'Daha kısa kapsamlı — ayırdığın süreden az yer tutar' };
+        return null;
+      }
+
+      function puanla(x, tip) {
+        var p = 0, n = [];
+        if (k.hedef && x.kategori === k.hedef) { p += 3; n.push(DC.etiket('konuAlanlari', k.hedef) + ' alanında'); }
+        if (k.seviye && x.seviye === k.seviye) { p += 2; n.push(DC.etiket('seviyeler', k.seviye) + ' seviyesi için'); }
+        if (k.format && x.formatlar && x.formatlar.indexOf(k.format) > -1) {
+          p += 2; n.push(DC.etiket('formatlar', k.format) + ' formatı var');
+        }
+        var su = sureUyum(x.sureKovasi, k.sure);
+        if (su) { p += su.p; n.push(su.n); }
+        return { kayit: x, tip: tip, puan: p, nedenler: n };
+      }
+
+      /* eğitim/program kayıtları aynı alan adlarıyla okunabilsin diye ince bir
+         görünüm kurulur — veri KOPYALANMAZ, kayda referans taşınır. */
+      function egitimGorunum(e) {
+        return { kategori: e.kategori, seviye: e.seviye, formatlar: [e.format],
+                 sureKovasi: e.sureKovasi };
+      }
+      function programGorunum(pr) {
+        var kats = [], sevs = [], fmts = [];
+        (pr.egitimIds || []).forEach(function (id) {
+          var e = DC.egitim(id); if (!e) return;
+          if (kats.indexOf(e.kategori) === -1) kats.push(e.kategori);
+          if (sevs.indexOf(e.seviye) === -1) sevs.push(e.seviye);
+          if (fmts.indexOf(e.format) === -1) fmts.push(e.format);
+        });
+        return { kategori: kats.indexOf(k.hedef) > -1 ? k.hedef : kats[0],
+                 seviye: sevs.indexOf(k.seviye) > -1 ? k.seviye : sevs[0],
+                 formatlar: fmts, sureKovasi: pr.yukKovasi };
+      }
+
+      function sirala(liste) {
+        return liste.sort(function (a, b) { return b.puan - a.puan; });
+      }
+
+      var eg = sirala(egitimler.map(function (e) {
+        var r = puanla(egitimGorunum(e), 'egitim'); r.kayit = e; return r;
+      }));
+      var pg = sirala(programlar.map(function (pr) {
+        var r = puanla(programGorunum(pr), 'program'); r.kayit = pr; return r;
+      }));
+      var enIyi = (eg[0] && eg[0].puan) || 0;
+      eg.forEach(function (r) { r.enCok = r.puan > 0 && r.puan === enIyi; });
+      var enIyiP = (pg[0] && pg[0].puan) || 0;
+      pg.forEach(function (r) { r.enCok = r.puan > 0 && r.puan === enIyiP; });
+      return { egitimler: eg, programlar: pg, kriterSayisi:
+        ['hedef', 'seviye', 'sure', 'format'].filter(function (a) { return !!k[a]; }).length };
+    },
 
     /** Referans listesinden etiket çözer: DC.etiket('seviyeler','orta') → 'Orta' */
     etiket: function (liste, slug) {
@@ -2555,6 +2658,11 @@ var egitmenRolleri = [
       return t + (b.dersler || []).filter(function (d) { return d.onizleme; }).length;
     }, 0);
     e.bolumSayisi = (e.bolumler || []).length;
+    /* R1/D8 — sihirbazın süre sorusu için KAPSAM kovası. Elle yazılmaz:
+       toplam süreden türetilir (eşikler mevcut 126–213 dk yayılımına göre),
+       içerik büyüyünce kendiliğinden doğru kalır. Kova bir SÜRE VAADİ değil,
+       kapsam işaretidir: az vakti olana kısa kapsamlı eğitim önerilir. */
+    e.sureKovasi = e.sureDk < 150 ? 'az' : (e.sureDk <= 200 ? 'orta' : 'cok');
   });
 
   /* Program süresi/eğitim sayısı da modüllerden türetilir. */
@@ -2569,6 +2677,10 @@ var egitmenRolleri = [
     p.toplamSureDk = ids.reduce(function (t, id) {
       var e = DC.egitim(id); return t + (e ? e.sureDk : 0);
     }, 0);
+    /* R1/D8 — haftalık yük metninin BAŞINDAKİ sayıdan kova türetilir
+       ('4–6 saat' → 4 → orta). Ayrı bir alan girilmez. */
+    var hy = parseInt((((p.haftalikYuk || '').match(/\d+/)) || ['0'])[0], 10);
+    p.yukKovasi = !hy ? 'orta' : (hy < 4 ? 'az' : (hy <= 6 ? 'orta' : 'cok'));
   });
 
   /* Kohort doluluk oranı kontenjandan türetilir. */
