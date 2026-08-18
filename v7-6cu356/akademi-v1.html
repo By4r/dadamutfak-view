@@ -55,6 +55,23 @@
   --green-deep:#2c9963;
   --yellow:#FAC045;          /* yalnız puan */
   --muted:#7E7E7E;           /* ikincil metin */
+  /* ============ TEHLİKE / HATA DURUMU (R1, Beyar kararı 2026-08-18) ============
+     Kurumsal palette tehlike rengi YOKTU; hata durumları DadaGastro'nun primary'si
+     olan domatesin koyu türevini (#C43D20) ödünç alıyordu — marka sızması.
+     Bu token o boşluğu Campus'un KENDİ değeriyle kapatır.
+     Ton seçimi (#8A3228 — koyu kızıl-kiremit) üç şartla belirlendi:
+       1) Gastro domatesinden ayrışır — #E14827 parlak turuncu-kırmızı (L .52),
+          bu ton koyu kiremit; aralarındaki parlaklık oranı 2,01:1, yan yana
+          konduklarında aynı renk ailesi gibi okunmaz.
+       2) Petrol tabanla çakışmaz — ton açısı tam karşıt (kırmızı ↔ mavi-yeşil),
+          hiçbir yerde metin-zemin çifti oluşturmazlar.
+       3) Yasak palet tonlarından değil (parlak pembe/magenta, parlak mor, saf/
+          turuncu sarı, fıstık/parlak yeşil, açık mavi/cyan) — hiçbirine yakın değil.
+     Ölçüm: beyazda 8,18:1 · bölüm tint'inde 6,95:1 · krem üstünde 6,55:1 (eşik 4,5).
+     🔴 Renk TEK BAŞINA sinyal değildir — her kullanımda ikon + metin korunur (§23.3).
+     Başarı ve uyarı için palette KARŞILIK VAR, yeni renk üretilmedi:
+       başarı  → --green-deep (.pstat.ok) · bekliyor/uyarı → --tomato (.pstat.wait) */
+  --danger:#8A3228;
   --line:#ECECEC;            /* hairline ayraç */
   --cream:#EFE5D3;           /* sıcak nötr */
   --cream-2:#F7F1E6;
@@ -833,7 +850,10 @@ textarea:focus-visible,summary:focus-visible,[tabindex]:focus-visible{
   min-height:100vh;min-height:100svh;display:flex;align-items:center;overflow:hidden;
   background:#101b1f;
 }
-.lst-hero-media{position:absolute;inset:0;z-index:0;background:#101b1f url('https://images.unsplash.com/photo-1556910103-1c02745aae4d?w=1600&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5') center/cover no-repeat}
+/* R1/D7: buradaki URL SABİTTİ ve 14 sayfa aynı fotoğrafla açılıyordu (R1 keşif §7.1).
+   Kabuk yalnız koyu zemini ve konumlandırmayı verir; fotoğrafı her sayfa kendi
+   CSS'inde tanımlar (yalnız campus-data.js'teki onaylı kimlikler). */
+.lst-hero-media{position:absolute;inset:0;z-index:0;background:#101b1f center/cover no-repeat}
 .lst-hero-media::after{content:"";position:absolute;inset:0;
   background:
     radial-gradient(820px 360px at 84% 14%, rgba(0,96,114,.20), transparent 62%),
@@ -848,10 +868,21 @@ textarea:focus-visible,summary:focus-visible,[tabindex]:focus-visible{
 .lst-top .rd-crumb b{color:#fff}
 .lst-hero .eyebrow{color:#B9DFE6}
 .lst-hero .eyebrow::before{background:var(--tomato)}
-.lst-hero{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:44px;align-items:end;padding:22px 0 56px}
-.lst-hero h1{color:#fff;font-size:46px;margin:16px 0 14px;letter-spacing:-.03em;text-shadow:0 2px 24px rgba(0,0,0,.25);max-width:680px}
+/* ============ BANNER BOŞLUK DİSİPLİNİ (R1, Beyar kuralı) ============
+   Banner içindeki dikey ritim ELLE değil ÖLÇEKTEN gelir: her değer --sec-y'nin
+   bir türevi. Böylece sayfadan sayfaya kaymaz ve gereksiz boşluk kalmaz.
+   eyebrow→h1 .22 · h1→lead .20 · lead→çip/CTA .34 · banner alt nefesi .8
+   Metin bloğu okuma genişliğiyle sınırlı — satırlar banner boyunca yayılmaz. */
+.lst-hero{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:44px;align-items:end;
+  padding:calc(var(--sec-y) * .34) 0 calc(var(--sec-y) * .8)}
+.lst-hero h1{color:#fff;font-size:46px;letter-spacing:-.03em;text-shadow:0 2px 24px rgba(0,0,0,.25);
+  max-width:16ch;margin:calc(var(--sec-y) * .22) 0 calc(var(--sec-y) * .20)}
 .lst-hero h1 .accent{color:#4FB8C9;white-space:nowrap}
-.lst-hero .lead{color:#e7edf1;font-weight:500;font-size:15.5px;max-width:560px;text-shadow:0 1px 14px rgba(0,0,0,.3)}
+.lst-hero .lead{color:#e7edf1;font-weight:500;font-size:15.5px;max-width:54ch;line-height:1.55;
+  text-shadow:0 1px 14px rgba(0,0,0,.3)}
+/* lead'den sonra gelen ilk eylem satırı — çip ya da buton, tek değer */
+.lst-hero .lead + *{margin-top:calc(var(--sec-y) * .34)}
+.lst-hero .lh-chips{margin-top:calc(var(--sec-y) * .34)}
 .lst-stats{display:flex;flex-direction:column;gap:16px;padding-left:38px;border-left:1px solid rgba(255,255,255,.18)}
 .lst-stats .st b{display:block;font-size:29px;font-weight:700;color:#fff;letter-spacing:-.02em;line-height:1.1}
 .lst-stats .st span{font-size:12.5px;color:#aebcc6;font-weight:500}
@@ -859,7 +890,9 @@ textarea:focus-visible,summary:focus-visible,[tabindex]:focus-visible{
 .soon-big{display:inline-flex;align-items:center;gap:8px;font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;
   color:#fff;background:var(--green);padding:8px 16px;border-radius:var(--radius-sm);box-shadow:0 6px 18px rgba(59,183,126,.35)}
 .soon-big i{font-size:12px}
-.ak-hero-cta{display:flex;align-items:center;gap:14px;margin-top:26px;flex-wrap:wrap}
+/* R1 banner disiplini: üst boşluk elle 26px'di → ölçek türevi (lead sonrası
+   eylem satırıyla aynı değer, her sayfada tutarlı) */
+.ak-hero-cta{display:flex;align-items:center;gap:14px;margin-top:calc(var(--sec-y) * .30);flex-wrap:wrap}
 .ak-hero-cta .btn-glassy{display:inline-flex;align-items:center;gap:9px;font-weight:700;font-size:13.5px;color:#fff;
   background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.26);border-radius:var(--radius-md);padding:13px 22px;
   -webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);transition:.2s var(--ease)}
@@ -977,7 +1010,7 @@ textarea:focus-visible,summary:focus-visible,[tabindex]:focus-visible{
 @media (max-width:640px){
   .rd-crumb{padding:14px 0 10px;font-size:12px}
   .lst-top{padding-top:74px}
-  .lst-hero{padding:10px 0 30px}
+  /* .lst-hero boşlukları var(--sec-y) türevlerinden geliyor (R1 banner disiplini) */
   .lst-hero h1{font-size:29px}
   .lst-hero .lead{font-size:14.5px}
   .lst-stats{gap:10px}

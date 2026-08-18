@@ -64,16 +64,16 @@
 
   /* §4.2 — 10 konu alanı. slug'lar Eğitimler Merkezi filtresinde ?konu= değeri. */
   var konuAlanlari = [
-    { slug: 'temel-mutfak',        ad: 'Temel Mutfak ve Bıçak Becerileri',            ikon: 'fa-kitchen-set',    ozet: 'Doğrama, bileme, mise en place', kapak: F.bicak },
-    { slug: 'pisirme-soslar',      ad: 'Pişirme Teknikleri, Soslar ve Fonlar',        ikon: 'fa-fire-burner',    ozet: 'Sote, haşlama, fırın, 5 ana sos', kapak: F.sos },
-    { slug: 'turk-mutfagi',        ad: 'Türk Mutfağı ve Yerel Mutfaklar',             ikon: 'fa-bowl-food',      ozet: 'Bölgesel teknik ve tarifler',    kapak: F.baharat },
-    { slug: 'dunya-mutfaklari',    ad: 'Dünya Mutfakları',                            ikon: 'fa-earth-americas', ozet: 'Akdeniz, Uzakdoğu, İtalyan',     kapak: F.dunya },
-    { slug: 'ekmek-fermantasyon',  ad: 'Ekmek, Fırıncılık ve Fermantasyon',           ikon: 'fa-bread-slice',    ozet: 'Maya, ekşi maya, fırın',         kapak: F.ekmek },
-    { slug: 'pastacilik',          ad: 'Pastacılık ve Tatlı Sanatı',                  ikon: 'fa-cake-candles',   ozet: 'Pasta, tart, plating',           kapak: F.pasta },
-    { slug: 'gida-guvenligi',      ad: 'Gıda Güvenliği, Hijyen ve Saklama',           ikon: 'fa-shield-halved',  ozet: 'HACCP temelleri, soğuk zincir',  kapak: F.guvenlik },
-    { slug: 'menu-yonetimi',       ad: 'Menü Planlama, Maliyet ve Mutfak Yönetimi',   ikon: 'fa-list-check',     ozet: 'Maliyet, porsiyon, denge',       kapak: F.dunya },
-    { slug: 'surdurulebilirlik',   ad: 'Sürdürülebilirlik ve Atıksız Mutfak',         ikon: 'fa-leaf',           ozet: 'Atık azaltma, yerel ürün',       kapak: F.sos },
-    { slug: 'girisimcilik',        ad: 'Gastronomi Girişimciliği ve Profesyonel Gelişim', ikon: 'fa-briefcase',  ozet: 'Sunum, marka, işletme',          kapak: F.sunum }
+    { slug: 'temel-mutfak',        ad: 'Temel Mutfak ve Bıçak Becerileri',            ikon: 'fa-kitchen-set',    ozet: 'Doğrama, bileme, mise en place', kapak: F.bicak, kisaAd: 'Temel Mutfak' },
+    { slug: 'pisirme-soslar',      ad: 'Pişirme Teknikleri, Soslar ve Fonlar',        ikon: 'fa-fire-burner',    ozet: 'Sote, haşlama, fırın, 5 ana sos', kapak: F.sos, kisaAd: 'Pişirme & Soslar' },
+    { slug: 'turk-mutfagi',        ad: 'Türk Mutfağı ve Yerel Mutfaklar',             ikon: 'fa-bowl-food',      ozet: 'Bölgesel teknik ve tarifler',    kapak: F.baharat, kisaAd: 'Türk Mutfağı' },
+    { slug: 'dunya-mutfaklari',    ad: 'Dünya Mutfakları',                            ikon: 'fa-earth-americas', ozet: 'Akdeniz, Uzakdoğu, İtalyan',     kapak: F.dunya, kisaAd: 'Dünya Mutfakları' },
+    { slug: 'ekmek-fermantasyon',  ad: 'Ekmek, Fırıncılık ve Fermantasyon',           ikon: 'fa-bread-slice',    ozet: 'Maya, ekşi maya, fırın',         kapak: F.ekmek, kisaAd: 'Ekmek & Fermantasyon' },
+    { slug: 'pastacilik',          ad: 'Pastacılık ve Tatlı Sanatı',                  ikon: 'fa-cake-candles',   ozet: 'Pasta, tart, plating',           kapak: F.pasta, kisaAd: 'Pastacılık' },
+    { slug: 'gida-guvenligi',      ad: 'Gıda Güvenliği, Hijyen ve Saklama',           ikon: 'fa-shield-halved',  ozet: 'HACCP temelleri, soğuk zincir',  kapak: F.guvenlik, kisaAd: 'Gıda Güvenliği' },
+    { slug: 'menu-yonetimi',       ad: 'Menü Planlama, Maliyet ve Mutfak Yönetimi',   ikon: 'fa-list-check',     ozet: 'Maliyet, porsiyon, denge',       kapak: F.dunya, kisaAd: 'Menü Yönetimi' },
+    { slug: 'surdurulebilirlik',   ad: 'Sürdürülebilirlik ve Atıksız Mutfak',         ikon: 'fa-leaf',           ozet: 'Atık azaltma, yerel ürün',       kapak: F.sos, kisaAd: 'Sürdürülebilirlik' },
+    { slug: 'girisimcilik',        ad: 'Gastronomi Girişimciliği ve Profesyonel Gelişim', ikon: 'fa-briefcase',  ozet: 'Sunum, marka, işletme',          kapak: F.sunum, kisaAd: 'Girişimcilik' }
   ];
 
   var seviyeler = [
@@ -123,7 +123,11 @@
   /* §11.1 / §11.3 — EĞİTMEN rolleri. `roller` (yukarıda) platform rol
      değiştiricisinin listesidir; bu ayrı kavramdır ve karıştırılmaz:
      eğitmenler[].rol bu listeden gelir, eğitmen dizini bununla süzülür. */
-  var egitmenRolleri = [
+  /* 🔴 ROLLERDE KAPAK YOK (R1/D7 öz denetim): rol soyut bir kavram; yemek fotoğrafı
+   "Akademisyen"i anlatmıyor, kişi fotoğrafı da belirli bir kişiyi ima ederdi.
+   Görselli kart YALNIZ somut alanlarda (konu alanı, program türü) kullanılır;
+   rol kartı ikonla çizilir (facet motoru kapak yoksa ikona düşer). */
+var egitmenRolleri = [
     { slug: 'sef',            ad: 'Şef Eğitmen',      ikon: 'fa-utensils',
       yetki: 'Uygulamalı ders ve canlı atölye verir, uygulama teslimlerini değerlendirir.' },
     { slug: 'akademisyen',    ad: 'Akademisyen',      ikon: 'fa-building-columns',
@@ -294,11 +298,11 @@
 
   /* §8.2 — program türleri */
   var programTurleri = [
-    { slug: 'sertifika',         ad: 'Sertifika Programları',              ikon: 'fa-certificate' },
-    { slug: 'universite-ortak',  ad: 'Üniversite Ortak Programları',       ikon: 'fa-building-columns' },
-    { slug: 'mutfak-okulu',      ad: 'Mutfak Sanatları Okulu Programları', ikon: 'fa-utensils' },
-    { slug: 'kamu',              ad: 'Kamu ve Sosyal Etki Programları',    ikon: 'fa-landmark' },
-    { slug: 'kurumsal',          ad: 'Kurumsal Mesleki Gelişim Programları', ikon: 'fa-briefcase' }
+    { slug: 'sertifika',         ad: 'Sertifika Programları',              ikon: 'fa-certificate', kapak: F.sunum },
+    { slug: 'universite-ortak',  ad: 'Üniversite Ortak Programları',       ikon: 'fa-building-columns', kapak: F.dunya },
+    { slug: 'mutfak-okulu',      ad: 'Mutfak Sanatları Okulu Programları', ikon: 'fa-utensils', kapak: F.bicak },
+    { slug: 'kamu',              ad: 'Kamu ve Sosyal Etki Programları',    ikon: 'fa-landmark', kapak: F.guvenlik },
+    { slug: 'kurumsal',          ad: 'Kurumsal Mesleki Gelişim Programları', ikon: 'fa-briefcase', kapak: F.baharat }
   ];
 
   /* §13.1 — etkinlik/atölye türleri */

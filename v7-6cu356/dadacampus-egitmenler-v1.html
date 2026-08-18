@@ -55,6 +55,23 @@
   --green-deep:#2c9963;
   --yellow:#FAC045;          /* yalnız puan */
   --muted:#7E7E7E;           /* ikincil metin */
+  /* ============ TEHLİKE / HATA DURUMU (R1, Beyar kararı 2026-08-18) ============
+     Kurumsal palette tehlike rengi YOKTU; hata durumları DadaGastro'nun primary'si
+     olan domatesin koyu türevini (#C43D20) ödünç alıyordu — marka sızması.
+     Bu token o boşluğu Campus'un KENDİ değeriyle kapatır.
+     Ton seçimi (#8A3228 — koyu kızıl-kiremit) üç şartla belirlendi:
+       1) Gastro domatesinden ayrışır — #E14827 parlak turuncu-kırmızı (L .52),
+          bu ton koyu kiremit; aralarındaki parlaklık oranı 2,01:1, yan yana
+          konduklarında aynı renk ailesi gibi okunmaz.
+       2) Petrol tabanla çakışmaz — ton açısı tam karşıt (kırmızı ↔ mavi-yeşil),
+          hiçbir yerde metin-zemin çifti oluşturmazlar.
+       3) Yasak palet tonlarından değil (parlak pembe/magenta, parlak mor, saf/
+          turuncu sarı, fıstık/parlak yeşil, açık mavi/cyan) — hiçbirine yakın değil.
+     Ölçüm: beyazda 8,18:1 · bölüm tint'inde 6,95:1 · krem üstünde 6,55:1 (eşik 4,5).
+     🔴 Renk TEK BAŞINA sinyal değildir — her kullanımda ikon + metin korunur (§23.3).
+     Başarı ve uyarı için palette KARŞILIK VAR, yeni renk üretilmedi:
+       başarı  → --green-deep (.pstat.ok) · bekliyor/uyarı → --tomato (.pstat.wait) */
+  --danger:#8A3228;
   --line:#ECECEC;            /* hairline ayraç */
   --cream:#EFE5D3;           /* sıcak nötr */
   --cream-2:#F7F1E6;
@@ -833,7 +850,10 @@ textarea:focus-visible,summary:focus-visible,[tabindex]:focus-visible{
   min-height:100vh;min-height:100svh;display:flex;align-items:center;overflow:hidden;
   background:#101b1f;
 }
-.lst-hero-media{position:absolute;inset:0;z-index:0;background:#101b1f url('https://images.unsplash.com/photo-1556910103-1c02745aae4d?w=1600&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5') center/cover no-repeat}
+/* R1/D7: buradaki URL SABİTTİ ve 14 sayfa aynı fotoğrafla açılıyordu (R1 keşif §7.1).
+   Kabuk yalnız koyu zemini ve konumlandırmayı verir; fotoğrafı her sayfa kendi
+   CSS'inde tanımlar (yalnız campus-data.js'teki onaylı kimlikler). */
+.lst-hero-media{position:absolute;inset:0;z-index:0;background:#101b1f center/cover no-repeat}
 .lst-hero-media::after{content:"";position:absolute;inset:0;
   background:
     radial-gradient(820px 360px at 84% 14%, rgba(0,96,114,.20), transparent 62%),
@@ -848,10 +868,21 @@ textarea:focus-visible,summary:focus-visible,[tabindex]:focus-visible{
 .lst-top .rd-crumb b{color:#fff}
 .lst-hero .eyebrow{color:#B9DFE6}
 .lst-hero .eyebrow::before{background:var(--tomato)}
-.lst-hero{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:44px;align-items:end;padding:22px 0 56px}
-.lst-hero h1{color:#fff;font-size:46px;margin:16px 0 14px;letter-spacing:-.03em;text-shadow:0 2px 24px rgba(0,0,0,.25);max-width:680px}
+/* ============ BANNER BOŞLUK DİSİPLİNİ (R1, Beyar kuralı) ============
+   Banner içindeki dikey ritim ELLE değil ÖLÇEKTEN gelir: her değer --sec-y'nin
+   bir türevi. Böylece sayfadan sayfaya kaymaz ve gereksiz boşluk kalmaz.
+   eyebrow→h1 .22 · h1→lead .20 · lead→çip/CTA .34 · banner alt nefesi .8
+   Metin bloğu okuma genişliğiyle sınırlı — satırlar banner boyunca yayılmaz. */
+.lst-hero{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:44px;align-items:end;
+  padding:calc(var(--sec-y) * .34) 0 calc(var(--sec-y) * .8)}
+.lst-hero h1{color:#fff;font-size:46px;letter-spacing:-.03em;text-shadow:0 2px 24px rgba(0,0,0,.25);
+  max-width:16ch;margin:calc(var(--sec-y) * .22) 0 calc(var(--sec-y) * .20)}
 .lst-hero h1 .accent{color:#4FB8C9;white-space:nowrap}
-.lst-hero .lead{color:#e7edf1;font-weight:500;font-size:15.5px;max-width:560px;text-shadow:0 1px 14px rgba(0,0,0,.3)}
+.lst-hero .lead{color:#e7edf1;font-weight:500;font-size:15.5px;max-width:54ch;line-height:1.55;
+  text-shadow:0 1px 14px rgba(0,0,0,.3)}
+/* lead'den sonra gelen ilk eylem satırı — çip ya da buton, tek değer */
+.lst-hero .lead + *{margin-top:calc(var(--sec-y) * .34)}
+.lst-hero .lh-chips{margin-top:calc(var(--sec-y) * .34)}
 .lst-stats{display:flex;flex-direction:column;gap:16px;padding-left:38px;border-left:1px solid rgba(255,255,255,.18)}
 .lst-stats .st b{display:block;font-size:29px;font-weight:700;color:#fff;letter-spacing:-.02em;line-height:1.1}
 .lst-stats .st span{font-size:12.5px;color:#aebcc6;font-weight:500}
@@ -859,7 +890,9 @@ textarea:focus-visible,summary:focus-visible,[tabindex]:focus-visible{
 .soon-big{display:inline-flex;align-items:center;gap:8px;font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;
   color:#fff;background:var(--green);padding:8px 16px;border-radius:var(--radius-sm);box-shadow:0 6px 18px rgba(59,183,126,.35)}
 .soon-big i{font-size:12px}
-.ak-hero-cta{display:flex;align-items:center;gap:14px;margin-top:26px;flex-wrap:wrap}
+/* R1 banner disiplini: üst boşluk elle 26px'di → ölçek türevi (lead sonrası
+   eylem satırıyla aynı değer, her sayfada tutarlı) */
+.ak-hero-cta{display:flex;align-items:center;gap:14px;margin-top:calc(var(--sec-y) * .30);flex-wrap:wrap}
 .ak-hero-cta .btn-glassy{display:inline-flex;align-items:center;gap:9px;font-weight:700;font-size:13.5px;color:#fff;
   background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.26);border-radius:var(--radius-md);padding:13px 22px;
   -webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);transition:.2s var(--ease)}
@@ -977,7 +1010,7 @@ textarea:focus-visible,summary:focus-visible,[tabindex]:focus-visible{
 @media (max-width:640px){
   .rd-crumb{padding:14px 0 10px;font-size:12px}
   .lst-top{padding-top:74px}
-  .lst-hero{padding:10px 0 30px}
+  /* .lst-hero boşlukları var(--sec-y) türevlerinden geliyor (R1 banner disiplini) */
   .lst-hero h1{font-size:29px}
   .lst-hero .lead{font-size:14.5px}
   .lst-stats{gap:10px}
@@ -1349,9 +1382,8 @@ html.reveal-ready .reveal.in{opacity:1;transform:none}
    İÇERİĞE bırakılır; hub'ın tam ekran istisnası DEĞİŞMEZ (ayrı dosya).
    Hedef oran ~0,50–0,60 (ölçümle doğrulanır). */
 .lst-top{min-height:0}
-.lst-hero{padding-bottom:52px}
-@media (max-width:1024px){ .lst-hero{padding-bottom:40px} }
-@media (max-width:640px){  .lst-hero{padding-bottom:30px} }
+/* R1 banner disiplini: alt nefes artık kabukta var(--sec-y)*.8 — elle üç ayrı
+   kırılım değeri tutulmuyor, merkez sayfası ayrı bir değer taşımıyor. */
 
 /* ============================================================================
    DadaCampus — ORTAK SAYFA CSS EKİ (üretilen TÜM sayfalara girer)
@@ -1386,10 +1418,16 @@ html.reveal-ready .reveal.in{opacity:1;transform:none}
    metin için AA eşiği 4,5:1 (§23.3). Açık petrol tonuna alındı: 12,65:1.
    Çipin kendisi beyaz zemin/koyu metin olduğu için zaten 16,64:1 — dokunulmadı. */
 .lh-chips .lbl{color:#cadfe2}
-.lh-chips .chip{background:rgba(255,255,255,.94)}
-.lh-chips .chip:hover{background:#fff;border-color:var(--tomato)}
+/* R1/D7 (Beyar: "hızlı tagleri şeffaf olacak") — koyu banner üstünde OPAK BEYAZ
+   çipler duruyordu; Gastro tarif dizinindeki camsı dile geçti. */
+.lh-chips .chip{background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.24);
+  color:#fff;-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px)}
+.lh-chips .chip i{color:#8fd4de}
+.lh-chips .chip:hover{background:var(--tomato);border-color:var(--tomato);color:#fff}
+.lh-chips .chip:hover i{color:#fff}
 
 /* ---- KOLEKSİYON / TÜR / BÖLÜM KEŞİF RAYI — .cat-track/.cat-card kompakt varyantı */
+.koll-track[hidden]{display:none}
 .koll-track{display:flex;gap:12px;overflow-x:auto;padding:2px 2px 12px;scrollbar-width:none;margin-bottom:6px}
 .koll-track::-webkit-scrollbar{display:none}
 .koll{flex:none;display:inline-flex;align-items:center;gap:10px;background:var(--paper);border:1px solid var(--line);
@@ -1439,7 +1477,10 @@ body.is-auth .misafir-sec{display:none}
 .pstat.ok{background:#EAF7F0;color:var(--green-deep);border-color:rgba(59,183,126,.32)}
 .pstat.wait{background:var(--tomato-tint);color:var(--tomato);border-color:rgba(0,96,114,.28)}
 .pstat.off{background:var(--bg);color:var(--muted);border-color:var(--line)}
-.pstat.warm{background:#FBE9E3;color:#C43D20;border-color:rgba(196,61,32,.28)}
+/* R1: hata/uyarı durumu artık Campus'un KENDİ tehlike token'ıyla (--danger).
+   Önce Gastro domatesinin koyu türevini ödünç alıyordu (marka sızması), sonra
+   geçici olarak nötre çekilmişti (renk kaybı). İkon + metin sinyali korunur. */
+.pstat.warm{background:color-mix(in srgb, var(--danger) 9%, #fff);color:var(--danger);border-color:color-mix(in srgb, var(--danger) 30%, transparent)}
 
 /* ---- DURUM/BAŞVURU SATIRI — .appt-row (panel) deseninin sadeleşmişi */
 .bsv{display:flex;flex-direction:column;gap:10px}
@@ -1672,12 +1713,14 @@ a.drs-row:hover{color:var(--tomato)}
 
 /* ---- koyu hero: yapı şeridi + erişim satırı ---- */
 .dt-top .lst-hero .lh-main{max-width:660px}
-.dt-yapi{display:flex;flex-wrap:wrap;gap:9px;margin:20px 0 4px}
+/* R1 banner disiplini: elle 20/4 yazılıydı → ölçek türevi (lead'den sonraki
+   ilk eylem satırıyla AYNI değer, böylece her sayfada tutarlı). */
+.dt-yapi{display:flex;flex-wrap:wrap;gap:9px;margin:calc(var(--sec-y) * .34) 0 0}
 .dt-yapi span{display:inline-flex;align-items:center;gap:7px;font-size:12.5px;font-weight:700;
   color:#e6f2f4;background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.20);
   padding:7px 12px;border-radius:var(--radius-sm)}
 .dt-yapi span i{font-size:11px;color:#4FB8C9}
-.dt-erisim{margin-top:14px;font-size:12.5px;font-weight:500;color:#cadfe2}
+.dt-erisim{margin-top:calc(var(--sec-y) * .22);font-size:12.5px;font-weight:500;color:#cadfe2}
 .dt-erisim b{color:#fff;font-weight:700}
 
 /* ---- iki kolon ---- */
@@ -1905,8 +1948,10 @@ a.drs-row:hover{color:var(--tomato)}
 .pn-top .eyebrow{color:#B9DFE6}
 .pn-top .eyebrow::before{background:#4FB8C9}
 
-.pn-head{display:flex;align-items:flex-end;justify-content:space-between;gap:28px;flex-wrap:wrap;
-  padding-top:calc(var(--sec-y) * .28)}
+/* R1 banner disiplini: gap elle 28px'di; sarma anında (KPI alta indiğinde) satır
+   arası ölçek bandının dışına çıkıyordu. Satır arası ölçekten, sütun arası sabit. */
+.pn-head{display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;
+  gap:calc(var(--sec-y) * .30) 28px;padding-top:calc(var(--sec-y) * .28)}
 .pn-kim{display:flex;align-items:center;gap:18px;min-width:0}
 .pn-ava{flex:none;width:76px;height:76px;border-radius:var(--radius-circle);background-size:cover;
   background-position:center;border:3px solid #fff;box-shadow:var(--sh-md);
@@ -1914,7 +1959,8 @@ a.drs-row:hover{color:var(--tomato)}
   font-size:24px;font-weight:800}
 .pn-kim h1{font-size:32px;letter-spacing:-.02em;margin:6px 0 4px;color:#fff;
   text-shadow:0 2px 22px rgba(0,0,0,.28)}
-.pn-rol{font-size:14px;font-weight:500;color:#dbe6ea}
+/* R1 banner disiplini: satır banner boyunca yayılmasın — okuma genişliği sınırı */
+.pn-rol{font-size:14px;font-weight:500;color:#dbe6ea;max-width:56ch;line-height:1.55}
 .pn-rol b{color:#7fd3e2;font-weight:700}
 
 /* ---- KPI kartları — koyu banner üstünde camsı ---- */
@@ -2083,7 +2129,10 @@ a.drs-row:hover{color:var(--tomato)}
    Burada TEKRARLANMAZ — iki kaynak divergans borcudur. */
 
 /* ---- yerleşim: facet sidebar + sonuç kolonu ---- */
-.lst-sec{padding:calc(var(--sec-y) * .6) 0 var(--sec-y);background:var(--bg-cream);
+/* ZEBRA KURALI (Beyar, 2026-08-18): liste sayfasinda VARSAYILAN ZEMIN BEYAZDIR.
+   Sonuc govdesi bir "bolum" degil, duz listedir - zemin rengi ALMAZ. Zebra yalniz
+   govdenin disindaki gercek bolumler arasinda uygulanir (yonlendirme bandi vb.). */
+.lst-sec{padding:calc(var(--sec-y) * .6) 0 var(--sec-y);background:var(--bg-white);
   /* hero→body seam: krem gövde hero üzerine yumuşak yükselen panel (sert kesim fix) */
   border-radius:22px 22px 0 0;margin-top:-22px;position:relative;z-index:2;
   box-shadow:0 -12px 32px rgba(20,16,10,.18)}
@@ -2121,7 +2170,8 @@ a.drs-row:hover{color:var(--tomato)}
 .fct-row:hover .cbx{border-color:var(--tomato)}
 .fct-row input:checked ~ .ft{color:var(--slate);font-weight:700}
 .fct-row .ft{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.fct-row .fcnt{margin-left:auto;flex:none;font-size:12px;color:var(--muted);font-weight:500}
+/* R1/D7 kontrast: 4,06:1 → --slate-2 ile 7,1:1 */
+.fct-row .fcnt{margin-left:auto;flex:none;font-size:12px;color:var(--slate-2);font-weight:600}
 .fct-row input:checked ~ .fcnt{color:var(--tomato);font-weight:700}
 /* bayraklı mutfak satırı (TD .chip-flag VERBATIM) */
 .chip-flag{width:17px;height:12px;border-radius:2px;object-fit:cover;margin-right:6px;display:inline-block;vertical-align:-1px}
@@ -2129,7 +2179,7 @@ a.drs-row:hover{color:var(--tomato)}
 /* Görsel kategori facet'i — urun-liste-v1 cat-fct ve cn-thumb mirası (CİLA-2 R3) */
 .cat-fct .fct-body{padding-top:2px}
 .cat-fct .fct-row{padding:6px 6px;gap:11px;border-radius:var(--radius-md);transition:background .15s,border-color .15s;border:1px solid transparent}
-.cat-fct .fct-row:hover{background:var(--tomato-tint);border-color:rgba(225,72,39,.16)}
+.cat-fct .fct-row:hover{background:var(--tomato-tint);border-color:rgba(var(--tomato-rgb),.16)}
 .cat-fct .cbx{display:none}
 .cat-fct .cn-thumb{flex:none;width:38px;height:38px;border-radius:var(--radius-sm);background-size:cover;background-position:center;border:1px solid var(--line);box-shadow:var(--sh-sm);transition:.18s var(--ease)}
 .cat-fct .fct-row .ft{font-size:13.5px;font-weight:600;color:var(--slate)}
@@ -2158,7 +2208,8 @@ a.drs-row:hover{color:var(--tomato)}
 .subcat-strip{margin:0 0 22px}
 .subcat-head{display:flex;align-items:baseline;justify-content:space-between;gap:14px;margin-bottom:14px}
 .subcat-head h2{font-size:17px}
-.subcat-head .sc-note{font-size:12.5px;color:var(--muted);font-weight:500}
+/* R1/D7 kontrast: --muted (#7E7E7E) bölüm tint'i üstünde 3,45:1 kalıyordu (eşik 4,5) */
+.subcat-head .sc-note{font-size:12.5px;color:var(--slate-2);font-weight:500}
 /* sağ-kenar fade — kaydırılabilirlik sinyali (shelf-tabs sh-more mirası); JS sona gelince kaldırır */
 .subcat-wrap{position:relative}
 .subcat-wrap.cs-more{-webkit-mask-image:linear-gradient(90deg,#000 calc(100% - 46px),transparent);mask-image:linear-gradient(90deg,#000 calc(100% - 46px),transparent)}
@@ -2166,15 +2217,18 @@ a.drs-row:hover{color:var(--tomato)}
 .subcat-track::-webkit-scrollbar{display:none}
 .subcat-track.drag-scroll{cursor:grab}
 .subcat-track.dragging{cursor:grabbing;scroll-snap-type:none}
-.subcat{flex:none;scroll-snap-align:start;display:flex;align-items:center;gap:12px;background:var(--bg-cream);border:1px solid var(--line);border-radius:var(--radius-md);padding:11px 16px 11px 11px;cursor:pointer;text-decoration:none;transition:.2s var(--ease);-webkit-user-drag:none;user-select:none}
-.subcat:hover{border-color:rgba(225,72,39,.4);background:var(--tomato-tint);transform:translateY(-2px)}
-/* RAFİNE aktif state (2026): kaba çerçeve/çift-ring YOK → ince düşük-opaklık tomato border
-   + yumuşak tomato-tint elevation gölgesi (outline değil derinlik) + ikon altında minimal
-   2px indicator accent. Tint zemin + tomato metin/ikon. Dolu-blok değil, zarif vurgu. */
+/* R1/D7: ray kartı gövde zemininden (primary tint) ayrışsın diye beyaz */
+.subcat{flex:none;scroll-snap-align:start;display:flex;align-items:center;gap:12px;background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-md);padding:11px 16px 11px 11px;cursor:pointer;text-decoration:none;transition:.2s var(--ease);-webkit-user-drag:none;user-select:none}
+.subcat:hover{border-color:rgba(var(--tomato-rgb),.4);background:var(--tomato-tint);transform:translateY(-2px)}
+/* Aktif state: kaba çerçeve/çift-ring YOK → ince düşük-opaklık aksan kenarı + yumuşak
+   elevation gölgesi + ikon altında 2px gösterge. 🔴 R1/D7 MARKA DÜZELTMESİ: bu blok
+   tarif dizininden verbatim geldiği için literal Gastro domatesi (225,72,39) taşıyordu
+   ve Campus gövdesinde kırmızı görünüyordu. Aksan artık --tomato-rgb (petrol) — referans
+   alınan şey YALNIZ yerleşim ve etkileşim deseni, tema/renk DEĞİL. */
 .subcat.active{
-  border-color:rgba(225,72,39,.32);
+  border-color:rgba(var(--tomato-rgb),.32);
   background:var(--tomato-tint);
-  box-shadow:0 6px 18px -8px rgba(225,72,39,.45),0 1px 3px rgba(225,72,39,.12);
+  box-shadow:0 6px 18px -8px rgba(var(--tomato-rgb),.45),0 1px 3px rgba(var(--tomato-rgb),.12);
 }
 .subcat .sc-ico{position:relative;flex:none;width:40px;height:40px;border-radius:var(--radius-sm);background-size:cover;background-position:center}
 /* ikon altı minimal indicator — ring yerine ince accent çubuk */
@@ -2185,9 +2239,9 @@ a.drs-row:hover{color:var(--tomato)}
 .subcat.active span span{color:var(--tomato);opacity:.8}
 
 .lst-bar{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
-.lst-sum{font-size:15px;color:var(--muted);font-weight:500;min-width:0}
+/* R1/D7 kontrast: 3,45:1 → --slate-2 */
+.lst-sum{font-size:15px;color:var(--slate-2);font-weight:500;min-width:0}
 .lst-sum b{color:var(--slate);font-weight:700;font-size:17px}
-.lst-sum .q{color:var(--tomato);font-weight:700}
 .lst-tools{display:flex;align-items:center;gap:10px;flex:none}
 /* sıralama dropdown'ı — see-all buton kabuğu + tb-lang menü dili */
 .sort-dd{position:relative}
@@ -2212,7 +2266,7 @@ a.drs-row:hover{color:var(--tomato)}
 /* ---- aktif filtre chip'leri ---- */
 .fchips{display:flex;flex-wrap:wrap;align-items:center;gap:9px;margin-top:16px}
 .fchips[hidden]{display:none}
-.fchip{display:inline-flex;align-items:center;gap:8px;font-size:13px;font-weight:700;color:var(--tomato);background:var(--tomato-tint);border:1px solid rgba(225,72,39,.25);padding:8px 12px;border-radius:var(--radius-sm);cursor:pointer;transition:.18s var(--ease)}
+.fchip{display:inline-flex;align-items:center;gap:8px;font-size:13px;font-weight:700;color:var(--tomato);background:var(--tomato-tint);border:1px solid rgba(var(--tomato-rgb),.25);padding:8px 12px;border-radius:var(--radius-sm);cursor:pointer;transition:.18s var(--ease)}
 .fchip i.fa-magnifying-glass{font-size:11px;opacity:.75}
 .fchip .x{display:grid;place-items:center;width:16px;height:16px;border-radius:var(--radius-circle);font-size:10px;transition:.15s}
 .fchip:hover{background:var(--tomato);color:#fff;border-color:var(--tomato)}
@@ -2237,8 +2291,8 @@ a.drs-row:hover{color:var(--tomato)}
   .lst-grid.is-list .r-facts{margin-bottom:15px}
 }
 /* Tarif Bulucu giriş köprüsü (Faz3 #22; lead grant — yalnız bu blok, hero/facet'e dokunulmadı) */
-.lst-bridge{display:flex;align-items:center;gap:16px;background:linear-gradient(100deg,var(--tomato-tint),var(--bg-white));border:1px solid rgba(225,72,39,.2);border-radius:var(--radius-lg);padding:15px 20px;margin-top:18px;transition:.2s var(--ease)}
-.lst-bridge:hover{border-color:rgba(225,72,39,.4);box-shadow:var(--sh-sm)}
+.lst-bridge{display:flex;align-items:center;gap:16px;background:linear-gradient(100deg,var(--tomato-tint),var(--bg-white));border:1px solid rgba(var(--tomato-rgb),.2);border-radius:var(--radius-lg);padding:15px 20px;margin-top:18px;transition:.2s var(--ease)}
+.lst-bridge:hover{border-color:rgba(var(--tomato-rgb),.4);box-shadow:var(--sh-sm)}
 .lst-bridge .lb-ico{flex:none;width:46px;height:46px;border-radius:var(--radius-md);background:var(--tomato);color:#fff;display:grid;place-items:center;font-size:19px}
 .lst-bridge .lb-txt{flex:1;min-width:0}
 .lst-bridge .lb-txt b{display:block;font-size:15px;font-weight:700;color:var(--slate);line-height:1.25}
@@ -2375,6 +2429,11 @@ a.drs-row:hover{color:var(--tomato)}
      girişli   → #roller(krem) · #benim(beyaz) · #basvuru(krem)
      ziyaretçi → #roller(krem) · #basvuru(BEYAZ) */
 body:not(.is-auth) #basvuru{background:var(--bg-white)}
+/* R1: liste govdesi artik beyaz; bant her durumda ikincil zemin alir */
+
+/* hero kapağı (R1/D7) — et/ateş — eğitmen dizini; campus-data.js'teki onaylı kimlik.
+   Kabuktaki tek sabit fotoğraf kalktı, her sayfa kendi görselini taşır. */
+.lst-hero-media{background-image:url('https://images.unsplash.com/photo-1544025162-d76694265947?w=1600&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')}
 </style>
 </head>
 <body data-brand="campus" data-hero="1">
@@ -2818,14 +2877,7 @@ body:not(.is-auth) #basvuru{background:var(--bg-white)}
       <div class="lh-main">
         <span class="eyebrow"><i class="fa-solid fa-chalkboard-user" aria-hidden="true"></i> Eğitmen Dizini</span>
         <h1>Kimden öğrendiğin <span class="accent">ne öğrendiğini belirler</span></h1>
-        <p class="lead">Şef, akademisyen, sektör uzmanı, mentor, değerlendirici ve konuk eğitmenleri role, uzmanlığa, eğitim diline, bağlı kuruma ve doğrulama durumuna göre süz. Profillerde yalnız doğrulanmış veri yayımlanır.</p>
-
-        <!-- §17.1 büyük arama alanı — mevcut .crs-search ailesi -->
-        <label class="crs-search" id="crsSearch">
-          <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
-          <input type="search" id="crsSearchInput" placeholder="Eğitmen adı, unvan veya uzmanlık ara… (ör. ekşi maya, duyusal analiz, maliyet)" aria-label="Eğitmenlerde ara" autocomplete="off" />
-          <button type="button" class="cs-clear" id="crsSearchClear" aria-label="Aramayı temizle"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button>
-        </label>
+        <p class="lead">Role, uzmanlığa ve dile göre daralt — doğru eğitmeni bul.</p>
 
         <!-- §4.5 eğitmenler mega menüsünün kısayolları; hepsi bu sayfanın
              kendi filtre parametreleriyle çalışır (rol çoklu seçim: virgüllü) -->
@@ -2877,12 +2929,26 @@ body:not(.is-auth) #basvuru{background:var(--bg-white)}
       <div class="lst-main">
 
         <!-- role ve göreve göre koleksiyonlar (§4.5 mega menü başlıkları) -->
-        <div class="koll-track" id="kollTrack" role="group" aria-label="Koleksiyonlar"></div>
+
+        <!-- GÖRSELLİ KEŞİF RAYI — R1/D7 (`.subcat*` kabukta tanımlı, kullanılmıyordu) -->
+        <div class="subcat-strip">
+          <div class="subcat-head">
+            <h2>Roller</h2>
+            <span class="sc-note">Bir role in — seçim soldaki filtrelerle birlikte daraltır</span>
+          </div>
+          <div class="subcat-wrap"><div class="subcat-track" id="subcatTrack"></div></div>
+        </div>
+
+        <div class="koll-track" id="kollTrack" role="group" aria-label="Koleksiyonlar" hidden></div>
 
         <div class="lst-bar">
           <p class="lst-sum" id="lstSum" role="status" aria-live="polite"></p>
           <div class="lst-tools">
             <button class="btn-filter" id="btnFilter" type="button"><i class="fa-solid fa-sliders" aria-hidden="true"></i> Filtrele <span class="fb-count" id="filCount" hidden>0</span></button>
+            <div class="vw-seg" role="group" aria-label="Görünüm">
+              <button class="vs-btn is-on" type="button" data-vw="kart" aria-pressed="true" aria-label="Kart görünümü"><i class="fa-solid fa-table-cells-large"></i></button>
+              <button class="vs-btn" type="button" data-vw="liste" aria-pressed="false" aria-label="Liste görünümü"><i class="fa-solid fa-list"></i></button>
+            </div>
             <div class="sort-dd" id="sortDd">
               <button class="sort-btn" id="sortBtn" type="button" aria-haspopup="true" aria-expanded="false">
                 <i class="fa-solid fa-arrow-down-wide-short" aria-hidden="true"></i><span class="sb-lbl">Sıralama:</span> <span id="sortCur">Önerilen</span> <i class="fa-solid fa-chevron-down sb-car" aria-hidden="true"></i>
@@ -3040,6 +3106,26 @@ body:not(.is-auth) #basvuru{background:var(--bg-white)}
     </div>
   </div>
 </section>
+<!-- ===== R1/D7 YÖNLENDİRME BANDI — Beyar: "liste sayfalarındaki renkler tek tip".
+     Katalog gövdesi tek bölümdü; sayfa boyunca hiç zemin değişimi yoktu. Gastro
+     tarif dizininde sonuç listesinin altında yönlendirme bandı var; karşılığı budur.
+     Yeni bileşen ÜRETİLMEDİ: mevcut .ak-sec + .ak-chef-cta + .ak-hero-cta. ===== -->
+<section class="ak-sec is-cream derin" id="yonlendirme">
+  <div class="wrap">
+    <div class="ak-chef-cta">
+      <div class="acc-txt">
+        <span class="eyebrow"><i class="fa-solid fa-user-plus"></i> Aradığını Bulamadın mı?</span>
+        <b>Kadroya katılmak ya da bir eğitmene ulaşmak</b>
+        <p>Eğitmen başvurusu DadaGastro "Şef Ol" akışından ayrıdır; roller, yeterlilik ve adımlar başvuru sayfasında yazılıdır.</p>
+      </div>
+      <div class="ak-hero-cta">
+        <a class="btn btn-primary" href="dadacampus-egitmen-basvuru-v1.html"><i class="fa-solid fa-user-plus"></i> Eğitmen Başvurusu</a>
+        <a class="btn btn-ghost" href="dadacampus-yardim-v1.html?konu=egitmen"><i class="fa-solid fa-circle-question"></i> Eğitmen Yardımı</a>
+      </div>
+    </div>
+  </div>
+</section>
+
 
 </main><!-- /.page-main -->
 
@@ -4079,7 +4165,7 @@ window.__FACET = (function () {
     sayfaBoy: 12,
 
     gruplar: [
-      { key: 'rol',      alan: 'rol',         ad: 'Rol',       liste: 'egitmenRolleri', acik: true },
+      { key: 'rol',      alan: 'rol',         ad: 'Rol',       liste: 'egitmenRolleri', acik: true , gorsel: true },
       { key: 'uzmanlik', alan: 'uzmanliklar', cok: true, ad: 'Uzmanlık Alanı', acik: true,
         secenekler: function () { return benzersiz('uzmanliklar'); } },
       { key: 'dil',      alan: 'diller',      cok: true, ad: 'Eğitim Dili', acik: true,
@@ -4180,7 +4266,7 @@ window.__FACET = (function () {
    Beklenen DOM id'leri: #facetler #fchips #lstGrid #lstEmpty #lstSum #lstLoad
                          #pagi #filCount #btnFilter #lstSide #sheetOverlay
                          #sheetClose #sheetApply #sortDd #sortBtn #sortCur
-                         #crsSearch #crsSearchInput #crsSearchClear #heroStats
+                         #heroStats
    ========================================================================= */
 (function () {
   var D = window.DC, C = window.__FACET;
@@ -4194,7 +4280,7 @@ window.__FACET = (function () {
 
   /* sayfanın SAHİP olduğu URL anahtarları — yabancı (kabuk demo) parametreler
      korunur; qsSahipli olmadan ?auth=1/?sheet=1/?cc=1 silinirdi (Faz 1 hatası) */
-  var SAHIP = ['q', 'sort', 'sayfa'].concat(GRUPLAR.map(function (g) { return g.key; }))
+  var SAHIP = ['sort', 'sayfa'].concat(GRUPLAR.map(function (g) { return g.key; }))
                                     .concat(C.bayraklar || []);
 
   function secenekler(g) {
@@ -4205,7 +4291,7 @@ window.__FACET = (function () {
 
   /* --- durum ---------------------------------------------------------------- */
   function durumOku() {
-    var q = D.qs(), st = { q: q.q || '', sort: q.sort || (C.sortlar[0] && C.sortlar[0].slug), sayfa: parseInt(q.sayfa, 10) || 1 };
+    var q = D.qs(), st = { q: '',   /* R1: liste sayfasinda serbest metin aramasi YOK */ sort: q.sort || (C.sortlar[0] && C.sortlar[0].slug), sayfa: parseInt(q.sayfa, 10) || 1 };
     GRUPLAR.forEach(function (g) { st[g.key] = q[g.key] ? String(q[g.key]).split(',').filter(Boolean) : []; });
     (C.bayraklar || []).forEach(function (b) { st[b] = q[b] === '1'; });
     return st;
@@ -4213,7 +4299,6 @@ window.__FACET = (function () {
 
   function durumYaz(st, degistir) {
     var o = {};
-    if (st.q) o.q = st.q;
     GRUPLAR.forEach(function (g) { if (st[g.key].length) o[g.key] = st[g.key].join(','); });
     (C.bayraklar || []).forEach(function (b) { if (st[b]) o[b] = '1'; });
     if (st.sort && st.sort !== C.sortlar[0].slug) o.sort = st.sort;
@@ -4274,13 +4359,21 @@ window.__FACET = (function () {
       var satir = ops.map(function (o, i) {
         var n = sayac(st, g, o.slug), isaretli = st[g.key].indexOf(o.slug) > -1;
         var xtra = (kisalt && i >= kisalt && !isaretli) ? ' xtra' : '';
+        /* R1/D7: `gorsel` taşıyan grup küçük görselli satır basar (.cat-fct + .cn-thumb).
+           İkisi de kabukta TANIMLIYDI ama hiç kullanılmamıştı (R1 keşif §K8).
+           Görsel kaynağı seçeneğin KENDİ `kapak` alanı — yeni ID uydurulmaz. */
+        var kapak = g.gorsel && o.kapak ? D.img(o.kapak, 120) : null;
         return '<label class="fct-row' + xtra + '">' +
           '<input type="checkbox" data-g="' + esc(g.key) + '" value="' + esc(o.slug) + '"' +
             (isaretli ? ' checked' : '') + (n === 0 && !isaretli ? ' disabled' : '') + ' />' +
-          '<span class="cbx"></span><span class="ft">' + esc(o.ad) + '</span>' +
+          (kapak
+            ? '<span class="cn-thumb" style="background-image:url(\'' + esc(kapak) + '\')"></span>'
+            : '<span class="cbx"></span>') +
+          '<span class="ft">' + esc(o.ad) + '</span>' +
           '<span class="fcnt">' + n + '</span></label>';
       }).join('');
       return '<div class="fct' + (g.acik || aktif ? ' open' : '') + (aktif ? ' has-active' : '') +
+             (g.gorsel ? ' cat-fct' : '') +
              '" data-group="' + esc(g.ad) + '">' +
         '<button class="fct-head" type="button">' + esc(g.ad) +
           ' <span class="fct-dot">' + aktif + '</span><i class="fa-solid fa-chevron-down fct-car"></i></button>' +
@@ -4294,7 +4387,6 @@ window.__FACET = (function () {
   /* --- aktif filtre chip'leri ---------------------------------------------- */
   function chipsKur(st) {
     var c = [];
-    if (st.q) c.push({ t: '<i class="fa-solid fa-magnifying-glass"></i> “' + esc(st.q) + '”', g: 'q', v: '' });
     GRUPLAR.forEach(function (g) {
       st[g.key].forEach(function (v) {
         var ad = v;
@@ -4335,7 +4427,10 @@ window.__FACET = (function () {
   /* --- koleksiyon rayı ------------------------------------------------------ */
   function kollKur(st) {
     var el = $('#kollTrack');
-    if (!el || !C.koleksiyonlar) return;
+    /* R1/D7: görselli keşif rayı açıldıktan sonra bu ikinci ray tekrar oldu
+       (aynı ekranda iki yatay şerit). Hero'daki hızlı çipler de aynı kısayolları
+       veriyor. Markup `hidden` taşıyorsa hiç çizilmez. */
+    if (!el || el.hidden || !C.koleksiyonlar) return;
     el.innerHTML = C.koleksiyonlar.map(function (k) {
       var anahtar = Object.keys(k.kri)[0], deger = k.kri[anahtar];
       var bayrak = (C.bayraklar || []).indexOf(anahtar) > -1;
@@ -4348,10 +4443,54 @@ window.__FACET = (function () {
     }).join('');
   }
 
+  /* --- görselli keşif rayı (R1/D7) -----------------------------------------
+     Sonuç listesinin üstünde, facet'ten AYRI bir eksen: birincil grubun (cfg'de
+     `gorsel` işaretli) seçeneklerini küçük görselli kart olarak gösterir.
+     `.subcat*` ailesi kabukta zaten tanımlıydı, hiç kullanılmıyordu. */
+  function rayKur(st) {
+    var el = $('#subcatTrack'); if (!el) return;
+    var g = GRUPLAR.filter(function (x) { return x.gorsel; })[0];
+    if (!g) { el.parentElement.parentElement.hidden = true; return; }
+    var ops = secenekler(g);
+    var hepsiAcik = !(st[g.key] || []).length;
+    var h = '<a class="subcat' + (hepsiAcik ? ' active' : '') + '" href="?' + esc(g.key) + '=">' +
+      '<span class="sc-ico" style="background:var(--tomato-tint);display:grid;place-items:center">' +
+        '<i class="fa-solid fa-grip" style="color:var(--tomato);font-size:14px"></i></span>' +
+      '<span><b>Tümü</b><span>' + suz(bosDurum()).length + ' ' + BIRIM + '</span></span></a>';
+    h += ops.map(function (o) {
+      var acik = (st[g.key] || []).indexOf(o.slug) > -1;
+      var b = bosDurum(); b[g.key] = [o.slug];
+      var kapak = o.kapak ? D.img(o.kapak, 120) : null;
+      return '<a class="subcat' + (acik ? ' active' : '') + '" href="?' + esc(g.key) + '=' + encodeURIComponent(o.slug) + '">' +
+        (kapak
+          ? '<span class="sc-ico" style="background-image:url(\'' + esc(kapak) + '\')"></span>'
+          : '<span class="sc-ico" style="background:var(--tomato-tint);display:grid;place-items:center">' +
+            '<i class="fa-solid ' + esc(o.ikon || 'fa-circle-dot') + '" style="color:var(--tomato);font-size:14px"></i></span>') +
+        '<span><b>' + esc(o.kisaAd || o.ad) + '</b><span>' + suz(b).length + ' ' + BIRIM + '</span></span></a>';
+    }).join('');
+    el.innerHTML = h;
+  }
+
+  /* --- görünüm anahtarı: kart / liste (R1/D7) ------------------------------ */
+  function gorunumKur() {
+    var seg = document.querySelector('.vw-seg'), grid = $('#lstGrid');
+    if (!seg || !grid) return;
+    seg.addEventListener('click', function (ev) {
+      var b = ev.target.closest && ev.target.closest('.vs-btn'); if (!b) return;
+      var liste = b.getAttribute('data-vw') === 'liste';
+      grid.classList.toggle('is-list', liste);
+      seg.querySelectorAll('.vs-btn').forEach(function (x) {
+        var on = x === b;
+        x.classList.toggle('is-on', on);
+        x.setAttribute('aria-pressed', on ? 'true' : 'false');
+      });
+    });
+  }
+
   /* --- ana çizim ----------------------------------------------------------- */
   var st;
   function ciz(urlYaz, degistir) {
-    facetKur(st); chipsKur(st); kollKur(st);
+    facetKur(st); chipsKur(st); kollKur(st); rayKur(st);
 
     var sonuc = sirala(suz(st), st.sort);
     var say = Math.max(1, Math.ceil(sonuc.length / SAYFA_BOY));
@@ -4364,7 +4503,7 @@ window.__FACET = (function () {
     $('#lstGrid').style.display = sonuc.length ? '' : 'none';
 
     $('#lstSum').innerHTML = '<b>' + sonuc.length + ' ' + BIRIM + '</b> bulundu' +
-      (st.q ? ' — <span class="q">“' + esc(st.q) + '”</span> araması için' : '');
+      '';
 
     var aktif = GRUPLAR.reduce(function (t, g) { return t + st[g.key].length; }, 0) +
                 (C.bayraklar || []).filter(function (b) { return st[b]; }).length;
@@ -4382,12 +4521,12 @@ window.__FACET = (function () {
   if (C.heroStat && $('#heroStats')) $('#heroStats').innerHTML = C.heroStat(D);
 
   st = durumOku();
-  if (st.q) { $('#crsSearchInput').value = st.q; $('#crsSearch').classList.add('has-q'); }
   $$('#sortDd .sort-menu button').forEach(function (b) {
     var on = b.getAttribute('data-sort') === st.sort;
     b.classList.toggle('active', on);
     if (on) $('#sortCur').textContent = b.textContent.trim();
   });
+  gorunumKur();
   ciz(true, true);
   if (C.kurulumSonrasi) C.kurulumSonrasi(D);
 
@@ -4410,8 +4549,8 @@ window.__FACET = (function () {
     var rm = ev.target.closest('[data-rm-g]');
     if (rm) {
       var g = rm.getAttribute('data-rm-g'), v = rm.getAttribute('data-rm-v');
-      if (g === 'q') { st.q = ''; $('#crsSearchInput').value = ''; $('#crsSearch').classList.remove('has-q'); }
-      else if ((C.bayraklar || []).indexOf(g) > -1) st[g] = false;
+      /* R1: 'q' dali kalkti (liste sayfasinda serbest metin aramasi yok) */
+      if ((C.bayraklar || []).indexOf(g) > -1) st[g] = false;
       else { var a = st[g], i = a.indexOf(v); if (i > -1) a.splice(i, 1); }
       st.sayfa = 1; ciz(true); return;
     }
@@ -4419,22 +4558,17 @@ window.__FACET = (function () {
       var b = bosDurum();
       Object.keys(b).forEach(function (k) { st[k] = b[k]; });
       st.sayfa = 1;
-      $('#crsSearchInput').value = ''; $('#crsSearch').classList.remove('has-q');
       ciz(true);
     }
   });
 
-  var inp = $('#crsSearchInput'), zaman;
-  inp.addEventListener('input', function () {
-    clearTimeout(zaman);
-    zaman = setTimeout(function () {
-      st.q = inp.value.trim(); st.sayfa = 1;
-      $('#crsSearch').classList.toggle('has-q', !!st.q);
-      ciz(true);
-    }, 180);
-  });
-  inp.addEventListener('keydown', function (e) { if (e.key === 'Escape') { inp.value = ''; inp.dispatchEvent(new Event('input')); } });
-  $('#crsSearchClear').addEventListener('click', function () { inp.value = ''; inp.dispatchEvent(new Event('input')); });
+  /* R1: serbest metin aramasi liste sayfasindan KALDIRILDI (Beyar kurali) - arama
+     header'daki buyutec ve arama-campus-v1.html'in isi, katalogda tekrarlanmaz.
+     Baska sayfadan ?q= ile gelen baglanti OLU BIRAKILMAZ: arama sayfasina aktarilir. */
+  (function () {
+    var gelen = (D.qs().q || '').trim();
+    if (gelen) { location.replace('arama-campus-v1.html?q=' + encodeURIComponent(gelen)); }
+  })();
 
   $('#sortBtn').addEventListener('click', function () {
     var dd = $('#sortDd'); dd.classList.toggle('open');
@@ -4482,8 +4616,6 @@ window.__FACET = (function () {
   window.addEventListener('popstate', function () {
     var y = durumOku();
     Object.keys(y).forEach(function (k) { st[k] = y[k]; });
-    $('#crsSearchInput').value = st.q;
-    $('#crsSearch').classList.toggle('has-q', !!st.q);
     ciz(false);
   });
 })();
