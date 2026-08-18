@@ -3325,14 +3325,24 @@ document.addEventListener('click',function(e){
     btn.innerHTML=h.innerHTML+'<i class="fa-solid fa-chevron-down dt-car" aria-hidden="true"></i>';
     h.innerHTML=''; h.appendChild(btn); h.classList.add('dt-baslik');
 
-    var kapali=b.hasAttribute('data-kapali');
-    b.classList.toggle('acik',!kapali);
-    btn.setAttribute('aria-expanded',kapali?'false':'true');
-    btn.addEventListener('click',function(){
-      var acik=b.classList.toggle('acik');
-      btn.setAttribute('aria-expanded',acik?'true':'false');
-    });
+    /* R3/1: HEPSİ KAPALI AÇILIR ve akordiyon TEK-AÇIK çalışır. Önce
+       `data-kapali` taşımayan bloklar açık geliyordu (9 bloğun 5'i) ve birden
+       çok blok aynı anda açık kalabiliyordu; sayfa ilk ekranda 3-4 kat uzundu.
+       `data-kapali` işareti markup'ta KALIR (anlamını yitirdi ama silmek üç
+       içerik dosyasını yeniden yazardı; davranışa etkisi yok). */
+    b.classList.remove('acik');
+    btn.setAttribute('aria-expanded','false');
+    btn.addEventListener('click',function(){ ac(b,!b.classList.contains('acik')); });
   });
+
+  /* tek-açık anahtarı: hedef açılırken kardeşleri kapanır */
+  function ac(hedef,acilsin){
+    bloklar.forEach(function(x){
+      var olsun=(x===hedef&&acilsin);
+      x.classList.toggle('acik',olsun);
+      var t=x.querySelector('.dt-ac'); if(t)t.setAttribute('aria-expanded',olsun?'true':'false');
+    });
+  }
 
   /* --- yan sütun bölüm listesi --- */
   if(yan){
@@ -3348,13 +3358,19 @@ document.addEventListener('click',function(e){
     }).join('');
     yan.insertBefore(nav,yan.firstChild);
 
+    /* R3/1: bölüm navigasyonu akordiyonla aynı sözleşmeye bağlı — tıklanan
+       bölüm açılır, diğerleri kapanır, sayfa oraya kayar. Kaydırma ELLE
+       yapılır: yükseklikler tıklama anında değiştiği için tarayıcının kendi
+       hash atlaması yanlış noktaya düşüyordu (kapanan kardeşler kadar aşağı). */
     nav.addEventListener('click',function(ev){
       var a=ev.target.closest&&ev.target.closest('a[href^="#"]'); if(!a)return;
-      var b=document.getElementById(a.getAttribute('href').slice(1));
-      if(b&&!b.classList.contains('acik')){
-        b.classList.add('acik');
-        var btn=b.querySelector('.dt-ac'); if(btn)btn.setAttribute('aria-expanded','true');
-      }
+      var b=document.getElementById(a.getAttribute('href').slice(1)); if(!b)return;
+      ev.preventDefault();
+      ac(b,true);
+      var git=function(){b.scrollIntoView({behavior:'smooth',block:'start'});};
+      if(document.fonts&&document.fonts.ready)document.fonts.ready.then(function(){requestAnimationFrame(git);});
+      else requestAnimationFrame(git);
+      if(history.replaceState)history.replaceState(null,'','#'+b.id);
     });
 
     if('IntersectionObserver' in window){
