@@ -2266,34 +2266,73 @@ a.drs-row:hover{color:var(--tomato)}
 .dr-agac .drs-row .drs-sure{font-size:11px}
 .dr-agac .drs-row .drs-etiket{display:none}   /* dar kolonda etiket yerine ikon yeter */
 
-/* ---- OYNATMA KABUĞU (`.ply`) ---- */
+/* ---- OYNATMA KABUĞU (`.ply`) — R3/9: DadaGastro ders oynatıcısı anatomisi ----
+   Referans ölçüm (dadagastro.com/.../ders, 1440, çerçeve 796×448):
+     çerçeve 16/9 · buton paneli çerçevenin İÇİNDE, alttan 24px, yüksekliği 48px
+     · buton dokunma kutusu 48×48, görünür daire 36×36, adım 48px (aralık 0)
+     · sıra: oynat → geçen/toplam süre → esnek boşluk → sağ küme, sağ kenara dayalı
+     · ilerleme çubuğu çerçevenin en altında, tam genişlikte, alttan 21px, 4px
+   🔴 RENK ALINMADI. Buradaki her değer Campus token'ından türer; hiçbiri
+   Gastro paletinden gelmez. Önceki sürümdeki token dışı düz değerler
+   (#101b1f · rgba(10,20,24,…) · rgba(0,0,0,.34) · #dcdcdc) de bu turda
+   token türevlerine çevrildi. */
 .ply{margin-bottom:0}
-.ply-stage{position:relative;aspect-ratio:16/9;border-radius:var(--radius-md);overflow:hidden;
-  background:#101b1f center/cover no-repeat;display:grid;place-items:center}
-.ply-stage::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(10,20,24,.30),rgba(10,20,24,.62))}
-.ply-play{position:relative;z-index:2;width:74px;height:74px;border-radius:var(--radius-circle);border:none;
-  background:rgba(255,255,255,.94);color:var(--tomato);font-size:24px;cursor:pointer;
-  box-shadow:0 10px 34px rgba(0,0,0,.34);transition:.2s var(--ease)}
-.ply-play:hover{transform:scale(1.06)}
-.ply.oynuyor .ply-play i::before{content:"\f04c"}   /* pause */
-.ply-sure,.ply-rozet{position:absolute;z-index:2;font-size:11.5px;font-weight:700;padding:5px 10px;
-  border-radius:var(--radius-sm);background:rgba(10,20,24,.72);color:#fff}
-.ply-sure{right:12px;bottom:12px}
-.ply-rozet{left:12px;top:12px;background:var(--tomato)}
-.ply-bar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:var(--bg);
-  border:1px solid var(--line);border-top:none;border-radius:0 0 var(--radius-md) var(--radius-md);padding:10px 12px}
-.ply-btn{flex:none;width:34px;height:34px;border-radius:var(--radius-sm);border:1px solid var(--line);
-  background:var(--paper);color:var(--slate);font-family:inherit;font-size:12px;cursor:pointer;transition:.16s var(--ease)}
-.ply-btn:hover{border-color:var(--tomato);color:var(--tomato)}
-.ply-btn.ply-lbl{width:auto;padding:0 11px;font-weight:700;font-size:12px;display:inline-flex;align-items:center;gap:6px}
-.ply-btn.is-on{background:var(--tomato);border-color:var(--tomato);color:#fff}
-.ply-track{flex:1;min-width:120px;height:5px;border-radius:999px;background:#dcdcdc;overflow:hidden}
-.ply-track > span{display:block;height:100%;width:0;background:var(--tomato);transition:width .25s linear}
-.ply-zaman{flex:none;font-size:12px;font-weight:700;color:var(--muted);font-variant-numeric:tabular-nums}
-/* R2/6: oynatıcı kartsız kaldığı için bu not artık KREM zeminde duruyor.
+.ply-stage{position:relative;aspect-ratio:16/9;border-radius:var(--radius-xl);overflow:hidden;
+  background:var(--slate) center/cover no-repeat;box-shadow:var(--sh-md);cursor:pointer}
+/* Üst perde YALNIZ rozet/süre etiketi için; kontrol satırının perdesi kendi
+   kutusunda (aşağıda). Referanstaki UA paneli de perdeyi tüm kareye değil
+   kontrol bandına basıyor — tek büyük gradyan parlak kapaklarda seyreliyor. */
+.ply-stage::after{content:"";position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(180deg,
+    color-mix(in srgb,var(--slate) 34%,transparent) 0%,
+    transparent 24%)}
+
+/* rozet (ders no) ve süre etiketi — Campus davranışı, çerçevenin üst köşelerinde.
+   Süre etiketi eskiden sağ ALTTAYDI; kontrol satırı içeri alınınca oraya
+   çakışıyordu, üst sağa taşındı. */
+.ply-rozet,.ply-sure{position:absolute;top:14px;z-index:3;font-size:11.5px;font-weight:700;
+  padding:5px 10px;border-radius:var(--radius-sm);color:#fff;line-height:1.35}
+.ply-rozet{left:14px;background:var(--tomato)}
+.ply-sure{right:14px;background:color-mix(in srgb,var(--slate) 74%,transparent);
+  -webkit-backdrop-filter:blur(5px);backdrop-filter:blur(5px)}
+
+/* kontrol satırı — çerçevenin İÇİNDE, altta */
+/* Kutu 112px: 40 perde nefesi + 48 buton satırı + 24 ilerleme bandı.
+   Buton satırı yine alttan 24px'te, referanstaki gibi; fazladan yükseklik
+   yalnız perdenin geçiş payı. */
+.ply-bar{position:absolute;left:0;right:0;bottom:0;z-index:4;height:112px;
+  display:flex;align-items:center;padding:40px 0 24px;cursor:default;
+  background:linear-gradient(180deg,transparent 0%,
+    color-mix(in srgb,var(--slate) 74%,transparent) 46%,
+    color-mix(in srgb,var(--slate) 94%,transparent) 100%)}
+.ply-btn{position:relative;flex:none;width:48px;height:48px;border:none;background:none;
+  color:#fff;font-family:inherit;font-size:15px;line-height:1;cursor:pointer;
+  display:inline-flex;align-items:center;justify-content:center;gap:6px}
+.ply-btn::before{content:"";position:absolute;inset:6px;border-radius:var(--radius-circle);
+  background:transparent;transition:background-color .16s var(--ease)}
+.ply-btn:hover::before{background:color-mix(in srgb,#fff 22%,transparent)}
+.ply-btn:focus-visible{outline:2px solid #fff;outline-offset:-4px;border-radius:var(--radius-sm)}
+.ply-btn > i,.ply-btn > span{position:relative;z-index:1}
+.ply-btn:disabled{opacity:.38;cursor:default}
+.ply-btn:disabled:hover::before{background:transparent}
+/* etiketli butonlar (hız · altyazı) — aynı 36px yükseklik, genişlik içeriğe göre */
+.ply-btn.ply-lbl{width:auto;min-width:48px;padding:0 12px;font-weight:700;font-size:12.5px}
+.ply-btn.ply-lbl::before{border-radius:var(--radius-pill)}
+.ply-btn.ply-lbl.is-on::before{background:color-mix(in srgb,var(--tomato) 82%,#fff)}
+.ply-btn.ply-lbl.is-on:hover::before{background:var(--tomato)}
+/* süre göstergesi: oynat kümesinin hemen sağında, sağ kümeyi kenara iten esnek boşluk */
+.ply-zaman{flex:none;margin:0 auto 0 4px;font-size:12.5px;font-weight:700;color:#fff;
+  font-variant-numeric:tabular-nums;letter-spacing:.01em;text-shadow:0 1px 2px color-mix(in srgb,var(--slate) 60%,transparent)}
+/* ilerleme çubuğu: çerçevenin en altı, tam genişlik */
+.ply-track{position:absolute;left:16px;right:16px;bottom:21px;height:4px;
+  border-radius:var(--radius-pill);background:color-mix(in srgb,#fff 30%,transparent);overflow:hidden}
+.ply-track > span{display:block;height:100%;width:0;
+  background:color-mix(in srgb,var(--tomato) 42%,#fff);transition:width .25s linear}
+
+/* R2/6: oynatıcı kartsız kaldığı için bu not KREM zeminde duruyor.
    `--muted` (#7E7E7E) kremde 3,45:1 — 12,5px metin için AA eşiği 4,5.
    `--slate-2` ile 6,68:1. Yeni renk üretilmedi, mevcut token'a geçildi. */
-.ply-not{display:flex;align-items:flex-start;gap:8px;margin-top:10px;font-size:12.5px;
+.ply-not{display:flex;align-items:flex-start;gap:8px;margin-top:12px;font-size:12.5px;
   font-weight:500;color:var(--slate-2);line-height:1.55}
 .ply-not i{flex:none;margin-top:3px;color:var(--tomato);font-size:11px}
 
@@ -2402,8 +2441,19 @@ a.drs-row:hover{color:var(--tomato)}
   .dr-govde{padding:18px 16px 22px;border-radius:var(--radius-md)}
   .dr-agac,.dr-not{padding:16px;border-radius:var(--radius-md)}
   .dr-govde h1{font-size:20px}
-  .ply-bar{gap:8px}
-  .ply-track{min-width:70px}
+  /* R3/9 dar ekran: aynı sıra ve aynı anatomi, ölçek küçülür.
+     48px dokunma kutusu 40px'e iner (WCAG 2.5.8 asgari 24px'in çok üstünde),
+     kontrol satırı 72 → 62px, çerçeve köşesi gövde kartlarıyla aynı kademeye. */
+  .ply-stage{border-radius:var(--radius-lg)}
+  .ply-bar{height:92px;padding:32px 0 20px}
+  .ply-btn{width:40px;height:40px;font-size:14px}
+  .ply-btn::before{inset:4px}
+  .ply-btn.ply-lbl{min-width:40px;padding:0 9px;font-size:11.5px;gap:5px}
+  .ply-zaman{margin-left:2px;font-size:11.5px}
+  .ply-track{left:12px;right:12px;bottom:17px}
+  .ply-rozet,.ply-sure{top:10px;font-size:11px;padding:4px 8px}
+  .ply-rozet{left:10px}
+  .ply-sure{right:10px}
 }
 </style>
 </head>
@@ -2906,24 +2956,34 @@ a.drs-row:hover{color:var(--tomato)}
       <!-- ---------- SOL 1/2: oynatıcı ---------- -->
       <div class="dr-ana">
         <!-- oynatma kabuğu (gerçek video dosyası yok — poster + kontroller) -->
+        <!-- R3/9: oynatıcı iskeleti DadaGastro ders oynatıcısının anatomisine
+             geçti (referans: /mutfaga-giris/temel-bicak-turleri-ve-kullanimlari/ders,
+             `.lv-player` + native <video controls>). ALINAN: 16/9 çerçeve, kontrol
+             satırının çerçeve İÇİNDE alta yerleşmesi, soldan sağa sıra
+             (oynat → süre → esnek boşluk → sağ küme), 48×48 dokunma kutusu /
+             36×36 görünür daire, ilerleme çubuğunun çerçevenin en altında tam
+             genişlikte durması, "geçen / toplam" süre göstergesi.
+             ALINMAYAN: renk. Her değer Campus token'ından türer (--slate,
+             --tomato, --sh-md, --radius-xl); Gastro paletinden tek değer yok.
+             KORUNAN Campus davranışları: ders numarası rozeti, süre etiketi,
+             altyazı dili anahtarı, arayüz taslağı bilgi satırı, önceki/sonraki
+             ders ve oynatma hızı. -->
         <div class="ply">
           <div class="ply-stage" id="plyStage">
-            <button class="ply-play" id="plyPlay" type="button" aria-label="Dersi oynat">
-              <i class="fa-solid fa-play" aria-hidden="true"></i>
-            </button>
-            <span class="ply-sure" id="plySure"></span>
             <span class="ply-rozet" id="plyRozet"></span>
-          </div>
-          <div class="ply-bar" role="group" aria-label="Oynatıcı kontrolleri">
-            <button class="ply-btn" id="plyPrev" type="button" aria-label="Önceki ders"><i class="fa-solid fa-backward-step"></i></button>
-            <button class="ply-btn" id="plyToggle" type="button" aria-label="Oynat / duraklat"><i class="fa-solid fa-play"></i></button>
-            <button class="ply-btn" id="plyNext" type="button" aria-label="Sonraki ders"><i class="fa-solid fa-forward-step"></i></button>
-            <span class="ply-track" aria-hidden="true"><span id="plyFill"></span></span>
-            <span class="ply-zaman" id="plyZaman">00:00</span>
-            <button class="ply-btn ply-lbl" id="plyHiz" type="button" aria-label="Oynatma hızı">1×</button>
-            <button class="ply-btn ply-lbl is-on" id="plyCc" type="button" aria-pressed="true" aria-label="Altyazı">
-              <i class="fa-solid fa-closed-captioning"></i> <span id="plyCcDil"></span>
-            </button>
+            <span class="ply-sure" id="plySure"></span>
+            <div class="ply-bar" role="group" aria-label="Oynatıcı kontrolleri">
+              <button class="ply-btn" id="plyPrev" type="button" aria-label="Önceki ders"><i class="fa-solid fa-backward-step" aria-hidden="true"></i></button>
+              <button class="ply-btn" id="plyToggle" type="button" aria-label="Oynat / duraklat"><i class="fa-solid fa-play" aria-hidden="true"></i></button>
+              <button class="ply-btn" id="plyNext" type="button" aria-label="Sonraki ders"><i class="fa-solid fa-forward-step" aria-hidden="true"></i></button>
+              <span class="ply-zaman" id="plyZaman">00:00 / 00:00</span>
+              <button class="ply-btn ply-lbl" id="plyHiz" type="button" aria-label="Oynatma hızı"><span>1×</span></button>
+              <button class="ply-btn ply-lbl is-on" id="plyCc" type="button" aria-pressed="true" aria-label="Altyazı">
+                <i class="fa-solid fa-closed-captioning" aria-hidden="true"></i> <span id="plyCcDil"></span>
+              </button>
+              <button class="ply-btn" id="plyTam" type="button" aria-label="Tam ekran"><i class="fa-solid fa-expand" aria-hidden="true"></i></button>
+              <span class="ply-track" aria-hidden="true"><span id="plyFill"></span></span>
+            </div>
           </div>
           <p class="ply-not">
             <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
@@ -4216,9 +4276,10 @@ window.__bottomStrips=window.__bottomStrips||[];
     var m = Math.floor(x / 60), s = Math.floor(x % 60);
     return (m < 10 ? '0' : '') + m + ':' + (s < 10 ? '0' : '') + s;
   }
+  /* R3/9: süre göstergesi Gastro kalıbındaki gibi "geçen / toplam" okur. */
   function ciz() {
     byId('plyFill').style.width = Math.min(100, sn / toplamSn * 100) + '%';
-    byId('plyZaman').textContent = ss(sn);
+    byId('plyZaman').textContent = ss(sn) + ' / ' + ss(toplamSn);
     byId('drDamga').textContent = ss(sn);
   }
   function durdur() {
@@ -4238,15 +4299,33 @@ window.__bottomStrips=window.__bottomStrips||[];
     }, 500);
   }
   function cevir() { oynuyor ? durdur() : oynat(); }
-  byId('plyPlay').addEventListener('click', cevir);
+  /* R3/9: 74px'lik merkez oynat düğmesi KALKTI — referansta kapağın üstünde
+     ikinci bir oynat yok, oynat kontrol satırının solunda duruyor. Kapağın
+     kendisi yine tıklanabilir; kontrol satırındaki tıklamalar dışarıda kalır. */
+  byId('plyStage').addEventListener('click', function (ev) {
+    if (ev.target.closest('.ply-bar')) return;
+    cevir();
+  });
   byId('plyToggle').addEventListener('click', cevir);
   byId('plyHiz').addEventListener('click', function () {
     hiz = HIZLAR[(HIZLAR.indexOf(hiz) + 1) % HIZLAR.length];
-    this.textContent = hiz + '×';
+    this.querySelector('span').textContent = hiz + '×';
   });
   byId('plyCc').addEventListener('click', function () {
     var on = this.classList.toggle('is-on');
     this.setAttribute('aria-pressed', on ? 'true' : 'false');
+  });
+  /* R3/9: tam ekran — referansın sağ kümesindeki karşılığı. Ölü düğme değil:
+     video dosyası olmasa da kapak ve kontrol satırı tam ekrana açılır. */
+  byId('plyTam').addEventListener('click', function () {
+    var st = byId('plyStage');
+    if (document.fullscreenElement) { document.exitFullscreen(); return; }
+    if (st.requestFullscreen) st.requestFullscreen();
+  });
+  document.addEventListener('fullscreenchange', function () {
+    byId('plyTam').innerHTML = document.fullscreenElement
+      ? '<i class="fa-solid fa-compress" aria-hidden="true"></i>'
+      : '<i class="fa-solid fa-expand" aria-hidden="true"></i>';
   });
   ciz();
 
