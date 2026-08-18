@@ -257,6 +257,29 @@ img{display:block;max-width:100%}
 .btn-login i{font-size:14px}
 .btn-login:hover{background:var(--tomato-dark);border-color:var(--tomato-dark)}
 
+/* ============ ÖĞRENME MODU (R1/D5) — body[data-mode="ders"] ============
+   Ders ekranında üst bant + site nav'ı öğrenmeye katkı vermiyor, üstelik
+   "Kampüsüm" hem header'da hem ders bar'ında çıkıyordu. Bu modda:
+   üst bant gizlenir · header en üste gelir ve 64px olur · nav gizlenir ·
+   ders bağlamı (geri · ilerleme · çıkış) header'ın içine taşınır.
+   Sabit kabuk 176px → 64px. --chrome-h da güncellenir, yapışkan ofsetler
+   tek formülden yeniden türer. */
+body[data-mode="ders"]{ --chrome-h:64px; }
+body[data-mode="ders"] .topbar{display:none}
+body[data-mode="ders"] .header{top:0}
+body[data-mode="ders"] .h-top>.wrap{height:64px;gap:18px}
+body[data-mode="ders"] .nav{display:none}
+body[data-mode="ders"] .ak-word{font-size:19px}
+body[data-mode="ders"] .ak-mark{width:34px;height:34px;padding:4px}
+/* öğrenme modunda header her zaman KATI — ders ekranında koyu banner yok */
+body[data-mode="ders"] .header{background:rgba(255,255,255,.96)}
+/* Kampüsüm çıkışı TEK: header'ın genel butonu kapanır, bağlam yuvasındaki kalır */
+body[data-mode="ders"] #hdrKampusum{display:none}
+
+.h-mode{display:none;flex:1;min-width:0;align-items:center;gap:20px}
+body[data-mode="ders"] .h-mode{display:flex}
+.h-mode[hidden]{display:none}
+
 /* ===== LOGIN-STATE (cila-2 faz 2) — header logged-in chrome ===== */
 /* varsayılan logged-out: ekle/zil/avatar gizli. body.is-auth → açılır, btn-login gizlenir */
 .head-add,.head-bell,.acct-wrap{display:none}
@@ -1959,8 +1982,12 @@ a.drs-row:hover{color:var(--tomato)}
    ========================================================== */
 
 /* ---- ÜST ŞERİT ---- */
-.dr-bar{position:sticky;top:112px;z-index:38;background:var(--paper);border-bottom:1px solid var(--line);padding:0}
-.dr-bar .wrap{display:flex;align-items:center;gap:20px;min-height:64px}
+/* ---- ÜST ŞERİT — R1/D5'te header'ın İÇİNE taşındı ----
+   .dr-bar artık DOM'dan kalkıyor (ders JS'i içeriğini #hdrMode yuvasına taşır);
+   aşağıdaki kurallar bağlam öğelerinin header içindeki halini boyar.
+   Ayrı bar kalmadığı için sabit kabuk 176px → 64px, --chrome-h de öyle. */
+.h-mode .dr-geri{flex:1}
+.h-mode .dr-ilerleme{width:190px}
 .dr-geri{display:flex;align-items:center;gap:12px;min-width:0;flex:1;color:var(--slate)}
 .dr-geri i{flex:none;font-size:12px;color:var(--tomato)}
 .dr-geri small{display:block;font-size:10.5px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}
@@ -1970,15 +1997,22 @@ a.drs-row:hover{color:var(--tomato)}
 .dr-bar-cta{flex:none;display:flex;gap:9px}
 
 /* ---- SEKME BARI: yalnız mobil (§23.2) ---- */
-.dr-tabbar{display:none;position:sticky;top:176px;z-index:37;background:var(--paper);border-bottom:1px solid var(--line)}
+.dr-tabbar{display:none;position:sticky;top:var(--chrome-h);z-index:37;background:var(--paper);border-bottom:1px solid var(--line);margin-top:var(--chrome-h)}
 .dr-tabbar .pf-tabbar{border-bottom:none;margin:0}
 
 /* ---- ÜÇ KOLON YERLEŞİM ---- */
-.dr-sec{padding:28px 0 60px;background:var(--bg-cream)}
+/* R1/D5: üç sütunun İÇ PADDING'i eşitlendi (18 / 24 / 18 idi → hepsi 20) ve
+   yapışkan ofset tek formülden türüyor: kabuk + bölüm üst boşluğu. */
+/* 🔴 Sabit kabuk ofseti artık BURADA: .dr-bar DOM'dan kalkınca onunla birlikte
+   .below-header dolgusu da gitmişti ve gövde header'ın altına giriyordu.
+   Üst dolgu = kabuk + bölüm boşluğu → yapışkan sütunların YAPIŞMA EŞİĞİ ile
+   DOĞAL KONUMU birebir aynı olur, açılışta zıplama olmaz. */
+.dr-sec{padding:calc(var(--chrome-h) + var(--sec-y) * .45) 0 var(--sec-y);background:var(--bg-cream)}
 .dr-layout{display:grid;grid-template-columns:290px minmax(0,1fr) 300px;gap:26px;align-items:start}
 .dr-agac,.dr-not{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-lg);
-  padding:18px;position:sticky;top:196px;max-height:calc(100vh - 220px);overflow-y:auto;scrollbar-width:thin}
-.dr-ana{min-width:0;background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-lg);padding:24px 26px 28px}
+  padding:20px;position:sticky;top:calc(var(--chrome-h) + var(--sec-y) * .45);
+  max-height:calc(100vh - var(--chrome-h) - var(--sec-y)); overflow-y:auto;scrollbar-width:thin}
+.dr-ana{min-width:0;background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-lg);padding:20px 26px 28px}
 .dr-agac-head{display:flex;align-items:center;justify-content:space-between;gap:10px;
   padding-bottom:13px;margin-bottom:13px;border-bottom:1px solid var(--line)}
 .dr-agac-head b{font-size:12px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}
@@ -2115,17 +2149,17 @@ a.drs-row:hover{color:var(--tomato)}
   .dr-layout{grid-template-columns:260px minmax(0,1fr)}
   /* notlar paneli mobil öncesi alt satıra iner, tam genişlik */
   .dr-not{grid-column:1 / -1;position:static;max-height:none}
-  .dr-agac{top:180px}
   .dr-iki{grid-template-columns:1fr;gap:20px}
-  .dr-ilerleme{width:150px}
+  .h-mode .dr-ilerleme{width:150px}
 }
 @media (max-width:640px){
-  .dr-bar{top:62px}
-  .dr-bar .wrap{min-height:56px;gap:12px}
-  .dr-ilerleme{display:none}
-  .dr-bar-cta .btn span{display:none}
+  .h-mode .dr-ilerleme{display:none}
+  .h-mode .dr-bar-cta .btn span{display:none}
+  .h-mode .dr-geri small{display:none}
   /* §23.2 — sekmeli düzen: üç panelden yalnız biri görünür */
-  .dr-tabbar{display:block;top:118px}
+  .dr-tabbar{display:block}
+  /* sekme barı gövdenin üstünde duruyor → gövde dolgusu yalnız bölüm boşluğu kadar */
+  .dr-sec{padding-top:calc(var(--sec-y) * .45)}
   .dr-layout{display:block}
   .dr-agac,.dr-not,.dr-ana{position:static;max-height:none;margin-bottom:0}
   .dr-layout [data-dp]{display:none}
@@ -2138,7 +2172,7 @@ a.drs-row:hover{color:var(--tomato)}
 }
 </style>
 </head>
-<body data-brand="campus" data-hero="0">
+<body data-brand="campus" data-hero="0" data-mode="ders">
 <!-- ATLAMA BAĞLANTISI (§23.3) — klavye kullanıcısı topbar + 4 menü + drawer +
      alt barı atlayıp doğrudan içeriğe geçebilsin. Odaklanınca görünür olur. -->
 <a class="skip" href="#pageMain"><i class="fa-solid fa-arrow-down" aria-hidden="true"></i> İçeriğe atla</a>
@@ -2282,6 +2316,12 @@ a.drs-row:hover{color:var(--tomato)}
              Önce akademi-v1.html#egitmenler'e gidiyordu (Faz 1 kalıntısı). -->
         <div class="nav-item"><a href="dadacampus-egitmenler-v1.html">Eğitmenler</a></div>
       </nav>
+
+      <!-- ÖĞRENME MODU YUVASI (R1/D5) — yalnız body[data-mode="ders"] sayfalarında dolar.
+           Ders ekranında site header'ı ile ders bağlam bar'ı İKİ AYRI kat oluşturuyordu
+           (40+72+64 = 176px) ve "Kampüsüm" ikisinde birden çıkıyordu. Ders sayfası JS'i
+           kendi bağlam öğelerini bu yuvaya TAŞIR, ayrı bar DOM'dan kalkar. -->
+      <div class="h-mode" id="hdrMode" hidden></div>
 
       <!-- SAĞ ALAN (§4.1) — arama · bildirim · Kampüsüm · hesap (Rol Değiştirici) / Giriş Yap.
            .head-bell ve .acct-wrap YALNIZ body.is-auth ile görünür (kabuk CSS 229-234);
@@ -3769,6 +3809,19 @@ window.__bottomStrips=window.__bottomStrips||[];
   byId('drIlerleme').innerHTML =
     '<div class="prg-lbl"><span>' + ilerleme.tamamlanan.length + '/' + e.dersSayisi + ' ders</span><b>%' + y + '</b></div>' +
     '<span class="prg"><span style="width:' + y + '%"></span></span>';
+
+  /* ---- ÖĞRENME MODU (R1/D5): bağlam öğelerini header'a taşı --------------
+     Ders ekranı önce üç kat taşıyordu: üst bant(40) + header(72) + .dr-bar(64).
+     Bağlam (geri · ilerleme · çıkış) header'ın içindeki yuvaya TAŞINIR, ayrı bar
+     DOM'dan çıkar. Markup çoğaltılmaz — aynı düğümler yer değiştirir. */
+  (function () {
+    var yuva = document.getElementById('hdrMode'), bar = document.querySelector('.dr-bar');
+    if (!yuva || !bar) return;
+    yuva.hidden = false;
+    var w = bar.querySelector('.wrap');
+    while (w.firstChild) yuva.appendChild(w.firstChild);
+    bar.remove();
+  })();
 
   byId('drBarCta').innerHTML =
     '<a class="btn btn-ghost" href="dadacampus-kampusum-v1.html?bolum=egitimlerim">' +

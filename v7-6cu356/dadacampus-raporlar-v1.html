@@ -257,6 +257,29 @@ img{display:block;max-width:100%}
 .btn-login i{font-size:14px}
 .btn-login:hover{background:var(--tomato-dark);border-color:var(--tomato-dark)}
 
+/* ============ ÖĞRENME MODU (R1/D5) — body[data-mode="ders"] ============
+   Ders ekranında üst bant + site nav'ı öğrenmeye katkı vermiyor, üstelik
+   "Kampüsüm" hem header'da hem ders bar'ında çıkıyordu. Bu modda:
+   üst bant gizlenir · header en üste gelir ve 64px olur · nav gizlenir ·
+   ders bağlamı (geri · ilerleme · çıkış) header'ın içine taşınır.
+   Sabit kabuk 176px → 64px. --chrome-h da güncellenir, yapışkan ofsetler
+   tek formülden yeniden türer. */
+body[data-mode="ders"]{ --chrome-h:64px; }
+body[data-mode="ders"] .topbar{display:none}
+body[data-mode="ders"] .header{top:0}
+body[data-mode="ders"] .h-top>.wrap{height:64px;gap:18px}
+body[data-mode="ders"] .nav{display:none}
+body[data-mode="ders"] .ak-word{font-size:19px}
+body[data-mode="ders"] .ak-mark{width:34px;height:34px;padding:4px}
+/* öğrenme modunda header her zaman KATI — ders ekranında koyu banner yok */
+body[data-mode="ders"] .header{background:rgba(255,255,255,.96)}
+/* Kampüsüm çıkışı TEK: header'ın genel butonu kapanır, bağlam yuvasındaki kalır */
+body[data-mode="ders"] #hdrKampusum{display:none}
+
+.h-mode{display:none;flex:1;min-width:0;align-items:center;gap:20px}
+body[data-mode="ders"] .h-mode{display:flex}
+.h-mode[hidden]{display:none}
+
 /* ===== LOGIN-STATE (cila-2 faz 2) — header logged-in chrome ===== */
 /* varsayılan logged-out: ekle/zil/avatar gizli. body.is-auth → açılır, btn-login gizlenir */
 .head-add,.head-bell,.acct-wrap{display:none}
@@ -2115,6 +2138,12 @@ a.drs-row:hover{color:var(--tomato)}
              Önce akademi-v1.html#egitmenler'e gidiyordu (Faz 1 kalıntısı). -->
         <div class="nav-item"><a href="dadacampus-egitmenler-v1.html">Eğitmenler</a></div>
       </nav>
+
+      <!-- ÖĞRENME MODU YUVASI (R1/D5) — yalnız body[data-mode="ders"] sayfalarında dolar.
+           Ders ekranında site header'ı ile ders bağlam bar'ı İKİ AYRI kat oluşturuyordu
+           (40+72+64 = 176px) ve "Kampüsüm" ikisinde birden çıkıyordu. Ders sayfası JS'i
+           kendi bağlam öğelerini bu yuvaya TAŞIR, ayrı bar DOM'dan kalkar. -->
+      <div class="h-mode" id="hdrMode" hidden></div>
 
       <!-- SAĞ ALAN (§4.1) — arama · bildirim · Kampüsüm · hesap (Rol Değiştirici) / Giriş Yap.
            .head-bell ve .acct-wrap YALNIZ body.is-auth ile görünür (kabuk CSS 229-234);
