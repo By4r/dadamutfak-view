@@ -75,10 +75,16 @@
   --sh-lg:0 18px 50px rgba(33,30,22,.16);
   --ease:cubic-bezier(.22,.61,.36,1);
   --wrap:1240px;
+  /* SABİT KABUK YÜKSEKLİĞİ (R1/D1) — topbar 40 + header 72 = 112px, mobilde tek kat 62px.
+     Yapışkan öğelerin (.dt-yan .pn-tabbar .lst-side .dgr-belge .fs-tabbar .dr-*) ofseti ve
+     .below-header / scroll-padding / scroll-margin BU TEK KAYNAKTAN türer. Elle sabit
+     yazmak 112/128/130/176/180/196 gibi altı farklı değer üretmişti (R1 keşif §K3). */
+  --chrome-h:112px;
 }
+@media (max-width:640px){ :root{ --chrome-h:62px; } }
 
 *{margin:0;padding:0;box-sizing:border-box}
-html{scroll-behavior:smooth;scroll-padding-top:128px}
+html{scroll-behavior:smooth;scroll-padding-top:calc(var(--chrome-h) + 16px)}
 body{
   font-family:"Gilroy",system-ui,sans-serif;
   font-weight:500;
@@ -104,9 +110,9 @@ img{display:block;max-width:100%}
 
 /* section head */
 .sec{padding:74px 0}
-/* fixed header offseti — sayfanın İLK section'ına bu class verilir
-   (topbar 40 + header 72 = 112px · mobil 62px) */
-.below-header{padding-top:112px}
+/* fixed header offseti — sayfanın İLK section'ına bu class verilir.
+   Değer var(--chrome-h)'den gelir; mobil kırılımı token'ın kendisinde (R1/D1). */
+.below-header{padding-top:var(--chrome-h)}
 /* ortak section header grid'i — aksiyon grubu (Tamamını Gör + oklar/tablar) h2 ile
    aynı satırda, açıklama altta tek başına: [eyebrow] / [h2 | tools] / [lead] (Revize T4 M1).
    Sol blok display:contents ile grid'e açılır — DOM aynı, ≤640 pattern'ı ile uyumlu */
@@ -428,8 +434,15 @@ body.is-auth .drawer-login{display:none}
    tablet 641–1024px · mobil ≤640px
    ========================================================= */
 
-/* yatay taşmayı global engelle */
+/* yatay taşmayı global engelle.
+   🔴 overflow-x:hidden tarayıcıyı body'yi scroll-container yapmaya zorluyor →
+   position:sticky viewport'a değil body'ye yapışıyor = ÖLÜ STICKY. overflow-x:clip
+   yatayı keser ama scroll-container ÜRETMEZ, overflow-y:visible kalır → sticky
+   gerçekten çalışır. Düzeltme daha önce yalnız katalog sayfalarının _facet.css'inde
+   vardı (3 sayfa); R1/D1'de kabuğa alındı → 13 sayfada yapışkan panel/sekme dirildi.
+   clip desteklemeyen tarayıcı hidden ile eski davranışta kalır (fallback). */
 html,body{overflow-x:hidden}
+@supports (overflow-x:clip){ html,body{overflow-x:clip} }
 
 /* sürükle-kaydır (mouse) imleci — yatay slider'lar */
 .drag-scroll.dragging{cursor:grabbing;user-select:none;scroll-behavior:auto}
@@ -649,8 +662,7 @@ html,body{overflow-x:hidden}
   body.is-auth .head-add,body.is-auth .head-bell,body.is-auth .acct-wrap{display:none}
   .icon-btn{width:40px;height:40px;font-size:15px}
 
-  /* fixed header offseti mobilde tek kat */
-  .below-header{padding-top:62px}
+  /* .below-header ofseti artık var(--chrome-h) token'ından geliyor (R1/D1) */
 
   /* bölüm ritmi */
   .sec{padding:44px 0}
@@ -730,7 +742,7 @@ textarea:focus-visible,summary:focus-visible,[tabindex]:focus-visible{
 .bottom-nav a:focus-visible,.drawer a:focus-visible,.drawer button:focus-visible{
   outline-color:#4FB8C9}
 /* odaklanan öğe yapışkan başlığın altında kalmasın */
-:target,.pf-pane:focus,[id]:focus{scroll-margin-top:128px}
+:target,.pf-pane:focus,[id]:focus{scroll-margin-top:calc(var(--chrome-h) + 16px)}
 
 /* ---- HAREKET AZALTMA: kullanıcı tercihine saygı (§23.3 ruhu + mobil kural).
    Süslü geçişler kapanır; DURUM DEĞİŞTİREN geçişler (açılır menü, çekmece)
@@ -1336,9 +1348,9 @@ body.is-auth .misafir-sec{display:none}
 .pagi-note{width:100%;font-size:12.5px;color:var(--muted);font-weight:500;margin-top:6px}
 
 /* 🔴 DERİN BAĞLANTI OFSETİ — scroll-margin EKLENMEZ.
-   Kabuk zaten `html{scroll-padding-top:128px}` taşıyor; scroll-padding-top
-   (container) ile scroll-margin-top (hedef) TOPLANIR → hedef 256px aşağıda
-   durur (ölçümle yakalandı). `.derin` yalnız anlamsal işaret. */
+   Kabuk zaten `html{scroll-padding-top:calc(var(--chrome-h) + 16px)}` taşıyor;
+   scroll-padding-top (container) ile scroll-margin-top (hedef) TOPLANIR → hedef iki
+   kat aşağıda durur (ölçümle yakalandı). `.derin` yalnız anlamsal işaret. */
 .derin{}
 
 /* ---- DURUM ROZETİ — panel-shell.html .pstat public karşılığı (radius-sm; pill YASAK)
@@ -1591,7 +1603,7 @@ a.drs-row:hover{color:var(--tomato)}
 .dt-sec{padding:44px 0 10px;background:var(--bg-white)}
 .dt-layout{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:46px;align-items:start}
 .dt-ana{min-width:0}
-.dt-yan{display:flex;flex-direction:column;gap:18px;position:sticky;top:128px}
+.dt-yan{display:flex;flex-direction:column;gap:18px;position:sticky;top:calc(var(--chrome-h) + 16px)}
 
 .dt-blok{padding-bottom:34px;margin-bottom:34px;border-bottom:1px solid var(--line)}
 .dt-blok:last-child{border-bottom:none;margin-bottom:0}
@@ -1705,7 +1717,7 @@ a.drs-row:hover{color:var(--tomato)}
 .pn-kpi .kp span{display:block;font-size:11.5px;font-weight:600;color:var(--muted);margin-top:3px}
 
 /* ---- yapışkan bölüm sekmeleri ---- */
-.pn-tabbar{position:sticky;top:112px;z-index:38;background:rgba(255,255,255,.94);
+.pn-tabbar{position:sticky;top:var(--chrome-h);z-index:38;background:rgba(255,255,255,.94);
   -webkit-backdrop-filter:blur(10px) saturate(150%);backdrop-filter:blur(10px) saturate(150%);
   border-bottom:1px solid var(--line)}
 .pn-tabbar .pf-tabs{gap:2px}
@@ -1776,7 +1788,7 @@ a.drs-row:hover{color:var(--tomato)}
   .pn-kim h1{font-size:25px}
 }
 @media (max-width:640px){
-  .pn-tabbar{top:62px}
+  /* .pn-tabbar ofseti var(--chrome-h)'den geliyor (R1/D1) — mobil override gereksiz */
   .pn-ava{width:58px;height:58px;font-size:18px}
   .pn-kim{gap:14px}
   .pn-kim h1{font-size:21px}
@@ -1874,7 +1886,7 @@ a.drs-row:hover{color:var(--tomato)}
 @media (max-width:640px){ .fb-sec > p{padding-left:0} }
 </style>
 </head>
-<body data-brand="campus">
+<body data-brand="campus" data-hero="1">
 <!-- ATLAMA BAĞLANTISI (§23.3) — klavye kullanıcısı topbar + 4 menü + drawer +
      alt barı atlayıp doğrudan içeriğe geçebilsin. Odaklanınca görünür olur. -->
 <a class="skip" href="#pageMain"><i class="fa-solid fa-arrow-down" aria-hidden="true"></i> İçeriğe atla</a>
@@ -3007,14 +3019,27 @@ a.drs-row:hover{color:var(--tomato)}
 if(location.search.indexOf('dd=1')>-1){document.querySelector('.nav-item').classList.add('open');var _l=document.getElementById('tbLang');if(_l)_l.classList.add('open');}
 if(location.search.indexOf('drawer=1')>-1){window.addEventListener('DOMContentLoaded',function(){document.getElementById('drawer').classList.add('open');document.getElementById('drawerOverlay').classList.add('open');var _s=document.querySelector('.d-has-sub');if(_s)_s.classList.add('open');});}
 
-// header: VARSAYILAN katı (içerik sayfası). heroMode=true → hero üstünde şeffaf,
-// ~60px scroll sonrası katı (v3a davranışı; ?hdr=solid ile yine zorla katı)
+// header: VARSAYILAN katı (içerik sayfası). data-hero="1" → koyu hero üstünde şeffaf,
+// ~60px scroll sonrası katı (v3a davranışı; ?hdr=solid ile yine zorla katı).
+//
+// 🔴 R1/D1: heroMode ARTIK SABİT DEĞİL. Eskiden kabukta `true` yazılıydı ve üretici onu
+// 25 sayfaya aynen kopyalıyordu → koyu hero'su OLMAYAN sayfalarda (ders + 5 panel) header
+// beyaz metin/beyaz logo ile beyaz veya #f9f9f9 zemin üstünde kalıyor, görünmez oluyordu.
+// Bayrak <body data-hero> niteliğinden okunuyor; değeri tasks/campus-sayfa-uret.py'deki
+// SAYFALAR sözlüğündeki `hero` alanı yazar. Statik olduğu için ilk boyamada da doğru (FOUC yok).
+//
+// DCHdr.tazele(): sayfa JS'i koyu hero yerine beyaz bir boş/kapı bölümü açtığında
+// document.body.dataset.hero='0' yazıp bunu çağırır → header katıya döner.
 (function(){
   var header=document.querySelector('.header');
-  var heroMode=true;                                   // full-viewport hero — header şeffaf, ~60px scroll'da katı
+  if(!header)return;
   var forceSolid=location.search.indexOf('hdr=solid')>-1;
-  if(!heroMode||forceSolid)return;                     // katı kal — at-top hiç eklenmez
-  function onScroll(){ if(window.scrollY<60){header.classList.add('at-top');} else {header.classList.remove('at-top');} }
+  function heroMode(){ return document.body.getAttribute('data-hero')==='1' && !forceSolid; }
+  function onScroll(){
+    if(heroMode() && window.scrollY<60){ header.classList.add('at-top'); }
+    else { header.classList.remove('at-top'); }
+  }
+  window.DCHdr={ tazele:onScroll };
   onScroll(); window.addEventListener('scroll',onScroll,{passive:true});
 })();
 
