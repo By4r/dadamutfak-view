@@ -2147,23 +2147,29 @@ a.drs-row:hover{color:var(--tomato)}
 .dr-ilerleme{flex:none;width:210px}
 .dr-bar-cta{flex:none;display:flex;gap:9px}
 
-/* ---- SEKME BARI: yalnız mobil (§23.2) ---- */
-.dr-tabbar{display:none;position:sticky;top:var(--chrome-h);z-index:37;background:var(--paper);border-bottom:1px solid var(--line);margin-top:var(--chrome-h)}
-.dr-tabbar .pf-tabbar{border-bottom:none;margin:0}
-
-/* ---- ÜÇ KOLON YERLEŞİM ---- */
-/* R1/D5: üç sütunun İÇ PADDING'i eşitlendi (18 / 24 / 18 idi → hepsi 20) ve
-   yapışkan ofset tek formülden türüyor: kabuk + bölüm üst boşluğu. */
-/* 🔴 Sabit kabuk ofseti artık BURADA: .dr-bar DOM'dan kalkınca onunla birlikte
-   .below-header dolgusu da gitmişti ve gövde header'ın altına giriyordu.
-   Üst dolgu = kabuk + bölüm boşluğu → yapışkan sütunların YAPIŞMA EŞİĞİ ile
-   DOĞAL KONUMU birebir aynı olur, açılışta zıplama olmaz. */
+/* ---- İKİ KOLON YERLEŞİM (R2/1) ----
+   R1/D5'te üç sütundu: içerik(290) · oynatıcı(1fr) · notlar(300). 1440'ta orta
+   sütuna yalnız 534px kalıyor, oynatıcı 480px'e sıkışıyor, iki yan sütunun altında
+   ölü boşluk kalıyordu (ölçüm: ağaç 413px, notlar 514px, gövde 2301px).
+   R2'de iki kolon: SOL = oynatıcı + sekmeli gövde · SAĞ = içerik listesi ÜSTTE,
+   notlarım ALTINDA, tek yapışkan ray. Ray genişliği detay sayfalarının yan
+   paneliyle AYNI (340px — _detay.css `.dt-layout`), ayrı ölçü üretilmedi. */
+/* 🔴 Sabit kabuk ofseti BURADA: üst dolgu = kabuk + bölüm boşluğu → yapışkan rayın
+   YAPIŞMA EŞİĞİ ile DOĞAL KONUMU birebir aynı olur, açılışta zıplama olmaz. */
 .dr-sec{padding:calc(var(--chrome-h) + var(--sec-y) * .45) 0 var(--sec-y);background:var(--bg-cream)}
-.dr-layout{display:grid;grid-template-columns:290px minmax(0,1fr) 300px;gap:26px;align-items:start}
-.dr-agac,.dr-not{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-lg);
-  padding:20px;position:sticky;top:calc(var(--chrome-h) + var(--sec-y) * .45);
-  max-height:calc(100vh - var(--chrome-h) - var(--sec-y)); overflow-y:auto;scrollbar-width:thin}
-.dr-ana{min-width:0;background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-lg);padding:20px 26px 28px}
+.dr-layout{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:22px 26px;align-items:start}
+
+/* oynatıcı: kart çerçevesi YOK — sahne ve kontrol barı kendi yüzeyini taşıyor,
+   böylece sol sütunun tam genişliğini kullanır. */
+.dr-ana{grid-column:1;grid-row:1;min-width:0}
+/* sekmeli gövde: kart yüzeyi (eski `.dr-ana` kartının değerleri birebir) */
+.dr-govde{grid-column:1;grid-row:2;min-width:0;background:var(--paper);border:1px solid var(--line);
+  border-radius:var(--radius-lg);padding:20px 26px 28px}
+/* yapışkan ray — iki panelin üst ofseti ray üzerinden ORTAK, ayrı ayrı yazılmaz */
+.dr-yan{grid-column:2;grid-row:1 / span 2;display:flex;flex-direction:column;gap:20px;
+  position:sticky;top:calc(var(--chrome-h) + var(--sec-y) * .45);
+  max-height:calc(100vh - var(--chrome-h) - var(--sec-y) * .9);overflow-y:auto;scrollbar-width:thin}
+.dr-agac,.dr-not{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-lg);padding:20px}
 .dr-agac-head{display:flex;align-items:center;justify-content:space-between;gap:10px;
   padding-bottom:13px;margin-bottom:13px;border-bottom:1px solid var(--line)}
 .dr-agac-head b{font-size:12px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}
@@ -2185,7 +2191,7 @@ a.drs-row:hover{color:var(--tomato)}
 .dr-agac .drs-row .drs-etiket{display:none}   /* dar kolonda etiket yerine ikon yeter */
 
 /* ---- OYNATMA KABUĞU (`.ply`) ---- */
-.ply{margin-bottom:22px}
+.ply{margin-bottom:0}
 .ply-stage{position:relative;aspect-ratio:16/9;border-radius:var(--radius-md);overflow:hidden;
   background:#101b1f center/cover no-repeat;display:grid;place-items:center}
 .ply-stage::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(10,20,24,.30),rgba(10,20,24,.62))}
@@ -2213,7 +2219,7 @@ a.drs-row:hover{color:var(--tomato)}
 .ply-not i{flex:none;margin-top:3px;color:var(--tomato);font-size:11px}
 
 /* ---- ders gövdesi ---- */
-.dr-ana h1{font-size:25px;letter-spacing:-.02em;margin-bottom:6px}
+.dr-govde h1{font-size:25px;letter-spacing:-.02em;margin-bottom:6px}
 .dr-yol{font-size:12.5px;font-weight:600;color:var(--muted);margin-bottom:20px}
 .dr-ic-tabbar{margin-bottom:20px}
 .dr-alt{font-size:13.5px;font-weight:500;color:var(--muted);line-height:1.6;margin-bottom:16px}
@@ -2297,10 +2303,21 @@ a.drs-row:hover{color:var(--tomato)}
 .dr-not-kart p{font-size:13px;font-weight:500;color:var(--slate-2);line-height:1.55}
 .dr-not-kart .nk-ders{display:block;font-size:11px;color:var(--muted);font-weight:600;margin-top:5px}
 
+/* ============ DAR EKRAN (R2/1) ============
+   ≤1024'te tek kolon. Sıra: OYNATICI → İÇERİK LİSTESİ → GÖVDE SEKMELERİ → NOTLARIM.
+   Sıra `order` ile kuruluyor; ray (`.dr-yan`) `display:contents` ile kutu olmaktan
+   çıkıyor, iki paneli doğrudan yerleşimin çocuğu oluyor — markup çoğaltılmadı.
+   R1/D5'in ≤640 sekme barı KALKTI: üç panelden birini gösteren anahtar, iki kolona
+   inince karşılıksız kaldı; paneller artık gizlenmiyor, sırayla diziliyor. */
 @media (max-width:1024px){
-  .dr-layout{grid-template-columns:260px minmax(0,1fr)}
-  /* notlar paneli mobil öncesi alt satıra iner, tam genişlik */
-  .dr-not{grid-column:1 / -1;position:static;max-height:none}
+  /* align-items:start temel kuralda ızgara için yazılı; esnek kolonda
+     çapraz eksene düşer ve panelleri içerik genişliğine büzer → stretch. */
+  .dr-layout{display:flex;flex-direction:column;gap:18px;align-items:stretch}
+  .dr-ana{order:1}
+  .dr-yan{display:contents}
+  .dr-agac{order:2}
+  .dr-govde{order:3}
+  .dr-not{order:4}
   .dr-iki{grid-template-columns:1fr;gap:20px}
   .h-mode .dr-ilerleme{width:150px}
 }
@@ -2308,17 +2325,9 @@ a.drs-row:hover{color:var(--tomato)}
   .h-mode .dr-ilerleme{display:none}
   .h-mode .dr-bar-cta .btn span{display:none}
   .h-mode .dr-geri small{display:none}
-  /* §23.2 — sekmeli düzen: üç panelden yalnız biri görünür */
-  .dr-tabbar{display:block}
-  /* sekme barı gövdenin üstünde duruyor → gövde dolgusu yalnız bölüm boşluğu kadar */
-  .dr-sec{padding-top:calc(var(--sec-y) * .45)}
-  .dr-layout{display:block}
-  .dr-agac,.dr-not,.dr-ana{position:static;max-height:none;margin-bottom:0}
-  .dr-layout [data-dp]{display:none}
-  .dr-layout [data-dp].dr-acik{display:block}
-  .dr-ana{padding:18px 16px 22px;border-radius:var(--radius-md)}
+  .dr-govde{padding:18px 16px 22px;border-radius:var(--radius-md)}
   .dr-agac,.dr-not{padding:16px;border-radius:var(--radius-md)}
-  .dr-ana h1{font-size:20px}
+  .dr-govde h1{font-size:20px}
   .ply-bar{gap:8px}
   .ply-track{min-width:70px}
 }
@@ -2799,33 +2808,12 @@ a.drs-row:hover{color:var(--tomato)}
   </div>
 </section>
 
-<!-- ===== SEKME BARI — YALNIZ ≤640'ta görünür (§23.2) ===== -->
-<div class="dr-tabbar" id="drTabbar">
-  <div class="wrap">
-    <div class="pf-tabs" role="tablist" aria-label="Ders ekranı bölümleri">
-      <button class="active" type="button" role="tab" aria-selected="true" data-dt="video"><i class="fa-solid fa-play"></i> Ders</button>
-      <button type="button" role="tab" aria-selected="false" data-dt="agac"><i class="fa-solid fa-list-ol"></i> İçerik</button>
-      <button type="button" role="tab" aria-selected="false" data-dt="not"><i class="fa-regular fa-pen-to-square"></i> Notlarım</button>
-    </div>
-  </div>
-</div>
-
 <section class="dr-sec">
   <div class="wrap">
     <div class="dr-layout">
 
-      <!-- ---------- SOL: içerik ağacı (§7.4 bölüm-ders hiyerarşisi) ---------- -->
-      <aside class="dr-agac" id="drAgacPane" data-dp="agac">
-        <div class="dr-agac-head">
-          <b>İçerik</b>
-          <span id="drAgacSay"></span>
-        </div>
-        <div class="drs" id="drAgac"></div>
-      </aside>
-
-      <!-- ---------- ORTA: oynatıcı + ders içeriği ---------- -->
-      <div class="dr-ana" data-dp="video">
-
+      <!-- ---------- SOL 1/2: oynatıcı ---------- -->
+      <div class="dr-ana">
         <!-- oynatma kabuğu (gerçek video dosyası yok — poster + kontroller) -->
         <div class="ply">
           <div class="ply-stage" id="plyStage">
@@ -2852,7 +2840,10 @@ a.drs-row:hover{color:var(--tomato)}
             adım özeti aşağıda gerçek içerik olarak yer alır.
           </p>
         </div>
+      </div>
 
+      <!-- ---------- SOL 2/2: sekmeli ders gövdesi ---------- -->
+      <div class="dr-govde">
         <h1 id="drDersAd"></h1>
         <p class="dr-yol" id="drYol"></p>
 
@@ -2926,23 +2917,37 @@ a.drs-row:hover{color:var(--tomato)}
         <div class="dr-gez" id="drGez"></div>
       </div>
 
-      <!-- ---------- SAĞ: notlarım (§12.4 zaman damgalı) ---------- -->
-      <aside class="dr-not" id="drNotPane" data-dp="not">
-        <div class="dr-agac-head">
-          <b>Notlarım</b>
-          <span id="drNotSay"></span>
-        </div>
-        <form class="dr-not-form" id="drNotForm">
-          <label class="sr-only" for="drNotInput">Yeni not</label>
-          <textarea class="fk-textarea" id="drNotInput" placeholder="Bu an için not al…"></textarea>
-          <div class="dr-not-foot">
-            <span class="dr-damga" id="drDamga">00:00</span>
-            <button class="btn btn-primary" type="submit"><i class="fa-solid fa-plus"></i> Ekle</button>
+      <!-- ---------- SAĞ RAY (R2/1): içerik listesi üstte, notlarım altında.
+           Tek yapışkan sütun; ikisinin üst ofseti ray üzerinden ORTAK. ---------- -->
+      <div class="dr-yan">
+        <!-- içerik ağacı (§7.4 bölüm-ders hiyerarşisi) -->
+        <aside class="dr-agac" id="drAgacPane" aria-label="Eğitim içeriği">
+          <div class="dr-agac-head">
+            <b>İçerik</b>
+            <span id="drAgacSay"></span>
           </div>
-        </form>
-        <div class="dr-not-liste" id="drNotListe"></div>
-        <a class="see-all" href="dadacampus-kampusum-v1.html?bolum=notlarim" style="margin-top:14px">Tüm notlarım <i class="fa-solid fa-arrow-right"></i></a>
-      </aside>
+          <div class="drs" id="drAgac"></div>
+        </aside>
+
+        <!-- notlarım (§12.4 zaman damgalı) -->
+        <aside class="dr-not" id="drNotPane" aria-label="Notlarım">
+          <div class="dr-agac-head">
+            <b>Notlarım</b>
+            <span id="drNotSay"></span>
+          </div>
+          <form class="dr-not-form" id="drNotForm">
+            <label class="sr-only" for="drNotInput">Yeni not</label>
+            <textarea class="fk-textarea" id="drNotInput" placeholder="Bu an için not al…"></textarea>
+            <div class="dr-not-foot">
+              <span class="dr-damga" id="drDamga">00:00</span>
+              <button class="btn btn-primary" type="submit"><i class="fa-solid fa-plus"></i> Ekle</button>
+            </div>
+          </form>
+          <div class="dr-not-liste" id="drNotListe"></div>
+          <a class="see-all" href="dadacampus-kampusum-v1.html?bolum=notlarim" style="margin-top:14px">Tüm notlarım <i class="fa-solid fa-arrow-right"></i></a>
+        </aside>
+      </div>
+
     </div>
   </div>
 </section>
@@ -4420,22 +4425,9 @@ window.__bottomStrips=window.__bottomStrips||[];
     });
   });
 
-  /* ---- MOBİL SEKME DÜZENİ (§23.2) ------------------------------------- */
-  function panelSec(ad) {
-    [].slice.call(document.querySelectorAll('.dr-layout [data-dp]')).forEach(function (x) {
-      x.classList.toggle('dr-acik', x.getAttribute('data-dp') === ad);
-    });
-    [].slice.call(document.querySelectorAll('#drTabbar button[data-dt]')).forEach(function (x) {
-      var on = x.getAttribute('data-dt') === ad;
-      x.classList.toggle('active', on);
-      x.setAttribute('aria-selected', on ? 'true' : 'false');
-    });
-  }
-  panelSec('video');
-  byId('drTabbar').addEventListener('click', function (ev) {
-    var b = ev.target.closest('button[data-dt]');
-    if (b) panelSec(b.getAttribute('data-dt'));
-  });
+  /* R2/1: mobil sekme düzeni KALKTI — dar ekranda üç panel gizlenmiyor, sırayla
+     diziliyor (oynatıcı → içerik listesi → gövde sekmeleri → notlarım). Anahtar
+     bar DOM'dan çıktığı için onu süren kod da kaldırıldı. */
 })();
 </script>
 </body>
