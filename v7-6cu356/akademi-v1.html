@@ -2871,6 +2871,82 @@ document.addEventListener('click',function(e){
   document.getElementById('cookieReject').addEventListener('click',function(){dismiss('rejected');});
 })();
 
+/* ===== KABUK JS — DETAY SAYFASI İSKELETİ (R1/D6) =====
+   Üç detay sayfası (eğitim · program · atölye) 9-13 bloklu tek akıştı. Bu blok
+   üçünü de aynı davranışa bağlar; sayfa JS'lerine kopyalanmaz:
+     1) her .dt-blok başlığı akordiyon düğmesine döner (a11y: gerçek <button>,
+        aria-expanded + aria-controls),
+     2) data-kapali taşıyan bloklar kapalı açılır,
+     3) yan sütuna bölüm listesi basılır ve kaydırdıkça aktif bölüm işaretlenir.
+   Yalnız .dt-layout taşıyan sayfada çalışır; başka sayfaya dokunmaz. */
+(function(){
+  var ana=document.querySelector('.dt-ana'), yan=document.querySelector('.dt-yan');
+  if(!ana)return;
+  var bloklar=[].slice.call(ana.querySelectorAll('.dt-blok'));
+  if(!bloklar.length)return;
+
+  bloklar.forEach(function(b,i){
+    var h=b.querySelector('h2'); if(!h)return;
+    if(!b.id)b.id='dtb-'+i;
+    var govde=document.createElement('div');
+    govde.className='dt-govde'; govde.id=b.id+'-govde';
+    while(h.nextSibling)govde.appendChild(h.nextSibling);
+    b.appendChild(govde);
+
+    /* 🔴 h2 KALDIRILMAZ: başlık semantiği ve sayfa taslağı korunur. Erişilebilir
+       açılır-kapanır deseni h2 > button'dur; başlık düğümü yerinde kalır. */
+    var btn=document.createElement('button');
+    btn.type='button'; btn.className='dt-ac';
+    btn.setAttribute('aria-controls',govde.id);
+    btn.innerHTML=h.innerHTML+'<i class="fa-solid fa-chevron-down dt-car" aria-hidden="true"></i>';
+    h.innerHTML=''; h.appendChild(btn); h.classList.add('dt-baslik');
+
+    var kapali=b.hasAttribute('data-kapali');
+    b.classList.toggle('acik',!kapali);
+    btn.setAttribute('aria-expanded',kapali?'false':'true');
+    btn.addEventListener('click',function(){
+      var acik=b.classList.toggle('acik');
+      btn.setAttribute('aria-expanded',acik?'true':'false');
+    });
+  });
+
+  /* --- yan sütun bölüm listesi --- */
+  if(yan){
+    var nav=document.createElement('nav');
+    nav.className='dt-nav'; nav.setAttribute('aria-label','Sayfa bölümleri');
+    nav.innerHTML='<h3>Bu sayfada</h3>'+bloklar.map(function(b){
+      var btn=b.querySelector('.dt-ac');
+      var ad=(btn?btn.textContent:'').trim();
+      var ikon=b.querySelector('.dt-ac i');
+      return '<a href="#'+b.id+'"><i class="fa-solid '+
+        (ikon&&ikon.className.match(/fa-[a-z0-9-]+/g)||['fa-circle-dot']).slice(-1)[0]+
+        '"></i> '+ad+'</a>';
+    }).join('');
+    yan.insertBefore(nav,yan.firstChild);
+
+    nav.addEventListener('click',function(ev){
+      var a=ev.target.closest&&ev.target.closest('a[href^="#"]'); if(!a)return;
+      var b=document.getElementById(a.getAttribute('href').slice(1));
+      if(b&&!b.classList.contains('acik')){
+        b.classList.add('acik');
+        var btn=b.querySelector('.dt-ac'); if(btn)btn.setAttribute('aria-expanded','true');
+      }
+    });
+
+    if('IntersectionObserver' in window){
+      var io=new IntersectionObserver(function(gir){
+        gir.forEach(function(g){
+          if(!g.isIntersecting)return;
+          nav.querySelectorAll('a').forEach(function(a){
+            a.classList.toggle('is-on',a.getAttribute('href')==='#'+g.target.id);
+          });
+        });
+      },{rootMargin:'-20% 0px -70% 0px'});
+      bloklar.forEach(function(b){io.observe(b);});
+    }
+  }
+})();
+
 /* ===== KABUK JS — SSS/akordeon (tek-açık, DELEGASYON) =====
    🔴 Neden delegasyon: üretilen sayfalarda içerik JS'i bu blokTAN SONRA çalışır;
    parse anında querySelectorAll ile bağlamak sonradan render edilen maddeleri

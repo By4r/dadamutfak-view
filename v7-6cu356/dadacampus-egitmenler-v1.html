@@ -1681,7 +1681,13 @@ a.drs-row:hover{color:var(--tomato)}
 .dt-erisim b{color:#fff;font-weight:700}
 
 /* ---- iki kolon ---- */
-.dt-sec{padding:calc(var(--sec-y) * .7) 0 0;background:var(--bg-white)}
+/* 🔴 R1/D6: markup'ta `class="lst-sec dt-sec"` yazıyordu ama `.lst-sec` YALNIZ
+   katalog sayfalarına giren _facet.css'te tanımlı — detay sayfalarında ölü sınıftı
+   ve onunla birlikte hero→gövde yumuşak geçişi de kayıptı (sert renk kesimi).
+   Geçiş burada, katalog sayfalarındakiyle AYNI değerlerle kuruluyor. */
+.dt-sec{padding:calc(var(--sec-y) * .7) 0 0;background:var(--bg-white);
+  border-radius:22px 22px 0 0;margin-top:-22px;position:relative;z-index:2;
+  box-shadow:0 -12px 32px rgba(20,16,10,.18)}
 .dt-layout{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:46px;align-items:start}
 .dt-ana{min-width:0}
 .dt-yan{display:flex;flex-direction:column;gap:18px;position:sticky;top:calc(var(--chrome-h) + 16px)}
@@ -1757,6 +1763,105 @@ a.drs-row:hover{color:var(--tomato)}
   .dt-yan{flex-direction:column}
   .dt-yan > *{min-width:0}
 }
+
+
+/* ============================================================================
+   R1/D6 — UZUN DETAY SAYFASI: ÖZET · BÖLÜM NAVİGASYONU · AKORDİYON · ÜYELİK DUVARI
+   Üç detay sayfası (eğitim, program, atölye) 9-13 blok taşıyor ve tek akışta
+   uzayıp gidiyordu. Yeni AİLE üretilmedi: hepsi mevcut `.dt-*` ailesinin
+   modifier'ları, kilit dili `.drs-row.kilitli` deseninden devralındı.
+   ========================================================================= */
+
+/* ---- 1) SOL SÜTUN ÖZETİ — sağ paneldeki ilk kartla AYNI çizgide başlar ---- */
+/* KÜNYE ŞERİDİ — hero'daki tanıtım cümlesi TEKRARLANMAZ; blok, kayıt kararını
+   etkileyen sayısal künyeyi taşır ve sağ paneldeki ilk kartla aynı çizgide başlar. */
+.dt-ozet{background:var(--tomato-tint);border:1px solid rgba(var(--tomato-rgb),.22);
+  border-radius:var(--radius-lg);padding:16px 22px;margin-bottom:30px}
+.dt-ozet .dt-ozet-kunye{display:flex;flex-wrap:wrap;gap:10px 22px}
+.dt-ozet .dt-ozet-kunye span{display:inline-flex;align-items:center;gap:8px;
+  font-size:13px;font-weight:600;color:var(--slate)}
+.dt-ozet .dt-ozet-kunye i{color:var(--tomato);font-size:12px}
+.dt-ozet .dt-ozet-kunye b{font-weight:800}
+
+/* ---- 2) BÖLÜM NAVİGASYONU — yan sütunun en üstünde, yapışkan ---- */
+.dt-nav{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-lg);padding:14px 8px 10px}
+.dt-nav h3{font-size:11px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--muted);padding:0 12px 10px}
+.dt-nav a{display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:var(--radius-sm);
+  font-size:13.5px;font-weight:600;color:var(--slate-2);transition:.16s var(--ease)}
+.dt-nav a i{flex:none;width:16px;text-align:center;color:var(--muted);font-size:11px;transition:.16s}
+.dt-nav a:hover{background:var(--tomato-tint);color:var(--tomato)}
+.dt-nav a:hover i{color:var(--tomato)}
+.dt-nav a.is-on{background:var(--tomato);color:#fff;font-weight:700}
+.dt-nav a.is-on i{color:#fff}
+
+/* ---- 3) AKORDİYON — blok başlığı düğmeye döner, uzun bloklar kapalı açılır ---- */
+.dt-blok > .dt-baslik{margin:0 0 10px}
+.dt-blok .dt-ac{display:flex;align-items:center;gap:11px;width:100%;text-align:left;
+  background:none;border:none;padding:0;margin:0 0 10px;cursor:pointer;font-family:inherit;
+  font-size:22px;font-weight:700;color:var(--slate);letter-spacing:-.02em;line-height:1.12}
+.dt-blok .dt-ac i:first-child{flex:none;width:38px;height:38px;border-radius:var(--radius-md);
+  background:var(--tomato-tint);color:var(--tomato);display:grid;place-items:center;font-size:15px}
+.dt-blok .dt-ac .dt-car{margin-left:auto;flex:none;width:auto;height:auto;background:none;
+  color:var(--muted);font-size:14px;transition:transform .25s var(--ease)}
+.dt-blok .dt-ac:hover .dt-car{color:var(--tomato)}
+.dt-blok.acik .dt-ac .dt-car{transform:rotate(180deg)}
+.dt-blok > .dt-govde{display:none}
+.dt-blok.acik > .dt-govde{display:block;animation:fadeUp .3s var(--ease)}
+
+/* ---- 4) ÜYELİK DUVARI (karar C3=B) — YENİ KAPI BİLEŞENİ ÜRETİLMEDİ,
+   `.drs-row.kilitli` dilinin blok ölçeğindeki karşılığı. İçerik GİZLENMEZ,
+   yerine ne olduğu ve nasıl açılacağı yazılır; §15.1 gereği belge türü ve
+   değerlendirme BİÇİMİ duvarın DIŞINDA kalır. ---- */
+.dt-blok.kilitli .dt-ac{color:var(--muted)}
+.dt-blok.kilitli .dt-ac i:first-child{background:var(--bg);color:var(--muted)}
+.dt-kilit{display:flex;align-items:center;gap:18px;flex-wrap:wrap;justify-content:space-between;
+  background:var(--paper);border:1px dashed #cfd9dc;border-radius:var(--radius-lg);padding:20px 24px}
+.dt-kilit .dk-ico{flex:none;width:44px;height:44px;border-radius:var(--radius-md);
+  background:var(--bg);color:var(--muted);display:grid;place-items:center;font-size:17px}
+.dt-kilit .dk-txt{flex:1;min-width:220px}
+.dt-kilit .dk-txt b{display:block;font-size:15px;color:var(--slate);font-weight:700;margin-bottom:3px}
+.dt-kilit .dk-txt p{font-size:13.5px;color:var(--muted);font-weight:500;line-height:1.55}
+
+@media (max-width:1024px){
+  .dt-nav{display:none}                 /* yan sütun alta indiğinde bölüm listesi anlamını yitirir */
+  .dt-ozet{padding:18px 18px}
+}
+
+
+/* ============================================================================
+   R1/D6 — DETAY GÖVDESİ TİPOGRAFİ AHENGİ
+   Ölçüm (atölye detay, 1440): gövde metninde SEKİZ farklı punto, ON farklı satır
+   yüksekliği ve satır başına 113 KARAKTER vardı (rahat okuma ~65-75). Ölçek beş
+   kademeye indi, satır yüksekliği tek orana bağlandı, düz metin okuma genişliğiyle
+   sınırlandı. Tablo, ızgara ve kart içi metin bu sınırdan MUAF — orada genişlik
+   sütun düzenini taşır.
+   Kademeler: 22 başlık · 15 giriş · 14 gövde · 13.5 ikincil · 12.5 künye/etiket
+   ========================================================================= */
+.dt-ana{line-height:1.65}
+
+/* düz metin: okuma genişliği + tek satır yüksekliği.
+   Kart/ızgara/tablo içindekiler AYRI (aşağıdaki muafiyet listesi). */
+.dt-ana p,
+.dt-ana .dt-alt{max-width:58ch;line-height:1.65}
+.dt-ana .dt-alt{font-size:15px}
+.dt-ana > .dt-blok > .dt-govde > p{font-size:14.5px;color:var(--slate-2)}
+
+/* madde listeleri tek kademede */
+.dt-ana .mad li{font-size:14px;line-height:1.6}
+
+/* künye / etiket kademesi: 12px ve 13px kaçakları 12.5-13.5'e oturur */
+.dt-ana .inf span,.dt-ana .inf small,.dt-ana small{font-size:12.5px;line-height:1.55}
+.dt-ana .dt-h3{font-size:12.5px}
+
+/* tablo, ızgara ve kart içi MUAF — genişlik sınırı sütun düzenini bozmasın */
+.dt-ana .ptable p,.dt-ana .ptable td,.dt-ana .dt-iki p,
+.dt-ana .crs-grid p,.dt-ana .ak-grid p,.dt-ana .mdl p,
+.dt-ana .crs-card p,.dt-ana .ak-card p,.dt-ana .kurum-gate p,
+.dt-ana .dt-kilit p,.dt-ana .inf p,.dt-ana .pstat,.dt-ana .faq-a p{max-width:none}
+
+/* punto kaçakları tek kademeye: 12→12.5 · 13→13.5 */
+.dt-ana .drs-row .drs-sure,.dt-ana .tkv small,.dt-ana .bsv small{font-size:12.5px}
 
 /* ============================================================================
    DadaCampus — ORTAK PANEL / KİŞİSEL ALAN YERLEŞİMİ (`.pn-*`)
@@ -3513,6 +3618,82 @@ document.addEventListener('click',function(e){
   }
   document.getElementById('cookieAccept').addEventListener('click',function(){dismiss('accepted');});
   document.getElementById('cookieReject').addEventListener('click',function(){dismiss('rejected');});
+})();
+
+/* ===== KABUK JS — DETAY SAYFASI İSKELETİ (R1/D6) =====
+   Üç detay sayfası (eğitim · program · atölye) 9-13 bloklu tek akıştı. Bu blok
+   üçünü de aynı davranışa bağlar; sayfa JS'lerine kopyalanmaz:
+     1) her .dt-blok başlığı akordiyon düğmesine döner (a11y: gerçek <button>,
+        aria-expanded + aria-controls),
+     2) data-kapali taşıyan bloklar kapalı açılır,
+     3) yan sütuna bölüm listesi basılır ve kaydırdıkça aktif bölüm işaretlenir.
+   Yalnız .dt-layout taşıyan sayfada çalışır; başka sayfaya dokunmaz. */
+(function(){
+  var ana=document.querySelector('.dt-ana'), yan=document.querySelector('.dt-yan');
+  if(!ana)return;
+  var bloklar=[].slice.call(ana.querySelectorAll('.dt-blok'));
+  if(!bloklar.length)return;
+
+  bloklar.forEach(function(b,i){
+    var h=b.querySelector('h2'); if(!h)return;
+    if(!b.id)b.id='dtb-'+i;
+    var govde=document.createElement('div');
+    govde.className='dt-govde'; govde.id=b.id+'-govde';
+    while(h.nextSibling)govde.appendChild(h.nextSibling);
+    b.appendChild(govde);
+
+    /* 🔴 h2 KALDIRILMAZ: başlık semantiği ve sayfa taslağı korunur. Erişilebilir
+       açılır-kapanır deseni h2 > button'dur; başlık düğümü yerinde kalır. */
+    var btn=document.createElement('button');
+    btn.type='button'; btn.className='dt-ac';
+    btn.setAttribute('aria-controls',govde.id);
+    btn.innerHTML=h.innerHTML+'<i class="fa-solid fa-chevron-down dt-car" aria-hidden="true"></i>';
+    h.innerHTML=''; h.appendChild(btn); h.classList.add('dt-baslik');
+
+    var kapali=b.hasAttribute('data-kapali');
+    b.classList.toggle('acik',!kapali);
+    btn.setAttribute('aria-expanded',kapali?'false':'true');
+    btn.addEventListener('click',function(){
+      var acik=b.classList.toggle('acik');
+      btn.setAttribute('aria-expanded',acik?'true':'false');
+    });
+  });
+
+  /* --- yan sütun bölüm listesi --- */
+  if(yan){
+    var nav=document.createElement('nav');
+    nav.className='dt-nav'; nav.setAttribute('aria-label','Sayfa bölümleri');
+    nav.innerHTML='<h3>Bu sayfada</h3>'+bloklar.map(function(b){
+      var btn=b.querySelector('.dt-ac');
+      var ad=(btn?btn.textContent:'').trim();
+      var ikon=b.querySelector('.dt-ac i');
+      return '<a href="#'+b.id+'"><i class="fa-solid '+
+        (ikon&&ikon.className.match(/fa-[a-z0-9-]+/g)||['fa-circle-dot']).slice(-1)[0]+
+        '"></i> '+ad+'</a>';
+    }).join('');
+    yan.insertBefore(nav,yan.firstChild);
+
+    nav.addEventListener('click',function(ev){
+      var a=ev.target.closest&&ev.target.closest('a[href^="#"]'); if(!a)return;
+      var b=document.getElementById(a.getAttribute('href').slice(1));
+      if(b&&!b.classList.contains('acik')){
+        b.classList.add('acik');
+        var btn=b.querySelector('.dt-ac'); if(btn)btn.setAttribute('aria-expanded','true');
+      }
+    });
+
+    if('IntersectionObserver' in window){
+      var io=new IntersectionObserver(function(gir){
+        gir.forEach(function(g){
+          if(!g.isIntersecting)return;
+          nav.querySelectorAll('a').forEach(function(a){
+            a.classList.toggle('is-on',a.getAttribute('href')==='#'+g.target.id);
+          });
+        });
+      },{rootMargin:'-20% 0px -70% 0px'});
+      bloklar.forEach(function(b){io.observe(b);});
+    }
+  }
 })();
 
 /* ===== KABUK JS — SSS/akordeon (tek-açık, DELEGASYON) =====
