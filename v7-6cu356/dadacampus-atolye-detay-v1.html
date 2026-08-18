@@ -361,7 +361,6 @@ body.is-auth .drawer-login{display:none}
    kabukta tanımlı ama kullanılmayan .dd-col canlandırıldı. */
 .mega-cats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px 26px;align-content:start}
 .mega-cats .dd-col{display:flex;flex-direction:column;min-width:0}
-.mega-cats .mega-cat-all{grid-column:1/-1;margin-top:10px}
 .mega-cats a{
   display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:var(--radius-md);
   font-size:14.5px;font-weight:500;color:var(--slate);transition:.16s var(--ease);line-height:1.25;
@@ -1756,24 +1755,47 @@ a.drs-row:hover{color:var(--tomato)}
    doğururdu (docs/KARARLAR.md Faz 4).
    ========================================================================= */
 
-/* ---- kimlik şeridi ---- */
-.pn-top{background:var(--bg-cream);border-bottom:1px solid var(--line);padding-bottom:calc(var(--sec-y) * .45)}
-.pn-head{display:flex;align-items:flex-end;justify-content:space-between;gap:28px;flex-wrap:wrap}
+/* ---- KİMLİK BANNER'I (R1/D4) ------------------------------------------------
+   Önce düz krem bir şeritti: banner sayılmıyordu, sayfanın üstü boş ve sönük
+   duruyordu (Beyar: "Kampüsüm banner'ı kötü ve görünmüyor"). DadaGastro'nun hesap
+   sayfası (.hs-top) referans alındı: koyu fotoğraf + gradyan + beyaz künye.
+   Fotoğraf her panelde AYRI ve sayfa CSS'inden gelir; yalnız campus-data.js'teki
+   onaylı kimlikler kullanılır (yeni ID uydurulmaz).
+   Koyu zemin olduğu için bu sayfalar da hero'lu sayılır → header şeffaf açılır. */
+.pn-top{position:relative;overflow:hidden;background-color:#101b1f;
+  background-size:cover;background-position:center;
+  padding-bottom:calc(var(--sec-y) * .62)}
+.pn-top::after{content:"";position:absolute;inset:0;z-index:0;
+  background:
+    radial-gradient(760px 340px at 82% 12%, rgba(0,96,114,.28), transparent 62%),
+    linear-gradient(90deg, rgba(16,27,31,.94) 0%, rgba(16,27,31,.82) 48%, rgba(16,27,31,.58) 100%);}
+.pn-top > .wrap{position:relative;z-index:2}
+.pn-top .rd-crumb,.pn-top .rd-crumb a{color:#c9d6da}
+.pn-top .rd-crumb a:hover{color:#5CC3D4}
+.pn-top .rd-crumb i{color:rgba(255,255,255,.42)}
+.pn-top .rd-crumb b{color:#fff}
+.pn-top .eyebrow{color:#B9DFE6}
+.pn-top .eyebrow::before{background:#4FB8C9}
+
+.pn-head{display:flex;align-items:flex-end;justify-content:space-between;gap:28px;flex-wrap:wrap;
+  padding-top:calc(var(--sec-y) * .28)}
 .pn-kim{display:flex;align-items:center;gap:18px;min-width:0}
 .pn-ava{flex:none;width:76px;height:76px;border-radius:var(--radius-circle);background-size:cover;
-  background-position:center;border:2px solid var(--paper);box-shadow:var(--sh-sm);
+  background-position:center;border:3px solid #fff;box-shadow:var(--sh-md);
   display:grid;place-items:center;background-color:var(--paper);color:var(--tomato);
   font-size:24px;font-weight:800}
-.pn-kim h1{font-size:30px;letter-spacing:-.02em;margin:4px 0 3px}
-.pn-rol{font-size:13.5px;font-weight:500;color:var(--muted)}
-.pn-rol b{color:var(--tomato);font-weight:700}
+.pn-kim h1{font-size:32px;letter-spacing:-.02em;margin:6px 0 4px;color:#fff;
+  text-shadow:0 2px 22px rgba(0,0,0,.28)}
+.pn-rol{font-size:14px;font-weight:500;color:#dbe6ea}
+.pn-rol b{color:#7fd3e2;font-weight:700}
 
-/* ---- KPI kartları ---- */
+/* ---- KPI kartları — koyu banner üstünde camsı ---- */
 .pn-kpi{display:flex;gap:12px;flex-wrap:wrap}
-.pn-kpi .kp{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-md);
-  padding:13px 18px;min-width:112px}
-.pn-kpi .kp b{display:block;font-size:23px;font-weight:800;letter-spacing:-.02em;color:var(--tomato);line-height:1.1}
-.pn-kpi .kp span{display:block;font-size:11.5px;font-weight:600;color:var(--muted);margin-top:3px}
+.pn-kpi .kp{background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.22);
+  border-radius:var(--radius-md);padding:13px 18px;min-width:112px;
+  -webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
+.pn-kpi .kp b{display:block;font-size:24px;font-weight:800;letter-spacing:-.02em;color:#fff;line-height:1.1}
+.pn-kpi .kp span{display:block;font-size:11.5px;font-weight:600;color:#c5d4d9;margin-top:3px}
 
 /* ---- yapışkan bölüm sekmeleri ---- */
 .pn-tabbar{position:sticky;top:var(--chrome-h);z-index:38;background:rgba(255,255,255,.94);
@@ -1847,6 +1869,10 @@ a.drs-row:hover{color:var(--tomato)}
   .pn-kim h1{font-size:25px}
 }
 @media (max-width:640px){
+  /* R1/D4: dört KPI 390'da tek satıra sıkışıp etiketleri iki satıra kırıyordu */
+  .pn-kpi{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));width:100%}
+  .pn-kpi .kp{min-width:0}
+  .pn-kim h1{font-size:25px}
   /* .pn-tabbar ofseti var(--chrome-h)'den geliyor (R1/D1) — mobil override gereksiz */
   .pn-ava{width:58px;height:58px;font-size:18px}
   .pn-kim{gap:14px}
@@ -2014,7 +2040,6 @@ a.drs-row:hover{color:var(--tomato)}
                   <a href="dadacampus-sertifika-dogrula-v1.html#turler"><i class="fa-solid fa-award"></i> <span>Belge Türleri<small>Beş belge türü ve koşulları</small></span></a>
                   <a href="dadacampus-sertifika-dogrula-v1.html"><i class="fa-solid fa-shield-halved"></i> <span>Sertifika Doğrula<small>Belge kimliği veya QR ile</small></span></a>
                   </div>
-                  <a class="mega-cat-all" href="dadacampus-programlar-v1.html"><i class="fa-solid fa-diagram-project"></i> <span>Tüm Programlar<small>Hedef, süre, kurum ve belge filtreleriyle</small></span><i class="fa-solid fa-arrow-right mca-arrow"></i></a>
                 </div>
                 <div class="mega-feat">
                   <a class="mf-fig" id="megaPrgFig" href="dadacampus-programlar-v1.html">
@@ -2058,7 +2083,6 @@ a.drs-row:hover{color:var(--tomato)}
                   <a href="dadacampus-kurumlar-v1.html#ornekler"><i class="fa-solid fa-chart-line"></i> <span>Kurumsal Başarı Örnekleri<small>Kurum onaylı çıktılar</small></span></a>
                   <a href="dadacampus-isbirligi-basvuru-v1.html"><i class="fa-solid fa-file-signature"></i> <span>İş Birliği Başlat<small>Kurum başvuru formu</small></span></a>
                   </div>
-                  <a class="mega-cat-all" href="dadacampus-kurumlar-v1.html"><i class="fa-solid fa-building-columns"></i> <span>Kurumlar Merkezi<small>Türler, modeller, süreç ve başvuru</small></span><i class="fa-solid fa-arrow-right mca-arrow"></i></a>
                 </div>
                 <div class="mega-feat">
                   <a class="mf-fig" id="megaKurFig" href="dadacampus-kurumlar-v1.html">
@@ -3583,6 +3607,9 @@ window.__bottomStrips=window.__bottomStrips||[];
 
   if (!k) {
     document.getElementById('otBos').hidden = false;
+    /* R1/D4: koyu hero yerine BEYAZ kapı/boş durum açılıyor → header katıya dönsün,
+       yoksa beyaz metin beyaz zeminde kalıyor (R1 keşif §K1 katman B). */
+    document.body.setAttribute('data-hero','0'); if(window.DCHdr)DCHdr.tazele();
     document.getElementById('otIcerik').hidden = true;
     document.title = 'Oturum bulunamadı — DadaCampus | DadaMutfak';
     return;
