@@ -1197,6 +1197,49 @@
     saatDilimi: 'Europe/Istanbul'
   };
 
+  /* ---- BİLDİRİMLER (R1/D3) --------------------------------------------------
+     DadaCampus'un KENDİ bildirim türleri; DadaGastro'nun tarif/yorum bildirimleriyle
+     karışmaz (karar C1=A). Her kayıt var olan bir varlığa REFERANS verir — metin
+     burada, hedef ilgili koleksiyondan çözülür. Uydurma bağlantı üretilmez. */
+  var bildirimTurleri = [
+    { slug: 'ders',    ad: 'Ders',        ikon: 'fa-circle-play',      renk: 'bilgi' },
+    { slug: 'teslim',  ad: 'Teslim',      ikon: 'fa-clipboard-check',  renk: 'uyari' },
+    { slug: 'oturum',  ad: 'Canlı Oturum', ikon: 'fa-video',           renk: 'bilgi' },
+    { slug: 'belge',   ad: 'Belge',       ikon: 'fa-award',            renk: 'ok'    },
+    { slug: 'kurum',   ad: 'Kurum',       ikon: 'fa-building-columns', renk: 'bilgi' }
+  ];
+
+  var bildirimler = [
+    { id: 'bd-01', tur: 'teslim', okundu: false, zaman: '2026-08-18T09:20',
+      baslik: 'Teslimin için revizyon istendi',
+      ozet: 'Sebzeli sote tabağı çalışmana eğitmen geri bildirimi bırakıldı; yeni sürüm yükleyebilirsin.',
+      hedef: { tip: 'teslim', id: 'ts-01' } },
+    { id: 'bd-02', tur: 'ders', okundu: false, zaman: '2026-08-18T07:05',
+      baslik: 'Kaldığın ders seni bekliyor',
+      ozet: 'Sıfırdan Mutfak: Temel Teknikler Atölyesi — 7. derse kaldığın yerden devam et.',
+      hedef: { tip: 'ders', egitimId: 'ed-01', ders: 7 } },
+    { id: 'bd-03', tur: 'oturum', okundu: false, zaman: '2026-08-17T18:40',
+      baslik: 'Canlı atölye yarın başlıyor',
+      ozet: 'Canlı Ekşi Maya Atölyesi oturumuna kayıtlısın. Malzeme listesi oturum detayında.',
+      hedef: { tip: 'atolye', id: 'at-01' } },
+    { id: 'bd-04', tur: 'belge', okundu: true, zaman: '2026-08-14T12:00',
+      baslik: 'Belgen düzenlendi',
+      ozet: 'Başarı sertifikan doğrulanabilir kimlikle verildi; belge kimliğiyle herkese açık doğrulanabilir.',
+      hedef: { tip: 'sertifika', id: 'DC-2026-004182' } },
+    { id: 'bd-05', tur: 'ders', okundu: true, zaman: '2026-08-13T16:30',
+      baslik: 'Yeni ders yayında',
+      ozet: 'Mayalı Hamurun Sırrı: Ekmek & Fırın eğitimine yeni bir bölüm eklendi.',
+      hedef: { tip: 'egitim', id: 'ed-02' } },
+    { id: 'bd-06', tur: 'teslim', okundu: true, zaman: '2026-08-11T10:15',
+      baslik: 'Teslim son tarihi yaklaşıyor',
+      ozet: 'Fırında bütün tavuk uygulaman taslak durumda; son tarihe kadar gönderebilirsin.',
+      hedef: { tip: 'teslim', id: 'ts-02' } },
+    { id: 'bd-07', tur: 'kurum', okundu: true, zaman: '2026-08-08T09:00',
+      baslik: 'Programına yeni kohort açıldı',
+      ozet: 'Temel Mutfak Uzmanlık Programı için yeni bir dönem takvimi yayımlandı.',
+      hedef: { tip: 'program', id: 'pr-01' } }
+  ];
+
   /* Eğitim ilerlemesi. tamamlanan = ders sıra numarası (1'den başlar). */
   var ilerlemeler = [
     { egitimId: 'ed-01', kayitli: true,  tamamlanan: [1, 2, 3, 4, 5, 6], sonDers: 7, sonErisim: '2026-08-15' },
@@ -1614,6 +1657,33 @@
     rubrikler: rubrikler,
     sss: sss,
     yardimKonulari: yardimKonulari,
+    bildirimTurleri: bildirimTurleri,
+    bildirimler: bildirimler,
+
+    /** Bildirimin hedef adresini VAR OLAN kayıttan çözer; kayıt yoksa null döner
+        (ölü bağlantı üretilmez — R1/D3). */
+    bildirimHedefi: function (b) {
+      var h = b && b.hedef; if (!h) return null;
+      var D = w.DC;
+      if (h.tip === 'teslim') {
+        var t = D.bulId('teslimler', h.id);
+        return t ? 'dadacampus-kampusum-v1.html?bolum=odevler' : null;
+      }
+      if (h.tip === 'ders') {
+        var e = D.bulId('egitimler', h.egitimId);
+        return e ? D.link.ders(e.slug, h.ders) : null;
+      }
+      if (h.tip === 'egitim')  { var g = D.bulId('egitimler', h.id);  return g ? D.link.egitim(g.slug) : null; }
+      if (h.tip === 'program') { var p = D.bulId('programlar', h.id); return p ? D.link.program(p.slug) : null; }
+      if (h.tip === 'atolye')  { var a = D.bulId('atolyeler', h.id);  return a ? D.link.atolye(a.slug) : null; }
+      if (h.tip === 'sertifika') return 'dadacampus-sertifika-dogrula-v1.html?kod=' + encodeURIComponent(h.id);
+      return null;
+    },
+
+    /** Okunmamış bildirim sayısı — kabuk zil rozeti bunu okur. */
+    okunmamisSayi: function () {
+      return (w.DC.bildirimler || []).filter(function (b) { return !b.okundu; }).length;
+    },
 
     /* kullanıcı durumu (yalnız body.is-auth iken gösterilir) */
     kullanici: kullanici,

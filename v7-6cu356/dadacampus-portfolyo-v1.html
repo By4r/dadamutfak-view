@@ -65,7 +65,15 @@
   --ink:#211E16;
   /* section zemin ritmi — açık bölüm alternasyonu (gri ↔ beyaz, eski site ekseni) */
   --bg-white:#ffffff;        /* saf beyaz */
-  --bg-cream:#f9f9f9;        /* eski site section grisi (own.css'teki en yaygın zemin) */
+  /* 🔴 BÖLÜM ALTERNASYON ZEMİNİ (Beyar, 2026-08-18 — iki kez düzeltildi)
+     1) Önce #f9f9f9'du: beyazdan ayırt edilemiyordu ("sayfa boyunca section farkı yok").
+     2) Sonra sıcak krem denendi: "sectionlarda krem rengini kullanma" —
+        ritim BEYAZ ile PRIMARY'NİN EN AÇIK TONU arasında olacak.
+     Değer artık --tomato-tint ile aynı: token bloğunda zaten "petrol fısıltısı zemin"
+     diye tanımlı olan #E2EFF1. Yeni renk ÜRETİLMEDİ, yeni değişken açılmadı; token
+     adı (--bg-cream) proje kuralı gereği korundu — bu depoda ad yanıltıcı olabilir
+     (bkz. --tomato = petrol), ad değiştirmek yerine değer değişir. */
+  --bg-cream:#E2EFF1;
 
   --radius-sm:8px; --radius-md:12px; --radius-lg:16px; --radius-xl:24px; --radius-pill:999px; --radius-circle:50%; --radius-mark:11px;
   /* legacy alias → yeni ölçek */
@@ -159,6 +167,11 @@ img{display:block;max-width:100%}
   padding:8px 15px;border-radius:var(--radius-sm);cursor:pointer;transition:.2s var(--ease);
 }
 .chip:hover{border-color:var(--tomato);color:var(--tomato);background:var(--tomato-tint)}
+/* R1/D3: SEÇİLİ çipin kendi kuralı YOKTU — hover tonuna düşüyordu ve bölüm zemini
+   primary tint olunca seçili çip zeminle aynı tonda kalıyordu. Seçili durum artık
+   dolu petrol: hem tint zeminde ayrışır hem "seçili" sinyali net (§23.3). */
+.chip.is-on{background:var(--tomato);border-color:var(--tomato);color:#fff;font-weight:700}
+.chip.is-on:hover{background:var(--tomato-dark);border-color:var(--tomato-dark);color:#fff}
 
 @keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
 
@@ -203,10 +216,12 @@ img{display:block;max-width:100%}
 .brand .logo-white{display:none}
 .header.at-top .brand .logo-color{display:none}
 .header.at-top .brand .logo-white{display:block}
-/* SVG mark + text wordmark koyu hero üstünde beyaz (petrol aksan katı-durumda korunur) */
+/* Marka kilidi koyu hero üstünde: tile beyaza, glif petrole döner (footer .fl-mark deseni) */
 .header.at-top .ak-word b,.header.at-top .ak-word .ak-st{color:#fff}
-.header.at-top .ak-mark path,.header.at-top .ak-mark circle{fill:#fff}
-.header.at-top .ak-mark line{stroke:#fff}
+.header.at-top .ak-mark{background:#fff;box-shadow:0 4px 14px rgba(0,0,0,.18)}
+.header.at-top .ak-mark path,.header.at-top .ak-mark circle{fill:var(--tomato)}
+.header.at-top .ak-mark line{stroke:var(--tomato)}
+.header.at-top .ak-mark path[fill="#fff"]{fill:rgba(255,255,255,.92)}
 /* nav, logo ile aksiyonlar arasında ortalanır */
 .nav{display:flex;gap:2px;flex-wrap:nowrap;flex:1;justify-content:center;min-width:0}
 .nav a{
@@ -341,7 +356,12 @@ body.is-auth .drawer-login{display:none}
 }
 .nav-item:hover .mega,.nav-item.open .mega{opacity:1;visibility:visible;transform:translateY(0)}
 .mega-grid{display:grid;grid-template-columns:2.2fr 1fr;gap:22px;align-items:start}
-.mega-cats{display:grid;grid-template-columns:repeat(3,1fr);gap:2px 16px;align-content:start}
+/* R1/D3: 5+5 iki başlıklı yapı → gerçek İKİ KOLON. Önce 3 kolonda akıyordu ve
+   beşli grup yarım satır bırakıyordu. Kolon kabı için YENİ SINIF ÜRETİLMEDİ:
+   kabukta tanımlı ama kullanılmayan .dd-col canlandırıldı. */
+.mega-cats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px 26px;align-content:start}
+.mega-cats .dd-col{display:flex;flex-direction:column;min-width:0}
+.mega-cats .mega-cat-all{grid-column:1/-1;margin-top:10px}
 .mega-cats a{
   display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:var(--radius-md);
   font-size:14.5px;font-weight:500;color:var(--slate);transition:.16s var(--ease);line-height:1.25;
@@ -358,6 +378,13 @@ body.is-auth .drawer-login{display:none}
 .mf-fig .r-chip{position:absolute;top:12px;left:12px;background:var(--tomato);color:#fff;z-index:2}
 .mf-fig h4{position:relative;z-index:2;color:#fff;font-size:17px;padding:16px;line-height:1.25}
 /* "Tüm Tarifler" — kategori grid'inin 13. hücresi, buton dilinde (Revize T3 M1) */
+/* mega içindeki grup başlığı: YENİ SINIF ÜRETİLMEDİ, mevcut .dd-head kullanıldı;
+   3 kolonlu ızgarada tam satırı kaplar (R1/D3) */
+.mega-cats .dd-col .dd-head{padding:2px 12px 6px;margin:0}
+/* öne çıkan görsel — sabit stok DEĞİL: program kapağı campus-data.js'ten JS ile basılır
+   (aşağıdaki kabuk JS'i). Kurum görseli onaylı kimliklerden; yeni ID uydurulmaz. */
+#megaKurFig{background-image:url('https://images.unsplash.com/photo-1466637574441-749b8f19452f?w=600&q=80&auto=format&fit=crop&exp=7&gam=6&sat=-9&high=8&vib=5')}
+a.mf-fig{text-decoration:none}
 .mega-cats .mega-cat-all{
   font-weight:700;color:var(--tomato);
   background:var(--tomato-tint);border:1px solid rgba(0,96,114,.22);
@@ -861,7 +888,9 @@ textarea:focus-visible,summary:focus-visible,[tabindex]:focus-visible{
    override — düşük specificity'li kurala güvenmek yetmiyor. */
 @media (max-width:1024px){ .ak-grid.is-3{grid-template-columns:repeat(2,minmax(0,1fr))} }
 @media (max-width:640px){ .ak-grid.is-3{grid-template-columns:1fr} }
-.ak-how-step{display:flex;gap:16px;align-items:flex-start;background:var(--bg-cream);border:1px solid var(--line);border-radius:var(--radius-lg);padding:22px}
+/* R1/D3: zemini krem'di ve krem section'ın üstünde dolgusu kayboluyordu
+   (hub #model). Kart dilinin geri kalanı gibi --paper'a alındı. */
+.ak-how-step{display:flex;gap:16px;align-items:flex-start;background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-lg);padding:22px}
 .ak-how-step .num{flex:none;font-size:15px;font-weight:700;color:var(--tomato);width:42px;height:42px;border-radius:var(--radius-md);background:var(--tomato-tint);border:1px solid rgba(0,96,114,.22);display:grid;place-items:center}
 .ak-how-step h4{font-size:15.5px;margin-bottom:4px}
 .ak-how-step p{font-size:13px;color:var(--muted);font-weight:500;line-height:1.55}
@@ -943,7 +972,16 @@ textarea:focus-visible,summary:focus-visible,[tabindex]:focus-visible{
 .tb-back i{font-size:11px;transition:transform .2s var(--ease)}
 .tb-back:hover i{transform:translateX(-3px)}
 .ak-brand{display:flex;align-items:center;gap:11px}
-.ak-mark{flex:none;display:block;width:40px;height:40px}
+/* MARKA TILE (R1/D3) — önce çıplak SVG'ydi, tile yoktu; Gastro'nun renkli tile +
+   beyaz glif geometrisine geçti. Köşe yarıçapı footer lockup'ıyla aynı token
+   (--radius-mark), yani Campus'un kare-yuvarlak marka dili header'da da geçerli. */
+.ak-mark{flex:none;display:block;width:40px;height:40px;padding:5px;
+  background:var(--tomato);border-radius:var(--radius-mark);
+  transition:background .3s var(--ease),box-shadow .3s var(--ease)}
+.ak-mark path,.ak-mark circle{fill:#fff}
+.ak-mark line{stroke:#fff}
+.ak-mark path[fill="#fff"]{fill:rgba(255,255,255,.28)}
+.drawer-brand .ak-mark{padding:4px}
 .ak-word{font-size:23px;font-weight:700;letter-spacing:-.02em;line-height:1;white-space:nowrap}
 .ak-word b{color:var(--slate);font-family:"GilroyXB","Gilroy",sans-serif;font-weight:800}
 .ak-word .ak-st{color:var(--tomato);font-family:"GilroyLt","Gilroy",sans-serif;font-weight:300}
@@ -1724,7 +1762,7 @@ a.drs-row:hover{color:var(--tomato)}
 .pn-kim{display:flex;align-items:center;gap:18px;min-width:0}
 .pn-ava{flex:none;width:76px;height:76px;border-radius:var(--radius-circle);background-size:cover;
   background-position:center;border:2px solid var(--paper);box-shadow:var(--sh-sm);
-  display:grid;place-items:center;background-color:var(--tomato-tint);color:var(--tomato);
+  display:grid;place-items:center;background-color:var(--paper);color:var(--tomato);
   font-size:24px;font-weight:800}
 .pn-kim h1{font-size:30px;letter-spacing:-.02em;margin:4px 0 3px}
 .pn-rol{font-size:13.5px;font-weight:500;color:var(--muted)}
@@ -1870,7 +1908,8 @@ a.drs-row:hover{color:var(--tomato)}
 .surec{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px 26px;counter-reset:sr}
 .surec-row{display:flex;align-items:flex-start;gap:14px;padding:12px 0;border-bottom:1px solid var(--line)}
 .surec-row:last-child,.surec-row:nth-last-child(2){border-bottom:none}
-.surec-no{flex:none;width:30px;height:30px;border-radius:var(--radius-sm);background:var(--tomato-tint);
+/* R1/D3: tint zeminli bölümde kayboluyordu → beyaz dolgu + ince petrol kenar */
+.surec-no{flex:none;width:30px;height:30px;border-radius:var(--radius-sm);background:var(--paper);border:1px solid rgba(var(--tomato-rgb),.22);
   color:var(--tomato);display:grid;place-items:center;font-size:12.5px;font-weight:700}
 .surec-row p{font-size:14px;font-weight:500;color:var(--slate-2);line-height:1.5;padding-top:5px}
 
@@ -1957,99 +1996,108 @@ a.drs-row:hover{color:var(--tomato)}
   <div class="h-top">
     <div class="wrap">
       <a class="brand ak-brand" href="akademi-v1.html" aria-label="DadaCampus">
-        <svg class="ak-mark" viewBox="0 0 44 44" aria-hidden="true"><path d="M22 9 L40 16.5 L22 24 L4 16.5 Z" fill="#006072"/><path d="M12.5 20.2 L22 24 L31.5 20.2 V27.6 C31.5 30.5 27.2 32.6 22 32.6 C16.8 32.6 12.5 30.5 12.5 27.6 Z" fill="#006072"/><path d="M22 13.7 L31 16.5 L22 19.3 L13 16.5 Z" fill="#fff" opacity=".92"/><line x1="40" y1="16.5" x2="40" y2="27.2" stroke="#006072" stroke-width="2.1" stroke-linecap="round"/><circle cx="40" cy="29" r="2.4" fill="#006072"/></svg>
+        <svg class="ak-mark" viewBox="0 0 44 44" aria-hidden="true"><path d="M22 9 L40 16.5 L22 24 L4 16.5 Z"/><path d="M12.5 20.2 L22 24 L31.5 20.2 V27.6 C31.5 30.5 27.2 32.6 22 32.6 C16.8 32.6 12.5 30.5 12.5 27.6 Z"/><path d="M22 13.7 L31 16.5 L22 19.3 L13 16.5 Z" fill="#fff" opacity=".92"/><line x1="40" y1="16.5" x2="40" y2="27.2" stroke-width="2.1" stroke-linecap="round"/><circle cx="40" cy="29" r="2.4"/></svg>
         <span class="ak-word"><b>Dada</b><span class="ak-st">Campus</span></span>
       </a>
       <!-- DÖRT KAMUSAL ANA MENÜ (§4.1) — "Campus" tekrar menüsü KALDIRILDI, logo ana sayfa linki.
            Tüm açılır menüler mevcut .dropdown.ak-tracks 2-kolon dilinde; .mega ailesi KİLİTLİ, kullanılmaz. -->
       <nav class="nav">
 
-        <!-- 1) EĞİTİMLER (§4.2) — 10 konu alanı + ücretsiz başlangıç + yönlendirme -->
-        <div class="nav-item">
-          <a href="dadacampus-egitimler-v1.html">Eğitimler <i class="fa-solid fa-chevron-down"></i></a>
-          <div class="dropdown ak-tracks">
-            <div class="dd-head">Konu Alanları</div>
-            <div class="dd-grid">
-              <a href="dadacampus-egitimler-v1.html?konu=temel-mutfak"><i class="fa-solid fa-kitchen-set"></i> <span>Temel Mutfak<small>Bıçak becerileri, mise en place</small></span></a>
-              <a href="dadacampus-egitimler-v1.html?konu=pisirme-soslar"><i class="fa-solid fa-fire-burner"></i> <span>Pişirme &amp; Soslar<small>Teknikler, fonlar</small></span></a>
-              <div class="dd-sep" role="separator" aria-hidden="true"></div>
-              <a href="dadacampus-egitimler-v1.html?konu=turk-mutfagi"><i class="fa-solid fa-bowl-food"></i> <span>Türk &amp; Yerel Mutfaklar<small>Bölgesel teknikler</small></span></a>
-              <a href="dadacampus-egitimler-v1.html?konu=dunya-mutfaklari"><i class="fa-solid fa-earth-americas"></i> <span>Dünya Mutfakları<small>Akdeniz, Uzakdoğu</small></span></a>
-              <div class="dd-sep" role="separator" aria-hidden="true"></div>
-              <a href="dadacampus-egitimler-v1.html?konu=ekmek-fermantasyon"><i class="fa-solid fa-bread-slice"></i> <span>Ekmek &amp; Fermantasyon<small>Maya, fırın</small></span></a>
-              <a href="dadacampus-egitimler-v1.html?konu=pastacilik"><i class="fa-solid fa-cake-candles"></i> <span>Pastacılık &amp; Tatlı<small>Pasta, tart, plating</small></span></a>
-              <div class="dd-sep" role="separator" aria-hidden="true"></div>
-              <a href="dadacampus-egitimler-v1.html?konu=gida-guvenligi"><i class="fa-solid fa-shield-halved"></i> <span>Gıda Güvenliği<small>Hijyen, saklama</small></span></a>
-              <a href="dadacampus-egitimler-v1.html?konu=menu-yonetimi"><i class="fa-solid fa-list-check"></i> <span>Menü &amp; Mutfak Yönetimi<small>Maliyet, planlama</small></span></a>
-              <div class="dd-sep" role="separator" aria-hidden="true"></div>
-              <a href="dadacampus-egitimler-v1.html?konu=surdurulebilirlik"><i class="fa-solid fa-leaf"></i> <span>Sürdürülebilirlik<small>Atıksız mutfak</small></span></a>
-              <a href="dadacampus-egitimler-v1.html?konu=girisimcilik"><i class="fa-solid fa-briefcase"></i> <span>Girişimcilik &amp; Gelişim<small>Sunum, marka, işletme</small></span></a>
-              <div class="dd-sep" role="separator" aria-hidden="true"></div>
-              <a href="dadacampus-egitimler-v1.html?ucret=ucretsiz"><i class="fa-solid fa-gift"></i> <span>Ücretsiz Başlangıç<small>Kayıt olmadan izle</small></span></a>
-              <a href="dadacampus-egitimler-v1.html?sihirbaz=1"><i class="fa-solid fa-wand-magic-sparkles"></i> <span>Bana Uygun Eğitimi Bul<small>Seviye ve hedefe göre</small></span></a>
-            </div>
-            <a class="dd-all" href="dadacampus-egitimler-v1.html"><i class="fa-solid fa-clapperboard"></i> <span>Tüm Eğitimler<small>Seviye, format, dil ve süre filtreleriyle</small></span></a>
-          </div>
-        </div>
+        <!-- 1) EĞİTİMLER (§4.2) — TEK BUTON. On konu alanı Eğitimler Merkezi'ndeki
+             görselli facet kartlarına ve konu rayına indi (R1/D7); "en fazla iki
+             tıklama" kuralı korunuyor: Eğitimler → konu kartı. -->
+        <div class="nav-item"><a href="dadacampus-egitimler-v1.html">Eğitimler</a></div>
 
-        <!-- 2) PROGRAMLAR (§4.3) — Sertifika buraya taşındı (§26.4) -->
-        <div class="nav-item">
+        <!-- 2) PROGRAMLAR (§4.3) — MEGA MENÜ, iki başlık × beş madde.
+             .mega ailesi kabukta zaten tanımlıydı ve petrol'e token'lanmıştı;
+             yalnız markup'ı yoktu (R1 keşif §K7). Sertifika burada (§26.4). -->
+        <div class="nav-item has-mega">
           <a href="dadacampus-programlar-v1.html">Programlar <i class="fa-solid fa-chevron-down"></i></a>
-          <div class="dropdown ak-tracks">
-            <div class="dd-head">Program Türleri</div>
-            <div class="dd-grid">
-              <a href="dadacampus-programlar-v1.html?tur=sertifika"><i class="fa-solid fa-certificate"></i> <span>Sertifika Programları<small>Değerlendirmeli, belgeli</small></span></a>
-              <a href="dadacampus-programlar-v1.html?tur=universite-ortak"><i class="fa-solid fa-building-columns"></i> <span>Üniversite Ortak Programları<small>Ortak müfredat ve belge</small></span></a>
-              <div class="dd-sep" role="separator" aria-hidden="true"></div>
-              <a href="dadacampus-programlar-v1.html?tur=mutfak-okulu"><i class="fa-solid fa-utensils"></i> <span>Mutfak Okulu Programları<small>Hibrit atölye modeli</small></span></a>
-              <a href="dadacampus-programlar-v1.html?tur=kamu"><i class="fa-solid fa-landmark"></i> <span>Kamu &amp; Sosyal Etki<small>Meslek edindirme</small></span></a>
-              <div class="dd-sep" role="separator" aria-hidden="true"></div>
-              <a href="dadacampus-programlar-v1.html?tur=kurumsal"><i class="fa-solid fa-briefcase"></i> <span>Kurumsal Mesleki Gelişim<small>Kurum içi yetkinlik</small></span></a>
-              <a href="dadacampus-programlar-v1.html?bolum=atolyeler"><i class="fa-solid fa-video"></i> <span>Canlı Atölyeler &amp; Etkinlikler<small>Belirli tarihli oturumlar</small></span></a>
-              <div class="dd-sep" role="separator" aria-hidden="true"></div>
-              <a href="dadacampus-programlar-v1.html?bolum=takvim"><i class="fa-regular fa-calendar-days"></i> <span>Akademik Takvim<small>Dönem, son tarih, oturum</small></span></a>
-              <a href="dadacampus-sertifika-dogrula-v1.html"><i class="fa-solid fa-shield-halved"></i> <span>Sertifika Doğrula<small>Belge kimliği veya QR ile</small></span></a>
+          <div class="mega">
+            <div class="wrap">
+              <div class="mega-grid">
+                <div class="mega-cats">
+                  <div class="dd-col">
+                  <div class="dd-head">Program Türleri</div>
+                  <a href="dadacampus-programlar-v1.html?tur=sertifika"><i class="fa-solid fa-certificate"></i> <span>Sertifika Programları<small>Değerlendirmeli, belgeli</small></span></a>
+                  <a href="dadacampus-programlar-v1.html?tur=universite-ortak"><i class="fa-solid fa-building-columns"></i> <span>Üniversite Ortak Programları<small>Ortak müfredat ve belge</small></span></a>
+                  <a href="dadacampus-programlar-v1.html?tur=mutfak-okulu"><i class="fa-solid fa-utensils"></i> <span>Mutfak Okulu Programları<small>Hibrit atölye modeli</small></span></a>
+                  <a href="dadacampus-programlar-v1.html?tur=kamu"><i class="fa-solid fa-landmark"></i> <span>Kamu &amp; Sosyal Etki<small>Meslek edindirme</small></span></a>
+                  <a href="dadacampus-programlar-v1.html?tur=kurumsal"><i class="fa-solid fa-briefcase"></i> <span>Kurumsal Mesleki Gelişim<small>Kurum içi yetkinlik</small></span></a>
+                  </div>
+                  <div class="dd-col">
+                  <div class="dd-head">Takvim, Oturum ve Belge</div>
+                  <a href="dadacampus-programlar-v1.html?bolum=atolyeler"><i class="fa-solid fa-video"></i> <span>Canlı Atölyeler &amp; Etkinlikler<small>Belirli tarihli oturumlar</small></span></a>
+                  <a href="dadacampus-takvim-v1.html"><i class="fa-regular fa-calendar-days"></i> <span>Akademik Takvim<small>Dönem, son tarih, oturum</small></span></a>
+                  <a href="dadacampus-programlar-v1.html?ortak=1"><i class="fa-solid fa-people-group"></i> <span>Kurum Kohortları<small>Kuruma özel katılımcı grubu</small></span></a>
+                  <a href="dadacampus-sertifika-dogrula-v1.html#turler"><i class="fa-solid fa-award"></i> <span>Belge Türleri<small>Beş belge türü ve koşulları</small></span></a>
+                  <a href="dadacampus-sertifika-dogrula-v1.html"><i class="fa-solid fa-shield-halved"></i> <span>Sertifika Doğrula<small>Belge kimliği veya QR ile</small></span></a>
+                  </div>
+                  <a class="mega-cat-all" href="dadacampus-programlar-v1.html"><i class="fa-solid fa-diagram-project"></i> <span>Tüm Programlar<small>Hedef, süre, kurum ve belge filtreleriyle</small></span><i class="fa-solid fa-arrow-right mca-arrow"></i></a>
+                </div>
+                <div class="mega-feat">
+                  <a class="mf-fig" id="megaPrgFig" href="dadacampus-programlar-v1.html">
+                    <span class="r-chip"><i class="fa-solid fa-star"></i> Öne Çıkan Program</span>
+                    <h4 id="megaPrgAd">Programlar</h4>
+                  </a>
+                  <a class="mega-find" href="dadacampus-programlar-v1.html">
+                    <span class="mf-ico"><i class="fa-solid fa-wand-magic-sparkles"></i></span>
+                    <span class="mf-body"><b>Bana Uygun Programı Bul</b><small>Hedef, seviye ve süreye göre</small></span>
+                    <i class="fa-solid fa-arrow-right mf-arr"></i>
+                  </a>
+                </div>
+              </div>
             </div>
-            <a class="dd-all" href="dadacampus-programlar-v1.html"><i class="fa-solid fa-diagram-project"></i> <span>Tüm Programlar<small>Hedef, süre, kurum ve belge filtreleriyle</small></span></a>
           </div>
         </div>
 
-        <!-- 3) KURUMLAR (§4.4) — YENİ ana menü. Faz 1'de kurum türleri Kurumlar Merkezi
-             içindeki bölümlere gider; Faz 4'te her tür kendi sayfasını alır. -->
-        <div class="nav-item">
+        <!-- 3) KURUMLAR (§4.4) — MEGA MENÜ, iki başlık × beş madde.
+             🔴 Beş kurum türü ARTIK anchor değil GERÇEK sayfaya gidiyor
+             (dadacampus-kurum-tur-v1.html?tur=…). Önce Merkez içindeki
+             #tur-<slug> bölümüne gidiyordu ve tür sayfası menüden erişilemiyordu. -->
+        <div class="nav-item has-mega">
           <a href="dadacampus-kurumlar-v1.html">Kurumlar <i class="fa-solid fa-chevron-down"></i></a>
-          <div class="dropdown ak-tracks">
-            <div class="dd-head">Kurum Türüne Göre</div>
-            <div class="dd-grid">
-              <a href="dadacampus-kurumlar-v1.html#tur-universite"><i class="fa-solid fa-building-columns"></i> <span>Üniversiteler İçin<small>Ders desteği, ortak sertifika</small></span></a>
-              <a href="dadacampus-kurumlar-v1.html#tur-mutfak-okulu"><i class="fa-solid fa-utensils"></i> <span>Mutfak Sanatları Okulları İçin<small>Hibrit eğitim, içerik lisansı</small></span></a>
-              <div class="dd-sep" role="separator" aria-hidden="true"></div>
-              <a href="dadacampus-kurumlar-v1.html#tur-kamu"><i class="fa-solid fa-landmark"></i> <span>Kamu ve Belediyeler İçin<small>Meslek edindirme, sosyal etki</small></span></a>
-              <a href="dadacampus-kurumlar-v1.html#tur-meslek"><i class="fa-solid fa-school"></i> <span>Mesleki Eğitim Kurumları İçin<small>Tamamlayıcı eğitim</small></span></a>
-              <div class="dd-sep" role="separator" aria-hidden="true"></div>
-              <a href="dadacampus-kurumlar-v1.html#tur-isletme"><i class="fa-solid fa-hotel"></i> <span>İşletmeler ve Sektör İçin<small>Kurum içi yetkinlik</small></span></a>
-              <a href="dadacampus-kurumlar-v1.html#modeller"><i class="fa-solid fa-handshake"></i> <span>İş Birliği Modelleri<small>On model, kapsam ve değer</small></span></a>
-              <div class="dd-sep" role="separator" aria-hidden="true"></div>
-              <a href="dadacampus-kurumlar-v1.html#partnerler"><i class="fa-solid fa-circle-check"></i> <span>Partner Kurumlar<small>Yalnız onay kaydı olanlar</small></span></a>
-              <a href="dadacampus-kurumlar-v1.html#ornekler"><i class="fa-solid fa-chart-line"></i> <span>Kurumsal Başarı Örnekleri<small>Kurum onaylı çıktılar</small></span></a>
-              <div class="dd-sep" role="separator" aria-hidden="true"></div>
-              <a href="dadacampus-kurumlar-v1.html#basvuru"><i class="fa-solid fa-file-signature"></i> <span>İş Birliği Başlat<small>Kurum başvuru formu</small></span></a>
-              <a href="giris-v1.html?tab=giris"><i class="fa-solid fa-right-to-bracket"></i> <span>Kurum Portalı Girişi<small>Koordinatör erişimi</small></span></a>
+          <div class="mega">
+            <div class="wrap">
+              <div class="mega-grid">
+                <div class="mega-cats">
+                  <div class="dd-col">
+                  <div class="dd-head">Kurum Türüne Göre</div>
+                  <a href="dadacampus-kurum-tur-v1.html?tur=universite"><i class="fa-solid fa-building-columns"></i> <span>Üniversiteler İçin<small>Ders desteği, ortak sertifika</small></span></a>
+                  <a href="dadacampus-kurum-tur-v1.html?tur=mutfak-okulu"><i class="fa-solid fa-utensils"></i> <span>Mutfak Sanatları Okulları İçin<small>Hibrit eğitim, içerik lisansı</small></span></a>
+                  <a href="dadacampus-kurum-tur-v1.html?tur=kamu"><i class="fa-solid fa-landmark"></i> <span>Kamu ve Belediyeler İçin<small>Meslek edindirme, sosyal etki</small></span></a>
+                  <a href="dadacampus-kurum-tur-v1.html?tur=meslek"><i class="fa-solid fa-school"></i> <span>Mesleki Eğitim Kurumları İçin<small>Tamamlayıcı eğitim</small></span></a>
+                  <a href="dadacampus-kurum-tur-v1.html?tur=isletme"><i class="fa-solid fa-hotel"></i> <span>İşletmeler ve Sektör İçin<small>Kurum içi yetkinlik</small></span></a>
+                  </div>
+                  <div class="dd-col">
+                  <div class="dd-head">İş Birliği</div>
+                  <a href="dadacampus-kurumlar-v1.html#modeller"><i class="fa-solid fa-handshake"></i> <span>İş Birliği Modelleri<small>On model, kapsam ve değer</small></span></a>
+                  <a href="dadacampus-kurumlar-v1.html#surec"><i class="fa-solid fa-timeline"></i> <span>Süreç ve Takvim<small>Başvurudan etki raporuna</small></span></a>
+                  <a href="dadacampus-kurumlar-v1.html#partnerler"><i class="fa-solid fa-circle-check"></i> <span>Partner Kurumlar<small>Yalnız onay kaydı olanlar</small></span></a>
+                  <a href="dadacampus-kurumlar-v1.html#ornekler"><i class="fa-solid fa-chart-line"></i> <span>Kurumsal Başarı Örnekleri<small>Kurum onaylı çıktılar</small></span></a>
+                  <a href="dadacampus-isbirligi-basvuru-v1.html"><i class="fa-solid fa-file-signature"></i> <span>İş Birliği Başlat<small>Kurum başvuru formu</small></span></a>
+                  </div>
+                  <a class="mega-cat-all" href="dadacampus-kurumlar-v1.html"><i class="fa-solid fa-building-columns"></i> <span>Kurumlar Merkezi<small>Türler, modeller, süreç ve başvuru</small></span><i class="fa-solid fa-arrow-right mca-arrow"></i></a>
+                </div>
+                <div class="mega-feat">
+                  <a class="mf-fig" id="megaKurFig" href="dadacampus-kurumlar-v1.html">
+                    <span class="r-chip"><i class="fa-solid fa-handshake"></i> Kurumlar</span>
+                    <h4>Kurumunuzla birlikte program tasarlayalım</h4>
+                  </a>
+                  <a class="mega-find" href="dadacampus-kurumlar-v1.html#basvuru">
+                    <span class="mf-ico"><i class="fa-solid fa-circle-question"></i></span>
+                    <span class="mf-body"><b>Kurumunuz listede yok mu?</b><small>Formda "Diğer"i seçin, birlikte belirleyelim</small></span>
+                    <i class="fa-solid fa-arrow-right mf-arr"></i>
+                  </a>
+                </div>
+              </div>
             </div>
-            <a class="dd-all" href="dadacampus-kurumlar-v1.html"><i class="fa-solid fa-building-columns"></i> <span>Kurumlar Merkezi<small>Modeller, süreç ve başvuru</small></span></a>
           </div>
         </div>
 
-        <!-- 4) EĞİTMENLER (§4.5) — Faz 1'de üç GERÇEK hedef; rol filtreleri Faz 5'te
-             Eğitmen Dizini sayfasıyla birlikte açılacak (tek anchor'a yığma YOK). -->
-        <div class="nav-item">
-          <a href="akademi-v1.html#egitmenler">Eğitmenler <i class="fa-solid fa-chevron-down"></i></a>
-          <div class="dropdown">
-            <a href="akademi-v1.html#egitmenler"><i class="fa-solid fa-chalkboard-user"></i> <span>Tüm Eğitmenler<small>Şef, akademisyen ve mentorlar</small></span></a>
-            <a href="dadacampus-yardim-v1.html?konu=egitmen"><i class="fa-solid fa-user-plus"></i> <span>Eğitmen Ol<small>Roller, yeterlilik ve başvuru adımları</small></span></a>
-            <a href="giris-v1.html?tab=giris"><i class="fa-solid fa-right-to-bracket"></i> <span>Eğitmen Paneli Girişi<small>İçerik ve değerlendirme</small></span></a>
-          </div>
-        </div>
+        <!-- 4) EĞİTMENLER (§4.5) — TEK BUTON, Faz 5'te açılan Eğitmen Dizini'ne.
+             Önce akademi-v1.html#egitmenler'e gidiyordu (Faz 1 kalıntısı). -->
+        <div class="nav-item"><a href="dadacampus-egitmenler-v1.html">Eğitmenler</a></div>
       </nav>
 
       <!-- SAĞ ALAN (§4.1) — arama · bildirim · Kampüsüm · hesap (Rol Değiştirici) / Giriş Yap.
@@ -2058,8 +2106,8 @@ a.drs-row:hover{color:var(--tomato)}
       <div class="head-actions">
         <button class="icon-btn" aria-label="Eğitim, program, kurum veya eğitmen ara" id="hdrSearchBtn" title="DadaCampus'ta ara"><i class="fa-solid fa-magnifying-glass"></i></button>
 
-        <button class="icon-btn head-bell" id="hdrBell" aria-label="Bildirimler — 2 okunmamış" title="Bildirimler" onclick="location.href='bildirimler-v1.html'">
-          <i class="fa-regular fa-bell"></i><span class="hb-badge" aria-hidden="true">2</span>
+        <button class="icon-btn head-bell" id="hdrBell" aria-label="Bildirimler — 2 okunmamış" title="Bildirimler" onclick="location.href='dadacampus-bildirimler-v1.html'">
+          <i class="fa-regular fa-bell"></i><span class="hb-badge" id="hdrBellBadge" aria-hidden="true"></span>
         </button>
 
         <a class="btn btn-primary head-add" id="hdrKampusum" href="dadacampus-kampusum-v1.html"><i class="fa-solid fa-graduation-cap"></i> Kampüsüm</a>
@@ -2085,12 +2133,12 @@ a.drs-row:hover{color:var(--tomato)}
             <a role="menuitem" href="dadacampus-egitmen-panel-v1.html"><i class="fa-solid fa-chalkboard-user"></i> <span>Eğitmen Paneli<small>İçerik, kohort, değerlendirme</small></span></a>
             <a role="menuitem" href="dadacampus-kurum-panel-v1.html"><i class="fa-solid fa-building-columns"></i> <span>Kurum Paneli<small>Program, katılımcı, rapor</small></span></a>
             <div class="acct-div"></div>
-            <a role="menuitem" href="hesabim-v1.html"><i class="fa-solid fa-gear"></i> <span>Hesap, Veri ve İzinler</span></a>
+            <a role="menuitem" href="hesabim-v1.html?brand=campus"><i class="fa-solid fa-gear"></i> <span>Hesap, Veri ve İzinler</span></a>
             <a role="menuitem" class="acct-logout" href="akademi-v1.html?auth=0"><i class="fa-solid fa-arrow-right-from-bracket"></i> <span>Çıkış Yap</span></a>
           </div>
         </div>
 
-        <button class="btn-login" onclick="location.href='giris-v1.html'"><i class="fa-regular fa-user"></i> Giriş Yap</button>
+        <button class="btn-login" onclick="location.href='giris-v1.html?brand=campus'"><i class="fa-regular fa-user"></i> Giriş Yap</button>
         <button class="icon-btn hamburger" id="hamburger" aria-label="Menü"><i class="fa-solid fa-bars"></i></button>
       </div>
     </div>
@@ -2101,7 +2149,7 @@ a.drs-row:hover{color:var(--tomato)}
 <div class="drawer-overlay" id="drawerOverlay"></div>
 <aside class="drawer" id="drawer" aria-label="DadaCampus menüsü">
   <div class="drawer-head">
-    <a class="drawer-brand" href="akademi-v1.html" aria-label="DadaCampus"><svg class="ak-mark" viewBox="0 0 44 44" aria-hidden="true"><path d="M22 9 L40 16.5 L22 24 L4 16.5 Z" fill="#006072"/><path d="M12.5 20.2 L22 24 L31.5 20.2 V27.6 C31.5 30.5 27.2 32.6 22 32.6 C16.8 32.6 12.5 30.5 12.5 27.6 Z" fill="#006072"/><path d="M22 13.7 L31 16.5 L22 19.3 L13 16.5 Z" fill="#fff" opacity=".92"/><line x1="40" y1="16.5" x2="40" y2="27.2" stroke="#006072" stroke-width="2.1" stroke-linecap="round"/><circle cx="40" cy="29" r="2.4" fill="#006072"/></svg><span class="ak-word"><b>Dada</b><span class="ak-st">Campus</span></span></a>
+    <a class="drawer-brand" href="akademi-v1.html" aria-label="DadaCampus"><svg class="ak-mark" viewBox="0 0 44 44" aria-hidden="true"><path d="M22 9 L40 16.5 L22 24 L4 16.5 Z"/><path d="M12.5 20.2 L22 24 L31.5 20.2 V27.6 C31.5 30.5 27.2 32.6 22 32.6 C16.8 32.6 12.5 30.5 12.5 27.6 Z"/><path d="M22 13.7 L31 16.5 L22 19.3 L13 16.5 Z" fill="#fff" opacity=".92"/><line x1="40" y1="16.5" x2="40" y2="27.2" stroke-width="2.1" stroke-linecap="round"/><circle cx="40" cy="29" r="2.4"/></svg><span class="ak-word"><b>Dada</b><span class="ak-st">Campus</span></span></a>
     <button class="drawer-close" id="drawerClose" aria-label="Menüyü kapat"><i class="fa-solid fa-xmark"></i></button>
   </div>
   <nav class="drawer-nav">
@@ -2112,30 +2160,15 @@ a.drs-row:hover{color:var(--tomato)}
         <b>Beyar Güneş</b>
         <span class="da-links">
           <a href="dadacampus-kampusum-v1.html">Kampüsüm</a>
-          <a href="hesabim-v1.html">Hesabım</a>
+          <a href="hesabim-v1.html?brand=campus">Hesabım</a>
         </span>
       </span>
     </div>
 
-    <!-- Masaüstü açılır menüler mobilde AKORDEON grubuna döner (§4.6) -->
-    <div class="d-item d-has-sub">
-      <button class="d-link"><i class="fa-solid fa-clapperboard"></i> Eğitimler <i class="fa-solid fa-chevron-down"></i></button>
-      <div class="d-sub">
-        <a href="dadacampus-egitimler-v1.html"><i class="fa-solid fa-list"></i> Tüm Eğitimler</a>
-        <a href="dadacampus-egitimler-v1.html?konu=temel-mutfak"><i class="fa-solid fa-kitchen-set"></i> Temel Mutfak</a>
-        <a href="dadacampus-egitimler-v1.html?konu=pisirme-soslar"><i class="fa-solid fa-fire-burner"></i> Pişirme &amp; Soslar</a>
-        <a href="dadacampus-egitimler-v1.html?konu=turk-mutfagi"><i class="fa-solid fa-bowl-food"></i> Türk &amp; Yerel Mutfaklar</a>
-        <a href="dadacampus-egitimler-v1.html?konu=dunya-mutfaklari"><i class="fa-solid fa-earth-americas"></i> Dünya Mutfakları</a>
-        <a href="dadacampus-egitimler-v1.html?konu=ekmek-fermantasyon"><i class="fa-solid fa-bread-slice"></i> Ekmek &amp; Fermantasyon</a>
-        <a href="dadacampus-egitimler-v1.html?konu=pastacilik"><i class="fa-solid fa-cake-candles"></i> Pastacılık &amp; Tatlı</a>
-        <a href="dadacampus-egitimler-v1.html?konu=gida-guvenligi"><i class="fa-solid fa-shield-halved"></i> Gıda Güvenliği</a>
-        <a href="dadacampus-egitimler-v1.html?konu=menu-yonetimi"><i class="fa-solid fa-list-check"></i> Menü &amp; Mutfak Yönetimi</a>
-        <a href="dadacampus-egitimler-v1.html?konu=surdurulebilirlik"><i class="fa-solid fa-leaf"></i> Sürdürülebilirlik</a>
-        <a href="dadacampus-egitimler-v1.html?konu=girisimcilik"><i class="fa-solid fa-briefcase"></i> Girişimcilik &amp; Gelişim</a>
-        <a href="dadacampus-egitimler-v1.html?ucret=ucretsiz"><i class="fa-solid fa-gift"></i> Ücretsiz Başlangıç</a>
-        <a href="dadacampus-egitimler-v1.html?sihirbaz=1"><i class="fa-solid fa-wand-magic-sparkles"></i> Bana Uygun Eğitimi Bul</a>
-      </div>
-    </div>
+    <!-- R1/D3: masaüstündeki dört öğe mobilde birebir karşılanır.
+         Eğitimler ve Eğitmenler DÜZ satır (masaüstünde de tek buton),
+         Programlar ve Kurumlar akordeon (masaüstünde mega). -->
+    <div class="d-item"><a class="d-link" href="dadacampus-egitimler-v1.html"><i class="fa-solid fa-clapperboard"></i> Eğitimler</a></div>
 
     <div class="d-item d-has-sub">
       <button class="d-link"><i class="fa-solid fa-diagram-project"></i> Programlar <i class="fa-solid fa-chevron-down"></i></button>
@@ -2147,7 +2180,8 @@ a.drs-row:hover{color:var(--tomato)}
         <a href="dadacampus-programlar-v1.html?tur=kamu"><i class="fa-solid fa-landmark"></i> Kamu &amp; Sosyal Etki</a>
         <a href="dadacampus-programlar-v1.html?tur=kurumsal"><i class="fa-solid fa-briefcase"></i> Kurumsal Mesleki Gelişim</a>
         <a href="dadacampus-programlar-v1.html?bolum=atolyeler"><i class="fa-solid fa-video"></i> Canlı Atölyeler &amp; Etkinlikler</a>
-        <a href="dadacampus-programlar-v1.html?bolum=takvim"><i class="fa-regular fa-calendar-days"></i> Akademik Takvim</a>
+        <a href="dadacampus-takvim-v1.html"><i class="fa-regular fa-calendar-days"></i> Akademik Takvim</a>
+        <a href="dadacampus-programlar-v1.html?ortak=1"><i class="fa-solid fa-people-group"></i> Kurum Kohortları</a>
         <a href="dadacampus-sertifika-dogrula-v1.html"><i class="fa-solid fa-shield-halved"></i> Sertifika Doğrula</a>
       </div>
     </div>
@@ -2156,33 +2190,25 @@ a.drs-row:hover{color:var(--tomato)}
       <button class="d-link"><i class="fa-solid fa-building-columns"></i> Kurumlar <i class="fa-solid fa-chevron-down"></i></button>
       <div class="d-sub">
         <a href="dadacampus-kurumlar-v1.html"><i class="fa-solid fa-list"></i> Kurumlar Merkezi</a>
-        <a href="dadacampus-kurumlar-v1.html#tur-universite"><i class="fa-solid fa-building-columns"></i> Üniversiteler İçin</a>
-        <a href="dadacampus-kurumlar-v1.html#tur-mutfak-okulu"><i class="fa-solid fa-utensils"></i> Mutfak Sanatları Okulları İçin</a>
-        <a href="dadacampus-kurumlar-v1.html#tur-kamu"><i class="fa-solid fa-landmark"></i> Kamu ve Belediyeler İçin</a>
-        <a href="dadacampus-kurumlar-v1.html#tur-meslek"><i class="fa-solid fa-school"></i> Mesleki Eğitim Kurumları İçin</a>
-        <a href="dadacampus-kurumlar-v1.html#tur-isletme"><i class="fa-solid fa-hotel"></i> İşletmeler ve Sektör İçin</a>
+        <a href="dadacampus-kurum-tur-v1.html?tur=universite"><i class="fa-solid fa-building-columns"></i> Üniversiteler İçin</a>
+        <a href="dadacampus-kurum-tur-v1.html?tur=mutfak-okulu"><i class="fa-solid fa-utensils"></i> Mutfak Sanatları Okulları İçin</a>
+        <a href="dadacampus-kurum-tur-v1.html?tur=kamu"><i class="fa-solid fa-landmark"></i> Kamu ve Belediyeler İçin</a>
+        <a href="dadacampus-kurum-tur-v1.html?tur=meslek"><i class="fa-solid fa-school"></i> Mesleki Eğitim Kurumları İçin</a>
+        <a href="dadacampus-kurum-tur-v1.html?tur=isletme"><i class="fa-solid fa-hotel"></i> İşletmeler ve Sektör İçin</a>
         <a href="dadacampus-kurumlar-v1.html#modeller"><i class="fa-solid fa-handshake"></i> İş Birliği Modelleri</a>
+        <a href="dadacampus-kurumlar-v1.html#surec"><i class="fa-solid fa-timeline"></i> Süreç ve Takvim</a>
         <a href="dadacampus-kurumlar-v1.html#partnerler"><i class="fa-solid fa-circle-check"></i> Partner Kurumlar</a>
-        <a href="dadacampus-kurumlar-v1.html#ornekler"><i class="fa-solid fa-chart-line"></i> Kurumsal Başarı Örnekleri</a>
-        <a href="dadacampus-kurumlar-v1.html#basvuru"><i class="fa-solid fa-file-signature"></i> İş Birliği Başlat</a>
-        <a href="giris-v1.html?tab=giris"><i class="fa-solid fa-right-to-bracket"></i> Kurum Portalı Girişi</a>
+        <a href="dadacampus-isbirligi-basvuru-v1.html"><i class="fa-solid fa-file-signature"></i> İş Birliği Başlat</a>
       </div>
     </div>
 
-    <div class="d-item d-has-sub">
-      <button class="d-link"><i class="fa-solid fa-chalkboard-user"></i> Eğitmenler <i class="fa-solid fa-chevron-down"></i></button>
-      <div class="d-sub">
-        <a href="akademi-v1.html#egitmenler"><i class="fa-solid fa-chalkboard-user"></i> Tüm Eğitmenler</a>
-        <a href="dadacampus-yardim-v1.html?konu=egitmen"><i class="fa-solid fa-user-plus"></i> Eğitmen Ol</a>
-        <a href="giris-v1.html?tab=giris"><i class="fa-solid fa-right-to-bracket"></i> Eğitmen Paneli Girişi</a>
-      </div>
-    </div>
+    <div class="d-item"><a class="d-link" href="dadacampus-egitmenler-v1.html"><i class="fa-solid fa-chalkboard-user"></i> Eğitmenler</a></div>
 
     <div class="d-item"><a class="d-link" href="dadacampus-yardim-v1.html"><i class="fa-solid fa-circle-question"></i> Yardım Merkezi</a></div>
   </nav>
   <div class="drawer-foot">
     <a href="dadacampus-egitimler-v1.html" class="btn btn-primary" style="width:100%"><i class="fa-solid fa-graduation-cap"></i> Eğitimleri Keşfet</a>
-    <a href="giris-v1.html" class="drawer-login btn btn-ghost" style="width:100%"><i class="fa-regular fa-user"></i> Giriş Yap</a>
+    <a href="giris-v1.html?brand=campus" class="drawer-login btn btn-ghost" style="width:100%"><i class="fa-regular fa-user"></i> Giriş Yap</a>
     <a href="anasayfa-portal-v3a.html" class="drawer-add"><i class="fa-solid fa-arrow-left-long"></i> DadaMutfak'a Dön</a>
     <div class="drawer-lang" id="drawerLang">
       <button class="drawer-lang-toggle" type="button" aria-haspopup="true" aria-expanded="false">
@@ -2207,7 +2233,7 @@ a.drs-row:hover{color:var(--tomato)}
   <a href="dadacampus-egitimler-v1.html" class="bn-item"><i class="fa-solid fa-clapperboard"></i><span>Eğitimler</span></a>
   <a href="dadacampus-kampusum-v1.html" class="bn-item bn-center" id="bnKampusum"><span class="bn-fab"><i class="fa-solid fa-graduation-cap"></i></span><span>Kampüsüm</span></a>
   <a href="dadacampus-programlar-v1.html" class="bn-item"><i class="fa-solid fa-diagram-project"></i><span>Programlar</span></a>
-  <a href="giris-v1.html" class="bn-item" id="bnAccount"><i class="fa-regular fa-user"></i><span>Hesabım</span></a>
+  <a href="giris-v1.html?brand=campus" class="bn-item" id="bnAccount"><i class="fa-regular fa-user"></i><span>Hesabım</span></a>
 </nav>
 
 <!-- ===== GÖRÜŞ BİLDİR (sağ kenar sabit etiket) ===== -->
@@ -2311,7 +2337,7 @@ a.drs-row:hover{color:var(--tomato)}
 
         <label class="fb-kvkk">
           <input type="checkbox" required />
-          <span><a href="yasal-v1.html?metin=aydinlatma">Aydınlatma Metni</a>'ni ve <a href="yasal-v1.html?metin=kvkk">KVKK Metni</a>'ni okudum, onaylıyorum.</span>
+          <span><a href="yasal-v1.html?brand=campus&amp;metin=aydinlatma">Aydınlatma Metni</a>'ni ve <a href="yasal-v1.html?brand=campus&amp;metin=kvkk">KVKK Metni</a>'ni okudum, onaylıyorum.</span>
         </label>
         <button class="btn btn-primary fb-send" type="submit"><i class="fa-solid fa-paper-plane"></i> Gönder</button>
       </form>
@@ -2329,7 +2355,7 @@ a.drs-row:hover{color:var(--tomato)}
   <div class="cookie-inner">
     <div class="cookie-text">
       <span class="cookie-ico"><i class="fa-solid fa-cookie-bite"></i></span>
-      <p>Sana daha iyi bir deneyim sunmak için çerezler kullanıyoruz. Siteyi kullanmaya devam ederek çerez kullanımını kabul etmiş olursun. <a href="yasal-v1.html?metin=cerez">Çerez Politikası</a> · <a href="yasal-v1.html?metin=aydinlatma">KVKK Aydınlatma Metni</a></p>
+      <p>Sana daha iyi bir deneyim sunmak için çerezler kullanıyoruz. Siteyi kullanmaya devam ederek çerez kullanımını kabul etmiş olursun. <a href="yasal-v1.html?brand=campus&amp;metin=cerez">Çerez Politikası</a> · <a href="yasal-v1.html?brand=campus&amp;metin=aydinlatma">KVKK Aydınlatma Metni</a></p>
     </div>
     <div class="cookie-actions">
       <button type="button" class="btn-cookie-reject" id="cookieReject">Reddet</button>
@@ -2571,8 +2597,8 @@ a.drs-row:hover{color:var(--tomato)}
     <h4 id="lgTitle">Bu işlem için giriş yap</h4>
     <p id="lgDesc">Kaydetmek, yorum yapmak ve takip etmek için DadaMutfak hesabına giriş yapman gerekiyor.</p>
     <div class="lg-acts">
-      <a class="btn btn-primary" href="giris-v1.html"><i class="fa-regular fa-user"></i> Giriş Yap</a>
-      <a class="btn btn-ghost" href="giris-v1.html?tab=kayit">Üye Ol</a>
+      <a class="btn btn-primary" href="giris-v1.html?brand=campus"><i class="fa-regular fa-user"></i> Giriş Yap</a>
+      <a class="btn btn-ghost" href="giris-v1.html?brand=campus&amp;tab=kayit">Üye Ol</a>
     </div>
   </div>
 </div>
@@ -2683,19 +2709,19 @@ a.drs-row:hover{color:var(--tomato)}
       <a href="dadacampus-yardim-v1.html#akademik-yaklasim">Akademik Yaklaşım</a><span class="sep"></span>
       <a href="dadacampus-yardim-v1.html#kalite-sureci">Kalite Süreci</a><span class="sep"></span>
       <a href="hakkimizda-v1.html#kunye">Künye</a><span class="sep"></span>
-      <a href="iletisim-v1.html">İletişim</a><span class="sep"></span>
+      <a href="iletisim-v1.html?brand=campus">İletişim</a><span class="sep"></span>
       <a href="dadacampus-yardim-v1.html">Çözüm Merkezi</a><span class="sep"></span>
       <button type="button" class="fk-oneri" onclick="document.getElementById('fbTab').click()">Öneri ve Şikâyet</button>
     </nav>
 
     <div class="foot-legal">
-      <a href="yasal-v1.html?metin=kullanim">Kullanım Koşulları</a><span class="sep"></span>
-      <a href="yasal-v1.html?metin=cerez">Gizlilik ve Çerez</a><span class="sep"></span>
-      <a href="yasal-v1.html?metin=kvkk">KVKK</a><span class="sep"></span>
-      <a href="yasal-v1.html?metin=aydinlatma">Aydınlatma Metni</a><span class="sep"></span>
-      <a href="yasal-v1.html?metin=uyelik">Üyelik Sözleşmesi</a><span class="sep"></span>
-      <a href="yasal-v1.html?metin=mesafeli">Mesafeli Satış</a><span class="sep"></span>
-      <a href="yasal-v1.html?metin=iade">İptal, İade ve Erteleme</a>
+      <a href="yasal-v1.html?brand=campus&amp;metin=kullanim">Kullanım Koşulları</a><span class="sep"></span>
+      <a href="yasal-v1.html?brand=campus&amp;metin=cerez">Gizlilik ve Çerez</a><span class="sep"></span>
+      <a href="yasal-v1.html?brand=campus&amp;metin=kvkk">KVKK</a><span class="sep"></span>
+      <a href="yasal-v1.html?brand=campus&amp;metin=aydinlatma">Aydınlatma Metni</a><span class="sep"></span>
+      <a href="yasal-v1.html?brand=campus&amp;metin=uyelik">Üyelik Sözleşmesi</a><span class="sep"></span>
+      <a href="yasal-v1.html?brand=campus&amp;metin=mesafeli">Mesafeli Satış</a><span class="sep"></span>
+      <a href="yasal-v1.html?brand=campus&amp;metin=iade">İptal, İade ve Erteleme</a>
     </div>
     <div class="foot-bottom">
       <span class="fb-left">© 2026 <b><span class="bd">Dada</span><span class="sf">Campus</span></b> · Tüm hakları saklıdır.</span>
@@ -2797,12 +2823,12 @@ a.drs-row:hover{color:var(--tomato)}
     if(u.level)b.setAttribute('data-level',String(u.level));
   }
   var bnA=document.getElementById('bnAccount');   // M6 — bottom-nav Hesap hedefi
-  if(bnA)bnA.setAttribute('href', authed?'hesabim-v1.html':'giris-v1.html');
+  if(bnA)bnA.setAttribute('href', authed?'hesabim-v1.html?brand=campus':'giris-v1.html?brand=campus');
   // Kampüsüm KİŞİSEL alandır: giriş yapmamış kullanıcı önce girişe gider (§12).
   // Faz 1'de dadacampus-kampusum-v1.html HENÜZ YOK → yalnız demo ?auth=1 durumunda hedeflenir.
   ['bnKampusum','hdrKampusum'].forEach(function(id){
     var el=document.getElementById(id);
-    if(el&&!authed)el.setAttribute('href','giris-v1.html?tab=giris');
+    if(el&&!authed)el.setAttribute('href','giris-v1.html?brand=campus&amp;tab=giris');
   });
   // Rol Değiştirici etiketi: aktif rolü hesap menüsünde göster (§3.3)
   var rl=document.getElementById('acctRoleLbl');
@@ -2812,7 +2838,8 @@ a.drs-row:hover{color:var(--tomato)}
   }
 })();
 
-if(location.search.indexOf('dd=1')>-1){document.querySelector('.nav-item').classList.add('open');var _l=document.getElementById('tbLang');if(_l)_l.classList.add('open');}
+/* ?dd=1 demo: ilk nav öğesi artık DÜZ BAĞLANTI (R1/D3) → açılır paneli olan ilk öğeyi aç */
+if(location.search.indexOf('dd=1')>-1){var _dd=document.querySelector('.nav-item.has-mega')||document.querySelector('.nav-item');if(_dd)_dd.classList.add('open');var _l=document.getElementById('tbLang');if(_l)_l.classList.add('open');}
 if(location.search.indexOf('drawer=1')>-1){window.addEventListener('DOMContentLoaded',function(){document.getElementById('drawer').classList.add('open');document.getElementById('drawerOverlay').classList.add('open');var _s=document.querySelector('.d-has-sub');if(_s)_s.classList.add('open');});}
 
 // header: VARSAYILAN katı (içerik sayfası). data-hero="1" → koyu hero üstünde şeffaf,
@@ -3156,6 +3183,29 @@ document.addEventListener('click',function(ev){
   });
 });
 
+
+/* ===== KABUK JS — mega menüdeki öne çıkan program (R1/D3) =====
+   Görsel ve ad SABİT DEĞİL: campus-data.js'teki programın kendi kapağından gelir.
+   Böylece menüdeki kart gerçek bir kayda işaret eder ve stok görsel elle seçilmez. */
+(function(){
+  var fig=document.getElementById('megaPrgFig'); if(!fig||!window.DC||!DC.programlar)return;
+  var p=DC.programlar.filter(function(x){return x.kapak;})[0]; if(!p)return;
+  fig.style.backgroundImage="url('"+DC.img(p.kapak,600)+"')";
+  fig.setAttribute('href', DC.link.program(p.slug));
+  var ad=document.getElementById('megaPrgAd'); if(ad)ad.textContent=p.ad;
+})();
+
+/* ===== KABUK JS — zil rozeti (R1/D3) =====
+   Sayı önce markup'ta SABİT "2" yazıyordu ve hiçbir yerden güncellenmiyordu;
+   DadaGastro'nun bildirim sayfası ise 3 gösteriyordu. Artık tek kaynak:
+   DC.okunmamisSayi(). Sıfırsa rozet hiç basılmaz. */
+(function(){
+  var el=document.getElementById('hdrBellBadge'), b=document.getElementById('hdrBell');
+  if(!el||!window.DC||!DC.okunmamisSayi)return;
+  var n=DC.okunmamisSayi();
+  if(n>0){ el.textContent=n; if(b)b.setAttribute('aria-label','Bildirimler — '+n+' okunmamış'); }
+  else { el.remove(); if(b)b.setAttribute('aria-label','Bildirimler'); }
+})();
 
 /* ===== KABUK JS — header arama → arama-campus-v1.html (crsSearchInput q'yu ?q= taşı) ===== */
 (function(){
