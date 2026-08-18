@@ -2130,22 +2130,37 @@ a.drs-row:hover{color:var(--tomato)}
                             .kurum-gate .pagi-note .fk-help .lst-empty .sr-only
    Yeni aile: `.ply` (oynatma kabuğu) ve `.dr-*` (ders ekranı yerleşimi) —
    kabukta karşılığı YOK, ilkel parçalardan kuruldu; raporda yazılı.
+   R2'de aynı aileye İKİ ad eklendi (yeni aile değil, mevcut `.dr-*`in parçası):
+     `.dr-yan`   — sağ yapışkan ray (içerik listesi + notlarım); `_detay.css`
+                   `.dt-yan` ile aynı rol, ders sütun ölçüsüyle.
+     `.dr-govde` — sekmeli ders gövdesi; eski `.dr-ana` kartının değerlerini
+                   birebir devraldı, `.dr-ana` yalnız oynatıcıyı taşıyor.
+     `.dr-top`   — banner kapsam seçicisi (`.lst-top .dt-top` üstüne iki fark).
+   R2'de DÜŞEN adlar: `.dr-bar` `.dr-geri` `.dr-ilerleme` `.dr-bar-cta`
+     `.dr-tabbar` `.dr-yol` — öğrenme modu bar'ı ve mobil sekme anahtarıyla
+     birlikte DOM'dan kalktı.
    ========================================================== */
 
-/* ---- ÜST ŞERİT ---- */
-/* ---- ÜST ŞERİT — R1/D5'te header'ın İÇİNE taşındı ----
-   .dr-bar artık DOM'dan kalkıyor (ders JS'i içeriğini #hdrMode yuvasına taşır);
-   aşağıdaki kurallar bağlam öğelerinin header içindeki halini boyar.
-   Ayrı bar kalmadığı için sabit kabuk 176px → 64px, --chrome-h de öyle. */
-.h-mode .dr-geri{flex:1}
-.h-mode .dr-ilerleme{width:190px}
-.dr-geri{display:flex;align-items:center;gap:12px;min-width:0;flex:1;color:var(--slate)}
-.dr-geri i{flex:none;font-size:12px;color:var(--tomato)}
-.dr-geri small{display:block;font-size:10.5px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}
-.dr-geri b{display:block;font-size:15px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.dr-geri:hover b{color:var(--tomato)}
-.dr-ilerleme{flex:none;width:210px}
-.dr-bar-cta{flex:none;display:flex;gap:9px}
+/* ---- BANNER (R2/2) — site standardı görselli koyu hero ----
+   R1/D5'te ders ekranının ne standart header'ı ne banner'ı vardı: ayrı bir
+   `.dr-bar` şeridi vardı ve içeriği header'ın `#hdrMode` yuvasına taşınıyordu
+   (öğrenme modu, `body[data-mode="ders"]`). R2'de ders ekranı diğer detay
+   sayfalarıyla AYNI anatomiye döndü — `.lst-top .dt-top` + `.lst-hero-media`.
+   Bu blok yalnız o iskeletin ders bağlamına düşen İKİ farkını kurar; geri
+   kalan her değer kabuktan ve `_detay.css`'ten gelir, yeniden yazılmaz.
+   🔴 İki bar üst üste binmez: `.dr-bar` DOM'dan tamamen kalktı, ders bağlamı
+      banner'ın içinde. Sabit kabuk yeniden 112px (`--chrome-h` kök değeri). */
+/* 1) ilerleme: banner sağ sütununda, koyu zemine göre — yeni renk üretilmedi,
+      raydaki dolgu beyaz, kanal beyazın şeffafı. */
+.dr-top .lst-stats{gap:12px;flex-wrap:wrap}
+/* ≤1024'te kabuk `.lst-stats`i YATAY diziyor (`.st{flex:1}`); çubuk esnek
+   olmayan bir kardeş olduğu için genişliği 0'a düşüyordu. Kendi satırını alır. */
+.dr-top .lst-stats .prg{flex:none;width:100%;background:rgba(255,255,255,.22)}
+.dr-top .lst-stats .prg > span{background:#fff}
+/* 2) künye çipleri lead'siz geliyor (banner'da açıklama paragrafı yok) →
+      h1'den sonraki ilk eylem satırı boşluğunu ölçekten alır. */
+.dr-top .lst-hero h1{margin-bottom:0}
+.dr-top .dt-yapi{margin-top:calc(var(--sec-y) * .34)}
 
 /* ---- İKİ KOLON YERLEŞİM (R2/1) ----
    R1/D5'te üç sütundu: içerik(290) · oynatıcı(1fr) · notlar(300). 1440'ta orta
@@ -2154,9 +2169,10 @@ a.drs-row:hover{color:var(--tomato)}
    R2'de iki kolon: SOL = oynatıcı + sekmeli gövde · SAĞ = içerik listesi ÜSTTE,
    notlarım ALTINDA, tek yapışkan ray. Ray genişliği detay sayfalarının yan
    paneliyle AYNI (340px — _detay.css `.dt-layout`), ayrı ölçü üretilmedi. */
-/* 🔴 Sabit kabuk ofseti BURADA: üst dolgu = kabuk + bölüm boşluğu → yapışkan rayın
-   YAPIŞMA EŞİĞİ ile DOĞAL KONUMU birebir aynı olur, açılışta zıplama olmaz. */
-.dr-sec{padding:calc(var(--chrome-h) + var(--sec-y) * .45) 0 var(--sec-y);background:var(--bg-cream)}
+/* R2/2: gövde artık banner'ın ardından geliyor — kabuk ofsetini `.below-header`
+   banner'ın kendisi taşıyor, gövde yalnız ölçekli üst boşluk alır (detay
+   sayfalarının `.dt-sec` değeriyle aynı kademe). */
+.dr-sec{padding:calc(var(--sec-y) * .7) 0 var(--sec-y);background:var(--bg-cream)}
 .dr-layout{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:22px 26px;align-items:start}
 
 /* oynatıcı: kart çerçevesi YOK — sahne ve kontrol barı kendi yüzeyini taşıyor,
@@ -2167,8 +2183,8 @@ a.drs-row:hover{color:var(--tomato)}
   border-radius:var(--radius-lg);padding:20px 26px 28px}
 /* yapışkan ray — iki panelin üst ofseti ray üzerinden ORTAK, ayrı ayrı yazılmaz */
 .dr-yan{grid-column:2;grid-row:1 / span 2;display:flex;flex-direction:column;gap:20px;
-  position:sticky;top:calc(var(--chrome-h) + var(--sec-y) * .45);
-  max-height:calc(100vh - var(--chrome-h) - var(--sec-y) * .9);overflow-y:auto;scrollbar-width:thin}
+  position:sticky;top:calc(var(--chrome-h) + 16px);
+  max-height:calc(100vh - var(--chrome-h) - 32px);overflow-y:auto;scrollbar-width:thin}
 .dr-agac,.dr-not{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-lg);padding:20px}
 .dr-agac-head{display:flex;align-items:center;justify-content:space-between;gap:10px;
   padding-bottom:13px;margin-bottom:13px;border-bottom:1px solid var(--line)}
@@ -2220,7 +2236,6 @@ a.drs-row:hover{color:var(--tomato)}
 
 /* ---- ders gövdesi ---- */
 .dr-govde h1{font-size:25px;letter-spacing:-.02em;margin-bottom:6px}
-.dr-yol{font-size:12.5px;font-weight:600;color:var(--muted);margin-bottom:20px}
 .dr-ic-tabbar{margin-bottom:20px}
 .dr-alt{font-size:13.5px;font-weight:500;color:var(--muted);line-height:1.6;margin-bottom:16px}
 .dr-h3{font-size:12px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);
@@ -2319,12 +2334,8 @@ a.drs-row:hover{color:var(--tomato)}
   .dr-govde{order:3}
   .dr-not{order:4}
   .dr-iki{grid-template-columns:1fr;gap:20px}
-  .h-mode .dr-ilerleme{width:150px}
 }
 @media (max-width:640px){
-  .h-mode .dr-ilerleme{display:none}
-  .h-mode .dr-bar-cta .btn span{display:none}
-  .h-mode .dr-geri small{display:none}
   .dr-govde{padding:18px 16px 22px;border-radius:var(--radius-md)}
   .dr-agac,.dr-not{padding:16px;border-radius:var(--radius-md)}
   .dr-govde h1{font-size:20px}
@@ -2333,7 +2344,7 @@ a.drs-row:hover{color:var(--tomato)}
 }
 </style>
 </head>
-<body data-brand="campus" data-hero="0" data-mode="ders">
+<body data-brand="campus" data-hero="1">
 <!-- ATLAMA BAĞLANTISI (§23.3) — klavye kullanıcısı topbar + 4 menü + drawer +
      alt barı atlayıp doğrudan içeriğe geçebilsin. Odaklanınca görünür olur. -->
 <a class="skip" href="#pageMain"><i class="fa-solid fa-arrow-down" aria-hidden="true"></i> İçeriğe atla</a>
@@ -2796,15 +2807,32 @@ a.drs-row:hover{color:var(--tomato)}
 
 <div id="drIcerik">
 
-<!-- ===== ÜST ŞERİT: eğitim adı + ilerleme + çıkış ===== -->
-<section class="below-header dr-bar">
+<!-- ===== BANNER (R2/2) — site standardı: görselli koyu hero, diğer detay
+     sayfalarıyla AYNI anatomi (.lst-top .dt-top + .lst-hero-media + .lst-hero).
+     🔴 R1/D5'in öğrenme modu bar'ının YERİNİ ALIR: ders bağlamı (eğitim adı,
+     bölüm, ders künyesi, ilerleme, geri dönüş) buraya taşındı. Ayrı bar YOK →
+     header + bar iki katı sorunu (R1 keşif §K1) geri gelmez, tek yapı var. ===== -->
+<section class="below-header lst-top dt-top dr-top">
+  <div class="lst-hero-media" id="drKapak" aria-hidden="true"></div>
   <div class="wrap">
-    <a class="dr-geri" id="drGeri" href="dadacampus-egitimler-v1.html">
-      <i class="fa-solid fa-chevron-left" aria-hidden="true"></i>
-      <span><small>Eğitim</small><b id="drEgitimAd"></b></span>
-    </a>
-    <div class="dr-ilerleme" id="drIlerleme"></div>
-    <div class="dr-bar-cta" id="drBarCta"></div>
+    <nav class="rd-crumb" aria-label="Sayfa yolu">
+      <a href="akademi-v1.html"><i class="fa-solid fa-house" aria-hidden="true"></i></a>
+      <i class="fa-solid fa-chevron-right" aria-hidden="true"></i>
+      <a href="dadacampus-egitimler-v1.html">Eğitimler</a>
+      <i class="fa-solid fa-chevron-right" aria-hidden="true"></i>
+      <a id="drGeri" href="dadacampus-egitimler-v1.html">Eğitim</a>
+      <i class="fa-solid fa-chevron-right" aria-hidden="true"></i>
+      <b id="drCrumbDers">Ders</b>
+    </nav>
+    <div class="lst-hero">
+      <div class="lh-main">
+        <span class="eyebrow" id="drEyebrow"></span>
+        <h1 id="drDersAd"></h1>
+        <div class="dt-yapi" id="drKunye" role="group" aria-label="Ders künyesi"></div>
+        <div class="ak-hero-cta" id="drBarCta"></div>
+      </div>
+      <div class="lst-stats" id="drIlerleme" role="group" aria-label="Eğitim ilerlemesi"></div>
+    </div>
   </div>
 </section>
 
@@ -2844,9 +2872,6 @@ a.drs-row:hover{color:var(--tomato)}
 
       <!-- ---------- SOL 2/2: sekmeli ders gövdesi ---------- -->
       <div class="dr-govde">
-        <h1 id="drDersAd"></h1>
-        <p class="dr-yol" id="drYol"></p>
-
         <!-- transkript / adım özeti / malzeme sekmeleri -->
         <div class="pf-tabbar dr-ic-tabbar">
           <div class="pf-tabs" role="tablist" aria-label="Ders içeriği">
@@ -4035,30 +4060,29 @@ window.__bottomStrips=window.__bottomStrips||[];
   document.title = ders.ad + ' — ' + e.ad + ' | DadaCampus';
 
   /* ---- üst şerit -------------------------------------------------------- */
+  /* ---- BANNER (R2/2): ders bağlamı site standardı koyu hero'ya taşındı ----
+     R1/D5'te bu bilgiler header'ın içindeki `#hdrMode` yuvasına taşınıyordu
+     (öğrenme modu). Ders ekranı artık diğer detay sayfalarıyla aynı anatomiyi
+     kullanıyor: görselli banner + standart header. Yuvaya taşıma KALDIRILDI. */
+  byId('drKapak').style.backgroundImage = 'url(\'' + img(e.kapak, 1680) + '\')';
   byId('drGeri').setAttribute('href', D.link.egitim(e.slug));
-  byId('drEgitimAd').textContent = e.ad;
+  byId('drGeri').textContent = e.ad;
 
-  var y = D.yuzde(e.id);
-  byId('drIlerleme').innerHTML =
-    '<div class="prg-lbl"><span>' + ilerleme.tamamlanan.length + '/' + e.dersSayisi + ' ders</span><b>%' + y + '</b></div>' +
-    '<span class="prg"><span style="width:' + y + '%"></span></span>';
-
-  /* ---- ÖĞRENME MODU (R1/D5): bağlam öğelerini header'a taşı --------------
-     Ders ekranı önce üç kat taşıyordu: üst bant(40) + header(72) + .dr-bar(64).
-     Bağlam (geri · ilerleme · çıkış) header'ın içindeki yuvaya TAŞINIR, ayrı bar
-     DOM'dan çıkar. Markup çoğaltılmaz — aynı düğümler yer değiştirir. */
-  (function () {
-    var yuva = document.getElementById('hdrMode'), bar = document.querySelector('.dr-bar');
-    if (!yuva || !bar) return;
-    yuva.hidden = false;
-    var w = bar.querySelector('.wrap');
-    while (w.firstChild) yuva.appendChild(w.firstChild);
-    bar.remove();
-  })();
+  /* ilerleme banner'ın sağ sütununda — .lst-stats + .prg, ikisi de mevcut aile */
+  function ilerlemeCiz() {
+    var y = D.yuzde(e.id);
+    byId('drIlerleme').innerHTML =
+      '<div class="st"><b>%' + y + '</b><span>' + ilerleme.tamamlanan.length + '/' +
+        e.dersSayisi + ' ders tamamlandı</span></div>' +
+      '<span class="prg"><span style="width:' + y + '%"></span></span>';
+  }
+  ilerlemeCiz();
 
   byId('drBarCta').innerHTML =
-    '<a class="btn btn-ghost" href="dadacampus-kampusum-v1.html?bolum=egitimlerim">' +
-      '<i class="fa-solid fa-graduation-cap"></i> <span>Kampüsüm</span></a>';
+    '<a class="btn btn-glassy" href="' + esc(D.link.egitim(e.slug)) + '">' +
+      '<i class="fa-solid fa-chevron-left"></i> Eğitime Dön</a>' +
+    '<a class="btn btn-glassy" href="dadacampus-kampusum-v1.html?bolum=egitimlerim">' +
+      '<i class="fa-solid fa-graduation-cap"></i> Kampüsüm</a>';
 
   /* ---- içerik ağacı (aktif ders işaretli) ------------------------------- */
   byId('drAgacSay').textContent = e.dersSayisi + ' ders';
@@ -4168,10 +4192,14 @@ window.__bottomStrips=window.__bottomStrips||[];
 
   /* ---- ders başlığı ve yol ---------------------------------------------- */
   byId('drDersAd').textContent = ders.ad;
-  byId('drYol').innerHTML =
-    esc(D.etiket('konuAlanlari', e.kategori)) + ' · Bölüm ' + ders.bolumNo + ' — ' + esc(ders.bolum) +
-    ' · Ders ' + no + '/' + e.dersSayisi + ' · ' + esc(D.sure(ders.sureDk)) +
-    (ders.onizleme ? ' · <b style="color:var(--tomato)">ücretsiz ön izleme</b>' : '');
+  byId('drCrumbDers').textContent = 'Ders ' + no;
+  byId('drEyebrow').textContent = 'Bölüm ' + ders.bolumNo + ' — ' + ders.bolum;
+  /* künye çipleri: eski `.dr-yol` satırının taşıdığı bilgi, banner çip dilinde */
+  byId('drKunye').innerHTML =
+    '<span><i class="fa-solid fa-list-ol"></i> Ders ' + no + '/' + e.dersSayisi + '</span>' +
+    '<span><i class="fa-regular fa-clock"></i> ' + esc(D.sure(ders.sureDk)) + '</span>' +
+    '<span><i class="fa-solid fa-closed-captioning"></i> ' + esc(D.etiket('konuAlanlari', e.kategori)) + '</span>' +
+    (ders.onizleme ? '<span><i class="fa-regular fa-circle-play"></i> Ücretsiz ön izleme</span>' : '');
 
   /* ---- adım özeti (metinsel anlatım — §23.3) ---------------------------- */
   /* Adımlar dersin adından ve eğitimin kazanımlarından türetilir; uydurma
@@ -4396,10 +4424,7 @@ window.__bottomStrips=window.__bottomStrips||[];
     if (ix > -1) ilerleme.tamamlanan.splice(ix, 1);
     else { ilerleme.tamamlanan.push(no); ilerleme.sonDers = Math.min(dersler.length, no + 1); }
     /* §17.3 — tamamlanan ders ilerlemeyi ve belge uygunluğunu günceller */
-    var yy = D.yuzde(e.id);
-    byId('drIlerleme').innerHTML =
-      '<div class="prg-lbl"><span>' + ilerleme.tamamlanan.length + '/' + e.dersSayisi + ' ders</span><b>%' + yy + '</b></div>' +
-      '<span class="prg"><span style="width:' + yy + '%"></span></span>';
+    ilerlemeCiz();
     var bitti = ilerleme.tamamlanan.indexOf(no) > -1;
     this.innerHTML = '<i class="fa-solid ' + (bitti ? 'fa-rotate-left' : 'fa-check') + '"></i> ' +
       (bitti ? 'Tamamlandı işaretini kaldır' : 'Dersi Tamamla');
